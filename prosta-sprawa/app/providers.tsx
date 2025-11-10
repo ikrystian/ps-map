@@ -18,6 +18,7 @@ export function Providers({
         defaultTheme="dark"
         enableSystem={false}
         disableTransitionOnChange
+        storageKey="theme"
       >
         {children}
       </ThemeProvider>
