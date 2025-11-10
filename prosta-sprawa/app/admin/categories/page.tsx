@@ -477,7 +477,7 @@ export default function AdminCategoriesPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategoria nadrzędna</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <Select onValueChange={field.onChange} value={field.value || "none"}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Wybierz kategorię nadrzędną (opcjonalnie)" />
@@ -682,7 +682,7 @@ export default function AdminCategoriesPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Kategoria nadrzędna</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <Select onValueChange={field.onChange} value={field.value || "none"}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Wybierz kategorię nadrzędną (opcjonalnie)" />

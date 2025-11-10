@@ -87,8 +87,8 @@ export default function ClientProfilePage() {
           kodPocztowy: data.kodPocztowy || "",
           miasto: data.miasto || "",
           voivodeshipId: data.voivodeshipId || "",
-          zgodaNewsletter: data.zgodaNewsletter || false,
-          zgodaMarketing: data.zgodaMarketing || false,
+          zgodaNewsletter: data.zgodaNewsletter === true,
+          zgodaMarketing: data.zgodaMarketing === true,
         })
       }
 
