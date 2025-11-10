@@ -194,7 +194,7 @@ export default function SearchLawyerPage() {
                       <SelectValue placeholder="Wszystkie" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Wszystkie</SelectItem>
+                      <SelectItem value="all">Wszystkie</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.slug}>
                           {category.nazwa}
