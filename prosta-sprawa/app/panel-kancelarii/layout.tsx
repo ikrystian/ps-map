@@ -18,7 +18,20 @@ import {
   BarChart3,
   MessageSquare,
   Settings,
+  FileStack,
+  Receipt,
+  HelpCircle,
+  LogOut,
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
@@ -80,12 +93,82 @@ export default function LawFirmPanelLayout({
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-6">
-          {children}
-        </div>
-      </main>
+      {/* Main content area */}
+      <div className="flex flex-1 flex-col">
+        {/* Header */}
+        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="text-xl font-bold">
+              ProstaSprawa
+            </Link>
+          </div>
+
+          {/* User menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+              <Avatar className="h-9 w-9 cursor-pointer">
+                <AvatarImage src="/avatars/user.jpg" alt="User" />
+                <AvatarFallback>KA</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii" className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Panel użytkownika
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii/sprawy" className="flex items-center gap-2">
+                  <Briefcase className="h-4 w-4" />
+                  Moje sprawy
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii/dokumenty" className="flex items-center gap-2">
+                  <FileStack className="h-4 w-4" />
+                  Dokumenty
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii/faktury" className="flex items-center gap-2">
+                  <Receipt className="h-4 w-4" />
+                  Faktury
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii/pomoc" className="flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4" />
+                  Centrum pomocy
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-kancelarii/profil" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Konto
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/api/auth/logout" className="flex items-center gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Wyloguj
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto p-6">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

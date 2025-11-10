@@ -17,7 +17,18 @@ import {
   CreditCard,
   LogOut,
   Wrench,
+  HelpCircle,
+  User,
 } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
@@ -78,12 +89,70 @@ export default function ClientPanelLayout({
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-6">
-          {children}
-        </div>
-      </main>
+      {/* Main content area */}
+      <div className="flex flex-1 flex-col">
+        {/* Header */}
+        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="text-xl font-bold">
+              ProstaSprawa
+            </Link>
+          </div>
+
+          {/* User menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+              <Avatar className="h-9 w-9 cursor-pointer">
+                <AvatarImage src="/avatars/client.jpg" alt="Klient" />
+                <AvatarFallback>KL</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/panel-klienta" className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Panel użytkownika
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-klienta/sprawy" className="flex items-center gap-2">
+                  <Briefcase className="h-4 w-4" />
+                  Moje sprawy
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-klienta/profil" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Moje konto
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/panel-klienta/pomoc" className="flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4" />
+                  Centrum pomocy
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/api/auth/logout" className="flex items-center gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Wyloguj
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto p-6">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
