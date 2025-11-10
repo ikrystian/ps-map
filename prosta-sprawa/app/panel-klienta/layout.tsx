@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Briefcase,
@@ -29,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
@@ -43,7 +45,6 @@ const navigation = [
   { name: "Punkty", href: "/panel-klienta/punkty", icon: Coins },
   { name: "Moje artykuły", href: "/panel-klienta/artykuly", icon: BookOpen },
   { name: "Subskrypcje i płatności", href: "/panel-klienta/subskrypcje", icon: CreditCard },
-  { name: "Wyloguj", href: "/api/auth/logout", icon: LogOut },
 ]
 
 export default function ClientPanelLayout({
@@ -52,6 +53,10 @@ export default function ClientPanelLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -85,6 +90,14 @@ export default function ClientPanelLayout({
                 </Link>
               )
             })}
+            <Button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              variant="ghost"
+            >
+              <LogOut className="h-5 w-5" />
+              Wyloguj
+            </Button>
           </nav>
         </div>
       </aside>
@@ -136,11 +149,9 @@ export default function ClientPanelLayout({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/api/auth/logout" className="flex items-center gap-2">
-                  <LogOut className="h-4 w-4" />
-                  Wyloguj
-                </Link>
+              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
+                <LogOut className="h-4 w-4" />
+                Wyloguj
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

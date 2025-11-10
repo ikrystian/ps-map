@@ -68,7 +68,6 @@ app/panel-kancelarii/
 ├── page.tsx                       # Dashboard
 ├── sprawy/
 │   ├── page.tsx                   # Lista spraw
-│   └── [id]/page.tsx             # Szczegóły + składanie oferty
 ├── oferty/page.tsx               # Moje oferty
 ├── profil/page.tsx               # Edycja profilu
 ├── zakres-uslug/
