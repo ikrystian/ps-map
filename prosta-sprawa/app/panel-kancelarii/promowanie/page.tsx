@@ -204,8 +204,8 @@ export default function LawFirmPromotionPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedType, setSelectedType] = useState<string>("")
   const [duration, setDuration] = useState<number>(7)
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>("all")
   const [startDate, setStartDate] = useState<string>("")
   const [autoRenewal, setAutoRenewal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -289,8 +289,8 @@ export default function LawFirmPromotionPage() {
         body: JSON.stringify({
           typPromocji: selectedType,
           czasTrwaniaDni: duration,
-          kategoriaPromocji: selectedCategory || null,
-          wojewodztwoPromocji: selectedVoivodeship || null,
+          kategoriaPromocji: selectedCategory && selectedCategory !== "all" ? selectedCategory : null,
+          wojewodztwoPromocji: selectedVoivodeship && selectedVoivodeship !== "all" ? selectedVoivodeship : null,
           startPromocji: new Date(startDate).toISOString(),
           automatyczneOdnowienie: autoRenewal,
         }),
@@ -315,8 +315,8 @@ export default function LawFirmPromotionPage() {
   const resetForm = () => {
     setSelectedType("")
     setDuration(7)
-    setSelectedCategory("")
-    setSelectedVoivodeship("")
+    setSelectedCategory("all")
+    setSelectedVoivodeship("all")
     setStartDate("")
     setAutoRenewal(false)
     setError(null)
@@ -677,7 +677,7 @@ export default function LawFirmPromotionPage() {
                   <SelectValue placeholder="Wszystkie kategorie" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Wszystkie kategorie</SelectItem>
+                  <SelectItem value="all">Wszystkie kategorie</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.nazwa}
@@ -695,7 +695,7 @@ export default function LawFirmPromotionPage() {
                   <SelectValue placeholder="Wszystkie województwa" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Wszystkie województwa</SelectItem>
+                  <SelectItem value="all">Wszystkie województwa</SelectItem>
                   {voivodeships.map((voivodeship) => (
                     <SelectItem key={voivodeship.id} value={voivodeship.id}>
                       {voivodeship.nazwa}

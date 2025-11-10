@@ -134,11 +134,20 @@ export default function LawFirmProfilePage() {
 
         if (lawFirmRes && lawFirmRes.ok) {
           const lawFirmData = await lawFirmRes.json()
-          setFormData({
-            ...formData,
+          const normalizedData = {
             ...lawFirmData,
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
             categoriesIds: lawFirmData.categories?.map((c: any) => c.category.id) || [],
+          }
+          // Konwertuj null na puste stringi dla wszystkich pól
+          Object.keys(normalizedData).forEach((key) => {
+            if (normalizedData[key] === null && typeof formData[key as keyof typeof formData] === 'string') {
+              normalizedData[key] = ''
+            }
+          })
+          setFormData({
+            ...formData,
+            ...normalizedData,
           })
         }
       } catch (error) {

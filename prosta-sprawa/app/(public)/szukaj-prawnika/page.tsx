@@ -61,11 +61,11 @@ export default function SearchLawyerPage() {
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [selectedVoivodeship, setSelectedVoivodeship] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedVoivodeship, setSelectedVoivodeship] = useState("all")
   const [selectedCity, setSelectedCity] = useState("")
   const [priceRange, setPriceRange] = useState([0, 10000])
-  const [minRating, setMinRating] = useState("")
+  const [minRating, setMinRating] = useState("all")
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
@@ -109,8 +109,8 @@ export default function SearchLawyerPage() {
 
         if (searchQuery) params.append("search", searchQuery)
         if (selectedCategory && selectedCategory !== "all") params.append("category", selectedCategory)
-        if (selectedVoivodeship) params.append("voivodeship", selectedVoivodeship)
-        if (minRating) params.append("ratingMin", minRating)
+        if (selectedVoivodeship && selectedVoivodeship !== "all") params.append("voivodeship", selectedVoivodeship)
+        if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
         params.append("limit", limit.toString())
@@ -138,10 +138,10 @@ export default function SearchLawyerPage() {
   const handleResetFilters = () => {
     setSearchQuery("")
     setSelectedCategory("all")
-    setSelectedVoivodeship("")
+    setSelectedVoivodeship("all")
     setSelectedCity("")
     setPriceRange([0, 10000])
-    setMinRating("")
+    setMinRating("all")
     setOnlineOnly(false)
     setVerifiedOnly(false)
     setSortBy("relevance")
@@ -212,7 +212,7 @@ export default function SearchLawyerPage() {
                       <SelectValue placeholder="Wszystkie" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Wszystkie</SelectItem>
+                      <SelectItem value="all">Wszystkie</SelectItem>
                       {voivodeships.map((voivodeship) => (
                         <SelectItem key={voivodeship.id} value={voivodeship.slug}>
                           {voivodeship.nazwa}
@@ -240,7 +240,7 @@ export default function SearchLawyerPage() {
                       <SelectValue placeholder="Dowolna" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Dowolna</SelectItem>
+                      <SelectItem value="all">Dowolna</SelectItem>
                       <SelectItem value="5">5 gwiazdek</SelectItem>
                       <SelectItem value="4">4+ gwiazdek</SelectItem>
                       <SelectItem value="3">3+ gwiazdek</SelectItem>
