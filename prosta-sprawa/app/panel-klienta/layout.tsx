@@ -9,15 +9,8 @@ import {
   Briefcase,
   UserCircle,
   MessageSquare,
-  MapPin,
-  Package,
-  Star,
-  TrendingUp,
-  Coins,
-  BookOpen,
-  CreditCard,
+  Heart,
   LogOut,
-  Wrench,
   HelpCircle,
   User,
 } from "lucide-react"
@@ -35,16 +28,9 @@ import { Button } from "@/components/ui/button";
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
   { name: "Zarządzanie profilem", href: "/panel-klienta/profil", icon: UserCircle },
-  { name: "Zakres usług", href: "/panel-klienta/zakres-uslug", icon: Wrench },
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
-  { name: "Pozycja ogłoszenia", href: "/panel-klienta/pozycja-ogloszenia", icon: MapPin },
-  { name: "Pakiet", href: "/panel-klienta/pakiet", icon: Package },
   { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
-  { name: "Opinie i certyfikaty", href: "/panel-klienta/opinie-certyfikaty", icon: Star },
-  { name: "Promowanie", href: "/panel-klienta/promowanie", icon: TrendingUp },
-  { name: "Punkty", href: "/panel-klienta/punkty", icon: Coins },
-  { name: "Moje artykuły", href: "/panel-klienta/artykuly", icon: BookOpen },
-  { name: "Subskrypcje i płatności", href: "/panel-klienta/subskrypcje", icon: CreditCard },
+  { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },
 ]
 
 export default function ClientPanelLayout({

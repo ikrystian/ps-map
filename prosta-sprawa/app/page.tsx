@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar";
 import { Search, MapPin, Star } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -35,7 +36,7 @@ export default function Home() {
         </NavigationMenu>
         <div className="flex items-center gap-4">
           <Button variant="outline">Dodaj sprawę</Button>
-          <Button>Zaloguj</Button>
+          <Link href="/logowanie">Zaloguj</Link>
         </div>
       </header>
 
