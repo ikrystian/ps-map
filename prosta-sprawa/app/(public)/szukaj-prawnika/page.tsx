@@ -108,7 +108,7 @@ export default function SearchLawyerPage() {
         const params = new URLSearchParams()
 
         if (searchQuery) params.append("search", searchQuery)
-        if (selectedCategory) params.append("category", selectedCategory)
+        if (selectedCategory && selectedCategory !== "all") params.append("category", selectedCategory)
         if (selectedVoivodeship) params.append("voivodeship", selectedVoivodeship)
         if (minRating) params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
@@ -137,7 +137,7 @@ export default function SearchLawyerPage() {
 
   const handleResetFilters = () => {
     setSearchQuery("")
-    setSelectedCategory("")
+    setSelectedCategory("all")
     setSelectedVoivodeship("")
     setSelectedCity("")
     setPriceRange([0, 10000])
