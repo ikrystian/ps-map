@@ -1,3 +1,226 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+
 export default function ClientRegistrationPage() {
-  return <div>Rejestracja Klienta</div>
+  const router = useRouter()
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    imie: "",
+    nazwisko: "",
+    telefon: "",
+    miasto: "",
+    zgodaRegulamin: false,
+    zgodaNewsletter: false,
+  })
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+
+    // Walidacja
+    if (formData.password !== formData.confirmPassword) {
+      setError("Hasła nie są identyczne")
+      return
+    }
+
+    if (!formData.zgodaRegulamin) {
+      setError("Musisz zaakceptować regulamin")
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          role: "CLIENT",
+          name: `${formData.imie} ${formData.nazwisko}`,
+          client: {
+            imie: formData.imie,
+            nazwisko: formData.nazwisko,
+            telefon: formData.telefon,
+            miasto: formData.miasto,
+            zgodaRegulamin: formData.zgodaRegulamin,
+            zgodaNewsletter: formData.zgodaNewsletter,
+            zgodaMarketing: false,
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || "Wystąpił błąd podczas rejestracji")
+        setIsLoading(false)
+        return
+      }
+
+      // Przekieruj na stronę logowania
+      router.push("/logowanie?registered=true")
+    } catch (error) {
+      setError("Wystąpił błąd podczas rejestracji")
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Rejestracja klienta</CardTitle>
+          <CardDescription className="text-center">
+            Już masz konto?{" "}
+            <Link href="/logowanie" className="text-primary hover:underline">
+              Zaloguj się
+            </Link>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="imie">Imię *</Label>
+              <Input
+                id="imie"
+                type="text"
+                required
+                value={formData.imie}
+                onChange={(e) => setFormData({ ...formData, imie: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="nazwisko">Nazwisko *</Label>
+              <Input
+                id="nazwisko"
+                type="text"
+                required
+                value={formData.nazwisko}
+                onChange={(e) => setFormData({ ...formData, nazwisko: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="twoj@email.com"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="telefon">Telefon</Label>
+              <Input
+                id="telefon"
+                type="tel"
+                value={formData.telefon}
+                onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="miasto">Miasto</Label>
+              <Input
+                id="miasto"
+                type="text"
+                value={formData.miasto}
+                onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Hasło *</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                required
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="zgodaRegulamin"
+                required
+                checked={formData.zgodaRegulamin}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, zgodaRegulamin: checked === true })
+                }
+                disabled={isLoading}
+              />
+              <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> i <Link href="/polityka-prywatnosci" className="text-primary hover:underline">politykę prywatności</Link> *
+              </label>
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="zgodaNewsletter"
+                checked={formData.zgodaNewsletter}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, zgodaNewsletter: checked === true })
+                }
+                disabled={isLoading}
+              />
+              <label htmlFor="zgodaNewsletter" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Chcę otrzymywać newsletter
+              </label>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Rejestrowanie..." : "Zarejestruj się"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }
