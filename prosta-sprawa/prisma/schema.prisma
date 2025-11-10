@@ -847,10 +847,32 @@ model NotificationSettings {
   userId            String   @unique
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Stare pola (backward compatibility)
   emailNoweOferty   Boolean  @default(true)
   emailWiadomosci   Boolean  @default(true)
   emailStatusy      Boolean  @default(true)
   smsPilne          Boolean  @default(false)
+
+  // Powiadomienia e-mail
+  kontaktKlienci              Boolean  @default(true)  // Obowiązkowe
+  kluczowe                    Boolean  @default(true)  // Obowiązkowe
+  wskazowkiPorady             Boolean  @default(true)
+  ofertPromocje               Boolean  @default(true)
+  przypomnienieWiadomosci     Boolean  @default(true)
+  noweFunkcje                 Boolean  @default(true)
+  zmianyCenniki               Boolean  @default(true)
+  zmianyRegulamin             Boolean  @default(true)
+
+  // Kontakt telefoniczny
+  kontaktDoradca              Boolean  @default(false)
+
+  // Dodatkowe
+  wyswietlanieAwatara         Boolean  @default(true)
+  autoProsbOpinie             Boolean  @default(false)
+  powiadomienieDzwiekowe      Boolean  @default(false)
+
+  // Ustawienia ogłoszenia
+  ustawieniaOgloszenia        Boolean  @default(true)
 
   updatedAt         DateTime @updatedAt
 
