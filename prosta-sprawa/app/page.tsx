@@ -7,10 +7,10 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu"
 import { MapPin, Star, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import PublicHeader from "@/components/PublicHeader"
 
 interface LawFirm {
   id: string
@@ -55,35 +55,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* Header */}
-      <header className="container mx-auto flex items-center justify-between p-4">
-        <div className="text-2xl font-bold text-blue-600">Prosta Sprawa</div>
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/szukaj-prawnika" className="px-4 py-2">Szukaj prawnika</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/kategorie" className="px-4 py-2">Sprawy firmowe</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/kategorie" className="px-4 py-2">Sprawy prywatne</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/jak-to-dziala" className="px-4 py-2 text-green-500 font-bold">Z nami wygrywasz</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/rejestracja/kancelaria" className="px-4 py-2">Dla prawnika</NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <div className="flex items-center gap-4">
-          <Link href="/panel-klienta/sprawy/dodaj">
-            <Button variant="outline">Dodaj sprawę</Button>
-          </Link>
-          <Link href="/logowanie">Zaloguj</Link>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Hero Section */}
       <main className="container mx-auto text-center py-20">
