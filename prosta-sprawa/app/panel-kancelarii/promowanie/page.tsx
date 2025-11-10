@@ -251,17 +251,17 @@ export default function LawFirmPromotionPage() {
     }
   }
 
-  const calculateCost = () => {
+  const calculateCost = (): number => {
     if (!selectedType) return 0
 
     const promoType = PROMOTION_TYPES.find((p) => p.type === selectedType)
     if (!promoType) return 0
 
     if (selectedType === "PODBICIE_OGLOSZENIA") {
-      return promoType.pointsPerDay * duration
+      return (promoType.pointsPerDay || 0) * duration
     } else {
       const weeks = Math.ceil(duration / 7)
-      return promoType.pointsPerWeek * weeks
+      return (promoType.pointsPerWeek || 0) * weeks
     }
   }
 
@@ -774,7 +774,7 @@ export default function LawFirmPromotionPage() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={submitting || !selectedType || !startDate || (lawFirm && lawFirm.punktySaldo < calculateCost())}
+              disabled={submitting || !selectedType || !startDate || (lawFirm ? lawFirm.punktySaldo < calculateCost() : false)}
             >
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Utwórz promocję

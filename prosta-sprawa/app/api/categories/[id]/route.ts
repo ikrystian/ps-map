@@ -3,11 +3,12 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         parent: {
           select: {

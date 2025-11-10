@@ -72,12 +72,12 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null 
             <NavigationMenuList className="flex gap-6">
               {/* Szukaj Button */}
               <NavigationMenuItem>
-                <Link href="/szukaj-prawnika" legacyBehavior passHref>
-                  <NavigationMenuLink className="flex items-center gap-2 px-4 py-2 hover:text-primary">
+                <NavigationMenuLink asChild>
+                  <Link href="/szukaj-prawnika" className="flex items-center gap-2 px-4 py-2 hover:text-primary">
                     <Search className="h-4 w-4" />
                     Szukaj
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Sprawy Firmowe - Mega Menu */}
@@ -178,20 +178,20 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null 
 
               {/* Z nami wygrywasz */}
               <NavigationMenuItem>
-                <Link href="/jak-to-dziala" legacyBehavior passHref>
-                  <NavigationMenuLink className="px-4 py-2 text-green-600 font-semibold hover:text-green-700">
+                <NavigationMenuLink asChild>
+                  <Link href="/jak-to-dziala" className="px-4 py-2 text-green-600 font-semibold hover:text-green-700">
                     Z nami wygrywasz
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Dla prawnika */}
               <NavigationMenuItem>
-                <Link href="/rejestracja/kancelaria" legacyBehavior passHref>
-                  <NavigationMenuLink className="px-4 py-2 hover:text-primary">
+                <NavigationMenuLink asChild>
+                  <Link href="/rejestracja/kancelaria" className="px-4 py-2 hover:text-primary">
                     Dla prawnika
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
