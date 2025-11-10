@@ -60,26 +60,35 @@ export async function POST(request: NextRequest) {
 
     // Jeśli LAW_FIRM, utwórz profil kancelarii
     if (user.role === UserRole.LAW_FIRM && userData.lawFirm) {
+      // Pobierz pierwsze województwo mazowieckie jako domyślne
+      const defaultVoivodeship = await prisma.voivodeship.findFirst({
+        where: { nazwa: "mazowieckie" }
+      })
+
+      if (!defaultVoivodeship) {
+        throw new Error("Nie znaleziono domyślnego województwa")
+      }
+
       await prisma.lawFirm.create({
         data: {
           userId: user.id,
           typ: userData.lawFirm.typ,
           typInny: userData.lawFirm.typInny || null,
           nazwa: userData.lawFirm.nazwa,
-          nazwaFirmy: userData.lawFirm.nazwaFirmy,
-          nip: userData.lawFirm.nip,
+          nazwaFirmy: userData.lawFirm.nazwaFirmy || userData.lawFirm.nazwa,
+          nip: userData.lawFirm.nip || `TEMP${Date.now()}`, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,
           krs: userData.lawFirm.krs || null,
-          imieKontakt: userData.lawFirm.imieKontakt,
-          nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt,
+          imieKontakt: userData.lawFirm.imieKontakt || "Do uzupełnienia",
+          nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
           stanowisko: userData.lawFirm.stanowisko || null,
-          numerTelefonu: userData.lawFirm.numerTelefonu,
+          numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
           emailKontakt: userData.lawFirm.emailKontakt,
           adres: userData.lawFirm.adres,
-          kodPocztowy: userData.lawFirm.kodPocztowy,
+          kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
           miasto: userData.lawFirm.miasto,
-          voivodeshipId: userData.lawFirm.voivodeshipId,
+          voivodeshipId: userData.lawFirm.voivodeshipId || defaultVoivodeship.id,
           typOferty: userData.lawFirm.typOferty,
           zgodaRegulamin: userData.lawFirm.zgodaRegulamin || false,
           zgodaPrzetwarzanie: userData.lawFirm.zgodaPrzetwarzanie || false,
