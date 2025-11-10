@@ -1,3 +1,17 @@
+import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+
 export async function GET() {
-  return Response.json({ message: "Get voivodeships" })
+  try {
+    const voivodeships = await prisma.voivodeship.findMany({
+      orderBy: {
+        nazwa: "asc",
+      },
+    })
+
+    return NextResponse.json(voivodeships)
+  } catch (error) {
+    console.error("Error fetching voivodeships:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

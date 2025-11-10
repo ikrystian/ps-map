@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(
@@ -122,11 +123,153 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth()
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const { id } = await params
     const body = await request.json()
 
-    // TODO: Implementuj aktualizację kancelarii
-    return NextResponse.json({ message: "Update law firm", id, body })
+    // Sprawdź, czy kancelaria istnieje i należy do zalogowanego użytkownika
+    const existingLawFirm = await prisma.lawFirm.findUnique({
+      where: { id },
+    })
+
+    if (!existingLawFirm) {
+      return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+    }
+
+    if (session.user.role !== "LAW_FIRM" || existingLawFirm.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    // Przygotuj dane do aktualizacji
+    const updateData: any = {}
+
+    // Dane podstawowe
+    if (body.nazwa) updateData.nazwa = body.nazwa
+    if (body.nazwaFirmy) updateData.nazwaFirmy = body.nazwaFirmy
+    if (body.opis !== undefined) updateData.opis = body.opis
+    if (body.logo !== undefined) updateData.logo = body.logo
+    if (body.zdjecieGlowne !== undefined) updateData.zdjecieGlowne = body.zdjecieGlowne
+
+    // Dane kontaktowe
+    if (body.imieKontakt) updateData.imieKontakt = body.imieKontakt
+    if (body.nazwiskoKontakt) updateData.nazwiskoKontakt = body.nazwiskoKontakt
+    if (body.stanowisko !== undefined) updateData.stanowisko = body.stanowisko
+    if (body.numerTelefonu) updateData.numerTelefonu = body.numerTelefonu
+    if (body.numerTelefonu2 !== undefined) updateData.numerTelefonu2 = body.numerTelefonu2
+    if (body.emailKontakt) updateData.emailKontakt = body.emailKontakt
+    if (body.stronaWww !== undefined) updateData.stronaWww = body.stronaWww
+
+    // Adres
+    if (body.adres) updateData.adres = body.adres
+    if (body.kodPocztowy) updateData.kodPocztowy = body.kodPocztowy
+    if (body.miasto) updateData.miasto = body.miasto
+    if (body.voivodeshipId) updateData.voivodeshipId = body.voivodeshipId
+
+    // Multimedia
+    if (body.galeriaZdjec) updateData.galeriaZdjec = JSON.stringify(body.galeriaZdjec)
+    if (body.filmYouTube !== undefined) updateData.filmYouTube = body.filmYouTube
+    if (body.okladkaFilmu !== undefined) updateData.okladkaFilmu = body.okladkaFilmu
+    if (body.kolejnoscMultimedia !== undefined) updateData.kolejnoscMultimedia = body.kolejnoscMultimedia
+
+    // Godziny otwarcia
+    if (body.statusGodzinyOtwarcia !== undefined) updateData.statusGodzinyOtwarcia = body.statusGodzinyOtwarcia
+    if (body.godzinyOtwarcia) updateData.godzinyOtwarcia = JSON.stringify(body.godzinyOtwarcia)
+
+    // Social media
+    if (body.linkLinkedIn !== undefined) updateData.linkLinkedIn = body.linkLinkedIn
+    if (body.linkFacebook !== undefined) updateData.linkFacebook = body.linkFacebook
+    if (body.linkInstagram !== undefined) updateData.linkInstagram = body.linkInstagram
+    if (body.linkTwitter !== undefined) updateData.linkTwitter = body.linkTwitter
+    if (body.linkTikTok !== undefined) updateData.linkTikTok = body.linkTikTok
+
+    // Edukacja
+    if (body.edukacja) updateData.edukacja = JSON.stringify(body.edukacja)
+
+    // Wpisy do rejestrów
+    if (body.oirpMiasto !== undefined) updateData.oirpMiasto = body.oirpMiasto
+    if (body.oirpWpis !== undefined) updateData.oirpWpis = body.oirpWpis
+    if (body.oirpStatus !== undefined) updateData.oirpStatus = body.oirpStatus
+    if (body.oraMiasto !== undefined) updateData.oraMiasto = body.oraMiasto
+    if (body.oraWpis !== undefined) updateData.oraWpis = body.oraWpis
+    if (body.oraStatus !== undefined) updateData.oraStatus = body.oraStatus
+
+    // Specjalizacje
+    if (body.unikatowyOpisUslugi !== undefined) updateData.unikatowyOpisUslugi = body.unikatowyOpisUslugi
+    if (body.slowaKluczowe) updateData.slowaKluczowe = JSON.stringify(body.slowaKluczowe)
+
+    // Obszar działania
+    if (body.callaPolska !== undefined) updateData.callaPolska = body.callaPolska
+    if (body.onlineOnly !== undefined) updateData.onlineOnly = body.onlineOnly
+
+    // Typ oferty
+    if (body.typOferty) updateData.typOferty = body.typOferty
+
+    updateData.updatedAt = new Date()
+
+    // Aktualizuj kancelarię
+    const updatedLawFirm = await prisma.lawFirm.update({
+      where: { id },
+      data: updateData,
+      include: {
+        voivodeship: true,
+        voivodeships: {
+          include: {
+            voivodeship: true,
+          },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    })
+
+    // Obsłuż aktualizację województw działania
+    if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds)) {
+      // Usuń stare
+      await prisma.lawFirmVoivodeship.deleteMany({
+        where: { lawFirmId: id },
+      })
+
+      // Dodaj nowe
+      if (body.voivodeshipsIds.length > 0) {
+        await prisma.lawFirmVoivodeship.createMany({
+          data: body.voivodeshipsIds.map((voivodeshipId: string) => ({
+            lawFirmId: id,
+            voivodeshipId,
+          })),
+        })
+      }
+    }
+
+    // Obsłuż aktualizację kategorii/specjalizacji
+    if (body.categoriesIds && Array.isArray(body.categoriesIds)) {
+      // Usuń stare
+      await prisma.lawFirmCategory.deleteMany({
+        where: { lawFirmId: id },
+      })
+
+      // Dodaj nowe
+      if (body.categoriesIds.length > 0) {
+        await prisma.lawFirmCategory.createMany({
+          data: body.categoriesIds.map((categoryId: string) => ({
+            lawFirmId: id,
+            categoryId,
+          })),
+        })
+      }
+    }
+
+    return NextResponse.json({
+      message: "Law firm updated successfully",
+      lawFirm: updatedLawFirm,
+    })
   } catch (error) {
     console.error("Error updating law firm:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

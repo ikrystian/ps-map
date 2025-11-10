@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,71 +9,141 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
+interface Voivodeship {
+  id: string
+  nazwa: string
+}
+
+interface Category {
+  id: string
+  nazwa: string
+}
+
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
+  const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [formData, setFormData] = useState({
     // Krok 1: Typ działalności
-    typDzialnosci: "",
+    typ: "",
+    typInny: "",
 
     // Krok 2: Dane firmy
+    nazwa: "",
+    nazwaFirmy: "",
     nip: "",
     regon: "",
     krs: "",
 
     // Krok 3: Dane kontaktowe
-    nazwa: "",
-    email: "",
-    telefon: "",
+    imieKontakt: "",
+    nazwiskoKontakt: "",
+    stanowisko: "",
+    numerTelefonu: "",
+    numerTelefonu2: "",
+    emailKontakt: "",
 
     // Krok 4: Adres siedziby
     adres: "",
-    miasto: "",
     kodPocztowy: "",
+    miasto: "",
+    voivodeshipId: "",
 
     // Krok 5: Obszar działania
-    wojewodztwa: [] as string[],
+    voivodeshipsIds: [] as string[],
+    callaPolska: false,
 
     // Krok 6: Specjalizacje
-    specjalizacje: [] as string[],
+    categoriesIds: [] as string[],
 
     // Krok 7: Typ oferty
     typOferty: "",
 
     // Krok 8: Dane logowania
+    email: "",
     password: "",
     confirmPassword: "",
     zgodaRegulamin: false,
-    zgodaNewsletter: false,
+    zgodaPrzetwarzanie: false,
   })
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const totalSteps = 8
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [voivRes, catRes] = await Promise.all([
+          fetch("/api/voivodeships"),
+          fetch("/api/categories"),
+        ])
+
+        if (voivRes.ok) {
+          const voivData = await voivRes.json()
+          setVoivodeships(voivData)
+        }
+
+        if (catRes.ok) {
+          const catData = await catRes.json()
+          setCategories(catData)
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   const validateStep = () => {
     switch (currentStep) {
       case 1:
-        if (!formData.typDzialnosci) {
+        if (!formData.typ) {
           setError("Wybierz typ działalności")
           return false
         }
         break
+      case 2:
+        if (!formData.nazwa || !formData.nazwaFirmy || !formData.nip) {
+          setError("Wypełnij nazwę kancelarii, nazwę firmy i NIP")
+          return false
+        }
+        if (formData.nip.length < 10) {
+          setError("NIP musi mieć co najmniej 10 znaków")
+          return false
+        }
+        break
       case 3:
-        if (!formData.nazwa || !formData.email) {
-          setError("Wypełnij nazwę kancelarii i email")
+        if (!formData.imieKontakt || !formData.nazwiskoKontakt || !formData.numerTelefonu || !formData.emailKontakt) {
+          setError("Wypełnij wszystkie wymagane dane kontaktowe")
           return false
         }
         break
       case 4:
-        if (!formData.adres || !formData.miasto) {
-          setError("Wypełnij adres i miasto")
+        if (!formData.adres || !formData.kodPocztowy || !formData.miasto || !formData.voivodeshipId) {
+          setError("Wypełnij wszystkie dane adresowe")
           return false
         }
         break
       case 7:
         if (!formData.typOferty) {
           setError("Wybierz typ oferty")
+          return false
+        }
+        break
+      case 8:
+        if (!formData.email || !formData.password) {
+          setError("Wypełnij email i hasło")
+          return false
+        }
+        if (formData.password !== formData.confirmPassword) {
+          setError("Hasła nie są identyczne")
+          return false
+        }
+        if (!formData.zgodaRegulamin || !formData.zgodaPrzetwarzanie) {
+          setError("Musisz zaakceptować regulamin i zgodę na przetwarzanie danych")
           return false
         }
         break
@@ -110,21 +180,15 @@ export default function LawFirmRegistrationPage() {
       return
     }
 
-    // Walidacja finalna (krok 8)
-    if (formData.password !== formData.confirmPassword) {
-      setError("Hasła nie są identyczne")
-      return
-    }
-
-    if (!formData.zgodaRegulamin) {
-      setError("Musisz zaakceptować regulamin")
+    // Walidacja finalna
+    if (!validateStep()) {
       return
     }
 
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/law-firms", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,30 +196,29 @@ export default function LawFirmRegistrationPage() {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          role: "LAW_FIRM",
-          name: formData.nazwa,
-          lawFirm: {
-            typ: formData.typDzialnosci,
-            typInny: null,
-            nazwa: formData.nazwa,
-            nazwaFirmy: formData.nazwa,
-            nip: formData.nip || null,
-            regon: formData.regon || null,
-            krs: formData.krs || null,
-            imieKontakt: null,
-            nazwiskoKontakt: null,
-            stanowisko: null,
-            numerTelefonu: formData.telefon || null,
-            numerTelefonu2: null,
-            emailKontakt: formData.email,
-            adres: formData.adres,
-            kodPocztowy: formData.kodPocztowy || null,
-            miasto: formData.miasto,
-            voivodeshipId: null,
-            typOferty: formData.typOferty,
-            zgodaRegulamin: formData.zgodaRegulamin,
-            zgodaPrzetwarzanie: formData.zgodaRegulamin,
-          },
+          typ: formData.typ,
+          typInny: formData.typInny || null,
+          nazwa: formData.nazwa,
+          nazwaFirmy: formData.nazwaFirmy,
+          nip: formData.nip,
+          regon: formData.regon || null,
+          krs: formData.krs || null,
+          imieKontakt: formData.imieKontakt,
+          nazwiskoKontakt: formData.nazwiskoKontakt,
+          stanowisko: formData.stanowisko || null,
+          numerTelefonu: formData.numerTelefonu,
+          numerTelefonu2: formData.numerTelefonu2 || null,
+          emailKontakt: formData.emailKontakt,
+          adres: formData.adres,
+          kodPocztowy: formData.kodPocztowy,
+          miasto: formData.miasto,
+          voivodeshipId: formData.voivodeshipId,
+          typOferty: formData.typOferty,
+          zgodaRegulamin: formData.zgodaRegulamin,
+          zgodaPrzetwarzanie: formData.zgodaPrzetwarzanie,
+          callaPolska: formData.callaPolska,
+          voivodeshipsIds: formData.voivodeshipsIds,
+          categoriesIds: formData.categoriesIds,
         }),
       })
 
@@ -180,11 +243,11 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="typDzialnosci">Typ działalności *</Label>
+              <Label htmlFor="typ">Typ działalności *</Label>
               <select
-                id="typDzialnosci"
-                value={formData.typDzialnosci}
-                onChange={(e) => setFormData({ ...formData, typDzialnosci: e.target.value })}
+                id="typ"
+                value={formData.typ}
+                onChange={(e) => setFormData({ ...formData, typ: e.target.value })}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 required
               >
@@ -198,6 +261,16 @@ export default function LawFirmRegistrationPage() {
                 <option value="INNY">Inny</option>
               </select>
             </div>
+            {formData.typ === "INNY" && (
+              <div className="space-y-2">
+                <Label htmlFor="typInny">Podaj typ działalności</Label>
+                <Input
+                  id="typInny"
+                  value={formData.typInny}
+                  onChange={(e) => setFormData({ ...formData, typInny: e.target.value })}
+                />
+              </div>
+            )}
           </div>
         )
 
@@ -205,10 +278,32 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nip">NIP</Label>
+              <Label htmlFor="nazwa">Nazwa kancelarii *</Label>
+              <Input
+                id="nazwa"
+                type="text"
+                required
+                value={formData.nazwa}
+                onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="nazwaFirmy">Nazwa firmy *</Label>
+              <Input
+                id="nazwaFirmy"
+                type="text"
+                required
+                value={formData.nazwaFirmy}
+                onChange={(e) => setFormData({ ...formData, nazwaFirmy: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="nip">NIP *</Label>
               <Input
                 id="nip"
                 type="text"
+                required
+                placeholder="0000000000"
                 value={formData.nip}
                 onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
               />
@@ -238,33 +333,62 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nazwa">Nazwa kancelarii *</Label>
+              <Label htmlFor="imieKontakt">Imię kontaktowe *</Label>
               <Input
-                id="nazwa"
+                id="imieKontakt"
                 type="text"
                 required
-                value={formData.nazwa}
-                onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })}
+                value={formData.imieKontakt}
+                onChange={(e) => setFormData({ ...formData, imieKontakt: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="nazwiskoKontakt">Nazwisko kontaktowe *</Label>
               <Input
-                id="email"
+                id="nazwiskoKontakt"
+                type="text"
+                required
+                value={formData.nazwiskoKontakt}
+                onChange={(e) => setFormData({ ...formData, nazwiskoKontakt: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stanowisko">Stanowisko</Label>
+              <Input
+                id="stanowisko"
+                type="text"
+                value={formData.stanowisko}
+                onChange={(e) => setFormData({ ...formData, stanowisko: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="numerTelefonu">Telefon główny *</Label>
+              <Input
+                id="numerTelefonu"
+                type="tel"
+                required
+                value={formData.numerTelefonu}
+                onChange={(e) => setFormData({ ...formData, numerTelefonu: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="numerTelefonu2">Telefon dodatkowy</Label>
+              <Input
+                id="numerTelefonu2"
+                type="tel"
+                value={formData.numerTelefonu2}
+                onChange={(e) => setFormData({ ...formData, numerTelefonu2: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emailKontakt">Email kontaktowy *</Label>
+              <Input
+                id="emailKontakt"
                 type="email"
                 placeholder="kontakt@kancelaria.pl"
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="telefon">Telefon</Label>
-              <Input
-                id="telefon"
-                type="tel"
-                value={formData.telefon}
-                onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+                value={formData.emailKontakt}
+                onChange={(e) => setFormData({ ...formData, emailKontakt: e.target.value })}
               />
             </div>
           </div>
@@ -284,6 +408,17 @@ export default function LawFirmRegistrationPage() {
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="kodPocztowy">Kod pocztowy *</Label>
+              <Input
+                id="kodPocztowy"
+                type="text"
+                placeholder="00-000"
+                required
+                value={formData.kodPocztowy}
+                onChange={(e) => setFormData({ ...formData, kodPocztowy: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="miasto">Miasto *</Label>
               <Input
                 id="miasto"
@@ -294,14 +429,21 @@ export default function LawFirmRegistrationPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="kodPocztowy">Kod pocztowy</Label>
-              <Input
-                id="kodPocztowy"
-                type="text"
-                placeholder="00-000"
-                value={formData.kodPocztowy}
-                onChange={(e) => setFormData({ ...formData, kodPocztowy: e.target.value })}
-              />
+              <Label htmlFor="voivodeshipId">Województwo *</Label>
+              <select
+                id="voivodeshipId"
+                value={formData.voivodeshipId}
+                onChange={(e) => setFormData({ ...formData, voivodeshipId: e.target.value })}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                required
+              >
+                <option value="">Wybierz województwo</option>
+                {voivodeships.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.nazwa}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )
@@ -309,32 +451,44 @@ export default function LawFirmRegistrationPage() {
       case 5:
         return (
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Województwa, w których działasz *</Label>
-              <div className="text-sm text-muted-foreground mb-2">
-                Wybierz obszar swojej działalności (wielokrotny wybór)
-              </div>
-              <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
-                {["dolnośląskie", "kujawsko-pomorskie", "lubelskie", "lubuskie", "łódzkie", "małopolskie", "mazowieckie", "opolskie", "podkarpackie", "podlaskie", "pomorskie", "śląskie", "świętokrzyskie", "warmińsko-mazurskie", "wielkopolskie", "zachodniopomorskie"].map((woj) => (
-                  <div key={woj} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={woj}
-                      checked={formData.wojewodztwa.includes(woj)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData({ ...formData, wojewodztwa: [...formData.wojewodztwa, woj] })
-                        } else {
-                          setFormData({ ...formData, wojewodztwa: formData.wojewodztwa.filter(w => w !== woj) })
-                        }
-                      }}
-                    />
-                    <label htmlFor={woj} className="text-sm capitalize cursor-pointer">
-                      {woj}
-                    </label>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center space-x-2 mb-4">
+              <Checkbox
+                id="callaPolska"
+                checked={formData.callaPolska}
+                onCheckedChange={(checked) => setFormData({ ...formData, callaPolska: checked === true })}
+              />
+              <label htmlFor="callaPolska" className="text-sm cursor-pointer">
+                Działam w całej Polsce
+              </label>
             </div>
+            {!formData.callaPolska && (
+              <div className="space-y-2">
+                <Label>Województwa działania *</Label>
+                <div className="text-sm text-muted-foreground mb-2">
+                  Wybierz dodatkowe województwa, w których działasz
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
+                  {voivodeships.map((v) => (
+                    <div key={v.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`voiv-${v.id}`}
+                        checked={formData.voivodeshipsIds.includes(v.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData({ ...formData, voivodeshipsIds: [...formData.voivodeshipsIds, v.id] })
+                          } else {
+                            setFormData({ ...formData, voivodeshipsIds: formData.voivodeshipsIds.filter((id) => id !== v.id) })
+                          }
+                        }}
+                      />
+                      <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer">
+                        {v.nazwa}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )
 
@@ -347,21 +501,21 @@ export default function LawFirmRegistrationPage() {
                 Wybierz dziedziny prawa, w których się specjalizujesz
               </div>
               <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
-                {["Prawo rodzinne", "Prawo karne", "Prawo cywilne", "Prawo pracy", "Prawo gospodarcze", "Prawo spadkowe", "Prawo administracyjne", "Prawo podatkowe", "Prawo nieruchomości", "Prawo ubezpieczeń"].map((spec) => (
-                  <div key={spec} className="flex items-center space-x-2">
+                {categories.map((cat) => (
+                  <div key={cat.id} className="flex items-center space-x-2">
                     <Checkbox
-                      id={spec}
-                      checked={formData.specjalizacje.includes(spec)}
+                      id={`cat-${cat.id}`}
+                      checked={formData.categoriesIds.includes(cat.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setFormData({ ...formData, specjalizacje: [...formData.specjalizacje, spec] })
+                          setFormData({ ...formData, categoriesIds: [...formData.categoriesIds, cat.id] })
                         } else {
-                          setFormData({ ...formData, specjalizacje: formData.specjalizacje.filter(s => s !== spec) })
+                          setFormData({ ...formData, categoriesIds: formData.categoriesIds.filter((id) => id !== cat.id) })
                         }
                       }}
                     />
-                    <label htmlFor={spec} className="text-sm cursor-pointer">
-                      {spec}
+                    <label htmlFor={`cat-${cat.id}`} className="text-sm cursor-pointer">
+                      {cat.nazwa}
                     </label>
                   </div>
                 ))}
@@ -395,6 +549,18 @@ export default function LawFirmRegistrationPage() {
       case 8:
         return (
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email (login) *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="twoj@email.pl"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                disabled={isLoading}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="password">Hasło *</Label>
               <Input
@@ -430,20 +596,21 @@ export default function LawFirmRegistrationPage() {
                 disabled={isLoading}
               />
               <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> i <Link href="/polityka-prywatnosci" className="text-primary hover:underline">politykę prywatności</Link> *
+                Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> *
               </label>
             </div>
             <div className="flex items-start space-x-2">
               <Checkbox
-                id="zgodaNewsletter"
-                checked={formData.zgodaNewsletter}
+                id="zgodaPrzetwarzanie"
+                required
+                checked={formData.zgodaPrzetwarzanie}
                 onCheckedChange={(checked) =>
-                  setFormData({ ...formData, zgodaNewsletter: checked === true })
+                  setFormData({ ...formData, zgodaPrzetwarzanie: checked === true })
                 }
                 disabled={isLoading}
               />
-              <label htmlFor="zgodaNewsletter" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Chcę otrzymywać newsletter
+              <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline">przetwarzanie danych osobowych</Link> *
               </label>
             </div>
           </div>
