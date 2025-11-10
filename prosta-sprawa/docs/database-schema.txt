@@ -1,0 +1,1005 @@
+================================================================================
+PROSTASPRAWA.PL - STRUKTURA BAZY DANYCH (SQLITE)
+================================================================================
+
+Wersja: 1.0
+Data: 2025-11-10
+Typ bazy: SQLite (Prisma ORM)
+
+================================================================================
+SCHEMAT PRISMA - schema.prisma
+================================================================================
+
+// Główna konfiguracja
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================================================
+// UŻYTKOWNICY I AUTORYZACJA
+// ============================================================================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String   // Hash bcrypt
+  role          UserRole @default(CLIENT)
+  emailVerified Boolean  @default(false)
+  verificationToken String?
+  resetToken    String?
+  resetTokenExpiry DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastLogin     DateTime?
+
+  // Relacje
+  client        Client?
+  lawFirm       LawFirm?
+  sentMessages  Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  notifications Notification[]
+  notificationSettings NotificationSettings?
+
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  CLIENT      // Klient
+  LAW_FIRM    // Kancelaria
+  ADMIN       // Administrator
+}
+
+// ============================================================================
+// KLIENCI
+// ============================================================================
+
+model Client {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dane osobowe
+  imie            String
+  nazwisko        String
+  telefon         String?
+
+  // Adres
+  adres           String?
+  kodPocztowy     String?
+  miasto          String?
+  voivodeshipId   String?
+  voivodeship     Voivodeship? @relation(fields: [voivodeshipId], references: [id])
+
+  // Zgody marketingowe
+  zgodaRegulamin  Boolean  @default(false)
+  zgodaNewsletter Boolean  @default(false)
+  zgodaMarketing  Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relacje
+  cases           Case[]
+  reviews         Review[]
+  favoritesFirms  FavoriteLawFirm[]
+  negotiations    Negotiation[]
+
+  @@index([userId])
+  @@index([voivodeshipId])
+}
+
+// ============================================================================
+// KANCELARIE PRAWNE
+// ============================================================================
+
+model LawFirm {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Typ działalności
+  typ                   LawFirmType
+  typInny               String?  // Jeśli typ = INNY
+
+  // Dane firmy
+  nazwa                 String
+  nazwaFirmy            String
+  nip                   String   @unique
+  regon                 String?
+  krs                   String?
+
+  // Dane kontaktowe
+  imieKontakt           String
+  nazwiskoKontakt       String
+  stanowisko            String?
+  numerTelefonu         String
+  numerTelefonu2        String?
+  emailKontakt          String
+
+  // Adres siedziby
+  adres                 String
+  kodPocztowy           String
+  miasto                String
+  voivodeshipId         String
+  voivodeship           Voivodeship @relation(fields: [voivodeshipId], references: [id])
+
+  // Profil publiczny
+  opis                  String?   @default("")
+  logo                  String?   // URL do logo
+  zdjecieGlowne         String?   // URL do zdjęcia głównego
+  galeriaZdjec          String?   // JSON array URL-i
+  filmYouTube           String?   // URL do filmu
+  okladkaFilmu          String?   // URL do miniatury filmu
+  kolejnoscMultimedia   String?   @default("zdjecia") // "zdjecia" lub "film"
+
+  // Godziny otwarcia
+  statusGodzinyOtwarcia Boolean  @default(false)
+  godzinyOtwarcia       String?  // JSON: {"poniedzialek": "9:00-17:00", ...}
+
+  // Social media
+  linkLinkedIn          String?
+  linkFacebook          String?
+  linkInstagram         String?
+  linkTwitter           String?
+  linkTikTok            String?
+  stronaWww             String?
+
+  // Edukacja
+  edukacja              String?  // JSON array: [{"uczelnia": "", "wydzial": "", "rokOd": 2000, "rokDo": 2005}, ...]
+
+  // Wpisy do rejestrów
+  oirpMiasto            String?
+  oirpWpis              String?
+  oirpStatus            Boolean  @default(false)
+  oraMiasto             String?
+  oraWpis               String?
+  oraStatus             Boolean  @default(false)
+
+  // Specjalizacje i usługi
+  unikatowyOpisUslugi   String?
+  slowaKluczowe         String?  // JSON array tagów
+
+  // Obszar działania
+  callaPolska           Boolean  @default(false)
+  onlineOnly            Boolean  @default(false)
+
+  // Typ oferty
+  typOferty             OfferType
+
+  // Dane logowania (nazwa użytkownika już jest w User)
+
+  // System punktowy i subskrypcja
+  punktySaldo           Int      @default(0)
+  pakietSubskrypcji     SubscriptionPackage @default(PODSTAWOWY)
+  dataPakietuOd         DateTime?
+  dataPakietuDo         DateTime?
+
+  // Statystyki
+  wyswietleniaProfilu   Int      @default(0)
+  zlozoneOferty         Int      @default(0)
+  wygraneOferty         Int      @default(0)
+  konwersja             Float    @default(0)
+  pozycjaRanking        Int?
+
+  // Zgody
+  zgodaRegulamin        Boolean  @default(false)
+  zgodaPrzetwarzanie    Boolean  @default(false)
+
+  // Status konta
+  zweryfikowana         Boolean  @default(false)
+  aktywna               Boolean  @default(true)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relacje
+  voivodeships          LawFirmVoivodeship[]  // Województwa działania
+  categories            LawFirmCategory[]     // Specjalizacje
+  services              Service[]
+  certificates          Certificate[]
+  blogPosts             BlogPost[]
+  offers                Offer[]
+  reviews               Review[]
+  orders                Order[]
+  promotions            Promotion[]
+  favoritedBy           FavoriteLawFirm[]
+
+  @@index([userId])
+  @@index([voivodeshipId])
+  @@index([nip])
+  @@index([zweryfikowana])
+  @@index([aktywna])
+}
+
+enum LawFirmType {
+  OSOBA_FIZYCZNA
+  SPOLKA_CYWILNA
+  SPOLKA_PARTNERSKA
+  SPOLKA_KOMANDYTOWA
+  SPOLKA_JAWNA
+  SPOLKA_ZOO
+  INNY
+}
+
+enum OfferType {
+  STALA_WSPOLPRACA
+  JEDNORAZOWA_USLUGA
+  KONSULTACJA
+  WSZYSTKIE
+}
+
+enum SubscriptionPackage {
+  PODSTAWOWY    // 0 zł
+  STANDARD      // 99 zł/mies
+  PREMIUM       // 299 zł/mies
+  ENTERPRISE    // Kontakt
+}
+
+// ============================================================================
+// RELACJA: KANCELARIA <-> WOJEWÓDZTWA DZIAŁANIA
+// ============================================================================
+
+model LawFirmVoivodeship {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  voivodeshipId   String
+  voivodeship     Voivodeship @relation(fields: [voivodeshipId], references: [id])
+
+  createdAt       DateTime @default(now())
+
+  @@unique([lawFirmId, voivodeshipId])
+  @@index([lawFirmId])
+  @@index([voivodeshipId])
+}
+
+// ============================================================================
+// RELACJA: KLIENT <-> ULUBIONE KANCELARIE
+// ============================================================================
+
+model FavoriteLawFirm {
+  id          String   @id @default(uuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  lawFirmId   String
+  lawFirm     LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([clientId, lawFirmId])
+  @@index([clientId])
+  @@index([lawFirmId])
+}
+
+// ============================================================================
+// KATEGORIE PRAWNE (SPECJALIZACJE)
+// ============================================================================
+
+model Category {
+  id          String   @id @default(uuid())
+  nazwa       String
+  slug        String   @unique
+  opis        String?
+
+  // Hierarchia (parent/child)
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+
+  aktywna     Boolean  @default(true)
+  kolejnosc   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacje
+  lawFirms    LawFirmCategory[]
+  cases       Case[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@index([aktywna])
+}
+
+// ============================================================================
+// RELACJA: KANCELARIA <-> KATEGORIE (MANY-TO-MANY)
+// ============================================================================
+
+model LawFirmCategory {
+  id          String   @id @default(uuid())
+  lawFirmId   String
+  lawFirm     LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([lawFirmId, categoryId])
+  @@index([lawFirmId])
+  @@index([categoryId])
+}
+
+// ============================================================================
+// SPRAWY (CASES)
+// ============================================================================
+
+model Case {
+  id                        String   @id @default(uuid())
+  clientId                  String
+  client                    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Typ sprawy
+  typSprawy                 CaseType
+
+  // Kategoria
+  categoryId                String
+  category                  Category @relation(fields: [categoryId], references: [id])
+  wybranadziedzinaPrawa     String?  // Podkategoria
+  wybranaSpecyfikacja       String?  // Szczegółowa specyfikacja
+  specjalizacja             String?  // Dodatkowe wymagania
+
+  // Opis sprawy
+  nazwaSprawy               String
+  opisSprawy                String   // Min 100 znaków
+  zalaczniki                String?  // JSON array URL-i (max 5 plików)
+
+  // Termin i budżet
+  oczekiwanyTerminRealizacji DateTime?
+  trybPilny                 Boolean  @default(false)
+  budzetOd                  Float?
+  budzetDo                  Float?
+  doNegocjacji              Boolean  @default(false)
+
+  // Dane kontaktowe
+  imieNazwisko              String
+  emailKontakt              String
+  telefonKontakt            String
+  preferowanyKontakt        PreferredContact
+
+  // Lokalizacja
+  voivodeshipId             String
+  voivodeship               Voivodeship @relation(fields: [voivodeshipId], references: [id])
+
+  // Status
+  status                    CaseStatus @default(NOWA)
+
+  // Zgody
+  akceptujeKlauzule         Boolean  @default(false)
+
+  // Daty
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  zamknieto                 DateTime?
+
+  // Relacje
+  offers                    Offer[]
+  messages                  Message[]
+
+  @@index([clientId])
+  @@index([categoryId])
+  @@index([voivodeshipId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum CaseType {
+  OSOBA_PRYWATNA
+  FIRMA
+  ORGANIZACJA
+}
+
+enum CaseStatus {
+  NOWA
+  OFERTY_OTRZYMANE
+  W_TRAKCIE
+  ZAKONCZONA
+  ANULOWANA
+}
+
+enum PreferredContact {
+  EMAIL
+  TELEFON
+  OBA
+}
+
+// ============================================================================
+// OFERTY (OFFERS)
+// ============================================================================
+
+model Offer {
+  id                  String   @id @default(uuid())
+  caseId              String
+  case                Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  lawFirmId           String
+  lawFirm             LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  // Wycena
+  kwotaNetto          Float
+  vat                 Int      // 23, 8, 0, -1 (zwolniony)
+  kwotaBrutto         Float
+
+  // Termin
+  terminRealizacjiDni Int      // Dni robocze
+
+  // Opis
+  opisOferty          String   // Min 200 znaków
+  zakresUslug         String
+
+  // Warunki płatności
+  warunkiPlatnosci    PaymentTerms
+  dodatkoweWarunki    String?
+
+  // Wyróżnienie
+  wyroznienie         Boolean  @default(false)
+  punktyWyroznienia   Int?
+
+  // Status
+  status              OfferStatus @default(ZLOZONA)
+
+  // Daty
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  zaakceptowanaData   DateTime?
+  odrzuconaData       DateTime?
+
+  // Relacje
+  negotiations        Negotiation[]
+
+  @@index([caseId])
+  @@index([lawFirmId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum PaymentTerms {
+  PRZELEW_7
+  PRZELEW_14
+  PRZELEW_30
+  Z_GORY
+  RATY
+  INNY
+}
+
+enum OfferStatus {
+  ZLOZONA
+  ZAAKCEPTOWANA
+  ODRZUCONA
+  NEGOCJACJE
+  WYGASLA
+}
+
+// ============================================================================
+// NEGOCJACJE OFERT
+// ============================================================================
+
+model Negotiation {
+  id                  String   @id @default(uuid())
+  offerId             String
+  offer               Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  clientId            String
+  client              Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  propozycjaKwoty     Float
+  uzasadnienie        String
+  terminRealizacji    DateTime?
+
+  createdAt           DateTime @default(now())
+
+  @@index([offerId])
+  @@index([clientId])
+}
+
+// ============================================================================
+// WIADOMOŚCI
+// ============================================================================
+
+model Message {
+  id            String   @id @default(uuid())
+  senderId      String
+  sender        User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId    String
+  receiver      User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  // Opcjonalnie powiązana ze sprawą
+  caseId        String?
+  case          Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  temat         String
+  tresc         String
+  zalaczniki    String?  // JSON array URL-i
+
+  przeczytana   Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([caseId])
+  @@index([przeczytana])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// OPINIE (REVIEWS)
+// ============================================================================
+
+model Review {
+  id                  String   @id @default(uuid())
+  lawFirmId           String
+  lawFirm             LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  clientId            String
+  client              Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Oceny (1-5 gwiazdek)
+  ocenaOgolna         Int      // Wymagana
+  profesjonalizm      Int?
+  komunikacja         Int?
+  terminowosc         Int?
+  stosunekJakosci     Int?
+
+  // Treść opinii
+  tytulOpinii         String
+  trescOpinii         String   // Min 50 znaków
+
+  // Opcje
+  polecam             Boolean  @default(true)
+  anonimowa           Boolean  @default(false)
+
+  // Odpowiedź kancelarii
+  odpowiedz           String?
+  dataOdpowiedzi      DateTime?
+
+  // Status
+  zweryfikowana       Boolean  @default(false)
+  aktywna             Boolean  @default(true)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([clientId])
+  @@index([createdAt])
+  @@index([aktywna])
+}
+
+// ============================================================================
+// USŁUGI KANCELARII
+// ============================================================================
+
+model Service {
+  id            String   @id @default(uuid())
+  lawFirmId     String
+  lawFirm       LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  nazwaUslugi   String
+  opisUslugi    String
+  cenaOd        Float?
+  cenaDo        Float?
+  jednostka     ServiceUnit
+
+  aktywna       Boolean  @default(true)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([aktywna])
+}
+
+enum ServiceUnit {
+  ZA_USLUGE
+  ZA_GODZINE
+  RYCZALT
+  DO_UZGODNIENIA
+}
+
+// ============================================================================
+// CERTYFIKATY KANCELARII
+// ============================================================================
+
+model Certificate {
+  id                String   @id @default(uuid())
+  lawFirmId         String
+  lawFirm           LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  nazwaCertyfikatu  String
+  wydawca           String
+  dataUzyskania     DateTime
+  dataWaznosci      DateTime?
+  numerCertyfikatu  String?
+  skanCertyfikatu   String   // URL do pliku
+
+  aktywny           Boolean  @default(true)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([aktywny])
+}
+
+// ============================================================================
+// BLOG KANCELARII
+// ============================================================================
+
+model BlogPost {
+  id                    String   @id @default(uuid())
+  lawFirmId             String
+  lawFirm               LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  tytul                 String
+  slug                  String   @unique
+  tresc                 String
+  kategoriaWpisu        String?
+  tagi                  String?  // JSON array tagów
+  obrazekWyrozniajacy   String?  // URL
+
+  // SEO
+  metaTitle             String?
+  metaDescription       String?
+
+  opublikowany          Boolean  @default(false)
+  dataPublikacji        DateTime?
+
+  wyswietlenia          Int      @default(0)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relacje
+  comments              BlogComment[]
+
+  @@index([lawFirmId])
+  @@index([slug])
+  @@index([opublikowany])
+}
+
+// ============================================================================
+// KOMENTARZE DO BLOGA
+// ============================================================================
+
+model BlogComment {
+  id          String   @id @default(uuid())
+  blogPostId  String
+  blogPost    BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  // Autor (może być niezalogowany)
+  userId      String?
+  author      String   // Imię
+  email       String
+  url         String?
+
+  comment     String
+
+  zatwierdzony Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+
+  @@index([blogPostId])
+  @@index([zatwierdzony])
+}
+
+// ============================================================================
+// ZAMÓWIENIA PUNKTÓW
+// ============================================================================
+
+model Order {
+  id                String   @id @default(uuid())
+  lawFirmId         String
+  lawFirm           LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  pakietPunktow     String   // "100_pkt", "250_pkt", etc.
+  liczbaPunktow     Int
+  kwota             Float
+
+  metodaPlatnosci   PaymentMethod
+  statusPlatnosci   PaymentStatus @default(OCZEKUJE)
+
+  // Dane rozliczeniowe
+  daneFaktury       String?  // JSON z danymi do faktury
+
+  // PayU/Przelewy24 integration
+  externalOrderId   String?
+  transactionId     String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  zaplaconoData     DateTime?
+
+  @@index([lawFirmId])
+  @@index([statusPlatnosci])
+  @@index([createdAt])
+}
+
+enum PaymentMethod {
+  PAYU
+  PRZELEWY24
+  PRZELEW
+  PAYPAL
+  BACS
+}
+
+enum PaymentStatus {
+  OCZEKUJE
+  ZAPLACONE
+  ANULOWANE
+  ZWROT
+}
+
+// ============================================================================
+// PROMOCJE
+// ============================================================================
+
+model Promotion {
+  id                      String   @id @default(uuid())
+  lawFirmId               String
+  lawFirm                 LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  typPromocji             PromotionType
+  czasTrwaniaDni          Int
+  kategoriaPromocji       String?
+  wojewodztwoPromocji     String?
+
+  startPromocji           DateTime
+  koniecPromocji          DateTime
+
+  kosztPunktow            Int
+  automatyczneOdnowienie  Boolean  @default(false)
+
+  aktywna                 Boolean  @default(true)
+
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([aktywna])
+  @@index([startPromocji])
+  @@index([koniecPromocji])
+}
+
+enum PromotionType {
+  PODBICIE_OGLOSZENIA     // 20 pkt/dobę
+  WYROZNIENIE             // 50 pkt/tydzień
+  TOP_LISTA               // 100 pkt/tydzień
+  STRONA_GLOWNA           // 200 pkt/tydzień
+}
+
+// ============================================================================
+// POWIADOMIENIA
+// ============================================================================
+
+model Notification {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  typ           NotificationType
+  tytul         String
+  tresc         String
+  linkUrl       String?
+
+  przeczytane   Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([przeczytane])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  NOWA_OFERTA
+  NOWA_WIADOMOSC
+  ZMIANA_STATUSU
+  NOWA_OPINIA
+  MALY_STAN_PUNKTOW
+  KONIEC_SUBSKRYPCJI
+  SYSTEM
+}
+
+// ============================================================================
+// USTAWIENIA POWIADOMIEŃ
+// ============================================================================
+
+model NotificationSettings {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emailNoweOferty   Boolean  @default(true)
+  emailWiadomosci   Boolean  @default(true)
+  emailStatusy      Boolean  @default(true)
+  smsPilne          Boolean  @default(false)
+
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ============================================================================
+// WOJEWÓDZTWA (SŁOWNIK)
+// ============================================================================
+
+model Voivodeship {
+  id              String   @id @default(uuid())
+  nazwa           String   @unique
+  slug            String   @unique
+
+  // Relacje
+  cities          City[]
+  clients         Client[]
+  lawFirms        LawFirm[]
+  lawFirmVoivodeships LawFirmVoivodeship[]
+  cases           Case[]
+
+  @@index([slug])
+}
+
+// ============================================================================
+// MIASTA (SŁOWNIK)
+// ============================================================================
+
+model City {
+  id              String   @id @default(uuid())
+  nazwa           String
+  voivodeshipId   String
+  voivodeship     Voivodeship @relation(fields: [voivodeshipId], references: [id])
+
+  @@index([voivodeshipId])
+  @@index([nazwa])
+}
+
+// ============================================================================
+// NEWSLETTER
+// ============================================================================
+
+model Newsletter {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  imie          String?
+  zgoda         Boolean  @default(true)
+  aktywny       Boolean  @default(true)
+
+  dataZapisu    DateTime @default(now())
+  dataRezygnacji DateTime?
+
+  @@index([email])
+  @@index([aktywny])
+}
+
+// ============================================================================
+// FORMULARZ KONTAKTOWY
+// ============================================================================
+
+model ContactForm {
+  id            String   @id @default(uuid())
+  imieNazwisko  String
+  email         String
+  telefon       String?
+  temat         ContactSubject
+  wiadomosc     String
+  zalacznik     String?  // URL do załącznika
+
+  odpowiedziano Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+
+  @@index([odpowiedziano])
+  @@index([createdAt])
+}
+
+enum ContactSubject {
+  INFORMACJA
+  WSPARCIE
+  WSPOLPRACA
+  REKLAMACJA
+  INNE
+}
+
+================================================================================
+RELACJE I ZALEŻNOŚCI
+================================================================================
+
+GŁÓWNE RELACJE:
+
+1. User -> Client (1:1)
+   User -> LawFirm (1:1)
+   - Każdy użytkownik może być albo klientem, albo kancelarią
+
+2. Client -> Case (1:N)
+   - Klient może mieć wiele spraw
+
+3. Case -> Offer (1:N)
+   - Sprawa może mieć wiele ofert od różnych kancelarii
+
+4. LawFirm -> Offer (1:N)
+   - Kancelaria może składać wiele ofert
+
+5. LawFirm <-> Category (M:N poprzez LawFirmCategory)
+   - Kancelaria może mieć wiele specjalizacji
+   - Kategoria może być przypisana do wielu kancelarii
+
+6. LawFirm <-> Voivodeship (M:N poprzez LawFirmVoivodeship)
+   - Kancelaria może działać w wielu województwach
+
+7. Client <-> LawFirm (M:N poprzez FavoriteLawFirm)
+   - Ulubione kancelarie klienta
+
+8. User -> Message (1:N jako sender i receiver)
+   - System wiadomości między użytkownikami
+
+9. LawFirm -> Review (1:N)
+   Client -> Review (1:N)
+   - Opinie o kancelariach wystawiane przez klientów
+
+10. Offer -> Negotiation (1:N)
+    - Negocjacje ofert
+
+CASCADE DELETES:
+- Usunięcie User → usuwa Client/LawFirm i wszystkie powiązane dane
+- Usunięcie Client → usuwa Case i powiązania
+- Usunięcie LawFirm → usuwa wszystkie oferty, usługi, certyfikaty, etc.
+- Usunięcie Case → usuwa powiązane oferty i wiadomości
+- Usunięcie Offer → usuwa negocjacje
+
+================================================================================
+INDEKSY DLA WYDAJNOŚCI
+================================================================================
+
+Główne indeksy zostały dodane dla:
+- Klucze obce (foreign keys)
+- Pola używane w WHERE/JOIN (status, email, role, etc.)
+- Pola sortowania (createdAt, updatedAt)
+- Pola wyszukiwania (nazwa, slug)
+- Pola filtrowania (aktywna, zweryfikowana, etc.)
+
+================================================================================
+DANE SŁOWNIKOWE DO ZAŁADOWANIA
+================================================================================
+
+WOJEWÓDZTWA (16):
+1. dolnośląskie
+2. kujawsko-pomorskie
+3. lubelskie
+4. lubuskie
+5. łódzkie
+6. małopolskie
+7. mazowieckie
+8. opolskie
+9. podkarpackie
+10. podlaskie
+11. pomorskie
+12. śląskie
+13. świętokrzyskie
+14. warmińsko-mazurskie
+15. wielkopolskie
+16. zachodniopomorskie
+
+KATEGORIE PRAWNE (podstawowe - rozszerzalne):
+- Prawo cywilne
+- Prawo karne
+- Prawo rodzinne
+- Prawo pracy
+- Prawo gospodarcze
+- Prawo administracyjne
+- Prawo podatkowe
+- Prawo medyczne
+- Prawo nieruchomości
+- Prawo spadkowe
+- Prawo konsumenckie
+- Prawo ubezpieczeniowe
+- itp.
+
+================================================================================
+KONIEC SCHEMATU
+================================================================================
