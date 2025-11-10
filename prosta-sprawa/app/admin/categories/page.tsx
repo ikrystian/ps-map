@@ -96,7 +96,7 @@ export default function AdminCategoriesPage() {
       nazwa: "",
       slug: "",
       opis: "",
-      parentId: null,
+      parentId: "none",
       metaTitle: null,
       metaDescription: null,
       aktywna: true,
@@ -257,7 +257,7 @@ export default function AdminCategoriesPage() {
       nazwa: category.nazwa,
       slug: category.slug,
       opis: category.opis || "",
-      parentId: category.parentId || "",
+      parentId: category.parentId || "none",
       metaTitle: category.metaTitle || "",
       metaDescription: category.metaDescription || "",
       aktywna: category.aktywna,
@@ -484,7 +484,7 @@ export default function AdminCategoriesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">Brak kategorii nadrzędnej</SelectItem>
+                          <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
                           {getParentCategories().map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.nazwa}
@@ -689,7 +689,7 @@ export default function AdminCategoriesPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Brak kategorii nadrzędnej</SelectItem>
+                        <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
                         {getParentCategories(selectedCategory?.id).map((category) => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.nazwa}
