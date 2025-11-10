@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { signOut } from "next-auth/react"
+import { Button } from "@/components/ui/button"
 import {
   LayoutDashboard,
   Briefcase,
@@ -56,6 +58,10 @@ export default function LawFirmPanelLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/" })
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -152,11 +158,9 @@ export default function LawFirmPanelLayout({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/api/auth/logout" className="flex items-center gap-2">
-                  <LogOut className="h-4 w-4" />
-                  Wyloguj
-                </Link>
+              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
+                <LogOut className="h-4 w-4" />
+                Wyloguj
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
