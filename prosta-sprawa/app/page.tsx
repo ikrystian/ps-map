@@ -1,15 +1,58 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar";
-import { Search, MapPin, Star } from "lucide-react";
-import Link from "next/link";
+"use client"
+
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu"
+import { MapPin, Star, CheckCircle2 } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
+
+interface LawFirm {
+  id: string
+  nazwa: string
+  nazwaFirmy: string
+  logo?: string
+  opis?: string
+  miasto: string
+  voivodeship: {
+    nazwa: string
+  }
+  zweryfikowana: boolean
+  categories: Array<{
+    nazwa: string
+    slug: string
+  }>
+  avgRating: number
+  reviewCount: number
+}
 
 export default function Home() {
+  const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchLawFirms = async () => {
+      try {
+        const response = await fetch("/api/law-firms?limit=8")
+        if (response.ok) {
+          const data = await response.json()
+          setLawFirms(data.lawFirms)
+        }
+      } catch (error) {
+        console.error("Error fetching law firms:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchLawFirms()
+  }, [])
+
   return (
     <div>
       {/* Header */}
@@ -18,24 +61,26 @@ export default function Home() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#" className="px-4 py-2">Szukaj prawnika</NavigationMenuLink>
+              <NavigationMenuLink href="/szukaj-prawnika" className="px-4 py-2">Szukaj prawnika</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#" className="px-4 py-2">Sprawy firmowe</NavigationMenuLink>
+              <NavigationMenuLink href="/kategorie" className="px-4 py-2">Sprawy firmowe</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#" className="px-4 py-2">Sprawy prywatne</NavigationMenuLink>
+              <NavigationMenuLink href="/kategorie" className="px-4 py-2">Sprawy prywatne</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#" className="px-4 py-2 text-green-500 font-bold">Z nami wygrywasz</NavigationMenuLink>
+              <NavigationMenuLink href="/jak-to-dziala" className="px-4 py-2 text-green-500 font-bold">Z nami wygrywasz</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#" className="px-4 py-2">Dla prawnika</NavigationMenuLink>
+              <NavigationMenuLink href="/rejestracja/kancelaria" className="px-4 py-2">Dla prawnika</NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
         <div className="flex items-center gap-4">
-          <Button variant="outline">Dodaj sprawę</Button>
+          <Link href="/panel-klienta/sprawy/dodaj">
+            <Button variant="outline">Dodaj sprawę</Button>
+          </Link>
           <Link href="/logowanie">Zaloguj</Link>
         </div>
       </header>
@@ -46,7 +91,9 @@ export default function Home() {
         <p className="text-xl mt-4">Opisz i dodaj swoją sprawę. Znajdź prawnika</p>
         <p className="text-xl">Wybierz najlepszą dla siebie ofertę!</p>
         <div className="mt-8">
-          <Button size="lg" className="bg-green-500 hover:bg-green-600">Dodaj sprawę</Button>
+          <Link href="/panel-klienta/sprawy/dodaj">
+            <Button size="lg" className="bg-green-500 hover:bg-green-600">Dodaj sprawę</Button>
+          </Link>
         </div>
       </main>
 
@@ -70,8 +117,14 @@ export default function Home() {
                 </div>
             </TabsContent>
             <TabsContent value="corporate">
-              {/* Content for Sprawy Firmowe */}
-              <p className="mt-4">Szczegóły dotyczące spraw firmowych pojawią się tutaj.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                    <Card><CardContent className="p-6">Kompleksowa obsługa prawna dla firm</CardContent></Card>
+                    <Card><CardContent className="p-6">Doradztwo biznesowe</CardContent></Card>
+                    <Card><CardContent className="p-6">Reprezentacja w sporach gospodarczych</CardContent></Card>
+                    <Card><CardContent className="p-6">Pomoc w zakładaniu spółek</CardContent></Card>
+                    <Card><CardContent className="p-6">Audyt prawny</CardContent></Card>
+                    <Card><CardContent className="p-6">Obsługa umów i kontraktów</CardContent></Card>
+                </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -84,10 +137,12 @@ export default function Home() {
             <h3 className="text-gray-500">MASZ PROBLEM?</h3>
             <h2 className="text-4xl font-bold mt-2">Powiedz nam jakiej pomocy szukasz</h2>
             <p className="mt-4 text-gray-600">Dodaj swoją sprawę bez zbędnych formalności, czekaj na ofertę i wybierz tę, która najlepiej odpowiada Twoim potrzebom.</p>
-            <Button size="lg" className="mt-8 bg-blue-600 hover:bg-blue-700">Dodaj sprawę</Button>
+            <Link href="/panel-klienta/sprawy/dodaj">
+              <Button size="lg" className="mt-8 bg-blue-600 hover:bg-blue-700">Dodaj sprawę</Button>
+            </Link>
           </div>
           <div className="grid grid-cols-1 gap-8">
-             <Card><CardContent className="p-6"><h4 className="font-bold">Kompleksowa obsługa ekspertów</h4><p className="text-sm text-gray-600 mt-2">Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników i ekspertow z całego kraju.</p></CardContent></Card>
+             <Card><CardContent className="p-6"><h4 className="font-bold">Kompleksowa obsługa ekspertów</h4><p className="text-sm text-gray-600 mt-2">Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników i ekspertów z całego kraju.</p></CardContent></Card>
              <Card><CardContent className="p-6"><h4 className="font-bold">Proces dodawania Twojej sprawy</h4><p className="text-sm text-gray-600 mt-2">Nasz portal umożliwia dodawanie sprawy całkowicie za darmo. Wystarczy kilka kliknięć, aby opisać Twoją sytuację.</p></CardContent></Card>
              <Card><CardContent className="p-6"><h4 className="font-bold">Załatwianie spraw bez wychodzenia z domu</h4><p className="text-sm text-gray-600 mt-2">Prosta Sprawa to miejsce gdzie wszystko załatwisz online, bez konieczności wychodzenia z domu czy tracenia czasu na dojazdy.</p></CardContent></Card>
           </div>
@@ -95,57 +150,89 @@ export default function Home() {
       </section>
 
       {/* Lawyers Section */}
-      <section className="py-20">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-bold">Znajdź prawnika dla siebie</h2>
-              <Button variant="outline">Zobacz wszystkich</Button>
+              <Link href="/szukaj-prawnika">
+                <Button variant="outline">Zobacz wszystkich</Button>
+              </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Repeat this card for each lawyer */}
-            <Card className="text-center">
-              <CardHeader>
-                <Avatar className="mx-auto w-24 h-24 mb-4">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="Anna Lewandowska Kuśmierczyk" />
-                  <AvatarFallback>AL</AvatarFallback>
-                </Avatar>
-                <CardTitle>Anna Lewandowska Kuśmierczyk</CardTitle>
-                <p className="text-sm text-gray-500">ADWOKAT</p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center text-sm text-gray-500">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  Strzebrzeszyn Pomorski, Kujawsko Pomorskie
-                </div>
-                <div className="flex items-center justify-center mt-2">
-                  <Star className="text-yellow-400 w-5 h-5" />
-                  <span className="font-bold ml-1">5,0</span>
-                  <span className="text-sm text-gray-500 ml-2">(11 opinii)</span>
-                </div>
-              </CardContent>
-            </Card>
-             <Card className="text-center">
-              <CardHeader>
-                <Avatar className="mx-auto w-24 h-24 mb-4">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="Joahim Mogba" />
-                  <AvatarFallback>JM</AvatarFallback>
-                </Avatar>
-                <CardTitle>Joahim Mogba</CardTitle>
-                <p className="text-sm text-gray-500">ADWOKAT</p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center text-sm text-gray-500">
-                  <MapPin className="w-4 h-4 mr-1" />
-                   Warszawa, Mazowieckie
-                </div>
-                <div className="flex items-center justify-center mt-2">
-                  <Star className="text-yellow-400 w-5 h-5" />
-                  <span className="font-bold ml-1">5,0</span>
-                  <span className="text-sm text-gray-500 ml-2">(11 opinii)</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Ładowanie kancelarii...</p>
+            </div>
+          ) : lawFirms.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {lawFirms.map((firm) => (
+                <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                  <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer h-full">
+                    <CardHeader>
+                      {firm.logo ? (
+                        <div className="relative mx-auto w-24 h-24 mb-4 rounded-full overflow-hidden border-2">
+                          <Image
+                            src={firm.logo}
+                            alt={firm.nazwa}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <Avatar className="mx-auto w-24 h-24 mb-4">
+                          <AvatarFallback>{firm.nazwa.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div className="flex items-center justify-center gap-2">
+                        <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
+                        {firm.zweryfikowana && (
+                          <CheckCircle2 className="h-4 w-4 text-primary" />
+                        )}
+                      </div>
+                      {firm.categories.length > 0 && (
+                        <p className="text-sm text-muted-foreground">
+                          {firm.categories[0].nazwa}
+                        </p>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-center text-sm text-muted-foreground mb-3">
+                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="truncate">{firm.miasto}, {firm.voivodeship.nazwa}</span>
+                      </div>
+                      {firm.reviewCount > 0 && (
+                        <div className="flex items-center justify-center">
+                          <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                          <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
+                          <span className="text-sm text-muted-foreground ml-2">
+                            ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
+                          </span>
+                        </div>
+                      )}
+                      {firm.categories.length > 1 && (
+                        <div className="flex flex-wrap gap-1 justify-center mt-3">
+                          {firm.categories.slice(1, 3).map((cat) => (
+                            <Badge key={cat.slug} variant="secondary" className="text-xs">
+                              {cat.nazwa}
+                            </Badge>
+                          ))}
+                          {firm.categories.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{firm.categories.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Brak kancelarii do wyświetlenia</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -179,7 +266,9 @@ export default function Home() {
             </div>
              <div>
                  <h3 className="font-bold text-lg mb-4">Dołącz do nas</h3>
-                 <Button>Dodaj sprawę</Button>
+                 <Link href="/panel-klienta/sprawy/dodaj">
+                   <Button>Dodaj sprawę</Button>
+                 </Link>
             </div>
         </div>
         <Separator className="my-8 bg-gray-700" />

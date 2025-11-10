@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import {
   LayoutDashboard,
@@ -24,6 +24,7 @@ import {
   Receipt,
   HelpCircle,
   LogOut,
+  ExternalLink,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -58,6 +59,7 @@ export default function LawFirmPanelLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
@@ -95,6 +97,32 @@ export default function LawFirmPanelLayout({
                 </Link>
               )
             })}
+
+            {/* Link do publicznej strony kancelarii */}
+            {session?.user?.id && (
+              <>
+                <div className="border-t border-border my-2" />
+                <Link
+                  href={`/kancelaria/${session.user.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                  <span>Mój profil publiczny</span>
+                </Link>
+              </>
+            )}
+
+            <div className="border-t border-border my-2" />
+            <Button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              variant="ghost"
+            >
+              <LogOut className="h-5 w-5" />
+              Wyloguj
+            </Button>
           </nav>
         </div>
       </aside>
