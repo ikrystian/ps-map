@@ -1,7 +1,174 @@
-export async function GET() {
-  return Response.json({ message: "Get orders" })
+import { NextRequest } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+
+// GET - Pobierz historię zamówień punktów dla kancelarii
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user) {
+      return Response.json(
+        { error: "Musisz być zalogowany" },
+        { status: 401 }
+      )
+    }
+
+    // Sprawdź czy użytkownik jest kancelarią
+    if (session.user.role !== "LAW_FIRM") {
+      return Response.json(
+        { error: "Dostęp tylko dla kancelarii" },
+        { status: 403 }
+      )
+    }
+
+    // Pobierz dane kancelarii
+    const lawFirm = await prisma.lawFirm.findUnique({
+      where: { userId: session.user.id },
+      select: { id: true }
+    })
+
+    if (!lawFirm) {
+      return Response.json(
+        { error: "Nie znaleziono profilu kancelarii" },
+        { status: 404 }
+      )
+    }
+
+    const searchParams = request.nextUrl.searchParams
+    const page = parseInt(searchParams.get("page") || "1")
+    const limit = parseInt(searchParams.get("limit") || "10")
+    const status = searchParams.get("status") // OCZEKUJE, ZAPLACONE, ANULOWANE, ZWROT
+
+    // Buduj warunki zapytania
+    const where: any = {
+      lawFirmId: lawFirm.id,
+    }
+
+    if (status) {
+      where.statusPlatnosci = status
+    }
+
+    // Pobierz zamówienia z paginacją
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.order.count({ where }),
+    ])
+
+    return Response.json({
+      orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    })
+  } catch (error) {
+    console.error("Error fetching orders:", error)
+    return Response.json(
+      { error: "Błąd podczas pobierania zamówień" },
+      { status: 500 }
+    )
+  }
 }
 
-export async function POST() {
-  return Response.json({ message: "Create order" })
+// POST - Utwórz nowe zamówienie punktów
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user) {
+      return Response.json(
+        { error: "Musisz być zalogowany" },
+        { status: 401 }
+      )
+    }
+
+    // Sprawdź czy użytkownik jest kancelarią
+    if (session.user.role !== "LAW_FIRM") {
+      return Response.json(
+        { error: "Dostęp tylko dla kancelarii" },
+        { status: 403 }
+      )
+    }
+
+    // Pobierz dane kancelarii
+    const lawFirm = await prisma.lawFirm.findUnique({
+      where: { userId: session.user.id },
+    })
+
+    if (!lawFirm) {
+      return Response.json(
+        { error: "Nie znaleziono profilu kancelarii" },
+        { status: 404 }
+      )
+    }
+
+    const body = await request.json()
+    const {
+      pakietPunktow,
+      liczbaPunktow,
+      kwota,
+      metodaPlatnosci,
+      daneFaktury,
+    } = body
+
+    // Walidacja wymaganych pól
+    if (!pakietPunktow || !liczbaPunktow || !kwota || !metodaPlatnosci) {
+      return Response.json(
+        { error: "Brak wymaganych pól" },
+        { status: 400 }
+      )
+    }
+
+    // Walidacja wartości
+    if (liczbaPunktow <= 0 || kwota <= 0) {
+      return Response.json(
+        { error: "Liczba punktów i kwota muszą być większe od 0" },
+        { status: 400 }
+      )
+    }
+
+    // Walidacja metody płatności
+    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "PAYPAL", "BACS"]
+    if (!validPaymentMethods.includes(metodaPlatnosci)) {
+      return Response.json(
+        { error: "Nieprawidłowa metoda płatności" },
+        { status: 400 }
+      )
+    }
+
+    // Utwórz zamówienie
+    const order = await prisma.order.create({
+      data: {
+        lawFirmId: lawFirm.id,
+        pakietPunktow,
+        liczbaPunktow,
+        kwota,
+        metodaPlatnosci,
+        daneFaktury: daneFaktury ? JSON.stringify(daneFaktury) : null,
+        statusPlatnosci: "OCZEKUJE",
+      },
+    })
+
+    // W przypadku przelewu tradycyjnego, możemy od razu zmienić status
+    // (wymaga to później ręcznej weryfikacji przez admina)
+    // Dla PayU/Przelewy24 - trzeba by zintegrować API płatności
+
+    return Response.json(order, { status: 201 })
+  } catch (error) {
+    console.error("Error creating order:", error)
+    return Response.json(
+      { error: "Błąd podczas tworzenia zamówienia" },
+      { status: 500 }
+    )
+  }
 }
