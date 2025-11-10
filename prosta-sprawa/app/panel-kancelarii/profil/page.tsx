@@ -34,6 +34,7 @@ export default function LawFirmProfilePage() {
   const [categories, setCategories] = useState<Category[]>([])
 
   const [formData, setFormData] = useState({
+    id: "",
     // Dane podstawowe
     nazwa: "",
     nazwaFirmy: "",
@@ -160,7 +161,7 @@ export default function LawFirmProfilePage() {
     setIsSaving(true)
 
     try {
-      const response = await fetch(`/api/law-firms/${session?.user?.id}`, {
+      const response = await fetch(`/api/law-firms/${formData.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

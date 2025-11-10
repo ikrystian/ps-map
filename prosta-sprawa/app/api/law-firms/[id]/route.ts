@@ -15,6 +15,7 @@ export async function GET(
         OR: [
           { id },
           { nip: id },
+          { userId: id },
         ],
         aktywna: true,
       },
