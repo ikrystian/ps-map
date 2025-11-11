@@ -27,12 +27,6 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement>, Varian
   open?: boolean
 }
 
-export interface ToastActionElement {
-  altText?: string
-  onClick?: () => void
-  children?: React.ReactNode
-}
-
 const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   ({ className, variant, ...props }, ref) => {
     return (
@@ -122,7 +116,6 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = "ToastViewport"
 
 export {
-  type ToastActionElement,
   ToastProvider,
   ToastViewport,
   Toast,

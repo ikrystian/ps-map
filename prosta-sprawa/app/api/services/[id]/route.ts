@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const service = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         lawFirm: {
           select: {
@@ -32,8 +33,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await auth()
 
@@ -52,7 +54,7 @@ export async function PUT(
 
     // Sprawdź czy usługa należy do kancelarii
     const existingService = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingService) {
@@ -67,7 +69,7 @@ export async function PUT(
 
     // Aktualizuj usługę
     const service = await prisma.service.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nazwaUslugi: body.nazwaUslugi,
         opisUslugi: body.opisUslugi,
@@ -90,8 +92,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await auth()
 
@@ -110,7 +113,7 @@ export async function DELETE(
 
     // Sprawdź czy usługa należy do kancelarii
     const existingService = await prisma.service.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingService) {
@@ -123,7 +126,7 @@ export async function DELETE(
 
     // Usuń usługę
     await prisma.service.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Service deleted successfully" })

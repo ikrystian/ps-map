@@ -32,8 +32,8 @@ const profileFormSchema = z.object({
   kodPocztowy: z.string().optional(),
   miasto: z.string().optional(),
   voivodeshipId: z.string().optional(),
-  zgodaNewsletter: z.boolean().default(false),
-  zgodaMarketing: z.boolean().default(false),
+  zgodaNewsletter: z.any().transform(v => Boolean(v)),
+  zgodaMarketing: z.any().transform(v => Boolean(v)),
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>

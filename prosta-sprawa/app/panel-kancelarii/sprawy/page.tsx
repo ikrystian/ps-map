@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Case {
   id: string
@@ -59,6 +59,7 @@ interface Category {
   id: string
   nazwa: string
   slug: string
+  parentId?: string | null
 }
 
 const SprawyPage = () => {
