@@ -472,6 +472,66 @@ export default function LawFirmProfilePage() {
                 />
               </div>
 
+              <div className="grid gap-2">
+                <Label htmlFor="slowoKluczowe">Słowa kluczowe</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="slowoKluczowe"
+                    placeholder="Dodaj słowo kluczowe..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        const value = e.currentTarget.value.trim()
+                        if (value && !formData.slowaKluczowe.includes(value)) {
+                          handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
+                          e.currentTarget.value = ""
+                        }
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    onClick={(e) => {
+                      const input = document.getElementById("slowoKluczowe") as HTMLInputElement
+                      const value = input.value.trim()
+                      if (value && !formData.slowaKluczowe.includes(value)) {
+                        handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
+                        input.value = ""
+                      }
+                    }}
+                  >
+                    Dodaj
+                  </Button>
+                </div>
+                {formData.slowaKluczowe.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.slowaKluczowe.map((keyword, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
+                      >
+                        <span>{keyword}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleInputChange(
+                              "slowaKluczowe",
+                              formData.slowaKluczowe.filter((_, i) => i !== index)
+                            )
+                          }}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Naciśnij Enter lub kliknij "Dodaj" aby dodać słowo kluczowe
+                </p>
+              </div>
+
               <div className="space-y-2">
                 <Label>Obszar działania</Label>
                 <div className="flex items-center space-x-4">
