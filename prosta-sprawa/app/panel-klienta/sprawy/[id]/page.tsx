@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { useToast } from "@/components/ui/use-toast"
 import {
   AlertCircle,
   ArrowLeft,
@@ -112,9 +113,11 @@ const offerStatusLabels: Record<string, { label: string; variant: "default" | "s
 export default function ClientCaseDetailsPage() {
   const params = useParams()
   const router = useRouter()
+  const { toast } = useToast()
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [processingOfferId, setProcessingOfferId] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCase = async () => {
@@ -138,6 +141,80 @@ export default function ClientCaseDetailsPage() {
       fetchCase()
     }
   }, [params.id])
+
+  const handleAcceptOffer = async (offerId: string) => {
+    if (processingOfferId) return
+
+    setProcessingOfferId(offerId)
+
+    try {
+      const response = await fetch(`/api/offers/${offerId}/accept`, {
+        method: "POST",
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się zaakceptować oferty")
+      }
+
+      toast({
+        title: "Oferta zaakceptowana",
+        description: "Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.",
+      })
+
+      // Odśwież dane sprawy
+      const caseResponse = await fetch(`/api/cases/${params.id}`)
+      if (caseResponse.ok) {
+        const data = await caseResponse.json()
+        setCaseData(data)
+      }
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd podczas akceptacji oferty",
+        variant: "destructive",
+      })
+    } finally {
+      setProcessingOfferId(null)
+    }
+  }
+
+  const handleRejectOffer = async (offerId: string) => {
+    if (processingOfferId) return
+
+    setProcessingOfferId(offerId)
+
+    try {
+      const response = await fetch(`/api/offers/${offerId}/reject`, {
+        method: "POST",
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się odrzucić oferty")
+      }
+
+      toast({
+        title: "Oferta odrzucona",
+        description: "Oferta została odrzucona. Kancelaria została powiadomiona.",
+      })
+
+      // Odśwież dane sprawy
+      const caseResponse = await fetch(`/api/cases/${params.id}`)
+      if (caseResponse.ok) {
+        const data = await caseResponse.json()
+        setCaseData(data)
+      }
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd podczas odrzucania oferty",
+        variant: "destructive",
+      })
+    } finally {
+      setProcessingOfferId(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -445,13 +522,22 @@ export default function ClientCaseDetailsPage() {
                       </div>
                       {offer.status === "ZLOZONA" && (
                         <div className="flex gap-2">
-                          <Button className="flex-1">
+                          <Button
+                            className="flex-1"
+                            onClick={() => handleAcceptOffer(offer.id)}
+                            disabled={processingOfferId === offer.id}
+                          >
                             <CheckCircle2 className="mr-2 h-4 w-4" />
-                            Zaakceptuj
+                            {processingOfferId === offer.id ? "Przetwarzanie..." : "Zaakceptuj"}
                           </Button>
-                          <Button variant="outline" className="flex-1">
+                          <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => handleRejectOffer(offer.id)}
+                            disabled={processingOfferId === offer.id}
+                          >
                             <XCircle className="mr-2 h-4 w-4" />
-                            Odrzuć
+                            {processingOfferId === offer.id ? "Przetwarzanie..." : "Odrzuć"}
                           </Button>
                         </div>
                       )}

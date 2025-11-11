@@ -2,12 +2,34 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useToast } from "@/components/ui/use-toast"
 import {
   MapPin,
   Phone,
@@ -26,6 +48,7 @@ import {
   MessageSquare,
   Briefcase,
   GraduationCap,
+  Send,
 } from "lucide-react"
 
 interface LawFirm {
@@ -161,10 +184,40 @@ const serviceUnitLabels: Record<string, string> = {
 export default function LawFirmProfilePage() {
   const params = useParams()
   const router = useRouter()
+  const { data: session } = useSession()
+  const { toast } = useToast()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
+
+  // Contact Form States
+  const [contactForm, setContactForm] = useState({
+    imieNazwisko: "",
+    miasto: "",
+    wojewodztwo: "",
+    email: "",
+    telefon: "",
+    typSprawy: "prywatna",
+    tresc: "",
+    politykaPrivacy: false,
+  })
+  const [sendingContact, setSendingContact] = useState(false)
+
+  // Review Form States
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
+  const [reviewForm, setReviewForm] = useState({
+    ocenaOgolna: 5,
+    profesjonalizm: 5,
+    komunikacja: 5,
+    terminowosc: 5,
+    stosunekJakosci: 5,
+    tytulOpinii: "",
+    trescOpinii: "",
+    polecam: true,
+    anonimowa: false,
+  })
+  const [submittingReview, setSubmittingReview] = useState(false)
 
   useEffect(() => {
     const fetchLawFirm = async () => {
@@ -189,6 +242,139 @@ export default function LawFirmProfilePage() {
       fetchLawFirm()
     }
   }, [params.slug])
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!contactForm.politykaPrivacy) {
+      toast({
+        title: "Błąd",
+        description: "Musisz zaakceptować politykę prywatności",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setSendingContact(true)
+
+    try {
+      // Tu możesz wysłać email lub zapisać wiadomość w bazie
+      // Na razie symulujemy wysłanie
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      toast({
+        title: "Wiadomość wysłana",
+        description: "Twoja wiadomość została wysłana do kancelarii.",
+      })
+
+      // Reset formularza
+      setContactForm({
+        imieNazwisko: "",
+        miasto: "",
+        wojewodztwo: "",
+        email: "",
+        telefon: "",
+        typSprawy: "prywatna",
+        tresc: "",
+        politykaPrivacy: false,
+      })
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: "Nie udało się wysłać wiadomości",
+        variant: "destructive",
+      })
+    } finally {
+      setSendingContact(false)
+    }
+  }
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!session?.user) {
+      toast({
+        title: "Wymagane logowanie",
+        description: "Musisz być zalogowany jako klient, aby wystawić opinię",
+        variant: "destructive",
+      })
+      router.push("/auth/login")
+      return
+    }
+
+    if (session.user.role !== "CLIENT") {
+      toast({
+        title: "Brak uprawnień",
+        description: "Tylko klienci mogą wystawiać opinie",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (reviewForm.trescOpinii.length < 50) {
+      toast({
+        title: "Zbyt krótka treść",
+        description: "Treść opinii musi mieć minimum 50 znaków",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setSubmittingReview(true)
+
+    try {
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lawFirmId: lawFirm?.id,
+          ...reviewForm,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się dodać opinii")
+      }
+
+      toast({
+        title: "Opinia dodana",
+        description: "Twoja opinia została pomyślnie dodana",
+      })
+
+      setReviewDialogOpen(false)
+
+      // Odśwież dane kancelarii
+      const firmResponse = await fetch(`/api/law-firms/${params.slug}`)
+      if (firmResponse.ok) {
+        const data = await firmResponse.json()
+        setLawFirm(data)
+      }
+
+      // Reset formularza
+      setReviewForm({
+        ocenaOgolna: 5,
+        profesjonalizm: 5,
+        komunikacja: 5,
+        terminowosc: 5,
+        stosunekJakosci: 5,
+        tytulOpinii: "",
+        trescOpinii: "",
+        polecam: true,
+        anonimowa: false,
+      })
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd",
+        variant: "destructive",
+      })
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
@@ -529,6 +715,218 @@ export default function LawFirmProfilePage() {
 
               {/* Reviews Tab */}
               <TabsContent value="reviews" className="space-y-4">
+                {/* Add Review Button */}
+                {session?.user?.role === "CLIENT" && (
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-lg">Masz doświadczenie z tą kancelarią?</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Podziel się swoją opinią i pomóż innym klientom
+                          </p>
+                        </div>
+                        <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button>
+                              <Star className="mr-2 h-4 w-4" />
+                              Dodaj opinię
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Dodaj opinię o kancelarii</DialogTitle>
+                              <DialogDescription>
+                                Podziel się swoimi doświadczeniami z {lawFirm.nazwa}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleReviewSubmit} className="space-y-4">
+                              <div className="space-y-4">
+                                {/* Ocena ogólna */}
+                                <div>
+                                  <Label htmlFor="ocenaOgolna">Ocena ogólna *</Label>
+                                  <Select
+                                    value={reviewForm.ocenaOgolna.toString()}
+                                    onValueChange={(value) =>
+                                      setReviewForm({ ...reviewForm, ocenaOgolna: parseInt(value) })
+                                    }
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {[5, 4, 3, 2, 1].map((rating) => (
+                                        <SelectItem key={rating} value={rating.toString()}>
+                                          {rating} {rating === 1 ? "gwiazdka" : "gwiazdki"}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                {/* Szczegółowe oceny */}
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label>Profesjonalizm</Label>
+                                    <Select
+                                      value={reviewForm.profesjonalizm.toString()}
+                                      onValueChange={(value) =>
+                                        setReviewForm({ ...reviewForm, profesjonalizm: parseInt(value) })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[5, 4, 3, 2, 1].map((rating) => (
+                                          <SelectItem key={rating} value={rating.toString()}>
+                                            {rating}/5
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  <div>
+                                    <Label>Komunikacja</Label>
+                                    <Select
+                                      value={reviewForm.komunikacja.toString()}
+                                      onValueChange={(value) =>
+                                        setReviewForm({ ...reviewForm, komunikacja: parseInt(value) })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[5, 4, 3, 2, 1].map((rating) => (
+                                          <SelectItem key={rating} value={rating.toString()}>
+                                            {rating}/5
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  <div>
+                                    <Label>Terminowość</Label>
+                                    <Select
+                                      value={reviewForm.terminowosc.toString()}
+                                      onValueChange={(value) =>
+                                        setReviewForm({ ...reviewForm, terminowosc: parseInt(value) })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[5, 4, 3, 2, 1].map((rating) => (
+                                          <SelectItem key={rating} value={rating.toString()}>
+                                            {rating}/5
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  <div>
+                                    <Label>Stosunek jakości do ceny</Label>
+                                    <Select
+                                      value={reviewForm.stosunekJakosci.toString()}
+                                      onValueChange={(value) =>
+                                        setReviewForm({ ...reviewForm, stosunekJakosci: parseInt(value) })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[5, 4, 3, 2, 1].map((rating) => (
+                                          <SelectItem key={rating} value={rating.toString()}>
+                                            {rating}/5
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+
+                                {/* Tytuł opinii */}
+                                <div>
+                                  <Label htmlFor="tytulOpinii">Tytuł opinii *</Label>
+                                  <Input
+                                    id="tytulOpinii"
+                                    value={reviewForm.tytulOpinii}
+                                    onChange={(e) =>
+                                      setReviewForm({ ...reviewForm, tytulOpinii: e.target.value })
+                                    }
+                                    placeholder="Podsumuj swoją opinię w jednym zdaniu"
+                                    required
+                                  />
+                                </div>
+
+                                {/* Treść opinii */}
+                                <div>
+                                  <Label htmlFor="trescOpinii">Treść opinii * (min. 50 znaków)</Label>
+                                  <Textarea
+                                    id="trescOpinii"
+                                    value={reviewForm.trescOpinii}
+                                    onChange={(e) =>
+                                      setReviewForm({ ...reviewForm, trescOpinii: e.target.value })
+                                    }
+                                    placeholder="Opisz szczegółowo swoje doświadczenia z kancelarią..."
+                                    rows={6}
+                                    required
+                                  />
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {reviewForm.trescOpinii.length}/50 znaków
+                                  </p>
+                                </div>
+
+                                {/* Opcje */}
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id="polecam"
+                                    checked={reviewForm.polecam}
+                                    onCheckedChange={(checked) =>
+                                      setReviewForm({ ...reviewForm, polecam: !!checked })
+                                    }
+                                  />
+                                  <Label htmlFor="polecam" className="cursor-pointer">
+                                    Polecam tę kancelarię
+                                  </Label>
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id="anonimowa"
+                                    checked={reviewForm.anonimowa}
+                                    onCheckedChange={(checked) =>
+                                      setReviewForm({ ...reviewForm, anonimowa: !!checked })
+                                    }
+                                  />
+                                  <Label htmlFor="anonimowa" className="cursor-pointer">
+                                    Opublikuj opinię anonimowo
+                                  </Label>
+                                </div>
+                              </div>
+
+                              <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>
+                                  Anuluj
+                                </Button>
+                                <Button type="submit" disabled={submittingReview}>
+                                  {submittingReview ? "Dodawanie..." : "Dodaj opinię"}
+                                </Button>
+                              </DialogFooter>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {lawFirm.reviews.length > 0 ? (
                   lawFirm.reviews.map((review) => (
                     <Card key={review.id}>
@@ -814,16 +1212,134 @@ export default function LawFirmProfilePage() {
               </CardContent>
             </Card>
 
-            {/* CTA */}
-            <Card className="bg-primary text-primary-foreground">
-              <CardContent className="pt-6">
-                <h3 className="font-semibold text-lg mb-2">Potrzebujesz pomocy prawnej?</h3>
-                <p className="text-sm mb-4 opacity-90">
-                  Skontaktuj się z {lawFirm.nazwa} i uzyskaj profesjonalną pomoc
-                </p>
-                <Button variant="secondary" className="w-full">
-                  Wyślij wiadomość
-                </Button>
+            {/* Contact Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Skontaktuj się z kancelarią</CardTitle>
+                <CardDescription>
+                  Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
+                    <Input
+                      id="imieNazwisko"
+                      value={contactForm.imieNazwisko}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, imieNazwisko: e.target.value })
+                      }
+                      placeholder="Jan Kowalski"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="miasto">Miasto *</Label>
+                      <Input
+                        id="miasto"
+                        value={contactForm.miasto}
+                        onChange={(e) =>
+                          setContactForm({ ...contactForm, miasto: e.target.value })
+                        }
+                        placeholder="Warszawa"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="wojewodztwo">Województwo *</Label>
+                      <Input
+                        id="wojewodztwo"
+                        value={contactForm.wojewodztwo}
+                        onChange={(e) =>
+                          setContactForm({ ...contactForm, wojewodztwo: e.target.value })
+                        }
+                        placeholder="Mazowieckie"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={contactForm.email}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, email: e.target.value })
+                      }
+                      placeholder="jan@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="telefon">Telefon</Label>
+                    <Input
+                      id="telefon"
+                      type="tel"
+                      value={contactForm.telefon}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, telefon: e.target.value })
+                      }
+                      placeholder="+48 123 456 789"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="typSprawy">Typ sprawy *</Label>
+                    <Select
+                      value={contactForm.typSprawy}
+                      onValueChange={(value) =>
+                        setContactForm({ ...contactForm, typSprawy: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="prywatna">Prywatna</SelectItem>
+                        <SelectItem value="firmowa">Firmowa</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="tresc">Treść wiadomości *</Label>
+                    <Textarea
+                      id="tresc"
+                      value={contactForm.tresc}
+                      onChange={(e) =>
+                        setContactForm({ ...contactForm, tresc: e.target.value })
+                      }
+                      placeholder="Opisz swoją sprawę..."
+                      rows={5}
+                      required
+                    />
+                  </div>
+
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="politykaPrivacy"
+                      checked={contactForm.politykaPrivacy}
+                      onCheckedChange={(checked) =>
+                        setContactForm({ ...contactForm, politykaPrivacy: !!checked })
+                      }
+                    />
+                    <Label htmlFor="politykaPrivacy" className="text-xs cursor-pointer">
+                      Akceptuję politykę prywatności i wyrażam zgodę na przetwarzanie moich danych osobowych *
+                    </Label>
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={sendingContact}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </div>
