@@ -63,70 +63,140 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Zaloguj się</CardTitle>
-          <CardDescription className="text-center">
-            Wprowadź swoje dane, aby uzyskać dostęp do konta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                {error}
+    <div className="min-h-screen grid lg:grid-cols-2">
+      {/* Left Column - Form */}
+      <div className="flex items-center justify-center p-8 bg-background">
+        <div className="w-full max-w-md space-y-8">
+          {/* Logo/Brand */}
+          <div className="text-center">
+            <Link href="/" className="inline-block">
+              <h1 className="text-3xl font-bold">ProstaSprawa</h1>
+            </Link>
+          </div>
+
+          {/* Form Card */}
+          <Card className="border-none shadow-none">
+            <CardHeader className="space-y-1 px-0">
+              <CardTitle className="text-2xl font-bold">Witaj ponownie</CardTitle>
+              <CardDescription>
+                Wprowadź swoje dane, aby zalogować się do konta
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-0">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
+                    {error}
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Adres e-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="nazwa@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                    required
+                    className="h-11"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Hasło</Label>
+                    <Link
+                      href="/moje-konto/lost-password"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      Zapomniałeś hasła?
+                    </Link>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Wprowadź hasło"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    required
+                    className="h-11"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                  {isLoading ? "Logowanie..." : "Zaloguj się"}
+                </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Nie masz konta?
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full h-11"
+                  onClick={() => window.location.href = '/rejestracja'}
+                >
+                  Zarejestruj się
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Footer Links */}
+          <div className="text-center text-sm text-muted-foreground">
+            <p>
+              Logując się, akceptujesz nasze{" "}
+              <Link href="/regulamin" className="underline hover:text-primary">
+                Warunki korzystania
+              </Link>{" "}
+              i{" "}
+              <Link href="/polityka-prywatnosci" className="underline hover:text-primary">
+                Politykę prywatności
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column - Image/Hero */}
+      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
+          <div className="max-w-md space-y-6 text-center">
+            <h2 className="text-4xl font-bold">
+              Twoja droga do rozwiązania problemów prawnych
+            </h2>
+            <p className="text-lg text-white/90">
+              Połącz się z najlepszymi prawnikami i kancelariami w Polsce.
+              Znajdź pomoc prawną dostosowaną do Twoich potrzeb.
+            </p>
+            <div className="grid grid-cols-3 gap-8 pt-8">
+              <div>
+                <div className="text-3xl font-bold">2000+</div>
+                <div className="text-sm text-white/80">Prawników</div>
               </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="twoj@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                required
-              />
+              <div>
+                <div className="text-3xl font-bold">5000+</div>
+                <div className="text-sm text-white/80">Spraw</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold">98%</div>
+                <div className="text-sm text-white/80">Zadowolenia</div>
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Hasło</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div className="flex items-center justify-end">
-              <Link
-                href="/moje-konto/lost-password"
-                className="text-sm text-muted-foreground hover:text-primary"
-              >
-                Zapomniałeś hasła?
-              </Link>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logowanie..." : "Zaloguj się"}
-            </Button>
-
-            <div className="text-center text-sm text-muted-foreground">
-              Nie masz konta?{" "}
-              <Link href="/rejestracja" className="text-primary hover:underline">
-                Zarejestruj się
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
