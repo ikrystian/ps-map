@@ -110,6 +110,7 @@ export default function SearchLawyerPage() {
         if (searchQuery) params.append("search", searchQuery)
         if (selectedCategory && selectedCategory !== "all") params.append("category", selectedCategory)
         if (selectedVoivodeship && selectedVoivodeship !== "all") params.append("voivodeship", selectedVoivodeship)
+        if (selectedCity) params.append("city", selectedCity)
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
@@ -131,7 +132,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, minRating, onlineOnly, verifiedOnly, sortBy, page])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, minRating, onlineOnly, verifiedOnly, sortBy, page])
 
   const totalPages = Math.ceil(total / limit)
 
@@ -152,144 +153,109 @@ export default function SearchLawyerPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-4xl font-bold mb-2">Szukaj prawnika</h1>
           <p className="text-muted-foreground">
             Znajdź najlepszego prawnika dla swoich potrzeb spośród {total} zweryfikowanych kancelarii
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
-          <aside className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Filtry</span>
-                  <Button variant="ghost" size="sm" onClick={handleResetFilters}>
-                    Wyczyść
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Search */}
-                <div className="space-y-2">
-                  <Label>Wyszukaj</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Nazwa, miasto..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                {/* Category */}
-                <div className="space-y-2">
-                  <Label>Kategoria prawna</Label>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Wszystkie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Wszystkie</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.slug}>
-                          {category.nazwa}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Voivodeship */}
-                <div className="space-y-2">
-                  <Label>Województwo</Label>
-                  <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Wszystkie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Wszystkie</SelectItem>
-                      {voivodeships.map((voivodeship) => (
-                        <SelectItem key={voivodeship.id} value={voivodeship.slug}>
-                          {voivodeship.nazwa}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* City */}
-                <div className="space-y-2">
-                  <Label>Miasto</Label>
+        {/* Horizontal Filters */}
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filtry
+              </CardTitle>
+              <Button variant="ghost" size="sm" onClick={handleResetFilters}>
+                Wyczyść wszystkie
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Search */}
+              <div className="space-y-2">
+                <Label className="text-xs">Wyszukaj</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Wpisz miasto..."
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
+                    placeholder="Nazwa, miasto..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
                   />
                 </div>
+              </div>
 
-                {/* Min Rating */}
-                <div className="space-y-2">
-                  <Label>Minimalna ocena</Label>
-                  <Select value={minRating} onValueChange={setMinRating}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Dowolna" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Dowolna</SelectItem>
-                      <SelectItem value="5">5 gwiazdek</SelectItem>
-                      <SelectItem value="4">4+ gwiazdek</SelectItem>
-                      <SelectItem value="3">3+ gwiazdek</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Category */}
+              <div className="space-y-2">
+                <Label className="text-xs">Kategoria prawna</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Wszystkie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Wszystkie</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                {/* Checkboxes */}
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="onlineOnly"
-                      checked={onlineOnly}
-                      onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
-                    />
-                    <Label htmlFor="onlineOnly" className="cursor-pointer">
-                      Tylko online
-                    </Label>
-                  </div>
+              {/* Voivodeship */}
+              <div className="space-y-2">
+                <Label className="text-xs">Województwo</Label>
+                <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Wszystkie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Wszystkie</SelectItem>
+                    {voivodeships.map((voivodeship) => (
+                      <SelectItem key={voivodeship.id} value={voivodeship.slug}>
+                        {voivodeship.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="verifiedOnly"
-                      checked={verifiedOnly}
-                      onCheckedChange={(checked) => setVerifiedOnly(checked as boolean)}
-                    />
-                    <Label htmlFor="verifiedOnly" className="cursor-pointer">
-                      Tylko zweryfikowane
-                    </Label>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </aside>
+              {/* City */}
+              <div className="space-y-2">
+                <Label className="text-xs">Miasto</Label>
+                <Input
+                  placeholder="Wpisz miasto..."
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                />
+              </div>
 
-          {/* Results */}
-          <div className="lg:col-span-3">
-            {/* Sort and Results Count */}
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-muted-foreground">
-                Znaleziono <span className="font-semibold text-foreground">{total}</span> kancelarii
-              </p>
+              {/* Min Rating */}
+              <div className="space-y-2">
+                <Label className="text-xs">Minimalna ocena</Label>
+                <Select value={minRating} onValueChange={setMinRating}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Dowolna" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Dowolna</SelectItem>
+                    <SelectItem value="5">5 gwiazdek</SelectItem>
+                    <SelectItem value="4">4+ gwiazdek</SelectItem>
+                    <SelectItem value="3">3+ gwiazdek</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <div className="flex items-center gap-2">
-                <Label htmlFor="sort" className="text-sm">
-                  Sortuj:
-                </Label>
+              {/* Sort By */}
+              <div className="space-y-2">
+                <Label className="text-xs">Sortuj według</Label>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort" className="w-[180px]">
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -300,6 +266,45 @@ export default function SearchLawyerPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Checkboxes */}
+              <div className="space-y-2">
+                <Label className="text-xs">Opcje</Label>
+                <div className="flex flex-col gap-2 pt-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="onlineOnly"
+                      checked={onlineOnly}
+                      onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
+                    />
+                    <Label htmlFor="onlineOnly" className="cursor-pointer text-sm font-normal">
+                      Tylko online
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="verifiedOnly"
+                      checked={verifiedOnly}
+                      onCheckedChange={(checked) => setVerifiedOnly(checked as boolean)}
+                    />
+                    <Label htmlFor="verifiedOnly" className="cursor-pointer text-sm font-normal">
+                      Tylko zweryfikowane
+                    </Label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Results */}
+        <div>
+            {/* Results Count */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-lg font-medium">
+                Znaleziono <span className="text-primary">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
+              </p>
             </div>
 
             {/* Loading State */}
@@ -310,7 +315,7 @@ export default function SearchLawyerPage() {
             ) : lawFirms.length > 0 ? (
               <>
                 {/* Law Firms Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                   {lawFirms.map((firm) => (
                     <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
                       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">

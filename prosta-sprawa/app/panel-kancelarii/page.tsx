@@ -399,46 +399,71 @@ export default function LawFirmDashboardPage() {
       {/* Wykresy statystyk */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Wykres wyświetleń */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-primary" />
-              Statystyki wyświetleń
-            </CardTitle>
-            <CardDescription>Odsłony profilu w ostatnich 7 dniach</CardDescription>
+        <Card className="border-2">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Eye className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Statystyki wyświetleń</CardTitle>
+                  <CardDescription className="text-xs">Ostatnie 7 dni</CardDescription>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">{stats.viewsThisMonth}</div>
+                <div className="text-xs text-muted-foreground">ten miesiąc</div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* Simple bar chart using CSS */}
-              <div className="space-y-3">
+              {/* Enhanced bar chart */}
+              <div className="space-y-2">
                 {[
-                  { day: "Pon", views: 45, percentage: 75 },
-                  { day: "Wt", views: 52, percentage: 87 },
-                  { day: "Śr", views: 38, percentage: 63 },
-                  { day: "Czw", views: 60, percentage: 100 },
-                  { day: "Pt", views: 48, percentage: 80 },
-                  { day: "Sob", views: 25, percentage: 42 },
-                  { day: "Ndz", views: 18, percentage: 30 },
-                ].map((item) => (
-                  <div key={item.day} className="flex items-center gap-3">
-                    <span className="text-xs font-medium w-8">{item.day}</span>
-                    <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
-                      <div
-                        className="h-full bg-primary flex items-center justify-end pr-2 transition-all"
-                        style={{ width: `${item.percentage}%` }}
-                      >
-                        <span className="text-xs text-primary-foreground font-medium">
-                          {item.views}
-                        </span>
+                  { day: "Pon", views: 45, percentage: 75, trend: "+12%" },
+                  { day: "Wt", views: 52, percentage: 87, trend: "+15%" },
+                  { day: "Śr", views: 38, percentage: 63, trend: "-27%" },
+                  { day: "Czw", views: 60, percentage: 100, trend: "+58%" },
+                  { day: "Pt", views: 48, percentage: 80, trend: "-20%" },
+                  { day: "Sob", views: 25, percentage: 42, trend: "-48%" },
+                  { day: "Ndz", views: 18, percentage: 30, trend: "-28%" },
+                ].map((item, index) => (
+                  <div key={item.day} className="group">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium w-10">{item.day}</span>
+                      <div className="flex-1 h-10 bg-muted rounded-lg overflow-hidden relative group-hover:shadow-sm transition-shadow">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-between px-3 transition-all duration-500 ease-out"
+                          style={{
+                            width: `${item.percentage}%`,
+                            animationDelay: `${index * 100}ms`
+                          }}
+                        >
+                          <span className="text-xs text-primary-foreground font-semibold">
+                            {item.views}
+                          </span>
+                          <span className="text-xs text-primary-foreground/80">
+                            {item.trend}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="pt-2 border-t">
+              <div className="pt-3 border-t space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Średnio dziennie</span>
-                  <span className="font-semibold">41 wyświetleń</span>
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    Średnio dziennie
+                  </span>
+                  <span className="font-bold text-primary">41 wyświetleń</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Najlepszy dzień</span>
+                  <span className="font-medium">Czwartek (60)</span>
                 </div>
               </div>
             </div>
@@ -446,64 +471,82 @@ export default function LawFirmDashboardPage() {
         </Card>
 
         {/* Wykres ofert */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Statystyki ofert
-            </CardTitle>
-            <CardDescription>Status ofert w ostatnim miesiącu</CardDescription>
+        <Card className="border-2">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-green-500/10 rounded-lg">
+                  <FileText className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Statystyki ofert</CardTitle>
+                  <CardDescription className="text-xs">Ostatni miesiąc</CardDescription>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">{lawFirm.zlozoneOferty}</div>
+                <div className="text-xs text-muted-foreground">ofert</div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* Pie chart visualization using circles */}
-              <div className="flex items-center justify-center py-4">
-                <div className="relative w-40 h-40">
+              {/* Enhanced pie chart visualization */}
+              <div className="flex items-center justify-center py-6">
+                <div className="relative w-48 h-48">
                   {/* Background circle */}
                   <svg className="w-full h-full transform -rotate-90">
                     <circle
-                      cx="80"
-                      cy="80"
-                      r="70"
+                      cx="96"
+                      cy="96"
+                      r="80"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="20"
-                      className="text-green-500"
-                      strokeDasharray={`${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 440} 440`}
+                      strokeWidth="24"
+                      className="text-green-500 drop-shadow-sm"
+                      strokeDasharray={`${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 502} 502`}
+                      strokeLinecap="round"
                     />
                     <circle
-                      cx="80"
-                      cy="80"
-                      r="70"
+                      cx="96"
+                      cy="96"
+                      r="80"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="20"
+                      strokeWidth="24"
                       className="text-muted"
-                      strokeDasharray={`${((lawFirm.zlozoneOferty - lawFirm.wygraneOferty) / (lawFirm.zlozoneOferty || 1)) * 440} 440`}
-                      strokeDashoffset={`-${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 440}`}
+                      strokeDasharray={`${((lawFirm.zlozoneOferty - lawFirm.wygraneOferty) / (lawFirm.zlozoneOferty || 1)) * 502} 502`}
+                      strokeDashoffset={`-${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 502}`}
+                      strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <span className="text-3xl font-bold">{lawFirm.konwersja.toFixed(0)}%</span>
-                    <span className="text-xs text-muted-foreground">konwersja</span>
+                    <span className="text-4xl font-bold text-green-600">{lawFirm.konwersja.toFixed(0)}%</span>
+                    <span className="text-xs text-muted-foreground mt-1">sukces</span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+              <div className="space-y-3 pt-2 border-t">
+                <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                  <div className="flex items-center gap-3">
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-sm">Zaakceptowane</span>
+                    <div>
+                      <span className="text-sm font-medium">Zaakceptowane</span>
+                      <p className="text-xs text-muted-foreground">Oferty wygrane</p>
+                    </div>
                   </div>
-                  <span className="text-sm font-semibold">{lawFirm.wygraneOferty}</span>
+                  <span className="text-lg font-bold text-green-600">{lawFirm.wygraneOferty}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-muted"></div>
-                    <span className="text-sm">Pozostałe</span>
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
+                    <div>
+                      <span className="text-sm font-medium">Pozostałe</span>
+                      <p className="text-xs text-muted-foreground">W trakcie/odrzucone</p>
+                    </div>
                   </div>
-                  <span className="text-sm font-semibold">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>
+                  <span className="text-lg font-bold">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>
                 </div>
               </div>
             </div>

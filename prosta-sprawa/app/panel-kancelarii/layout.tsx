@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -26,6 +27,9 @@ import {
   HelpCircle,
   LogOut,
   ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -62,6 +66,7 @@ export default function LawFirmPanelLayout({
 }) {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
@@ -70,11 +75,22 @@ export default function LawFirmPanelLayout({
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card">
+      <aside className={cn(
+        "border-r border-border bg-card transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-16" : "w-64"
+      )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-b border-border px-6">
-            <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
+          <div className="flex h-16 items-center border-b border-border px-4 justify-between">
+            {!isCollapsed && <h2 className="text-lg font-semibold">Panel Kancelarii</h2>}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="h-8 w-8"
+            >
+              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
           </div>
 
           {/* Navigation */}
@@ -91,11 +107,13 @@ export default function LawFirmPanelLayout({
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    isCollapsed && "justify-center"
                   )}
+                  title={isCollapsed ? item.name : undefined}
                 >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && <span>{item.name}</span>}
                 </Link>
               )
             })}
@@ -108,10 +126,14 @@ export default function LawFirmPanelLayout({
                   href={`/kancelaria/${session.user.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    isCollapsed && "justify-center"
+                  )}
+                  title={isCollapsed ? "Mój profil publiczny" : undefined}
                 >
-                  <ExternalLink className="h-5 w-5" />
-                  <span>Mój profil publiczny</span>
+                  <ExternalLink className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && <span>Mój profil publiczny</span>}
                 </Link>
               </>
             )}
@@ -119,11 +141,15 @@ export default function LawFirmPanelLayout({
             <div className="border-t border-border my-2" />
             <Button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              className={cn(
+                "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                isCollapsed && "justify-center"
+              )}
               variant="ghost"
+              title={isCollapsed ? "Wyloguj" : undefined}
             >
-              <LogOut className="h-5 w-5" />
-              Wyloguj
+              <LogOut className="h-5 w-5 flex-shrink-0" />
+              {!isCollapsed && <span>Wyloguj</span>}
             </Button>
           </nav>
         </div>

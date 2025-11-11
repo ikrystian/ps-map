@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -17,6 +18,8 @@ import {
   LogOut,
   FileText,
   User,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -50,6 +53,7 @@ export default function AdminLayout({
   const pathname = usePathname()
   const router = useRouter()
   const { toast } = useToast()
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -58,14 +62,28 @@ export default function AdminLayout({
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card">
+      <aside className={cn(
+        "border-r border-border bg-card transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-16" : "w-64"
+      )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-b border-border px-6">
-            <div className="flex items-center gap-2">
-              <Shield className="h-6 w-6 text-primary" />
-              <h2 className="text-lg font-semibold">Panel Admina</h2>
-            </div>
+          <div className="flex h-16 items-center border-b border-border px-4 justify-between">
+            {!isCollapsed && (
+              <div className="flex items-center gap-2">
+                <Shield className="h-6 w-6 text-primary" />
+                <h2 className="text-lg font-semibold">Panel Admina</h2>
+              </div>
+            )}
+            {isCollapsed && <Shield className="h-6 w-6 text-primary mx-auto" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="h-8 w-8"
+            >
+              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
           </div>
 
           {/* Navigation */}
@@ -82,11 +100,13 @@ export default function AdminLayout({
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    isCollapsed && "justify-center"
                   )}
+                  title={isCollapsed ? item.name : undefined}
                 >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && <span>{item.name}</span>}
                 </Link>
               )
             })}
