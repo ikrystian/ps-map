@@ -51,16 +51,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Zapisz wiadomość w bazie danych
-    const message = await prisma.contactMessage.create({
+    const message = await prisma.contactForm.create({
       data: {
-        lawFirmId,
         imieNazwisko,
-        miasto,
-        wojewodztwo,
         email,
         telefon,
-        typSprawy,
-        tresc,
+        temat: "INFORMACJA",
+        wiadomosc: tresc,
       },
     })
 
@@ -71,7 +68,7 @@ export async function POST(request: NextRequest) {
         typ: "NOWA_WIADOMOSC",
         tytul: "Nowa wiadomość kontaktowa",
         tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
-        linkUrl: `/panel-kancelarii/wiadomosci/${message.id}`,
+        linkUrl: `/panel-kancelarii/wiadomosci`,
       },
     })
 

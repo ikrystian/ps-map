@@ -76,6 +76,14 @@ export async function GET(
       return NextResponse.json({ error: "Case not found" }, { status: 404 })
     }
 
+    // Dodaj _count dla ofert
+    const caseDataWithCount = {
+      ...caseData,
+      _count: {
+        offers: caseData.offers.length,
+      },
+    }
+
     // Sprawdź uprawnienia
     if (session.user.role === "CLIENT") {
       // Klient może zobaczyć tylko swoje sprawy
@@ -107,8 +115,8 @@ export async function GET(
 
     // Parse załączniki jeśli są w JSON
     const parsedCase = {
-      ...caseData,
-      zalaczniki: caseData.zalaczniki ? JSON.parse(caseData.zalaczniki) : [],
+      ...caseDataWithCount,
+      zalaczniki: caseDataWithCount.zalaczniki ? JSON.parse(caseDataWithCount.zalaczniki) : [],
     }
 
     return NextResponse.json(parsedCase)

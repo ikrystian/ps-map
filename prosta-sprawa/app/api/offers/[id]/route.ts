@@ -4,9 +4,10 @@ import { auth } from "@/lib/auth"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -17,11 +18,12 @@ export async function GET(
     }
 
     const offer = await prisma.offer.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         case: {
           select: {
             id: true,
+            clientId: true,
             nazwaSprawy: true,
             opisSprawy: true,
             status: true,
@@ -105,7 +107,7 @@ export async function GET(
         select: { id: true }
       })
 
-      if (!client || offer.case.client.id !== client.id) {
+      if (!client || offer.case.clientId !== client.id) {
         return Response.json(
           { error: "Brak dostępu do tej oferty" },
           { status: 403 }
@@ -125,9 +127,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -159,7 +162,7 @@ export async function PUT(
 
     // Sprawdź czy oferta istnieje i należy do kancelarii
     const existingOffer = await prisma.offer.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingOffer) {
@@ -204,7 +207,7 @@ export async function PUT(
 
     // Aktualizuj ofertę
     const updatedOffer = await prisma.offer.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         kwotaNetto: kwotaNetto !== undefined ? kwotaNetto : undefined,
         vat: vat !== undefined ? vat : undefined,
@@ -236,9 +239,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -270,7 +274,7 @@ export async function DELETE(
 
     // Sprawdź czy oferta istnieje i należy do kancelarii
     const existingOffer = await prisma.offer.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingOffer) {
@@ -298,7 +302,7 @@ export async function DELETE(
     // Usuń ofertę
     await prisma.$transaction(async (tx) => {
       await tx.offer.delete({
-        where: { id: params.id }
+        where: { id }
       })
 
       // Zmniejsz licznik złożonych ofert

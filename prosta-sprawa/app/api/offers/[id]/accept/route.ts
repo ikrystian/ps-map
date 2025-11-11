@@ -4,9 +4,10 @@ import { auth } from "@/lib/auth"
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -38,7 +39,7 @@ export async function POST(
 
     // Pobierz ofertę
     const offer = await prisma.offer.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         case: {
           select: {
@@ -91,7 +92,7 @@ export async function POST(
     const updatedOffer = await prisma.$transaction(async (tx) => {
       // Zaakceptuj ofertę
       const updated = await tx.offer.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           status: "ZAAKCEPTOWANA",
           zaakceptowanaData: new Date()
@@ -114,7 +115,7 @@ export async function POST(
       await tx.offer.updateMany({
         where: {
           caseId: offer.caseId,
-          id: { not: params.id },
+          id: { not: id },
           status: { not: "ODRZUCONA" }
         },
         data: {
