@@ -104,7 +104,7 @@ export async function PUT(request: NextRequest) {
         adres,
         kodPocztowy,
         miasto,
-        voivodeshipId,
+        voivodeshipId: voivodeshipId || null,
         zgodaNewsletter,
         zgodaMarketing,
       },

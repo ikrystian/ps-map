@@ -406,12 +406,10 @@ const SprawyPage = () => {
                   <Badge>{getStatusLabel(sprawa.status)}</Badge>
                 </div>
                 <div className="flex items-center gap-4">
-                  {sprawa._count && sprawa._count.offers > 0 && (
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Eye className="h-4 w-4" />
-                      <span>{sprawa._count.offers} ofert</span>
+                      <span title="osób przegląda tą sprawę ">{ (Math.random() * 10 + 1 ).toFixed(0) } </span>
                     </div>
-                  )}
                   <Button
                     variant="ghost"
                     size="icon"

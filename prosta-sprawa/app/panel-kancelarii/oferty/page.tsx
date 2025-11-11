@@ -120,7 +120,7 @@ export default function LawFirmOffersPage() {
       }
 
       const data = await response.json()
-      setOffers(data)
+      setOffers(data.offers || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {

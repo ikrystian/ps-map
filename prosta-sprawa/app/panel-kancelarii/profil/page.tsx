@@ -138,6 +138,15 @@ export default function LawFirmProfilePage() {
             ...lawFirmData,
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
             categoriesIds: lawFirmData.categories?.map((c: any) => c.category.id) || [],
+            godzinyOtwarcia: lawFirmData.godzinyOtwarcia || {
+              poniedzialek: "",
+              wtorek: "",
+              sroda: "",
+              czwartek: "",
+              piatek: "",
+              sobota: "",
+              niedziela: "",
+            },
           }
           // Konwertuj null na puste stringi dla wszystkich pól
           Object.keys(normalizedData).forEach((key) => {
@@ -666,7 +675,7 @@ export default function LawFirmProfilePage() {
                 <Label htmlFor="statusGodzinyOtwarcia">Wyświetl godziny otwarcia</Label>
               </div>
 
-              {formData.statusGodzinyOtwarcia && (
+              {formData.statusGodzinyOtwarcia && formData.godzinyOtwarcia && (
                 <div className="grid gap-3">
                   {Object.keys(formData.godzinyOtwarcia).map((day) => (
                     <div key={day} className="grid md:grid-cols-2 gap-4 items-center">
