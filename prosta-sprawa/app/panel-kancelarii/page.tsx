@@ -29,6 +29,13 @@ import {
   Star,
   Calendar,
   ArrowRight,
+  Edit,
+  BarChart3,
+  Target,
+  Settings,
+  Zap,
+  Users,
+  Crown,
 } from "lucide-react"
 
 interface LawFirm {
@@ -318,6 +325,314 @@ export default function LawFirmDashboardPage() {
                 Zobacz szczegóły
               </Button>
             </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions - 4 Boxy z ikonkami */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Link href="/panel-kancelarii/profil">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Edit className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold">Edycja profilu</h3>
+                <p className="text-xs text-muted-foreground">
+                  Zaktualizuj dane kancelarii
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/panel-kancelarii/sprawy">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-blue-500" />
+                </div>
+                <h3 className="font-semibold">Sprawy</h3>
+                <p className="text-xs text-muted-foreground">
+                  Przeglądaj dostępne sprawy
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/panel-kancelarii/pozycja-ogloszenia">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-green-500" />
+                </div>
+                <h3 className="font-semibold">Pozycja</h3>
+                <p className="text-xs text-muted-foreground">
+                  Zobacz swoją pozycję
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/panel-kancelarii/zakres-uslug">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                  <Settings className="h-6 w-6 text-yellow-500" />
+                </div>
+                <h3 className="font-semibold">Zakres usług</h3>
+                <p className="text-xs text-muted-foreground">
+                  Zarządzaj swoimi usługami
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
+
+      {/* Wykresy statystyk */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Wykres wyświetleń */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Statystyki wyświetleń
+            </CardTitle>
+            <CardDescription>Odsłony profilu w ostatnich 7 dniach</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Simple bar chart using CSS */}
+              <div className="space-y-3">
+                {[
+                  { day: "Pon", views: 45, percentage: 75 },
+                  { day: "Wt", views: 52, percentage: 87 },
+                  { day: "Śr", views: 38, percentage: 63 },
+                  { day: "Czw", views: 60, percentage: 100 },
+                  { day: "Pt", views: 48, percentage: 80 },
+                  { day: "Sob", views: 25, percentage: 42 },
+                  { day: "Ndz", views: 18, percentage: 30 },
+                ].map((item) => (
+                  <div key={item.day} className="flex items-center gap-3">
+                    <span className="text-xs font-medium w-8">{item.day}</span>
+                    <div className="flex-1 h-8 bg-muted rounded-md overflow-hidden">
+                      <div
+                        className="h-full bg-primary flex items-center justify-end pr-2 transition-all"
+                        style={{ width: `${item.percentage}%` }}
+                      >
+                        <span className="text-xs text-primary-foreground font-medium">
+                          {item.views}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-2 border-t">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Średnio dziennie</span>
+                  <span className="font-semibold">41 wyświetleń</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Wykres ofert */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Statystyki ofert
+            </CardTitle>
+            <CardDescription>Status ofert w ostatnim miesiącu</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Pie chart visualization using circles */}
+              <div className="flex items-center justify-center py-4">
+                <div className="relative w-40 h-40">
+                  {/* Background circle */}
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle
+                      cx="80"
+                      cy="80"
+                      r="70"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="20"
+                      className="text-green-500"
+                      strokeDasharray={`${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 440} 440`}
+                    />
+                    <circle
+                      cx="80"
+                      cy="80"
+                      r="70"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="20"
+                      className="text-muted"
+                      strokeDasharray={`${((lawFirm.zlozoneOferty - lawFirm.wygraneOferty) / (lawFirm.zlozoneOferty || 1)) * 440} 440`}
+                      strokeDashoffset={`-${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 440}`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <span className="text-3xl font-bold">{lawFirm.konwersja.toFixed(0)}%</span>
+                    <span className="text-xs text-muted-foreground">konwersja</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2 border-t">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-sm">Zaakceptowane</span>
+                  </div>
+                  <span className="text-sm font-semibold">{lawFirm.wygraneOferty}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-muted"></div>
+                    <span className="text-sm">Pozostałe</span>
+                  </div>
+                  <span className="text-sm font-semibold">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Box Promowania i Box Partnerski */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Box Promowania */}
+        <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Promuj swoją kancelarię
+            </CardTitle>
+            <CardDescription>
+              Zwiększ widoczność i zdobądź więcej klientów
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Wyróżnienie profilu</p>
+                  <p className="text-xs text-muted-foreground">
+                    Twój profil będzie wyświetlany na górze listy
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Top pozycja</p>
+                  <p className="text-xs text-muted-foreground">
+                    Znajdź się w sekcji TOP kancelarii
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Więcej odsłon</p>
+                  <p className="text-xs text-muted-foreground">
+                    Nawet do 300% więcej wyświetleń profilu
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Twoje punkty:</span>
+                <span className="font-bold text-lg">{lawFirm.punktySaldo} pkt</span>
+              </div>
+              <div className="flex gap-2">
+                <Link href="/panel-kancelarii/promowanie" className="flex-1">
+                  <Button className="w-full" size="sm">
+                    <Zap className="mr-2 h-4 w-4" />
+                    Rozpocznij promocję
+                  </Button>
+                </Link>
+                <Link href="/panel-kancelarii/punkty">
+                  <Button variant="outline" size="sm">
+                    Kup punkty
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Box Partnerski */}
+        <Card className="border-yellow-500/50 bg-gradient-to-br from-yellow-500/5 to-yellow-500/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-yellow-600" />
+              Program Partnerski
+            </CardTitle>
+            <CardDescription>
+              Zostań partnerem premium i zyskaj więcej
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Badge "Partner Premium"</p>
+                  <p className="text-xs text-muted-foreground">
+                    Wyróżnij się wśród konkurencji
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Dedykowany opiekun</p>
+                  <p className="text-xs text-muted-foreground">
+                    Osobiste wsparcie w rozwoju
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Priorytetowa widoczność</p>
+                  <p className="text-xs text-muted-foreground">
+                    Zawsze na pierwszych pozycjach
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t">
+              <div className="mb-3 p-3 bg-background rounded-lg">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold">299 zł</span>
+                  <span className="text-sm text-muted-foreground">/miesięcznie</span>
+                </div>
+              </div>
+              <Link href="/panel-kancelarii/pakiet">
+                <Button className="w-full bg-yellow-600 hover:bg-yellow-700" size="sm">
+                  <Crown className="mr-2 h-4 w-4" />
+                  Zostań partnerem
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
