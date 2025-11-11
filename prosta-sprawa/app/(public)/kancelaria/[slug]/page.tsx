@@ -318,6 +318,19 @@ export default function LawFirmProfilePage() {
                     <Briefcase className="h-4 w-4" />
                     <span>{lawFirmTypeLabels[lawFirm.typ] || lawFirm.typ}</span>
                   </div>
+
+                  {/* Słowa kluczowe */}
+                  {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
+                    <div className="mt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {lawFirm.slowaKluczowe.map((keyword, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {keyword}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Actions */}
