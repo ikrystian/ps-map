@@ -75,7 +75,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form Card */}
-          <Card className="border-none shadow-none">
+          <Card className="border-none shadow-none bg-transparent">
             <CardHeader className="space-y-1 px-0">
               <CardTitle className="text-2xl font-bold">Witaj ponownie</CardTitle>
               <CardDescription>
