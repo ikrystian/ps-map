@@ -437,54 +437,56 @@ export default function LawFirmPackagePage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Potwierdź aktywację pakietu</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-4">
-              {selectedPlan && (
-                <>
-                  <div>
-                    <p className="font-semibold text-foreground mb-2">
-                      Aktywujesz pakiet: {selectedPlan.nazwa}
-                    </p>
-                    <div className="space-y-1 text-sm">
-                      <p>
-                        <span className="text-muted-foreground">Okres:</span>{" "}
-                        <span className="font-medium text-foreground">
-                          {getPeriodLabel(selectedPeriods[selectedPlan.id] || "12")}
-                        </span>
-                      </p>
-                      <p>
-                        <span className="text-muted-foreground">Cena:</span>{" "}
-                        <span className="font-medium text-foreground">
-                          {getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")} zł
-                        </span>
-                      </p>
-                      {selectedPlan.punktyGratis > 0 && (
-                        <p className="flex items-center gap-1 text-green-600">
-                          <Gift className="h-4 w-4" />
-                          <span>Otrzymasz {selectedPlan.punktyGratis} punktów gratis!</span>
-                        </p>
-                      )}
+            <AlertDialogDescription asChild>
+              <div className="space-y-4">
+                {selectedPlan && (
+                  <>
+                    <div>
+                      <div className="font-semibold text-foreground mb-2">
+                        Aktywujesz pakiet: {selectedPlan.nazwa}
+                      </div>
+                      <div className="space-y-1 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Okres:</span>{" "}
+                          <span className="font-medium text-foreground">
+                            {getPeriodLabel(selectedPeriods[selectedPlan.id] || "12")}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Cena:</span>{" "}
+                          <span className="font-medium text-foreground">
+                            {getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")} zł
+                          </span>
+                        </div>
+                        {selectedPlan.punktyGratis > 0 && (
+                          <div className="flex items-center gap-1 text-green-600">
+                            <Gift className="h-4 w-4" />
+                            <span>Otrzymasz {selectedPlan.punktyGratis} punktów gratis!</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="bg-muted p-4 rounded-lg space-y-2">
-                    <p className="font-semibold text-foreground">Co się zmieni?</p>
-                    <ul className="text-sm space-y-1">
-                      <li>✓ Dostęp do {selectedPlan.dostepDoSpraw ?? "∞"} spraw</li>
-                      <li>✓ {selectedPlan.kategorieSpraw ?? "∞"} kategorii spraw</li>
-                      <li>✓ {selectedPlan.wojewodztwa} województw</li>
-                      <li>✓ {selectedPlan.miasta} miast</li>
-                      {selectedPlan.priorytetWyszukiwanie && <li>✓ Priorytet w wyszukiwaniu</li>}
-                      {selectedPlan.statystykiAnalizy && <li>✓ Statystyki i analizy</li>}
-                      {selectedPlan.mozliwoscBloga && <li>✓ Możliwość prowadzenia bloga</li>}
-                    </ul>
-                  </div>
+                    <div className="bg-muted p-4 rounded-lg space-y-2">
+                      <div className="font-semibold text-foreground">Co się zmieni?</div>
+                      <ul className="text-sm space-y-1">
+                        <li>✓ Dostęp do {selectedPlan.dostepDoSpraw ?? "∞"} spraw</li>
+                        <li>✓ {selectedPlan.kategorieSpraw ?? "∞"} kategorii spraw</li>
+                        <li>✓ {selectedPlan.wojewodztwa} województw</li>
+                        <li>✓ {selectedPlan.miasta} miast</li>
+                        {selectedPlan.priorytetWyszukiwanie && <li>✓ Priorytet w wyszukiwaniu</li>}
+                        {selectedPlan.statystykiAnalizy && <li>✓ Statystyki i analizy</li>}
+                        {selectedPlan.mozliwoscBloga && <li>✓ Możliwość prowadzenia bloga</li>}
+                      </ul>
+                    </div>
 
-                  <p className="text-xs text-muted-foreground">
-                    Pakiet zostanie aktywowany natychmiast po potwierdzeniu. W prawdziwej aplikacji
-                    tutaj byłby proces płatności.
-                  </p>
-                </>
-              )}
+                    <div className="text-xs text-muted-foreground">
+                      Pakiet zostanie aktywowany natychmiast po potwierdzeniu. W prawdziwej aplikacji
+                      tutaj byłby proces płatności.
+                    </div>
+                  </>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
