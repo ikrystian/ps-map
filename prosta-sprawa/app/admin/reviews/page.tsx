@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface Review {
@@ -89,8 +89,6 @@ export default function AdminReviewsPage() {
   const [verifiedFilter, setVerifiedFilter] = useState<string>("all")
   const [activeFilter, setActiveFilter] = useState<string>("all")
 
-  const { toast } = useToast()
-
   const fetchReviews = async (page: number = 1) => {
     try {
       setLoading(true)
@@ -115,11 +113,7 @@ export default function AdminReviewsPage() {
         throw new Error("Błąd pobierania opinii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać opinii",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać opinii")
     } finally {
       setLoading(false)
     }
@@ -138,10 +132,7 @@ export default function AdminReviewsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Opinia została usunięta",
-        })
+        toast.success("Opinia została usunięta")
         setIsDeleteDialogOpen(false)
         setSelectedReview(null)
         fetchReviews(pagination.page)
@@ -150,11 +141,7 @@ export default function AdminReviewsPage() {
         throw new Error(error.error || "Błąd usuwania opinii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć opinii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć opinii")
     }
   }
 
@@ -171,23 +158,18 @@ export default function AdminReviewsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: field === "zweryfikowana"
+        toast.success(
+          field === "zweryfikowana"
             ? `Opinia została ${!currentValue ? "zweryfikowana" : "oznaczona jako niezweryfikowana"}`
-            : `Opinia została ${!currentValue ? "aktywowana" : "dezaktywowana"}`,
-        })
+            : `Opinia została ${!currentValue ? "aktywowana" : "dezaktywowana"}`
+        )
         fetchReviews(pagination.page)
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd aktualizacji statusu")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się zaktualizować statusu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować statusu")
     }
   }
 

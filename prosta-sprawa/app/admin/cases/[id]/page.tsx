@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface User {
@@ -138,7 +138,6 @@ const offerStatusLabels: Record<string, { label: string; variant: "default" | "s
 export default function CaseDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const [caseData, setCaseData] = useState<CaseDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -159,11 +158,7 @@ export default function CaseDetailsPage() {
         throw new Error("Błąd pobierania danych sprawy")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać danych sprawy",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać danych sprawy")
       router.push("/admin/cases")
     } finally {
       setLoading(false)
@@ -184,21 +179,14 @@ export default function CaseDetailsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: deleteType === "hard" ? "Sprawa została trwale usunięta" : "Sprawa została zarchiwizowana",
-        })
+        toast.success(deleteType === "hard" ? "Sprawa została trwale usunięta" : "Sprawa została zarchiwizowana")
         router.push("/admin/cases")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd usuwania sprawy")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć sprawy",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć sprawy")
     }
   }
 

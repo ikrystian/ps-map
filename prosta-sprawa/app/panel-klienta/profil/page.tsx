@@ -21,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { Loader2, Save, User } from "lucide-react"
 
 const profileFormSchema = z.object({
@@ -45,7 +45,6 @@ interface Voivodeship {
 
 export default function ClientProfilePage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
@@ -100,11 +99,7 @@ export default function ClientProfilePage() {
       }
     } catch (error) {
       console.error("Error fetching data:", error)
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać danych",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać danych")
     } finally {
       setLoading(false)
     }
@@ -122,26 +117,15 @@ export default function ClientProfilePage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Profil został zaktualizowany",
-        })
+        toast.success("Profil został zaktualizowany")
         router.push("/panel-klienta")
       } else {
         const error = await response.json()
-        toast({
-          title: "Błąd",
-          description: error.error || "Nie udało się zaktualizować profilu",
-          variant: "destructive",
-        })
+        toast.error(error.error || "Nie udało się zaktualizować profilu")
       }
     } catch (error) {
       console.error("Error updating profile:", error)
-      toast({
-        title: "Błąd",
-        description: "Wystąpił błąd podczas zapisywania",
-        variant: "destructive",
-      })
+      toast.error("Wystąpił błąd podczas zapisywania")
     } finally {
       setSubmitting(false)
     }

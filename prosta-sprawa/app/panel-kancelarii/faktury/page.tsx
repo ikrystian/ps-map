@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   FileText,
   Download,
@@ -56,7 +56,6 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
 }
 
 export default function InvoicesPage() {
-  const { toast } = useToast()
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -71,11 +70,7 @@ export default function InvoicesPage() {
       const data = await response.json()
       setInvoices(data)
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać faktur",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać faktur")
     } finally {
       setLoading(false)
     }
@@ -98,10 +93,7 @@ export default function InvoicesPage() {
 
   const handleDownload = (invoice: Invoice) => {
     // W prawdziwej aplikacji tutaj byłoby pobieranie PDF
-    toast({
-      title: "Pobieranie faktury",
-      description: `Faktura ${invoice.invoiceNumber} zostanie pobrana (w prawdziwej aplikacji)`,
-    })
+    toast.success(`Faktura ${invoice.invoiceNumber} zostanie pobrana (w prawdziwej aplikacji)`)
   }
 
   if (loading) {

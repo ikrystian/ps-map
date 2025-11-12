@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface Client {
@@ -118,8 +118,6 @@ export default function AdminCasesPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [showArchived, setShowArchived] = useState(false)
 
-  const { toast } = useToast()
-
   const fetchCases = async (page: number = 1) => {
     try {
       setLoading(true)
@@ -141,11 +139,7 @@ export default function AdminCasesPage() {
         throw new Error("Błąd pobierania spraw")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać spraw",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać spraw")
     } finally {
       setLoading(false)
     }
@@ -169,10 +163,7 @@ export default function AdminCasesPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: deleteType === "hard" ? "Sprawa została trwale usunięta" : "Sprawa została zarchiwizowana",
-        })
+        toast.success(deleteType === "hard" ? "Sprawa została trwale usunięta" : "Sprawa została zarchiwizowana")
         setIsDeleteDialogOpen(false)
         setSelectedCase(null)
         fetchCases(pagination.page)
@@ -181,11 +172,7 @@ export default function AdminCasesPage() {
         throw new Error(error.error || "Błąd usuwania sprawy")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć sprawy",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć sprawy")
     }
   }
 

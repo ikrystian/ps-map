@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { ArrowLeft, Save, Loader2 } from "lucide-react"
 import Link from "next/link"
 import {
@@ -49,7 +49,6 @@ interface SubscriptionPlanForm {
 export default function EditSubscriptionPlanPage() {
   const router = useRouter()
   const params = useParams()
-  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState<SubscriptionPlanForm>({
@@ -91,11 +90,7 @@ export default function EditSubscriptionPlanPage() {
       const data = await response.json()
       setFormData(data)
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać danych pakietu",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać danych pakietu")
     } finally {
       setLoading(false)
     }
@@ -116,18 +111,11 @@ export default function EditSubscriptionPlanPage() {
 
       if (!response.ok) throw new Error("Failed to update plan")
 
-      toast({
-        title: "Sukces",
-        description: "Pakiet został zaktualizowany",
-      })
+      toast.success("Pakiet został zaktualizowany")
 
       router.push("/admin/pakiety")
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się zaktualizować pakietu",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się zaktualizować pakietu")
     } finally {
       setSaving(false)
     }

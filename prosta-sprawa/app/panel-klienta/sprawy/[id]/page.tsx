@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   AlertCircle,
   ArrowLeft,
@@ -113,7 +113,6 @@ const offerStatusLabels: Record<string, { label: string; variant: "default" | "s
 export default function ClientCaseDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -157,10 +156,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się zaakceptować oferty")
       }
 
-      toast({
-        title: "Oferta zaakceptowana",
-        description: "Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.",
-      })
+      toast.success("Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -169,11 +165,7 @@ export default function ClientCaseDetailsPage() {
         setCaseData(data)
       }
     } catch (err) {
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd podczas akceptacji oferty",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd podczas akceptacji oferty")
     } finally {
       setProcessingOfferId(null)
     }
@@ -194,10 +186,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się odrzucić oferty")
       }
 
-      toast({
-        title: "Oferta odrzucona",
-        description: "Oferta została odrzucona. Kancelaria została powiadomiona.",
-      })
+      toast.success("Oferta została odrzucona. Kancelaria została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -206,11 +195,7 @@ export default function ClientCaseDetailsPage() {
         setCaseData(data)
       }
     } catch (err) {
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd podczas odrzucania oferty",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd podczas odrzucania oferty")
     } finally {
       setProcessingOfferId(null)
     }

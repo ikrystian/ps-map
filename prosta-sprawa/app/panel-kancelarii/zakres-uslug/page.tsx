@@ -25,7 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Plus, Pencil, Trash2, Loader2, Briefcase } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 
 interface Service {
   id: string
@@ -55,7 +55,6 @@ const getUnitLabel = (unit: string) => {
 
 export default function LawFirmServicesPage() {
   const router = useRouter()
-  const { toast } = useToast()
 
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,19 +85,11 @@ export default function LawFirmServicesPage() {
         const data = await response.json()
         setServices(data)
       } else {
-        toast({
-          variant: "destructive",
-          title: "Błąd",
-          description: "Nie udało się pobrać usług",
-        })
+        toast.error("Nie udało się pobrać usług")
       }
     } catch (error) {
       console.error("Error fetching services:", error)
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nie udało się pobrać usług",
-      })
+      toast.error("Nie udało się pobrać usług")
     } finally {
       setLoading(false)
     }
@@ -131,11 +122,7 @@ export default function LawFirmServicesPage() {
 
   const handleSaveService = async () => {
     if (!formData.nazwaUslugi || !formData.opisUslugi) {
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nazwa i opis usługi są wymagane",
-      })
+      toast.error("Nazwa i opis usługi są wymagane")
       return
     }
 
@@ -162,29 +149,18 @@ export default function LawFirmServicesPage() {
           })
 
       if (response.ok) {
-        toast({
-          title: editingService ? "Usługa zaktualizowana" : "Usługa dodana",
-          description: editingService
-            ? "Usługa została pomyślnie zaktualizowana"
-            : "Usługa została pomyślnie dodana",
-        })
+        toast.success(editingService
+          ? "Usługa została pomyślnie zaktualizowana"
+          : "Usługa została pomyślnie dodana")
         fetchServices()
         setModalOpen(false)
       } else {
         const error = await response.json()
-        toast({
-          variant: "destructive",
-          title: "Błąd",
-          description: error.error || "Nie udało się zapisać usługi",
-        })
+        toast.error(error.error || "Nie udało się zapisać usługi")
       }
     } catch (error) {
       console.error("Error saving service:", error)
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nie udało się zapisać usługi",
-      })
+      toast.error("Nie udało się zapisać usługi")
     }
   }
 
@@ -197,27 +173,16 @@ export default function LawFirmServicesPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Usługa usunięta",
-          description: "Usługa została pomyślnie usunięta",
-        })
+        toast.success("Usługa została pomyślnie usunięta")
         fetchServices()
         setDeleteModalOpen(false)
         setServiceToDelete(null)
       } else {
-        toast({
-          variant: "destructive",
-          title: "Błąd",
-          description: "Nie udało się usunąć usługi",
-        })
+        toast.error("Nie udało się usunąć usługi")
       }
     } catch (error) {
       console.error("Error deleting service:", error)
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nie udało się usunąć usługi",
-      })
+      toast.error("Nie udało się usunąć usługi")
     }
   }
 

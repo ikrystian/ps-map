@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { ArrowLeft, Save, Loader2 } from "lucide-react"
 import Link from "next/link"
 import {
@@ -48,7 +48,6 @@ interface SubscriptionPlanForm {
 
 export default function AddSubscriptionPlanPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState<SubscriptionPlanForm>({
     typ: "PODSTAWOWY",
@@ -93,18 +92,11 @@ export default function AddSubscriptionPlanPage() {
 
       if (!response.ok) throw new Error("Failed to create plan")
 
-      toast({
-        title: "Sukces",
-        description: "Pakiet został utworzony",
-      })
+      toast.success("Pakiet został utworzony")
 
       router.push("/admin/pakiety")
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się utworzyć pakietu",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się utworzyć pakietu")
     } finally {
       setSaving(false)
     }

@@ -44,7 +44,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -187,7 +187,6 @@ export default function AdminLawFirmsPage() {
     limit: 20,
     pages: 0,
   })
-  const { toast } = useToast()
 
   const createForm = useForm<CreateLawFirmFormValues>({
     resolver: zodResolver(createLawFirmSchema),
@@ -293,11 +292,7 @@ export default function AdminLawFirmsPage() {
         throw new Error("Error fetching law firms")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch law firms",
-        variant: "destructive",
-      })
+      toast.error("Failed to fetch law firms")
     } finally {
       setLoading(false)
     }
@@ -319,10 +314,7 @@ export default function AdminLawFirmsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Law firm created successfully",
-        })
+        toast.success("Law firm created successfully")
         setIsCreateDialogOpen(false)
         createForm.reset()
         fetchLawFirms()
@@ -331,11 +323,7 @@ export default function AdminLawFirmsPage() {
         throw new Error(error.error || "Error creating law firm")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create law firm",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to create law firm")
     }
   }
 
@@ -369,10 +357,7 @@ export default function AdminLawFirmsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Law firm updated successfully",
-        })
+        toast.success("Law firm updated successfully")
         setIsEditDialogOpen(false)
         setSelectedLawFirm(null)
         editForm.reset()
@@ -382,11 +367,7 @@ export default function AdminLawFirmsPage() {
         throw new Error(error.error || "Error updating law firm")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update law firm",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to update law firm")
     }
   }
 
@@ -400,10 +381,7 @@ export default function AdminLawFirmsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Law firm deleted successfully",
-        })
+        toast.success("Law firm deleted successfully")
         setIsDeleteDialogOpen(false)
         setSelectedLawFirm(null)
         fetchLawFirms()
@@ -412,11 +390,7 @@ export default function AdminLawFirmsPage() {
         throw new Error(error.error || "Error deleting law firm")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete law firm",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to delete law firm")
     }
   }
 

@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   MapPin,
   Phone,
@@ -72,7 +72,6 @@ const lawFirmTypeLabels: Record<string, string> = {
 
 export default function ClientFavoritesPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [favorites, setFavorites] = useState<FavoriteLawFirm[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [removingId, setRemovingId] = useState<string | null>(null)
@@ -92,11 +91,7 @@ export default function ClientFavoritesPage() {
       const data = await response.json()
       setFavorites(data)
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Wystąpił błąd")
     } finally {
       setIsLoading(false)
     }
@@ -114,19 +109,12 @@ export default function ClientFavoritesPage() {
         throw new Error("Nie udało się usunąć kancelarii z ulubionych")
       }
 
-      toast({
-        title: "Usunięto z ulubionych",
-        description: "Kancelaria została usunięta z Twojej listy ulubionych",
-      })
+      toast.success("Kancelaria została usunięta z Twojej listy ulubionych")
 
       // Usuń z lokalnej listy
       setFavorites(favorites.filter((fav) => fav.lawFirm.id !== lawFirmId))
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Wystąpił błąd")
     } finally {
       setRemovingId(null)
     }

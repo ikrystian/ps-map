@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { signOut } from "next-auth/react"
 
 const navigation = [
@@ -56,7 +56,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { toast } = useToast()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const handleLogout = async () => {

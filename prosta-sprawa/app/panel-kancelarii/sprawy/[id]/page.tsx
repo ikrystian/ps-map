@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   AlertCircle,
   Loader2,
@@ -109,7 +109,6 @@ export default function LawFirmCaseDetailsPage() {
   const { data: session } = useSession()
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -224,20 +223,13 @@ export default function LawFirmCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się złożyć oferty")
       }
 
-      toast({
-        title: "Oferta złożona",
-        description: "Twoja oferta została pomyślnie złożona",
-      })
+      toast.success("Twoja oferta została pomyślnie złożona")
 
       // Przekieruj do listy ofert
       router.push("/panel-kancelarii/oferty")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setSubmitting(false)
     }

@@ -35,7 +35,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -88,7 +88,6 @@ export default function AdminCategoriesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
-  const { toast } = useToast()
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -115,11 +114,7 @@ export default function AdminCategoriesPage() {
         throw new Error("Błąd pobierania kategorii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać kategorii",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać kategorii")
     } finally {
       setLoading(false)
     }
@@ -165,10 +160,7 @@ export default function AdminCategoriesPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Kategoria została utworzona",
-        })
+        toast.success("Kategoria została utworzona")
         setIsCreateDialogOpen(false)
         form.reset()
         fetchCategories()
@@ -177,11 +169,7 @@ export default function AdminCategoriesPage() {
         throw new Error(error.error || "Błąd tworzenia kategorii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się utworzyć kategorii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć kategorii")
     }
   }
 
@@ -199,10 +187,7 @@ export default function AdminCategoriesPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Kategoria została zaktualizowana",
-        })
+        toast.success("Kategoria została zaktualizowana")
         setIsEditDialogOpen(false)
         setSelectedCategory(null)
         form.reset()
@@ -212,11 +197,7 @@ export default function AdminCategoriesPage() {
         throw new Error(error.error || "Błąd aktualizacji kategorii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się zaktualizować kategorii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować kategorii")
     }
   }
 
@@ -230,10 +211,7 @@ export default function AdminCategoriesPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Kategoria została usunięta",
-        })
+        toast.success("Kategoria została usunięta")
         setIsDeleteDialogOpen(false)
         setSelectedCategory(null)
         fetchCategories()
@@ -242,11 +220,7 @@ export default function AdminCategoriesPage() {
         throw new Error(error.error || "Błąd usuwania kategorii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć kategorii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć kategorii")
     }
   }
 

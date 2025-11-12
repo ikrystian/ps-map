@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -121,7 +121,6 @@ export default function AdminUsersPage() {
     limit: 20,
     pages: 0,
   })
-  const { toast } = useToast()
 
   const createForm = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
@@ -167,11 +166,7 @@ export default function AdminUsersPage() {
         throw new Error("Error fetching users")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch users",
-        variant: "destructive",
-      })
+      toast.error("Failed to fetch users")
     } finally {
       setLoading(false)
     }
@@ -193,10 +188,7 @@ export default function AdminUsersPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User created successfully",
-        })
+        toast.success("User created successfully")
         setIsCreateDialogOpen(false)
         createForm.reset()
         fetchUsers()
@@ -205,11 +197,7 @@ export default function AdminUsersPage() {
         throw new Error(error.error || "Error creating user")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create user",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to create user")
     }
   }
 
@@ -239,10 +227,7 @@ export default function AdminUsersPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User updated successfully",
-        })
+        toast.success("User updated successfully")
         setIsEditDialogOpen(false)
         setSelectedUser(null)
         editForm.reset()
@@ -252,11 +237,7 @@ export default function AdminUsersPage() {
         throw new Error(error.error || "Error updating user")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update user",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to update user")
     }
   }
 
@@ -270,10 +251,7 @@ export default function AdminUsersPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User deleted successfully",
-        })
+        toast.success("User deleted successfully")
         setIsDeleteDialogOpen(false)
         setSelectedUser(null)
         fetchUsers()
@@ -282,11 +260,7 @@ export default function AdminUsersPage() {
         throw new Error(error.error || "Error deleting user")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete user",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to delete user")
     }
   }
 
