@@ -1,0 +1,91 @@
+# Plan implementacji funkcjonalności bloga
+
+## 1. Baza Danych (Prisma Schema)
+
+-   **Model `BlogCategory`**:
+    -   `id`: CUID
+    -   `name`: String (unikalny)
+    -   `slug`: String (unikalny, generowany z nazwy)
+    -   Pola `createdAt`, `updatedAt`
+
+-   **Model `BlogPost`**:
+    -   `id`: CUID
+    -   `title`: String
+    -   `slug`: String (unikalny, generowany z tytułu)
+    -   `content`: String (lub JSON dla edytora rich-text)
+    -   `imageUrl`: String (opcjonalnie)
+    -   `published`: Boolean (domyślnie `false`)
+    -   Pola `createdAt`, `updatedAt`
+    -   **Relacje**:
+        -   Do `LawFirm` (autor wpisu) - `lawFirmId`
+        -   Do `BlogCategory` (kategoria wpisu) - `categoryId`
+
+## 2. API Endpoints (`/app/api/...`)
+
+-   **Zarządzanie kategoriami (Panel Admina)**:
+    -   `GET /api/blog/categories`: Pobiera wszystkie kategorie.
+    -   `POST /api/blog/categories`: Tworzy nową kategorię.
+    -   `PUT /api/blog/categories/[id]`: Aktualizuje kategorię.
+    -   `DELETE /api/blog/categories/[id]`: Usuwa kategorię.
+
+-   **Zarządzanie wpisami (Panel Kancelarii)**:
+    -   `GET /api/panel-kancelarii/blog`: Pobiera wpisy zalogowanej kancelarii.
+    -   `POST /api/panel-kancelarii/blog`: Tworzy nowy wpis dla zalogowanej kancelarii.
+    -   `GET /api/panel-kancelarii/blog/[id]`: Pobiera konkretny wpis do edycji.
+    -   `PUT /api/panel-kancelarii/blog/[id]`: Aktualizuje wpis.
+    -   `DELETE /api/panel-kancelarii/blog/[id]`: Usuwa wpis.
+
+-   **Zarządzanie wpisami (Panel Admina)**:
+    -   `GET /api/admin/blog`: Pobiera wszystkie wpisy wszystkich kancelarii.
+    -   `DELETE /api/admin/blog/[id]`: Usuwa dowolny wpis.
+
+-   **Publiczne API (dla stron publicznych)**:
+    -   `GET /api/blog/posts`: Pobiera wszystkie opublikowane wpisy (z paginacją i filtrowaniem po kategorii).
+    -   `GET /api/blog/posts/[slug]`: Pobiera jeden opublikowany wpis po jego `slug`.
+    -   `GET /api/kancelaria/[slug]/posts`: Pobiera wszystkie opublikowane wpisy dla konkretnej kancelarii.
+
+## 3. Interfejs Użytkownika (UI)
+
+### a) Panel Administratora (`/app/admin/...`)
+
+-   **`/admin/categories`**:
+    -   Tabela (shadcn `Table`) z listą kategorii.
+    -   Przyciski do dodawania (w dialogu `Dialog`), edycji i usuwania kategorii.
+-   **`/admin/blog`**:
+    -   Tabela ze wszystkimi wpisami (tytuł, autor, kategoria, data, status).
+    -   Możliwość usuwania i ewentualnej edycji wpisów.
+
+### b) Panel Kancelarii (`/app/panel-kancelarii/blog/...`)
+
+-   **`/panel-kancelarii/blog`**:
+    -   Tabela z wpisami danej kancelarii.
+    -   Przycisk "Dodaj nowy artykuł" prowadzący do `/panel-kancelarii/blog/nowy`.
+    -   Przyciski "Edytuj" i "Usuń" (z potwierdzeniem w `AlertDialog`) przy każdym wpisie.
+-   **`/panel-kancelarii/blog/nowy`** i **`/panel-kancelarii/blog/edytuj/[id]`**:
+    -   Formularz (shadcn `Form`) zawierający:
+        -   Pole `Input` na tytuł.
+        -   Edytor tekstu (np. prosty `Textarea` lub implementacja edytora rich-text).
+        -   Pole `Select` do wyboru kategorii (pobranych z API).
+        -   Przycisk do uploadu zdjęcia.
+        -   Przełącznik `Switch` do publikacji.
+
+### c) Strony Publiczne (`/app/(public)/...`)
+
+-   **Nowa strona `/artykuly`**:
+    -   Nagłówek z listą kategorii (przyciski `Button` do filtrowania).
+    -   Siatka lub lista kart (`Card`) z artykułami (zdjęcie, tytuł, fragment, autor).
+    -   Paginacja.
+-   **Nowa strona `/artykuly/[slug]`**:
+    -   Strona wyświetlająca pełną treść artykułu.
+    -   Informacje o autorze (link do profilu kancelarii).
+-   **Profil kancelarii `/kancelaria/[slug]`**:
+    -   Dodanie nowej zakładki "Blog" w komponencie `Tabs`.
+    -   W zakładce "Blog" lista artykułów danej kancelarii, linkujących do `/artykuly/[slug]`.
+
+## 4. Logika i Autoryzacja
+
+-   Zabezpieczenie wszystkich endpointów API za pomocą `next-auth/middleware`.
+-   Sprawdzanie ról: `ADMIN` dla ścieżek `/api/admin/*`, `LAWYER` dla `/api/panel-kancelarii/*`.
+-   Przy edycji/usuwaniu wpisu w panelu kancelarii, weryfikacja, czy dany wpis na pewno należy do zalogowanej kancelarii.
+-   Publiczne API powinno zwracać tylko wpisy z atrybutem `published: true`.
+-   Generowanie `slug`ów z tytułów/nazw po stronie serwera przy tworzeniu/aktualizacji.
