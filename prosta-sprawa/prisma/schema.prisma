@@ -266,10 +266,10 @@ enum OfferType {
 }
 
 enum SubscriptionPackage {
-  PODSTAWOWY    // 0 zł
-  STANDARD      // 99 zł/mies
-  PREMIUM       // 299 zł/mies
-  ENTERPRISE    // Kontakt
+  PODSTAWOWY    // 440 zł/rok
+  STANDARD      // 880 zł/rok
+  PREMIUM       // 1320 zł/rok
+  BIZNES        // 1980 zł/rok
 }
 
 // ============================================================================
@@ -927,6 +927,59 @@ model Newsletter {
   dataRezygnacji DateTime?
 
   @@index([email])
+  @@index([aktywny])
+}
+
+// ============================================================================
+// PAKIETY SUBSKRYPCJI
+// ============================================================================
+
+model SubscriptionPlan {
+  id                    String   @id @default(uuid())
+
+  // Podstawowe informacje
+  typ                   SubscriptionPackage @unique
+  nazwa                 String
+  cena1Miesiac          Float?
+  cena6Miesiecy         Float?
+  cena12Miesiecy        Float
+  aktywny               Boolean  @default(true)
+
+  // Dostęp do spraw
+  dostepDoSpraw         Int?     // null = nieograniczone
+
+  // Kategorie i lokalizacje
+  kategorieSpraw        Int?     // null = nieograniczone
+  wojewodztwa           Int
+  miasta                Int
+
+  // Funkcjonalności
+  priorytetWyszukiwanie Boolean  @default(false)
+  osobistyOpiekun       Int      @default(0)
+  artykutySponsoro      Boolean  @default(false)
+  specjalneOznaczenie   String?  // null, "Podstawowe", "Rozszerzone"
+  statystykiAnalizy     Boolean  @default(false)
+  mozliwoscBloga        Boolean  @default(false)
+  wsparcieMarketingowe  Boolean  @default(false)
+  promowanieProfilu     Boolean  @default(false)
+
+  // Powiadomienia i komunikacja
+  powiadomieniaSprawy   Int      @default(0)
+  liczbaTakow           Int      @default(0)
+  zalaczniki            Boolean  @default(false)
+  coverBaner            Boolean  @default(false)
+  wyswietlanieReklam    Boolean  @default(true)
+
+  // Punkty gratis
+  punktyGratis          Int      @default(0)
+
+  // Skill Law Focus - specjalna funkcjonalność (dla pakietu BIZNES)
+  skillLawFocus         Boolean  @default(false)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([typ])
   @@index([aktywny])
 }
 

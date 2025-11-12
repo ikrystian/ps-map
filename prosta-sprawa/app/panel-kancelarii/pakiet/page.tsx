@@ -6,14 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   CheckCircle2,
   Package,
   Loader2,
   AlertCircle,
-  Zap,
-  Crown,
-  Star,
-  Sparkles,
+  Check,
+  X,
+  Gift,
 } from "lucide-react"
 
 interface LawFirm {
@@ -24,86 +30,33 @@ interface LawFirm {
   dataPakietuDo: string | null
 }
 
-const subscriptionPackages = [
-  {
-    id: "PODSTAWOWY",
-    name: "Podstawowy",
-    price: "0 zł",
-    period: "miesięcznie",
-    icon: Package,
-    color: "text-muted-foreground",
-    features: [
-      "Profil kancelarii",
-      "Do 5 ofert miesięcznie",
-      "Podstawowe statystyki",
-      "Odpowiedzi na opinie",
-      "Newsletter",
-    ],
-    limitations: [
-      "Brak wyróżnień",
-      "Brak pozycjonowania",
-      "Ograniczone statystyki",
-    ],
-  },
-  {
-    id: "STANDARD",
-    name: "Standard",
-    price: "99 zł",
-    period: "miesięcznie",
-    icon: Star,
-    color: "text-blue-500",
-    popular: true,
-    features: [
-      "Wszystko z pakietu Podstawowy",
-      "Do 25 ofert miesięcznie",
-      "Rozszerzone statystyki",
-      "Wyróżnienie profilu",
-      "10 punktów co miesiąc",
-      "Newsletter Premium",
-      "Wsparcie priorytetowe",
-    ],
-    limitations: [],
-  },
-  {
-    id: "PREMIUM",
-    name: "Premium",
-    price: "299 zł",
-    period: "miesięcznie",
-    icon: Crown,
-    color: "text-primary",
-    features: [
-      "Wszystko z pakietu Standard",
-      "Nieograniczona liczba ofert",
-      "Pełne statystyki i analizy",
-      "TOP pozycja w wynikach",
-      "50 punktów co miesiąc",
-      "Badge \"Premium Partner\"",
-      "Dedykowany opiekun",
-      "Wsparcie 24/7",
-      "API dostęp",
-    ],
-    limitations: [],
-  },
-  {
-    id: "ENTERPRISE",
-    name: "Enterprise",
-    price: "Kontakt",
-    period: "indywidualnie",
-    icon: Sparkles,
-    color: "text-yellow-500",
-    features: [
-      "Wszystko z pakietu Premium",
-      "Dedykowane rozwiązania",
-      "Integracje na zamówienie",
-      "White-label możliwości",
-      "SLA 99.9%",
-      "Dedykowany zespół wsparcia",
-      "Szkolenia dla zespołu",
-      "Własny Account Manager",
-    ],
-    limitations: [],
-  },
-]
+interface SubscriptionPlan {
+  id: string
+  typ: string
+  nazwa: string
+  cena1Miesiac: number | null
+  cena6Miesiecy: number | null
+  cena12Miesiecy: number
+  dostepDoSpraw: number | null
+  kategorieSpraw: number | null
+  wojewodztwa: number
+  miasta: number
+  priorytetWyszukiwanie: boolean
+  osobistyOpiekun: number
+  artykutySponsoro: boolean
+  specjalneOznaczenie: string | null
+  statystykiAnalizy: boolean
+  mozliwoscBloga: boolean
+  wsparcieMarketingowe: boolean
+  promowanieProfilu: boolean
+  powiadomieniaSprawy: number
+  liczbaTakow: number
+  zalaczniki: boolean
+  coverBaner: boolean
+  wyswietlanieReklam: boolean
+  punktyGratis: number
+  skillLawFocus: boolean
+}
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("pl-PL", {
@@ -113,34 +66,72 @@ const formatDate = (dateString: string) => {
   })
 }
 
+const renderValue = (value: any): string => {
+  if (value === null || value === undefined) return "∞"
+  if (typeof value === "boolean") return value ? "Tak" : "-"
+  if (typeof value === "number") return value.toString()
+  return value.toString()
+}
+
 export default function LawFirmPackagePage() {
   const { data: session } = useSession()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([])
+  const [selectedPeriods, setSelectedPeriods] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchLawFirm()
+    fetchData()
   }, [session])
 
-  const fetchLawFirm = async () => {
+  const fetchData = async () => {
     if (!session?.user?.id) return
 
     setLoading(true)
     setError(null)
 
     try {
-      const response = await fetch("/api/law-firms/me")
-      if (!response.ok) {
+      const [firmResponse, plansResponse] = await Promise.all([
+        fetch("/api/law-firms/me"),
+        fetch("/api/subscription-plans"),
+      ])
+
+      if (!firmResponse.ok) {
         throw new Error("Nie udało się pobrać danych kancelarii")
       }
+      if (!plansResponse.ok) {
+        throw new Error("Nie udało się pobrać pakietów")
+      }
 
-      const data = await response.json()
-      setLawFirm(data)
+      const firmData = await firmResponse.json()
+      const plansData = await plansResponse.json()
+
+      setLawFirm(firmData)
+      setPlans(plansData)
+
+      // Initialize selected periods to 12 months
+      const initialPeriods: Record<string, string> = {}
+      plansData.forEach((plan: SubscriptionPlan) => {
+        initialPeriods[plan.id] = "12"
+      })
+      setSelectedPeriods(initialPeriods)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const getPrice = (plan: SubscriptionPlan, period: string) => {
+    switch (period) {
+      case "1":
+        return plan.cena1Miesiac ? `${plan.cena1Miesiac} zł / miesięcznie` : "-"
+      case "6":
+        return plan.cena6Miesiecy ? `${plan.cena6Miesiecy} zł / 6 miesięcy` : "-"
+      case "12":
+      default:
+        return `${plan.cena12Miesiecy} zł / rok`
     }
   }
 
@@ -164,6 +155,28 @@ export default function LawFirmPackagePage() {
       </Card>
     )
   }
+
+  const features = [
+    { label: "Dostęp do spraw", key: "dostepDoSpraw" },
+    { label: "Kategorie spraw", key: "kategorieSpraw" },
+    { label: "Województwa", key: "wojewodztwa" },
+    { label: "Miasta", key: "miasta" },
+    { label: "Priorytet w wyszukiwaniu", key: "priorytetWyszukiwanie" },
+    { label: "Osobisty opiekun klienta", key: "osobistyOpiekun" },
+    { label: "Artykuły sponsorowane", key: "artykutySponsoro" },
+    { label: "Specjalne oznaczenie profilu", key: "specjalneOznaczenie" },
+    { label: "Statystyki i analizy", key: "statystykiAnalizy" },
+    { label: "Możliwość prowadzenia bloga", key: "mozliwoscBloga" },
+    { label: "Wsparcie marketingowe", key: "wsparcieMarketingowe" },
+    { label: "Promowanie profilu na stronie głównej", key: "promowanieProfilu" },
+    { label: "Powiadomienia o nowych sprawach", key: "powiadomieniaSprawy" },
+    { label: "Liczba tagów", key: "liczbaTakow" },
+    { label: "Załączniki", key: "zalaczniki" },
+    { label: "Cover baner", key: "coverBaner" },
+    { label: "Wyświetlanie reklam", key: "wyswietlanieReklam" },
+    { label: "Skill Law Focus", key: "skillLawFocus" },
+    { label: "Punkty gratis", key: "punktyGratis" },
+  ]
 
   return (
     <div className="space-y-6">
@@ -190,117 +203,131 @@ export default function LawFirmPackagePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-bold">
-                    {subscriptionPackages.find(p => p.id === lawFirm.pakietSubskrypcji)?.name || lawFirm.pakietSubskrypcji}
+                    {plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji}
                   </h3>
-                  {lawFirm.pakietSubskrypcji !== "PODSTAWOWY" && (
-                    <Badge variant="default">Aktywny</Badge>
-                  )}
+                  <Badge variant="default">Aktywny</Badge>
                 </div>
                 {lawFirm.dataPakietuDo && (
                   <p className="text-sm text-muted-foreground mt-1">
                     Ważny do: {formatDate(lawFirm.dataPakietuDo)}
                   </p>
                 )}
-                {!lawFirm.dataPakietuDo && lawFirm.pakietSubskrypcji === "PODSTAWOWY" && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Bezterminowy
-                  </p>
-                )}
               </div>
             </div>
-            {lawFirm.pakietSubskrypcji === "PODSTAWOWY" && (
-              <Badge variant="outline" className="gap-1">
-                <Zap className="h-3 w-3" />
-                Darmowy
-              </Badge>
-            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Packages Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {subscriptionPackages.map((pkg) => {
-          const Icon = pkg.icon
-          const isCurrentPackage = lawFirm.pakietSubskrypcji === pkg.id
-
-          return (
-            <Card
-              key={pkg.id}
-              className={`relative ${
-                pkg.popular ? "border-primary shadow-lg" : ""
-              } ${isCurrentPackage ? "ring-2 ring-primary" : ""}`}
-            >
-              {pkg.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge variant="default" className="gap-1">
-                    <Star className="h-3 w-3" />
-                    Najpopularniejszy
-                  </Badge>
-                </div>
-              )}
-
-              {isCurrentPackage && (
-                <div className="absolute -top-3 right-4">
-                  <Badge variant="default" className="gap-1 bg-green-500">
-                    <CheckCircle2 className="h-3 w-3" />
-                    Aktywny
-                  </Badge>
-                </div>
-              )}
-
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <Icon className={`h-8 w-8 ${pkg.color}`} />
-                  <div>
-                    <CardTitle className="text-xl">{pkg.name}</CardTitle>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <div className="text-3xl font-bold">{pkg.price}</div>
-                  <p className="text-sm text-muted-foreground">{pkg.period}</p>
-                </div>
-              </CardHeader>
-
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Features */}
-                  <div className="space-y-2">
-                    {pkg.features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+      {/* Comparison Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Porównanie pakietów</CardTitle>
+          <CardDescription>
+            Porównaj funkcjonalności wszystkich dostępnych pakietów
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="border-b border-border p-4 text-left font-semibold">Funkcjonalność</th>
+                  {plans.map((plan) => (
+                    <th key={plan.id} className="border-b border-border p-4 text-center font-semibold">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-lg">{plan.nazwa}</span>
+                        {plan.typ === lawFirm.pakietSubskrypcji && (
+                          <Badge variant="default" className="mx-auto">Aktywny</Badge>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {features.map((feature, index) => (
+                  <tr key={feature.key} className={index % 2 === 0 ? "bg-muted/30" : ""}>
+                    <td className="border-b border-border p-4 font-medium">{feature.label}</td>
+                    {plans.map((plan) => {
+                      const value = plan[feature.key as keyof SubscriptionPlan]
+                      return (
+                        <td key={plan.id} className="border-b border-border p-4 text-center">
+                          {typeof value === "boolean" ? (
+                            value ? (
+                              <Check className="h-5 w-5 text-green-500 mx-auto" />
+                            ) : (
+                              <X className="h-5 w-5 text-muted-foreground mx-auto" />
+                            )
+                          ) : (
+                            <span>{renderValue(value)}</span>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+                {/* Price Row */}
+                <tr className="bg-muted/50">
+                  <td className="border-b border-border p-4 font-semibold">Cena</td>
+                  {plans.map((plan) => (
+                    <td key={plan.id} className="border-b border-border p-4">
+                      <div className="flex flex-col gap-2">
+                        <Select
+                          value={selectedPeriods[plan.id] || "12"}
+                          onValueChange={(value) =>
+                            setSelectedPeriods({ ...selectedPeriods, [plan.id]: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {plan.cena1Miesiac && (
+                              <SelectItem value="1">1 miesiąc</SelectItem>
+                            )}
+                            {plan.cena6Miesiecy && (
+                              <SelectItem value="6">6 miesięcy</SelectItem>
+                            )}
+                            <SelectItem value="12">12 miesięcy</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <div className="text-center font-semibold">
+                          {getPrice(plan, selectedPeriods[plan.id] || "12")}
+                        </div>
+                        {plan.punktyGratis > 0 && (
+                          <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                            <Gift className="h-4 w-4" />
+                            <span>{plan.punktyGratis} punktów gratis!</span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+                {/* Action Row */}
+                <tr>
+                  <td className="p-4"></td>
+                  {plans.map((plan) => (
+                    <td key={plan.id} className="p-4">
+                      {plan.typ === lawFirm.pakietSubskrypcji ? (
+                        <Button variant="outline" className="w-full" disabled>
+                          Twój obecny pakiet
+                        </Button>
+                      ) : (
+                        <Button className="w-full">
+                          Wybieram
+                        </Button>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
-                  {/* Button */}
-                  <div className="pt-4">
-                    {isCurrentPackage ? (
-                      <Button variant="outline" className="w-full" disabled>
-                        Twój obecny pakiet
-                      </Button>
-                    ) : pkg.id === "ENTERPRISE" ? (
-                      <Button variant="default" className="w-full">
-                        Skontaktuj się
-                      </Button>
-                    ) : (
-                      <Button
-                        variant={pkg.popular ? "default" : "outline"}
-                        className="w-full"
-                      >
-                        {lawFirm.pakietSubskrypcji === "PODSTAWOWY" ? "Wybierz" : "Zmień na ten pakiet"}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      {/* FAQ or Additional Info */}
+      {/* FAQ */}
       <Card>
         <CardHeader>
           <CardTitle>Najczęściej zadawane pytania</CardTitle>

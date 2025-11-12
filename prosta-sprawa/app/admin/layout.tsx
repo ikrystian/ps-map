@@ -44,6 +44,7 @@ const navigation = [
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
+  { name: "Pakiety", href: "/admin/pakiety", icon: Shield }
 ]
 
 export default function AdminLayout({
