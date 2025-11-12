@@ -1,0 +1,86 @@
+# Plan for Case Management Functionality (Admin)
+
+## 1. Objective
+
+Create a case management interface for administrators to perform CRUD (Create, Read, Update, Delete) operations on all cases (`Sprawa`) in the system. This will allow admins to monitor, moderate, and assist in the case lifecycle.
+
+## 2. Core Features
+
+- **List Cases:**
+  - Display a paginated table of all cases.
+  - Columns: Case ID, Title, Submitting Client, Assigned Law Firm (if any), Category, Status (e.g., 'Nowa', 'Oczekuje na oferty', 'W toku', 'Zakończona', 'Anulowana'), Creation Date.
+  - Add advanced search and filtering capabilities (by title, client name, law firm name, category, status).
+
+- **View Case Details:**
+  - Clicking on a case in the table will lead to a detailed view.
+  - Display all case information from the `Sprawa` model.
+  - Show related information:
+    - The client (`Klient`) who submitted the case.
+    - The list of offers (`Oferta`) submitted by law firms.
+    - The selected law firm (`Kancelaria`) for the case.
+    - All messages (`Wiadomosc`) exchanged between the client and the law firm.
+    - Attached files.
+
+- **Add New Case (for a user):**
+  - While cases are typically created by clients, an admin might need to create one on behalf of a user.
+  - A form to create a new case.
+  - Fields for title, description, category, and selecting the client (user) for whom the case is being created.
+
+- **Edit Case:**
+  - A form to modify existing case data.
+  - Admins should be able to change:
+    - Case title and description.
+    - Case category.
+    - Case status (e.g., manually close a case, reopen a case).
+    - Assign or reassign a case to a different law firm if needed (this should be handled with care).
+
+- **Delete/Archive Case:**
+  - Ability to delete or archive a case.
+  - A confirmation modal should be displayed before the action.
+  - **Archive (Soft Delete):** Mark the case as 'archived' or 'hidden'. This is the preferred method to maintain data integrity and history. The case would be hidden from normal views but accessible by admins.
+  - **Hard Delete:** Permanently remove the case and all its related data (offers, messages). This is destructive and should be used with extreme caution.
+
+## 3. Technical Implementation Plan
+
+### 3.1. Backend (API Endpoints)
+
+- `GET /api/admin/cases`: Fetch a list of all cases (with pagination, search, and filtering).
+- `GET /api/admin/cases/{id}`: Fetch details for a single case.
+- `POST /api/admin/cases`: Create a new case on behalf of a user.
+- `PUT /api/admin/cases/{id}`: Update an existing case.
+- `DELETE /api/admin/cases/{id}`: Delete/Archive a case.
+
+- **Authentication & Authorization:**
+  - All endpoints must be protected and accessible only by users with the 'admin' role.
+
+### 3.2. Frontend (UI Components)
+
+- **Location:** `app/admin/cases/page.tsx`
+- **Case Table Component:**
+  - Use `shadcn/ui/table` to display the case list.
+  - Implement server-side pagination, sorting, and filtering.
+  - Each row should have "View Details", "Edit", and "Delete/Archive" action buttons.
+- **Case Details View:**
+  - A dedicated page `app/admin/cases/{id}/page.tsx` to show all case details, including related offers, messages, and files.
+- **Case Form Component (for Add/Edit):**
+  - A reusable form using `shadcn/ui/form` with `zod` for validation.
+- **Delete/Archive Confirmation Dialog:**
+  - Use `shadcn/ui/alert-dialog` to confirm the action.
+
+### 3.3. Database (Prisma Schema)
+
+- Review the `Sprawa` model in `prisma/schema.prisma`.
+- Ensure it has a comprehensive `status` field (e.g., `enum CaseStatus { ... }`).
+- For archiving/soft-delete, add a field like `isArchived` (Boolean) or `archivedAt` (DateTime?).
+
+## 4. Development Steps
+
+1.  **Schema Update:** Modify `prisma/schema.prisma` if new fields are needed for status or archiving. Run `prisma migrate dev`.
+2.  **API Routes:** Implement the required API endpoints in `app/api/admin/cases/`.
+3.  **UI - List Page:** Create the main case list page at `app/admin/cases/page.tsx`.
+4.  **UI - Data Table:** Build the data table component with columns, pagination, and filters.
+5.  **UI - Details Page:** Create the detailed view page for a single case.
+6.  **UI - Forms:** Create the add/edit case form.
+7.  **UI - Actions:** Implement the logic for the action buttons.
+8.  **Testing:** Write tests for the new API endpoints and UI components.
+9.  **Documentation:** Update `STRUCTURE.md` and any other relevant documentation.

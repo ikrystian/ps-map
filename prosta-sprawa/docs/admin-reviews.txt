@@ -1,0 +1,89 @@
+# Plan for Review Management Functionality (Admin)
+
+## 1. Objective
+
+Create a review management interface for administrators to perform CRUD (Create, Read, Update, Delete) operations on all reviews (`Opinia`) in the system. This will allow admins to moderate, approve, or remove reviews to maintain quality and relevance.
+
+## 2. Core Features
+
+- **List Reviews:**
+  - Display a paginated table of all reviews.
+  - Columns: Review ID, Author (Client), Reviewed Entity (Law Firm/Case), Rating (stars), Content Snippet, Status (e.g., 'Pending', 'Approved', 'Rejected'), Submission Date.
+  - Add advanced search and filtering capabilities (by author, reviewed entity, rating, status, keywords in content).
+
+- **View Review Details:**
+  - Clicking on a review in the table will lead to a detailed view.
+  - Display all review information from the `Opinia` model.
+  - Show related information:
+    - The client (`Klient`) who wrote the review.
+    - The law firm (`Kancelaria`) or case (`Sprawa`) that was reviewed.
+    - Full review content.
+
+- **Add New Review (on behalf of a user):**
+  - While reviews are typically submitted by clients, an admin might need to add one (e.g., from an offline source or to correct an error).
+  - A form to create a new review.
+  - Fields for author (client), reviewed entity (law firm/case), rating, and content.
+
+- **Edit Review:**
+  - A form to modify existing review data.
+  - Admins should be able to change:
+    - Review content.
+    - Rating.
+    - Status (e.g., change from 'Pending' to 'Approved' or 'Rejected').
+    - Associate with a different author or reviewed entity (with caution).
+
+- **Moderate Review Status:**
+  - Quick actions to approve or reject reviews directly from the list view.
+  - This is a critical feature for maintaining content quality.
+
+- **Delete Review:**
+  - Ability to delete a review.
+  - A confirmation modal should be displayed before deletion.
+  - **Soft Delete:** Mark the review as 'deleted' or 'inactive' to preserve historical data and prevent accidental permanent loss.
+  - **Hard Delete:** Permanently remove the review record.
+
+## 3. Technical Implementation Plan
+
+### 3.1. Backend (API Endpoints)
+
+- `GET /api/admin/reviews`: Fetch a list of all reviews (with pagination, search, and filtering).
+- `GET /api/admin/reviews/{id}`: Fetch details for a single review.
+- `POST /api/admin/reviews`: Create a new review.
+- `PUT /api/admin/reviews/{id}`: Update an existing review.
+- `DELETE /api/admin/reviews/{id}`: Delete a review.
+- `PATCH /api/admin/reviews/{id}/status`: Update the status of a review (e.g., approve/reject).
+
+- **Authentication & Authorization:**
+  - All endpoints must be protected and accessible only by users with the 'admin' role.
+
+### 3.2. Frontend (UI Components)
+
+- **Location:** `app/admin/reviews/page.tsx`
+- **Review Table Component:**
+  - Use `shadcn/ui/table` to display the review list.
+  - Implement server-side pagination, sorting, and filtering.
+  - Each row should have "View Details", "Edit", "Approve", "Reject", and "Delete" action buttons.
+- **Review Details View:**
+  - A dedicated page `app/admin/reviews/{id}/page.tsx` to show all review details.
+- **Review Form Component (for Add/Edit):**
+  - A reusable form using `shadcn/ui/form` with `zod` for validation.
+- **Delete Confirmation Dialog:**
+  - Use `shadcn/ui/alert-dialog` to confirm the delete action.
+
+### 3.3. Database (Prisma Schema)
+
+- Review the `Opinia` model in `prisma/schema.prisma`.
+- Ensure it has a `status` field (e.g., `enum ReviewStatus { PENDING, APPROVED, REJECTED }`).
+- For soft-delete, consider an `isDeleted` (Boolean) or `deletedAt` (DateTime?) field.
+
+## 4. Development Steps
+
+1.  **Schema Update:** Modify `prisma/schema.prisma` if new fields are needed for status or soft-delete. Run `prisma migrate dev`.
+2.  **API Routes:** Implement the required API endpoints in `app/api/admin/reviews/`.
+3.  **UI - List Page:** Create the main review list page at `app/admin/reviews/page.tsx`.
+4.  **UI - Data Table:** Build the data table component with columns, pagination, and filters.
+5.  **UI - Details Page:** Create the detailed view page for a single review.
+6.  **UI - Forms:** Create the add/edit review form.
+7.  **UI - Actions:** Implement the logic for the action buttons (Edit, Approve, Reject, Delete).
+8.  **Testing:** Write tests for the new API endpoints and UI components.
+9.  **Documentation:** Update `STRUCTURE.md` and any other relevant documentation.

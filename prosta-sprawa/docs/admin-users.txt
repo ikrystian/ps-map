@@ -1,0 +1,83 @@
+# Plan for User Management Functionality (Admin)
+
+## 1. Objective
+
+Create a user management interface for administrators to perform CRUD (Create, Read, Update, Delete) operations on all users in the system.
+
+## 2. Core Features
+
+- **List Users:**
+  - Display a paginated table of all registered users.
+  - Columns: User ID, Name, Email, Role (e.g., 'klient', 'kancelaria', 'admin'), Registration Date, Status (e.g., 'Active', 'Inactive', 'Suspended').
+  - Add search and filtering capabilities (by name, email, role).
+
+- **View User Details:**
+  - Clicking on a user in the table will lead to a detailed view.
+  - Display all user information from the `User` model.
+  - Show related information, such as associated law firm (`Kancelaria`), client profile (`Klient`), created cases (`Sprawa`), and orders (`Zamowienie`).
+
+- **Add New User:**
+  - A form to create a new user.
+  - Fields for name, email, password, and role.
+  - Ability to associate the new user with a new or existing `Kancelaria` or `Klient` profile.
+  - Send a welcome email with temporary credentials.
+
+- **Edit User:**
+  - A form to modify existing user data.
+  - Admins should be able to change:
+    - User's name, email.
+    - User's role.
+    - User's status (activate, deactivate, suspend).
+    - Reset user's password (send a password reset link).
+
+- **Delete User:**
+  - Ability to delete a user.
+  - A confirmation modal should be displayed before deletion to prevent accidental removal.
+  - Decide on a deletion strategy:
+    - **Soft delete:** Mark the user as 'deleted' in the database but keep the record for historical purposes. This is generally preferred.
+    - **Hard delete:** Permanently remove the user record from the database. This can have cascading effects on related data.
+
+## 3. Technical Implementation Plan
+
+### 3.1. Backend (API Endpoints)
+
+- `GET /api/admin/users`: Fetch a list of all users (with pagination, search, and filtering).
+- `GET /api/admin/users/{id}`: Fetch details for a single user.
+- `POST /api/admin/users`: Create a new user.
+- `PUT /api/admin/users/{id}`: Update an existing user.
+- `DELETE /api/admin/users/{id}`: Delete a user.
+
+- **Authentication & Authorization:**
+  - All endpoints must be protected and accessible only by users with the 'admin' role.
+  - Implement checks in the API handlers using the session user's role.
+
+### 3.2. Frontend (UI Components)
+
+- **Location:** `app/admin/users/page.tsx`
+- **User Table Component:**
+  - Use `shadcn/ui/table` to display the user list.
+  - Implement server-side pagination, sorting, and filtering.
+  - Add a "Add User" button.
+  - Each row should have "Edit" and "Delete" action buttons.
+- **User Form Component (for Add/Edit):**
+  - Create a reusable form using `shadcn/ui/form` with `zod` for validation.
+  - The form will be used for both creating and updating users.
+- **Delete Confirmation Dialog:**
+  - Use `shadcn/ui/alert-dialog` to confirm the delete action.
+
+### 3.3. Database (Prisma Schema)
+
+- Review the `User` model in `prisma/schema.prisma`.
+- Consider adding a `status` field if it doesn't exist (e.g., `enum UserStatus { ACTIVE, INACTIVE, SUSPENDED }`).
+- If implementing soft deletes, add a `deletedAt` (DateTime?) or `isDeleted` (Boolean) field.
+
+## 4. Development Steps
+
+1.  **Schema Update:** Modify `prisma/schema.prisma` to include `status` or soft-delete fields if necessary. Run `prisma migrate dev`.
+2.  **API Routes:** Implement the five API endpoints in `app/api/admin/users/`.
+3.  **UI - List Page:** Create the main user list page at `app/admin/users/page.tsx`.
+4.  **UI - Data Table:** Build the data table component with columns, pagination, and filters.
+5.  **UI - Forms:** Create the add/edit user form.
+6.  **UI - Actions:** Implement the logic for the "Edit" and "Delete" buttons, including the confirmation dialog.
+7.  **Testing:** Add tests for the new API endpoints and UI components.
+8.  **Documentation:** Update `STRUCTURE.md` and any other relevant documentation.
