@@ -405,6 +405,10 @@ model Case {
   // Status
   status                    CaseStatus @default(NOWA)
 
+  // Archiwizacja (soft delete)
+  isArchived                Boolean  @default(false)
+  archivedAt                DateTime?
+
   // Zgody
   akceptujeKlauzule         Boolean  @default(false)
 
@@ -421,6 +425,7 @@ model Case {
   @@index([categoryId])
   @@index([voivodeshipId])
   @@index([status])
+  @@index([isArchived])
   @@index([createdAt])
 }
 
