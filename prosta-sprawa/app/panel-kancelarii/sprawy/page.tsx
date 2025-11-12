@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 
 interface Case {
   id: string
@@ -64,7 +64,6 @@ interface Category {
 
 const SprawyPage = () => {
   const router = useRouter()
-  const { toast } = useToast()
 
   const [cases, setCases] = useState<Case[]>([])
   const [filteredCases, setFilteredCases] = useState<Case[]>([])
@@ -124,11 +123,7 @@ const SprawyPage = () => {
       }
     } catch (error) {
       console.error("Error fetching cases:", error)
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nie udało się pobrać spraw",
-      })
+      toast.error("Nie udało się pobrać spraw")
     } finally {
       setLoading(false)
     }
@@ -164,16 +159,10 @@ const SprawyPage = () => {
 
     if (isFavorite) {
       newFavorites.delete(id)
-      toast({
-        title: "Usunięto z obserwowanych",
-        description: "Sprawa została usunięta z listy obserwowanych",
-      })
+      toast.success("Sprawa została usunięta z listy obserwowanych")
     } else {
       newFavorites.add(id)
-      toast({
-        title: "Dodano do obserwowanych",
-        description: "Sprawa została dodana do listy obserwowanych",
-      })
+      toast.success("Sprawa została dodana do listy obserwowanych")
     }
 
     saveFavorites(newFavorites)
@@ -198,20 +187,13 @@ const SprawyPage = () => {
       // Usuń sprawę z listy
       setCases(cases.filter((c) => c.id !== caseToReject))
 
-      toast({
-        title: "Sprawa odrzucona",
-        description: "Sprawa została odrzucona i ukryta z listy",
-      })
+      toast.success("Sprawa została odrzucona i ukryta z listy")
 
       setRejectModalOpen(false)
       setCaseToReject(null)
     } catch (error) {
       console.error("Error rejecting case:", error)
-      toast({
-        variant: "destructive",
-        title: "Błąd",
-        description: "Nie udało się odrzucić sprawy",
-      })
+      toast.error("Nie udało się odrzucić sprawy")
     }
   }
 

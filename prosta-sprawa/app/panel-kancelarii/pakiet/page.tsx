@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   Select,
   SelectContent,
@@ -87,7 +87,6 @@ const renderValue = (value: any): string => {
 
 export default function LawFirmPackagePage() {
   const { data: session } = useSession()
-  const { toast } = useToast()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [plans, setPlans] = useState<SubscriptionPlan[]>([])
   const [selectedPeriods, setSelectedPeriods] = useState<Record<string, string>>({})
@@ -207,19 +206,12 @@ export default function LawFirmPackagePage() {
 
       const data = await response.json()
 
-      toast({
-        title: "Pakiet aktywowany!",
-        description: `Gratulacje! Aktywowałeś pakiet ${data.plan.nazwa}. Otrzymałeś ${data.plan.punktyGratis} punktów gratis!`,
-      })
+      toast.success(`Gratulacje! Aktywowałeś pakiet ${data.plan.nazwa}. Otrzymałeś ${data.plan.punktyGratis} punktów gratis!`)
 
       // Odśwież dane
       await fetchData()
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się aktywować pakietu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się aktywować pakietu")
     } finally {
       setPurchasing(false)
       setSelectedPlan(null)

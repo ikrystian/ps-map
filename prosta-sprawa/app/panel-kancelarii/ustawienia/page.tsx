@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { AlertCircle, Loader2, Save, Info } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -48,7 +48,6 @@ interface NotificationSettings {
 
 export default function LawFirmSettingsPage() {
   const { data: session } = useSession()
-  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
   const [isSavingUser, setIsSavingUser] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
@@ -103,11 +102,7 @@ export default function LawFirmSettingsPage() {
         }
       } catch (error) {
         console.error("Error fetching data:", error)
-        toast({
-          title: "Błąd",
-          description: "Nie udało się pobrać danych",
-          variant: "destructive",
-        })
+        toast.error("Nie udało się pobrać danych")
       } finally {
         setIsLoading(false)
       }
@@ -130,11 +125,7 @@ export default function LawFirmSettingsPage() {
   const handleSettingChange = (field: keyof NotificationSettings, value: boolean) => {
     // Nie pozwól na wyłączenie obowiązkowych pól
     if ((field === "kontaktKlienci" || field === "kluczowe") && !value) {
-      toast({
-        title: "Uwaga",
-        description: "Ta opcja jest obowiązkowa i nie może być wyłączona",
-        variant: "destructive",
-      })
+      toast.error("Ta opcja jest obowiązkowa i nie może być wyłączona")
       return
     }
 
@@ -163,17 +154,10 @@ export default function LawFirmSettingsPage() {
         throw new Error("Failed to update user data")
       }
 
-      toast({
-        title: "Sukces",
-        description: "Dane osobowe zostały zaktualizowane",
-      })
+      toast.success("Dane osobowe zostały zaktualizowane")
     } catch (error) {
       console.error("Error saving user data:", error)
-      toast({
-        title: "Błąd",
-        description: "Nie udało się zapisać danych osobowych",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się zapisać danych osobowych")
     } finally {
       setIsSavingUser(false)
     }
@@ -196,17 +180,10 @@ export default function LawFirmSettingsPage() {
         throw new Error("Failed to update settings")
       }
 
-      toast({
-        title: "Sukces",
-        description: "Ustawienia zostały zaktualizowane",
-      })
+      toast.success("Ustawienia zostały zaktualizowane")
     } catch (error) {
       console.error("Error saving settings:", error)
-      toast({
-        title: "Błąd",
-        description: "Nie udało się zapisać ustawień",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się zapisać ustawień")
     } finally {
       setIsSavingSettings(false)
     }

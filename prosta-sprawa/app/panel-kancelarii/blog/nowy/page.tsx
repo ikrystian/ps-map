@@ -24,7 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -52,7 +52,6 @@ export default function LawFirmNewBlogPostPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingCategories, setLoadingCategories] = useState(true)
-  const { toast } = useToast()
   const router = useRouter()
 
   const form = useForm<PostFormValues>({
@@ -104,21 +103,14 @@ export default function LawFirmNewBlogPostPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: values.opublikowany ? "Artykuł został opublikowany" : "Szkic został zapisany",
-        })
+        toast.success(values.opublikowany ? "Artykuł został opublikowany" : "Szkic został zapisany")
         router.push("/panel-kancelarii/blog")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd tworzenia wpisu")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się zapisać artykułu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się zapisać artykułu")
     } finally {
       setLoading(false)
     }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   Package,
   Plus,
@@ -45,7 +45,6 @@ interface SubscriptionPlan {
 }
 
 export default function AdminSubscriptionPlansPage() {
-  const { toast } = useToast()
   const [plans, setPlans] = useState<SubscriptionPlan[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -60,11 +59,7 @@ export default function AdminSubscriptionPlansPage() {
       const data = await response.json()
       setPlans(data)
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać pakietów",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać pakietów")
     } finally {
       setLoading(false)
     }
@@ -80,18 +75,11 @@ export default function AdminSubscriptionPlansPage() {
 
       if (!response.ok) throw new Error("Failed to delete plan")
 
-      toast({
-        title: "Sukces",
-        description: "Pakiet został dezaktywowany",
-      })
+      toast.success("Pakiet został dezaktywowany")
 
       fetchPlans()
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się dezaktywować pakietu",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się dezaktywować pakietu")
     }
   }
 

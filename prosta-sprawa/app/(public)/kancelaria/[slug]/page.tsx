@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   MapPin,
   Phone,
@@ -188,7 +188,6 @@ export default function LawFirmProfilePage() {
   const params = useParams()
   const router = useRouter()
   const { data: session } = useSession()
-  const { toast } = useToast()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -406,21 +405,13 @@ export default function LawFirmProfilePage() {
 
   const handleToggleFavorite = async () => {
     if (!session?.user) {
-      toast({
-        title: "Wymagane logowanie",
-        description: "Musisz być zalogowany, aby dodać kancelarię do ulubionych",
-        variant: "destructive",
-      })
+      toast.error("Musisz być zalogowany, aby dodać kancelarię do ulubionych")
       router.push("/auth/login")
       return
     }
 
     if (session.user.role !== "CLIENT") {
-      toast({
-        title: "Brak uprawnień",
-        description: "Tylko klienci mogą dodawać kancelarie do ulubionych",
-        variant: "destructive",
-      })
+      toast.error("Tylko klienci mogą dodawać kancelarie do ulubionych")
       return
     }
 
@@ -441,18 +432,13 @@ export default function LawFirmProfilePage() {
 
       setIsFavorite(!isFavorite)
 
-      toast({
-        title: isFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych",
-        description: isFavorite
+      toast.success(
+        isFavorite
           ? "Kancelaria została usunięta z Twojej listy ulubionych"
-          : "Kancelaria została dodana do Twojej listy ulubionych",
-      })
+          : "Kancelaria została dodana do Twojej listy ulubionych"
+      )
     } catch (err) {
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setIsFavoriteLoading(false)
     }

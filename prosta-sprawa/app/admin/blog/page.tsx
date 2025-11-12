@@ -23,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface BlogPost {
@@ -64,7 +64,6 @@ export default function AdminBlogPage() {
     limit: 20,
     pages: 0,
   })
-  const { toast } = useToast()
 
   const fetchPosts = async (page: number = 1) => {
     try {
@@ -78,11 +77,7 @@ export default function AdminBlogPage() {
         throw new Error("Błąd pobierania wpisów")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać wpisów bloga",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać wpisów bloga")
     } finally {
       setLoading(false)
     }
@@ -101,10 +96,7 @@ export default function AdminBlogPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Wpis został usunięty",
-        })
+        toast.success("Wpis został usunięty")
         setIsDeleteDialogOpen(false)
         setSelectedPost(null)
         fetchPosts(pagination.page)
@@ -113,11 +105,7 @@ export default function AdminBlogPage() {
         throw new Error(error.error || "Błąd usuwania wpisu")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć wpisu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć wpisu")
     }
   }
 

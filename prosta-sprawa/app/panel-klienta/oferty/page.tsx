@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   FileText,
   Building2,
@@ -129,7 +129,6 @@ const getPaymentTermsLabel = (terms: string) => {
 export default function ClientOffersPage() {
   const { data: session } = useSession()
   const router = useRouter()
-  const { toast } = useToast()
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -202,12 +201,10 @@ export default function ClientOffersPage() {
         throw new Error(errorData.error || "Wystąpił błąd")
       }
 
-      toast({
-        title: actionType === "accept" ? "Oferta zaakceptowana" : "Oferta odrzucona",
-        description: actionType === "accept"
-          ? "Kancelaria została powiadomiona o akceptacji oferty"
-          : "Kancelaria została powiadomiona o odrzuceniu oferty",
-      })
+      const message = actionType === "accept"
+        ? "Kancelaria została powiadomiona o akceptacji oferty"
+        : "Kancelaria została powiadomiona o odrzuceniu oferty"
+      toast.success(message)
 
       setConfirmDialogOpen(false)
       setSelectedOffer(null)
@@ -215,11 +212,7 @@ export default function ClientOffersPage() {
       fetchOffers()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setSubmitting(false)
     }

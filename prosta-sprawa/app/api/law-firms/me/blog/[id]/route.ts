@@ -6,7 +6,7 @@ import { generateSlug } from "@/lib/utils"
 // GET /api/law-firms/me/blog/[id] - Pobiera konkretny wpis do edycji
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -27,9 +27,11 @@ export async function GET(
       )
     }
 
+    const { id } = await params
+
     // Pobierz wpis
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
       },
@@ -57,7 +59,7 @@ export async function GET(
 // PUT /api/law-firms/me/blog/[id] - Aktualizuje wpis
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -78,9 +80,11 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
+
     // Sprawdź czy wpis istnieje
     const existingPost = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingPost) {
@@ -149,7 +153,7 @@ export async function PUT(
 
     // Aktualizuj wpis
     const post = await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         tytul,
         slug,
@@ -188,7 +192,7 @@ export async function PUT(
 // DELETE /api/law-firms/me/blog/[id] - Usuwa wpis
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -209,9 +213,11 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
+
     // Sprawdź czy wpis istnieje
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!post) {
@@ -227,7 +233,7 @@ export async function DELETE(
     }
 
     await prisma.blogPost.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Wpis został usunięty" })

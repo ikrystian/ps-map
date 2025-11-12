@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface Review {
@@ -59,7 +59,6 @@ interface Review {
 export default function ReviewDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const reviewId = params.id as string
 
   const [review, setReview] = useState<Review | null>(null)
@@ -111,11 +110,7 @@ export default function ReviewDetailsPage() {
         throw new Error("Nie znaleziono opinii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się pobrać opinii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się pobrać opinii")
       router.push("/admin/reviews")
     } finally {
       setLoading(false)
@@ -128,11 +123,7 @@ export default function ReviewDetailsPage() {
 
       // Validate
       if (trescOpinii.length < 50) {
-        toast({
-          title: "Błąd walidacji",
-          description: "Treść opinii musi zawierać minimum 50 znaków",
-          variant: "destructive",
-        })
+        toast.error("Treść opinii musi zawierać minimum 50 znaków")
         return
       }
 
@@ -158,10 +149,7 @@ export default function ReviewDetailsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Opinia została zaktualizowana",
-        })
+        toast.success("Opinia została zaktualizowana")
         setIsEditing(false)
         fetchReview()
       } else {
@@ -169,11 +157,7 @@ export default function ReviewDetailsPage() {
         throw new Error(error.error || "Błąd aktualizacji opinii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się zaktualizować opinii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować opinii")
     } finally {
       setSaving(false)
     }
@@ -186,21 +170,14 @@ export default function ReviewDetailsPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Opinia została usunięta",
-        })
+        toast.success("Opinia została usunięta")
         router.push("/admin/reviews")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd usuwania opinii")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się usunąć opinii",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć opinii")
     }
   }
 

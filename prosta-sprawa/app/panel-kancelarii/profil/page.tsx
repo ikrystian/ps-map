@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { AlertCircle, Loader2 } from "lucide-react"
 
 interface Voivodeship {
@@ -27,7 +27,6 @@ interface Category {
 
 export default function LawFirmProfilePage() {
   const { data: session } = useSession()
-  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
@@ -161,11 +160,7 @@ export default function LawFirmProfilePage() {
         }
       } catch (error) {
         console.error("Error fetching data:", error)
-        toast({
-          title: "Błąd",
-          description: "Nie udało się pobrać danych",
-          variant: "destructive",
-        })
+        toast.error("Nie udało się pobrać danych")
       } finally {
         setIsLoading(false)
       }
@@ -191,17 +186,10 @@ export default function LawFirmProfilePage() {
         throw new Error("Failed to update profile")
       }
 
-      toast({
-        title: "Sukces",
-        description: "Profil został zaktualizowany",
-      })
+      toast.success("Profil został zaktualizowany")
     } catch (error) {
       console.error("Error saving profile:", error)
-      toast({
-        title: "Błąd",
-        description: "Nie udało się zapisać profilu",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się zapisać profilu")
     } finally {
       setIsSaving(false)
     }

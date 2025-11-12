@@ -5,13 +5,12 @@ import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import Link from "next/link"
 
 export default function EditCasePage() {
   const params = useParams()
   const router = useRouter()
-  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [caseData, setCaseData] = useState<any>(null)
 
@@ -30,11 +29,7 @@ export default function EditCasePage() {
         throw new Error("Błąd pobierania danych sprawy")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się pobrać danych sprawy",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się pobrać danych sprawy")
       router.push("/admin/cases")
     } finally {
       setLoading(false)

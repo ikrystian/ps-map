@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import {
   Accordion,
   AccordionContent,
@@ -182,7 +182,6 @@ const helpItems: HelpItem[] = [
 ]
 
 export default function HelpCenterPage() {
-  const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [filteredItems, setFilteredItems] = useState<HelpItem[]>(helpItems)
@@ -228,10 +227,7 @@ export default function HelpCenterPage() {
     const url = `${window.location.origin}${window.location.pathname}#${itemId}`
     navigator.clipboard.writeText(url)
 
-    toast({
-      title: "Link skopiowany!",
-      description: "Link do tego tematu został skopiowany do schowka",
-    })
+    toast.success("Link do tego tematu został skopiowany do schowka")
 
     // Aktualizuj URL bez przeładowania strony
     window.history.pushState(null, "", `#${itemId}`)

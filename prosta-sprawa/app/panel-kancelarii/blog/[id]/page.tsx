@@ -24,7 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -53,7 +53,6 @@ export default function LawFirmEditBlogPostPage() {
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
-  const { toast } = useToast()
   const router = useRouter()
   const params = useParams()
   const postId = params.id as string
@@ -95,11 +94,7 @@ export default function LawFirmEditBlogPostPage() {
       const response = await fetch(`/api/law-firms/me/blog/${postId}`)
 
       if (response.status === 403) {
-        toast({
-          title: "Błąd",
-          description: "Nie masz uprawnień do edycji tego wpisu",
-          variant: "destructive",
-        })
+        toast.error("Nie masz uprawnień do edycji tego wpisu")
         router.push("/panel-kancelarii/blog")
         return
       }
@@ -119,11 +114,7 @@ export default function LawFirmEditBlogPostPage() {
         throw new Error("Nie znaleziono wpisu")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się pobrać wpisu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się pobrać wpisu")
       router.push("/panel-kancelarii/blog")
     } finally {
       setLoadingPost(false)
@@ -148,21 +139,14 @@ export default function LawFirmEditBlogPostPage() {
       })
 
       if (response.ok) {
-        toast({
-          title: "Sukces",
-          description: "Artykuł został zaktualizowany",
-        })
+        toast.success("Artykuł został zaktualizowany")
         router.push("/panel-kancelarii/blog")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd aktualizacji wpisu")
       }
     } catch (error) {
-      toast({
-        title: "Błąd",
-        description: error instanceof Error ? error.message : "Nie udało się zaktualizować artykułu",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować artykułu")
     } finally {
       setLoading(false)
     }
