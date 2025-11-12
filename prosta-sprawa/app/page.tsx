@@ -56,7 +56,7 @@ interface Category {
   aktywna: boolean
 }
 
-export default function Home() {
+export default function HomePage() {
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
