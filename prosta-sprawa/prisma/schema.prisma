@@ -661,6 +661,28 @@ model Certificate {
 }
 
 // ============================================================================
+// KATEGORIE BLOGA
+// ============================================================================
+
+model BlogCategory {
+  id          String   @id @default(uuid())
+  nazwa       String   @unique
+  slug        String   @unique
+  opis        String?
+
+  aktywna     Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacje
+  blogPosts   BlogPost[]
+
+  @@index([slug])
+  @@index([aktywna])
+}
+
+// ============================================================================
 // BLOG KANCELARII
 // ============================================================================
 
@@ -672,7 +694,11 @@ model BlogPost {
   tytul                 String
   slug                  String   @unique
   tresc                 String
-  kategoriaWpisu        String?
+
+  // Kategoria bloga
+  categoryId            String?
+  category              BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
   tagi                  String?  // JSON array tagów
   obrazekWyrozniajacy   String?  // URL
 
@@ -692,6 +718,7 @@ model BlogPost {
   comments              BlogComment[]
 
   @@index([lawFirmId])
+  @@index([categoryId])
   @@index([slug])
   @@index([opublikowany])
 }
