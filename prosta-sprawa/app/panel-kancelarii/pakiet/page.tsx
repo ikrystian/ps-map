@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/use-toast"
 import {
   Select,
   SelectContent,
@@ -20,7 +21,18 @@ import {
   Check,
   X,
   Gift,
+  ShoppingCart,
 } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface LawFirm {
   id: string
@@ -75,11 +87,15 @@ const renderValue = (value: any): string => {
 
 export default function LawFirmPackagePage() {
   const { data: session } = useSession()
+  const { toast } = useToast()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [plans, setPlans] = useState<SubscriptionPlan[]>([])
   const [selectedPeriods, setSelectedPeriods] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [purchasing, setPurchasing] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -132,6 +148,81 @@ export default function LawFirmPackagePage() {
       case "12":
       default:
         return `${plan.cena12Miesiecy} zł / rok`
+    }
+  }
+
+  const getPriceValue = (plan: SubscriptionPlan, period: string): number => {
+    switch (period) {
+      case "1":
+        return plan.cena1Miesiac ?? 0
+      case "6":
+        return plan.cena6Miesiecy ?? 0
+      case "12":
+      default:
+        return plan.cena12Miesiecy
+    }
+  }
+
+  const getPeriodLabel = (period: string): string => {
+    switch (period) {
+      case "1":
+        return "1 miesiąc"
+      case "6":
+        return "6 miesięcy"
+      case "12":
+      default:
+        return "12 miesięcy"
+    }
+  }
+
+  const handlePurchaseClick = (plan: SubscriptionPlan) => {
+    setSelectedPlan(plan)
+    setShowConfirmDialog(true)
+  }
+
+  const handleConfirmPurchase = async () => {
+    if (!selectedPlan) return
+
+    setPurchasing(true)
+    setShowConfirmDialog(false)
+
+    try {
+      const period = parseInt(selectedPeriods[selectedPlan.id] || "12")
+
+      const response = await fetch("/api/law-firms/me/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          period: period,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Wystąpił błąd")
+      }
+
+      const data = await response.json()
+
+      toast({
+        title: "Pakiet aktywowany!",
+        description: `Gratulacje! Aktywowałeś pakiet ${data.plan.nazwa}. Otrzymałeś ${data.plan.punktyGratis} punktów gratis!`,
+      })
+
+      // Odśwież dane
+      await fetchData()
+    } catch (error) {
+      toast({
+        title: "Błąd",
+        description: error instanceof Error ? error.message : "Nie udało się aktywować pakietu",
+        variant: "destructive",
+      })
+    } finally {
+      setPurchasing(false)
+      setSelectedPlan(null)
     }
   }
 
@@ -314,8 +405,22 @@ export default function LawFirmPackagePage() {
                           Twój obecny pakiet
                         </Button>
                       ) : (
-                        <Button className="w-full">
-                          Wybieram
+                        <Button
+                          className="w-full"
+                          onClick={() => handlePurchaseClick(plan)}
+                          disabled={purchasing}
+                        >
+                          {purchasing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Aktywacja...
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingCart className="mr-2 h-4 w-4" />
+                              Wybieram
+                            </>
+                          )}
                         </Button>
                       )}
                     </td>
@@ -326,6 +431,70 @@ export default function LawFirmPackagePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Potwierdź aktywację pakietu</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              {selectedPlan && (
+                <>
+                  <div>
+                    <p className="font-semibold text-foreground mb-2">
+                      Aktywujesz pakiet: {selectedPlan.nazwa}
+                    </p>
+                    <div className="space-y-1 text-sm">
+                      <p>
+                        <span className="text-muted-foreground">Okres:</span>{" "}
+                        <span className="font-medium text-foreground">
+                          {getPeriodLabel(selectedPeriods[selectedPlan.id] || "12")}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-muted-foreground">Cena:</span>{" "}
+                        <span className="font-medium text-foreground">
+                          {getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")} zł
+                        </span>
+                      </p>
+                      {selectedPlan.punktyGratis > 0 && (
+                        <p className="flex items-center gap-1 text-green-600">
+                          <Gift className="h-4 w-4" />
+                          <span>Otrzymasz {selectedPlan.punktyGratis} punktów gratis!</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-muted p-4 rounded-lg space-y-2">
+                    <p className="font-semibold text-foreground">Co się zmieni?</p>
+                    <ul className="text-sm space-y-1">
+                      <li>✓ Dostęp do {selectedPlan.dostepDoSpraw ?? "∞"} spraw</li>
+                      <li>✓ {selectedPlan.kategorieSpraw ?? "∞"} kategorii spraw</li>
+                      <li>✓ {selectedPlan.wojewodztwa} województw</li>
+                      <li>✓ {selectedPlan.miasta} miast</li>
+                      {selectedPlan.priorytetWyszukiwanie && <li>✓ Priorytet w wyszukiwaniu</li>}
+                      {selectedPlan.statystykiAnalizy && <li>✓ Statystyki i analizy</li>}
+                      {selectedPlan.mozliwoscBloga && <li>✓ Możliwość prowadzenia bloga</li>}
+                    </ul>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Pakiet zostanie aktywowany natychmiast po potwierdzeniu. W prawdziwej aplikacji
+                    tutaj byłby proces płatności.
+                  </p>
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmPurchase}>
+              Aktywuj pakiet
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* FAQ */}
       <Card>

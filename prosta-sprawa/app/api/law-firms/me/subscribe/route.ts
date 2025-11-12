@@ -1,0 +1,190 @@
+import { NextRequest } from "next/server"
+import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user) {
+      return Response.json(
+        { error: "Musisz być zalogowany" },
+        { status: 401 }
+      )
+    }
+
+    if (session.user.role !== "LAW_FIRM") {
+      return Response.json(
+        { error: "Tylko kancelarie mogą kupować pakiety" },
+        { status: 403 }
+      )
+    }
+
+    const body = await request.json()
+    const { planId, period } = body // period: 1, 6, 12 (months)
+
+    if (!planId || !period) {
+      return Response.json(
+        { error: "Brak wymaganych danych" },
+        { status: 400 }
+      )
+    }
+
+    // Pobierz szczegóły pakietu
+    const plan = await prisma.subscriptionPlan.findUnique({
+      where: { id: planId },
+    })
+
+    if (!plan) {
+      return Response.json(
+        { error: "Nie znaleziono pakietu" },
+        { status: 404 }
+      )
+    }
+
+    if (!plan.aktywny) {
+      return Response.json(
+        { error: "Pakiet jest nieaktywny" },
+        { status: 400 }
+      )
+    }
+
+    // Pobierz dane kancelarii
+    const lawFirm = await prisma.lawFirm.findUnique({
+      where: { userId: session.user.id },
+    })
+
+    if (!lawFirm) {
+      return Response.json(
+        { error: "Nie znaleziono kancelarii" },
+        { status: 404 }
+      )
+    }
+
+    // Oblicz cenę w zależności od okresu
+    let price = 0
+    switch (period) {
+      case 1:
+        price = plan.cena1Miesiac ?? 0
+        break
+      case 6:
+        price = plan.cena6Miesiecy ?? 0
+        break
+      case 12:
+        price = plan.cena12Miesiecy
+        break
+      default:
+        return Response.json(
+          { error: "Nieprawidłowy okres subskrypcji" },
+          { status: 400 }
+        )
+    }
+
+    if (price === 0) {
+      return Response.json(
+        { error: "Cena dla wybranego okresu jest niedostępna" },
+        { status: 400 }
+      )
+    }
+
+    // Oblicz daty subskrypcji
+    const dataPakietuOd = new Date()
+    const dataPakietuDo = new Date()
+    dataPakietuDo.setMonth(dataPakietuDo.getMonth() + period)
+
+    // Generuj numer zamówienia
+    const orderNumber = `SUB-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
+
+    // Aktualizuj kancelarię i utwórz zamówienie w transakcji
+    const [updatedLawFirm, order] = await prisma.$transaction([
+      prisma.lawFirm.update({
+        where: { id: lawFirm.id },
+        data: {
+          pakietSubskrypcji: plan.typ,
+          dataPakietuOd,
+          dataPakietuDo,
+          // Dodaj punkty gratis do salda
+          punktySaldo: {
+            increment: plan.punktyGratis,
+          },
+        },
+      }),
+      prisma.order.create({
+        data: {
+          orderNumber,
+          lawFirmId: lawFirm.id,
+          orderType: "SUBSCRIPTION",
+          subscriptionPlanId: plan.id,
+          subscriptionPeriod: period,
+          packageStartDate: dataPakietuOd,
+          packageEndDate: dataPakietuDo,
+          kwota: price,
+          metodaPlatnosci: "PRZELEW", // W prawdziwej aplikacji byłby wybór
+          statusPlatnosci: "ZAPLACONE", // Symulujemy opłacone zamówienie
+          zaplaconoData: new Date(),
+        },
+      }),
+    ])
+
+    // Generuj numer faktury
+    const invoiceNumber = `FV/${new Date().getFullYear()}/${String(Date.now()).slice(-6)}`
+
+    // Oblicz kwoty VAT
+    const vatRate = 23.0
+    const netAmount = price / (1 + vatRate / 100)
+    const vatAmount = price - netAmount
+    const grossAmount = price
+
+    // Oblicz termin płatności (7 dni)
+    const dueDate = new Date()
+    dueDate.setDate(dueDate.getDate() + 7)
+
+    // Utwórz fakturę
+    const invoice = await prisma.invoice.create({
+      data: {
+        invoiceNumber,
+        orderId: order.id,
+        lawFirmId: lawFirm.id,
+        buyerName: lawFirm.nazwaFirmy,
+        buyerNIP: lawFirm.nip,
+        buyerAddress: lawFirm.adres,
+        buyerPostalCode: lawFirm.kodPocztowy,
+        buyerCity: lawFirm.miasto,
+        netAmount,
+        vatRate,
+        vatAmount,
+        grossAmount,
+        status: "PAID", // Symulujemy opłaconą fakturę
+        dueDate,
+        paymentDate: new Date(),
+      },
+    })
+
+    return Response.json({
+      success: true,
+      message: "Pakiet został aktywowany",
+      lawFirm: updatedLawFirm,
+      plan: {
+        nazwa: plan.nazwa,
+        typ: plan.typ,
+        punktyGratis: plan.punktyGratis,
+        dataPakietuOd,
+        dataPakietuDo,
+      },
+      order: {
+        id: order.id,
+        orderNumber: order.orderNumber,
+      },
+      invoice: {
+        id: invoice.id,
+        invoiceNumber: invoice.invoiceNumber,
+      },
+    })
+  } catch (error) {
+    console.error("Error subscribing to plan:", error)
+    return Response.json(
+      { error: "Wystąpił błąd podczas aktywacji pakietu" },
+      { status: 500 }
+    )
+  }
+}

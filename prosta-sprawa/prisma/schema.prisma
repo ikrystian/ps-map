@@ -238,6 +238,7 @@ model LawFirm {
   offers                Offer[]
   reviews               Review[]
   orders                Order[]
+  invoices              Invoice[]
   promotions            Promotion[]
   favoritedBy           FavoriteLawFirm[]
 
@@ -726,11 +727,25 @@ model BlogComment {
 
 model Order {
   id                String   @id @default(uuid())
+  orderNumber       String?  @unique
   lawFirmId         String
   lawFirm           LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
 
-  pakietPunktow     String   // "100_pkt", "250_pkt", etc.
-  liczbaPunktow     Int
+  // Typ zamówienia
+  orderType         OrderType @default(POINTS)
+
+  // Dla zamówień punktów
+  pakietPunktow     String?   // "100_pkt", "250_pkt", etc.
+  liczbaPunktow     Int?
+
+  // Dla zamówień subskrypcji
+  subscriptionPlanId String?
+  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id])
+  subscriptionPeriod Int?      // 1, 6, 12 miesięcy
+  packageStartDate   DateTime?
+  packageEndDate     DateTime?
+
+  // Wspólne pola
   kwota             Float
 
   metodaPlatnosci   PaymentMethod
@@ -747,9 +762,18 @@ model Order {
   updatedAt         DateTime @updatedAt
   zaplaconoData     DateTime?
 
+  // Relacja z fakturą
+  invoice           Invoice?
+
   @@index([lawFirmId])
+  @@index([orderNumber])
   @@index([statusPlatnosci])
   @@index([createdAt])
+}
+
+enum OrderType {
+  POINTS        // Zakup punktów
+  SUBSCRIPTION  // Zakup subskrypcji
 }
 
 enum PaymentMethod {
@@ -979,8 +1003,67 @@ model SubscriptionPlan {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // Relacje
+  orders                Order[]
+
   @@index([typ])
   @@index([aktywny])
+}
+
+// ============================================================================
+// FAKTURY VAT
+// ============================================================================
+
+model Invoice {
+  id                    String   @id @default(uuid())
+  invoiceNumber         String   @unique
+
+  // Relacje
+  orderId               String   @unique
+  order                 Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  lawFirmId             String
+  lawFirm               LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  // Dane nabywcy (zapisane na moment wystawienia faktury)
+  buyerName             String
+  buyerNIP              String?
+  buyerAddress          String
+  buyerPostalCode       String
+  buyerCity             String
+  buyerCountry          String   @default("Polska")
+
+  // Kwoty
+  netAmount             Float    // Kwota netto
+  vatRate               Float    @default(23.0) // Stawka VAT w %
+  vatAmount             Float    // Kwota VAT
+  grossAmount           Float    // Kwota brutto
+
+  // Status i daty
+  status                InvoiceStatus @default(ISSUED)
+  issueDate             DateTime @default(now())
+  saleDate              DateTime @default(now())
+  paymentDate           DateTime?
+  dueDate               DateTime
+
+  // PDF
+  pdfUrl                String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([invoiceNumber])
+  @@index([status])
+  @@index([issueDate])
+}
+
+enum InvoiceStatus {
+  DRAFT         // Szkic
+  ISSUED        // Wystawiona
+  SENT          // Wysłana
+  PAID          // Opłacona
+  CANCELLED     // Anulowana
 }
 
 // ============================================================================
