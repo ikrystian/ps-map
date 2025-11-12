@@ -23,7 +23,6 @@ import PublicHeader from "@/components/PublicHeader"
 export default function WinWithUsPage() {
   return (
     <div className="min-h-screen">
-      <PublicHeader />
 
       {/* SEKCJA 1: Jak działa Prosta Sprawa */}
       <section className="py-20 md:py-32 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
