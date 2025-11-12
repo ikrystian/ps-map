@@ -188,7 +188,7 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null 
               {/* Dla prawnika */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/rejestracja/kancelaria" className="px-4 py-2 hover:text-primary">
+                  <Link href="/dla-prawnika" className="px-4 py-2 hover:text-primary">
                     Dla prawnika
                   </Link>
                 </NavigationMenuLink>

@@ -300,164 +300,163 @@ export default function SearchLawyerPage() {
 
         {/* Results */}
         <div>
-            {/* Results Count */}
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-lg font-medium">
-                Znaleziono <span className="text-primary">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
-              </p>
-            </div>
+          {/* Results Count */}
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-lg font-medium">
+              Znaleziono <span className="text-primary">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
+            </p>
+          </div>
 
-            {/* Loading State */}
-            {isLoading ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Ładowanie kancelarii...</p>
-              </div>
-            ) : lawFirms.length > 0 ? (
-              <>
-                {/* Law Firms Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                  {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                        <CardHeader>
-                          {firm.logo ? (
-                            <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
-                              <Image
-                                src={firm.logo}
-                                alt={firm.nazwa}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <Avatar className="mx-auto w-20 h-20 mb-3">
-                              <AvatarFallback className="text-xl">
-                                {firm.nazwa.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex items-center justify-center gap-2">
-                            <CardTitle className="text-lg text-center">
-                              {firm.nazwa}
-                            </CardTitle>
-                            {firm.zweryfikowana && (
-                              <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                            )}
+          {/* Loading State */}
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Ładowanie kancelarii...</p>
+            </div>
+          ) : lawFirms.length > 0 ? (
+            <>
+              {/* Law Firms Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                {lawFirms.map((firm) => (
+                  <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                    <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                      <CardHeader>
+                        {firm.logo ? (
+                          <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
+                            <Image
+                              src={firm.logo}
+                              alt={firm.nazwa}
+                              fill
+                              className="object-cover"
+                            />
                           </div>
-                          {firm.categories.length > 0 && (
-                            <p className="text-sm text-muted-foreground text-center">
-                              {firm.categories[0].nazwa}
-                            </p>
+                        ) : (
+                          <Avatar className="mx-auto w-20 h-20 mb-3">
+                            <AvatarFallback className="text-xl">
+                              {firm.nazwa.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className="flex items-center justify-center gap-2">
+                          <CardTitle className="text-lg text-center">
+                            {firm.nazwa}
+                          </CardTitle>
+                          {firm.zweryfikowana && (
+                            <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
                           )}
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {/* Location */}
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">
-                                {firm.miasto}, {firm.voivodeship.nazwa}
+                        </div>
+                        {firm.categories.length > 0 && (
+                          <p className="text-sm text-muted-foreground text-center">
+                            {firm.categories[0].nazwa}
+                          </p>
+                        )}
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {/* Location */}
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">
+                              {firm.miasto}, {firm.voivodeship.nazwa}
+                            </span>
+                          </div>
+
+                          {/* Rating */}
+                          {firm.reviewCount > 0 && (
+                            <div className="flex items-center">
+                              <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                              <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
+                              <span className="text-sm text-muted-foreground ml-2">
+                                ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
                               </span>
                             </div>
+                          )}
 
-                            {/* Rating */}
-                            {firm.reviewCount > 0 && (
-                              <div className="flex items-center">
-                                <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
-                                <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
-                                <span className="text-sm text-muted-foreground ml-2">
-                                  ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
-                                </span>
-                              </div>
-                            )}
+                          {/* Description */}
+                          {firm.opis && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {firm.opis}
+                            </p>
+                          )}
 
-                            {/* Description */}
-                            {firm.opis && (
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {firm.opis}
-                              </p>
-                            )}
-
-                            {/* Categories */}
-                            {firm.categories.length > 1 && (
-                              <div className="flex flex-wrap gap-1">
-                                {firm.categories.slice(1, 3).map((cat) => (
-                                  <Badge key={cat.slug} variant="secondary" className="text-xs">
-                                    {cat.nazwa}
-                                  </Badge>
-                                ))}
-                                {firm.categories.length > 3 && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    +{firm.categories.length - 3}
-                                  </Badge>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Badges */}
-                            <div className="flex gap-2">
-                              {firm.onlineOnly && (
-                                <Badge variant="outline" className="text-xs">
-                                  Online
+                          {/* Categories */}
+                          {firm.categories.length > 1 && (
+                            <div className="flex flex-wrap gap-1">
+                              {firm.categories.slice(1, 3).map((cat) => (
+                                <Badge key={cat.slug} variant="secondary" className="text-xs">
+                                  {cat.nazwa}
+                                </Badge>
+                              ))}
+                              {firm.categories.length > 3 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{firm.categories.length - 3}
                                 </Badge>
                               )}
                             </div>
+                          )}
+
+                          {/* Badges */}
+                          <div className="flex gap-2">
+                            {firm.onlineOnly && (
+                              <Badge variant="outline" className="text-xs">
+                                Online
+                              </Badge>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex justify-center gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                    >
-                      Poprzednia
-                    </Button>
-
-                    <div className="flex items-center gap-2">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        const pageNum = i + 1
-                        return (
-                          <Button
-                            key={pageNum}
-                            variant={page === pageNum ? "default" : "outline"}
-                            onClick={() => setPage(pageNum)}
-                          >
-                            {pageNum}
-                          </Button>
-                        )
-                      })}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={page === totalPages}
-                    >
-                      Następna
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <Filter className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Nie znaleziono kancelarii</h3>
-                <p className="text-muted-foreground mb-4">
-                  Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników
-                </p>
-                <Button variant="outline" onClick={handleResetFilters}>
-                  Wyczyść filtry
-                </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
+                    Poprzednia
+                  </Button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = i + 1
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={page === pageNum ? "default" : "outline"}
+                          onClick={() => setPage(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      )
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                  >
+                    Następna
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <Filter className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Nie znaleziono kancelarii</h3>
+              <p className="text-muted-foreground mb-4">
+                Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników
+              </p>
+              <Button variant="outline" onClick={handleResetFilters}>
+                Wyczyść filtry
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

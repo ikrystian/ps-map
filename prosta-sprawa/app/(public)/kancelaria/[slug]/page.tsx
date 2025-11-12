@@ -190,6 +190,7 @@ export default function LawFirmProfilePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -231,6 +232,15 @@ export default function LawFirmProfilePage() {
 
         const data = await response.json()
         setLawFirm(data)
+
+        // Sprawdź czy kancelaria jest w ulubionych
+        if (session?.user?.role === "CLIENT") {
+          const favoriteResponse = await fetch(`/api/law-firms/${data.id}/favorite`)
+          if (favoriteResponse.ok) {
+            const favoriteData = await favoriteResponse.json()
+            setIsFavorite(favoriteData.isFavorite)
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Wystąpił błąd")
       } finally {
@@ -241,7 +251,7 @@ export default function LawFirmProfilePage() {
     if (params.slug) {
       fetchLawFirm()
     }
-  }, [params.slug])
+  }, [params.slug, session])
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -391,6 +401,60 @@ export default function LawFirmProfilePage() {
     }).format(amount)
   }
 
+  const handleToggleFavorite = async () => {
+    if (!session?.user) {
+      toast({
+        title: "Wymagane logowanie",
+        description: "Musisz być zalogowany, aby dodać kancelarię do ulubionych",
+        variant: "destructive",
+      })
+      router.push("/auth/login")
+      return
+    }
+
+    if (session.user.role !== "CLIENT") {
+      toast({
+        title: "Brak uprawnień",
+        description: "Tylko klienci mogą dodawać kancelarie do ulubionych",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!lawFirm) return
+
+    setIsFavoriteLoading(true)
+
+    try {
+      const method = isFavorite ? "DELETE" : "POST"
+      const response = await fetch(`/api/law-firms/${lawFirm.id}/favorite`, {
+        method,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Wystąpił błąd")
+      }
+
+      setIsFavorite(!isFavorite)
+
+      toast({
+        title: isFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych",
+        description: isFavorite
+          ? "Kancelaria została usunięta z Twojej listy ulubionych"
+          : "Kancelaria została dodana do Twojej listy ulubionych",
+      })
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd",
+        variant: "destructive",
+      })
+    } finally {
+      setIsFavoriteLoading(false)
+    }
+  }
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-1">
@@ -524,7 +588,10 @@ export default function LawFirmProfilePage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => setIsFavorite(!isFavorite)}
+                    className="add-to-favorites"
+                    title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                    onClick={handleToggleFavorite}
+                    disabled={isFavoriteLoading}
                   >
                     <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
                   </Button>
