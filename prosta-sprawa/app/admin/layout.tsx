@@ -20,6 +20,7 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Tags,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
+  { name: "Kategorie bloga", href: "/admin/blog-categories", icon: Tags },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
   { name: "Pakiety", href: "/admin/pakiety", icon: Shield }
