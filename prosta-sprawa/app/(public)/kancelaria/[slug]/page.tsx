@@ -49,6 +49,8 @@ import {
   Briefcase,
   GraduationCap,
   Send,
+  Eye,
+  Calendar,
 } from "lucide-react"
 
 interface LawFirm {
