@@ -1,3 +1,351 @@
+"use client"
+
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, Save, Eye } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { useToast } from "@/components/ui/use-toast"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import Link from "next/link"
+
+const postSchema = z.object({
+  tytul: z.string().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
+  tresc: z.string().min(100, "Treść musi mieć minimum 100 znaków"),
+  categoryId: z.string().optional(),
+  obrazekWyrozniajacy: z.string().url("Podaj poprawny URL obrazka").optional().or(z.literal("")),
+  metaTitle: z.string().max(70, "Meta tytuł może mieć maksymalnie 70 znaków").optional(),
+  metaDescription: z.string().max(160, "Meta opis może mieć maksymalnie 160 znaków").optional(),
+  opublikowany: z.boolean(),
+})
+
+type PostFormValues = z.infer<typeof postSchema>
+
+interface BlogCategory {
+  id: string
+  nazwa: string
+  slug: string
+}
+
 export default function LawFirmNewBlogPostPage() {
-  return <div>Nowy Wpis</div>
+  const [categories, setCategories] = useState<BlogCategory[]>([])
+  const [loading, setLoading] = useState(false)
+  const [loadingCategories, setLoadingCategories] = useState(true)
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const form = useForm<PostFormValues>({
+    resolver: zodResolver(postSchema),
+    defaultValues: {
+      tytul: "",
+      tresc: "",
+      categoryId: "",
+      obrazekWyrozniajacy: "",
+      metaTitle: "",
+      metaDescription: "",
+      opublikowany: false,
+    },
+  })
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/blog/categories")
+      if (response.ok) {
+        const data = await response.json()
+        setCategories(data.filter((cat: BlogCategory & { aktywna: boolean }) => cat.aktywna))
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error)
+    } finally {
+      setLoadingCategories(false)
+    }
+  }
+
+  const handleSubmit = async (values: PostFormValues) => {
+    setLoading(true)
+    try {
+      const response = await fetch("/api/law-firms/me/blog", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          categoryId: values.categoryId || null,
+          obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
+          metaTitle: values.metaTitle || null,
+          metaDescription: values.metaDescription || null,
+        }),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Sukces",
+          description: values.opublikowany ? "Artykuł został opublikowany" : "Szkic został zapisany",
+        })
+        router.push("/panel-kancelarii/blog")
+      } else {
+        const error = await response.json()
+        throw new Error(error.error || "Błąd tworzenia wpisu")
+      }
+    } catch (error) {
+      toast({
+        title: "Błąd",
+        description: error instanceof Error ? error.message : "Nie udało się zapisać artykułu",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/panel-kancelarii/blog">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">Nowy artykuł</h1>
+            <p className="text-muted-foreground">
+              Utwórz nowy wpis na blogu swojej kancelarii
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Podstawowe informacje</CardTitle>
+              <CardDescription>
+                Wypełnij podstawowe dane artykułu
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="tytul"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tytuł artykułu *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="np. Jak przygotować się do sprawy rozwodowej?"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Atrakcyjny tytuł zachęci czytelników do przeczytania artykułu
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kategoria</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={loadingCategories}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wybierz kategorię" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.nazwa}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Kategoria pomoże czytelnikom znaleźć Twój artykuł
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tresc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Treść artykułu *</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Napisz treść swojego artykułu..."
+                        className="min-h-[400px] resize-y font-mono"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Minimum 100 znaków. Możesz użyć formatowania markdown.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="obrazekWyrozniajacy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Obrazek wyróżniający</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="url"
+                        placeholder="https://example.com/image.jpg"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      URL do obrazka, który pojawi się jako miniatura artykułu
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>SEO</CardTitle>
+              <CardDescription>
+                Opcjonalne ustawienia SEO dla lepszej widoczności w wyszukiwarkach
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="metaTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Meta tytuł</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Tytuł dla wyszukiwarek"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Jeśli puste, zostanie użyty tytuł artykułu (max 70 znaków)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="metaDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Meta opis</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Krótki opis artykułu dla wyszukiwarek"
+                        className="resize-none"
+                        rows={3}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Zachęcający opis pojawi się w wynikach wyszukiwania (max 160 znaków)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Publikacja</CardTitle>
+              <CardDescription>
+                Zdecyduj czy opublikować artykuł natychmiast
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="opublikowany"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Opublikuj artykuł</FormLabel>
+                      <FormDescription>
+                        Artykuł będzie widoczny publicznie na stronie
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <div className="flex items-center gap-4">
+            <Button type="submit" disabled={loading}>
+              <Save className="h-4 w-4 mr-2" />
+              {loading ? "Zapisywanie..." : form.watch("opublikowany") ? "Opublikuj" : "Zapisz szkic"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/panel-kancelarii/blog")}
+            >
+              Anuluj
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  )
 }
