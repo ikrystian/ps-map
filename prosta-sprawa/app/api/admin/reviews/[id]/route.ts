@@ -1,0 +1,189 @@
+import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
+
+// GET /api/admin/reviews/[id] - Get a single review by ID (ADMIN only)
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const review = await prisma.review.findUnique({
+      where: { id: params.id },
+      include: {
+        lawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+            email: true,
+            telefon: true,
+            miasto: true,
+          },
+        },
+        client: {
+          select: {
+            id: true,
+            imie: true,
+            nazwisko: true,
+            email: true,
+          },
+        },
+      },
+    })
+
+    if (!review) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 })
+    }
+
+    return NextResponse.json(review)
+  } catch (error) {
+    console.error("Error fetching review:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+// PUT /api/admin/reviews/[id] - Update a review (ADMIN only)
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const {
+      ocenaOgolna,
+      profesjonalizm,
+      komunikacja,
+      terminowosc,
+      stosunekJakosci,
+      tytulOpinii,
+      trescOpinii,
+      polecam,
+      anonimowa,
+      zweryfikowana,
+      aktywna,
+      odpowiedz,
+    } = body
+
+    // Verify review exists
+    const existingReview = await prisma.review.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!existingReview) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 })
+    }
+
+    // Validate rating if provided
+    if (ocenaOgolna !== undefined && (ocenaOgolna < 1 || ocenaOgolna > 5)) {
+      return NextResponse.json(
+        { error: "Rating must be between 1 and 5" },
+        { status: 400 }
+      )
+    }
+
+    // Validate review content length if provided
+    if (trescOpinii !== undefined && trescOpinii.length < 50) {
+      return NextResponse.json(
+        { error: "Review content must be at least 50 characters" },
+        { status: 400 }
+      )
+    }
+
+    // Build update data
+    const updateData: any = {}
+
+    if (ocenaOgolna !== undefined) updateData.ocenaOgolna = ocenaOgolna
+    if (profesjonalizm !== undefined) updateData.profesjonalizm = profesjonalizm
+    if (komunikacja !== undefined) updateData.komunikacja = komunikacja
+    if (terminowosc !== undefined) updateData.terminowosc = terminowosc
+    if (stosunekJakosci !== undefined) updateData.stosunekJakosci = stosunekJakosci
+    if (tytulOpinii !== undefined) updateData.tytulOpinii = tytulOpinii
+    if (trescOpinii !== undefined) updateData.trescOpinii = trescOpinii
+    if (polecam !== undefined) updateData.polecam = polecam
+    if (anonimowa !== undefined) updateData.anonimowa = anonimowa
+    if (zweryfikowana !== undefined) updateData.zweryfikowana = zweryfikowana
+    if (aktywna !== undefined) updateData.aktywna = aktywna
+    if (odpowiedz !== undefined) {
+      updateData.odpowiedz = odpowiedz
+      if (odpowiedz) {
+        updateData.dataOdpowiedzi = new Date()
+      } else {
+        updateData.dataOdpowiedzi = null
+      }
+    }
+
+    // Update review
+    const review = await prisma.review.update({
+      where: { id: params.id },
+      data: updateData,
+      include: {
+        lawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+          },
+        },
+        client: {
+          select: {
+            id: true,
+            imie: true,
+            nazwisko: true,
+            email: true,
+          },
+        },
+      },
+    })
+
+    return NextResponse.json(review)
+  } catch (error) {
+    console.error("Error updating review:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+// DELETE /api/admin/reviews/[id] - Delete a review (ADMIN only)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Verify review exists
+    const existingReview = await prisma.review.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!existingReview) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 })
+    }
+
+    // Hard delete the review
+    await prisma.review.delete({
+      where: { id: params.id },
+    })
+
+    return NextResponse.json({ message: "Review deleted successfully" })
+  } catch (error) {
+    console.error("Error deleting review:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
