@@ -22,11 +22,13 @@ model User {
   image         String?
   password      String?   // Hash bcrypt (nullable for OAuth)
   role          UserRole  @default(CLIENT)
+  status        UserStatus @default(ACTIVE)
   resetToken    String?
   resetTokenExpiry DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastLogin     DateTime?
+  deletedAt     DateTime?  // Soft delete timestamp
 
   // NextAuth relations
   accounts      Account[]
@@ -42,6 +44,8 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@index([status])
+  @@index([deletedAt])
 }
 
 model Account {
@@ -86,6 +90,12 @@ enum UserRole {
   CLIENT      // Klient
   LAW_FIRM    // Kancelaria
   ADMIN       // Administrator
+}
+
+enum UserStatus {
+  ACTIVE      // Aktywny
+  INACTIVE    // Nieaktywny
+  SUSPENDED   // Zawieszony
 }
 
 // ============================================================================
