@@ -5,11 +5,36 @@ Kompletna struktura Next.js App Router zgodna z sitemap-structure.txt
 ## Statystyki
 
 - **Strony publiczne:** 19 stron
-- **Panel klienta:** 11 stron  
+- **Panel klienta:** 11 stron
 - **Panel kancelarii:** 19 stron
 - **Sklep:** 6 stron
-- **Panel admin:** 10 stron
-- **API endpoints:** 87 route handlers
+- **Panel admin:** 10 stron (User Management fully implemented ✅)
+- **API endpoints:** 92 route handlers (including 5 new admin/users endpoints)
+
+## Recent Updates
+
+### User Management System (November 2025)
+- **Database Schema:**
+  - Added `UserStatus` enum (ACTIVE, INACTIVE, SUSPENDED)
+  - Added `status` field to User model (default: ACTIVE)
+  - Added `deletedAt` field for soft delete functionality
+  - Added indexes on `status` and `deletedAt` columns
+  - Migration: `20251112223105_add_user_status_and_soft_delete`
+
+- **API Endpoints:**
+  - `GET /api/admin/users` - List users with pagination, search, and filters
+  - `POST /api/admin/users` - Create new user with validation
+  - `GET /api/admin/users/[id]` - Get detailed user information
+  - `PUT /api/admin/users/[id]` - Update user (with security checks)
+  - `DELETE /api/admin/users/[id]` - Soft delete user
+
+- **Admin UI:**
+  - Full CRUD interface at `/admin/users`
+  - Real-time search and filtering
+  - Dialog-based forms for create/edit operations
+  - Confirmation dialogs for deletions
+  - Role and status badge indicators
+  - Pagination support
 
 ## Struktura folderów
 
@@ -110,15 +135,27 @@ app/sklep/
 app/admin/
 ├── layout.tsx
 ├── page.tsx                       # Dashboard
-├── users/page.tsx                # Użytkownicy
+├── users/page.tsx                # Zarządzanie użytkownikami (CRUD)
 ├── law-firms/page.tsx            # Kancelarie
 ├── cases/page.tsx                # Sprawy
 ├── reviews/page.tsx              # Opinie
-├── categories/page.tsx           # Kategorie
+├── categories/page.tsx           # Kategorie (CRUD)
 ├── blog/page.tsx                 # Blog
 ├── newsletter/page.tsx           # Newsletter
 └── settings/page.tsx             # Ustawienia
 ```
+
+**User Management Features (app/admin/users/page.tsx):**
+- ✅ List all users with pagination (20 per page)
+- ✅ Search by name or email
+- ✅ Filter by role (CLIENT, LAW_FIRM, ADMIN)
+- ✅ Filter by status (ACTIVE, INACTIVE, SUSPENDED)
+- ✅ Create new users with all required fields
+- ✅ Edit existing users (name, email, role, status, password)
+- ✅ Soft delete users (sets deletedAt timestamp)
+- ✅ Display related profile info (Client or LawFirm)
+- ✅ Role-based badges and status indicators
+- ✅ Security: Admins cannot delete or change their own status
 
 ### 6. API Routes
 ```
@@ -131,6 +168,11 @@ app/api/
 │   ├── reset-password/route.ts
 │   ├── change-password/route.ts
 │   └── me/route.ts
+├── admin/                        # Admin API (ADMIN role required)
+│   ├── users/
+│   │   ├── route.ts             # GET (list), POST (create)
+│   │   └── [id]/route.ts        # GET (details), PUT (update), DELETE (soft delete)
+│   └── blog/route.ts
 ├── clients/                      # Klienci
 │   ├── route.ts
 │   └── [id]/route.ts
