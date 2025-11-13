@@ -464,7 +464,7 @@ export default function ClientCaseDetailsPage() {
 
       {/* Oferty */}
       {caseData.offers && caseData.offers.length > 0 && (
-        <Card>
+        <Card className={ caseData.offers.wyroznienie !== "OFERTY_OTRZYMANE" ? "hidden" : "" }>
           <CardHeader>
             <CardTitle>Otrzymane oferty ({caseData.offers.length})</CardTitle>
             <CardDescription>Lista ofert złożonych przez kancelarie prawne</CardDescription>
