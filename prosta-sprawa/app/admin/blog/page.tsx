@@ -210,7 +210,7 @@ export default function AdminBlogPage() {
                             size="sm"
                             asChild
                           >
-                            <Link href={`/artykuly/${post.slug}`} target="_blank">
+                            <Link href={`/blog/${post.slug}`} target="_blank">
                               <ExternalLink className="h-4 w-4" />
                             </Link>
                           </Button>

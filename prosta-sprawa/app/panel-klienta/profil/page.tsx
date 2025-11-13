@@ -118,7 +118,8 @@ export default function ClientProfilePage() {
 
       if (response.ok) {
         toast.success("Profil został zaktualizowany")
-        router.push("/panel-klienta")
+        // Odśwież dane klienta po zapisie
+        await fetchData()
       } else {
         const error = await response.json()
         toast.error(error.error || "Nie udało się zaktualizować profilu")
