@@ -223,7 +223,7 @@ export default function PublicHeader({
               />
             ) : (
               <>
-                <Link href="/dodaj-sprawe">
+                <Link href="/panel-klienta/dodaj-sprawe">
                   <Button variant="outline">Dodaj sprawę</Button>
                 </Link>
                 <Link href="/logowanie">
