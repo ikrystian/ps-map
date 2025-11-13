@@ -1190,6 +1190,12 @@ model HelpCategory {
   ikona       String?  // Nazwa ikony z Lucide
   kolejnosc   Int      @default(0)
   aktywna     Boolean  @default(true)
+
+  // Relacje
+  questions   HelpQuestion[]
+}
+
+// ============================================================================
 // MODUŁY I STRONY
 // ============================================================================
 
@@ -1206,11 +1212,10 @@ model Module {
   updatedAt   DateTime @updatedAt
 
   // Relacje
-  questions   HelpQuestion[]
+  pageModules PageModule[]
 
-  @@index([slug])
-  @@index([aktywna])
-  @@index([kolejnosc])
+  @@index([active])
+  @@index([createdAt])
 }
 
 model HelpQuestion {
@@ -1258,10 +1263,7 @@ model Document {
 
   @@index([lawFirmId])
   @@index([createdAt])
-  pages       PageModule[]
-
-  @@index([active])
-  @@index([createdAt])
+  @@index([typDokumentu])
 }
 
 model Page {
