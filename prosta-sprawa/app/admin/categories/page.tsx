@@ -160,12 +160,18 @@ export default function AdminCategoriesPage() {
   // Tworzenie kategorii
   const handleCreateCategory = async (values: CategoryFormValues) => {
     try {
+      // Konwertuj "none" na null przed wysłaniem
+      const dataToSend = {
+        ...values,
+        parentId: values.parentId === "none" ? null : values.parentId,
+      }
+
       const response = await fetch("/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(dataToSend),
       })
 
       if (response.ok) {
@@ -187,12 +193,18 @@ export default function AdminCategoriesPage() {
     if (!selectedCategory) return
 
     try {
+      // Konwertuj "none" na null przed wysłaniem
+      const dataToSend = {
+        ...values,
+        parentId: values.parentId === "none" ? null : values.parentId,
+      }
+
       const response = await fetch(`/api/categories/${selectedCategory.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(dataToSend),
       })
 
       if (response.ok) {
@@ -534,7 +546,7 @@ export default function AdminCategoriesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">Brak kategorii nadrzędnej</SelectItem>
+                          <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
                           {getParentCategories().map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.nazwa}

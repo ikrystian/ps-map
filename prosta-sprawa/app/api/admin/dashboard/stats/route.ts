@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       SELECT
         strftime('%Y-%m', createdAt) as month,
         SUM(kwota) as revenue
-      FROM Order
+      FROM "Order"
       WHERE statusPlatnosci = 'ZAPLACONE'
         AND createdAt >= ${sixMonthsAgo.toISOString()}
       GROUP BY strftime('%Y-%m', createdAt)
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       SELECT
         strftime('%Y-%m-%d', createdAt) as date,
         COUNT(*) as count
-      FROM User
+      FROM "User"
       WHERE createdAt >= ${sevenDaysAgo.toISOString()}
       GROUP BY strftime('%Y-%m-%d', createdAt)
       ORDER BY date ASC
