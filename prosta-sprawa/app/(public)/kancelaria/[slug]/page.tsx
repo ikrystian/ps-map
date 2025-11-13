@@ -115,9 +115,15 @@ interface LawFirm {
     }
   }>
   categories: Array<{
+    id: string
+    kolejnosc: number
     category: {
       nazwa: string
       slug: string
+      opis?: string | null
+      opisDodatkowy?: string | null
+      ikona?: string | null
+      typ: string
     }
   }>
   services: Array<{
@@ -703,33 +709,70 @@ export default function LawFirmProfilePage() {
 
               {/* Services Tab */}
               <TabsContent value="services" className="space-y-4">
-                {lawFirm.services.length > 0 ? (
-                  lawFirm.services.map((service) => (
-                    <Card key={service.id}>
-                      <CardHeader>
-                        <CardTitle className="text-lg">{service.nazwaUslugi}</CardTitle>
-                        <CardDescription>{service.opisUslugi}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">
-                            {serviceUnitLabels[service.jednostka]}
-                          </span>
-                          {service.cenaOd && service.cenaDo ? (
-                            <span className="font-semibold text-lg">
-                              {formatCurrency(service.cenaOd)} - {formatCurrency(service.cenaDo)}
-                            </span>
-                          ) : service.cenaOd ? (
-                            <span className="font-semibold text-lg">
-                              od {formatCurrency(service.cenaOd)}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">Cena do uzgodnienia</span>
-                          )}
+                {lawFirm.categories && lawFirm.categories.length > 0 ? (
+                  <>
+                    {/* Sprawy firmowe */}
+                    {lawFirm.categories.filter(c => c.category.typ === "SPRAWY_FIRMOWE").length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-xl font-semibold">Sprawy firmowe</h3>
+                        <div className="grid gap-3">
+                          {lawFirm.categories
+                            .filter(c => c.category.typ === "SPRAWY_FIRMOWE")
+                            .map((lawFirmCategory) => (
+                              <Card key={lawFirmCategory.id}>
+                                <CardHeader>
+                                  <CardTitle className="text-lg flex items-center gap-2">
+                                    {lawFirmCategory.category.nazwa}
+                                    <Badge variant="default">Firmowe</Badge>
+                                  </CardTitle>
+                                  {lawFirmCategory.category.opis && (
+                                    <CardDescription>{lawFirmCategory.category.opis}</CardDescription>
+                                  )}
+                                </CardHeader>
+                                {lawFirmCategory.category.opisDodatkowy && (
+                                  <CardContent>
+                                    <p className="text-sm text-muted-foreground">
+                                      {lawFirmCategory.category.opisDodatkowy}
+                                    </p>
+                                  </CardContent>
+                                )}
+                              </Card>
+                            ))}
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                      </div>
+                    )}
+
+                    {/* Sprawy prywatne */}
+                    {lawFirm.categories.filter(c => c.category.typ === "SPRAWY_PRYWATNE").length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-xl font-semibold">Sprawy prywatne</h3>
+                        <div className="grid gap-3">
+                          {lawFirm.categories
+                            .filter(c => c.category.typ === "SPRAWY_PRYWATNE")
+                            .map((lawFirmCategory) => (
+                              <Card key={lawFirmCategory.id}>
+                                <CardHeader>
+                                  <CardTitle className="text-lg flex items-center gap-2">
+                                    {lawFirmCategory.category.nazwa}
+                                    <Badge variant="secondary">Prywatne</Badge>
+                                  </CardTitle>
+                                  {lawFirmCategory.category.opis && (
+                                    <CardDescription>{lawFirmCategory.category.opis}</CardDescription>
+                                  )}
+                                </CardHeader>
+                                {lawFirmCategory.category.opisDodatkowy && (
+                                  <CardContent>
+                                    <p className="text-sm text-muted-foreground">
+                                      {lawFirmCategory.category.opisDodatkowy}
+                                    </p>
+                                  </CardContent>
+                                )}
+                              </Card>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">

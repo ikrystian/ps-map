@@ -36,6 +36,9 @@ export async function GET(
           include: {
             category: true,
           },
+          orderBy: {
+            kolejnosc: "asc",
+          },
         },
         services: {
           where: {
@@ -226,6 +229,9 @@ export async function PUT(
         categories: {
           include: {
             category: true,
+          },
+          orderBy: {
+            kolejnosc: "asc",
           },
         },
       },

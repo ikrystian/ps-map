@@ -324,11 +324,21 @@ model FavoriteLawFirm {
 // KATEGORIE PRAWNE (SPECJALIZACJE)
 // ============================================================================
 
+enum CategoryType {
+  SPRAWY_FIRMOWE   // Business cases
+  SPRAWY_PRYWATNE  // Private cases
+}
+
 model Category {
   id          String   @id @default(uuid())
   nazwa       String
   slug        String   @unique
   opis        String?
+  opisDodatkowy String?  // Additional description
+  ikona       String?    // Icon name (e.g., from Lucide)
+
+  // Typ kategorii
+  typ         CategoryType @default(SPRAWY_PRYWATNE)
 
   // Hierarchia (parent/child)
   parentId    String?
@@ -352,6 +362,7 @@ model Category {
   @@index([slug])
   @@index([parentId])
   @@index([aktywna])
+  @@index([typ])
 }
 
 // ============================================================================
@@ -364,6 +375,8 @@ model LawFirmCategory {
   lawFirm     LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  kolejnosc   Int      @default(0)  // Order of category for this law firm
 
   createdAt   DateTime @default(now())
 

@@ -40,7 +40,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nazwa, slug, opis, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
+    const { nazwa, slug, opis, opisDodatkowy, ikona, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
 
     // Walidacja podstawowych pól
     if (!nazwa || !slug) {
@@ -81,6 +81,9 @@ export async function POST(request: Request) {
         nazwa,
         slug,
         opis,
+        opisDodatkowy,
+        ikona,
+        typ: typ || "SPRAWY_PRYWATNE",
         parentId: parentId || null,
         metaTitle,
         metaDescription,

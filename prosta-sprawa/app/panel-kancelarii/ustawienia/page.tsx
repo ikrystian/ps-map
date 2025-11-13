@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import {
   AlertDialog,
@@ -248,151 +247,142 @@ export default function LawFirmSettingsPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Lewa kolumna - Dane osobowe i Konto */}
         <div className="space-y-6">
-          <Tabs defaultValue="personal-data" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="personal-data">Dane osobowe</TabsTrigger>
-              <TabsTrigger value="account">Konto</TabsTrigger>
-            </TabsList>
+          {/* Dane osobowe */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Dane osobowe</CardTitle>
+              <CardDescription>Edytuj swoje podstawowe informacje</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSaveUserData} className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Imię i nazwisko</Label>
+                  <Input
+                    id="name"
+                    value={userData.name || ""}
+                    onChange={(e) => handleUserDataChange("name", e.target.value)}
+                    placeholder="Wpisz swoje imię i nazwisko"
+                  />
+                </div>
 
-            <TabsContent value="personal-data" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Dane osobowe</CardTitle>
-                  <CardDescription>Edytuj swoje podstawowe informacje</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSaveUserData} className="space-y-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="name">Imię i nazwisko</Label>
-                      <Input
-                        id="name"
-                        value={userData.name || ""}
-                        onChange={(e) => handleUserDataChange("name", e.target.value)}
-                        placeholder="Wpisz swoje imię i nazwisko"
-                      />
-                    </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" value={userData.email} disabled />
+                  <p className="text-xs text-muted-foreground">
+                    Email nie może być zmieniony z poziomu ustawień
+                  </p>
+                </div>
 
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" value={userData.email} disabled />
-                      <p className="text-xs text-muted-foreground">
-                        Email nie może być zmieniony z poziomu ustawień
+                <Separator />
+
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isSavingUser}>
+                    {isSavingUser && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Save className="mr-2 h-4 w-4" />
+                    Zapisz dane osobowe
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Zarządzanie kontem */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Zarządzanie kontem</CardTitle>
+              <CardDescription>Zarządzaj swoim kontem i bezpieczeństwem</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Status konta */}
+              <div className="space-y-2">
+                <Label>Status konta</Label>
+                <div className="flex items-center gap-2">
+                  <Badge variant="default" className="flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Aktywny
+                  </Badge>
+                  <p className="text-sm text-muted-foreground">
+                    Twoje konto jest w pełni aktywne
+                  </p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Akcje konta */}
+              <div className="space-y-4">
+                <Label>Akcje konta</Label>
+
+                <div className="space-y-3">
+                  {/* Wyloguj */}
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex-1">
+                      <h4 className="font-medium">Wyloguj się</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Zakończ bieżącą sesję i wyloguj się z konta
                       </p>
                     </div>
-
-                    <Separator />
-
-                    <div className="flex justify-end">
-                      <Button type="submit" disabled={isSavingUser}>
-                        {isSavingUser && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        <Save className="mr-2 h-4 w-4" />
-                        Zapisz dane osobowe
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="account" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Konto</CardTitle>
-                  <CardDescription>Zarządzaj swoim kontem i bezpieczeństwem</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Status konta */}
-                  <div className="space-y-2">
-                    <Label>Status konta</Label>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="default" className="flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Aktywny
-                      </Badge>
-                      <p className="text-sm text-muted-foreground">
-                        Twoje konto jest w pełni aktywne
-                      </p>
-                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={handleLogout}
+                      className="ml-4"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Wyloguj
+                    </Button>
                   </div>
 
-                  <Separator />
-
-                  {/* Akcje konta */}
-                  <div className="space-y-4">
-                    <Label>Akcje konta</Label>
-
-                    <div className="space-y-3">
-                      {/* Wyloguj */}
-                      <div className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex-1">
-                          <h4 className="font-medium">Wyloguj się</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Zakończ bieżącą sesję i wyloguj się z konta
-                          </p>
-                        </div>
+                  {/* Usuń konto */}
+                  <div className="flex items-center justify-between p-4 border border-destructive/30 rounded-lg bg-destructive/5">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-destructive">Usuń konto</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Trwale usuń swoje konto i wszystkie powiązane dane. Tej akcji nie można cofnąć.
+                      </p>
+                    </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
                         <Button
-                          variant="outline"
-                          onClick={handleLogout}
+                          variant="destructive"
                           className="ml-4"
                         >
-                          <LogOut className="h-4 w-4 mr-2" />
-                          Wyloguj
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Usuń konto
                         </Button>
-                      </div>
-
-                      {/* Usuń konto */}
-                      <div className="flex items-center justify-between p-4 border border-destructive/30 rounded-lg bg-destructive/5">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-destructive">Usuń konto</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Permanently delete your account and all associated data. This action cannot be undone.
-                          </p>
-                        </div>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="destructive"
-                              className="ml-4"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Usuń konto
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Ta akcja jest nieodwracalna. Wszystkie Twoje dane, w tym profil kancelarii,
-                                oferty, wiadomości i historia zostaną trwale usunięte. Nie będziesz mógł
-                                odzyskać tych danych.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={handleDeleteAccount}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Tak, usuń moje konto
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </div>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Ta akcja jest nieodwracalna. Wszystkie Twoje dane, w tym profil kancelarii,
+                            oferty, wiadomości i historia zostaną trwale usunięte. Nie będziesz mógł
+                            odzyskać tych danych.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeleteAccount}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Tak, usuń moje konto
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
+                </div>
+              </div>
 
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Jeśli masz aktywne ogłoszenia lub subskrypcję, upewnij się, że je zakończyłeś
-                      przed usunięciem konta.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Jeśli masz aktywne ogłoszenia lub subskrypcję, upewnij się, że je zakończyłeś
+                  przed usunięciem konta.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Prawa kolumna - Ustawienia powiadomień */}
