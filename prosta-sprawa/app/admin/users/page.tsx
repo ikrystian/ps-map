@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react"
 import { Edit, Trash2, Search, UserPlus, RefreshCw } from "lucide-react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Table,
   TableBody,
@@ -32,6 +34,7 @@ interface User {
   id: string
   name?: string | null
   email: string
+  image?: string | null
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
   emailVerified?: Date | null
@@ -206,6 +209,24 @@ export default function AdminUsersPage() {
     })
   }
 
+  // Get user initials for avatar fallback
+  const getUserInitials = (user: User) => {
+    if (user.name) {
+      const names = user.name.split(" ")
+      if (names.length >= 2) {
+        return `${names[0][0]}${names[1][0]}`.toUpperCase()
+      }
+      return user.name.substring(0, 2).toUpperCase()
+    }
+    if (user.client) {
+      return `${user.client.imie[0]}${user.client.nazwisko[0]}`.toUpperCase()
+    }
+    if (user.lawFirm) {
+      return user.lawFirm.nazwa.substring(0, 2).toUpperCase()
+    }
+    return user.email.substring(0, 2).toUpperCase()
+  }
+
   if (loading && users.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -291,6 +312,7 @@ export default function AdminUsersPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Avatar</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
@@ -303,13 +325,23 @@ export default function AdminUsersPage() {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
                     No users found
                   </TableCell>
                 </TableRow>
               ) : (
                 users.map((user) => (
                   <TableRow key={user.id}>
+                    <TableCell>
+                      <Avatar className="h-10 w-10">
+                        {user.image && (
+                          <AvatarImage src={user.image} alt={user.name || user.email} />
+                        )}
+                        <AvatarFallback>
+                          {getUserInitials(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TableCell>
                     <TableCell className="font-medium">
                       {user.name || "—"}
                     </TableCell>

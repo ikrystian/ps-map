@@ -1,10 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, ChevronRight, ChevronDown } from "lucide-react"
+import { Plus, Edit, Trash2, ChevronRight, ChevronDown, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ImageUpload } from "@/components/ui/image-upload"
 import {
   Table,
   TableBody,
@@ -47,6 +48,7 @@ const categorySchema = z.object({
   opis: z.string().optional(),
   opisDodatkowy: z.string().optional(),
   ikona: z.string().optional(),
+  ikonaUrl: z.string().optional(),
   typ: z.enum(["SPRAWY_FIRMOWE", "SPRAWY_PRYWATNE"]),
   parentId: z.string().nullable().optional(),
   metaTitle: z.string().nullable().optional(),
@@ -64,6 +66,7 @@ interface Category {
   opis?: string | null
   opisDodatkowy?: string | null
   ikona?: string | null
+  ikonaUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   parentId?: string | null
   metaTitle?: string | null
@@ -103,6 +106,7 @@ export default function AdminCategoriesPage() {
       opis: "",
       opisDodatkowy: "",
       ikona: "",
+      ikonaUrl: "",
       typ: "SPRAWY_PRYWATNE",
       parentId: "none",
       metaTitle: null,
@@ -254,6 +258,7 @@ export default function AdminCategoriesPage() {
       opis: category.opis || "",
       opisDodatkowy: category.opisDodatkowy || "",
       ikona: category.ikona || "",
+      ikonaUrl: category.ikonaUrl || "",
       typ: category.typ,
       parentId: category.parentId || "none",
       metaTitle: category.metaTitle || "",
@@ -518,7 +523,7 @@ export default function AdminCategoriesPage() {
                     name="ikona"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ikona</FormLabel>
+                        <FormLabel>Ikona (Lucide)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="np. Briefcase, Scale, Building..."
@@ -526,13 +531,31 @@ export default function AdminCategoriesPage() {
                           />
                         </FormControl>
                         <FormDescription>
-                          Nazwa ikony z Lucide React
+                          Nazwa ikony z Lucide React (opcjonalnie)
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="ikonaUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ikona niestandardowa</FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          label=""
+                          description="Prześlij niestandardową ikonę (priorytet nad ikoną Lucide)"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="parentId"
@@ -783,7 +806,7 @@ export default function AdminCategoriesPage() {
                   name="ikona"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ikona</FormLabel>
+                      <FormLabel>Ikona (Lucide)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="np. Briefcase, Scale, Building..."
@@ -791,13 +814,31 @@ export default function AdminCategoriesPage() {
                         />
                       </FormControl>
                       <FormDescription>
-                        Nazwa ikony z Lucide React
+                        Nazwa ikony z Lucide React (opcjonalnie)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="ikonaUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ikona niestandardowa</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        label=""
+                        description="Prześlij niestandardową ikonę (priorytet nad ikoną Lucide)"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="parentId"
