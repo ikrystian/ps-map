@@ -9,24 +9,36 @@ export async function GET(request: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get all active law firms with their stats
+    // Get all active law firms with their stats and reviews
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         aktywna: true,
       },
       select: {
         id: true,
-        avgRating: true,
-        reviewCount: true,
         zlozoneOferty: true,
         wygraneOferty: true,
         konwersja: true,
         wyswietleniaProfilu: true,
+        reviews: {
+          where: {
+            aktywna: true,
+          },
+          select: {
+            ocenaOgolna: true,
+          },
+        },
       },
     })
 
     // Calculate ranking score for each law firm
     const lawFirmsWithScore = lawFirms.map((firm) => {
+      // Calculate average rating and review count from reviews
+      const reviewCount = firm.reviews.length
+      const avgRating = reviewCount > 0
+        ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / reviewCount
+        : 0
+
       // Calculate score based on multiple factors
       // Weights:
       // - Average rating: 40%
@@ -35,9 +47,9 @@ export async function GET(request: NextRequest) {
       // - Profile views: 10%
       // - Total offers: 5%
 
-      const ratingScore = firm.avgRating * 20 // Max 100 (5 stars * 20)
+      const ratingScore = avgRating * 20 // Max 100 (5 stars * 20)
       const conversionScore = firm.konwersja // Already a percentage (0-100)
-      const reviewScore = Math.min(firm.reviewCount * 2, 100) // Cap at 100
+      const reviewScore = Math.min(reviewCount * 2, 100) // Cap at 100
       const viewsScore = Math.min(firm.wyswietleniaProfilu / 100, 100) // Cap at 100
       const offersScore = Math.min(firm.zlozoneOferty * 2, 100) // Cap at 100
 

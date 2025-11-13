@@ -166,7 +166,7 @@ export async function POST(
       const month = now.getMonth() + 1 // 1-12
 
       // Update monthly stats
-      await tx.lawFirmStats.upsert({
+      const existingMonthlyStats = await tx.lawFirmStats.findUnique({
         where: {
           lawFirmId_year_month: {
             lawFirmId: offer.lawFirmId,
@@ -174,39 +174,64 @@ export async function POST(
             month,
           },
         },
-        update: {
-          offersAccepted: { increment: 1 },
-        },
-        create: {
-          lawFirmId: offer.lawFirmId,
-          year,
-          month,
-          offersAccepted: 1,
-        },
       })
 
-      // Update category stats if case has a category
-      if (updated.case.categoryId) {
-        await tx.lawFirmCategoryStats.upsert({
+      if (existingMonthlyStats) {
+        await tx.lawFirmStats.update({
           where: {
-            lawFirmId_categoryId_year_month: {
+            lawFirmId_year_month: {
               lawFirmId: offer.lawFirmId,
-              categoryId: updated.case.categoryId,
               year,
               month,
             },
           },
-          update: {
+          data: {
             offersAccepted: { increment: 1 },
           },
-          create: {
+        })
+      } else {
+        await tx.lawFirmStats.create({
+          data: {
             lawFirmId: offer.lawFirmId,
-            categoryId: updated.case.categoryId,
             year,
             month,
             offersAccepted: 1,
           },
         })
+      }
+
+      // Update category stats if case has a category
+      if (updated.case.categoryId) {
+        const existingCategoryStats = await tx.lawFirmCategoryStats.findUnique({
+          where: {
+            lawFirmId_categoryId: {
+              lawFirmId: offer.lawFirmId,
+              categoryId: updated.case.categoryId,
+            },
+          },
+        })
+
+        if (existingCategoryStats) {
+          await tx.lawFirmCategoryStats.update({
+            where: {
+              lawFirmId_categoryId: {
+                lawFirmId: offer.lawFirmId,
+                categoryId: updated.case.categoryId,
+              },
+            },
+            data: {
+              offersAccepted: { increment: 1 },
+            },
+          })
+        } else {
+          await tx.lawFirmCategoryStats.create({
+            data: {
+              lawFirmId: offer.lawFirmId,
+              categoryId: updated.case.categoryId,
+              offersAccepted: 1,
+            },
+          })
+        }
       }
 
       // Utwórz powiadomienie dla kancelarii

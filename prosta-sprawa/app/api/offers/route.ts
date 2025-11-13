@@ -315,26 +315,36 @@ export async function POST(request: NextRequest) {
 
       // Update category stats if case has a category
       if (newOffer.case.categoryId) {
-        await tx.lawFirmCategoryStats.upsert({
+        const existingCategoryStats = await tx.lawFirmCategoryStats.findUnique({
           where: {
-            lawFirmId_categoryId_year_month: {
+            lawFirmId_categoryId: {
               lawFirmId: lawFirm.id,
               categoryId: newOffer.case.categoryId,
-              year,
-              month,
             },
           },
-          update: {
-            offersSubmitted: { increment: 1 },
-          },
-          create: {
-            lawFirmId: lawFirm.id,
-            categoryId: newOffer.case.categoryId,
-            year,
-            month,
-            offersSubmitted: 1,
-          },
         })
+
+        if (existingCategoryStats) {
+          await tx.lawFirmCategoryStats.update({
+            where: {
+              lawFirmId_categoryId: {
+                lawFirmId: lawFirm.id,
+                categoryId: newOffer.case.categoryId,
+              },
+            },
+            data: {
+              offersSubmitted: { increment: 1 },
+            },
+          })
+        } else {
+          await tx.lawFirmCategoryStats.create({
+            data: {
+              lawFirmId: lawFirm.id,
+              categoryId: newOffer.case.categoryId,
+              offersSubmitted: 1,
+            },
+          })
+        }
       }
 
       // Zaktualizuj status sprawy
