@@ -79,66 +79,19 @@ interface Voivodeship {
   nazwa: string
 }
 
-// Typy promocji z cenami
-const PROMOTION_TYPES = [
-  {
-    type: "PODBICIE_OGLOSZENIA",
-    label: "Podbicie ogłoszenia",
-    description: "Twój profil pojawi się wyżej w wynikach wyszukiwania",
-    pointsPerDay: 20,
-    icon: TrendingUp,
-    color: "text-blue-500",
-    features: [
-      "Wyższa pozycja w wynikach wyszukiwania",
-      "Zwiększona widoczność profilu",
-      "Oznaczenie jako aktywna kancelaria",
-    ],
-  },
-  {
-    type: "WYROZNIENIE",
-    label: "Wyróżnienie",
-    description: "Twój profil zostanie wyróżniony wizualnie",
-    pointsPerWeek: 50,
-    icon: Sparkles,
-    color: "text-purple-500",
-    features: [
-      "Kolorowa ramka wokół profilu",
-      "Ikona wyróżnienia",
-      "Wyższa pozycja niż standardowe profile",
-      "Zwiększenie CTR o 30-50%",
-    ],
-  },
-  {
-    type: "TOP_LISTA",
-    label: "TOP Lista",
-    description: "Pojaw się w TOP 3 wyników w swojej kategorii",
-    pointsPerWeek: 100,
-    icon: Award,
-    color: "text-orange-500",
-    features: [
-      "Gwarantowana pozycja w TOP 3",
-      "Specjalne wyróżnienie wizualne",
-      "Badge 'TOP Kancelaria'",
-      "Priorytetowe wyświetlanie",
-      "Zwiększenie CTR o 70-100%",
-    ],
-  },
-  {
-    type: "STRONA_GLOWNA",
-    label: "Strona główna",
-    description: "Wyświetl swój profil na stronie głównej portalu",
-    pointsPerWeek: 200,
-    icon: Home,
-    color: "text-red-500",
-    features: [
-      "Wyświetlanie na stronie głównej",
-      "Maksymalna widoczność",
-      "Badge 'Polecana Kancelaria'",
-      "Dotarcie do wszystkich użytkowników",
-      "Największy wzrost zapytań",
-    ],
-  },
-]
+// Icon mapping for dynamic icon rendering
+const ICON_MAP: Record<string, any> = {
+  TrendingUp,
+  Sparkles,
+  Award,
+  Home,
+}
+
+// Helper to get icon component
+const getIconComponent = (iconName: string | null) => {
+  if (!iconName) return TrendingUp
+  return ICON_MAP[iconName] || TrendingUp
+}
 
 const formatDate = (date: Date | string) => {
   const d = new Date(date)
@@ -197,6 +150,7 @@ export default function LawFirmPromotionPage() {
   const [promotions, setPromotions] = useState<Promotion[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [promotionTypes, setPromotionTypes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -244,6 +198,12 @@ export default function LawFirmPromotionPage() {
       if (!voivodeshipsResponse.ok) throw new Error("Nie udało się pobrać województw")
       const voivodeshipsData = await voivodeshipsResponse.json()
       setVoivodeships(voivodeshipsData)
+
+      // Pobierz dostępne typy promocji
+      const promotionTypesResponse = await fetch("/api/promotion-configs")
+      if (!promotionTypesResponse.ok) throw new Error("Nie udało się pobrać typów promocji")
+      const promotionTypesData = await promotionTypesResponse.json()
+      setPromotionTypes(promotionTypesData)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
@@ -254,7 +214,7 @@ export default function LawFirmPromotionPage() {
   const calculateCost = (): number => {
     if (!selectedType) return 0
 
-    const promoType = PROMOTION_TYPES.find((p) => p.type === selectedType)
+    const promoType = promotionTypes.find((p) => p.type === selectedType)
     if (!promoType) return 0
 
     if (selectedType === "PODBICIE_OGLOSZENIA") {
@@ -406,62 +366,75 @@ export default function LawFirmPromotionPage() {
       {/* Typy promocji */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Dostępne promocje</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {PROMOTION_TYPES.map((promo) => {
-            const Icon = promo.icon
-            return (
-              <Card key={promo.type} className="relative hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg bg-secondary`}>
-                        <Icon className={`h-6 w-6 ${promo.color}`} />
-                      </div>
-                      <div>
-                        <CardTitle>{promo.label}</CardTitle>
-                        <CardDescription>{promo.description}</CardDescription>
+        {promotionTypes.length === 0 ? (
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center">
+                <Info className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Brak dostępnych promocji. Sprawdź ponownie później.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {promotionTypes.map((promo) => {
+              const Icon = getIconComponent(promo.icon)
+              return (
+                <Card key={promo.type} className="relative hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-secondary`}>
+                          <Icon className={`h-6 w-6`} style={{ color: promo.color || '#3b82f6' }} />
+                        </div>
+                        <div>
+                          <CardTitle>{promo.label}</CardTitle>
+                          <CardDescription>{promo.description}</CardDescription>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold">
-                        {promo.type === "PODBICIE_OGLOSZENIA"
-                          ? `${promo.pointsPerDay} pkt`
-                          : `${promo.pointsPerWeek} pkt`}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        /{" "}
-                        {promo.type === "PODBICIE_OGLOSZENIA" ? "dzień" : "tydzień"}
-                      </span>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold">
+                          {promo.pointsPerDay
+                            ? `${promo.pointsPerDay} pkt`
+                            : `${promo.pointsPerWeek} pkt`}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          /{" "}
+                          {promo.pointsPerDay ? "dzień" : "tydzień"}
+                        </span>
+                      </div>
+
+                      <ul className="space-y-2">
+                        {promo.features.map((feature: string, index: number) => (
+                          <li key={index} className="flex items-start gap-2 text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Button
+                        className="w-full"
+                        onClick={() => {
+                          setSelectedType(promo.type)
+                          handleOpenDialog()
+                        }}
+                      >
+                        Wybierz
+                      </Button>
                     </div>
-
-                    <ul className="space-y-2">
-                      {promo.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        setSelectedType(promo.type)
-                        handleOpenDialog()
-                      }}
-                    >
-                      Wybierz
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <Separator />
