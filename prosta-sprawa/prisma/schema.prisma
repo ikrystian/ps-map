@@ -1136,3 +1136,71 @@ enum ContactSubject {
   REKLAMACJA
   INNE
 }
+
+// ============================================================================
+// MODUŁY I STRONY
+// ============================================================================
+
+model Module {
+  id          String   @id @default(uuid())
+  name        String   // Nazwa modułu
+  code        String   // Kod HTML z tagami specjalnymi jak {input-text}, {textarea-wysiwyg}, etc.
+  description String?  // Opcjonalny opis modułu
+  preview     String?  // URL do zdjęcia podglądu modułu
+
+  active      Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacje
+  pages       PageModule[]
+
+  @@index([active])
+  @@index([createdAt])
+}
+
+model Page {
+  id              String   @id @default(uuid())
+  title           String   // Tytuł strony
+  slug            String   @unique // URL-friendly slug
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+
+  // Status publikacji
+  published       Boolean  @default(false)
+  publishedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relacje
+  modules         PageModule[]
+
+  @@index([slug])
+  @@index([published])
+  @@index([createdAt])
+}
+
+model PageModule {
+  id        String   @id @default(uuid())
+
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  moduleId  String
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  order     Int      // Kolejność modułu na stronie
+  data      String?  // JSON z danymi wypełnionymi przez użytkownika
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pageId, moduleId, order])
+  @@index([pageId])
+  @@index([moduleId])
+  @@index([order])
+}

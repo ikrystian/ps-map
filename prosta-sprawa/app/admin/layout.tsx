@@ -22,6 +22,8 @@ import {
   ChevronRight,
   Tags,
   CreditCard,
+  LayoutTemplate,
+  FileCode,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -44,6 +46,8 @@ const navigation = [
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
+  { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
+  { name: "Moduły", href: "/admin/modules", icon: FileCode },
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
   { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
