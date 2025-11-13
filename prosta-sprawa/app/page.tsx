@@ -29,6 +29,7 @@ import {
 import Link from "next/link"
 import Image from "next/image"
 import PublicHeader from "@/components/PublicHeader"
+import { toast } from "sonner"
 
 interface LawFirm {
   id: string
@@ -111,11 +112,29 @@ export default function HomePage() {
     cat.nazwa.toLowerCase().includes('gospodarc')
   ).slice(0, 6)
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement newsletter subscription
-    console.log("Newsletter subscription:", email)
-    setEmail("")
+
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Nie udało się zapisać do newslettera")
+      }
+
+      toast.success("Dziękujemy za zapis do newslettera!")
+      setEmail("")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Wystąpił błąd")
+    }
   }
 
   return (

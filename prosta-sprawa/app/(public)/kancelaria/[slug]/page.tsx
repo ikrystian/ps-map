@@ -204,6 +204,7 @@ export default function LawFirmProfilePage() {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
   const [isStartingChat, setIsStartingChat] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -477,6 +478,15 @@ export default function LawFirmProfilePage() {
     }
   }
 
+  const handleCopyUrl = () => {
+    const currentUrl = window.location.href
+    navigator.clipboard.writeText(currentUrl).then(() => {
+      toast.success("Link został skopiowany do schowka")
+    }).catch(() => {
+      toast.error("Nie udało się skopiować linku")
+    })
+  }
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-1">
@@ -610,9 +620,38 @@ export default function LawFirmProfilePage() {
                   >
                     <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
                   </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="h-5 w-5" />
-                  </Button>
+                  <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Share2 className="h-5 w-5" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Udostępnij profil kancelarii</DialogTitle>
+                        <DialogDescription>
+                          Skopiuj link do profilu kancelarii
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="flex gap-2">
+                          <Input
+                            value={typeof window !== 'undefined' ? window.location.href : ''}
+                            readOnly
+                            className="flex-1"
+                          />
+                          <Button onClick={handleCopyUrl}>
+                            Kopiuj
+                          </Button>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
+                          Zamknij
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
 
                   {session?.user?.role === "CLIENT" ? (
                     <Button onClick={handleStartChat} disabled={isStartingChat}>
@@ -1423,15 +1462,17 @@ export default function LawFirmProfilePage() {
             </Card>
 
             {/* Contact Form */}
-            {session?.user && (
-              <Card id="contact-form">
-                <CardHeader>
-                  <CardTitle>Skontaktuj się z kancelarią</CardTitle>
-                  <CardDescription>
-                    Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+            <Card id="contact-form">
+              <CardHeader>
+                <CardTitle>Skontaktuj się z kancelarią</CardTitle>
+                <CardDescription>
+                  {session?.user
+                    ? "Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe"
+                    : "Zaloguj się, aby wysłać wiadomość do kancelarii"
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   <div>
                     <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
@@ -1540,20 +1581,31 @@ export default function LawFirmProfilePage() {
                       onCheckedChange={(checked) =>
                         setContactForm({ ...contactForm, politykaPrivacy: !!checked })
                       }
+                      disabled={!session?.user}
                     />
                     <Label htmlFor="politykaPrivacy" className="text-xs cursor-pointer">
                       Akceptuję politykę prywatności i wyrażam zgodę na przetwarzanie moich danych osobowych *
                     </Label>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={sendingContact}>
-                    <Send className="mr-2 h-4 w-4" />
-                    {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
-                  </Button>
+                  {session?.user ? (
+                    <Button type="submit" className="w-full" disabled={sendingContact}>
+                      <Send className="mr-2 h-4 w-4" />
+                      {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
+                    </Button>
+                  ) : (
+                    <div className="p-4 bg-muted rounded-lg text-center">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Wysłanie wiadomości będzie możliwe po zalogowaniu
+                      </p>
+                      <Button type="button" onClick={() => router.push("/logowanie")} className="w-full">
+                        Zaloguj się
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </CardContent>
             </Card>
-            )}
           </div>
         </div>
       </div>
