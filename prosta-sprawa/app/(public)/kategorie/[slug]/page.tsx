@@ -41,6 +41,7 @@ interface Category {
 
 interface LawFirm {
   id: string
+  slug: string
   nazwa: string
   nazwaFirmy: string
   logo?: string
@@ -440,7 +441,7 @@ export default function CategoryPage() {
                 {viewMode === "grid" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                     {lawFirms.map((firm) => (
-                      <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                         <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                           <CardHeader>
                             {firm.logo ? (
@@ -510,7 +511,7 @@ export default function CategoryPage() {
                   /* Law Firms List View */
                   <div className="space-y-4 mb-8">
                     {lawFirms.map((firm) => (
-                      <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                         <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                           <CardContent className="p-6">
                             <div className="flex gap-6">

@@ -33,6 +33,7 @@ import { toast } from "sonner"
 
 interface LawFirm {
   id: string
+  slug: string
   nazwa: string
   nazwaFirmy: string
   logo?: string
@@ -437,7 +438,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <Button asChild className="w-full">
-                    <Link href={`/kancelaria/${firm.id}`}>
+                    <Link href={`/kancelaria/${firm.slug}`}>
                       Zobacz profil
                     </Link>
                   </Button>
@@ -500,7 +501,7 @@ export default function HomePage() {
                           <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
                         </div>
                         <Button asChild size="sm" className="w-full">
-                          <Link href={`/kancelaria/${firm.id}`}>
+                          <Link href={`/kancelaria/${firm.slug}`}>
                             Zobacz profil
                           </Link>
                         </Button>
@@ -576,7 +577,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <Button asChild size="sm" className="w-full">
-                    <Link href={`/kancelaria/${firm.id}`}>
+                    <Link href={`/kancelaria/${firm.slug}`}>
                       Zobacz profil
                     </Link>
                   </Button>
@@ -848,7 +849,7 @@ export default function HomePage() {
               <h4 className="font-semibold mb-4">Dla klientów</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/dodaj-sprawe" className="text-muted-foreground hover:text-foreground">
+                  <Link href="u/dodaj-sprawe" className="text-muted-foreground hover:text-foreground">
                     Dodaj sprawę
                   </Link>
                 </li>

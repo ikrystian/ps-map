@@ -62,6 +62,7 @@ export default function LawFirmPanelLayout({
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [punktySaldo, setPunktySaldo] = useState<number>(0)
+  const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function LawFirmPanelLayout({
         if (response.ok) {
           const data = await response.json()
           setPunktySaldo(data.punktySaldo || 0)
+          setLawFirmSlug(data.slug || "")
         }
       } catch (error) {
         console.error("Error fetching law firm data:", error)
@@ -164,11 +166,11 @@ export default function LawFirmPanelLayout({
             })}
 
             {/* Link do publicznej strony kancelarii */}
-            {session?.user?.id && (
+            {lawFirmSlug && (
               <>
                 <div className="border-t border-border my-2" />
                 <Link
-                  href={`/kancelaria/${session.user.id}`}
+                  href={`/kancelaria/${lawFirmSlug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(

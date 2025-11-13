@@ -22,6 +22,7 @@ import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List } from "lucid
 
 interface LawFirm {
   id: string
+  slug: string
   nazwa: string
   nazwaFirmy: string
   logo?: string
@@ -341,7 +342,7 @@ export default function SearchLawyerPage() {
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                   {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                    <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                         <CardHeader>
                           {firm.logo ? (
@@ -436,7 +437,7 @@ export default function SearchLawyerPage() {
                 /* Law Firms List View */
                 <div className="space-y-4 mb-8">
                   {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                    <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                       <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                         <CardContent className="p-6">
                           <div className="flex gap-6">

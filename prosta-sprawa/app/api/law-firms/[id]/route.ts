@@ -14,6 +14,7 @@ export async function GET(
       where: {
         OR: [
           { id },
+          { slug: id },
           { nip: id },
           { userId: id },
         ],
@@ -159,7 +160,31 @@ export async function PUT(
     const updateData: any = {}
 
     // Dane podstawowe
-    if (body.nazwa) updateData.nazwa = body.nazwa
+    // Note: slug is NOT directly updateable - it's only regenerated when nazwa changes
+    if (body.nazwa && body.nazwa !== existingLawFirm.nazwa) {
+      updateData.nazwa = body.nazwa
+      // Regenerate slug if nazwa changes
+      const polishChars: Record<string, string> = {
+        'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+        'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+        'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
+        'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
+      }
+      let slug = body.nazwa
+      for (const [polish, latin] of Object.entries(polishChars)) {
+        slug = slug.replace(new RegExp(polish, 'g'), latin)
+      }
+      slug = slug
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+      const nipSuffix = existingLawFirm.nip.slice(-4)
+      updateData.slug = `${slug}-${nipSuffix}`
+    } else if (body.nazwa) {
+      // If nazwa hasn't changed, still update it (for consistency)
+      updateData.nazwa = body.nazwa
+    }
     if (body.nazwaFirmy) updateData.nazwaFirmy = body.nazwaFirmy
     if (body.opis !== undefined) updateData.opis = body.opis
     if (body.logo !== undefined) updateData.logo = body.logo
@@ -222,6 +247,7 @@ export async function PUT(
     updateData.updatedAt = new Date()
 
     // Aktualizuj kancelarię
+    console.log('Updating law firm with data:', updateData)
     const updatedLawFirm = await prisma.lawFirm.update({
       where: { id },
       data: updateData,
@@ -285,6 +311,9 @@ export async function PUT(
     })
   } catch (error) {
     console.error("Error updating law firm:", error)
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

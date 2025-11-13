@@ -26,6 +26,7 @@ interface BlogPost {
   } | null
   lawFirm: {
     id: string
+    slug: string
     nazwa: string
     nazwaFirmy: string
     logo: string | null
@@ -216,7 +217,7 @@ export default function BlogPostPage() {
 
               {/* View Profile Button */}
               <Button asChild className="w-full">
-                <Link href={`/kancelaria/${post.lawFirm.id}`}>
+                <Link href={`/kancelaria/${post.lawFirm.slug}`}>
                   Zobacz profil kancelarii
                 </Link>
               </Button>

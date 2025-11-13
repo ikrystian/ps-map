@@ -41,6 +41,7 @@ export default function LawFirmProfilePage() {
 
   const [formData, setFormData] = useState({
     id: "",
+    slug: "",
     // Dane podstawowe
     nazwa: "",
     nazwaFirmy: "",

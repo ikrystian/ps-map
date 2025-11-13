@@ -36,6 +36,7 @@ interface FavoriteLawFirm {
   addedAt: string
   lawFirm: {
     id: string
+    slug: string
     nazwa: string
     nazwaFirmy: string
     typ: string
@@ -208,7 +209,7 @@ export default function ClientFavoritesPage() {
                         <div className="flex items-center gap-2 mb-2">
                           <CardTitle className="text-xl">
                             <Link
-                              href={`/kancelaria/${lawFirm.id}`}
+                              href={`/kancelaria/${lawFirm.slug}`}
                               className="hover:underline"
                             >
                               {lawFirm.nazwa}
@@ -282,7 +283,7 @@ export default function ClientFavoritesPage() {
                     {/* Actions */}
                     <div className="flex flex-col gap-2">
                       <Button asChild size="sm">
-                        <Link href={`/kancelaria/${lawFirm.id}`}>
+                        <Link href={`/kancelaria/${lawFirm.slug}`}>
                           Zobacz profil
                         </Link>
                       </Button>

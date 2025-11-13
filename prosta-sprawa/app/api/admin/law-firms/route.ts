@@ -242,6 +242,17 @@ export async function POST(request: NextRequest) {
       })
 
       // Create law firm
+      const cleanNip = nip.replace(/[-\s]/g, "")
+      const slug = nazwa
+        .toLowerCase()
+        .replace(/[ąćęłńóśźż]/g, (char: string) => {
+          const map: Record<string, string> = { ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z' }
+          return map[char] || char
+        })
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') + '-' + cleanNip.slice(-4)
+
       const lawFirm = await tx.lawFirm.create({
         data: {
           userId: user.id,
@@ -249,7 +260,8 @@ export async function POST(request: NextRequest) {
           typInny: typ === "INNY" ? typInny : null,
           nazwa,
           nazwaFirmy,
-          nip: nip.replace(/[-\s]/g, ""),
+          slug,
+          nip: cleanNip,
           regon: regon || null,
           krs: krs || null,
           imieKontakt,

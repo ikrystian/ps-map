@@ -56,6 +56,7 @@ interface Offer {
   }
   lawFirm: {
     id: string
+    slug: string
     nazwa: string
     logo?: string
     miasto: string
@@ -383,7 +384,7 @@ export default function ClientOffersPage() {
                 )}
 
                 {offer.status === "ZAAKCEPTOWANA" && (
-                  <Link href={`/kancelaria/${offer.lawFirm.id}`}>
+                  <Link href={`/kancelaria/${offer.lawFirm.slug}`}>
                     <Button variant="outline">
                       Zobacz profil kancelarii
                     </Button>

@@ -3,6 +3,33 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
+// Helper function to generate slug from name and NIP
+function generateSlug(nazwa: string, nip: string): string {
+  const polishChars: Record<string, string> = {
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+    'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+    'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
+    'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
+  }
+
+  let slug = nazwa
+  // Replace Polish characters
+  for (const [polish, latin] of Object.entries(polishChars)) {
+    slug = slug.replace(new RegExp(polish, 'g'), latin)
+  }
+
+  // Convert to lowercase and replace spaces with hyphens
+  slug = slug
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  // Add last 4 digits of NIP for uniqueness
+  const nipSuffix = nip.slice(-4)
+  return `${slug}-${nipSuffix}`
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
@@ -102,6 +129,7 @@ export async function GET(request: NextRequest) {
 
       return {
         id: firm.id,
+        slug: firm.slug,
         nazwa: firm.nazwa,
         nazwaFirmy: firm.nazwaFirmy,
         logo: firm.logo,
@@ -214,6 +242,7 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           nazwa: body.nazwa,
           nazwaFirmy: body.nazwaFirmy,
+          slug: generateSlug(body.nazwa, body.nip),
           nip: body.nip,
           regon: body.regon || null,
           krs: body.krs || null,

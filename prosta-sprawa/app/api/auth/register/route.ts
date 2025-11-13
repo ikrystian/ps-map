@@ -69,6 +69,17 @@ export async function POST(request: NextRequest) {
         throw new Error("Nie znaleziono domyślnego województwa")
       }
 
+      const nip = userData.lawFirm.nip || `TEMP${Date.now()}`
+      const slug = userData.lawFirm.nazwa
+        .toLowerCase()
+        .replace(/[ąćęłńóśźż]/g, (char: string) => {
+          const map: Record<string, string> = { ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z' }
+          return map[char] || char
+        })
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') + '-' + nip.slice(-4)
+
       await prisma.lawFirm.create({
         data: {
           userId: user.id,
@@ -76,7 +87,8 @@ export async function POST(request: NextRequest) {
           typInny: userData.lawFirm.typInny || null,
           nazwa: userData.lawFirm.nazwa,
           nazwaFirmy: userData.lawFirm.nazwaFirmy || userData.lawFirm.nazwa,
-          nip: userData.lawFirm.nip || `TEMP${Date.now()}`, // Tymczasowy NIP dla MVP
+          slug,
+          nip, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,
           krs: userData.lawFirm.krs || null,
           imieKontakt: userData.lawFirm.imieKontakt || "Do uzupełnienia",
