@@ -62,6 +62,7 @@ interface UserData {
   email: string
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
+  image?: string | null
   client?: {
     id: string
     imie: string
