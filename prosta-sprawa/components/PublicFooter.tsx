@@ -6,7 +6,7 @@ import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "luc
 
 export default function PublicFooter() {
   return (
-    <footer id="public-footer" className="bg-slate-900 text-slate-300 border-t">
+    <footer id="public-footer" className="bg-black/[0.3] text-slate-300 border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Description */}
