@@ -128,22 +128,17 @@ export async function PUT(
       },
     })
 
-    // TODO: If order was marked as paid and it's a points order, add points to law firm
-    // NOTE: This functionality is currently disabled because the 'punkty' field doesn't exist in the LawFirm model
-    // if (statusPlatnosci === "ZAPLACONE" && updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
-    //   const lawFirm = await prisma.lawFirm.findUnique({
-    //     where: { id: updatedOrder.lawFirmId },
-    //   })
-
-    //   if (lawFirm) {
-    //     await prisma.lawFirm.update({
-    //       where: { id: updatedOrder.lawFirmId },
-    //       data: {
-    //         punkty: (lawFirm.punkty || 0) + updatedOrder.liczbaPunktow,
-    //       },
-    //     })
-    //   }
-    // }
+    // If order was marked as paid and it's a points order, add points to law firm
+    if (statusPlatnosci === "ZAPLACONE" && updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
+      await prisma.lawFirm.update({
+        where: { id: updatedOrder.lawFirmId },
+        data: {
+          punktySaldo: {
+            increment: updatedOrder.liczbaPunktow,
+          },
+        },
+      })
+    }
 
     return NextResponse.json(updatedOrder)
   } catch (error) {
