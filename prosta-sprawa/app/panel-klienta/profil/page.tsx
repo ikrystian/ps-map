@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -22,7 +23,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
-import { Loader2, Save, User } from "lucide-react"
+import { Loader2, Save, User, Upload, X, Image as ImageIcon } from "lucide-react"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 const profileFormSchema = z.object({
   imie: z.string().min(2, "Imię musi mieć minimum 2 znaki"),
@@ -45,8 +48,10 @@ interface Voivodeship {
 
 export default function ClientProfilePage() {
   const router = useRouter()
+  const { update } = useSession()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [clientData, setClientData] = useState<any>(null)
 
@@ -105,6 +110,89 @@ export default function ClientProfilePage() {
     }
   }
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingAvatar(true)
+
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload avatar")
+      }
+
+      const data = await response.json()
+
+      // Zaktualizuj dane użytkownika z nowym avatarem
+      const updateResponse = await fetch("/api/auth/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image: data.url,
+        }),
+      })
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to update avatar")
+      }
+
+      // Odśwież dane klienta lokalnie
+      await fetchData()
+
+      // Zaktualizuj sesję NextAuth aby odświeżyć avatar w menu
+      await update()
+
+      toast.success("Avatar został zaktualizowany")
+    } catch (error) {
+      console.error("Error uploading avatar:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
+    } finally {
+      setIsUploadingAvatar(false)
+      // Reset input
+      e.target.value = ""
+    }
+  }
+
+  const handleRemoveAvatar = async () => {
+    try {
+      const response = await fetch("/api/auth/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image: null,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to remove avatar")
+      }
+
+      // Odśwież dane klienta lokalnie
+      await fetchData()
+
+      // Zaktualizuj sesję NextAuth aby odświeżyć avatar w menu
+      await update()
+
+      toast.success("Avatar został usunięty")
+    } catch (error) {
+      console.error("Error removing avatar:", error)
+      toast.error("Nie udało się usunąć avatara")
+    }
+  }
+
   const onSubmit = async (data: ProfileFormValues) => {
     setSubmitting(true)
     try {
@@ -156,21 +244,103 @@ export default function ClientProfilePage() {
       {/* Avatar Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Zdjęcie profilowe</CardTitle>
-          <CardDescription>To zdjęcie będzie widoczne dla kancelarii</CardDescription>
+          <CardTitle>Zdjęcie profilowe (Avatar)</CardTitle>
+          <CardDescription>
+            Avatar będzie wyświetlany w górnym menu i będzie widoczny dla kancelarii. Zalecany rozmiar: 200x200px.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center gap-6">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src={clientData?.user.image || undefined} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Aby zmienić zdjęcie profilowe, skontaktuj się z administracją
-            </p>
-          </div>
+        <CardContent>
+          {clientData?.user.image ? (
+            <div className="flex items-start gap-4">
+              <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
+                <Image
+                  src={clientData.user.image}
+                  alt="Avatar"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="avatar-upload"
+                  className={cn(
+                    "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
+                    isUploadingAvatar
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                  )}
+                  onClick={(e) => {
+                    if (isUploadingAvatar) {
+                      e.preventDefault()
+                    }
+                  }}
+                >
+                  {isUploadingAvatar ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Przesyłanie...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Zmień avatar
+                    </>
+                  )}
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleRemoveAvatar}
+                  disabled={isUploadingAvatar}
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Usuń avatar
+                </Button>
+              </div>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarUpload}
+                disabled={isUploadingAvatar}
+              />
+            </div>
+          ) : (
+            <div>
+              <label
+                htmlFor="avatar-upload"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  {isUploadingAvatar ? (
+                    <>
+                      <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                      <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                      <p className="mb-2 text-sm text-muted-foreground">
+                        <span className="font-semibold">Kliknij aby przesłać</span> avatar
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        PNG, JPG, WEBP (max 5MB)
+                      </p>
+                    </>
+                  )}
+                </div>
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarUpload}
+                disabled={isUploadingAvatar}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

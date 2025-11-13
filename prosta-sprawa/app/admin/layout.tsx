@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
+
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -115,9 +117,9 @@ export default function AdminLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold">
-              ProstaSprawa
-            </Link>
+          <Link href="/" className="flex items-center">
+            <Image src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+          </Link>
           </div>
 
           {/* User menu */}

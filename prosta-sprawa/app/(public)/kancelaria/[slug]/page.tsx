@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import {
   MapPin,
@@ -169,6 +170,9 @@ interface LawFirm {
     client: {
       imie: string
       nazwisko: string
+      user?: {
+        image?: string | null
+      }
     }
   }>
 }
@@ -426,11 +430,10 @@ export default function LawFirmProfilePage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-5 w-5 ${
-              star <= rating
+            className={`h-5 w-5 ${star <= rating
                 ? "fill-yellow-400 text-yellow-400"
                 : "fill-muted text-muted"
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -469,20 +472,21 @@ export default function LawFirmProfilePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Image */}
-      {lawFirm.zdjecieGlowne && (
-        <div className="relative h-64 md:h-96 w-full">
+
+      <div className="relative h-64 md:h-96 w-full flex items-end">
+        {lawFirm.zdjecieGlowne && (
           <Image
             src={lawFirm.zdjecieGlowne}
             alt={lawFirm.nazwa}
             fill
-            className="object-cover"
+            id="cover-photo"
+            className="object-cover z-[-1]] opacity-75"
           />
-        </div>
-      )}
+        )}
+      <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="relative">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Logo */}
             {lawFirm.logo && (
@@ -490,6 +494,7 @@ export default function LawFirmProfilePage() {
                 <Image
                   src={lawFirm.logo}
                   alt={lawFirm.nazwa}
+                  id="logo-photo"
                   fill
                   className="object-contain p-2"
                 />
@@ -501,7 +506,7 @@ export default function LawFirmProfilePage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-3xl md:text-4xl font-bold">{lawFirm.nazwa}</h1>
+                    <h1 className="text-xl md:text-2xl font-bold">{lawFirm.nazwa}</h1>
                     {lawFirm.zweryfikowana && (
                       <Badge variant="secondary" className="flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" />
@@ -509,11 +514,13 @@ export default function LawFirmProfilePage() {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-lg text-muted-foreground mb-3">{lawFirm.nazwaFirmy}</p>
+
+                  <p className="text-lg text-muted-foreground">{lawFirm.nazwaFirmy}</p>
+
 
                   {/* Rating */}
                   {lawFirm.reviewCount > 0 && (
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-3">
                       {renderStars(Math.round(lawFirm.avgRating))}
                       <span className="font-semibold">{lawFirm.avgRating.toFixed(1)}</span>
                       <span className="text-muted-foreground">
@@ -522,22 +529,12 @@ export default function LawFirmProfilePage() {
                     </div>
                   )}
 
-                  {/* Location */}
-                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{lawFirm.miasto}, {lawFirm.voivodeship.nazwa}</span>
-                  </div>
 
-                  {/* Type */}
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Briefcase className="h-4 w-4" />
-                    <span>{lawFirmTypeLabels[lawFirm.typ] || lawFirm.typ}</span>
-                  </div>
 
                   {/* Słowa kluczowe */}
                   {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
                     <div className="mt-4">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 hidden">
                         {lawFirm.slowaKluczowe.map((keyword, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
                             {keyword}
@@ -563,6 +560,7 @@ export default function LawFirmProfilePage() {
                   <Button variant="outline" size="icon">
                     <Share2 className="h-5 w-5" />
                   </Button>
+
                   <Button>
                     <MessageSquare className="mr-2 h-4 w-4" />
                     Kontakt
@@ -572,6 +570,12 @@ export default function LawFirmProfilePage() {
             </div>
           </div>
         </div>
+        </div>
+      </div>
+
+
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -1000,17 +1004,34 @@ export default function LawFirmProfilePage() {
                   lawFirm.reviews.map((review) => (
                     <Card key={review.id}>
                       <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-lg">{review.tytulOpinii}</CardTitle>
-                            <CardDescription>
+                        <div className="flex items-start gap-4">
+                          {/* Avatar klienta */}
+                          <Avatar className="h-12 w-12 flex-shrink-0">
+                            {!review.anonimowa && review.client.user?.image ? (
+                              <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
+                            ) : null}
+                            <AvatarFallback className="bg-primary text-primary-foreground">
                               {review.anonimowa
-                                ? "Anonim"
-                                : `${review.client.imie} ${review.client.nazwisko}`}{" "}
-                              • {formatDate(review.createdAt)}
-                            </CardDescription>
+                                ? "AN"
+                                : `${review.client.imie[0]}${review.client.nazwisko[0]}`.toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+
+                          {/* Treść opinii */}
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <CardTitle className="text-lg">{review.tytulOpinii}</CardTitle>
+                                <CardDescription>
+                                  {review.anonimowa
+                                    ? "Anonim"
+                                    : `${review.client.imie} ${review.client.nazwisko}`}{" "}
+                                  • {formatDate(review.createdAt)}
+                                </CardDescription>
+                              </div>
+                              {renderStars(review.ocenaOgolna)}
+                            </div>
                           </div>
-                          {renderStars(review.ocenaOgolna)}
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -1316,7 +1337,7 @@ export default function LawFirmProfilePage() {
             </Card>
 
             {/* Contact Form */}
-            <Card>
+            <Card id="contact-form">
               <CardHeader>
                 <CardTitle>Skontaktuj się z kancelarią</CardTitle>
                 <CardDescription>

@@ -5,6 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "next-auth/react"
+import Image from "next/image"
+
 import { Button } from "@/components/ui/button"
 import {
   LayoutDashboard,
@@ -172,13 +174,15 @@ export default function LawFirmPanelLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold">
-              ProstaSprawa
-            </Link>
+          <Link href="/" className="flex items-center">
+            <Image src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+          </Link>
           </div>
 
           <UserMenu
             userRole="LAW_FIRM"
+            userName={session?.user?.name}
+            userImage={session?.user?.image}
             punktySaldo={punktySaldo}
             userId={session?.user?.id}
           />

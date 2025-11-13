@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
+import Image from "next/image"
 
 interface Voivodeship {
   id: string
@@ -29,6 +30,7 @@ export default function LawFirmProfilePage() {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
 
@@ -202,6 +204,104 @@ export default function LawFirmProfilePage() {
     }))
   }
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    // Sprawdź limit 10 zdjęć
+    if (formData.galeriaZdjec.length + files.length > 10) {
+      toast.error("Możesz dodać maksymalnie 10 zdjęć do galerii")
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formDataToSend = new FormData()
+        formDataToSend.append("file", file)
+
+        const response = await fetch("/api/upload/image", {
+          method: "POST",
+          body: formDataToSend,
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error || "Failed to upload image")
+        }
+
+        const data = await response.json()
+        return data.url
+      })
+
+      const uploadedUrls = await Promise.all(uploadPromises)
+
+      handleInputChange("galeriaZdjec", [...formData.galeriaZdjec, ...uploadedUrls])
+
+      toast.success(`Dodano ${uploadedUrls.length} zdjęć do galerii`)
+    } catch (error) {
+      console.error("Error uploading images:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęć")
+    } finally {
+      setIsUploading(false)
+      // Reset input
+      e.target.value = ""
+    }
+  }
+
+  const handleRemoveImage = (index: number) => {
+    const newGallery = formData.galeriaZdjec.filter((_, i) => i !== index)
+    handleInputChange("galeriaZdjec", newGallery)
+    toast.success("Zdjęcie zostało usunięte")
+  }
+
+  const handleSingleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "logo" | "zdjecieGlowne"
+  ) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload image")
+      }
+
+      const data = await response.json()
+      handleInputChange(field, data.url)
+
+      toast.success(
+        field === "logo" ? "Logo zostało przesłane" : "Zdjęcie główne zostało przesłane"
+      )
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
+    } finally {
+      setIsUploading(false)
+      // Reset input
+      e.target.value = ""
+    }
+  }
+
+  const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne") => {
+    handleInputChange(field, "")
+    toast.success(
+      field === "logo" ? "Logo zostało usunięte" : "Zdjęcie główne zostało usunięte"
+    )
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -222,6 +322,7 @@ export default function LawFirmProfilePage() {
           <TabsTrigger value="basic">Podstawowe</TabsTrigger>
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
           <TabsTrigger value="specialization">Specjalizacje</TabsTrigger>
+          <TabsTrigger value="multimedia">Multimedia</TabsTrigger>
           <TabsTrigger value="additional">Dodatkowe</TabsTrigger>
         </TabsList>
 
@@ -264,6 +365,200 @@ export default function LawFirmProfilePage() {
                     placeholder="Opisz swoją kancelarię..."
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Logo i zdjęcia</CardTitle>
+              <CardDescription>
+                Dodaj logo oraz zdjęcie główne swojej kancelarii
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Logo Upload */}
+              <div className="space-y-3">
+                <Label>Logo kancelarii</Label>
+                <p className="text-sm text-muted-foreground">
+                  Logo będzie wyświetlane na Twojej stronie kancelarii i w wynikach wyszukiwania.
+                  Zalecany rozmiar: 400x400px (kwadratowe).
+                </p>
+
+                {formData.logo ? (
+                  <div className="flex items-start gap-4">
+                    <div className="relative h-32 w-32 rounded-lg overflow-hidden border-2 border-border bg-card">
+                      <Image
+                        src={formData.logo}
+                        alt="Logo"
+                        fill
+                        className="object-contain p-2"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label
+                        htmlFor="logo-upload"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Przesyłanie...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Zmień logo
+                          </>
+                        )}
+                      </label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleRemoveSingleImage("logo")}
+                        disabled={isUploading}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Usuń logo
+                      </Button>
+                    </div>
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleSingleImageUpload(e, "logo")}
+                      disabled={isUploading}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label
+                      htmlFor="logo-upload"
+                      className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                            <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                          </>
+                        ) : (
+                          <>
+                            <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                            <p className="mb-2 text-sm text-muted-foreground">
+                              <span className="font-semibold">Kliknij aby przesłać</span> logo
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              PNG, JPG, WEBP (max 5MB)
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleSingleImageUpload(e, "logo")}
+                      disabled={isUploading}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Zdjęcie główne Upload */}
+              <div className="space-y-3">
+                <Label>Zdjęcie główne</Label>
+                <p className="text-sm text-muted-foreground">
+                  Zdjęcie główne będzie wyświetlane jako banner na górze Twojej strony kancelarii.
+                  Zalecany rozmiar: 1920x600px (panoramiczne).
+                </p>
+
+                {formData.zdjecieGlowne ? (
+                  <div className="space-y-3">
+                    <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-border">
+                      <Image
+                        src={formData.zdjecieGlowne}
+                        alt="Zdjęcie główne"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <label
+                        htmlFor="main-image-upload"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Przesyłanie...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Zmień zdjęcie
+                          </>
+                        )}
+                      </label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleRemoveSingleImage("zdjecieGlowne")}
+                        disabled={isUploading}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Usuń zdjęcie
+                      </Button>
+                    </div>
+                    <input
+                      id="main-image-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleSingleImageUpload(e, "zdjecieGlowne")}
+                      disabled={isUploading}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label
+                      htmlFor="main-image-upload"
+                      className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                            <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                          </>
+                        ) : (
+                          <>
+                            <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                            <p className="mb-2 text-sm text-muted-foreground">
+                              <span className="font-semibold">Kliknij aby przesłać</span> zdjęcie główne
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              PNG, JPG, WEBP (max 5MB)
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                    <input
+                      id="main-image-upload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleSingleImageUpload(e, "zdjecieGlowne")}
+                      disabled={isUploading}
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -584,6 +879,135 @@ export default function LawFirmProfilePage() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Multimedia */}
+        <TabsContent value="multimedia" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Galeria zdjęć</CardTitle>
+              <CardDescription>
+                Dodaj zdjęcia swojej kancelarii (maksymalnie 10 zdjęć, każde do 5MB)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Upload Button */}
+              <div className="flex items-center gap-4">
+                <label
+                  htmlFor="gallery-upload"
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Przesyłanie...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Dodaj zdjęcia
+                    </>
+                  )}
+                </label>
+                <input
+                  id="gallery-upload"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  disabled={isUploading || formData.galeriaZdjec.length >= 10}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {formData.galeriaZdjec.length} / 10 zdjęć
+                </span>
+              </div>
+
+              {/* Gallery Grid */}
+              {formData.galeriaZdjec.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {formData.galeriaZdjec.map((imageUrl, index) => (
+                    <div key={index} className="relative group">
+                      <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-border">
+                        <Image
+                          src={imageUrl}
+                          alt={`Galeria ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                          className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/90"
+                          title="Usuń zdjęcie"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-center text-muted-foreground mt-1">
+                        Zdjęcie {index + 1}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border rounded-lg">
+                  <ImageIcon className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground text-center">
+                    Brak zdjęć w galerii
+                  </p>
+                  <p className="text-sm text-muted-foreground text-center mt-1">
+                    Kliknij "Dodaj zdjęcia" aby przesłać zdjęcia
+                  </p>
+                </div>
+              )}
+
+              {formData.galeriaZdjec.length > 0 && (
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twojej stronie kancelarii.
+                    Najedź kursorem na zdjęcie i kliknij przycisk X aby je usunąć.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Film YouTube (opcjonalnie)</CardTitle>
+              <CardDescription>
+                Dodaj link do filmu na YouTube prezentującego Twoją kancelarię
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="filmYouTube">Link do filmu YouTube</Label>
+                <Input
+                  id="filmYouTube"
+                  value={formData.filmYouTube}
+                  onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="kolejnoscMultimedia">Kolejność wyświetlania</Label>
+                <Select
+                  value={formData.kolejnoscMultimedia}
+                  onValueChange={(value) => handleInputChange("kolejnoscMultimedia", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="zdjecia">Najpierw zdjęcia, potem film</SelectItem>
+                    <SelectItem value="film">Najpierw film, potem zdjęcia</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

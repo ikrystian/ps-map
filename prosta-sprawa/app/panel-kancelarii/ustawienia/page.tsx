@@ -20,9 +20,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { AlertCircle, Loader2, Save, Info, LogOut, Trash2, CheckCircle2 } from "lucide-react"
+import { AlertCircle, Loader2, Save, Info, LogOut, Trash2, CheckCircle2, Upload, X, Image as ImageIcon } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 interface UserData {
   id: string
@@ -62,10 +64,11 @@ interface NotificationSettings {
 }
 
 export default function LawFirmSettingsPage() {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [isSavingUser, setIsSavingUser] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   // Dane użytkownika
   const [userData, setUserData] = useState<UserData>({
@@ -153,6 +156,101 @@ export default function LawFirmSettingsPage() {
     }))
   }
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingAvatar(true)
+
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload avatar")
+      }
+
+      const data = await response.json()
+
+      // Zaktualizuj dane użytkownika z nowym avatarem
+      const updateResponse = await fetch("/api/auth/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          image: data.url,
+        }),
+      })
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to update avatar")
+      }
+
+      setUserData((prev) => ({ ...prev, image: data.url }))
+
+      // Zaktualizuj sesję NextAuth
+      await update()
+
+      // Poczekaj na propagację zmian w sesji
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      toast.success("Avatar został zaktualizowany")
+
+      // Odśwież stronę aby zobaczyć zmiany w menu
+      window.location.reload()
+    } catch (error) {
+      console.error("Error uploading avatar:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
+    } finally {
+      setIsUploadingAvatar(false)
+      // Reset input
+      e.target.value = ""
+    }
+  }
+
+  const handleRemoveAvatar = async () => {
+    try {
+      const response = await fetch("/api/auth/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          image: null,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to remove avatar")
+      }
+
+      setUserData((prev) => ({ ...prev, image: null }))
+
+      // Zaktualizuj sesję NextAuth
+      await update()
+
+      // Poczekaj na propagację zmian w sesji
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      toast.success("Avatar został usunięty")
+
+      // Odśwież stronę aby zobaczyć zmiany w menu
+      window.location.reload()
+    } catch (error) {
+      console.error("Error removing avatar:", error)
+      toast.error("Nie udało się usunąć avatara")
+    }
+  }
+
   const handleSaveUserData = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSavingUser(true)
@@ -165,6 +263,7 @@ export default function LawFirmSettingsPage() {
         },
         body: JSON.stringify({
           name: userData.name,
+          image: userData.image,
         }),
       })
 
@@ -172,7 +271,16 @@ export default function LawFirmSettingsPage() {
         throw new Error("Failed to update user data")
       }
 
+      // Zaktualizuj sesję NextAuth
+      await update()
+
+      // Poczekaj na propagację zmian w sesji
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
       toast.success("Dane osobowe zostały zaktualizowane")
+
+      // Odśwież stronę aby zobaczyć zmiany w menu
+      window.location.reload()
     } catch (error) {
       console.error("Error saving user data:", error)
       toast.error("Nie udało się zapisać danych osobowych")
@@ -255,6 +363,108 @@ export default function LawFirmSettingsPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSaveUserData} className="space-y-4">
+                {/* Avatar Upload */}
+                <div className="space-y-3">
+                  <Label>Zdjęcie profilowe (Avatar)</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Avatar będzie wyświetlany w górnym menu i przy Twoich komentarzach. Zalecany rozmiar: 200x200px.
+                  </p>
+
+                  {userData.image ? (
+                    <div className="flex items-start gap-4">
+                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
+                        <Image
+                          src={userData.image}
+                          alt="Avatar"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label
+                          htmlFor="avatar-upload"
+                          className={cn(
+                            "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
+                            isUploadingAvatar
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                          )}
+                          onClick={(e) => {
+                            if (isUploadingAvatar) {
+                              e.preventDefault()
+                            }
+                          }}
+                        >
+                          {isUploadingAvatar ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Przesyłanie...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Zmień avatar
+                            </>
+                          )}
+                        </label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleRemoveAvatar}
+                          disabled={isUploadingAvatar}
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Usuń avatar
+                        </Button>
+                      </div>
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleAvatarUpload}
+                        disabled={isUploadingAvatar}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label
+                        htmlFor="avatar-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          {isUploadingAvatar ? (
+                            <>
+                              <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                              <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                              <p className="mb-2 text-sm text-muted-foreground">
+                                <span className="font-semibold">Kliknij aby przesłać</span> avatar
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                PNG, JPG, WEBP (max 5MB)
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </label>
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleAvatarUpload}
+                        disabled={isUploadingAvatar}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <Separator />
+
                 <div className="grid gap-2">
                   <Label htmlFor="name">Imię i nazwisko</Label>
                   <Input

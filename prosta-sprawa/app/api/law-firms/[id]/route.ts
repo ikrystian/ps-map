@@ -75,6 +75,11 @@ export async function GET(
               select: {
                 imie: true,
                 nazwisko: true,
+                user: {
+                  select: {
+                    image: true,
+                  },
+                },
               },
             },
           },

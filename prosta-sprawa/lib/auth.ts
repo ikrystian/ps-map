@@ -63,12 +63,45 @@ export const authOptions: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user: User }) {
+    async jwt({ token, user, trigger }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update" }) {
+      // Podczas pierwszego logowania
       if (user) {
         token.role = user.role as UserRole
-        token.id = user.id as string // Cast to string, assuming user.id is always present for authenticated users
+        token.id = user.id as string
         token.picture = user.image
       }
+
+      // Odśwież dane użytkownika z bazy jeśli sesja jest aktualizowana
+      // lub okresowo (np. co 5 minut)
+      const shouldRefresh = trigger === "update" ||
+        !token.lastRefresh ||
+        Date.now() - (token.lastRefresh as number) > 5 * 60 * 1000 // 5 minut
+
+      if (shouldRefresh && token.id) {
+        try {
+          const freshUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              role: true,
+              image: true,
+            },
+          })
+
+          if (freshUser) {
+            token.name = freshUser.name
+            token.email = freshUser.email
+            token.picture = freshUser.image
+            token.role = freshUser.role as UserRole
+            token.lastRefresh = Date.now()
+          }
+        } catch (error) {
+          console.error("Error refreshing user data in JWT:", error)
+        }
+      }
+
       return token
     },
     async session({ session, token }: { session: Session; token: JWT }) {
@@ -76,6 +109,7 @@ export const authOptions: NextAuthConfig = {
         session.user.id = token.id as string
         session.user.role = token.role as UserRole
         session.user.image = token.picture as string | null | undefined
+        session.user.name = token.name as string | null | undefined
       }
       return session
     },

@@ -1,10 +1,11 @@
 "use client"
+import Image from "next/image"
 
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Briefcase,
@@ -32,6 +33,7 @@ export default function ClientPanelLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const handleLogout = async () => {
@@ -105,13 +107,18 @@ export default function ClientPanelLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold">
-              ProstaSprawa
-            </Link>
+          <Link href="/" className="flex items-center">
+            <Image src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+          </Link>
           </div>
 
           {/* User menu */}
-          <UserMenu userRole="CLIENT" />
+          <UserMenu
+            userRole="CLIENT"
+            userName={session?.user?.name}
+            userImage={session?.user?.image}
+            userId={session?.user?.id}
+          />
         </header>
 
         {/* Main content */}
