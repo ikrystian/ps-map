@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { blocks, BlockKey } from '@/blocks'
-import { renderToStaticMarkup } from 'react-dom/server'
-import React from 'react'
 
 /**
  * POST /api/admin/blocks/[key]/render
- * Renderuje wybrany blok do HTML
+ * Zwraca HTML wybranego bloku
  */
 export async function POST(
   req: NextRequest,
@@ -27,18 +25,14 @@ export async function POST(
     }
 
     const block = blocks[blockKey]
-    const Component = block.component
-
-    // Renderuj komponent do statycznego HTML
-    const html = renderToStaticMarkup(React.createElement(Component))
 
     return NextResponse.json({
-      html,
+      html: block.html,
       name: block.name,
       description: block.description,
     })
   } catch (error) {
-    console.error('Error rendering block:', error)
+    console.error('Error getting block:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

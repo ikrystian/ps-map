@@ -1,39 +1,39 @@
 /**
  * Export wszystkich bloków HTML
- * Każdy blok to osobny komponent Next.js, który można renderować do HTML
+ * Każdy blok to gotowy HTML string kompatybilny z Tailwind CSS
  */
 
-import HeroBlock from './hero'
-import FeaturesBlock from './features'
-import CTABlock from './cta'
-import ContactBlock from './contact'
-import TestimonialsBlock from './testimonials'
+import { heroBlockHtml } from './hero'
+import { featuresBlockHtml } from './features'
+import { ctaBlockHtml } from './cta'
+import { contactBlockHtml } from './contact'
+import { testimonialsBlockHtml } from './testimonials'
 
 export const blocks = {
   hero: {
     name: 'Hero - Nagłówek główny',
     description: 'Sekcja główna z nagłówkiem, opisem i przyciskami CTA',
-    component: HeroBlock,
+    html: heroBlockHtml,
   },
   features: {
     name: 'Features - Cechy/Usługi',
     description: 'Trzy kolumny z ikonami i opisami usług/cech',
-    component: FeaturesBlock,
+    html: featuresBlockHtml,
   },
   cta: {
     name: 'CTA - Wezwanie do działania',
     description: 'Sekcja call-to-action z dużym przyciskiem',
-    component: CTABlock,
+    html: ctaBlockHtml,
   },
   contact: {
     name: 'Contact - Formularz kontaktowy',
     description: 'Sekcja z danymi kontaktowymi i formularzem',
-    component: ContactBlock,
+    html: contactBlockHtml,
   },
   testimonials: {
     name: 'Testimonials - Opinie klientów',
     description: 'Trzy opinie klientów z ocenami gwiazdkami',
-    component: TestimonialsBlock,
+    html: testimonialsBlockHtml,
   },
 }
 

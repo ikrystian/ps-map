@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { blocks } from '@/blocks'
-import { renderToString } from 'react-dom/server'
 
 /**
  * GET /api/admin/blocks
