@@ -30,6 +30,7 @@ import Link from "next/link"
 import Image from "next/image"
 import PublicHeader from "@/components/PublicHeader"
 import { toast } from "sonner"
+import PublicFooter from "@/components/PublicFooter"
 
 interface LawFirm {
   id: string
@@ -833,104 +834,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+                <PublicFooter />
 
-      {/* SECTION 13: Footer - Basic Footer */}
-      <footer className="bg-card border-t py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-lg mb-4">Prosta Sprawa</h3>
-              <p className="text-sm text-muted-foreground">
-                Platforma łącząca klientów z ekspertami prawnymi w całej Polsce
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Dla klientów</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="u/dodaj-sprawe" className="text-muted-foreground hover:text-foreground">
-                    Dodaj sprawę
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/szukaj-prawnika" className="text-muted-foreground hover:text-foreground">
-                    Szukaj prawnika
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kategorie" className="text-muted-foreground hover:text-foreground">
-                    Kategorie
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/jak-to-dziala" className="text-muted-foreground hover:text-foreground">
-                    Jak to działa
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Dla prawników</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/dla-prawnika" className="text-muted-foreground hover:text-foreground">
-                    Dla prawnika
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/cennik" className="text-muted-foreground hover:text-foreground">
-                    Cennik
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/rejestracja/kancelaria" className="text-muted-foreground hover:text-foreground">
-                    Rejestracja kancelarii
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">O nas</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/o-nas" className="text-muted-foreground hover:text-foreground">
-                    O nas
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="text-muted-foreground hover:text-foreground">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kontakt" className="text-muted-foreground hover:text-foreground">
-                    Kontakt
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/polityka-prywatnosci" className="text-muted-foreground hover:text-foreground">
-                    Polityka prywatności
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/regulamin" className="text-muted-foreground hover:text-foreground">
-                    Regulamin
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <Separator className="my-8" />
-
-          <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} Prosta Sprawa. Wszystkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </footer>
     </div>
+
   )
 }
