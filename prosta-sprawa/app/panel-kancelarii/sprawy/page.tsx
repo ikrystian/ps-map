@@ -95,23 +95,20 @@ const SprawyPage = () => {
   const fetchCases = async () => {
     setLoading(true)
     try {
+      // Pobierz wszystkie sprawy
       const response = await fetch("/api/cases")
       if (response.ok) {
         const data = await response.json()
 
-        // Pobierz odrzucone sprawy z localStorage
-        const rejectedCases = new Set(
-          JSON.parse(localStorage.getItem("rejectedCases") || "[]")
-        )
-
-        // Dodaj licznik ofert
-        const casesWithCount = await Promise.all(
+        // Pobierz szczegóły każdej sprawy wraz z ofertami
+        const casesWithOffers = await Promise.all(
           data.map(async (caseItem: Case) => {
             const offersResponse = await fetch(`/api/cases/${caseItem.id}`)
             if (offersResponse.ok) {
               const caseData = await offersResponse.json()
               return {
                 ...caseItem,
+                offers: caseData.offers || [],
                 _count: {
                   offers: caseData.offers?.length || 0,
                 },
@@ -119,14 +116,18 @@ const SprawyPage = () => {
             }
             return {
               ...caseItem,
+              offers: [],
               _count: { offers: 0 },
             }
           })
         )
 
-        // Filtruj odrzucone sprawy
-        const filteredCases = casesWithCount.filter((c) => !rejectedCases.has(c.id))
-        setCases(filteredCases)
+        // Filtruj tylko sprawy, w których klient zaakceptował ofertę od tej kancelarii
+        const acceptedCases = casesWithOffers.filter((caseItem: any) => {
+          return caseItem.offers.some((offer: any) => offer.status === "ZAAKCEPTOWANA")
+        })
+
+        setCases(acceptedCases)
       }
     } catch (error) {
       console.error("Error fetching cases:", error)
@@ -289,7 +290,12 @@ const SprawyPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold mb-6">Zarządzaj Sprawami</h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Moje Sprawy</h1>
+        <p className="text-muted-foreground mt-2">
+          Sprawy, w których klient zaakceptował Twoją ofertę
+        </p>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <Input
@@ -329,11 +335,33 @@ const SprawyPage = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Nowe sprawy</CardTitle>
-            <span className="text-2xl font-bold">{newCasesCount}</span>
+            <CardTitle className="text-sm font-medium">W trakcie</CardTitle>
+            <span className="text-2xl font-bold">
+              {filteredCases.filter((c) => c.status === "W_TRAKCIE").length}
+            </span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Nowe zlecenia do przejrzenia</p>
+            <p className="text-xs text-muted-foreground">Sprawy w realizacji</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Zakończone</CardTitle>
+            <span className="text-2xl font-bold">
+              {filteredCases.filter((c) => c.status === "ZAKONCZONA").length}
+            </span>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Sprawy ukończone</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Wszystkie</CardTitle>
+            <span className="text-2xl font-bold">{filteredCases.length}</span>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Zaakceptowane sprawy</p>
           </CardContent>
         </Card>
         <Card>
@@ -345,38 +373,18 @@ const SprawyPage = () => {
             <p className="text-xs text-muted-foreground">Sprawy, które obserwujesz</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Wszystkie</CardTitle>
-            <span className="text-2xl font-bold">{filteredCases.length}</span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Dostępne sprawy</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Z ofertami</CardTitle>
-            <span className="text-2xl font-bold">
-              {filteredCases.filter((c) => c._count && c._count.offers > 0).length}
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy z Twoimi ofertami</p>
-          </CardContent>
-        </Card>
       </div>
 
       <Separator className="my-6" />
 
-      <h2 className="text-2xl font-bold mb-4">Dostępne Sprawy</h2>
+      <h2 className="text-2xl font-bold mb-4">Zaakceptowane Sprawy</h2>
 
       {filteredCases.length === 0 ? (
         <div className="text-center py-12">
           <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Brak dostępnych spraw</h3>
+          <h3 className="text-lg font-semibold mb-2">Brak zaakceptowanych spraw</h3>
           <p className="text-muted-foreground">
-            Nie znaleziono spraw spełniających kryteria wyszukiwania
+            Nie masz jeszcze spraw, w których klient zaakceptował Twoją ofertę
           </p>
         </div>
       ) : (

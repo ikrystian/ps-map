@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 
 // GET /api/admin/transakcje/[id] - Get single transaction (ADMIN only)
 export async function GET(
@@ -128,16 +129,24 @@ export async function PUT(
       },
     })
 
-    // If order was marked as paid and it's a points order, add points to law firm
-    if (statusPlatnosci === "ZAPLACONE" && updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
-      await prisma.lawFirm.update({
-        where: { id: updatedOrder.lawFirmId },
-        data: {
-          punktySaldo: {
-            increment: updatedOrder.liczbaPunktow,
+    // If order was marked as paid, perform post-payment actions
+    if (statusPlatnosci === "ZAPLACONE") {
+      // If it's a points order, add points to law firm
+      if (updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
+        await prisma.lawFirm.update({
+          where: { id: updatedOrder.lawFirmId },
+          data: {
+            punktySaldo: {
+              increment: updatedOrder.liczbaPunktow,
+            },
           },
-        },
-      })
+        })
+      }
+
+      // Generate invoice if it doesn't exist yet
+      if (!updatedOrder.invoice) {
+        await generateInvoiceForOrder(updatedOrder.id)
+      }
     }
 
     return NextResponse.json(updatedOrder)
