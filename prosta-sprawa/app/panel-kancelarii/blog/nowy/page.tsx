@@ -30,12 +30,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
 import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
+import { ImageUpload } from "@/components/ui/image-upload"
 
 const postSchema = z.object({
   tytul: z.string().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
   tresc: z.string().min(100, "Treść musi mieć minimum 100 znaków"),
   categoryId: z.string().optional(),
-  obrazekWyrozniajacy: z.string().url("Podaj poprawny URL obrazka").optional().or(z.literal("")),
+  obrazekWyrozniajacy: z.string().optional().or(z.literal("")),
   metaTitle: z.string().max(70, "Meta tytuł może mieć maksymalnie 70 znaków").optional(),
   metaDescription: z.string().max(160, "Meta opis może mieć maksymalnie 160 znaków").optional(),
   opublikowany: z.boolean(),
@@ -224,17 +225,14 @@ export default function LawFirmNewBlogPostPage() {
                 name="obrazekWyrozniajacy"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Obrazek wyróżniający</FormLabel>
                     <FormControl>
-                      <Input
-                        type="url"
-                        placeholder="https://example.com/image.jpg"
-                        {...field}
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        label="Obrazek wyróżniający"
+                        description="Prześlij obrazek lub podaj URL. Obrazek pojawi się jako miniatura artykułu."
                       />
                     </FormControl>
-                    <FormDescription>
-                      URL do obrazka, który pojawi się jako miniatura artykułu
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -1,4 +1,5 @@
 import PublicHeader from "@/components/PublicHeader"
+import PublicFooter from "@/components/PublicFooter"
 import { auth } from "@/lib/auth"
 
 export default async function PublicLayout({
@@ -19,6 +20,7 @@ export default async function PublicLayout({
       <main className="flex-1 pt-[65px]">
         {children}
       </main>
+      <PublicFooter />
     </div>
   )
 }
