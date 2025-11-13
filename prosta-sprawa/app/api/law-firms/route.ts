@@ -288,6 +288,7 @@ export async function POST(request: NextRequest) {
       const lawFirm = await tx.lawFirm.create({
         data: {
           userId: user.id,
+          slug: generateSlug(body.nazwa, body.nip),
           typ: body.typ,
           typInny: body.typInny || null,
           nazwa: body.nazwa,

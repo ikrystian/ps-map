@@ -36,8 +36,8 @@ export function ImageCropper({ image, aspectRatio, onCropComplete, onCancel, ope
             onCrop={handleCrop}
             maxImageSize={5 * 1024 * 1024}
           >
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden p-4">
-              <ImageCropContent className="w-full" />
+            <div className="relative bg-gray-100 rounded-lg overflow-hidden p-4 flex items-center justify-center min-h-[400px] max-h-[600px]">
+              <ImageCropContent className="max-h-[550px]" />
             </div>
 
             <DialogFooter className="mt-4">

@@ -253,7 +253,7 @@ export const ImageCropContent = ({
 
   return (
     <ReactCrop
-      className={cn('max-h-[277px] max-w-full', className)}
+      className={cn('max-w-full', className)}
       crop={crop}
       onChange={handleChange}
       onComplete={handleComplete}
@@ -263,10 +263,11 @@ export const ImageCropContent = ({
       {imgSrc && (
         <img
           alt="crop"
-          className="size-full"
+          className="max-w-full h-auto"
           onLoad={onImageLoad}
           ref={imgRef}
           src={imgSrc}
+          style={{ display: 'block' }}
         />
       )}
     </ReactCrop>

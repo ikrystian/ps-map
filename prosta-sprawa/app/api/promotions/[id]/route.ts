@@ -5,9 +5,10 @@ import { auth } from "@/lib/auth"
 // GET /api/promotions/[id] - Pobierz szczegóły promocji
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -38,7 +39,7 @@ export async function GET(
 
     // Pobierz promocję
     const promotion = await prisma.promotion.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!promotion) {
@@ -69,9 +70,10 @@ export async function GET(
 // PUT /api/promotions/[id] - Aktualizuj promocję (głównie auto-renewal)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -101,7 +103,7 @@ export async function PUT(
 
     // Pobierz promocję
     const promotion = await prisma.promotion.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!promotion) {
@@ -124,7 +126,7 @@ export async function PUT(
 
     // Aktualizuj tylko pole automatyczneOdnowienie
     const updatedPromotion = await prisma.promotion.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         automatyczneOdnowienie:
           automatyczneOdnowienie !== undefined
@@ -146,9 +148,10 @@ export async function PUT(
 // DELETE /api/promotions/[id] - Anuluj promocję
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
@@ -178,7 +181,7 @@ export async function DELETE(
 
     // Pobierz promocję
     const promotion = await prisma.promotion.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!promotion) {
@@ -225,7 +228,7 @@ export async function DELETE(
     // Deaktywuj promocję i zwróć punkty w transakcji
     const [deactivatedPromotion, updatedLawFirm] = await prisma.$transaction([
       prisma.promotion.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           aktywna: false,
           automatyczneOdnowienie: false,
