@@ -44,7 +44,7 @@ export default function UserMenu({
   userId,
 }: UserMenuProps) {
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" })
+    await signOut({ callbackUrl: "/wylogowano" })
   }
 
   // Get initials for avatar fallback

@@ -18,7 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Briefcase } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Category {
@@ -74,6 +74,9 @@ export default function CategoryPage() {
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [total, setTotal] = useState(0)
+
+  // View mode
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -368,27 +371,50 @@ export default function CategoryPage() {
           {/* Results */}
           <div className="lg:col-span-3">
             {/* Sort and Results Count */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
               <p className="text-sm text-muted-foreground">
                 Znaleziono <span className="font-semibold text-foreground">{total}</span>{" "}
                 {total === 1 ? "kancelarię" : "kancelarie"}
               </p>
 
-              <div className="flex items-center gap-2">
-                <Label htmlFor="sort" className="text-sm">
-                  Sortuj:
-                </Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort" className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Trafność</SelectItem>
-                    <SelectItem value="rating">Najwyżej oceniane</SelectItem>
-                    <SelectItem value="newest">Najnowsze</SelectItem>
-                    <SelectItem value="experience">Doświadczenie</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex items-center gap-4">
+                {/* View Toggle */}
+                <div className="flex items-center gap-1 border rounded-md p-1">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className="px-3"
+                  >
+                    <Grid3x3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="px-3"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Sort */}
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="sort" className="text-sm">
+                    Sortuj:
+                  </Label>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger id="sort" className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="relevance">Trafność</SelectItem>
+                      <SelectItem value="rating">Najwyżej oceniane</SelectItem>
+                      <SelectItem value="newest">Najnowsze</SelectItem>
+                      <SelectItem value="experience">Doświadczenie</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
@@ -410,75 +436,155 @@ export default function CategoryPage() {
               </div>
             ) : lawFirms.length > 0 ? (
               <>
-                {/* Law Firms Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                  {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                        <CardHeader>
-                          {firm.logo ? (
-                            <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
-                              <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
-                            </div>
-                          ) : (
-                            <Avatar className="mx-auto w-20 h-20 mb-3">
-                              <AvatarFallback className="text-xl">
-                                {firm.nazwa.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex items-center justify-center gap-2">
-                            <CardTitle className="text-lg text-center">{firm.nazwa}</CardTitle>
-                            {firm.zweryfikowana && (
-                              <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                            )}
-                          </div>
-                          {firm.categories.length > 0 && (
-                            <p className="text-sm text-muted-foreground text-center">
-                              {firm.categories[0].nazwa}
-                            </p>
-                          )}
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {/* Location */}
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">
-                                {firm.miasto}, {firm.voivodeship.nazwa}
-                              </span>
-                            </div>
-
-                            {/* Rating */}
-                            {firm.reviewCount > 0 && (
-                              <div className="flex items-center">
-                                <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
-                                <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
-                                <span className="text-sm text-muted-foreground ml-2">
-                                  ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
-                                </span>
+                {/* Law Firms Grid View */}
+                {viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                    {lawFirms.map((firm) => (
+                      <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                          <CardHeader>
+                            {firm.logo ? (
+                              <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
+                                <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
                               </div>
+                            ) : (
+                              <Avatar className="mx-auto w-20 h-20 mb-3">
+                                <AvatarFallback className="text-xl">
+                                  {firm.nazwa.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
                             )}
-
-                            {/* Description */}
-                            {firm.opis && (
-                              <p className="text-sm text-muted-foreground line-clamp-2">{firm.opis}</p>
-                            )}
-
-                            {/* Badges */}
-                            <div className="flex gap-2">
-                              {firm.onlineOnly && (
-                                <Badge variant="outline" className="text-xs">
-                                  Online
-                                </Badge>
+                            <div className="flex items-center justify-center gap-2">
+                              <CardTitle className="text-lg text-center">{firm.nazwa}</CardTitle>
+                              {firm.zweryfikowana && (
+                                <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
                               )}
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
+                            {firm.categories.length > 0 && (
+                              <p className="text-sm text-muted-foreground text-center">
+                                {firm.categories[0].nazwa}
+                              </p>
+                            )}
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {/* Location */}
+                              <div className="flex items-center text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">
+                                  {firm.miasto}, {firm.voivodeship.nazwa}
+                                </span>
+                              </div>
+
+                              {/* Rating */}
+                              {firm.reviewCount > 0 && (
+                                <div className="flex items-center">
+                                  <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                                  <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
+                                  <span className="text-sm text-muted-foreground ml-2">
+                                    ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Description */}
+                              {firm.opis && (
+                                <p className="text-sm text-muted-foreground line-clamp-2">{firm.opis}</p>
+                              )}
+
+                              {/* Badges */}
+                              <div className="flex gap-2">
+                                {firm.onlineOnly && (
+                                  <Badge variant="outline" className="text-xs">
+                                    Online
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  /* Law Firms List View */
+                  <div className="space-y-4 mb-8">
+                    {lawFirms.map((firm) => (
+                      <Link key={firm.id} href={`/kancelaria/${firm.id}`}>
+                        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                          <CardContent className="p-6">
+                            <div className="flex gap-6">
+                              {/* Logo */}
+                              <div className="flex-shrink-0">
+                                {firm.logo ? (
+                                  <div className="relative w-24 h-24 rounded-full overflow-hidden border-2">
+                                    <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
+                                  </div>
+                                ) : (
+                                  <Avatar className="w-24 h-24">
+                                    <AvatarFallback className="text-2xl">
+                                      {firm.nazwa.substring(0, 2).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                )}
+                              </div>
+
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-4 mb-2">
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h3 className="text-xl font-semibold">{firm.nazwa}</h3>
+                                      {firm.zweryfikowana && (
+                                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                                      )}
+                                    </div>
+                                    {firm.categories.length > 0 && (
+                                      <p className="text-sm text-muted-foreground">
+                                        {firm.categories[0].nazwa}
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  {/* Rating */}
+                                  {firm.reviewCount > 0 && (
+                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                      <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                                      <span className="font-bold">{firm.avgRating.toFixed(1)}</span>
+                                      <span className="text-sm text-muted-foreground">
+                                        ({firm.reviewCount})
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Description */}
+                                {firm.opis && (
+                                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                    {firm.opis}
+                                  </p>
+                                )}
+
+                                {/* Location and Badges */}
+                                <div className="flex items-center gap-4 flex-wrap">
+                                  <div className="flex items-center text-sm text-muted-foreground">
+                                    <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                                    <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
+                                  </div>
+                                  {firm.onlineOnly && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Online
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Pagination */}
                 {totalPages > 1 && (
