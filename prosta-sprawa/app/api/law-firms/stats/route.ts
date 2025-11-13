@@ -1,29 +1,18 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { requireFeature } from "@/lib/api-permissions"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    // Sprawdź uprawnienia do statystyk (tylko PREMIUM i BIZNES)
+    const result = await requireFeature("canAccessStatistics")
+    if (result instanceof NextResponse) return result
+    const { lawFirm: lawFirmPermData } = result
 
-    if (!session?.user) {
-      return Response.json(
-        { error: "Musisz być zalogowany" },
-        { status: 401 }
-      )
-    }
-
-    // Sprawdź czy użytkownik jest kancelarią
-    if (session.user.role !== "LAW_FIRM") {
-      return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
-        { status: 403 }
-      )
-    }
-
-    // Pobierz dane kancelarii
+    // Pobierz pełne dane kancelarii
     const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
+      where: { id: lawFirmPermData.id },
     })
 
     if (!lawFirm) {

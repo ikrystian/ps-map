@@ -1,0 +1,419 @@
+/**
+ * System Promocji - Helper Functions
+ *
+ * Funkcje pomocnicze do zarządzania i sprawdzania aktywnych promocji kancelarii
+ */
+
+import { prisma } from "@/lib/prisma"
+import { PromotionType } from "@prisma/client"
+
+// ============================================================================
+// TYPY
+// ============================================================================
+
+export interface ActivePromotion {
+  id: string
+  typPromocji: PromotionType
+  kategoriaPromocji: string | null
+  wojewodztwoPromocji: string | null
+  startPromocji: Date
+  koniecPromocji: Date
+}
+
+export interface PromotionBoost {
+  hasBoost: boolean
+  boostMultiplier: number
+  promotionTypes: PromotionType[]
+}
+
+// ============================================================================
+// GŁÓWNE FUNKCJE
+// ============================================================================
+
+/**
+ * Pobiera wszystkie aktywne promocje dla kancelarii
+ */
+export async function getActiveLawFirmPromotions(
+  lawFirmId: string
+): Promise<ActivePromotion[]> {
+  const now = new Date()
+
+  const promotions = await prisma.promotion.findMany({
+    where: {
+      lawFirmId,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+    },
+    select: {
+      id: true,
+      typPromocji: true,
+      kategoriaPromocji: true,
+      wojewodztwoPromocji: true,
+      startPromocji: true,
+      koniecPromocji: true,
+    },
+  })
+
+  return promotions
+}
+
+/**
+ * Sprawdza czy kancelaria ma aktywną promocję danego typu
+ */
+export async function hasActivePromotion(
+  lawFirmId: string,
+  promotionType: PromotionType
+): Promise<boolean> {
+  const promotions = await getActiveLawFirmPromotions(lawFirmId)
+  return promotions.some((p) => p.typPromocji === promotionType)
+}
+
+/**
+ * Sprawdza czy kancelaria ma aktywną promocję dla danej kategorii
+ */
+export async function hasActiveCategoryPromotion(
+  lawFirmId: string,
+  categoryId: string | null
+): Promise<boolean> {
+  const now = new Date()
+
+  const promotion = await prisma.promotion.findFirst({
+    where: {
+      lawFirmId,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+      OR: [
+        { kategoriaPromocji: categoryId },
+        { kategoriaPromocji: null }, // Promocja dla wszystkich kategorii
+      ],
+    },
+  })
+
+  return !!promotion
+}
+
+/**
+ * Sprawdza czy kancelaria ma aktywną promocję dla danego województwa
+ */
+export async function hasActiveVoivodeshipPromotion(
+  lawFirmId: string,
+  voivodeshipId: string | null
+): Promise<boolean> {
+  const now = new Date()
+
+  const promotion = await prisma.promotion.findFirst({
+    where: {
+      lawFirmId,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+      OR: [
+        { wojewodztwoPromocji: voivodeshipId },
+        { wojewodztwoPromocji: null }, // Promocja dla wszystkich województw
+      ],
+    },
+  })
+
+  return !!promotion
+}
+
+/**
+ * Oblicza boost rankingu dla kancelarii na podstawie aktywnych promocji
+ *
+ * Zwraca mnożnik, który należy zastosować do pozycji w rankingu:
+ * - PODBICIE_OGLOSZENIA: 1.5x
+ * - WYROZNIENIE: 2x
+ * - TOP_LISTA: 3x
+ * - STRONA_GLOWNA: 5x
+ *
+ * Jeśli kancelaria ma wiele promocji, stosowany jest najwyższy mnożnik
+ */
+export async function calculatePromotionBoost(
+  lawFirmId: string,
+  categoryId?: string | null,
+  voivodeshipId?: string | null
+): Promise<PromotionBoost> {
+  const promotions = await getActiveLawFirmPromotions(lawFirmId)
+
+  // Filtruj promocje według kategorii i województwa jeśli podane
+  const relevantPromotions = promotions.filter((promo) => {
+    // Sprawdź kategorię
+    if (categoryId && promo.kategoriaPromocji) {
+      if (promo.kategoriaPromocji !== categoryId) {
+        return false
+      }
+    }
+
+    // Sprawdź województwo
+    if (voivodeshipId && promo.wojewodztwoPromocji) {
+      if (promo.wojewodztwoPromocji !== voivodeshipId) {
+        return false
+      }
+    }
+
+    return true
+  })
+
+  if (relevantPromotions.length === 0) {
+    return {
+      hasBoost: false,
+      boostMultiplier: 1,
+      promotionTypes: [],
+    }
+  }
+
+  // Mapowanie typów promocji na mnożniki
+  const boostMultipliers: Record<PromotionType, number> = {
+    PODBICIE_OGLOSZENIA: 1.5,
+    WYROZNIENIE: 2,
+    TOP_LISTA: 3,
+    STRONA_GLOWNA: 5,
+  }
+
+  // Znajdź najwyższy mnożnik
+  let maxMultiplier = 1
+  const promotionTypes: PromotionType[] = []
+
+  for (const promo of relevantPromotions) {
+    const multiplier = boostMultipliers[promo.typPromocji]
+    if (multiplier > maxMultiplier) {
+      maxMultiplier = multiplier
+    }
+    promotionTypes.push(promo.typPromocji)
+  }
+
+  return {
+    hasBoost: true,
+    boostMultiplier: maxMultiplier,
+    promotionTypes,
+  }
+}
+
+/**
+ * Pobiera kancelarie z aktywną promocją STRONA_GLOWNA
+ * (do wyświetlenia na stronie głównej)
+ */
+export async function getFeaturedLawFirms(limit: number = 5) {
+  const now = new Date()
+
+  const promotions = await prisma.promotion.findMany({
+    where: {
+      typPromocji: PromotionType.STRONA_GLOWNA,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+    },
+    include: {
+      lawFirm: {
+        include: {
+          voivodeship: true,
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      startPromocji: "desc",
+    },
+    take: limit,
+  })
+
+  return promotions.map((p) => p.lawFirm)
+}
+
+/**
+ * Pobiera kancelarie z aktywną promocją TOP_LISTA
+ * (do wyświetlenia w sekcji "Top Kancelarie")
+ */
+export async function getTopLawFirms(limit: number = 10) {
+  const now = new Date()
+
+  const promotions = await prisma.promotion.findMany({
+    where: {
+      typPromocji: PromotionType.TOP_LISTA,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+    },
+    include: {
+      lawFirm: {
+        include: {
+          voivodeship: true,
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      startPromocji: "desc",
+    },
+    take: limit,
+  })
+
+  return promotions.map((p) => p.lawFirm)
+}
+
+/**
+ * Sprawdza czy kancelaria powinna być wyróżniona wizualnie
+ */
+export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean> {
+  return await hasActivePromotion(lawFirmId, PromotionType.WYROZNIENIE)
+}
+
+/**
+ * Pobiera typ wyróżnienia dla kancelarii (jeśli ma aktywną promocję)
+ */
+export async function getLawFirmHighlightType(
+  lawFirmId: string
+): Promise<PromotionType | null> {
+  const promotions = await getActiveLawFirmPromotions(lawFirmId)
+
+  // Priorytet: STRONA_GLOWNA > TOP_LISTA > WYROZNIENIE > PODBICIE_OGLOSZENIA
+  const priority: PromotionType[] = [
+    PromotionType.STRONA_GLOWNA,
+    PromotionType.TOP_LISTA,
+    PromotionType.WYROZNIENIE,
+    PromotionType.PODBICIE_OGLOSZENIA,
+  ]
+
+  for (const type of priority) {
+    if (promotions.some((p) => p.typPromocji === type)) {
+      return type
+    }
+  }
+
+  return null
+}
+
+// ============================================================================
+// FUNKCJE POMOCNICZE DO ODNOWIENIA
+// ============================================================================
+
+/**
+ * Automatycznie odnawia promocje, które się zakończyły i mają włączone auto-odnowienie
+ * (Ta funkcja powinna być wywoływana przez cron job)
+ */
+export async function renewExpiredPromotions() {
+  const now = new Date()
+
+  // Znajdź promocje do odnowienia
+  const expiredPromotions = await prisma.promotion.findMany({
+    where: {
+      aktywna: true,
+      automatyczneOdnowienie: true,
+      koniecPromocji: {
+        lt: now,
+      },
+    },
+    include: {
+      lawFirm: true,
+    },
+  })
+
+  const results = {
+    renewed: [] as string[],
+    failed: [] as { id: string; reason: string }[],
+  }
+
+  for (const promotion of expiredPromotions) {
+    try {
+      // Sprawdź czy kancelaria ma wystarczająco punktów
+      if (promotion.lawFirm.punktySaldo < promotion.kosztPunktow) {
+        // Dezaktywuj promocję i wyłącz auto-odnowienie
+        await prisma.promotion.update({
+          where: { id: promotion.id },
+          data: {
+            aktywna: false,
+            automatyczneOdnowienie: false,
+          },
+        })
+
+        results.failed.push({
+          id: promotion.id,
+          reason: "Niewystarczająca liczba punktów",
+        })
+
+        // TODO: Wyślij powiadomienie do kancelarii
+        continue
+      }
+
+      // Oblicz nowe daty
+      const newStart = new Date()
+      const newEnd = new Date(newStart)
+      newEnd.setDate(newEnd.getDate() + promotion.czasTrwaniaDni)
+
+      // Utwórz nową promocję i odejmij punkty
+      await prisma.$transaction([
+        prisma.promotion.create({
+          data: {
+            lawFirmId: promotion.lawFirmId,
+            typPromocji: promotion.typPromocji,
+            czasTrwaniaDni: promotion.czasTrwaniaDni,
+            kategoriaPromocji: promotion.kategoriaPromocji,
+            wojewodztwoPromocji: promotion.wojewodztwoPromocji,
+            startPromocji: newStart,
+            koniecPromocji: newEnd,
+            kosztPunktow: promotion.kosztPunktow,
+            automatyczneOdnowienie: true,
+            aktywna: true,
+          },
+        }),
+        prisma.lawFirm.update({
+          where: { id: promotion.lawFirmId },
+          data: {
+            punktySaldo: {
+              decrement: promotion.kosztPunktow,
+            },
+          },
+        }),
+        // Dezaktywuj starą promocję
+        prisma.promotion.update({
+          where: { id: promotion.id },
+          data: {
+            aktywna: false,
+          },
+        }),
+      ])
+
+      results.renewed.push(promotion.id)
+
+      // TODO: Wyślij powiadomienie o odnowieniu
+    } catch (error) {
+      console.error(`Error renewing promotion ${promotion.id}:`, error)
+      results.failed.push({
+        id: promotion.id,
+        reason: error instanceof Error ? error.message : "Unknown error",
+      })
+    }
+  }
+
+  return results
+}

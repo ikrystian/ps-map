@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { planId, period } = body // period: 1, 6, 12 (months)
+    const { planId, period, autoRenewal = false } = body // period: 1, 6, 12 (months)
 
     if (!planId || !period) {
       return Response.json(
@@ -87,6 +87,35 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Proporcjonalne rozliczenie - jeśli kancelaria ma aktywny pakiet
+    let proRataCredit = 0
+    let upgradeNote = ""
+
+    if (lawFirm.dataPakietuDo && new Date(lawFirm.dataPakietuDo) > new Date()) {
+      // Pakiet jeszcze aktywny - oblicz wartość niewykorzystanego czasu
+      const now = new Date()
+      const remainingDays = Math.ceil(
+        (new Date(lawFirm.dataPakietuDo).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      )
+
+      // Pobierz poprzedni pakiet aby znać jego cenę
+      const previousPlan = await prisma.subscriptionPlan.findUnique({
+        where: { typ: lawFirm.pakietSubskrypcji },
+      })
+
+      if (previousPlan && remainingDays > 0) {
+        // Oblicz dzienną wartość poprzedniego pakietu
+        // Zakładamy że cena roczna to baza
+        const dailyValue = previousPlan.cena12Miesiecy / 365
+        proRataCredit = dailyValue * remainingDays
+
+        upgradeNote = `Niewykorzystany czas z pakietu ${previousPlan.nazwa}: ${remainingDays} dni (wartość: ${proRataCredit.toFixed(2)} zł)`
+      }
+    }
+
+    // Oblicz finalną cenę po uwzględnieniu kredytu
+    const finalPrice = Math.max(price - proRataCredit, 0)
+
     // Oblicz daty subskrypcji
     const dataPakietuOd = new Date()
     const dataPakietuDo = new Date()
@@ -103,6 +132,7 @@ export async function POST(request: NextRequest) {
           pakietSubskrypcji: plan.typ,
           dataPakietuOd,
           dataPakietuDo,
+          autoRenewal, // Zapisz ustawienie auto-renewal
           // Dodaj punkty gratis do salda
           punktySaldo: {
             increment: plan.punktyGratis,
@@ -118,7 +148,7 @@ export async function POST(request: NextRequest) {
           subscriptionPeriod: period,
           packageStartDate: dataPakietuOd,
           packageEndDate: dataPakietuDo,
-          kwota: price,
+          kwota: finalPrice, // Użyj ceny po uwzględnieniu kredytu
           metodaPlatnosci: "PRZELEW", // W prawdziwej aplikacji byłby wybór
           statusPlatnosci: "ZAPLACONE", // Symulujemy opłacone zamówienie
           zaplaconoData: new Date(),
@@ -129,11 +159,11 @@ export async function POST(request: NextRequest) {
     // Generuj numer faktury
     const invoiceNumber = `FV/${new Date().getFullYear()}/${String(Date.now()).slice(-6)}`
 
-    // Oblicz kwoty VAT
+    // Oblicz kwoty VAT na podstawie finalnej ceny
     const vatRate = 23.0
-    const netAmount = price / (1 + vatRate / 100)
-    const vatAmount = price - netAmount
-    const grossAmount = price
+    const netAmount = finalPrice / (1 + vatRate / 100)
+    const vatAmount = finalPrice - netAmount
+    const grossAmount = finalPrice
 
     // Oblicz termin płatności (7 dni)
     const dueDate = new Date()
@@ -170,6 +200,13 @@ export async function POST(request: NextRequest) {
         punktyGratis: plan.punktyGratis,
         dataPakietuOd,
         dataPakietuDo,
+        autoRenewal,
+      },
+      pricing: {
+        originalPrice: price,
+        proRataCredit,
+        finalPrice,
+        upgradeNote: upgradeNote || undefined,
       },
       order: {
         id: order.id,

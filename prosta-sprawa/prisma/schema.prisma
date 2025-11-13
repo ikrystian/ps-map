@@ -227,6 +227,7 @@ model LawFirm {
   pakietSubskrypcji     SubscriptionPackage @default(PODSTAWOWY)
   dataPakietuOd         DateTime?
   dataPakietuDo         DateTime?
+  autoRenewal           Boolean  @default(false)  // Automatyczne przedłużanie pakietu
 
   // Statystyki
   wyswietleniaProfilu   Int      @default(0)

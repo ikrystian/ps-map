@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
+import { requireFeature } from "@/lib/api-permissions"
 
 // GET /api/blog/[id] - Pobiera wpis do edycji
 export async function GET(
@@ -9,22 +10,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-
-    if (!session?.user || session.user.role !== "LAW_FIRM") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    // Sprawdź uprawnienia do bloga (tylko BIZNES)
+    const result = await requireFeature("canAccessBlog")
+    if (result instanceof NextResponse) return result
+    const { lawFirm } = result
 
     const { id } = await params
-
-    // Pobierz kancelarię
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Kancelaria nie znaleziona" }, { status: 404 })
-    }
 
     // Pobierz wpis
     const post = await prisma.blogPost.findUnique({
@@ -56,22 +47,12 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-
-    if (!session?.user || session.user.role !== "LAW_FIRM") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    // Sprawdź uprawnienia do bloga (tylko BIZNES)
+    const result = await requireFeature("canAccessBlog")
+    if (result instanceof NextResponse) return result
+    const { lawFirm } = result
 
     const { id } = await params
-
-    // Pobierz kancelarię
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Kancelaria nie znaleziona" }, { status: 404 })
-    }
 
     // Pobierz istniejący wpis
     const existingPost = await prisma.blogPost.findUnique({
@@ -179,22 +160,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth()
-
-    if (!session?.user || session.user.role !== "LAW_FIRM") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    // Sprawdź uprawnienia do bloga (tylko BIZNES)
+    const result = await requireFeature("canAccessBlog")
+    if (result instanceof NextResponse) return result
+    const { lawFirm } = result
 
     const { id } = await params
-
-    // Pobierz kancelarię
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Kancelaria nie znaleziona" }, { status: 404 })
-    }
 
     // Pobierz wpis
     const post = await prisma.blogPost.findUnique({

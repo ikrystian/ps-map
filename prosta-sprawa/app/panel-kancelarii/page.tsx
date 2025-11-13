@@ -6,6 +6,8 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { usePermissions } from "@/hooks/usePermissions"
+import { LimitIndicator, PackageBadge } from "@/components/permissions"
 import {
   Table,
   TableBody,
@@ -212,10 +214,16 @@ export default function LawFirmDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [recentBlogPosts, setRecentBlogPosts] = useState<BlogPost[]>([])
+  const [categoriesCount, setCategoriesCount] = useState(0)
+  const [activeCasesCount, setActiveCasesCount] = useState(0)
+
+  // Sprawdź uprawnienia i limity
+  const { permissions, packageName, packageExpired } = usePermissions()
 
   useEffect(() => {
     fetchDashboardData()
     fetchRecentBlogPosts()
+    fetchLimitsData()
   }, [session])
 
   const fetchDashboardData = async () => {
@@ -253,6 +261,28 @@ export default function LawFirmDashboardPage() {
       setRecentBlogPosts(data.posts || [])
     } catch (err) {
       console.error("Error fetching blog posts:", err)
+    }
+  }
+
+  const fetchLimitsData = async () => {
+    if (!session?.user?.id) return
+
+    try {
+      // Pobierz liczbę kategorii
+      const categoriesResponse = await fetch("/api/law-firms/me/categories")
+      if (categoriesResponse.ok) {
+        const categoriesData = await categoriesResponse.json()
+        setCategoriesCount(categoriesData.length || 0)
+      }
+
+      // Pobierz liczbę aktywnych ofert (sprawy)
+      const offersResponse = await fetch("/api/offers?status=active")
+      if (offersResponse.ok) {
+        const offersData = await offersResponse.json()
+        setActiveCasesCount(offersData.total || offersData.length || 0)
+      }
+    } catch (err) {
+      console.error("Error fetching limits data:", err)
     }
   }
 
@@ -359,6 +389,64 @@ export default function LawFirmDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Package info and limits */}
+      {permissions && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Twój pakiet i limity</CardTitle>
+                <CardDescription>
+                  Aktualny pakiet: <strong>{packageName}</strong>
+                  {packageExpired && <span className="text-destructive ml-2">(Wygasł!)</span>}
+                </CardDescription>
+              </div>
+              <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="lg" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* Aktywne sprawy */}
+              <LimitIndicator
+                current={activeCasesCount}
+                limit={permissions.limits.activeCases}
+                label="Aktywne sprawy"
+                type="activeCases"
+                size="md"
+              />
+
+              {/* Kategorie */}
+              <LimitIndicator
+                current={categoriesCount}
+                limit={permissions.limits.categories}
+                label="Kategorie prawne"
+                type="categories"
+                size="md"
+              />
+            </div>
+
+            {packageExpired && (
+              <div className="mt-4 p-4 bg-destructive/10 border border-destructive rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-destructive">Twój pakiet wygasł</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Odnów pakiet, aby zachować dostęp do wszystkich funkcji.
+                    </p>
+                    <Link href="/panel-kancelarii/pakiet">
+                      <Button variant="destructive" size="sm" className="mt-2">
+                        Odnów pakiet
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick Actions - 4 Boxy z ikonkami */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -7,6 +7,7 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { PackageBadge } from "@/components/permissions"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -107,6 +108,7 @@ interface LawFirm {
   konwersja: number
   avgRating: number
   reviewCount: number
+  pakietSubskrypcji: string
   voivodeship: {
     nazwa: string
   }
@@ -580,13 +582,19 @@ export default function LawFirmProfilePage() {
             <div className="flex-1">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h1 className="text-xl md:text-2xl font-bold">{lawFirm.nazwa}</h1>
                     {lawFirm.zweryfikowana && (
                       <Badge variant="secondary" className="flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" />
                         Zweryfikowana
                       </Badge>
+                    )}
+                    {lawFirm.pakietSubskrypcji && (
+                      <PackageBadge
+                        packageType={lawFirm.pakietSubskrypcji as any}
+                        size="md"
+                      />
                     )}
                   </div>
 
@@ -1424,6 +1432,38 @@ export default function LawFirmProfilePage() {
                       </Button>
                     )}
                   </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Package Badge */}
+            {lawFirm.pakietSubskrypcji && (
+              <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-primary/5">
+                <CardHeader>
+                  <CardTitle className="text-base">Plan kancelarii</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-center py-2">
+                    <PackageBadge
+                      packageType={lawFirm.pakietSubskrypcji as any}
+                      size="lg"
+                    />
+                  </div>
+                  {lawFirm.pakietSubskrypcji === "BIZNES" && (
+                    <p className="text-xs text-center text-muted-foreground mt-3">
+                      Kancelaria z najwyższym pakietem - pełen dostęp do wszystkich funkcji
+                    </p>
+                  )}
+                  {lawFirm.pakietSubskrypcji === "PREMIUM" && (
+                    <p className="text-xs text-center text-muted-foreground mt-3">
+                      Zaawansowana kancelaria z rozszerzonymi funkcjami
+                    </p>
+                  )}
+                  {lawFirm.pakietSubskrypcji === "STANDARD" && (
+                    <p className="text-xs text-center text-muted-foreground mt-3">
+                      Kancelaria z pakietem standardowym
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}

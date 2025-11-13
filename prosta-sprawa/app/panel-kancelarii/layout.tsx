@@ -8,6 +8,8 @@ import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
+import { usePermissions } from "@/hooks/usePermissions"
+import { ExpiredPackageModal } from "@/components/permissions"
 import {
   LayoutDashboard,
   Briefcase,
@@ -64,6 +66,10 @@ export default function LawFirmPanelLayout({
   const [punktySaldo, setPunktySaldo] = useState<number>(0)
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [unreadCount, setUnreadCount] = useState(0)
+  const [showExpiredModal, setShowExpiredModal] = useState(false)
+
+  // Hook do sprawdzania uprawnień
+  const { packageExpired, expiryDate, packageName, loading: permissionsLoading } = usePermissions()
 
   useEffect(() => {
     const fetchLawFirmData = async () => {
@@ -104,6 +110,18 @@ export default function LawFirmPanelLayout({
       return () => clearInterval(interval)
     }
   }, [session])
+
+  // Sprawdź czy pakiet wygasł i pokaż modal
+  useEffect(() => {
+    if (!permissionsLoading && packageExpired && session?.user?.role === "LAW_FIRM") {
+      // Pokaż modal tylko raz na sesję (możesz użyć localStorage jeśli chcesz trwałość)
+      const hasSeenExpiredModal = sessionStorage.getItem("hasSeenExpiredModal")
+      if (!hasSeenExpiredModal) {
+        setShowExpiredModal(true)
+        sessionStorage.setItem("hasSeenExpiredModal", "true")
+      }
+    }
+  }, [permissionsLoading, packageExpired, session])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
@@ -229,6 +247,14 @@ export default function LawFirmPanelLayout({
           </div>
         </main>
       </div>
+
+      {/* Modal wygasłego pakietu */}
+      <ExpiredPackageModal
+        open={showExpiredModal}
+        onOpenChange={setShowExpiredModal}
+        packageName={packageName || ""}
+        expiryDate={expiryDate}
+      />
     </div>
   )
 }

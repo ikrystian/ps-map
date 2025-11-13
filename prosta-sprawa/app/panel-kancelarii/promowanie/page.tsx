@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { usePermissions } from "@/hooks/usePermissions"
+import { FeatureLockedCard } from "@/components/permissions"
 import {
   Select,
   SelectContent,
@@ -46,8 +48,20 @@ import {
   XCircle,
   Plus,
   Info,
+  Trash2,
+  RefreshCw,
+  MoreVertical,
+  Star,
+  Crown,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useToast } from "@/components/ui/use-toast"
 
 interface LawFirm {
   id: string
@@ -85,6 +99,8 @@ const ICON_MAP: Record<string, any> = {
   Sparkles,
   Award,
   Home,
+  Star,
+  Crown,
 }
 
 // Helper to get icon component
@@ -146,6 +162,7 @@ const getPromotionStatusBadge = (promotion: Promotion) => {
 
 export default function LawFirmPromotionPage() {
   const { data: session } = useSession()
+  const { toast } = useToast()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [promotions, setPromotions] = useState<Promotion[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -153,6 +170,10 @@ export default function LawFirmPromotionPage() {
   const [promotionTypes, setPromotionTypes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Sprawdź uprawnienia do promowania profilu
+  const { hasFeature, loading: permissionsLoading } = usePermissions()
+  const canPromoteProfile = hasFeature("canPromoteProfile")
 
   // Dialog nowej promocji
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -163,6 +184,11 @@ export default function LawFirmPromotionPage() {
   const [startDate, setStartDate] = useState<string>("")
   const [autoRenewal, setAutoRenewal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  // Dialog anulowania promocji
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [promotionToCancel, setPromotionToCancel] = useState<Promotion | null>(null)
+  const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -285,6 +311,119 @@ export default function LawFirmPromotionPage() {
   const handleOpenDialog = () => {
     resetForm()
     setDialogOpen(true)
+  }
+
+  const handleToggleAutoRenewal = async (promotion: Promotion) => {
+    try {
+      const response = await fetch(`/api/promotions/${promotion.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          automatyczneOdnowienie: !promotion.automatyczneOdnowienie,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się zaktualizować promocji")
+      }
+
+      toast({
+        title: "Sukces",
+        description: `Automatyczne odnowienie ${!promotion.automatyczneOdnowienie ? "włączone" : "wyłączone"}`,
+      })
+
+      // Odśwież dane
+      await fetchData()
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleCancelPromotion = async () => {
+    if (!promotionToCancel) return
+
+    setCancelling(true)
+
+    try {
+      const response = await fetch(`/api/promotions/${promotionToCancel.id}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się anulować promocji")
+      }
+
+      const data = await response.json()
+
+      toast({
+        title: "Sukces",
+        description: data.message,
+      })
+
+      // Zamknij dialog i odśwież dane
+      setCancelDialogOpen(false)
+      setPromotionToCancel(null)
+      await fetchData()
+    } catch (err) {
+      toast({
+        title: "Błąd",
+        description: err instanceof Error ? err.message : "Wystąpił błąd",
+        variant: "destructive",
+      })
+    } finally {
+      setCancelling(false)
+    }
+  }
+
+  const openCancelDialog = (promotion: Promotion) => {
+    setPromotionToCancel(promotion)
+    setCancelDialogOpen(true)
+  }
+
+  // Jeśli ładuje uprawnienia - pokaż loader
+  if (permissionsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Jeśli brak dostępu do promowania - pokaż kartę upgrade
+  if (!canPromoteProfile) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Promowanie profilu</h1>
+          <p className="text-muted-foreground">
+            Zwiększ widoczność swojej kancelarii i przyciągnij więcej klientów
+          </p>
+        </div>
+
+        <FeatureLockedCard
+          title="Promowanie profilu"
+          description="Wypromuj swoją kancelarię na liście wyników wyszukiwania i zwiększ liczbę klientów."
+          requiredPackage={["PREMIUM", "BIZNES"]}
+          icon={TrendingUp}
+          features={[
+            "Wyróżnienie profilu na liście wyników",
+            "Podbicie ogłoszeń o sprawy",
+            "Priorytetowe wyświetlanie w kategoriach",
+            "Promowanie w wybranych województwach",
+            "Promocje czasowe z automatycznym odnowieniem",
+            "Szczegółowe statystyki efektywności promocji",
+          ]}
+        />
+      </div>
+    )
   }
 
   if (loading) {
@@ -476,6 +615,7 @@ export default function LawFirmPromotionPage() {
                         <TableHead>Koniec</TableHead>
                         <TableHead className="text-right">Koszt</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Akcje</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -493,6 +633,33 @@ export default function LawFirmPromotionPage() {
                             {promo.kosztPunktow} pkt
                           </TableCell>
                           <TableCell>{getPromotionStatusBadge(promo)}</TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleToggleAutoRenewal(promo)}
+                                  className="gap-2"
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                  {promo.automatyczneOdnowienie
+                                    ? "Wyłącz auto-odnowienie"
+                                    : "Włącz auto-odnowienie"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => openCancelDialog(promo)}
+                                  className="gap-2 text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Anuluj promocję
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -523,6 +690,7 @@ export default function LawFirmPromotionPage() {
                         <TableHead>Koniec</TableHead>
                         <TableHead className="text-right">Koszt</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Akcje</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -540,6 +708,33 @@ export default function LawFirmPromotionPage() {
                             {promo.kosztPunktow} pkt
                           </TableCell>
                           <TableCell>{getPromotionStatusBadge(promo)}</TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleToggleAutoRenewal(promo)}
+                                  className="gap-2"
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                  {promo.automatyczneOdnowienie
+                                    ? "Wyłącz auto-odnowienie"
+                                    : "Włącz auto-odnowienie"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => openCancelDialog(promo)}
+                                  className="gap-2 text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Anuluj promocję
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

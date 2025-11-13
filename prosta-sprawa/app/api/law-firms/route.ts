@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 
 // Helper function to generate slug from name and NIP
 function generateSlug(nazwa: string, nip: string): string {
@@ -94,6 +95,7 @@ export async function GET(request: NextRequest) {
             include: {
               category: {
                 select: {
+                  id: true,
                   nazwa: true,
                   slug: true,
                 },
@@ -115,42 +117,90 @@ export async function GET(request: NextRequest) {
           { zweryfikowana: "desc" },
           { wyswietleniaProfilu: "desc" },
         ],
-        take: limit,
+        take: limit * 2, // Pobierz więcej, aby móc posortować z boostami
         skip: offset,
       }),
       prisma.lawFirm.count({ where }),
     ])
 
-    // Calculate average rating for each law firm
-    const lawFirmsWithRatings = lawFirms.map((firm) => {
-      const avgRating = firm.reviews.length > 0
-        ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / firm.reviews.length
-        : 0
+    // Get category ID for boost calculation
+    let categoryId: string | null = null
+    if (category) {
+      const categoryRecord = await prisma.category.findUnique({
+        where: { slug: category },
+        select: { id: true },
+      })
+      categoryId = categoryRecord?.id || null
+    }
 
-      return {
-        id: firm.id,
-        slug: firm.slug,
-        nazwa: firm.nazwa,
-        nazwaFirmy: firm.nazwaFirmy,
-        logo: firm.logo,
-        zdjecieGlowne: firm.zdjecieGlowne,
-        opis: firm.opis,
-        miasto: firm.miasto,
-        voivodeship: firm.voivodeship,
-        zweryfikowana: firm.zweryfikowana,
-        callaPolska: firm.callaPolska,
-        onlineOnly: firm.onlineOnly,
-        categories: firm.categories.map((c) => c.category),
-        avgRating: parseFloat(avgRating.toFixed(1)),
-        reviewCount: firm.reviews.length,
-        wyswietleniaProfilu: firm.wyswietleniaProfilu,
-        zlozoneOferty: firm.zlozoneOferty,
-        wygraneOferty: firm.wygraneOferty,
-      }
-    })
+    // Get voivodeship ID for boost calculation
+    let voivodeshipId: string | null = null
+    if (voivodeship) {
+      const voivodeshipRecord = await prisma.voivodeship.findUnique({
+        where: { slug: voivodeship },
+        select: { id: true },
+      })
+      voivodeshipId = voivodeshipRecord?.id || null
+    }
+
+    // Calculate ratings, boosts, and highlight types for each law firm
+    const lawFirmsWithData = await Promise.all(
+      lawFirms.map(async (firm) => {
+        const avgRating = firm.reviews.length > 0
+          ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / firm.reviews.length
+          : 0
+
+        // Calculate promotion boost
+        const boost = await calculatePromotionBoost(firm.id, categoryId, voivodeshipId)
+
+        // Get highlight type for visual distinction
+        const highlightType = await getLawFirmHighlightType(firm.id)
+
+        // Calculate base score (verified firms get priority)
+        const baseScore = firm.zweryfikowana ? 1000 : 0
+        const viewScore = firm.wyswietleniaProfilu * 0.1
+        const ratingScore = avgRating * 50
+
+        // Apply promotion boost
+        const finalScore = (baseScore + viewScore + ratingScore) * boost.boostMultiplier
+
+        return {
+          id: firm.id,
+          nazwa: firm.nazwa,
+          nazwaFirmy: firm.nazwaFirmy,
+          logo: firm.logo,
+          zdjecieGlowne: firm.zdjecieGlowne,
+          opis: firm.opis,
+          miasto: firm.miasto,
+          voivodeship: firm.voivodeship,
+          zweryfikowana: firm.zweryfikowana,
+          callaPolska: firm.callaPolska,
+          onlineOnly: firm.onlineOnly,
+          categories: firm.categories.map((c) => c.category),
+          avgRating: parseFloat(avgRating.toFixed(1)),
+          reviewCount: firm.reviews.length,
+          wyswietleniaProfilu: firm.wyswietleniaProfilu,
+          zlozoneOferty: firm.zlozoneOferty,
+          wygraneOferty: firm.wygraneOferty,
+          // Promotion data
+          promoted: boost.hasBoost,
+          promotionBoost: boost.boostMultiplier,
+          promotionTypes: boost.promotionTypes,
+          highlightType: highlightType,
+          // Internal score for sorting
+          _score: finalScore,
+        }
+      })
+    )
+
+    // Sort by final score (with promotion boosts applied)
+    const sortedLawFirms = lawFirmsWithData
+      .sort((a, b) => b._score - a._score)
+      .slice(0, limit) // Apply limit after sorting
+      .map(({ _score, ...firm }) => firm) // Remove internal score from response
 
     return NextResponse.json({
-      lawFirms: lawFirmsWithRatings,
+      lawFirms: sortedLawFirms,
       total,
       limit,
       offset,
@@ -242,7 +292,6 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           nazwa: body.nazwa,
           nazwaFirmy: body.nazwaFirmy,
-          slug: generateSlug(body.nazwa, body.nip),
           nip: body.nip,
           regon: body.regon || null,
           krs: body.krs || null,

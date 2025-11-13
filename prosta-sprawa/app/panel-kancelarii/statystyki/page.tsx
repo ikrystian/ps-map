@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { usePermissions } from "@/hooks/usePermissions"
+import { FeatureLockedCard } from "@/components/permissions"
 import {
   Eye,
   FileText,
@@ -68,6 +70,10 @@ export default function LawFirmStatsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Sprawdź uprawnienia do statystyk
+  const { hasFeature, loading: permissionsLoading } = usePermissions()
+  const canAccessStatistics = hasFeature("canAccessStatistics")
+
   useEffect(() => {
     fetchStats()
   }, [session])
@@ -106,6 +112,44 @@ export default function LawFirmStatsPage() {
             }`}
           />
         ))}
+      </div>
+    )
+  }
+
+  // Jeśli ładuje uprawnienia - pokaż loader
+  if (permissionsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Jeśli brak dostępu do statystyk - pokaż kartę upgrade
+  if (!canAccessStatistics) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Statystyki i analizy</h1>
+          <p className="text-muted-foreground">
+            Zaawansowane statystyki i analityka dla Twojej kancelarii
+          </p>
+        </div>
+
+        <FeatureLockedCard
+          title="Zaawansowane statystyki"
+          description="Zyskaj pełen wgląd w wydajność swojej kancelarii dzięki szczegółowym statystykom i analizom."
+          requiredPackage={["PREMIUM", "BIZNES"]}
+          icon={BarChart3}
+          features={[
+            "Szczegółowe statystyki wyświetleń profilu",
+            "Analiza skuteczności ofert i konwersji",
+            "Wykresy trendów w czasie",
+            "Statystyki wg kategorii prawnych",
+            "Porównanie z konkurencją",
+            "Eksport danych do analizy",
+          ]}
+        />
       </div>
     )
   }

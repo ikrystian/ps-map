@@ -2,24 +2,15 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
+import { requireFeature } from "@/lib/api-permissions"
 
 // GET /api/blog - Pobiera wpisy zalogowanej kancelarii
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-
-    if (!session?.user || session.user.role !== "LAW_FIRM") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // Pobierz kancelarię
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Kancelaria nie znaleziona" }, { status: 404 })
-    }
+    // Sprawdź uprawnienia do bloga (tylko BIZNES)
+    const result = await requireFeature("canAccessBlog")
+    if (result instanceof NextResponse) return result
+    const { lawFirm } = result
 
     // Pobierz wszystkie wpisy kancelarii
     const posts = await prisma.blogPost.findMany({
@@ -44,20 +35,10 @@ export async function GET(request: NextRequest) {
 // POST /api/blog - Tworzy nowy wpis dla zalogowanej kancelarii
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-
-    if (!session?.user || session.user.role !== "LAW_FIRM") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // Pobierz kancelarię
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Kancelaria nie znaleziona" }, { status: 404 })
-    }
+    // Sprawdź uprawnienia do bloga (tylko BIZNES)
+    const result = await requireFeature("canAccessBlog")
+    if (result instanceof NextResponse) return result
+    const { lawFirm } = result
 
     const body = await request.json()
     const {

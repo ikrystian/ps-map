@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Eye, FileText } from "lucide-react"
+import { Plus, Edit, Trash2, Eye, FileText, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { usePermissions } from "@/hooks/usePermissions"
+import { FeatureLockedCard } from "@/components/permissions"
 import {
   Table,
   TableBody,
@@ -61,6 +63,10 @@ export default function LawFirmBlogPage() {
     pages: 0,
   })
   const router = useRouter()
+
+  // Sprawdź uprawnienia do bloga
+  const { hasFeature, loading: permissionsLoading } = usePermissions()
+  const canAccessBlog = hasFeature("canAccessBlog")
 
   const fetchPosts = async (page: number = 1) => {
     try {
@@ -132,6 +138,47 @@ export default function LawFirmBlogPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-lg">Ładowanie...</div>
+      </div>
+    )
+  }
+
+  // Jeśli ładuje uprawnienia - pokaż loader
+  if (permissionsLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Ładowanie...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Jeśli brak dostępu do bloga - pokaż kartę upgrade
+  if (!canAccessBlog) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Blog kancelarii</h1>
+          <p className="text-muted-foreground">
+            Buduj autorytet i przyciągaj klientów dzięki profesjonalnemu blogowi
+          </p>
+        </div>
+
+        <FeatureLockedCard
+          title="Blog kancelarii"
+          description="Prowadź profesjonalny blog prawniczy, dziel się wiedzą i buduj autorytet w swojej dziedzinie."
+          requiredPackage="BIZNES"
+          icon={BookOpen}
+          features={[
+            "Nieograniczona liczba artykułów",
+            "Kategorie i tagi dla lepszej organizacji",
+            "Edytor WYSIWYG z pełnym formatowaniem",
+            "Optymalizacja SEO dla każdego wpisu",
+            "Statystyki wyświetleń i zaangażowania",
+            "Możliwość publikacji i wersji roboczych",
+          ]}
+        />
       </div>
     )
   }
