@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
 import {
   LayoutDashboard,
   Briefcase,
@@ -16,6 +17,8 @@ import {
   Users,
   FileText,
   Coins,
+  Moon,
+  Sun,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -43,8 +46,14 @@ export default function UserMenu({
   punktySaldo = 0,
   userId,
 }: UserMenuProps) {
+  const { theme, setTheme } = useTheme()
+
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/wylogowano" })
+  }
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
   }
 
   // Get initials for avatar fallback
@@ -101,6 +110,19 @@ export default function UserMenu({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
+            {theme === "dark" ? (
+              <>
+                <Sun className="h-4 w-4" />
+                Jasny motyw
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4" />
+                Ciemny motyw
+              </>
+            )}
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
             <LogOut className="h-4 w-4" />
             Wyloguj
@@ -171,6 +193,19 @@ export default function UserMenu({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  Jasny motyw
+                </>
+              ) : (
+                <>
+                  <Moon className="h-4 w-4" />
+                  Ciemny motyw
+                </>
+              )}
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
               <LogOut className="h-4 w-4" />
               Wyloguj
@@ -225,6 +260,19 @@ export default function UserMenu({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
+            {theme === "dark" ? (
+              <>
+                <Sun className="h-4 w-4" />
+                Jasny motyw
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4" />
+                Ciemny motyw
+              </>
+            )}
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleLogout}
             className="flex items-center gap-2 cursor-pointer"

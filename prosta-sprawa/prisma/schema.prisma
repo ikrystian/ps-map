@@ -41,6 +41,7 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
   notificationSettings NotificationSettings?
+  loginHistory  LoginHistory[]
 
   // Chat relations
   clientConversations     Conversation[] @relation("ClientConversations")
@@ -257,6 +258,8 @@ model LawFirm {
   promotions            Promotion[]
   favoritedBy           FavoriteLawFirm[]
   documents             Document[]
+  stats                 LawFirmStats[]        // Statystyki miesięczne
+  categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -363,6 +366,7 @@ model Category {
   // Relacje
   lawFirms    LawFirmCategory[]
   cases       Case[]
+  stats       LawFirmCategoryStats[]
 
   @@index([slug])
   @@index([parentId])
@@ -1323,6 +1327,57 @@ model HelpQuestion {
 }
 
 // ============================================================================
+// STATYSTYKI KANCELARII (MIESIĘCZNE)
+// ============================================================================
+
+model LawFirmStats {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  // Okres statystyk
+  year            Int      // Rok
+  month           Int      // Miesiąc (1-12)
+
+  // Statystyki
+  profileViews    Int      @default(0)  // Wyświetlenia profilu
+  offersSubmitted Int      @default(0)  // Złożone oferty
+  offersAccepted  Int      @default(0)  // Zaakceptowane oferty
+  offersRejected  Int      @default(0)  // Odrzucone oferty
+  casesViewed     Int      @default(0)  // Obejrzane sprawy
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([lawFirmId, year, month])
+  @@index([lawFirmId])
+  @@index([year, month])
+}
+
+// ============================================================================
+// STATYSTYKI KANCELARII WG KATEGORII
+// ============================================================================
+
+model LawFirmCategoryStats {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  categoryId      String
+  category        Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // Statystyki
+  offersSubmitted Int      @default(0)  // Złożone oferty
+  offersAccepted  Int      @default(0)  // Zaakceptowane oferty
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([lawFirmId, categoryId])
+  @@index([lawFirmId])
+  @@index([categoryId])
+}
+
+// ============================================================================
 // DOKUMENTY KANCELARII
 // ============================================================================
 
@@ -1403,6 +1458,27 @@ model Settings {
   updatedAt                 DateTime @updatedAt
 
   @@index([key])
+}
+
+// ============================================================================
+// HISTORIA LOGOWAŃ
+// ============================================================================
+
+model LoginHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  success     Boolean  @default(true)  // true = udane, false = nieudane
+  ipAddress   String?
+  userAgent   String?
+  location    String?  // Opcjonalna lokalizacja (miasto, kraj)
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([success])
 }
 
 // ============================================================================

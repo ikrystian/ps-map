@@ -79,47 +79,13 @@ export default function LawFirmStatsPage() {
     setError(null)
 
     try {
-      const response = await fetch("/api/law-firms/dashboard")
+      const response = await fetch("/api/law-firms/stats")
       if (!response.ok) {
         throw new Error("Nie udało się pobrać danych statystyk")
       }
 
-      const dashboardData = await response.json()
-
-      // Generate mock monthly data for demonstration
-      const currentDate = new Date()
-      const monthlyViews = []
-      const monthlyOffers = []
-
-      for (let i = 5; i >= 0; i--) {
-        const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
-        const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-
-        monthlyViews.push({
-          month: monthStr,
-          views: Math.floor(Math.random() * 100) + 50
-        })
-
-        monthlyOffers.push({
-          month: monthStr,
-          total: Math.floor(Math.random() * 20) + 5,
-          accepted: Math.floor(Math.random() * 10) + 2
-        })
-      }
-
-      setData({
-        lawFirm: dashboardData.lawFirm,
-        stats: dashboardData.stats,
-        monthlyViews,
-        monthlyOffers,
-        categoryStats: [
-          { category: "Prawo cywilne", offers: 15, won: 8 },
-          { category: "Prawo karne", offers: 12, won: 7 },
-          { category: "Prawo rodzinne", offers: 10, won: 6 },
-          { category: "Prawo pracy", offers: 8, won: 4 },
-          { category: "Prawo gospodarcze", offers: 6, won: 3 },
-        ]
-      })
+      const statsData = await response.json()
+      setData(statsData)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
