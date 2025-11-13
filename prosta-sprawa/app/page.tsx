@@ -314,67 +314,500 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 4: Categories Grids */}
+      {/* SECTION 4: Categories Grid */}
       <section className="py-16 bg-card/50">
         <div className="container mx-auto px-4">
-          {/* Private Categories */}
-          <div className="mb-16">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Kategorie spraw prywatnych</h2>
-              <Button asChild variant="outline">
-                <Link href="/kategorie">
-                  Zobacz wszystkie
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {privateCategories.map((category) => (
-                <Card key={category.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <Link href={`/kategorie/${category.slug}`}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Scale className="h-5 w-5 mr-2 text-primary" />
-                        {category.nazwa}
-                      </CardTitle>
-                      {category.opis && (
-                        <CardDescription>{category.opis}</CardDescription>
-                      )}
-                    </CardHeader>
-                  </Link>
-                </Card>
-              ))}
-            </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Wybierz kategorię prawną
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Znajdź eksperta w wybranej dziedzinie prawa
+            </p>
           </div>
 
-          {/* Business Categories */}
-          <div>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Kategorie spraw firmowych</h2>
-              <Button asChild variant="outline">
-                <Link href="/kategorie">
-                  Zobacz wszystkie
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {businessCategories.map((category) => (
-                <Card key={category.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <Link href={`/kategorie/${category.slug}`}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Briefcase className="h-5 w-5 mr-2 text-primary" />
-                        {category.nazwa}
-                      </CardTitle>
-                      {category.opis && (
-                        <CardDescription>{category.opis}</CardDescription>
-                      )}
-                    </CardHeader>
-                  </Link>
-                </Card>
-              ))}
-            </div>
+          {/* Desktop Grid Layout */}
+          <div
+            className="hidden lg:grid grid-cols-6 grid-rows-3 gap-4 max-w-7xl mx-auto mb-8 min-h-[600px]"
+            style={{
+              gridTemplateAreas: `
+                "first second fourth sixth eighth nineth"
+                "first third fourth seventh eighth tenth"
+                ". . . . . ."
+              `
+            }}
+          >
+            {/* First */}
+            {categories[0] && (
+              <Link
+                href={`/kategorie/${categories[0].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:first]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[0].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Second */}
+            {categories[1] && (
+              <Link
+                href={`/kategorie/${categories[1].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:second]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[1].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Third */}
+            {categories[2] && (
+              <Link
+                href={`/kategorie/${categories[2].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:third]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[2].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Fourth */}
+            {categories[3] && (
+              <Link
+                href={`/kategorie/${categories[3].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:fourth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[3].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Sixth */}
+            {categories[4] && (
+              <Link
+                href={`/kategorie/${categories[4].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:sixth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[4].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Seventh */}
+            {categories[5] && (
+              <Link
+                href={`/kategorie/${categories[5].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:seventh]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[5].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Eighth */}
+            {categories[6] && (
+              <Link
+                href={`/kategorie/${categories[6].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:eighth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[6].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Nineth */}
+            {categories[7] && (
+              <Link
+                href={`/kategorie/${categories[7].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:nineth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[7].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Tenth */}
+            {categories[8] && (
+              <Link
+                href={`/kategorie/${categories[8].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:tenth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[8].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+          </div>
+
+          {/* Tablet Grid Layout (3 columns) */}
+          <div className="hidden md:grid lg:hidden grid-cols-3 gap-4 mb-8">
+            {categories.slice(0, 9).map((category, index) => (
+              <Link
+                key={category.id}
+                href={`/kategorie/${category.slug}`}
+                className="relative overflow-hidden rounded-lg group aspect-video"
+                style={{
+                  backgroundImage: `url(https://images.unsplash.com/photo-${index % 2 === 0 ? '1589829545856-d10d557cf95f' : '1450101499163-c8848c66ca85'}?w=800&q=80)`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{category.nazwa}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Mobile Grid Layout (1 column) */}
+          <div className="grid md:hidden grid-cols-1 gap-4 mb-8">
+            {categories.slice(0, 9).map((category, index) => (
+              <Link
+                key={category.id}
+                href={`/kategorie/${category.slug}`}
+                className="relative overflow-hidden rounded-lg group aspect-video"
+                style={{
+                  backgroundImage: `url(https://images.unsplash.com/photo-${index % 2 === 0 ? '1589829545856-d10d557cf95f' : '1450101499163-c8848c66ca85'}?w=800&q=80)`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{category.nazwa}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg">
+              <Link href="/kategorie">
+                Zobacz wszystkie kategorie
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4B: Business Categories Grid */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Kategorie dla firm i przedsiębiorców
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Profesjonalna obsługa prawna dla biznesu
+            </p>
+          </div>
+
+          {/* Desktop Grid Layout */}
+          <div
+            className="hidden lg:grid grid-cols-6 grid-rows-3 gap-4 max-w-7xl mx-auto mb-8 min-h-[600px]"
+            style={{
+              gridTemplateAreas: `
+                "first second fourth sixth eighth nineth"
+                "first third fourth seventh eighth tenth"
+                ". . . . . ."
+              `
+            }}
+          >
+            {/* First */}
+            {categories[9] && (
+              <Link
+                href={`/kategorie/${categories[9].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:first]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[9].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Second */}
+            {categories[10] && (
+              <Link
+                href={`/kategorie/${categories[10].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:second]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[10].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Third */}
+            {categories[11] && (
+              <Link
+                href={`/kategorie/${categories[11].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:third]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[11].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Fourth */}
+            {categories[12] && (
+              <Link
+                href={`/kategorie/${categories[12].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:fourth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[12].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Sixth */}
+            {categories[13] && (
+              <Link
+                href={`/kategorie/${categories[13].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:sixth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[13].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Seventh */}
+            {categories[14] && (
+              <Link
+                href={`/kategorie/${categories[14].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:seventh]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[14].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Eighth */}
+            {categories[15] && (
+              <Link
+                href={`/kategorie/${categories[15].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:eighth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{categories[15].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Nineth */}
+            {categories[16] && (
+              <Link
+                href={`/kategorie/${categories[16].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:nineth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[16].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+
+            {/* Tenth */}
+            {categories[17] && (
+              <Link
+                href={`/kategorie/${categories[17].slug}`}
+                className="relative overflow-hidden rounded-lg group [grid-area:tenth]"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: 'url(https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{categories[17].nazwa}</h3>
+                </div>
+              </Link>
+            )}
+          </div>
+
+          {/* Tablet Grid Layout (3 columns) */}
+          <div className="hidden md:grid lg:hidden grid-cols-3 gap-4 mb-8">
+            {categories.slice(9, 18).map((category, index) => (
+              <Link
+                key={category.id}
+                href={`/kategorie/${category.slug}`}
+                className="relative overflow-hidden rounded-lg group aspect-video"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url(https://images.unsplash.com/photo-${index % 2 === 0 ? '1507679799987-c73779587ccf' : '1553877522-43269d4ea984'}?w=800&q=80)`
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-lg font-bold text-center">{category.nazwa}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Mobile Grid Layout (1 column) */}
+          <div className="grid md:hidden grid-cols-1 gap-4 mb-8">
+            {categories.slice(9, 18).map((category, index) => (
+              <Link
+                key={category.id}
+                href={`/kategorie/${category.slug}`}
+                className="relative overflow-hidden rounded-lg group aspect-video"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url(https://images.unsplash.com/photo-${index % 2 === 0 ? '1507679799987-c73779587ccf' : '1553877522-43269d4ea984'}?w=800&q=80)`
+                  }}
+                />
+                <div className="absolute inset-0 bg-[var(--primary)] opacity-60 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="relative h-full flex items-center justify-center p-6">
+                  <h3 className="text-white text-xl font-bold text-center">{category.nazwa}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg">
+              <Link href="/kategorie">
+                Zobacz wszystkie kategorie biznesowe
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

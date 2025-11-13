@@ -102,8 +102,8 @@ export default function PublicHeader({
                     Sprawy firmowe
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[500px] p-4">
-                    <div className="grid grid-cols-2 gap-4">
+                  <DropdownMenuContent className="w-[700px] p-4">
+                    <div className="grid grid-cols-3 gap-4">
                       {firmoweCat.map((category) => (
                         <div key={category.id}>
                           <Link
