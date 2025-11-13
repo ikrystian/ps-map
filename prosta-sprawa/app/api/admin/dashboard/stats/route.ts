@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     const sixMonthsAgo = new Date()
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
-    const monthlyRevenue = await prisma.$queryRaw<Array<{ month: string; revenue: number }>>`
+    const monthlyRevenueRaw = await prisma.$queryRaw<Array<{ month: string; revenue: bigint }>>`
       SELECT
         strftime('%Y-%m', createdAt) as month,
         SUM(kwota) as revenue
@@ -73,6 +73,23 @@ export async function GET(request: NextRequest) {
       GROUP BY strftime('%Y-%m', createdAt)
       ORDER BY month ASC
     `
+
+    // Convert BigInt to Number and ensure all 6 months are present
+    const monthlyRevenue = []
+    const currentDate = new Date()
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
+      const monthKey = date.toISOString().slice(0, 7) // YYYY-MM format
+      const monthName = date.toLocaleDateString('pl-PL', { month: 'short', year: 'numeric' })
+
+      const existingData = monthlyRevenueRaw.find(item => item.month === monthKey)
+
+      monthlyRevenue.push({
+        month: monthName,
+        revenue: existingData ? Number(existingData.revenue) : 0
+      })
+    }
 
     // Get cases by status for chart
     const casesByStatus = await prisma.case.groupBy({
@@ -86,7 +103,7 @@ export async function GET(request: NextRequest) {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const dailyRegistrations = await prisma.$queryRaw<Array<{ date: string; count: number }>>`
+    const dailyRegistrationsRaw = await prisma.$queryRaw<Array<{ date: string; count: bigint }>>`
       SELECT
         strftime('%Y-%m-%d', createdAt) as date,
         COUNT(*) as count
@@ -95,6 +112,23 @@ export async function GET(request: NextRequest) {
       GROUP BY strftime('%Y-%m-%d', createdAt)
       ORDER BY date ASC
     `
+
+    // Convert BigInt to Number and ensure all 7 days are present
+    const dailyRegistrations = []
+    const currentDate = new Date()
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(currentDate)
+      date.setDate(currentDate.getDate() - i)
+      const dateKey = date.toISOString().slice(0, 10) // YYYY-MM-DD format
+
+      const existingData = dailyRegistrationsRaw.find(item => item.date === dateKey)
+
+      dailyRegistrations.push({
+        date: dateKey,
+        count: existingData ? Number(existingData.count) : 0
+      })
+    }
 
     // Get recent activity data
     const recentUsers = await prisma.user.findMany({

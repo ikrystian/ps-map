@@ -83,6 +83,18 @@ interface Promotion {
   aktywna: boolean
 }
 
+interface BlogPost {
+  id: string
+  tytul: string
+  slug: string
+  tresc: string
+  createdAt: Date
+  opublikowany: boolean
+  category?: {
+    nazwa: string
+  }
+}
+
 interface DashboardData {
   lawFirm: LawFirm
   recentCases: Case[]
@@ -199,9 +211,11 @@ export default function LawFirmDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [recentBlogPosts, setRecentBlogPosts] = useState<BlogPost[]>([])
 
   useEffect(() => {
     fetchDashboardData()
+    fetchRecentBlogPosts()
   }, [session])
 
   const fetchDashboardData = async () => {
@@ -222,6 +236,23 @@ export default function LawFirmDashboardPage() {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchRecentBlogPosts = async () => {
+    if (!session?.user?.id) return
+
+    try {
+      const response = await fetch("/api/law-firms/me/blog?limit=3")
+      if (!response.ok) {
+        console.error("Failed to fetch blog posts")
+        return
+      }
+
+      const data = await response.json()
+      setRecentBlogPosts(data.posts || [])
+    } catch (err) {
+      console.error("Error fetching blog posts:", err)
     }
   }
 
@@ -572,6 +603,72 @@ export default function LawFirmDashboardPage() {
         </Card>
       </div>
 
+      {/* Moje artykuły */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              Moje artykuły
+            </CardTitle>
+            <Link href="/panel-kancelarii/blog">
+              <Button variant="ghost" size="sm">
+                Zobacz wszystkie
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {recentBlogPosts.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-muted-foreground mb-4">
+                Nie masz jeszcze żadnych artykułów
+              </p>
+              <Link href="/panel-kancelarii/blog/nowy">
+                <Button size="sm">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Dodaj pierwszy artykuł
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentBlogPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/panel-kancelarii/blog/${post.id}`}
+                >
+                  <div className="flex items-start justify-between p-3 border rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                    <div className="flex-1">
+                      <p className="font-medium line-clamp-1">
+                        {post.tytul}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-sm text-muted-foreground">
+                          {formatDate(post.createdAt)}
+                        </p>
+                        {post.category && (
+                          <>
+                            <span className="text-muted-foreground">•</span>
+                            <Badge variant="outline" className="text-xs">
+                              {post.category.nazwa}
+                            </Badge>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <Badge variant={post.opublikowany ? "default" : "secondary"} className="ml-2">
+                      {post.opublikowany ? "Opublikowany" : "Szkic"}
+                    </Badge>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Box Promowania i Box Partnerski */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Box Promowania */}
@@ -697,6 +794,72 @@ export default function LawFirmDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Klub Partnerski Info */}
+      <Card className="border-blue-500/50 bg-gradient-to-br from-blue-500/5 to-blue-500/10">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-blue-600" />
+            Klub Partnerski
+          </CardTitle>
+          <CardDescription>
+            Dołącz do naszego programu i czerp liczne korzyści
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="prose prose-sm max-w-none">
+            <p className="text-sm">
+              W ramach dołączenia do naszego Klubu Partnerskiego, możesz czerpać liczne korzyści.
+              Dołączając do programu, zyskujesz następujące przywileje:
+            </p>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <p className="font-semibold text-sm mb-2">Dla pakietów płatnych:</p>
+                <ul className="space-y-2 text-sm ml-4">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Co miesiąc otrzymasz 20 punktów o łącznej wartości 20 zł, które zostaną dodane do Twojego schowka.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Korzystaj z większych gratisów przy zakupie dodatkowych punktów.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="font-semibold text-sm mb-2">Dla pakietu bezpłatnego:</p>
+                <ul className="space-y-2 text-sm ml-4">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Możliwość odsłonięcia numeru kontaktowego.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Opcja odpowiadania na wiadomości prywatne.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Aby przystąpić do programu, wystarczy umieścić baner lub widget na Twojej stronie internetowej.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t">
+            <Link href="/panel-kancelarii/klub-partnerski">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" size="sm">
+                <Users className="mr-2 h-4 w-4" />
+                Dowiedz się więcej
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Subscription & Points */}
       <div className="grid gap-4 md:grid-cols-2">

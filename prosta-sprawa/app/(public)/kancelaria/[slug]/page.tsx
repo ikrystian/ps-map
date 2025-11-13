@@ -701,7 +701,10 @@ export default function LawFirmProfilePage() {
                       <CardTitle>Opis kancelarii</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="whitespace-pre-wrap">{lawFirm.opis}</p>
+                      <div
+                        className="prose prose-sm max-w-none dark:prose-invert"
+                        dangerouslySetInnerHTML={{ __html: lawFirm.opis }}
+                      />
                     </CardContent>
                   </Card>
                 )}
