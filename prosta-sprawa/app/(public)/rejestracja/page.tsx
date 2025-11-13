@@ -1,11 +1,20 @@
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { AuthLayout } from "@/components/auth"
 
 export default function RegistrationPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full space-y-8">
+    <AuthLayout
+      heroTitle="Dołącz do społeczności ProstaSprawa"
+      heroDescription="Niezależnie od tego, czy szukasz pomocy prawnej, czy oferujesz usługi prawne - jesteśmy tu dla Ciebie."
+      heroStats={[
+        { value: "2000+", label: "Zaufanych prawników" },
+        { value: "15 000+", label: "Użytkowników" },
+        { value: "99%", label: "Pozytywnych opinii" },
+      ]}
+    >
+      <div className="space-y-8">
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-bold">
             Wybierz typ konta
@@ -21,19 +30,23 @@ export default function RegistrationPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6">
           {/* Klient */}
           <Link href="/rejestracja/klient">
-            <Card className="h-full transition-all hover:border-primary cursor-pointer">
-              <CardHeader className="text-center">
-                <div className="text-4xl mb-2">👤</div>
-                <CardTitle>Jestem klientem</CardTitle>
-                <CardDescription>
-                  Szukam pomocy prawnej dla siebie lub mojej firmy
-                </CardDescription>
+            <Card className="transition-all hover:border-primary hover:shadow-md cursor-pointer">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl">👤</div>
+                  <div className="flex-1">
+                    <CardTitle>Jestem klientem</CardTitle>
+                    <CardDescription>
+                      Szukam pomocy prawnej dla siebie lub mojej firmy
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="flex justify-center">
-                <Button className="w-full">
+              <CardContent>
+                <Button className="w-full h-11">
                   Zarejestruj się jako klient
                 </Button>
               </CardContent>
@@ -42,16 +55,20 @@ export default function RegistrationPage() {
 
           {/* Kancelaria */}
           <Link href="/rejestracja/kancelaria">
-            <Card className="h-full transition-all hover:border-primary cursor-pointer">
-              <CardHeader className="text-center">
-                <div className="text-4xl mb-2">⚖️</div>
-                <CardTitle>Jestem prawnikiem / kancelarią</CardTitle>
-                <CardDescription>
-                  Oferuję usługi prawne i chcę pozyskiwać nowych klientów
-                </CardDescription>
+            <Card className="transition-all hover:border-primary hover:shadow-md cursor-pointer">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl">⚖️</div>
+                  <div className="flex-1">
+                    <CardTitle>Jestem prawnikiem / kancelarią</CardTitle>
+                    <CardDescription>
+                      Oferuję usługi prawne i chcę pozyskiwać nowych klientów
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="flex justify-center">
-                <Button className="w-full">
+              <CardContent>
+                <Button className="w-full h-11">
                   Zarejestruj się jako kancelaria
                 </Button>
               </CardContent>
@@ -59,6 +76,6 @@ export default function RegistrationPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </AuthLayout>
   )
 }

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthLayout } from "@/components/auth"
 
 interface Voivodeship {
   id: string
@@ -636,21 +637,29 @@ export default function LawFirmRegistrationPage() {
   }
 
   return (
-    <div className="flex items-center justify-center p-4 py-12">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Rejestracja kancelarii</CardTitle>
-          <CardDescription className="text-center">
+    <AuthLayout
+      heroTitle="Rozwijaj swoją kancelarię"
+      heroDescription="Dołącz do najlepszych prawników w Polsce. Zdobywaj nowych klientów i rozwijaj swoją praktykę prawną."
+      heroStats={[
+        { value: "2000+", label: "Prawników" },
+        { value: "10 000+", label: "Zapytań miesięcznie" },
+        { value: "95%", label: "Zadowolenia klientów" },
+      ]}
+    >
+      <Card className="border-none shadow-none bg-transparent">
+        <CardHeader className="space-y-1 px-0">
+          <CardTitle className="text-2xl font-bold">Rejestracja kancelarii</CardTitle>
+          <CardDescription>
             Krok {currentStep} z {totalSteps}: {getStepTitle()}
           </CardDescription>
-          <CardDescription className="text-center">
+          <CardDescription>
             Już masz konto?{" "}
             <Link href="/logowanie" className="text-primary hover:underline">
               Zaloguj się
             </Link>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-0">
           {/* Progress bar */}
           <div className="mb-6">
             <div className="flex justify-between mb-2">
@@ -701,6 +710,6 @@ export default function LawFirmRegistrationPage() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   )
 }

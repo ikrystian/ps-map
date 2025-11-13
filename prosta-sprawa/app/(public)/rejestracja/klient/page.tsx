@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthLayout } from "@/components/auth"
 
 export default function ClientRegistrationPage() {
   const router = useRouter()
@@ -82,18 +83,26 @@ export default function ClientRegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Rejestracja klienta</CardTitle>
-          <CardDescription className="text-center">
+    <AuthLayout
+      heroTitle="Dołącz do tysięcy zadowolonych klientów"
+      heroDescription="Znajdź najlepszych prawników w Polsce. Szybko, łatwo i bezpiecznie rozwiąż swoje problemy prawne."
+      heroStats={[
+        { value: "10 min", label: "Średni czas odpowiedzi" },
+        { value: "5000+", label: "Rozwiązanych spraw" },
+        { value: "4.8/5", label: "Średnia ocena" },
+      ]}
+    >
+      <Card className="border-none shadow-none bg-transparent">
+        <CardHeader className="space-y-1 px-0">
+          <CardTitle className="text-2xl font-bold">Rejestracja klienta</CardTitle>
+          <CardDescription>
             Już masz konto?{" "}
             <Link href="/logowanie" className="text-primary hover:underline">
               Zaloguj się
             </Link>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-0">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
@@ -110,6 +119,7 @@ export default function ClientRegistrationPage() {
                 value={formData.imie}
                 onChange={(e) => setFormData({ ...formData, imie: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -122,6 +132,7 @@ export default function ClientRegistrationPage() {
                 value={formData.nazwisko}
                 onChange={(e) => setFormData({ ...formData, nazwisko: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -135,6 +146,7 @@ export default function ClientRegistrationPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -146,6 +158,7 @@ export default function ClientRegistrationPage() {
                 value={formData.telefon}
                 onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -157,6 +170,7 @@ export default function ClientRegistrationPage() {
                 value={formData.miasto}
                 onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -170,6 +184,7 @@ export default function ClientRegistrationPage() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -183,6 +198,7 @@ export default function ClientRegistrationPage() {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 disabled={isLoading}
+                className="h-11"
               />
             </div>
 
@@ -215,12 +231,12 @@ export default function ClientRegistrationPage() {
               </label>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full h-11" disabled={isLoading}>
               {isLoading ? "Rejestrowanie..." : "Zarejestruj się"}
             </Button>
           </form>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   )
 }
