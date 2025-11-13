@@ -23,6 +23,7 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Star,
   MessageSquare,
@@ -63,6 +64,9 @@ interface Review {
   client: {
     imie: string
     nazwisko: string
+    user?: {
+      image?: string | null
+    }
   }
 }
 
@@ -84,11 +88,18 @@ interface ReviewsResponse {
   }
 }
 
+interface LawFirm {
+  id: string
+  nazwa: string
+  logo: string | null
+}
+
 export default function LawFirmReviewsPage() {
   const { data: session } = useSession()
   const [reviews, setReviews] = useState<Review[]>([])
   const [stats, setStats] = useState<ReviewsResponse["stats"] | null>(null)
   const [pagination, setPagination] = useState<ReviewsResponse["pagination"] | null>(null)
+  const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedRating, setSelectedRating] = useState<string>("all")
@@ -115,6 +126,7 @@ export default function LawFirmReviewsPage() {
         throw new Error("Nie udało się pobrać danych kancelarii")
       }
       const lawFirmData = await lawFirmResponse.json()
+      setLawFirm({ id: lawFirmData.id, nazwa: lawFirmData.nazwa, logo: lawFirmData.logo })
 
       // Pobierz opinie
       const params = new URLSearchParams({
@@ -356,12 +368,26 @@ export default function LawFirmReviewsPage() {
           reviews.map((review) => (
             <Card key={review.id}>
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <CardTitle className="text-lg">
-                        {review.tytulOpinii}
-                      </CardTitle>
+                <div className="flex items-start gap-4">
+                  {/* Avatar klienta */}
+                  <Avatar className="h-12 w-12 flex-shrink-0">
+                    {!review.anonimowa && review.client.user?.image ? (
+                      <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {review.anonimowa
+                        ? "AN"
+                        : `${review.client.imie[0]}${review.client.nazwisko[0]}`.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <CardTitle className="text-lg">
+                            {review.tytulOpinii}
+                          </CardTitle>
                       {review.polecam ? (
                         <Badge variant="default" className="gap-1">
                           <ThumbsUp className="h-3 w-3" />
@@ -380,14 +406,16 @@ export default function LawFirmReviewsPage() {
                     <CardDescription>
                       {review.anonimowa ? "Anonimowy" : `${review.client.imie} ${review.client.nazwisko}`}
                       {" • "}
-                      {formatDate(review.createdAt)}
-                    </CardDescription>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    {renderStars(review.ocenaOgolna)}
-                    <span className="text-sm font-medium">
-                      {review.ocenaOgolna.toFixed(1)}/5
-                    </span>
+                          {formatDate(review.createdAt)}
+                        </CardDescription>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        {renderStars(review.ocenaOgolna)}
+                        <span className="text-sm font-medium">
+                          {review.ocenaOgolna.toFixed(1)}/5
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -436,20 +464,34 @@ export default function LawFirmReviewsPage() {
                 </div>
 
                 {/* Odpowiedź kancelarii */}
-                {review.odpowiedz && (
+                {review.odpowiedz && lawFirm && (
                   <>
                     <Separator />
                     <div className="bg-primary/5 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <MessageSquare className="h-4 w-4 text-primary" />
-                        <p className="text-sm font-medium">Odpowiedź kancelarii</p>
-                        {review.dataOdpowiedzi && (
-                          <span className="text-xs text-muted-foreground">
-                            • {formatDate(review.dataOdpowiedzi)}
-                          </span>
-                        )}
+                      <div className="flex items-start gap-3">
+                        {/* Avatar kancelarii */}
+                        <Avatar className="h-10 w-10 flex-shrink-0">
+                          {lawFirm.logo ? (
+                            <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
+                          ) : null}
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            {lawFirm.nazwa.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MessageSquare className="h-4 w-4 text-primary" />
+                            <p className="text-sm font-medium">Odpowiedź kancelarii</p>
+                            {review.dataOdpowiedzi && (
+                              <span className="text-xs text-muted-foreground">
+                                • {formatDate(review.dataOdpowiedzi)}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm">{review.odpowiedz}</p>
+                        </div>
                       </div>
-                      <p className="text-sm">{review.odpowiedz}</p>
                     </div>
                   </>
                 )}
