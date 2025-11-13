@@ -437,5 +437,66 @@ export async function GET(request: NextRequest) {
 
 ---
 
-**Ostatnia aktualizacja**: 13.11.2025, 03:52
-**Wersja dokumentacji**: 1.0
+## Rozwiązywanie problemów
+
+### Błąd "Export authOptions doesn't exist in target module"
+- **Problem**: Błąd kompilacji wskazujący na brak eksportu `authOptions` z `lib/auth.ts`.
+- **Rozwiązanie**: Należy wyeksportować konfigurację NextAuth jako `authOptions` w pliku `lib/auth.ts`.
+
+```typescript
+// lib/auth.ts
+export const authOptions: NextAuthConfig = {
+  // ...
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)
+```
+
+### Błąd "Export getServerSession doesn't exist in target module"
+- **Problem**: Błąd kompilacji wskazujący na brak eksportu `getServerSession` z `next-auth`.
+- **Rozwiązanie**: W nowszych wersjach Next.js, w API Routes należy używać `auth()` z `lib/auth` zamiast `getServerSession`.
+
+```typescript
+// app/api/.../route.ts
+import { auth } from '@/lib/auth'
+
+export async function GET(request: NextRequest) {
+  const session = await auth()
+  // ...
+}
+```
+
+### Błąd TypeScript z `params` w API Routes
+- **Problem**: Błąd typu `Type '{ params: Promise<{ key: string; }>; }' is not assignable to type '{ params: { key: string; }; }'`.
+- **Rozwiązanie**: W API Routes, parametr `context` może zawierać `params` jako `Promise`. Należy go odpowiednio otypować i użyć `await`.
+
+```typescript
+// app/api/admin/blocks/[key]/render/route.ts
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ key: string }> }
+) {
+  const params = await context.params
+  // ...
+}
+```
+
+### Błąd TypeScript "Type 'string | undefined' is not assignable to type 'string'"
+- **Problem**: Błąd typu przy przypisywaniu wartości do obiektu `token` w `callbacks` w `lib/auth.ts`.
+- **Rozwiązanie**: Należy upewnić się, że typy się zgadzają, np. poprzez rzutowanie.
+
+```typescript
+// lib/auth.ts
+async jwt({ token, user }: { token: JWT; user: User }) {
+  if (user) {
+    token.id = user.id as string
+    // ...
+  }
+  return token
+},
+```
+
+---
+
+**Ostatnia aktualizacja**: 13.11.2025, 07:15
+**Wersja dokumentacji**: 1.1

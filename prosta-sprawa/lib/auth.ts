@@ -3,8 +3,11 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import type { UserRole } from "@prisma/client"
+import type { NextAuthConfig, Session, User } from "next-auth"
+import type { JWT } from "next-auth/jwt"
+import { NextRequest, NextResponse } from "next/server"
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthConfig = {
   session: {
     strategy: "jwt",
   },
@@ -60,15 +63,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
         token.role = user.role as UserRole
-        token.id = user.id
+        token.id = user.id as string // Cast to string, assuming user.id is always present for authenticated users
         token.picture = user.image
       }
       return token
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as UserRole
@@ -76,11 +79,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
-    async signIn({ user }) {
+    async signIn({ user }: { user: User }) {
       // Możesz dodać tutaj dodatkową logikę weryfikacji
       return true
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       // Jeśli URL jest relatywny lub z tej samej domeny
       if (url.startsWith("/")) {
         return `${baseUrl}${url}`
@@ -93,11 +96,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   events: {
-    async signIn({ user }) {
+    async signIn({ user }: { user: User }) {
       console.log(`User ${user.email} signed in`)
     },
     async signOut() {
       console.log(`User signed out`)
     },
   },
-})
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)
