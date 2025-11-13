@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
@@ -9,7 +8,7 @@ import { existsSync } from "fs"
 // GET /api/law-firms/documents - List documents
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "LAW_FIRM") {
       return NextResponse.json(
@@ -47,7 +46,7 @@ export async function GET() {
 // POST /api/law-firms/documents - Upload document
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "LAW_FIRM") {
       return NextResponse.json(

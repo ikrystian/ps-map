@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 
 // PUT /api/admin/help/questions/[id] - Update question
@@ -9,7 +8,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json(
@@ -95,7 +94,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json(

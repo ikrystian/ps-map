@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 
 // GET /api/admin/help/questions - List all questions
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json(
@@ -43,7 +42,7 @@ export async function GET() {
 // POST /api/admin/help/questions - Create new question
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session || session.user.role !== "ADMIN") {
       return NextResponse.json(
