@@ -46,7 +46,7 @@ interface DashboardStats {
     }>
     cases: Array<{
       id: string
-      title: string
+      nazwaSprawy: string
       status: string
       createdAt: string
       client: { user: { name: string | null } }
@@ -54,10 +54,10 @@ interface DashboardStats {
     orders: Array<{
       id: string
       orderNumber: string
-      amount: number
-      paymentStatus: string
+      kwota: number
+      statusPlatnosci: string
       createdAt: string
-      user: { name: string | null }
+      lawFirm: { nazwa: string | null }
     }>
     blogPosts: Array<{
       id: string
@@ -374,7 +374,7 @@ export default function AdminDashboardPage() {
               {recentActivity.cases.map((caseItem) => (
                 <div key={caseItem.id} className="flex items-center justify-between border-b pb-2">
                   <div>
-                    <div className="font-medium">{caseItem.title}</div>
+                    <div className="font-medium">{caseItem.nazwaSprawy}</div>
                     <div className="text-sm text-gray-500">
                       {caseItem.client.user.name || 'Brak nazwy'}
                     </div>
@@ -409,13 +409,13 @@ export default function AdminDashboardPage() {
                   <div>
                     <div className="font-medium">{order.orderNumber}</div>
                     <div className="text-sm text-gray-500">
-                      {order.user.name || 'Brak nazwy'}
+                      {order.lawFirm?.nazwa || 'Brak nazwy'}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">{formatCurrency(order.amount)}</div>
-                    <Badge className={getStatusBadge(order.paymentStatus)}>
-                      {order.paymentStatus}
+                    <div className="font-medium">{formatCurrency(order.kwota)}</div>
+                    <Badge className={getStatusBadge(order.statusPlatnosci)}>
+                      {order.statusPlatnosci}
                     </Badge>
                     <div className="text-xs text-gray-500 mt-1">
                       {formatDate(order.createdAt)}
