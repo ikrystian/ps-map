@@ -85,7 +85,7 @@ export default function AdminPromotionsPage() {
       const data = await response.json()
       setConfigs(data.configs.map((config: any) => ({
         ...config,
-        features: JSON.parse(config.features),
+        features: config.features && config.features.trim() ? JSON.parse(config.features) : [],
       })))
     } catch (error) {
       toast.error("Nie udało się pobrać konfiguracji promocji")

@@ -38,7 +38,7 @@ interface Case {
   typSprawy: string
   nazwaSprawy: string
   opisSprawy: string
-  zalaczniki?: string
+  zalaczniki?: string[] | null
   budzetOd?: number
   budzetDo?: number
   doNegocjacji: boolean
@@ -306,75 +306,65 @@ export default function LawFirmCaseDetailsPage() {
           </Card>
 
           {/* Załączniki */}
-          {caseData.zalaczniki && (() => {
-            try {
-              const attachments = JSON.parse(caseData.zalaczniki)
-              if (Array.isArray(attachments) && attachments.length > 0) {
-                return (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Paperclip className="h-5 w-5" />
-                        Załączniki ({attachments.length})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {attachments.map((url: string, index: number) => {
-                          const fileName = url.split('/').pop() || `Załącznik ${index + 1}`
-                          const fileExtension = fileName.split('.').pop()?.toLowerCase()
+          {caseData.zalaczniki && Array.isArray(caseData.zalaczniki) && caseData.zalaczniki.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Paperclip className="h-5 w-5" />
+                  Załączniki ({caseData.zalaczniki.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {caseData.zalaczniki.map((url: string, index: number) => {
+                    const fileName = url.split('/').pop() || `Załącznik ${index + 1}`
+                    const fileExtension = fileName.split('.').pop()?.toLowerCase()
 
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                            >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <Paperclip className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium truncate">{fileName}</p>
-                                  {fileExtension && (
-                                    <p className="text-xs text-muted-foreground uppercase">
-                                      {fileExtension}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  asChild
-                                >
-                                  <a href={url} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="h-4 w-4 mr-1" />
-                                    Otwórz
-                                  </a>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  asChild
-                                >
-                                  <a href={url} download>
-                                    <Download className="h-4 w-4 mr-1" />
-                                    Pobierz
-                                  </a>
-                                </Button>
-                              </div>
-                            </div>
-                          )
-                        })}
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Paperclip className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{fileName}</p>
+                            {fileExtension && (
+                              <p className="text-xs text-muted-foreground uppercase">
+                                {fileExtension}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                          >
+                            <a href={url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4 mr-1" />
+                              Otwórz
+                            </a>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                          >
+                            <a href={url} download>
+                              <Download className="h-4 w-4 mr-1" />
+                              Pobierz
+                            </a>
+                          </Button>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                )
-              }
-            } catch (e) {
-              console.error("Error parsing attachments:", e)
-            }
-            return null
-          })()}
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Dane kontaktowe */}
           <Card>

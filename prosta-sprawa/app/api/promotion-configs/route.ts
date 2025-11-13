@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     // Parse features JSON for each config
     const configsWithParsedFeatures = configs.map((config) => ({
       ...config,
-      features: JSON.parse(config.features),
+      features: config.features && config.features.trim() ? JSON.parse(config.features) : [],
     }))
 
     return NextResponse.json(configsWithParsedFeatures)

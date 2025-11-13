@@ -118,7 +118,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
           moduleId: pm.moduleId,
           module: pm.module,
           order: pm.order,
-          data: pm.data ? JSON.parse(pm.data) : {},
+          data: pm.data && pm.data.trim() ? JSON.parse(pm.data) : {},
         }))
       setPageModules(modules)
 

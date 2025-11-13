@@ -116,7 +116,9 @@ export async function GET(
     // Parse załączniki jeśli są w JSON
     const parsedCase = {
       ...caseDataWithCount,
-      zalaczniki: caseDataWithCount.zalaczniki ? JSON.parse(caseDataWithCount.zalaczniki) : [],
+      zalaczniki: caseDataWithCount.zalaczniki && typeof caseDataWithCount.zalaczniki === 'string' && caseDataWithCount.zalaczniki.trim()
+        ? JSON.parse(caseDataWithCount.zalaczniki)
+        : [],
     }
 
     return NextResponse.json(parsedCase)

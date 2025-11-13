@@ -77,7 +77,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Case not found" }, { status: 404 })
     }
 
-    return NextResponse.json(caseData)
+    // Parse załączniki jeśli są w JSON
+    const parsedCase = {
+      ...caseData,
+      zalaczniki: caseData.zalaczniki && typeof caseData.zalaczniki === 'string' && caseData.zalaczniki.trim()
+        ? JSON.parse(caseData.zalaczniki)
+        : [],
+    }
+
+    return NextResponse.json(parsedCase)
   } catch (error) {
     console.error("Error fetching case:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

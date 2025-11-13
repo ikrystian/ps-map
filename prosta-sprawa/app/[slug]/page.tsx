@@ -82,7 +82,7 @@ export default async function DynamicPage({ params }: PageProps) {
       {/* Render page modules */}
       <div className="page-content">
         {page.modules.map((pageModule) => {
-          const data = pageModule.data ? JSON.parse(pageModule.data) : {}
+          const data = pageModule.data && pageModule.data.trim() ? JSON.parse(pageModule.data) : {}
 
           // Handle EDITABLE_HTML modules differently
           let html: string

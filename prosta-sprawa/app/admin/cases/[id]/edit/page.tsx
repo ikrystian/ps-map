@@ -125,15 +125,9 @@ export default function EditCasePage() {
         if (response.ok) {
           const caseData = await response.json()
 
-          // Parse attachments if they exist
-          if (caseData.zalaczniki) {
-            try {
-              const parsedAttachments = JSON.parse(caseData.zalaczniki)
-              setAttachments(Array.isArray(parsedAttachments) ? parsedAttachments : [])
-            } catch (error) {
-              console.error("Error parsing attachments:", error)
-              setAttachments([])
-            }
+          // Set attachments if they exist
+          if (caseData.zalaczniki && Array.isArray(caseData.zalaczniki)) {
+            setAttachments(caseData.zalaczniki)
           }
 
           form.reset({

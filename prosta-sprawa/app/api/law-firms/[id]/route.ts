@@ -113,10 +113,10 @@ export async function GET(
     const parsedLawFirm = {
       ...lawFirm,
       userId: lawFirm.userId, // Include userId for chat functionality
-      galeriaZdjec: lawFirm.galeriaZdjec ? JSON.parse(lawFirm.galeriaZdjec) : [],
-      slowaKluczowe: lawFirm.slowaKluczowe ? JSON.parse(lawFirm.slowaKluczowe) : [],
-      godzinyOtwarcia: lawFirm.godzinyOtwarcia ? JSON.parse(lawFirm.godzinyOtwarcia) : null,
-      edukacja: lawFirm.edukacja ? JSON.parse(lawFirm.edukacja) : [],
+      galeriaZdjec: lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.trim() ? JSON.parse(lawFirm.galeriaZdjec) : [],
+      slowaKluczowe: lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.trim() ? JSON.parse(lawFirm.slowaKluczowe) : [],
+      godzinyOtwarcia: lawFirm.godzinyOtwarcia && lawFirm.godzinyOtwarcia.trim() ? JSON.parse(lawFirm.godzinyOtwarcia) : null,
+      edukacja: lawFirm.edukacja && lawFirm.edukacja.trim() ? JSON.parse(lawFirm.edukacja) : [],
       avgRating,
       reviewCount: lawFirm.reviews.length,
     }
