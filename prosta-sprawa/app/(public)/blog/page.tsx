@@ -109,8 +109,10 @@ export default function BlogPage() {
   }
 
   const getExcerpt = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content
-    return content.slice(0, maxLength) + "..."
+    // Strip HTML tags
+    const stripped = content.replace(/<[^>]*>/g, "")
+    if (stripped.length <= maxLength) return stripped
+    return stripped.slice(0, maxLength) + "..."
   }
 
   return (

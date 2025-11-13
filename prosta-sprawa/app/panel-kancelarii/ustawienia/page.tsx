@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { ImageCropper } from "@/components/ui/image-cropper"
 
 interface UserData {
   id: string
@@ -69,6 +70,8 @@ export default function LawFirmSettingsPage() {
   const [isSavingUser, setIsSavingUser] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null)
+  const [showAvatarCropper, setShowAvatarCropper] = useState(false)
 
   // Dane użytkownika
   const [userData, setUserData] = useState<UserData>({
@@ -156,13 +159,38 @@ export default function LawFirmSettingsPage() {
     }))
   }
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedAvatarFile(file)
+    setShowAvatarCropper(true)
+  }
+
+  const handleAvatarCropComplete = async (croppedBlob: Blob) => {
+    setShowAvatarCropper(false)
     setIsUploadingAvatar(true)
 
     try {
+      const file = new File([croppedBlob], selectedAvatarFile?.name || "avatar.jpg", {
+        type: croppedBlob.type,
+      })
+
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
@@ -211,9 +239,13 @@ export default function LawFirmSettingsPage() {
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
     } finally {
       setIsUploadingAvatar(false)
-      // Reset input
-      e.target.value = ""
+      setSelectedAvatarFile(null)
     }
+  }
+
+  const handleAvatarCropCancel = () => {
+    setShowAvatarCropper(false)
+    setSelectedAvatarFile(null)
   }
 
   const handleRemoveAvatar = async () => {
@@ -422,7 +454,7 @@ export default function LawFirmSettingsPage() {
                         type="file"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         className="hidden"
-                        onChange={handleAvatarUpload}
+                        onChange={handleAvatarFileSelect}
                         disabled={isUploadingAvatar}
                       />
                     </div>
@@ -456,7 +488,7 @@ export default function LawFirmSettingsPage() {
                         type="file"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         className="hidden"
-                        onChange={handleAvatarUpload}
+                        onChange={handleAvatarFileSelect}
                         disabled={isUploadingAvatar}
                       />
                     </div>
@@ -1009,6 +1041,16 @@ export default function LawFirmSettingsPage() {
           </Card>
         </div>
       </div>
+
+      {selectedAvatarFile && (
+        <ImageCropper
+          image={selectedAvatarFile}
+          aspectRatio={1}
+          onCropComplete={handleAvatarCropComplete}
+          onCancel={handleAvatarCropCancel}
+          open={showAvatarCropper}
+        />
+      )}
     </div>
   )
 }

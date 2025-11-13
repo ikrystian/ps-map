@@ -26,6 +26,7 @@ import { toast } from "sonner"
 import { Loader2, Save, User, Upload, X, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { ImageCropper } from "@/components/ui/image-cropper"
 
 const profileFormSchema = z.object({
   imie: z.string().min(2, "Imię musi mieć minimum 2 znaki"),
@@ -54,6 +55,8 @@ export default function ClientProfilePage() {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [clientData, setClientData] = useState<any>(null)
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null)
+  const [showAvatarCropper, setShowAvatarCropper] = useState(false)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -110,13 +113,39 @@ export default function ClientProfilePage() {
     }
   }
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedAvatarFile(file)
+    setShowAvatarCropper(true)
+  }
+
+  const handleAvatarCropComplete = async (croppedBlob: Blob) => {
+    setShowAvatarCropper(false)
     setIsUploadingAvatar(true)
 
     try {
+      // Convert blob to file
+      const file = new File([croppedBlob], selectedAvatarFile?.name || "avatar.jpg", {
+        type: croppedBlob.type,
+      })
+
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
@@ -159,9 +188,13 @@ export default function ClientProfilePage() {
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
     } finally {
       setIsUploadingAvatar(false)
-      // Reset input
-      e.target.value = ""
+      setSelectedAvatarFile(null)
     }
+  }
+
+  const handleAvatarCropCancel = () => {
+    setShowAvatarCropper(false)
+    setSelectedAvatarFile(null)
   }
 
   const handleRemoveAvatar = async () => {
@@ -302,7 +335,7 @@ export default function ClientProfilePage() {
                 type="file"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 className="hidden"
-                onChange={handleAvatarUpload}
+                onChange={handleAvatarFileSelect}
                 disabled={isUploadingAvatar}
               />
             </div>
@@ -336,7 +369,7 @@ export default function ClientProfilePage() {
                 type="file"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 className="hidden"
-                onChange={handleAvatarUpload}
+                onChange={handleAvatarFileSelect}
                 disabled={isUploadingAvatar}
               />
             </div>
@@ -574,6 +607,16 @@ export default function ClientProfilePage() {
           </div>
         </form>
       </Form>
+
+      {selectedAvatarFile && (
+        <ImageCropper
+          image={selectedAvatarFile}
+          aspectRatio={1}
+          onCropComplete={handleAvatarCropComplete}
+          onCancel={handleAvatarCropCancel}
+          open={showAvatarCropper}
+        />
+      )}
     </div>
   )
 }

@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
 import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
+import { ImageCropper } from "@/components/ui/image-cropper"
 
 interface Voivodeship {
   id: string
@@ -33,6 +34,10 @@ export default function LawFirmProfilePage() {
   const [isUploading, setIsUploading] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null)
+  const [showLogoCropper, setShowLogoCropper] = useState(false)
+  const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
+  const [showMainImageCropper, setShowMainImageCropper] = useState(false)
 
   const [formData, setFormData] = useState({
     id: "",
@@ -256,16 +261,38 @@ export default function LawFirmProfilePage() {
     toast.success("Zdjęcie zostało usunięte")
   }
 
-  const handleSingleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: "logo" | "zdjecieGlowne"
-  ) => {
+  const handleLogoFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedLogoFile(file)
+    setShowLogoCropper(true)
+  }
+
+  const handleLogoCropComplete = async (croppedBlob: Blob) => {
+    setShowLogoCropper(false)
     setIsUploading(true)
 
     try {
+      const file = new File([croppedBlob], selectedLogoFile?.name || "logo.jpg", {
+        type: croppedBlob.type,
+      })
+
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
@@ -280,19 +307,82 @@ export default function LawFirmProfilePage() {
       }
 
       const data = await response.json()
-      handleInputChange(field, data.url)
-
-      toast.success(
-        field === "logo" ? "Logo zostało przesłane" : "Zdjęcie główne zostało przesłane"
-      )
+      handleInputChange("logo", data.url)
+      toast.success("Logo zostało przesłane")
     } catch (error) {
       console.error("Error uploading image:", error)
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
     } finally {
       setIsUploading(false)
-      // Reset input
-      e.target.value = ""
+      setSelectedLogoFile(null)
     }
+  }
+
+  const handleLogoCropCancel = () => {
+    setShowLogoCropper(false)
+    setSelectedLogoFile(null)
+  }
+
+  const handleMainImageFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedMainImageFile(file)
+    setShowMainImageCropper(true)
+  }
+
+  const handleMainImageCropComplete = async (croppedBlob: Blob) => {
+    setShowMainImageCropper(false)
+    setIsUploading(true)
+
+    try {
+      const file = new File([croppedBlob], selectedMainImageFile?.name || "main-image.jpg", {
+        type: croppedBlob.type,
+      })
+
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload image")
+      }
+
+      const data = await response.json()
+      handleInputChange("zdjecieGlowne", data.url)
+      toast.success("Zdjęcie główne zostało przesłane")
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
+    } finally {
+      setIsUploading(false)
+      setSelectedMainImageFile(null)
+    }
+  }
+
+  const handleMainImageCropCancel = () => {
+    setShowMainImageCropper(false)
+    setSelectedMainImageFile(null)
   }
 
   const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne") => {
@@ -427,7 +517,7 @@ export default function LawFirmProfilePage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleSingleImageUpload(e, "logo")}
+                      onChange={handleLogoFileSelect}
                       disabled={isUploading}
                     />
                   </div>
@@ -461,7 +551,7 @@ export default function LawFirmProfilePage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleSingleImageUpload(e, "logo")}
+                      onChange={handleLogoFileSelect}
                       disabled={isUploading}
                     />
                   </div>
@@ -520,7 +610,7 @@ export default function LawFirmProfilePage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleSingleImageUpload(e, "zdjecieGlowne")}
+                      onChange={handleMainImageFileSelect}
                       disabled={isUploading}
                     />
                   </div>
@@ -554,7 +644,7 @@ export default function LawFirmProfilePage() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="hidden"
-                      onChange={(e) => handleSingleImageUpload(e, "zdjecieGlowne")}
+                      onChange={handleMainImageFileSelect}
                       disabled={isUploading}
                     />
                   </div>
@@ -1120,6 +1210,26 @@ export default function LawFirmProfilePage() {
           Zapisz profil
         </Button>
       </div>
+
+      {selectedLogoFile && (
+        <ImageCropper
+          image={selectedLogoFile}
+          aspectRatio={1}
+          onCropComplete={handleLogoCropComplete}
+          onCancel={handleLogoCropCancel}
+          open={showLogoCropper}
+        />
+      )}
+
+      {selectedMainImageFile && (
+        <ImageCropper
+          image={selectedMainImageFile}
+          aspectRatio={2}
+          onCropComplete={handleMainImageCropComplete}
+          onCancel={handleMainImageCropCancel}
+          open={showMainImageCropper}
+        />
+      )}
     </form>
   )
 }

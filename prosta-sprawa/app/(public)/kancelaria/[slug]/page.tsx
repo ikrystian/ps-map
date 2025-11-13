@@ -234,6 +234,11 @@ export default function LawFirmProfilePage() {
   })
   const [submittingReview, setSubmittingReview] = useState(false)
 
+  // Helper function to strip HTML tags for blog excerpt
+  const stripHtmlTags = (html: string) => {
+    return html.replace(/<[^>]*>/g, "")
+  }
+
   useEffect(() => {
     const fetchLawFirm = async () => {
       try {
@@ -1244,7 +1249,7 @@ export default function LawFirmProfilePage() {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <p className="line-clamp-3 mb-3">{post.tresc}</p>
+                          <p className="line-clamp-3 mb-3">{stripHtmlTags(post.tresc)}</p>
                           <Button variant="link" className="p-0" asChild>
                             <a href={`/blog/${post.slug}`}>
                               Czytaj więcej →
