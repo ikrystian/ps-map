@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -35,6 +35,28 @@ export default function ClientPanelLayout({
   const pathname = usePathname()
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch("/api/conversations/unread-count")
+        if (response.ok) {
+          const data = await response.json()
+          setUnreadCount(data.unreadCount || 0)
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error)
+      }
+    }
+
+    if (session?.user) {
+      fetchUnreadCount()
+      // Odświeżaj co 30 sekund
+      const interval = setInterval(fetchUnreadCount, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [session])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -66,13 +88,15 @@ export default function ClientPanelLayout({
             {navigation.map((item) => {
               const isActive = pathname === item.href ||
                 (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
+              const isMessagesItem = item.href === "/panel-klienta/wiadomosci"
+              const showBadge = isMessagesItem && unreadCount > 0
 
               return (
                 <Link
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative",
                     isActive
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -82,6 +106,14 @@ export default function ClientPanelLayout({
                 >
                   <item.icon className="h-5 w-5 flex-shrink-0" />
                   {!isCollapsed && <span>{item.name}</span>}
+                  {showBadge && (
+                    <span className={cn(
+                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white",
+                      isCollapsed && "absolute -right-1 -top-1"
+                    )}>
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
               )
             })}
