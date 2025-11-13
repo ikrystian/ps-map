@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -105,6 +106,7 @@ const POINT_PACKAGES = [
 
 export default function LawFirmPointsPage() {
   const { data: session } = useSession()
+  const router = useRouter()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [pagination, setPagination] = useState<OrdersResponse["pagination"] | null>(null)
@@ -118,7 +120,6 @@ export default function LawFirmPointsPage() {
   const [selectedPackage, setSelectedPackage] = useState<typeof POINT_PACKAGES[0] | null>(null)
   const [customPoints, setCustomPoints] = useState("")
   const [paymentMethod, setPaymentMethod] = useState<string>("PAYU")
-  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -170,7 +171,7 @@ export default function LawFirmPointsPage() {
     setPurchaseDialogOpen(true)
   }
 
-  const handleSubmitPurchase = async () => {
+  const handleSubmitPurchase = () => {
     if (!selectedPackage && !customPoints) {
       setError("Wybierz pakiet lub wprowadź liczbę punktów")
       return
@@ -181,41 +182,22 @@ export default function LawFirmPointsPage() {
       return
     }
 
-    setSubmitting(true)
-    setError(null)
+    const points = selectedPackage ? selectedPackage.points : parseInt(customPoints)
+    const price = selectedPackage ? selectedPackage.price : Math.round(points * 0.49)
 
-    try {
-      const points = selectedPackage ? selectedPackage.points : parseInt(customPoints)
-      const price = selectedPackage ? selectedPackage.price : Math.round(points * 0.49)
-
-      const response = await fetch(`/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          pakietPunktow: selectedPackage ? selectedPackage.id : `custom_${points}_pkt`,
-          liczbaPunktow: points,
-          kwota: price,
-          metodaPlatnosci: paymentMethod,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Nie udało się utworzyć zamówienia")
-      }
-
-      // Zamknij dialog i odśwież dane
-      setPurchaseDialogOpen(false)
-      setSelectedPackage(null)
-      setCustomPoints("")
-      await fetchData()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Wystąpił błąd")
-    } finally {
-      setSubmitting(false)
+    // Zapisz dane zamówienia w sessionStorage
+    const orderData = {
+      pakietPunktow: selectedPackage ? selectedPackage.id : `custom_${points}_pkt`,
+      pakietLabel: selectedPackage ? selectedPackage.label : `${points} punktów`,
+      liczbaPunktow: points,
+      kwota: price,
+      metodaPlatnosci: paymentMethod,
     }
+
+    sessionStorage.setItem("pendingOrder", JSON.stringify(orderData))
+
+    // Przekieruj do strony checkout
+    router.push("/panel-kancelarii/checkout")
   }
 
   const getStatusBadge = (status: Order["statusPlatnosci"]) => {
@@ -540,16 +522,14 @@ export default function LawFirmPointsPage() {
             <Button
               variant="outline"
               onClick={() => setPurchaseDialogOpen(false)}
-              disabled={submitting}
             >
               Anuluj
             </Button>
             <Button
               onClick={handleSubmitPurchase}
-              disabled={submitting || (!selectedPackage && !customPoints)}
+              disabled={!selectedPackage && !customPoints}
             >
-              {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Złóż zamówienie
+              Przejdź do podsumowania
             </Button>
           </DialogFooter>
         </DialogContent>
