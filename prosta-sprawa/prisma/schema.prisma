@@ -1404,3 +1404,32 @@ model Settings {
 
   @@index([key])
 }
+
+// ============================================================================
+// LOGI SYSTEMOWE
+// ============================================================================
+
+model SystemLog {
+  id          String      @id @default(uuid())
+  level       LogLevel    @default(INFO)
+  action      String      // Rodzaj akcji (np. "USER_LOGIN", "ORDER_CREATED", "PAYMENT_STATUS_CHANGED")
+  message     String      // Opis zdarzenia
+  userId      String?     // ID użytkownika, który wykonał akcję (opcjonalne)
+  metadata    String?     // Dodatkowe dane w formacie JSON
+  ipAddress   String?     // Adres IP użytkownika
+  userAgent   String?     // User agent przeglądarki
+  createdAt   DateTime    @default(now())
+
+  @@index([level])
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum LogLevel {
+  DEBUG       // Szczegółowe informacje diagnostyczne
+  INFO        // Informacje o normalnym działaniu
+  WARNING     // Ostrzeżenia, które nie są błędami
+  ERROR       // Błędy, które nie zatrzymują działania systemu
+  CRITICAL    // Krytyczne błędy wymagające natychmiastowej uwagi
+}
