@@ -8,9 +8,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa"
 import { AuthLayout } from "@/components/auth"
+
+interface DevUser {
+  id: string
+  email: string
+  role: string
+  name: string | null
+  password: string
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,6 +31,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [devUsers, setDevUsers] = useState<DevUser[]>([])
+  const [selectedUserId, setSelectedUserId] = useState("")
+
+  // Fetch dev users list
+  useEffect(() => {
+    const fetchDevUsers = async () => {
+      try {
+        const response = await fetch("/api/users/dev-list")
+        if (response.ok) {
+          const data = await response.json()
+          setDevUsers(data.users)
+        }
+      } catch (error) {
+        console.error("Error fetching dev users:", error)
+      }
+    }
+    fetchDevUsers()
+  }, [])
 
   useEffect(() => {
     if (registered === "true") {
@@ -32,6 +59,57 @@ export default function LoginPage() {
       window.history.replaceState({}, "", url.toString())
     }
   }, [registered])
+
+  // Handle user selection from dropdown
+  const handleUserSelect = async (userId: string) => {
+    setSelectedUserId(userId)
+    const user = devUsers.find((u) => u.id === userId)
+    if (user) {
+      setEmail(user.email)
+      setPassword(user.password)
+
+      // Auto-login after selecting user
+      setIsLoading(true)
+      setError("")
+
+      try {
+        const result = await signIn("credentials", {
+          email: user.email,
+          password: user.password,
+          redirect: false,
+        })
+
+        if (result?.error) {
+          setError("Nieprawidłowy email lub hasło")
+          setIsLoading(false)
+          return
+        }
+
+        // Pobierz dane użytkownika aby określić rolę
+        const response = await fetch("/api/auth/me")
+        if (response.ok) {
+          const data = await response.json()
+          const userRole = data.user.role
+
+          // Przekieruj na odpowiedni panel
+          if (userRole === "CLIENT") {
+            router.push("/panel-klienta")
+          } else if (userRole === "LAW_FIRM") {
+            router.push("/panel-kancelarii")
+          } else if (userRole === "ADMIN") {
+            router.push("/admin")
+          } else {
+            router.push(callbackUrl)
+          }
+        } else {
+          router.push(callbackUrl)
+        }
+      } catch (error) {
+        setError("Wystąpił błąd podczas logowania")
+        setIsLoading(false)
+      }
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -95,17 +173,28 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Adres e-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nazwa@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+              <Label htmlFor="email">Wybierz użytkownika</Label>
+              <Select
+                value={selectedUserId}
+                onValueChange={handleUserSelect}
                 disabled={isLoading}
-                required
-                className="h-11"
-              />
+              >
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Wybierz użytkownika testowego" />
+                </SelectTrigger>
+                <SelectContent>
+                  {devUsers.map((user) => (
+                    <SelectItem key={user.id} value={user.id}>
+                      <div className="flex items-center gap-2">
+                        <span>{user.email}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ({user.role})
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -131,7 +220,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? "Logowanie..." : "Zaloguj się"}
+              {isLoading ? "Logowanie..." : "Zaloguj się (lub wybierz użytkownika powyżej)"}
             </Button>
 
             <div className="relative">
