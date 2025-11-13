@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Mail, Calendar, CheckCircle, XCircle } from "lucide-react"
+import { Mail, Calendar, CheckCircle, XCircle, Download } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
   Table,
@@ -69,6 +70,46 @@ export default function AdminNewsletterPage() {
   useEffect(() => {
     fetchSubscribers()
   }, [])
+
+  const exportToCSV = () => {
+    try {
+      // Prepare CSV header
+      const header = ["Email", "Imię", "Data zapisu", "Status", "Data rezygnacji"]
+
+      // Prepare CSV rows
+      const rows = subscribers.map((sub) => [
+        sub.email,
+        sub.imie || "",
+        formatDate(sub.dataZapisu),
+        sub.aktywny ? "Aktywny" : "Nieaktywny",
+        sub.dataRezygnacji ? formatDate(sub.dataRezygnacji) : "",
+      ])
+
+      // Create CSV content
+      const csvContent = [
+        header.join(","),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+      ].join("\n")
+
+      // Add BOM for proper UTF-8 encoding in Excel
+      const BOM = "\uFEFF"
+      const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" })
+
+      // Create download link
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.setAttribute("href", url)
+      link.setAttribute("download", `newsletter-${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = "hidden"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      toast.success("Lista została wyeksportowana do pliku CSV")
+    } catch (error) {
+      toast.error("Nie udało się wyeksportować listy")
+    }
+  }
 
   if (loading) {
     return (
@@ -138,10 +179,18 @@ export default function AdminNewsletterPage() {
       {/* Subscribers Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista subskrybentów</CardTitle>
-          <CardDescription>
-            Wszystkie adresy e-mail zapisane do newslettera
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Lista subskrybentów</CardTitle>
+              <CardDescription>
+                Wszystkie adresy e-mail zapisane do newslettera
+              </CardDescription>
+            </div>
+            <Button onClick={exportToCSV} variant="outline" disabled={subscribers.length === 0}>
+              <Download className="h-4 w-4 mr-2" />
+              Eksportuj do CSV
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

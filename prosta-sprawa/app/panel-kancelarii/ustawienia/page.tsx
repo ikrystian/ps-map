@@ -20,12 +20,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { AlertCircle, Loader2, Save, Info, LogOut, Trash2, CheckCircle2, Upload, X, Image as ImageIcon } from "lucide-react"
+import { AlertCircle, Loader2, Save, Info, LogOut, Trash2, CheckCircle2, Upload, X, Image as ImageIcon, Calendar, Shield } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ImageCropper } from "@/components/ui/image-cropper"
+
+const formatDateTime = (dateString: string): string => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('pl-PL', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
 
 interface UserData {
   id: string
@@ -62,6 +73,18 @@ interface NotificationSettings {
   powiadomieniaSmNowa: boolean
   wiadomosciZbiorcze: boolean
   urlop: boolean
+}
+
+interface AccountInfo {
+  createdAt: string
+  lastLogin: {
+    date: string
+    ipAddress: string | null
+  } | null
+  lastFailedLogin: {
+    date: string
+    ipAddress: string | null
+  } | null
 }
 
 export default function LawFirmSettingsPage() {
@@ -105,6 +128,9 @@ export default function LawFirmSettingsPage() {
     urlop: false,
   })
 
+  // Informacje o koncie
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -123,6 +149,13 @@ export default function LawFirmSettingsPage() {
         if (settingsRes.ok) {
           const settingsData = await settingsRes.json()
           setNotificationSettings(settingsData)
+        }
+
+        // Pobierz informacje o koncie
+        const accountRes = await fetch("/api/auth/account-info")
+        if (accountRes.ok) {
+          const accountData = await accountRes.json()
+          setAccountInfo(accountData)
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -535,6 +568,54 @@ export default function LawFirmSettingsPage() {
               <CardDescription>Zarządzaj swoim kontem i bezpieczeństwem</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Informacje o koncie */}
+              {accountInfo && (
+                <>
+                  <div className="space-y-3">
+                    <Label className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Informacje o koncie
+                    </Label>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between py-2 px-3 bg-muted/50 rounded-md">
+                        <span className="text-muted-foreground">Data założenia:</span>
+                        <span className="font-medium">{formatDateTime(accountInfo.createdAt)}</span>
+                      </div>
+
+                      {accountInfo.lastLogin && (
+                        <div className="flex items-center justify-between py-2 px-3 bg-muted/50 rounded-md">
+                          <span className="text-muted-foreground">Ostatnie logowanie:</span>
+                          <span className="font-medium">
+                            {formatDateTime(accountInfo.lastLogin.date)}
+                            {accountInfo.lastLogin.ipAddress && (
+                              <span className="text-muted-foreground ml-2">
+                                (IP: {accountInfo.lastLogin.ipAddress})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+
+                      {accountInfo.lastFailedLogin && (
+                        <div className="flex items-center justify-between py-2 px-3 bg-destructive/10 rounded-md">
+                          <span className="text-muted-foreground">Ostatnie błędne logowanie:</span>
+                          <span className="font-medium text-destructive">
+                            {formatDateTime(accountInfo.lastFailedLogin.date)}
+                            {accountInfo.lastFailedLogin.ipAddress && (
+                              <span className="text-muted-foreground ml-2">
+                                (IP: {accountInfo.lastFailedLogin.ipAddress})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <Separator />
+                </>
+              )}
+
               {/* Status konta */}
               <div className="space-y-2">
                 <Label>Status konta</Label>
