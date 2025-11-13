@@ -1,0 +1,523 @@
+"use client"
+
+import React, { useState, useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import Link from "next/link"
+
+// Validation schema
+const userSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
+  status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
+  // Client fields
+  client: z.object({
+    imie: z.string().min(1, "First name is required"),
+    nazwisko: z.string().min(1, "Last name is required"),
+    telefon: z.string().optional(),
+    adres: z.string().optional(),
+    kodPocztowy: z.string().optional(),
+    miasto: z.string().optional(),
+    voivodeshipId: z.string().optional(),
+    zgodaRegulamin: z.boolean(),
+    zgodaNewsletter: z.boolean(),
+    zgodaMarketing: z.boolean(),
+  }).optional(),
+})
+
+type UserFormValues = z.infer<typeof userSchema>
+
+interface Voivodeship {
+  id: string
+  nazwa: string
+}
+
+interface UserData {
+  id: string
+  name?: string | null
+  email: string
+  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
+  client?: {
+    id: string
+    imie: string
+    nazwisko: string
+    telefon?: string | null
+    adres?: string | null
+    kodPocztowy?: string | null
+    miasto?: string | null
+    voivodeshipId?: string | null
+    zgodaRegulamin: boolean
+    zgodaNewsletter: boolean
+    zgodaMarketing: boolean
+  } | null
+}
+
+export default function EditUserPage() {
+  const params = useParams()
+  const router = useRouter()
+  const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [userData, setUserData] = useState<UserData | null>(null)
+
+  const form = useForm<UserFormValues>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      role: "CLIENT",
+      status: "ACTIVE",
+      client: {
+        imie: "",
+        nazwisko: "",
+        telefon: "",
+        adres: "",
+        kodPocztowy: "",
+        miasto: "",
+        voivodeshipId: "",
+        zgodaRegulamin: false,
+        zgodaNewsletter: false,
+        zgodaMarketing: false,
+      },
+    },
+  })
+
+  // Fetch voivodeships
+  useEffect(() => {
+    const fetchVoivodeships = async () => {
+      try {
+        const response = await fetch("/api/voivodeships")
+        if (response.ok) {
+          const data = await response.json()
+          setVoivodeships(data)
+        }
+      } catch (error) {
+        console.error("Error fetching voivodeships:", error)
+      }
+    }
+    fetchVoivodeships()
+  }, [])
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/admin/users/${params.id}`)
+        if (response.ok) {
+          const user: UserData = await response.json()
+          setUserData(user)
+          form.reset({
+            name: user.name || "",
+            email: user.email,
+            password: "",
+            role: user.role,
+            status: user.status,
+            client: user.client ? {
+              imie: user.client.imie,
+              nazwisko: user.client.nazwisko,
+              telefon: user.client.telefon || "",
+              adres: user.client.adres || "",
+              kodPocztowy: user.client.kodPocztowy || "",
+              miasto: user.client.miasto || "",
+              voivodeshipId: user.client.voivodeshipId || "",
+              zgodaRegulamin: user.client.zgodaRegulamin,
+              zgodaNewsletter: user.client.zgodaNewsletter,
+              zgodaMarketing: user.client.zgodaMarketing,
+            } : undefined,
+          })
+        } else {
+          throw new Error("Błąd podczas pobierania danych użytkownika")
+        }
+      } catch (error) {
+        toast.error("Nie udało się pobrać danych użytkownika")
+        router.push("/admin/users")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (params.id) {
+      fetchUser()
+    }
+  }, [params.id, router])
+
+  // Update user
+  const handleSubmit = async (values: UserFormValues) => {
+    try {
+      setIsSubmitting(true)
+
+      const updateData: any = {
+        name: values.name,
+        email: values.email,
+        role: values.role,
+        status: values.status,
+      }
+
+      // Only include password if it was changed
+      if (values.password && values.password.length > 0) {
+        updateData.password = values.password
+      }
+
+      // Include client data if role is CLIENT
+      if (values.role === "CLIENT" && values.client) {
+        updateData.client = values.client
+      }
+
+      const response = await fetch(`/api/admin/users/${params.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      })
+
+      if (response.ok) {
+        toast.success("Użytkownik został zaktualizowany pomyślnie")
+        router.push("/admin/users")
+      } else {
+        const error = await response.json()
+        throw new Error(error.error || "Błąd podczas aktualizacji użytkownika")
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować użytkownika")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Ładowanie...</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/admin/users">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Edytuj Użytkownika</h1>
+          <p className="text-muted-foreground">{userData?.email}</p>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          {/* Basic Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Dane konta</CardTitle>
+              <CardDescription>Email, hasło i podstawowe informacje</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="user@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hasło</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Pozostaw puste aby nie zmieniać" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Pozostaw puste jeśli nie chcesz zmieniać hasła
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nazwa (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rola</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Wybierz rolę" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="CLIENT">Klient</SelectItem>
+                          <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
+                          <SelectItem value="ADMIN">Administrator</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Wybierz status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="ACTIVE">Aktywny</SelectItem>
+                          <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
+                          <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Client Information */}
+          {(form.watch("role") === "CLIENT" || userData?.client) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Dane klienta</CardTitle>
+                <CardDescription>Informacje o kliencie</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="client.imie"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Imię</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Jan" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.nazwisko"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nazwisko</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Kowalski" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="client.telefon"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefon (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+48 123 456 789" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="client.adres"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Adres (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ul. Przykładowa 123" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="client.kodPocztowy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="00-000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.miasto"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Miasto (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Warszawa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="client.voivodeshipId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Województwo (opcjonalnie)</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Wybierz województwo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {voivodeships.map((v) => (
+                            <SelectItem key={v.id} value={v.id}>
+                              {v.nazwa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaRegulamin"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na regulamin</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaNewsletter"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na newsletter</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaMarketing"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na marketing</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Form Actions */}
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={() => router.push("/admin/users")}>
+              Anuluj
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Zapisywanie..." : "Zapisz Zmiany"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  )
+}
