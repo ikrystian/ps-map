@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
   NavigationMenu,
@@ -59,12 +60,12 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null 
   const prywatneCat = categories.slice(Math.ceil(categories.length / 2))
 
   return (
-    <header className="border-b bg-background">
+    <header className="border-b bg-background fixed left-0 top-0 right-0 z-30 flex-shrink-0 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Prosta Sprawa</span>
+            <Image src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
           </Link>
 
           {/* Navigation Menu */}

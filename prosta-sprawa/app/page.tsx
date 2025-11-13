@@ -121,10 +121,10 @@ export default function HomePage() {
       <PublicHeader />
 
       {/* SECTION 1: Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-20 md:py-32">
-        <div className="container mx-auto px-4">
+      <section className="relative from-primary/10 via-background to-secondary/10 py-20 md:py-32 hero-image">
+        <div className="con1tainer mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Prosta Sprawa
             </h1>
             <p className="text-3xl md:text-5xl font-semibold mb-4">

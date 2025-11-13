@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // GET /api/admin/reviews/[id] - Get a single review by ID (ADMIN only)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,16 +14,18 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const review = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         lawFirm: {
           select: {
             id: true,
             nazwa: true,
             nazwaFirmy: true,
-            email: true,
-            telefon: true,
+            emailKontakt: true,
+            numerTelefonu: true,
             miasto: true,
           },
         },
@@ -32,7 +34,11 @@ export async function GET(
             id: true,
             imie: true,
             nazwisko: true,
-            email: true,
+            user: {
+              select: {
+                email: true,
+              },
+            },
           },
         },
       },
@@ -52,7 +58,7 @@ export async function GET(
 // PUT /api/admin/reviews/[id] - Update a review (ADMIN only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -61,6 +67,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const {
       ocenaOgolna,
@@ -79,7 +86,7 @@ export async function PUT(
 
     // Verify review exists
     const existingReview = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingReview) {
@@ -127,7 +134,7 @@ export async function PUT(
 
     // Update review
     const review = await prisma.review.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         lawFirm: {
@@ -142,7 +149,11 @@ export async function PUT(
             id: true,
             imie: true,
             nazwisko: true,
-            email: true,
+            user: {
+              select: {
+                email: true,
+              },
+            },
           },
         },
       },
@@ -158,7 +169,7 @@ export async function PUT(
 // DELETE /api/admin/reviews/[id] - Delete a review (ADMIN only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -167,9 +178,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Verify review exists
     const existingReview = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingReview) {
@@ -178,7 +191,7 @@ export async function DELETE(
 
     // Hard delete the review
     await prisma.review.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Review deleted successfully" })

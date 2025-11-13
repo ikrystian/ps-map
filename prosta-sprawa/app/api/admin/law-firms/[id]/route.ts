@@ -45,9 +45,10 @@ export async function GET(
         services: {
           select: {
             id: true,
-            nazwa: true,
-            opis: true,
-            cena: true,
+            nazwaUslugi: true,
+            opisUslugi: true,
+            cenaOd: true,
+            cenaDo: true,
             createdAt: true,
           },
           orderBy: {
@@ -58,8 +59,8 @@ export async function GET(
         certificates: {
           select: {
             id: true,
-            nazwa: true,
-            instytucja: true,
+            nazwaCertyfikatu: true,
+            wydawca: true,
             dataUzyskania: true,
             createdAt: true,
           },
@@ -72,7 +73,7 @@ export async function GET(
           select: {
             id: true,
             caseId: true,
-            kwotaOferty: true,
+            kwotaBrutto: true,
             status: true,
             createdAt: true,
           },
@@ -88,10 +89,11 @@ export async function GET(
             ocenaOgolna: true,
             komunikacja: true,
             profesjonalizm: true,
-            jakoscPracy: true,
-            stosunek: true,
+            terminowosc: true,
+            stosunekJakosci: true,
             trescOpinii: true,
-            status: true,
+            aktywna: true,
+            zweryfikowana: true,
             createdAt: true,
           },
           orderBy: {
@@ -104,7 +106,7 @@ export async function GET(
             id: true,
             tytul: true,
             slug: true,
-            status: true,
+            opublikowany: true,
             createdAt: true,
           },
           orderBy: {
@@ -115,9 +117,9 @@ export async function GET(
         orders: {
           select: {
             id: true,
-            typ: true,
+            orderType: true,
             kwota: true,
-            status: true,
+            statusPlatnosci: true,
             createdAt: true,
           },
           orderBy: {
@@ -128,9 +130,9 @@ export async function GET(
         invoices: {
           select: {
             id: true,
-            numer: true,
-            kwotaNetto: true,
-            kwotaBrutto: true,
+            invoiceNumber: true,
+            netAmount: true,
+            grossAmount: true,
             status: true,
             createdAt: true,
           },
@@ -142,9 +144,9 @@ export async function GET(
         promotions: {
           select: {
             id: true,
-            typ: true,
-            dataOd: true,
-            dataDo: true,
+            typPromocji: true,
+            startPromocji: true,
+            koniecPromocji: true,
             aktywna: true,
             createdAt: true,
           },

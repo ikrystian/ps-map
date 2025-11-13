@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
           subscriptionPlan: {
             select: {
               id: true,
-              name: true,
+              nazwa: true,
             },
           },
           invoice: {

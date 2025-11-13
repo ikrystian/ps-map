@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // GET /api/admin/transakcje/[id] - Get single transaction (ADMIN only)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,8 +14,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         lawFirm: {
           select: {
@@ -29,8 +31,8 @@ export async function GET(
         subscriptionPlan: {
           select: {
             id: true,
-            name: true,
-            description: true,
+            nazwa: true,
+            typ: true,
           },
         },
         invoice: true,
@@ -57,7 +59,7 @@ export async function GET(
 // PUT /api/admin/transakcje/[id] - Update transaction (ADMIN only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -66,6 +68,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { statusPlatnosci, metodaPlatnosci, kwota, transactionId, externalOrderId } = body
 
@@ -98,7 +101,7 @@ export async function PUT(
     }
 
     const updatedOrder = await prisma.order.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         lawFirm: {
@@ -112,7 +115,7 @@ export async function PUT(
         subscriptionPlan: {
           select: {
             id: true,
-            name: true,
+            nazwa: true,
           },
         },
         invoice: {
@@ -125,21 +128,22 @@ export async function PUT(
       },
     })
 
-    // If order was marked as paid and it's a points order, add points to law firm
-    if (statusPlatnosci === "ZAPLACONE" && updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
-      const lawFirm = await prisma.lawFirm.findUnique({
-        where: { id: updatedOrder.lawFirmId },
-      })
+    // TODO: If order was marked as paid and it's a points order, add points to law firm
+    // NOTE: This functionality is currently disabled because the 'punkty' field doesn't exist in the LawFirm model
+    // if (statusPlatnosci === "ZAPLACONE" && updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
+    //   const lawFirm = await prisma.lawFirm.findUnique({
+    //     where: { id: updatedOrder.lawFirmId },
+    //   })
 
-      if (lawFirm) {
-        await prisma.lawFirm.update({
-          where: { id: updatedOrder.lawFirmId },
-          data: {
-            punkty: (lawFirm.punkty || 0) + updatedOrder.liczbaPunktow,
-          },
-        })
-      }
-    }
+    //   if (lawFirm) {
+    //     await prisma.lawFirm.update({
+    //       where: { id: updatedOrder.lawFirmId },
+    //       data: {
+    //         punkty: (lawFirm.punkty || 0) + updatedOrder.liczbaPunktow,
+    //       },
+    //     })
+    //   }
+    // }
 
     return NextResponse.json(updatedOrder)
   } catch (error) {
@@ -154,7 +158,7 @@ export async function PUT(
 // DELETE /api/admin/transakcje/[id] - Delete transaction (ADMIN only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -163,8 +167,10 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     await prisma.order.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Transakcja została usunięta" })

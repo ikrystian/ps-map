@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma"
 // GET /api/blog/posts/[slug] - Pobiera pojedynczy opublikowany wpis (publiczne)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
+
     const post = await prisma.blogPost.findUnique({
       where: {
-        slug: params.slug,
+        slug,
       },
       include: {
         category: true,

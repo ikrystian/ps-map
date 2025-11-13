@@ -6,11 +6,13 @@ import { generateSlug } from "@/lib/utils"
 // GET /api/blog/categories/[id] - Pobiera pojedynczą kategorię
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     const category = await prisma.blogCategory.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: {
@@ -34,7 +36,7 @@ export async function GET(
 // PUT /api/blog/categories/[id] - Aktualizuje kategorię (tylko ADMIN)
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -43,6 +45,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { nazwa, slug: customSlug, opis, aktywna } = body
 
@@ -55,7 +58,7 @@ export async function PUT(
 
     // Sprawdź czy kategoria istnieje
     const existingCategory = await prisma.blogCategory.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingCategory) {
@@ -80,7 +83,7 @@ export async function PUT(
     }
 
     const category = await prisma.blogCategory.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nazwa,
         slug,
@@ -109,7 +112,7 @@ export async function PUT(
 // DELETE /api/blog/categories/[id] - Usuwa kategorię (tylko ADMIN)
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -118,9 +121,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Sprawdź czy kategoria istnieje
     const category = await prisma.blogCategory.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: {
@@ -143,7 +148,7 @@ export async function DELETE(
     }
 
     await prisma.blogCategory.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Kategoria została usunięta" })

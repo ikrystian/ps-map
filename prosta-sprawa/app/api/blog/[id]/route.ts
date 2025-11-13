@@ -6,7 +6,7 @@ import { generateSlug } from "@/lib/utils"
 // GET /api/blog/[id] - Pobiera wpis do edycji
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,6 +14,8 @@ export async function GET(
     if (!session?.user || session.user.role !== "LAW_FIRM") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const { id } = await params
 
     // Pobierz kancelarię
     const lawFirm = await prisma.lawFirm.findUnique({
@@ -26,7 +28,7 @@ export async function GET(
 
     // Pobierz wpis
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
       },
@@ -51,7 +53,7 @@ export async function GET(
 // PUT /api/blog/[id] - Aktualizuje wpis
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -59,6 +61,8 @@ export async function PUT(
     if (!session?.user || session.user.role !== "LAW_FIRM") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const { id } = await params
 
     // Pobierz kancelarię
     const lawFirm = await prisma.lawFirm.findUnique({
@@ -71,7 +75,7 @@ export async function PUT(
 
     // Pobierz istniejący wpis
     const existingPost = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingPost) {
@@ -141,7 +145,7 @@ export async function PUT(
       : existingPost.dataPublikacji
 
     const post = await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         tytul,
         slug,
@@ -172,7 +176,7 @@ export async function PUT(
 // DELETE /api/blog/[id] - Usuwa wpis
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -180,6 +184,8 @@ export async function DELETE(
     if (!session?.user || session.user.role !== "LAW_FIRM") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const { id } = await params
 
     // Pobierz kancelarię
     const lawFirm = await prisma.lawFirm.findUnique({
@@ -192,7 +198,7 @@ export async function DELETE(
 
     // Pobierz wpis
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!post) {
@@ -205,7 +211,7 @@ export async function DELETE(
     }
 
     await prisma.blogPost.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Wpis został usunięty" })

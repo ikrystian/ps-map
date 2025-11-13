@@ -14,7 +14,7 @@ export default async function PublicLayout({
         isAuthenticated={!!session}
         userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}
       />
-      <main className="flex-1">
+      <main className="flex-1 pt-[65px]">
         {children}
       </main>
     </div>

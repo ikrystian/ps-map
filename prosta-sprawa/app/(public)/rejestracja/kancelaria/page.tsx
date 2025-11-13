@@ -636,7 +636,7 @@ export default function LawFirmRegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-12">
+    <div className="flex items-center justify-center p-4 py-12">
       <Card className="w-full max-w-2xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Rejestracja kancelarii</CardTitle>

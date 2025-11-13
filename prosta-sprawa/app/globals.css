@@ -57,15 +57,15 @@
 }
 
 .dark {
-  --background: #1a1d23;
+  --background: #2f2e2b ;
   --foreground: #e5e5e5;
   --card: #2f3436;
   --card-foreground: #e5e5e5;
   --popover: #2f3436;
   --popover-foreground: #e5e5e5;
-  --primary: #34a85a;
+  --primary: #00897b;
   --primary-foreground: #ffffff;
-  --secondary: #4682b4;
+  --secondary: #d7b56d;
   --secondary-foreground: #e5e5e5;
   --muted: #444444;
   --muted-foreground: #a3a3a3;
@@ -81,7 +81,7 @@
   --chart-3: #6495ed;
   --chart-4: #66d9ef;
   --chart-5: #1a9641;
-  --sidebar: #1a1d23;
+  --sidebar: #a6a6a6;
   --sidebar-foreground: #e5e5e5;
   --sidebar-primary: #34a85a;
   --sidebar-primary-foreground: #ffffff;
@@ -176,4 +176,10 @@
     background-color: var(--background);
     color: var(--foreground);
   }
+}
+
+
+.hero-image {
+  background: url('/images/hero.webp') center no-repeat;
+  background-size: cover;
 }

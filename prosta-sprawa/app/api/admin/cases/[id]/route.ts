@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                 id: true,
                 nazwa: true,
                 nazwaFirmy: true,
-                email: true,
+                emailKontakt: true,
                 numerTelefonu: true,
                 logo: true,
               },

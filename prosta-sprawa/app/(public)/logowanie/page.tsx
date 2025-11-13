@@ -71,7 +71,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
+    <div className="min-h-[calc(100dvh-65px)] grid lg:grid-cols-2">
       {/* Left Column - Form */}
       <div className="flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8">
@@ -178,7 +178,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Column - Image/Hero */}
-      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary">
+      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary hero-image">
         <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
           <div className="max-w-md space-y-6 text-center">
             <h2 className="text-4xl font-bold">

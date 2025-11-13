@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // PATCH /api/admin/reviews/[id]/status - Update review status (verify/activate) (ADMIN only)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,12 +14,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { zweryfikowana, aktywna } = body
 
     // Verify review exists
     const existingReview = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingReview) {
@@ -39,7 +40,7 @@ export async function PATCH(
 
     // Update review status
     const review = await prisma.review.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         lawFirm: {
@@ -54,7 +55,11 @@ export async function PATCH(
             id: true,
             imie: true,
             nazwisko: true,
-            email: true,
+            user: {
+              select: {
+                email: true,
+              },
+            },
           },
         },
       },

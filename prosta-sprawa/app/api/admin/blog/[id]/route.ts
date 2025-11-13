@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // DELETE /api/admin/blog/[id] - Usuwa wpis (tylko ADMIN)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,9 +14,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Sprawdź czy wpis istnieje
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         lawFirm: {
           select: {
@@ -31,7 +33,7 @@ export async function DELETE(
     }
 
     await prisma.blogPost.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({

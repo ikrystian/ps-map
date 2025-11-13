@@ -259,11 +259,7 @@ export default function LawFirmProfilePage() {
     e.preventDefault()
 
     if (!contactForm.politykaPrivacy) {
-      toast({
-        title: "Błąd",
-        description: "Musisz zaakceptować politykę prywatności",
-        variant: "destructive",
-      })
+      toast.error("Musisz zaakceptować politykę prywatności")
       return
     }
 
@@ -274,10 +270,7 @@ export default function LawFirmProfilePage() {
       // Na razie symulujemy wysłanie
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      toast({
-        title: "Wiadomość wysłana",
-        description: "Twoja wiadomość została wysłana do kancelarii.",
-      })
+      toast.success("Twoja wiadomość została wysłana do kancelarii")
 
       // Reset formularza
       setContactForm({
@@ -291,11 +284,7 @@ export default function LawFirmProfilePage() {
         politykaPrivacy: false,
       })
     } catch (err) {
-      toast({
-        title: "Błąd",
-        description: "Nie udało się wysłać wiadomości",
-        variant: "destructive",
-      })
+      toast.error("Nie udało się wysłać wiadomości")
     } finally {
       setSendingContact(false)
     }
@@ -305,30 +294,18 @@ export default function LawFirmProfilePage() {
     e.preventDefault()
 
     if (!session?.user) {
-      toast({
-        title: "Wymagane logowanie",
-        description: "Musisz być zalogowany jako klient, aby wystawić opinię",
-        variant: "destructive",
-      })
+      toast.error("Musisz być zalogowany jako klient, aby wystawić opinię")
       router.push("/auth/login")
       return
     }
 
     if (session.user.role !== "CLIENT") {
-      toast({
-        title: "Brak uprawnień",
-        description: "Tylko klienci mogą wystawiać opinie",
-        variant: "destructive",
-      })
+      toast.error("Tylko klienci mogą wystawiać opinie")
       return
     }
 
     if (reviewForm.trescOpinii.length < 50) {
-      toast({
-        title: "Zbyt krótka treść",
-        description: "Treść opinii musi mieć minimum 50 znaków",
-        variant: "destructive",
-      })
+      toast.error("Treść opinii musi mieć minimum 50 znaków")
       return
     }
 
@@ -351,10 +328,7 @@ export default function LawFirmProfilePage() {
         throw new Error(errorData.error || "Nie udało się dodać opinii")
       }
 
-      toast({
-        title: "Opinia dodana",
-        description: "Twoja opinia została pomyślnie dodana",
-      })
+      toast.success("Twoja opinia została pomyślnie dodana")
 
       setReviewDialogOpen(false)
 
@@ -378,11 +352,7 @@ export default function LawFirmProfilePage() {
         anonimowa: false,
       })
     } catch (err) {
-      toast({
-        title: "Błąd",
-        description: err instanceof Error ? err.message : "Wystąpił błąd",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setSubmittingReview(false)
     }
