@@ -5,6 +5,7 @@ import { Plus, Edit, Trash2, Search, Eye, Code, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BlockImporter } from "@/components/admin/block-importer"
 import {
   Table,
   TableBody,
@@ -63,6 +64,7 @@ interface Module {
   description?: string | null
   preview?: string | null
   active: boolean
+  type?: 'TEMPLATE' | 'EDITABLE_HTML'
   createdAt: string
   updatedAt: string
   _count?: {
@@ -257,10 +259,13 @@ export default function AdminModulesPage() {
             Zarządzaj modułami HTML do budowy stron
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Dodaj moduł
-        </Button>
+        <div className="flex gap-2">
+          <BlockImporter onImported={fetchModules} />
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Dodaj moduł
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
