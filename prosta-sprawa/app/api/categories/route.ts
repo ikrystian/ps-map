@@ -4,7 +4,19 @@ import { prisma } from "@/lib/prisma"
 export async function GET() {
   try {
     const categories = await prisma.category.findMany({
-      include: {
+      select: {
+        id: true,
+        nazwa: true,
+        slug: true,
+        opis: true,
+        opisDodatkowy: true,
+        ikona: true,
+        typ: true,
+        parentId: true,
+        metaTitle: true,
+        metaDescription: true,
+        aktywna: true,
+        kolejnosc: true,
         parent: {
           select: {
             id: true,
@@ -15,6 +27,8 @@ export async function GET() {
           select: {
             id: true,
             nazwa: true,
+            slug: true,
+            ikona: true,
           },
         },
         _count: {

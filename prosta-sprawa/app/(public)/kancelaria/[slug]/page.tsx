@@ -252,6 +252,13 @@ export default function LawFirmProfilePage() {
         const data = await response.json()
         setLawFirm(data)
 
+        // Track profile view
+        fetch(`/api/law-firms/${data.id}/view`, {
+          method: "POST",
+        }).catch(() => {
+          // Ignore errors for view tracking
+        })
+
         // Sprawdź czy kancelaria jest w ulubionych
         if (session?.user?.role === "CLIENT") {
           const favoriteResponse = await fetch(`/api/law-firms/${data.id}/favorite`)

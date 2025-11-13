@@ -419,7 +419,7 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            {/* Loading State */}
+            {/* Loading State and Results */}
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                 {[...Array(6)].map((_, i) => (
