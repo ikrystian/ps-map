@@ -45,6 +45,9 @@ const categorySchema = z.object({
   nazwa: z.string().min(1, "Nazwa jest wymagana"),
   slug: z.string().min(1, "Slug jest wymagany").regex(/^[a-z0-9-]+$/, "Slug może zawierać tylko małe litery, cyfry i myślniki"),
   opis: z.string().optional(),
+  opisDodatkowy: z.string().optional(),
+  ikona: z.string().optional(),
+  typ: z.enum(["SPRAWY_FIRMOWE", "SPRAWY_PRYWATNE"]),
   parentId: z.string().nullable().optional(),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
@@ -59,6 +62,9 @@ interface Category {
   nazwa: string
   slug: string
   opis?: string | null
+  opisDodatkowy?: string | null
+  ikona?: string | null
+  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   parentId?: string | null
   metaTitle?: string | null
   metaDescription?: string | null
@@ -95,6 +101,9 @@ export default function AdminCategoriesPage() {
       nazwa: "",
       slug: "",
       opis: "",
+      opisDodatkowy: "",
+      ikona: "",
+      typ: "SPRAWY_PRYWATNE",
       parentId: "none",
       metaTitle: null,
       metaDescription: null,
@@ -231,6 +240,9 @@ export default function AdminCategoriesPage() {
       nazwa: category.nazwa,
       slug: category.slug,
       opis: category.opis || "",
+      opisDodatkowy: category.opisDodatkowy || "",
+      ikona: category.ikona || "",
+      typ: category.typ,
       parentId: category.parentId || "none",
       metaTitle: category.metaTitle || "",
       metaDescription: category.metaDescription || "",
@@ -319,6 +331,11 @@ export default function AdminCategoriesPage() {
           </TableCell>
           <TableCell>
             <code className="text-sm bg-muted px-2 py-1 rounded">{category.slug}</code>
+          </TableCell>
+          <TableCell>
+            <Badge variant={category.typ === "SPRAWY_FIRMOWE" ? "default" : "secondary"}>
+              {category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
+            </Badge>
           </TableCell>
           <TableCell>
             {category.parent?.nazwa || "-"}
@@ -447,6 +464,65 @@ export default function AdminCategoriesPage() {
                 />
                 <FormField
                   control={form.control}
+                  name="opisDodatkowy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Opis dodatkowy</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Dodatkowy opis kategorii..."
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="typ"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Typ kategorii</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Wybierz typ" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="SPRAWY_FIRMOWE">Sprawy firmowe</SelectItem>
+                            <SelectItem value="SPRAWY_PRYWATNE">Sprawy prywatne</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="ikona"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ikona</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="np. Briefcase, Scale, Building..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Nazwa ikony z Lucide React
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
                   name="parentId"
                   render={({ field }) => (
                     <FormItem>
@@ -567,6 +643,7 @@ export default function AdminCategoriesPage() {
               <TableRow>
                 <TableHead>Nazwa</TableHead>
                 <TableHead>Slug</TableHead>
+                <TableHead>Typ</TableHead>
                 <TableHead>Kategoria nadrzędna</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
@@ -575,7 +652,7 @@ export default function AdminCategoriesPage() {
             <TableBody>
               {hierarchicalCategories.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     Brak kategorii. Dodaj pierwszą kategorię, aby rozpocząć.
                   </TableCell>
                 </TableRow>
@@ -650,6 +727,65 @@ export default function AdminCategoriesPage() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="opisDodatkowy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opis dodatkowy</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Dodatkowy opis kategorii..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="typ"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Typ kategorii</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Wybierz typ" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="SPRAWY_FIRMOWE">Sprawy firmowe</SelectItem>
+                          <SelectItem value="SPRAWY_PRYWATNE">Sprawy prywatne</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ikona"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ikona</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="np. Briefcase, Scale, Building..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Nazwa ikony z Lucide React
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="parentId"
