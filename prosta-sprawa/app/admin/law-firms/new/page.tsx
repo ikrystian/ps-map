@@ -37,6 +37,7 @@ const createLawFirmSchema = z.object({
   typInny: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
   nazwaFirmy: z.string().min(1, "Company name is required"),
+  slug: z.string().optional(),
   nip: z.string().min(10, "NIP must be 10 digits"),
   regon: z.string().optional(),
   krs: z.string().optional(),
@@ -59,10 +60,54 @@ const createLawFirmSchema = z.object({
   opis: z.string().optional(),
   logo: z.string().optional(),
 
+  // Multimedia
+  zdjecieGlowne: z.string().optional(),
+  galeriaZdjec: z.string().optional(),
+  filmYouTube: z.string().optional(),
+  okladkaFilmu: z.string().optional(),
+  kolejnoscMultimedia: z.enum(["zdjecia", "film"]).optional(),
+
+  // Business hours
+  statusGodzinyOtwarcia: z.boolean(),
+  godzinyOtwarcia: z.string().optional(),
+
+  // Social media
+  linkLinkedIn: z.string().optional(),
+  linkFacebook: z.string().optional(),
+  linkInstagram: z.string().optional(),
+  linkTwitter: z.string().optional(),
+  linkTikTok: z.string().optional(),
+  stronaWww: z.string().optional(),
+
+  // Education
+  edukacja: z.string().optional(),
+
+  // Legal registrations
+  oirpMiasto: z.string().optional(),
+  oirpWpis: z.string().optional(),
+  oirpStatus: z.boolean(),
+  oraMiasto: z.string().optional(),
+  oraWpis: z.string().optional(),
+  oraStatus: z.boolean(),
+
+  // Services
+  unikatowyOpisUslugi: z.string().optional(),
+  slowaKluczowe: z.string().optional(),
+
+  // Coverage area
+  callaPolska: z.boolean(),
+  onlineOnly: z.boolean(),
+
   // Type and subscription
   typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
   pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]),
   punktySaldo: z.number(),
+  dataPakietuOd: z.string().optional(),
+  dataPakietuDo: z.string().optional(),
+
+  // Consents
+  zgodaRegulamin: z.boolean(),
+  zgodaPrzetwarzanie: z.boolean(),
 
   // Status
   zweryfikowana: z.boolean(),
@@ -91,6 +136,7 @@ export default function NewLawFirmPage() {
       typInny: "",
       nazwa: "",
       nazwaFirmy: "",
+      slug: "",
       nip: "",
       regon: "",
       krs: "",
@@ -106,9 +152,37 @@ export default function NewLawFirmPage() {
       voivodeshipId: "",
       opis: "",
       logo: "",
+      zdjecieGlowne: "",
+      galeriaZdjec: "",
+      filmYouTube: "",
+      okladkaFilmu: "",
+      kolejnoscMultimedia: "zdjecia",
+      statusGodzinyOtwarcia: false,
+      godzinyOtwarcia: "",
+      linkLinkedIn: "",
+      linkFacebook: "",
+      linkInstagram: "",
+      linkTwitter: "",
+      linkTikTok: "",
+      stronaWww: "",
+      edukacja: "",
+      oirpMiasto: "",
+      oirpWpis: "",
+      oirpStatus: false,
+      oraMiasto: "",
+      oraWpis: "",
+      oraStatus: false,
+      unikatowyOpisUslugi: "",
+      slowaKluczowe: "",
+      callaPolska: false,
+      onlineOnly: false,
       typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "PODSTAWOWY",
       punktySaldo: 0,
+      dataPakietuOd: "",
+      dataPakietuDo: "",
+      zgodaRegulamin: false,
+      zgodaPrzetwarzanie: false,
       zweryfikowana: false,
       aktywna: true,
     },
@@ -311,6 +385,23 @@ export default function NewLawFirmPage() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug URL (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="np. kancelaria-kowalski" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Przyjazny URL dla profilu kancelarii. Zostanie wygenerowany automatycznie jeśli pozostawisz puste.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="grid grid-cols-3 gap-4">
                 <FormField
@@ -667,6 +758,545 @@ export default function NewLawFirmPage() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>Aktywna</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Social Media */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Media społecznościowe</CardTitle>
+              <CardDescription>Linki do profili społecznościowych</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="stronaWww"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Strona WWW (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="linkLinkedIn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.linkedin.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="linkFacebook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Facebook (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.facebook.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="linkInstagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Instagram (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.instagram.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="linkTwitter"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Twitter (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://twitter.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="linkTikTok"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>TikTok (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.tiktok.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Multimedia */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Multimedia</CardTitle>
+              <CardDescription>Zdjęcia, galeria i filmy</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="zdjecieGlowne"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Zdjęcie główne (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        label=""
+                        description="Główne zdjęcie profilu kancelarii"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="galeriaZdjec"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Galeria zdjęć (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder='JSON array URL-i, np. ["https://...", "https://..."]' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Wpisz JSON array z URL-ami zdjęć do galerii
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="filmYouTube"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Film YouTube (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://www.youtube.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="okladkaFilmu"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Miniatura filmu (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="URL do miniatury" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="kolejnoscMultimedia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kolejność multimediów</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wybierz kolejność" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="zdjecia">Zdjęcia najpierw</SelectItem>
+                        <SelectItem value="film">Film najpierw</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Business Hours */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Godziny otwarcia</CardTitle>
+              <CardDescription>Godziny pracy kancelarii</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="statusGodzinyOtwarcia"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Włącz godziny otwarcia</FormLabel>
+                      <FormDescription>
+                        Wyświetlaj godziny pracy w profilu publicznym
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="godzinyOtwarcia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Godziny otwarcia (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='JSON, np. {"poniedzialek": "9:00-17:00", "wtorek": "9:00-17:00", ...}'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Wpisz JSON z godzinami otwarcia dla każdego dnia tygodnia
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Legal Registrations */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Wpisy do rejestrów</CardTitle>
+              <CardDescription>OIRP i ORA</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4 p-4 border rounded-lg">
+                <h4 className="font-semibold">OIRP (Okręgowa Izba Radców Prawnych)</h4>
+                <FormField
+                  control={form.control}
+                  name="oirpStatus"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Zarejestrowany w OIRP</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="oirpMiasto"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Miasto OIRP (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Warszawa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="oirpWpis"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Numer wpisu OIRP (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="WA/12345" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 p-4 border rounded-lg">
+                <h4 className="font-semibold">ORA (Okręgowa Rada Adwokacka)</h4>
+                <FormField
+                  control={form.control}
+                  name="oraStatus"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Zarejestrowany w ORA</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="oraMiasto"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Miasto ORA (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Warszawa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="oraWpis"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Numer wpisu ORA (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="WA/12345" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Professional Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Informacje zawodowe</CardTitle>
+              <CardDescription>Edukacja, specjalizacje i słowa kluczowe</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="edukacja"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Historia edukacji (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='JSON array, np. [{"uczelnia": "Uniwersytet Warszawski", "wydzial": "Prawo", "rokOd": 2000, "rokDo": 2005}]'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Wpisz JSON array z historią edukacji
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unikatowyOpisUslugi"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unikalny opis usług (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Opisz unikalne aspekty świadczonych usług..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="slowaKluczowe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Słowa kluczowe (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='JSON array tagów, np. ["prawo cywilne", "prawo rodzinne", "sprawy spadkowe"]'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Wpisz JSON array ze słowami kluczowymi
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Coverage Area */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Obszar działania</CardTitle>
+              <CardDescription>Zakres terytorialny działalności</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-4">
+                <FormField
+                  control={form.control}
+                  name="callaPolska"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Cała Polska</FormLabel>
+                        <FormDescription>
+                          Kancelaria świadczy usługi na terenie całej Polski
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="onlineOnly"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Tylko online</FormLabel>
+                        <FormDescription>
+                          Kancelaria świadczy usługi wyłącznie online
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Subscription Dates & Consents */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Subskrypcja i zgody</CardTitle>
+              <CardDescription>Daty subskrypcji i zgody użytkownika</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="dataPakietuOd"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Data rozpoczęcia subskrypcji (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dataPakietuDo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Data zakończenia subskrypcji (opcjonalnie)</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <FormField
+                  control={form.control}
+                  name="zgodaRegulamin"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Zgoda na regulamin</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="zgodaPrzetwarzanie"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Zgoda na przetwarzanie danych</FormLabel>
                       </div>
                     </FormItem>
                   )}
