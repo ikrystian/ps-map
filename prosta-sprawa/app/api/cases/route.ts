@@ -38,13 +38,35 @@ export async function GET(request: NextRequest) {
     }
 
     if (session.user.role === "LAW_FIRM") {
-      // Kancelaria widzi dostępne sprawy
+      const searchParams = request.nextUrl.searchParams
+      const includeAll = searchParams.get("includeAll") === "true"
+
+      // Pobierz ID kancelarii
+      const lawFirm = await prisma.lawFirm.findUnique({
+        where: { userId: session.user.id },
+        select: { id: true }
+      })
+
+      if (!lawFirm) {
+        return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+      }
+
+      // Jeśli includeAll=true, zwróć wszystkie sprawy (bez względu na status)
+      // W przeciwnym razie tylko NOWA i OFERTY_OTRZYMANE
+      const whereCondition: any = includeAll
+        ? {
+            status: {
+              notIn: ["ANULOWANA"], // Ukryj tylko anulowane
+            },
+          }
+        : {
+            status: {
+              in: ["NOWA", "OFERTY_OTRZYMANE"],
+            },
+          }
+
       const cases = await prisma.case.findMany({
-        where: {
-          status: {
-            in: ["NOWA", "OFERTY_OTRZYMANE"],
-          },
-        },
+        where: whereCondition,
         include: {
           category: true,
           voivodeship: true,
@@ -52,6 +74,23 @@ export async function GET(request: NextRequest) {
             select: {
               imie: true,
               nazwisko: true,
+            },
+          },
+          offers: {
+            where: {
+              lawFirmId: lawFirm.id, // Pobierz tylko oferty tej kancelarii
+            },
+            select: {
+              id: true,
+              status: true,
+              kwotaNetto: true,
+              terminRealizacjiDni: true,
+              createdAt: true,
+            },
+          },
+          _count: {
+            select: {
+              offers: true,
             },
           },
         },

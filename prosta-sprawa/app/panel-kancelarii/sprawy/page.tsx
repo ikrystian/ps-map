@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro } from "lucide-react"
+import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
@@ -53,13 +53,13 @@ interface Case {
   _count?: {
     offers: number
   }
-  acceptedOffer?: {
+  offers?: Array<{
     id: string
     status: string
     kwotaNetto: number
     terminRealizacjiDni: number
     createdAt: string
-  }
+  }>
 }
 
 interface Category {
@@ -102,40 +102,35 @@ const SprawyPage = () => {
   const fetchCases = async () => {
     setLoading(true)
     try {
-      // Pobierz oferty kancelarii (API automatycznie filtruje po lawFirmId zalogowanego użytkownika)
-      // Pobieramy tylko zaakceptowane oferty
-      const offersResponse = await fetch("/api/offers?status=ZAAKCEPTOWANA")
-      if (!offersResponse.ok) {
-        toast.error("Nie udało się pobrać ofert")
+      // Pobierz wszystkie sprawy (API automatycznie dołącza oferty kancelarii)
+      const casesResponse = await fetch("/api/cases?includeAll=true")
+      if (!casesResponse.ok) {
+        toast.error("Nie udało się pobrać spraw")
         return
       }
 
-      const offersData = await offersResponse.json()
-      const acceptedOffers = offersData.offers || []
+      const allCases = await casesResponse.json()
 
-      // Pobierz pełne dane spraw dla zaakceptowanych ofert
-      const casesWithDetails = await Promise.all(
-        acceptedOffers.map(async (offer: any) => {
-          try {
-            const caseResponse = await fetch(`/api/cases/${offer.caseId}`)
-            if (caseResponse.ok) {
-              const caseData = await caseResponse.json()
-              return {
-                ...caseData,
-                acceptedOffer: offer, // Dodaj informację o zaakceptowanej ofercie
-              }
-            }
-          } catch (error) {
-            console.error(`Error fetching case ${offer.caseId}:`, error)
-          }
-          return null
-        })
+      // Odfiltruj sprawy ukryte przez użytkownika (localStorage)
+      const rejectedIds = new Set(
+        JSON.parse(localStorage.getItem("rejectedCases") || "[]")
       )
+      const visibleCases = allCases.filter((c: Case) => !rejectedIds.has(c.id))
 
-      // Usuń puste wartości (sprawy, których nie udało się pobrać)
-      const validCases = casesWithDetails.filter((c) => c !== null)
+      // Posortuj sprawy: najpierw zaakceptowane przez klienta
+      const sortedCases = visibleCases.sort((a: Case, b: Case) => {
+        const aOffer = a.offers?.[0]
+        const bOffer = b.offers?.[0]
 
-      setCases(validCases)
+        const aIsAccepted = aOffer?.status === "ZAAKCEPTOWANA"
+        const bIsAccepted = bOffer?.status === "ZAAKCEPTOWANA"
+
+        if (aIsAccepted && !bIsAccepted) return -1
+        if (!aIsAccepted && bIsAccepted) return 1
+        return 0
+      })
+
+      setCases(sortedCases)
     } catch (error) {
       console.error("Error fetching cases:", error)
       toast.error("Nie udało się pobrać spraw")
@@ -202,7 +197,7 @@ const SprawyPage = () => {
       // Usuń sprawę z listy
       setCases(cases.filter((c) => c.id !== caseToReject))
 
-      toast.success("Sprawa została odrzucona i ukryta z listy")
+      toast.success("Sprawa została ukryta z listy")
 
       setRejectModalOpen(false)
       setCaseToReject(null)
@@ -298,9 +293,9 @@ const SprawyPage = () => {
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Moje Sprawy</h1>
+        <h1 className="text-3xl font-bold">Wszystkie Sprawy</h1>
         <p className="text-muted-foreground mt-2">
-          Sprawy, w których klient zaakceptował Twoją ofertę
+          Przeglądaj wszystkie dostępne sprawy (sprawy zaakceptowane przez klienta są wyróżnione na górze)
         </p>
       </div>
 
@@ -342,24 +337,24 @@ const SprawyPage = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">W trakcie</CardTitle>
+            <CardTitle className="text-sm font-medium">Zaakceptowane</CardTitle>
             <span className="text-2xl font-bold">
-              {filteredCases.filter((c) => c.status === "W_TRAKCIE").length}
+              {filteredCases.filter((c) => c.offers?.[0]?.status === "ZAAKCEPTOWANA").length}
             </span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy w realizacji</p>
+            <p className="text-xs text-muted-foreground">Sprawy z zaakceptowaną ofertą</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Zakończone</CardTitle>
+            <CardTitle className="text-sm font-medium">Twoje oferty</CardTitle>
             <span className="text-2xl font-bold">
-              {filteredCases.filter((c) => c.status === "ZAKONCZONA").length}
+              {filteredCases.filter((c) => c.offers && c.offers.length > 0).length}
             </span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy ukończone</p>
+            <p className="text-xs text-muted-foreground">Sprawy z Twoją ofertą</p>
           </CardContent>
         </Card>
         <Card>
@@ -368,7 +363,7 @@ const SprawyPage = () => {
             <span className="text-2xl font-bold">{filteredCases.length}</span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Zaakceptowane sprawy</p>
+            <p className="text-xs text-muted-foreground">Dostępne sprawy</p>
           </CardContent>
         </Card>
         <Card>
@@ -384,31 +379,56 @@ const SprawyPage = () => {
 
       <Separator className="my-6" />
 
-      <h2 className="text-2xl font-bold mb-4">Zaakceptowane Sprawy</h2>
+      <h2 className="text-2xl font-bold mb-4">Wszystkie Sprawy</h2>
 
       {filteredCases.length === 0 ? (
         <div className="text-center py-12">
           <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Brak zaakceptowanych spraw</h3>
+          <h3 className="text-lg font-semibold mb-2">Brak spraw</h3>
           <p className="text-muted-foreground">
-            Nie masz jeszcze spraw, w których klient zaakceptował Twoją ofertę
+            Nie znaleziono żadnych spraw pasujących do wybranych filtrów
           </p>
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredCases.map((sprawa) => (
-            <Card key={sprawa.id} className="overflow-hidden">
-              <CardHeader className="flex flex-row items-start justify-between bg-muted/50 px-6 py-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline">{sprawa.category.nazwa}</Badge>
-                  <Badge variant="secondary">{getTypeLabel(sprawa.typSprawy)}</Badge>
-                  {sprawa.trybPilny && (
-                    <Badge variant="destructive" className="animate-pulse">
-                      Pilne
-                    </Badge>
-                  )}
-                  <Badge>{getStatusLabel(sprawa.status)}</Badge>
-                </div>
+          {filteredCases.map((sprawa) => {
+            const myOffer = sprawa.offers?.[0]
+            const isAccepted = myOffer?.status === "ZAAKCEPTOWANA"
+            const hasOffer = !!myOffer
+
+            return (
+              <Card
+                key={sprawa.id}
+                className={cn(
+                  "overflow-hidden",
+                  isAccepted && "border-green-500 border-2 bg-green-50/50"
+                )}
+              >
+                <CardHeader className={cn(
+                  "flex flex-row items-start justify-between px-6 py-3",
+                  isAccepted ? "bg-green-100/70" : "bg-muted/50"
+                )}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isAccepted && (
+                      <Badge className="bg-green-600 hover:bg-green-700 gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        Zaakceptowana
+                      </Badge>
+                    )}
+                    {hasOffer && !isAccepted && (
+                      <Badge variant="secondary" className="gap-1">
+                        Złożono ofertę
+                      </Badge>
+                    )}
+                    <Badge variant="outline">{sprawa.category.nazwa}</Badge>
+                    <Badge variant="secondary">{getTypeLabel(sprawa.typSprawy)}</Badge>
+                    {sprawa.trybPilny && (
+                      <Badge variant="destructive" className="animate-pulse">
+                        Pilne
+                      </Badge>
+                    )}
+                    <Badge>{getStatusLabel(sprawa.status)}</Badge>
+                  </div>
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Eye className="h-4 w-4" />
@@ -482,7 +502,8 @@ const SprawyPage = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -490,10 +511,10 @@ const SprawyPage = () => {
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Czy na pewno chcesz odrzucić tę sprawę?</DialogTitle>
+            <DialogTitle>Czy na pewno chcesz ukryć tę sprawę?</DialogTitle>
             <DialogDescription>
-              Ta akcja ukryje sprawę z Twojej listy. Będziesz mógł ją przywrócić tylko przez
-              wyczyść filtr odrzuconych spraw.
+              Ta akcja ukryje sprawę z Twojej listy. Będzie ona nadal dostępna, ale nie będzie
+              wyświetlana w panelu spraw.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -501,7 +522,7 @@ const SprawyPage = () => {
               Anuluj
             </Button>
             <Button variant="destructive" onClick={handleReject}>
-              Odrzuć sprawę
+              Ukryj sprawę
             </Button>
           </DialogFooter>
         </DialogContent>
