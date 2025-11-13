@@ -83,7 +83,16 @@ export default async function DynamicPage({ params }: PageProps) {
       <div className="page-content">
         {page.modules.map((pageModule) => {
           const data = pageModule.data ? JSON.parse(pageModule.data) : {}
-          const html = renderModule(pageModule.module.code, data)
+
+          // Handle EDITABLE_HTML modules differently
+          let html: string
+          if (pageModule.module.type === 'EDITABLE_HTML') {
+            // For EDITABLE_HTML, use the edited HTML from data or fallback to original code
+            html = data.html || pageModule.module.code
+          } else {
+            // For TEMPLATE modules, use the parser to replace placeholders
+            html = renderModule(pageModule.module.code, data)
+          }
 
           return (
             <div

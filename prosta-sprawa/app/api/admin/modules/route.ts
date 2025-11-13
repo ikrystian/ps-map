@@ -73,12 +73,20 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, code, description, preview, active } = body
+    const { name, code, description, preview, active, type } = body
 
     // Validate required fields
     if (!name || !code) {
       return NextResponse.json(
         { error: "Name and code are required" },
+        { status: 400 }
+      )
+    }
+
+    // Validate type if provided
+    if (type && !['TEMPLATE', 'EDITABLE_HTML'].includes(type)) {
+      return NextResponse.json(
+        { error: "Invalid module type" },
         { status: 400 }
       )
     }
@@ -91,6 +99,7 @@ export async function POST(request: NextRequest) {
         description: description || null,
         preview: preview || null,
         active: active !== undefined ? active : true,
+        type: type || 'TEMPLATE',
       },
     })
 

@@ -22,6 +22,7 @@ interface Module {
   name: string
   code: string
   description?: string | null
+  type?: 'TEMPLATE' | 'EDITABLE_HTML'
 }
 
 interface PageModule {
@@ -59,7 +60,7 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
       moduleId,
       module,
       order: pageModules.length,
-      data: {},
+      data: module.type === 'EDITABLE_HTML' ? { html: module.code } : {},
     }
 
     onChange([...pageModules, newModule])
@@ -312,26 +313,50 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
                 </CardHeader>
                 {isExpanded && (
                   <CardContent className="space-y-4">
-                    {parsed.fields.length > 0 ? (
-                      parsed.fields.map((field) =>
-                        renderFieldInput(field, index, pageModule.data[field.name])
-                      )
+                    {module.type === 'EDITABLE_HTML' ? (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Edytuj HTML (kliknij w treść, aby edytować)</Label>
+                          <div
+                            className="bg-white border rounded-lg p-4 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            contentEditable={true}
+                            suppressContentEditableWarning={true}
+                            dangerouslySetInnerHTML={{
+                              __html: pageModule.data.html || module.code
+                            }}
+                            onBlur={(e) => {
+                              updateModuleData(index, 'html', e.currentTarget.innerHTML)
+                            }}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Kliknij w treść powyżej, aby ją edytować. Zmiany zostaną zapisane automatycznie.
+                          </p>
+                        </div>
+                      </>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Ten moduł nie ma edytowalnych pól.
-                      </p>
-                    )}
+                      <>
+                        {parsed.fields.length > 0 ? (
+                          parsed.fields.map((field) =>
+                            renderFieldInput(field, index, pageModule.data[field.name])
+                          )
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            Ten moduł nie ma edytowalnych pól.
+                          </p>
+                        )}
 
-                    {/* Preview */}
-                    <div className="mt-4 pt-4 border-t">
-                      <h4 className="text-sm font-semibold mb-2">Podgląd:</h4>
-                      <div
-                        className="bg-muted p-4 rounded-lg"
-                        dangerouslySetInnerHTML={{
-                          __html: renderModule(module.code, pageModule.data)
-                        }}
-                      />
-                    </div>
+                        {/* Preview for TEMPLATE modules only */}
+                        <div className="mt-4 pt-4 border-t">
+                          <h4 className="text-sm font-semibold mb-2">Podgląd:</h4>
+                          <div
+                            className="bg-muted p-4 rounded-lg"
+                            dangerouslySetInnerHTML={{
+                              __html: renderModule(module.code, pageModule.data)
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
                   </CardContent>
                 )}
               </Card>
