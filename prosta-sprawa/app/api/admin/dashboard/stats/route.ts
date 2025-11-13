@@ -115,7 +115,6 @@ export async function GET(request: NextRequest) {
 
     // Convert BigInt to Number and ensure all 7 days are present
     const dailyRegistrations = []
-    const currentDate = new Date()
 
     for (let i = 6; i >= 0; i--) {
       const date = new Date(currentDate)
