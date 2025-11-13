@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,11 +25,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-// Validation schema
-const userSchema = z.object({
+// Validation schema for user form
+const createUserSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
   image: z.string().optional(),
@@ -49,45 +48,21 @@ const userSchema = z.object({
   }).optional(),
 })
 
-type UserFormValues = z.infer<typeof userSchema>
+type CreateUserFormValues = z.infer<typeof createUserSchema>
 
 interface Voivodeship {
   id: string
   nazwa: string
 }
 
-interface UserData {
-  id: string
-  name?: string | null
-  email: string
-  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
-  client?: {
-    id: string
-    imie: string
-    nazwisko: string
-    telefon?: string | null
-    adres?: string | null
-    kodPocztowy?: string | null
-    miasto?: string | null
-    voivodeshipId?: string | null
-    zgodaRegulamin: boolean
-    zgodaNewsletter: boolean
-    zgodaMarketing: boolean
-  } | null
-}
-
-export default function EditUserPage() {
-  const params = useParams()
+export default function NewUserPage() {
   const router = useRouter()
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [userData, setUserData] = useState<UserData | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
 
-  const form = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+  const form = useForm<CreateUserFormValues>({
+    resolver: zodResolver(createUserSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -125,51 +100,6 @@ export default function EditUserPage() {
     }
     fetchVoivodeships()
   }, [])
-
-  // Fetch user data
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`/api/admin/users/${params.id}`)
-        if (response.ok) {
-          const user: UserData = await response.json()
-          setUserData(user)
-          form.reset({
-            name: user.name || "",
-            email: user.email,
-            password: "",
-            role: user.role,
-            status: user.status,
-            image: user.image || "",
-            client: user.client ? {
-              imie: user.client.imie,
-              nazwisko: user.client.nazwisko,
-              telefon: user.client.telefon || "",
-              adres: user.client.adres || "",
-              kodPocztowy: user.client.kodPocztowy || "",
-              miasto: user.client.miasto || "",
-              voivodeshipId: user.client.voivodeshipId || "",
-              zgodaRegulamin: user.client.zgodaRegulamin,
-              zgodaNewsletter: user.client.zgodaNewsletter,
-              zgodaMarketing: user.client.zgodaMarketing,
-            } : undefined,
-          })
-        } else {
-          throw new Error("Błąd podczas pobierania danych użytkownika")
-        }
-      } catch (error) {
-        toast.error("Nie udało się pobrać danych użytkownika")
-        router.push("/admin/users")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (params.id) {
-      fetchUser()
-    }
-  }, [params.id, router])
 
   // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,57 +140,30 @@ export default function EditUserPage() {
     toast.success("Zdjęcie zostało usunięte")
   }
 
-  // Update user
-  const handleSubmit = async (values: UserFormValues) => {
+  // Create user
+  const handleSubmit = async (values: CreateUserFormValues) => {
     try {
       setIsSubmitting(true)
-
-      const updateData: any = {
-        name: values.name,
-        email: values.email,
-        role: values.role,
-        status: values.status,
-        image: values.image,
-      }
-
-      // Only include password if it was changed
-      if (values.password && values.password.length > 0) {
-        updateData.password = values.password
-      }
-
-      // Include client data if role is CLIENT
-      if (values.role === "CLIENT" && values.client) {
-        updateData.client = values.client
-      }
-
-      const response = await fetch(`/api/admin/users/${params.id}`, {
-        method: "PUT",
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(values),
       })
 
       if (response.ok) {
-        toast.success("Użytkownik został zaktualizowany pomyślnie")
+        toast.success("Użytkownik został utworzony pomyślnie")
         router.push("/admin/users")
       } else {
         const error = await response.json()
-        throw new Error(error.error || "Błąd podczas aktualizacji użytkownika")
+        throw new Error(error.error || "Błąd podczas tworzenia użytkownika")
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować użytkownika")
+      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć użytkownika")
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg">Ładowanie...</div>
-      </div>
-    )
   }
 
   const imageValue = form.watch("image")
@@ -274,8 +177,8 @@ export default function EditUserPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Edytuj Użytkownika</h1>
-          <p className="text-muted-foreground">{userData?.email}</p>
+          <h1 className="text-3xl font-bold">Dodaj Nowego Użytkownika</h1>
+          <p className="text-muted-foreground">Wprowadź dane nowego użytkownika</p>
         </div>
       </div>
 
@@ -382,7 +285,7 @@ export default function EditUserPage() {
             </CardContent>
           </Card>
 
-          {/* Basic Information */}
+          {/* Account Information */}
           <Card>
             <CardHeader>
               <CardTitle>Dane konta</CardTitle>
@@ -409,10 +312,10 @@ export default function EditUserPage() {
                   <FormItem>
                     <FormLabel>Hasło</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Pozostaw puste aby nie zmieniać" {...field} />
+                      <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Pozostaw puste jeśli nie chcesz zmieniać hasła
+                      Minimum 8 znaków
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -438,7 +341,7 @@ export default function EditUserPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Rola</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Wybierz rolę" />
@@ -460,7 +363,7 @@ export default function EditUserPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Wybierz status" />
@@ -481,7 +384,7 @@ export default function EditUserPage() {
           </Card>
 
           {/* Client Information */}
-          {(form.watch("role") === "CLIENT" || userData?.client) && (
+          {form.watch("role") === "CLIENT" && (
             <Card>
               <CardHeader>
                 <CardTitle>Dane klienta</CardTitle>
@@ -662,7 +565,7 @@ export default function EditUserPage() {
               Anuluj
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Zapisywanie..." : "Zapisz Zmiany"}
+              {isSubmitting ? "Tworzenie..." : "Dodaj Użytkownika"}
             </Button>
           </div>
         </form>

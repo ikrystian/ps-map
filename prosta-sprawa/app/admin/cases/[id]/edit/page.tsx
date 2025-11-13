@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, FileText, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
@@ -66,6 +66,7 @@ export default function EditCasePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [attachments, setAttachments] = useState<string[]>([])
 
   const form = useForm<CaseFormValues>({
     resolver: zodResolver(caseSchema),
@@ -123,6 +124,18 @@ export default function EditCasePage() {
         const response = await fetch(`/api/admin/cases/${params.id}`)
         if (response.ok) {
           const caseData = await response.json()
+
+          // Parse attachments if they exist
+          if (caseData.zalaczniki) {
+            try {
+              const parsedAttachments = JSON.parse(caseData.zalaczniki)
+              setAttachments(Array.isArray(parsedAttachments) ? parsedAttachments : [])
+            } catch (error) {
+              console.error("Error parsing attachments:", error)
+              setAttachments([])
+            }
+          }
+
           form.reset({
             typSprawy: caseData.typSprawy,
             categoryId: caseData.categoryId,
@@ -547,6 +560,51 @@ export default function EditCasePage() {
               />
             </CardContent>
           </Card>
+
+          {/* Attachments */}
+          {attachments.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Załączone pliki</CardTitle>
+                <CardDescription>Pliki dodane do sprawy przez klienta</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {attachments.map((fileUrl, index) => {
+                    const fileName = fileUrl.split('/').pop() || `Plik ${index + 1}`
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm font-medium">{decodeURIComponent(fileName)}</p>
+                            <p className="text-xs text-muted-foreground truncate max-w-md">{fileUrl}</p>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Otwórz
+                          </a>
+                        </Button>
+                      </div>
+                    )
+                  })}
+                </div>
+                {attachments.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Brak załączonych plików</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Status */}
           <Card>

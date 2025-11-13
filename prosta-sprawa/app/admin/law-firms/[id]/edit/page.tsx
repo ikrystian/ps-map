@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
+import { ImageUpload } from "@/components/ui/image-upload"
 
 // Validation schema for law firm form
 const lawFirmSchema = z.object({
@@ -56,6 +57,7 @@ const lawFirmSchema = z.object({
 
   // Profile
   opis: z.string().optional(),
+  logo: z.string().optional(),
 
   // Type and subscription
   typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
@@ -105,6 +107,7 @@ export default function EditLawFirmPage() {
       miasto: "",
       voivodeshipId: "",
       opis: "",
+      logo: "",
       typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "PODSTAWOWY",
       punktySaldo: 0,
@@ -159,6 +162,7 @@ export default function EditLawFirmPage() {
             miasto: lawFirm.miasto,
             voivodeshipId: lawFirm.voivodeshipId,
             opis: lawFirm.opis || "",
+            logo: lawFirm.logo || "",
             typOferty: lawFirm.typOferty,
             pakietSubskrypcji: lawFirm.pakietSubskrypcji,
             punktySaldo: lawFirm.punktySaldo,
@@ -441,6 +445,25 @@ export default function EditLawFirmPage() {
                     <FormLabel>Opis (opcjonalnie)</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Opis kancelarii..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="logo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Logo (opcjonalnie)</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        label=""
+                        description="Logo kancelarii będzie wyświetlane w profilu publicznym"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

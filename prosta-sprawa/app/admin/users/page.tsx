@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search, Eye, UserPlus, RefreshCw } from "lucide-react"
+import { Edit, Trash2, Search, UserPlus, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,14 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -31,57 +23,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import Link from "next/link"
-
-// Validation schema for user form
-const userSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
-  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
-  status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
-  // Client fields
-  client: z.object({
-    imie: z.string().min(1, "First name is required"),
-    nazwisko: z.string().min(1, "Last name is required"),
-    telefon: z.string().optional(),
-    adres: z.string().optional(),
-    kodPocztowy: z.string().optional(),
-    miasto: z.string().optional(),
-    voivodeshipId: z.string().optional(),
-    zgodaRegulamin: z.boolean(),
-    zgodaNewsletter: z.boolean(),
-    zgodaMarketing: z.boolean(),
-  }).optional(),
-})
-
-const createUserSchema = userSchema.extend({
-  password: z.string().min(8, "Password must be at least 8 characters"),
-})
-
-type UserFormValues = z.infer<typeof userSchema>
-type CreateUserFormValues = z.infer<typeof createUserSchema>
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
 
 interface User {
   id: string
@@ -126,9 +71,7 @@ interface PaginatedResponse {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
-  const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [loading, setLoading] = useState(true)
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
@@ -141,45 +84,6 @@ export default function AdminUsersPage() {
     limit: 20,
     pages: 0,
   })
-
-  const createForm = useForm<CreateUserFormValues>({
-    resolver: zodResolver(createUserSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      role: "CLIENT",
-      status: "ACTIVE",
-      client: {
-        imie: "",
-        nazwisko: "",
-        telefon: "",
-        adres: "",
-        kodPocztowy: "",
-        miasto: "",
-        voivodeshipId: "",
-        zgodaRegulamin: false,
-        zgodaNewsletter: false,
-        zgodaMarketing: false,
-      },
-    },
-  })
-
-  // Fetch voivodeships
-  useEffect(() => {
-    const fetchVoivodeships = async () => {
-      try {
-        const response = await fetch("/api/voivodeships")
-        if (response.ok) {
-          const data = await response.json()
-          setVoivodeships(data)
-        }
-      } catch (error) {
-        console.error("Error fetching voivodeships:", error)
-      }
-    }
-    fetchVoivodeships()
-  }, [])
 
 
   // Fetch users
@@ -213,31 +117,6 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers()
   }, [currentPage, searchQuery, roleFilter, statusFilter])
-
-  // Create user
-  const handleCreateUser = async (values: CreateUserFormValues) => {
-    try {
-      const response = await fetch("/api/admin/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-
-      if (response.ok) {
-        toast.success("User created successfully")
-        setIsCreateDialogOpen(false)
-        createForm.reset()
-        fetchUsers()
-      } else {
-        const error = await response.json()
-        throw new Error(error.error || "Error creating user")
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create user")
-    }
-  }
 
   // Delete user (soft delete)
   const handleDeleteUser = async () => {
@@ -342,9 +221,11 @@ export default function AdminUsersPage() {
           <h1 className="text-3xl font-bold">User Management</h1>
           <p className="text-muted-foreground">Manage all users in the system</p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
+        <Button asChild>
+          <Link href="/admin/users/new">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add User
+          </Link>
         </Button>
       </div>
 
@@ -514,279 +395,6 @@ export default function AdminUsersPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Create User Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Dodaj Nowego Użytkownika</DialogTitle>
-            <DialogDescription>
-              Dodaj nowego użytkownika do systemu
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...createForm}>
-            <form onSubmit={createForm.handleSubmit(handleCreateUser)} className="space-y-4">
-              <FormField
-                control={createForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="user@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={createForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hasło</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Minimum 8 znaków
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={createForm.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Rola</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz rolę" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="CLIENT">Klient</SelectItem>
-                          <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
-                          <SelectItem value="ADMIN">Administrator</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={createForm.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="ACTIVE">Aktywny</SelectItem>
-                          <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
-                          <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Client-specific fields */}
-              {createForm.watch("role") === "CLIENT" && (
-                <>
-                  <div className="border-t pt-4 mt-4">
-                    <h3 className="text-lg font-semibold mb-4">Dane klienta</h3>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={createForm.control}
-                          name="client.imie"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Imię</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Jan" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={createForm.control}
-                          name="client.nazwisko"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nazwisko</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Kowalski" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={createForm.control}
-                        name="client.telefon"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Telefon (opcjonalnie)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="+48 123 456 789" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={createForm.control}
-                        name="client.adres"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Adres (opcjonalnie)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="ul. Przykładowa 123" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={createForm.control}
-                          name="client.kodPocztowy"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
-                              <FormControl>
-                                <Input placeholder="00-000" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={createForm.control}
-                          name="client.miasto"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Miasto (opcjonalnie)</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Warszawa" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={createForm.control}
-                        name="client.voivodeshipId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Województwo (opcjonalnie)</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Wybierz województwo" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {voivodeships.map((v) => (
-                                  <SelectItem key={v.id} value={v.id}>
-                                    {v.nazwa}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="space-y-2">
-                        <FormField
-                          control={createForm.control}
-                          name="client.zgodaRegulamin"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>Zgoda na regulamin</FormLabel>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={createForm.control}
-                          name="client.zgodaNewsletter"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>Zgoda na newsletter</FormLabel>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={createForm.control}
-                          name="client.zgodaMarketing"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>Zgoda na marketing</FormLabel>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Anuluj
-                </Button>
-                <Button type="submit">Dodaj Użytkownika</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
