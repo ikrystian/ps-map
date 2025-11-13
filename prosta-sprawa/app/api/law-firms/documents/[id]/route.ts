@@ -8,7 +8,7 @@ import { existsSync } from "fs"
 // DELETE /api/law-firms/documents/[id] - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -19,6 +19,8 @@ export async function DELETE(
         { status: 401 }
       )
     }
+
+    const { id } = await params
 
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id }
@@ -34,7 +36,7 @@ export async function DELETE(
     // Check if document exists and belongs to this law firm
     const document = await prisma.document.findFirst({
       where: {
-        id: params.id,
+        id,
         lawFirmId: lawFirm.id
       }
     })
@@ -54,7 +56,7 @@ export async function DELETE(
 
     // Delete from database
     await prisma.document.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: "Document deleted successfully" })

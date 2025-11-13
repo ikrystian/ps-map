@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma"
 // PUT /api/admin/help/categories/[id] - Update category
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -17,12 +17,13 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const { nazwa, slug, opis, ikona, kolejnosc, aktywna } = body
 
     // Check if category exists
     const existingCategory = await prisma.helpCategory.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingCategory) {
@@ -47,7 +48,7 @@ export async function PUT(
     }
 
     const updatedCategory = await prisma.helpCategory.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nazwa,
         slug,
@@ -76,7 +77,7 @@ export async function PUT(
 // DELETE /api/admin/help/categories/[id] - Delete category
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -88,9 +89,11 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
+
     // Check if category exists
     const existingCategory = await prisma.helpCategory.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: { questions: true }
@@ -107,7 +110,7 @@ export async function DELETE(
 
     // Delete the category (cascade will delete associated questions)
     await prisma.helpCategory.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: "Kategoria została usunięta" })

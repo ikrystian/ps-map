@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma"
 // PUT /api/admin/help/questions/[id] - Update question
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -17,12 +17,13 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const { categoryId, pytanie, odpowiedz, slug, kolejnosc, aktywna } = body
 
     // Check if question exists
     const existingQuestion = await prisma.helpQuestion.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingQuestion) {
@@ -59,7 +60,7 @@ export async function PUT(
     }
 
     const updatedQuestion = await prisma.helpQuestion.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         categoryId,
         pytanie,
@@ -91,7 +92,7 @@ export async function PUT(
 // DELETE /api/admin/help/questions/[id] - Delete question
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -103,9 +104,11 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
+
     // Check if question exists
     const existingQuestion = await prisma.helpQuestion.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingQuestion) {
@@ -116,7 +119,7 @@ export async function DELETE(
     }
 
     await prisma.helpQuestion.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: "Pytanie zostało usunięte" })

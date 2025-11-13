@@ -19,7 +19,7 @@ export async function GET(
     const module = await prisma.module.findUnique({
       where: { id },
       include: {
-        pages: {
+        pageModules: {
           include: {
             page: {
               select: {
@@ -116,7 +116,7 @@ export async function DELETE(
       include: {
         _count: {
           select: {
-            pages: true,
+            pageModules: true,
           },
         },
       },
@@ -127,9 +127,9 @@ export async function DELETE(
     }
 
     // Check if module is used in any pages
-    if (existingModule._count.pages > 0) {
+    if (existingModule._count.pageModules > 0) {
       return NextResponse.json(
-        { error: `Cannot delete module. It is used in ${existingModule._count.pages} page(s)` },
+        { error: `Cannot delete module. It is used in ${existingModule._count.pageModules} page(s)` },
         { status: 400 }
       )
     }

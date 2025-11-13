@@ -31,8 +31,8 @@ export async function GET(request: NextRequest) {
       prisma.blogPost.count(),
       prisma.review.count(),
       prisma.user.count({ where: { status: 'ACTIVE' } }),
-      prisma.case.count({ where: { status: 'PENDING' } }),
-      prisma.order.count({ where: { paymentStatus: 'PENDING' } }),
+      prisma.case.count({ where: { status: 'NOWA' } }),
+      prisma.order.count({ where: { statusPlatnosci: 'OCZEKUJE' } }),
     ])
 
     // Get recent cases (last 30 days)
@@ -50,14 +50,14 @@ export async function GET(request: NextRequest) {
     // Get revenue statistics
     const completedOrders = await prisma.order.findMany({
       where: {
-        paymentStatus: 'COMPLETED',
+        statusPlatnosci: 'ZAPLACONE',
       },
       select: {
-        amount: true,
+        kwota: true,
       },
     })
 
-    const totalRevenue = completedOrders.reduce((sum, order) => sum + order.amount, 0)
+    const totalRevenue = completedOrders.reduce((sum, order) => sum + order.kwota, 0)
 
     // Get monthly revenue for chart (last 6 months)
     const sixMonthsAgo = new Date()
@@ -66,9 +66,9 @@ export async function GET(request: NextRequest) {
     const monthlyRevenue = await prisma.$queryRaw<Array<{ month: string; revenue: number }>>`
       SELECT
         strftime('%Y-%m', createdAt) as month,
-        SUM(amount) as revenue
+        SUM(kwota) as revenue
       FROM Order
-      WHERE paymentStatus = 'COMPLETED'
+      WHERE statusPlatnosci = 'ZAPLACONE'
         AND createdAt >= ${sixMonthsAgo.toISOString()}
       GROUP BY strftime('%Y-%m', createdAt)
       ORDER BY month ASC
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
-        title: true,
+        nazwaSprawy: true,
         status: true,
         createdAt: true,
         client: {
@@ -135,12 +135,12 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         orderNumber: true,
-        amount: true,
-        paymentStatus: true,
+        kwota: true,
+        statusPlatnosci: true,
         createdAt: true,
-        user: {
+        lawFirm: {
           select: {
-            name: true,
+            nazwa: true,
           },
         },
       },

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // GET /api/admin/promotion-configs/[id] - Fetch single promotion config (ADMIN only)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -14,8 +14,10 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const config = await prisma.promotionConfig.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!config) {
@@ -38,7 +40,7 @@ export async function GET(
 // PUT /api/admin/promotion-configs/[id] - Update promotion config (ADMIN only)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -47,6 +49,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const {
       label,
@@ -70,7 +73,7 @@ export async function PUT(
 
     // Check if config exists
     const existingConfig = await prisma.promotionConfig.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingConfig) {
@@ -82,7 +85,7 @@ export async function PUT(
 
     // Update promotion config
     const config = await prisma.promotionConfig.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(label && { label }),
         ...(description && { description }),
@@ -109,7 +112,7 @@ export async function PUT(
 // DELETE /api/admin/promotion-configs/[id] - Delete promotion config (ADMIN only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -118,9 +121,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Check if config exists
     const existingConfig = await prisma.promotionConfig.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingConfig) {
@@ -132,7 +137,7 @@ export async function DELETE(
 
     // Delete promotion config
     await prisma.promotionConfig.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Promotion config deleted successfully" })

@@ -104,8 +104,8 @@ const formatDate = (date: Date | string) => {
   })
 }
 
-const getPromotionTypeLabel = (type: string) => {
-  const promo = PROMOTION_TYPES.find((p) => p.type === type)
+const getPromotionTypeLabel = (type: string, promotionTypes: any[]) => {
+  const promo = promotionTypes.find((p) => p.type === type)
   return promo?.label || type
 }
 
@@ -482,7 +482,7 @@ export default function LawFirmPromotionPage() {
                       {activePromotions.map((promo) => (
                         <TableRow key={promo.id}>
                           <TableCell className="font-medium">
-                            {getPromotionTypeLabel(promo.typPromocji)}
+                            {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
                             {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Wszystkie"}
@@ -529,7 +529,7 @@ export default function LawFirmPromotionPage() {
                       {upcomingPromotions.map((promo) => (
                         <TableRow key={promo.id}>
                           <TableCell className="font-medium">
-                            {getPromotionTypeLabel(promo.typPromocji)}
+                            {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
                             {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Wszystkie"}
@@ -576,7 +576,7 @@ export default function LawFirmPromotionPage() {
                       {pastPromotions.map((promo) => (
                         <TableRow key={promo.id}>
                           <TableCell className="font-medium">
-                            {getPromotionTypeLabel(promo.typPromocji)}
+                            {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
                             {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Wszystkie"}
@@ -616,7 +616,7 @@ export default function LawFirmPromotionPage() {
                   <SelectValue placeholder="Wybierz typ promocji" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PROMOTION_TYPES.map((promo) => (
+                  {promotionTypes.map((promo) => (
                     <SelectItem key={promo.type} value={promo.type}>
                       {promo.label} -{" "}
                       {promo.type === "PODBICIE_OGLOSZENIA"
@@ -714,7 +714,7 @@ export default function LawFirmPromotionPage() {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">Typ promocji:</span>
                   <span className="font-medium">
-                    {selectedType ? getPromotionTypeLabel(selectedType) : "-"}
+                    {selectedType ? getPromotionTypeLabel(selectedType, promotionTypes) : "-"}
                   </span>
                 </div>
                 <Separator className="my-3" />

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
         include: {
           _count: {
             select: {
-              pages: true,
+              pageModules: true,
             },
           },
         },

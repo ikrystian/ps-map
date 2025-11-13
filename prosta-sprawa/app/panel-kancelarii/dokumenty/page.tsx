@@ -149,15 +149,15 @@ export default function DocumentsPage() {
   }
 
   // Pobieranie dokumentu
-  const handleDownloadDocument = async (document: Document) => {
+  const handleDownloadDocument = async (doc: Document) => {
     try {
-      const response = await fetch(`/api/law-firms/documents/${document.id}/download`)
+      const response = await fetch(`/api/law-firms/documents/${doc.id}/download`)
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
-        link.download = `${document.nazwa}.${document.rozszerzenie}`
+        link.download = `${doc.nazwa}.${doc.rozszerzenie}`
         document.body.appendChild(link)
         link.click()
         link.remove()
