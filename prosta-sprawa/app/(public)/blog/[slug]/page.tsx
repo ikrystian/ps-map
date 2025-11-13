@@ -163,7 +163,7 @@ export default function BlogPostPage() {
 
             {/* Content */}
             <div className="prose prose-lg max-w-none mb-8">
-              <div className="whitespace-pre-wrap">{post.tresc}</div>
+              <div dangerouslySetInnerHTML={{ __html: post.tresc }} />
             </div>
 
             <Separator className="my-8" />
