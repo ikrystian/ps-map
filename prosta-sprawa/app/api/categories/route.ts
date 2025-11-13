@@ -11,12 +11,15 @@ export async function GET() {
         opis: true,
         opisDodatkowy: true,
         ikona: true,
+        ikonaUrl: true,
         typ: true,
         parentId: true,
         metaTitle: true,
         metaDescription: true,
         aktywna: true,
         kolejnosc: true,
+        createdAt: true,
+        updatedAt: true,
         parent: {
           select: {
             id: true,
@@ -29,6 +32,7 @@ export async function GET() {
             nazwa: true,
             slug: true,
             ikona: true,
+            ikonaUrl: true,
           },
         },
         _count: {
@@ -54,7 +58,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nazwa, slug, opis, opisDodatkowy, ikona, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
+    const { nazwa, slug, opis, opisDodatkowy, ikona, ikonaUrl, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
 
     // Walidacja podstawowych pól
     if (!nazwa || !slug) {
@@ -97,6 +101,7 @@ export async function POST(request: Request) {
         opis,
         opisDodatkowy,
         ikona,
+        ikonaUrl,
         typ: typ || "SPRAWY_PRYWATNE",
         parentId: parentId || null,
         metaTitle,

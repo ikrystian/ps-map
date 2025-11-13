@@ -55,7 +55,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { nazwa, slug, opis, opisDodatkowy, ikona, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
+    const { nazwa, slug, opis, opisDodatkowy, ikona, ikonaUrl, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
 
     // Sprawdzenie czy kategoria istnieje
     const existingCategory = await prisma.category.findUnique({
@@ -122,6 +122,7 @@ export async function PUT(
         opis,
         opisDodatkowy,
         ikona,
+        ikonaUrl,
         typ: typ !== undefined ? typ : existingCategory.typ,
         parentId: parentId || null,
         metaTitle,
