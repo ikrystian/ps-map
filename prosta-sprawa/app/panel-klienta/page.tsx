@@ -32,13 +32,29 @@ interface ClientData {
   }
 }
 
+interface BlogPost {
+  id: string
+  tytul: string
+  slug: string
+  obrazekWyrozniajacy?: string
+  dataPublikacji: string
+  category?: {
+    nazwa: string
+  }
+  lawFirm: {
+    nazwa: string
+  }
+}
+
 export default function ClientDashboardPage() {
   const router = useRouter()
   const [clientData, setClientData] = useState<ClientData | null>(null)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchClientData()
+    fetchBlogPosts()
   }, [])
 
   const fetchClientData = async () => {
@@ -52,6 +68,18 @@ export default function ClientDashboardPage() {
       console.error("Error fetching client data:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchBlogPosts = async () => {
+    try {
+      const response = await fetch("/api/blog/posts?limit=3")
+      if (response.ok) {
+        const data = await response.json()
+        setBlogPosts(data.posts || [])
+      }
+    } catch (error) {
+      console.error("Error fetching blog posts:", error)
     }
   }
 
@@ -194,27 +222,24 @@ export default function ClientDashboardPage() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Przykładowe artykuły - w przyszłości pobierane z API */}
-            <ArticleItem
-              title="Jak wybrać dobrego prawnika?"
-              category="Poradnik"
-              date="2025-11-05"
-              image="/placeholder-article.jpg"
-            />
-            <Separator />
-            <ArticleItem
-              title="Najczęstsze błędy w sprawach cywilnych"
-              category="Prawo cywilne"
-              date="2025-11-03"
-              image="/placeholder-article.jpg"
-            />
-            <Separator />
-            <ArticleItem
-              title="Prawa konsumenta w e-commerce"
-              category="Prawo gospodarcze"
-              date="2025-11-01"
-              image="/placeholder-article.jpg"
-            />
+            {blogPosts.length > 0 ? (
+              blogPosts.map((post, index) => (
+                <div key={post.id}>
+                  {index > 0 && <Separator />}
+                  <ArticleItem
+                    title={post.tytul}
+                    category={post.category?.nazwa || "Bez kategorii"}
+                    date={new Date(post.dataPublikacji).toLocaleDateString("pl-PL")}
+                    image={post.obrazekWyrozniajacy || "/placeholder-article.jpg"}
+                    slug={post.slug}
+                  />
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Brak artykułów do wyświetlenia
+              </p>
+            )}
           </CardContent>
         </Card>
 </div>
@@ -246,15 +271,25 @@ interface ArticleItemProps {
   category: string
   date: string
   image: string
+  slug: string
 }
 
-function ArticleItem({ title, category, date }: ArticleItemProps) {
+function ArticleItem({ title, category, date, image, slug }: ArticleItemProps) {
   return (
-    <div className="flex gap-4 group cursor-pointer">
+    <Link href={`/blog/${slug}`} className="flex gap-4 group cursor-pointer">
       <div className="relative w-20 h-20 rounded-md overflow-hidden bg-muted shrink-0">
-        <div className="w-full h-full flex items-center justify-center">
-          <BookOpen className="h-8 w-8 text-muted-foreground" />
-        </div>
+        {image && image !== "/placeholder-article.jpg" ? (
+          <Image
+            src={image}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <BookOpen className="h-8 w-8 text-muted-foreground" />
+          </div>
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <h4 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
@@ -267,6 +302,6 @@ function ArticleItem({ title, category, date }: ArticleItemProps) {
           <span className="text-xs text-muted-foreground">{date}</span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

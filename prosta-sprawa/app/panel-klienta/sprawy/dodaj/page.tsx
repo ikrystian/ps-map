@@ -14,6 +14,11 @@ import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react"
 type CaseType = "OSOBA_PRYWATNA" | "FIRMA" | "ORGANIZACJA"
 type PreferredContact = "EMAIL" | "TELEFON" | "OBA"
 
+interface FileAttachment {
+  url: string
+  originalName: string
+}
+
 interface FormData {
   // Krok 1: Typ sprawy
   typSprawy: CaseType | ""
@@ -48,6 +53,8 @@ export default function ClientAddCasePage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([])
+  const [isUploading, setIsUploading] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
@@ -72,6 +79,61 @@ export default function ClientAddCasePage() {
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  // Obsługa uploadu plików
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+
+    // Sprawdź czy nie przekroczono limitu 5 plików
+    if (uploadedFiles.length + files.length > 5) {
+      alert("Możesz dodać maksymalnie 5 plików")
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData()
+        formData.append("file", file)
+
+        const response = await fetch("/api/upload/document", {
+          method: "POST",
+          body: formData,
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error || "Upload failed")
+        }
+
+        const data = await response.json()
+        return {
+          url: data.url,
+          originalName: data.originalName,
+        }
+      })
+
+      const newFiles = await Promise.all(uploadPromises)
+      setUploadedFiles(prev => [...prev, ...newFiles])
+      updateFormData("zalaczniki", [...formData.zalaczniki, ...newFiles.map(f => f.url)])
+    } catch (error) {
+      console.error("Error uploading files:", error)
+      alert("Błąd podczas uploadu plików. Spróbuj ponownie.")
+    } finally {
+      setIsUploading(false)
+      // Reset input
+      event.target.value = ""
+    }
+  }
+
+  // Usuń plik z listy
+  const handleRemoveFile = (index: number) => {
+    const newUploadedFiles = uploadedFiles.filter((_, i) => i !== index)
+    setUploadedFiles(newUploadedFiles)
+    updateFormData("zalaczniki", newUploadedFiles.map(f => f.url))
   }
 
   // Pobierz dane użytkownika i uzupełnij dane kontaktowe
@@ -346,31 +408,41 @@ export default function ClientAddCasePage() {
       <div>
         <Label>Załączniki (opcjonalnie, max 5 plików)</Label>
         <div className="mt-2 space-y-2">
-          {formData.zalaczniki.length < 5 && (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                // W rzeczywistej implementacji tutaj byłby upload plików
-                alert("Funkcja uploadu plików zostanie dodana w przyszłości")
-              }}
-            >
-              <Upload className="mr-2 h-4 w-4" />
-              Dodaj załącznik
-            </Button>
+          {uploadedFiles.length < 5 && (
+            <div>
+              <input
+                type="file"
+                id="file-upload"
+                multiple
+                className="hidden"
+                onChange={handleFileUpload}
+                disabled={isUploading}
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif,.webp"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => document.getElementById("file-upload")?.click()}
+                disabled={isUploading}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                {isUploading ? "Uploading..." : "Dodaj załącznik"}
+              </Button>
+            </div>
           )}
-          {formData.zalaczniki.map((file, index) => (
+          <p className="text-xs text-muted-foreground">
+            Dozwolone typy: PDF, DOC, DOCX, XLS, XLSX, TXT, obrazy (max 10MB każdy)
+          </p>
+          {uploadedFiles.map((file, index) => (
             <div key={index} className="flex items-center justify-between rounded-lg border p-3">
-              <span className="text-sm">{file}</span>
+              <span className="text-sm truncate">{file.originalName}</span>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  const newFiles = formData.zalaczniki.filter((_, i) => i !== index)
-                  updateFormData("zalaczniki", newFiles)
-                }}
+                onClick={() => handleRemoveFile(index)}
+                disabled={isUploading}
               >
                 <X className="h-4 w-4" />
               </Button>
