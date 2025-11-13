@@ -6,86 +6,95 @@ import crypto from "crypto"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, token, newPassword } = body
+    const { token, password } = body
 
-    // Jeśli tylko email - wyślij token resetujący
-    if (email && !token && !newPassword) {
-      const user = await prisma.user.findUnique({
-        where: { email },
-      })
-
-      if (!user) {
-        // Nie ujawniaj czy użytkownik istnieje
-        return NextResponse.json(
-          { message: "Jeśli email istnieje, zostanie wysłany link resetujący" },
-          { status: 200 }
-        )
-      }
-
-      // Generuj token
-      const resetToken = crypto.randomBytes(32).toString("hex")
-      const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 godzina
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          resetToken,
-          resetTokenExpiry,
-        },
-      })
-
-      // TODO: Wyślij email z linkiem resetującym
-      // sendResetEmail(user.email, resetToken)
-
+    // Walidacja
+    if (!token || typeof token !== "string") {
       return NextResponse.json(
-        { message: "Link resetujący został wysłany na email" },
-        { status: 200 }
+        { error: "Token jest wymagany" },
+        { status: 400 }
       )
     }
 
-    // Jeśli token i nowe hasło - resetuj hasło
-    if (token && newPassword) {
-      const user = await prisma.user.findFirst({
-        where: {
-          resetToken: token,
-          resetTokenExpiry: {
-            gt: new Date(),
-          },
-        },
-      })
-
-      if (!user) {
-        return NextResponse.json(
-          { error: "Token nieprawidłowy lub wygasł" },
-          { status: 400 }
-        )
-      }
-
-      const hashedPassword = await bcrypt.hash(newPassword, 10)
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: hashedPassword,
-          resetToken: null,
-          resetTokenExpiry: null,
-        },
-      })
-
+    if (!password || typeof password !== "string") {
       return NextResponse.json(
-        { message: "Hasło zostało zresetowane" },
-        { status: 200 }
+        { error: "Hasło jest wymagane" },
+        { status: 400 }
       )
     }
+
+    // Walidacja siły hasła
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Hasło musi mieć co najmniej 8 znaków" },
+        { status: 400 }
+      )
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      return NextResponse.json(
+        { error: "Hasło musi zawierać co najmniej jedną wielką literę" },
+        { status: 400 }
+      )
+    }
+
+    if (!/[a-z]/.test(password)) {
+      return NextResponse.json(
+        { error: "Hasło musi zawierać co najmniej jedną małą literę" },
+        { status: 400 }
+      )
+    }
+
+    if (!/[0-9]/.test(password)) {
+      return NextResponse.json(
+        { error: "Hasło musi zawierać co najmniej jedną cyfrę" },
+        { status: 400 }
+      )
+    }
+
+    // Hash tokenu (token w URL jest niezahashowany, w bazie jest zahashowany)
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+
+    // Znajdź użytkownika z pasującym tokenem
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: hashedToken,
+        resetTokenExpiry: {
+          gt: new Date(), // Token nie wygasł
+        },
+      },
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Token jest nieprawidłowy lub wygasł. Zażądaj nowego linku resetującego." },
+        { status: 400 }
+      )
+    }
+
+    // Hash nowego hasła
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    // Zaktualizuj hasło użytkownika i usuń token resetowania
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    })
+
+    console.log(`Password successfully reset for user: ${user.email}`)
 
     return NextResponse.json(
-      { error: "Nieprawidłowe dane" },
-      { status: 400 }
+      { message: "Hasło zostało pomyślnie zresetowane" },
+      { status: 200 }
     )
   } catch (error) {
-    console.error("Reset password error:", error)
+    console.error("Error in reset-password:", error)
     return NextResponse.json(
-      { error: "Wystąpił błąd" },
+      { error: "Wystąpił błąd. Spróbuj ponownie później." },
       { status: 500 }
     )
   }
