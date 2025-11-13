@@ -17,10 +17,14 @@ export async function GET(
     // Get the user's law firm
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { lawFirmId: true },
+      select: {
+        lawFirm: {
+          select: { id: true }
+        }
+      },
     })
 
-    if (!user?.lawFirmId) {
+    if (!user?.lawFirm) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
@@ -28,7 +32,7 @@ export async function GET(
     const invoice = await prisma.invoice.findFirst({
       where: {
         id,
-        lawFirmId: user.lawFirmId,
+        lawFirmId: user.lawFirm.id,
       },
       include: {
         order: {
@@ -50,8 +54,7 @@ export async function GET(
             adres: true,
             kodPocztowy: true,
             miasto: true,
-            email: true,
-            telefon: true,
+            numerTelefonu: true,
           },
         },
       },

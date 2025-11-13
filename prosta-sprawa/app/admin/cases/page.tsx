@@ -210,7 +210,7 @@ export default function AdminCasesPage() {
           <p className="text-muted-foreground">Przeglądaj i zarządzaj wszystkimi sprawami w systemie</p>
         </div>
         <Button asChild>
-          <Link href="/admin/cases/new">
+          <Link href="/admin/cases/new">trakcie
             <Plus className="h-4 w-4 mr-2" />
             Nowa sprawa
           </Link>
