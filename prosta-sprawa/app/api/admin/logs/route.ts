@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
 
     // Sprawdź czy użytkownik jest zalogowany i ma rolę ADMIN
     if (!session || session.user.role !== "ADMIN") {
@@ -76,7 +75,7 @@ export async function GET(request: NextRequest) {
 // POST - Dodaj nowy log (może być używane przez różne części aplikacji)
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     const body = await request.json()
 
     const { level, action, message, metadata, userId, ipAddress, userAgent } = body

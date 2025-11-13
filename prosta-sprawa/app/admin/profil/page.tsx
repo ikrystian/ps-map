@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { User, Mail, Calendar, Shield, Loader2, Save, KeyRound } from "lucide-react"
 import { format } from "date-fns"
-import { pl } from "date-fns/locale"
+import { pl } from "date-fns/locale/pl"
 import { useSession } from "next-auth/react"
 
 interface AdminProfile {
