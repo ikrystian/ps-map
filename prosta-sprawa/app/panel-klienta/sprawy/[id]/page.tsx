@@ -22,6 +22,8 @@ import {
   MessageSquare,
   CheckCircle2,
   XCircle,
+  Download,
+  Paperclip,
 } from "lucide-react"
 
 interface Case {
@@ -358,18 +360,43 @@ export default function ClientCaseDetailsPage() {
       {caseData.zalaczniki && caseData.zalaczniki.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Załączniki</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Paperclip className="h-5 w-5" />
+              Załączniki ({caseData.zalaczniki.length})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {caseData.zalaczniki.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <span className="text-sm">{file}</span>
-                  <Button variant="outline" size="sm">
-                    Pobierz
-                  </Button>
-                </div>
-              ))}
+              {caseData.zalaczniki.map((fileUrl, index) => {
+                // Extract filename from URL
+                const filename = fileUrl.split('/').pop() || fileUrl
+                // Get file extension for icon
+                const extension = filename.split('.').pop()?.toLowerCase()
+
+                return (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium truncate max-w-md">{filename}</span>
+                        {extension && (
+                          <span className="text-xs text-muted-foreground uppercase">{extension}</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <a href={fileUrl} download target="_blank" rel="noopener noreferrer">
+                        <Download className="mr-2 h-4 w-4" />
+                        Pobierz
+                      </a>
+                    </Button>
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>
