@@ -259,3 +259,12 @@
   font-family: var(--font-mono);
   font-size: 0.9em;
 }
+
+a .bg-card {
+    transition: all 0.2s ease-in-out;
+
+  &:hover {
+    position: relative;
+    transform: translateY(-0.5rem);
+  }
+}
