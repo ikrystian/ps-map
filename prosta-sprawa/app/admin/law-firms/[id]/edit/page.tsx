@@ -121,12 +121,39 @@ interface Voivodeship {
   nazwa: string
 }
 
+interface NotificationSettings {
+  id: string
+  userId: string
+  emailNoweOferty: boolean
+  emailWiadomosci: boolean
+  emailStatusy: boolean
+  smsPilne: boolean
+  kontaktKlienci: boolean
+  kluczowe: boolean
+  wskazowkiPorady: boolean
+  ofertPromocje: boolean
+  przypomnienieWiadomosci: boolean
+  noweFunkcje: boolean
+  zmianyCenniki: boolean
+  zmianyRegulamin: boolean
+  kontaktDoradca: boolean
+  wyswietlanieAwatara: boolean
+  autoProsbOpinie: boolean
+  powiadomienieDzwiekowe: boolean
+  ustawieniaOgloszenia: boolean
+  powiadomieniaSmNowa: boolean
+  wiadomosciZbiorcze: boolean
+  urlop: boolean
+}
+
 export default function EditLawFirmPage() {
   const params = useParams()
   const router = useRouter()
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings | null>(null)
+  const [userId, setUserId] = useState<string>("")
   const [statistics, setStatistics] = useState({
     wyswietleniaProfilu: 0,
     zlozoneOferty: 0,
@@ -288,6 +315,20 @@ export default function EditLawFirmPage() {
             konwersja: lawFirm.konwersja || 0,
             pozycjaRanking: lawFirm.pozycjaRanking || null,
           })
+
+          // Store userId for fetching notification settings
+          setUserId(lawFirm.user.id)
+
+          // Fetch notification settings
+          try {
+            const settingsResponse = await fetch(`/api/admin/users/${lawFirm.user.id}/notification-settings`)
+            if (settingsResponse.ok) {
+              const settings = await settingsResponse.json()
+              setNotificationSettings(settings)
+            }
+          } catch (error) {
+            console.error("Error fetching notification settings:", error)
+          }
         } else {
           throw new Error("Błąd podczas pobierania danych kancelarii")
         }
@@ -1432,6 +1473,118 @@ export default function EditLawFirmPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Notification Settings (Read-only) */}
+          {notificationSettings && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Ustawienia powiadomień użytkownika</CardTitle>
+                <CardDescription>Dane tylko do odczytu - użytkownik zarządza nimi w swoim panelu</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Email Notifications */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">Powiadomienia e-mail</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.kontaktKlienci ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Kontakt z klientami</span>
+                        {notificationSettings.kontaktKlienci && <span className="text-xs text-muted-foreground">(obowiązkowe)</span>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.kluczowe ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Informacje kluczowe</span>
+                        {notificationSettings.kluczowe && <span className="text-xs text-muted-foreground">(obowiązkowe)</span>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.wskazowkiPorady ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Wskazówki i porady</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.ofertPromocje ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Oferty i promocje</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.przypomnienieWiadomosci ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Przypomnienia o wiadomościach</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.noweFunkcje ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Nowe funkcje</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.zmianyCenniki ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Zmiany cenników</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.zmianyRegulamin ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Zmiany regulaminu</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Phone Contact */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">Kontakt telefoniczny</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.kontaktDoradca ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Kontakt z doradcą</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Settings */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">Ustawienia dodatkowe</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.wyswietlanieAwatara ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Wyświetlanie awatara</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.autoProsbOpinie ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Automatyczna prośba o opinie</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.powiadomienieDzwiekowe ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Powiadomienia dźwiękowe</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Announcement Settings */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">Ustawienia ogłoszeń</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.ustawieniaOgloszenia ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Ustawienia ogłoszenia aktywne</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.powiadomieniaSmNowa ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Powiadomienia SMS o nowych sprawach</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${notificationSettings.wiadomosciZbiorcze ? "bg-green-500" : "bg-gray-300"}`} />
+                        <span className="text-sm">Wiadomości zbiorcze</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Vacation Mode */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">Tryb urlopowy</h3>
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${notificationSettings.urlop ? "bg-amber-500" : "bg-gray-300"}`} />
+                      <span className="text-sm font-medium">{notificationSettings.urlop ? "Tryb urlopowy AKTYWNY" : "Tryb urlopowy nieaktywny"}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Statistics (Read-only) */}
           <Card>

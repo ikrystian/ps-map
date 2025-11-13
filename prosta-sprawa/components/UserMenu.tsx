@@ -76,7 +76,8 @@ export default function UserMenu({
   if (userRole === "CLIENT") {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none" id="user-menu-button">
+        <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
+          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
           <Avatar className="h-9 w-9 cursor-pointer">
             <AvatarImage src={userImage || "/avatars/client.jpg"} alt="Klient" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
@@ -147,7 +148,8 @@ export default function UserMenu({
 
         {/* User menu */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="focus:outline-none" id="user-menu-button">
+          <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
+            {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
             <Avatar className="h-9 w-9 cursor-pointer">
               <AvatarImage src={userImage || "/avatars/user.jpg"} alt="User" />
               <AvatarFallback>{getInitials()}</AvatarFallback>
@@ -220,7 +222,8 @@ export default function UserMenu({
   if (userRole === "ADMIN") {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none" id="user-menu-button">
+        <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
+          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
           <Avatar className="h-9 w-9 cursor-pointer">
             <AvatarImage src={userImage || "/avatars/admin.jpg"} alt="Admin" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
