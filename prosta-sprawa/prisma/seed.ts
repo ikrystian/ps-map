@@ -157,6 +157,103 @@ const promotionConfigs = [
   },
 ]
 
+const blogCategories = [
+  {
+    nazwa: 'Prawo i Technologia',
+    slug: 'prawo-i-technologia',
+    opis: 'Najnowsze trendy na styku prawa i nowych technologii, RODO, AI, e-commerce.',
+  },
+  {
+    nazwa: 'Porady Prawne dla Biznesu',
+    slug: 'porady-prawne-dla-biznesu',
+    opis: 'Praktyczne porady dla przedsiębiorców, zakładanie firmy, umowy, podatki.',
+  },
+  {
+    nazwa: 'Prawo w Życiu Codziennym',
+    slug: 'prawo-w-zyciu-codziennym',
+    opis: 'Sprawy, z którymi każdy z nas może się spotkać: spadki, darowizny, reklamacje.',
+  },
+  {
+    nazwa: 'Nieruchomości i Prawo Budowlane',
+    slug: 'nieruchomosci-i-prawo-budowlane',
+    opis: 'Kupno, sprzedaż, najem nieruchomości, proces budowlany, umowy deweloperskie.',
+  },
+  {
+    nazwa: 'Prawo Pracy dla Pracownika i Pracodawcy',
+    slug: 'prawo-pracy-dla-pracownika-i-pracodawcy',
+    opis: 'Prawa i obowiązki w stosunku pracy, mobbing, zwolnienia, umowy o pracę.',
+  },
+  {
+    nazwa: 'Prawo Podatkowe bez Tajemnic',
+    slug: 'prawo-podatkowe-bez-tajemnic',
+    opis: 'Wyjaśnienie zawiłości systemu podatkowego, optymalizacja, ulgi i odliczenia.',
+  },
+]
+
+const helpData = [
+  {
+    category: {
+      nazwa: 'Konto i Profil',
+      slug: 'konto-i-profil',
+      opis: 'Wszystko na temat zarządzania kontem i profilem użytkownika.',
+      ikona: 'User',
+      kolejnosc: 0,
+    },
+    questions: [
+      {
+        pytanie: 'Jak zresetować hasło?',
+        odpowiedz:
+          'Aby zresetować hasło, przejdź do strony logowania i kliknij link "Nie pamiętasz hasła?". Następnie postępuj zgodnie z instrukcjami wysłanymi na Twój adres e-mail.',
+        slug: 'jak-zresetowac-haslo',
+        kolejnosc: 0,
+      },
+      {
+        pytanie: 'Jak mogę zmienić mój adres e-mail?',
+        odpowiedz:
+          'Zmiana adresu e-mail jest możliwa w ustawieniach konta. Przejdź do sekcji "Profil", a następnie znajdź opcję "Zmień e-mail". Będziesz musiał potwierdzić zmianę, klikając w link weryfikacyjny.',
+        slug: 'jak-zmienic-email',
+        kolejnosc: 1,
+      },
+    ],
+  },
+  {
+    category: {
+      nazwa: 'Zarządzanie Sprawami',
+      slug: 'zarzadzanie-sprawami',
+      opis: 'Pomoc dotycząca dodawania, edytowania i monitorowania spraw.',
+      ikona: 'FileText',
+      kolejnosc: 1,
+    },
+    questions: [
+      {
+        pytanie: 'Jak dodać nową sprawę?',
+        odpowiedz:
+          'Aby dodać nową sprawę, zaloguj się na swoje konto i przejdź do panelu klienta. Następnie kliknij przycisk "Dodaj nową sprawę" i wypełnij formularz, podając wszystkie wymagane informacje.',
+        slug: 'jak-dodac-nowa-sprawe',
+        kolejnosc: 0,
+      },
+    ],
+  },
+  {
+    category: {
+      nazwa: 'Płatności i Pakiety',
+      slug: 'platnosci-i-pakiety',
+      opis: 'Informacje na temat płatności, faktur i dostępnych pakietów.',
+      ikona: 'CreditCard',
+      kolejnosc: 2,
+    },
+    questions: [
+      {
+        pytanie: 'Jakie są dostępne metody płatności?',
+        odpowiedz:
+          'Akceptujemy płatności za pośrednictwem Przelewy24, PayU, karty kredytowej oraz tradycyjnego przelewu bankowego. Wszystkie dostępne opcje znajdziesz podczas finalizacji zamówienia.',
+        slug: 'jakie-sa-dostepne-metody-platnosci',
+        kolejnosc: 0,
+      },
+    ],
+  },
+]
+
 async function main() {
   console.log('Start seeding...')
 
@@ -199,6 +296,17 @@ async function main() {
       create: kat,
     })
     console.log(`Created/Updated category: ${category.nazwa}`)
+  }
+
+  // Seed kategorie bloga
+  console.log('Seeding kategorie bloga...')
+  for (const kat of blogCategories) {
+    const blogCategory = await prisma.blogCategory.upsert({
+      where: { slug: kat.slug },
+      update: {},
+      create: kat,
+    })
+    console.log(`Created/Updated blog category: ${blogCategory.nazwa}`)
   }
 
   // Seed promotion configs
@@ -426,11 +534,107 @@ async function main() {
   })
   console.log(`Created/Updated law firm profile: ${lawFirm.nazwa}`)
 
+  // --- Kancelaria 2: Nowoczesne Prawo (Warszawa) ---
+  console.log('Seeding law firm 2 user...')
+  const lawFirm2Password = await bcrypt.hash('Prawo2024!', 10)
+  const lawFirm2User = await prisma.user.upsert({
+    where: { email: 'biuro@nowoczesneprawo.pl' },
+    update: {},
+    create: {
+      email: 'biuro@nowoczesneprawo.pl',
+      name: 'Nowoczesne Prawo Kancelaria Podatkowa',
+      password: lawFirm2Password,
+      role: 'LAW_FIRM',
+      emailVerified: new Date(),
+    },
+  })
+  console.log(`Created law firm user: ${lawFirm2User.email}`)
+
+  const lawFirm2 = await prisma.lawFirm.upsert({
+    where: { userId: lawFirm2User.id },
+    update: {},
+    create: {
+      userId: lawFirm2User.id,
+      typ: 'OSOBA_FIZYCZNA',
+      nazwa: 'Nowoczesne Prawo Kancelaria Podatkowa',
+      nazwaFirmy: 'Nowoczesne Prawo Jan Nowak',
+      nip: '9876543210',
+      imieKontakt: 'Jan',
+      nazwiskoKontakt: 'Nowak',
+      numerTelefonu: '+48 22 987 65 43',
+      emailKontakt: 'jan.nowak@nowoczesneprawo.pl',
+      adres: 'ul. Finansowa 1',
+      kodPocztowy: '02-001',
+      miasto: 'Warszawa',
+      voivodeshipId: mazowieckieVoivodeship?.id || '',
+      opis: 'Specjalizujemy się w optymalizacji podatkowej dla firm i osób prywatnych. Oferujemy również pełne wsparcie w zakresie prawa pracy.',
+      typOferty: 'STALA_WSPOLPRACA',
+      pakietSubskrypcji: 'STANDARD',
+      zgodaRegulamin: true,
+      zgodaPrzetwarzanie: true,
+      zweryfikowana: true,
+      aktywna: true,
+    },
+  })
+  console.log(`Created law firm profile: ${lawFirm2.nazwa}`)
+
+  // --- Kancelaria 3: Lex Secure (Kraków) ---
+  console.log('Seeding law firm 3 user...')
+  const lawFirm3Password = await bcrypt.hash('LexSecure#1', 10)
+  const lawFirm3User = await prisma.user.upsert({
+    where: { email: 'kontakt@lexsecure.pl' },
+    update: {},
+    create: {
+      email: 'kontakt@lexsecure.pl',
+      name: 'Lex Secure Kancelaria Adwokacka',
+      password: lawFirm3Password,
+      role: 'LAW_FIRM',
+      emailVerified: new Date(),
+    },
+  })
+  console.log(`Created law firm user: ${lawFirm3User.email}`)
+
+  const malopolskieVoivodeship = await prisma.voivodeship.findFirst({
+    where: { slug: 'malopolskie' },
+  })
+
+  const lawFirm3 = await prisma.lawFirm.upsert({
+    where: { userId: lawFirm3User.id },
+    update: {},
+    create: {
+      userId: lawFirm3User.id,
+      typ: 'SPOLKA_ZOO',
+      nazwa: 'Lex Secure Kancelaria Adwokacka',
+      nazwaFirmy: 'Lex Secure Sp. z o.o.',
+      nip: '1122334455',
+      imieKontakt: 'Katarzyna',
+      nazwiskoKontakt: 'Wiśniewska',
+      numerTelefonu: '+48 12 111 22 33',
+      emailKontakt: 'k.wisniewska@lexsecure.pl',
+      adres: 'ul. Bezpieczna 10',
+      kodPocztowy: '30-001',
+      miasto: 'Kraków',
+      voivodeshipId: malopolskieVoivodeship?.id || '',
+      opis: 'Obrona w sprawach karnych na każdym etapie postępowania. Reprezentujemy również pacjentów w sprawach o błędy medyczne.',
+      typOferty: 'JEDNORAZOWA_USLUGA',
+      pakietSubskrypcji: 'PODSTAWOWY',
+      zgodaRegulamin: true,
+      zgodaPrzetwarzanie: true,
+      zweryfikowana: false,
+      aktywna: true,
+    },
+  })
+  console.log(`Created law firm profile: ${lawFirm3.nazwa}`)
+
   // Przypisz kategorie do kancelarii
   console.log('Assigning categories to law firm...')
   const prawoCywilne = await prisma.category.findFirst({ where: { slug: 'prawo-cywilne' } })
   const prawoRodzinne = await prisma.category.findFirst({ where: { slug: 'prawo-rodzinne' } })
   const prawoGospodarcze = await prisma.category.findFirst({ where: { slug: 'prawo-gospodarcze' } })
+  const prawoPodatkowe = await prisma.category.findFirst({ where: { slug: 'prawo-podatkowe' } })
+  const prawoPracy = await prisma.category.findFirst({ where: { slug: 'prawo-pracy' } })
+  const prawoKarne = await prisma.category.findFirst({ where: { slug: 'prawo-karne' } })
+  const prawoMedyczne = await prisma.category.findFirst({ where: { slug: 'prawo-medyczne' } })
 
   if (prawoCywilne) {
     await prisma.lawFirmCategory.upsert({
@@ -483,6 +687,38 @@ async function main() {
     })
   }
 
+  // Kategorie dla Kancelarii 2
+  if (prawoPodatkowe) {
+    await prisma.lawFirmCategory.upsert({
+      where: { lawFirmId_categoryId: { lawFirmId: lawFirm2.id, categoryId: prawoPodatkowe.id } },
+      update: {},
+      create: { lawFirmId: lawFirm2.id, categoryId: prawoPodatkowe.id },
+    })
+  }
+  if (prawoPracy) {
+    await prisma.lawFirmCategory.upsert({
+      where: { lawFirmId_categoryId: { lawFirmId: lawFirm2.id, categoryId: prawoPracy.id } },
+      update: {},
+      create: { lawFirmId: lawFirm2.id, categoryId: prawoPracy.id },
+    })
+  }
+
+  // Kategorie dla Kancelarii 3
+  if (prawoKarne) {
+    await prisma.lawFirmCategory.upsert({
+      where: { lawFirmId_categoryId: { lawFirmId: lawFirm3.id, categoryId: prawoKarne.id } },
+      update: {},
+      create: { lawFirmId: lawFirm3.id, categoryId: prawoKarne.id },
+    })
+  }
+  if (prawoMedyczne) {
+    await prisma.lawFirmCategory.upsert({
+      where: { lawFirmId_categoryId: { lawFirmId: lawFirm3.id, categoryId: prawoMedyczne.id } },
+      update: {},
+      create: { lawFirmId: lawFirm3.id, categoryId: prawoMedyczne.id },
+    })
+  }
+
   // Przypisz województwa działania do kancelarii
   console.log('Assigning voivodeships to law firm...')
   if (wielkopolskieVoivodeship) {
@@ -514,6 +750,24 @@ async function main() {
         lawFirmId: lawFirm.id,
         voivodeshipId: mazowieckieVoivodeship.id,
       },
+    })
+  }
+
+  // Województwa dla Kancelarii 2
+  if (mazowieckieVoivodeship) {
+    await prisma.lawFirmVoivodeship.upsert({
+      where: { lawFirmId_voivodeshipId: { lawFirmId: lawFirm2.id, voivodeshipId: mazowieckieVoivodeship.id } },
+      update: {},
+      create: { lawFirmId: lawFirm2.id, voivodeshipId: mazowieckieVoivodeship.id },
+    })
+  }
+
+  // Województwa dla Kancelarii 3
+  if (malopolskieVoivodeship) {
+    await prisma.lawFirmVoivodeship.upsert({
+      where: { lawFirmId_voivodeshipId: { lawFirmId: lawFirm3.id, voivodeshipId: malopolskieVoivodeship.id } },
+      update: {},
+      create: { lawFirmId: lawFirm3.id, voivodeshipId: malopolskieVoivodeship.id },
     })
   }
 
@@ -873,6 +1127,38 @@ async function main() {
       skillLawFocus: true,
     },
   })
+
+  // Seed centrum pomocy
+  console.log('Seeding help center...')
+  for (const data of helpData) {
+    const helpCategory = await prisma.helpCategory.upsert({
+      where: { slug: data.category.slug },
+      update: {
+        nazwa: data.category.nazwa,
+        opis: data.category.opis,
+        ikona: data.category.ikona,
+        kolejnosc: data.category.kolejnosc,
+      },
+      create: data.category,
+    })
+    console.log(`Created/Updated help category: ${helpCategory.nazwa}`)
+
+    for (const q of data.questions) {
+      const helpQuestion = await prisma.helpQuestion.upsert({
+        where: { slug: q.slug },
+        update: {
+          pytanie: q.pytanie,
+          odpowiedz: q.odpowiedz,
+          kolejnosc: q.kolejnosc,
+        },
+        create: {
+          ...q,
+          categoryId: helpCategory.id,
+        },
+      })
+      console.log(`  - Created/Updated help question: ${helpQuestion.pytanie}`)
+    }
+  }
 
   console.log('Seeding finished.')
 }
