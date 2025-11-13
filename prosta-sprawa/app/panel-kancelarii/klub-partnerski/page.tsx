@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Label } from "@/components/ui/label"
 import {
   Table,
   TableBody,
@@ -419,7 +420,7 @@ export default function KlubPartnerskiPage() {
                   )}
                 </p>
               )}
-              {partnerStatus.verificationFailCount > 0 && (
+              {(partnerStatus.verificationFailCount ?? 0) > 0 && (
                 <p className="text-sm text-red-600">
                   Nieudane weryfikacje: {partnerStatus.verificationFailCount}/3
                 </p>

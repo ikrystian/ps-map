@@ -28,11 +28,7 @@ export async function GET(request: NextRequest) {
     // Pobierz dane kancelarii z programem partnerskim
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
-      select: {
-        id: true,
-        nazwa: true,
-        stronaWww: true,
-        punktySaldo: true,
+      include: {
         partnerProgram: {
           include: {
             pointsHistory: {
@@ -96,7 +92,8 @@ export async function GET(request: NextRequest) {
         createdAt: h.createdAt
       })),
       lawFirmName: lawFirm.nazwa,
-      websiteUrl: lawFirm.stronaWww
+      websiteUrl: lawFirm.stronaWww,
+      hasWebsite: !!lawFirm.stronaWww
     })
 
   } catch (error) {
