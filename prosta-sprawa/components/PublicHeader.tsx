@@ -194,7 +194,7 @@ export default function PublicHeader({
               {/* Z nami wygrywasz */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/z-nami-wygrywasz" className="px-4 py-2 text-green-600 font-semibold hover:text-green-700">
+                  <Link href="/z-nami-wygrywasz" className="px-4 py-2 hover:text-primary">
                     Z nami wygrywasz
                   </Link>
                 </NavigationMenuLink>
