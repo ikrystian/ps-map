@@ -86,7 +86,9 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
     const targetIndex = direction === 'up' ? index - 1 : index + 1
 
     // Zamień miejscami
-    [newModules[index], newModules[targetIndex]] = [newModules[targetIndex], newModules[index]]
+    const temp = newModules[index]
+    newModules[index] = newModules[targetIndex]
+    newModules[targetIndex] = temp
 
     // Aktualizuj kolejność
     const reorderedModules = newModules.map((m, i) => ({ ...m, order: i }))
