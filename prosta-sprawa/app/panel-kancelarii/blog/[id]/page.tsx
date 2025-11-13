@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, Upload, X, Image as ImageIcon, Bold, Italic, List, Link2, Heading1, Heading2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
   Select,
@@ -53,6 +54,10 @@ export default function LawFirmEditBlogPostPage() {
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
   const params = useParams()
   const postId = params.id as string
@@ -110,6 +115,9 @@ export default function LawFirmEditBlogPostPage() {
           metaDescription: post.metaDescription || "",
           opublikowany: post.opublikowany || false,
         })
+        if (post.obrazekWyrozniajacy) {
+          setImagePreview(post.obrazekWyrozniajacy)
+        }
       } else {
         throw new Error("Nie znaleziono wpisu")
       }
@@ -119,6 +127,72 @@ export default function LawFirmEditBlogPostPage() {
     } finally {
       setLoadingPost(false)
     }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Proszę wybrać plik obrazu")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Rozmiar pliku nie może przekraczać 5MB")
+      return
+    }
+
+    setUploadingImage(true)
+
+    try {
+      // For now, we'll use a data URL for preview
+      // In production, you would upload to a storage service
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string
+        setImagePreview(dataUrl)
+        form.setValue("obrazekWyrozniajacy", dataUrl)
+        toast.success("Obrazek został dodany")
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      toast.error("Nie udało się wgrać obrazka")
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImagePreview(null)
+    form.setValue("obrazekWyrozniajacy", "")
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+    toast.success("Obrazek został usunięty")
+  }
+
+  const insertFormatting = (before: string, after: string = "") => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = textarea.value.substring(start, end)
+    const beforeText = textarea.value.substring(0, start)
+    const afterText = textarea.value.substring(end)
+
+    const newText = beforeText + before + selectedText + after + afterText
+    form.setValue("tresc", newText)
+
+    // Set cursor position
+    setTimeout(() => {
+      textarea.focus()
+      const newPosition = start + before.length + selectedText.length
+      textarea.setSelectionRange(newPosition, newPosition)
+    }, 0)
   }
 
   const handleSubmit = async (values: PostFormValues) => {
@@ -234,13 +308,79 @@ export default function LawFirmEditBlogPostPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Treść artykułu *</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Treść artykułu..."
-                        className="min-h-[400px] resize-y font-mono"
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className="space-y-2">
+                      {/* WYSIWYG Toolbar */}
+                      <div className="flex flex-wrap gap-1 p-2 border rounded-lg bg-muted/50">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("# ", "")}
+                          title="Nagłówek 1"
+                        >
+                          <Heading1 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("## ", "")}
+                          title="Nagłówek 2"
+                        >
+                          <Heading2 className="h-4 w-4" />
+                        </Button>
+                        <div className="w-px h-6 bg-border mx-1" />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("**", "**")}
+                          title="Pogrubienie"
+                        >
+                          <Bold className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("_", "_")}
+                          title="Kursywa"
+                        >
+                          <Italic className="h-4 w-4" />
+                        </Button>
+                        <div className="w-px h-6 bg-border mx-1" />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("- ", "")}
+                          title="Lista"
+                        >
+                          <List className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertFormatting("[", "](url)")}
+                          title="Link"
+                        >
+                          <Link2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <FormControl>
+                        <Textarea
+                          ref={textareaRef}
+                          placeholder="Treść artykułu w formacie Markdown...&#10;&#10;Przykłady:&#10;# Nagłówek 1&#10;## Nagłówek 2&#10;**Pogrubienie**&#10;_Kursywa_&#10;- Element listy&#10;[Tekst linku](https://example.com)"
+                          className="min-h-[400px] resize-y font-mono"
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Używaj Markdown do formatowania tekstu. Skróty: Ctrl+B (pogrubienie), Ctrl+I (kursywa)
+                      </p>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -253,7 +393,78 @@ export default function LawFirmEditBlogPostPage() {
                   <FormItem>
                     <FormLabel>Obrazek wyróżniający</FormLabel>
                     <FormControl>
-                      <Input type="url" placeholder="https://example.com/image.jpg" {...field} />
+                      <div className="space-y-4">
+                        {imagePreview ? (
+                          <div className="space-y-3">
+                            <div className="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden border">
+                              <Image
+                                src={imagePreview}
+                                alt="Podgląd obrazka"
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploadingImage}
+                              >
+                                <Upload className="h-4 w-4 mr-2" />
+                                Zmień obrazek
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleRemoveImage}
+                                disabled={uploadingImage}
+                              >
+                                <X className="h-4 w-4 mr-2" />
+                                Usuń obrazek
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <div
+                              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                              <p className="text-sm font-medium mb-2">
+                                Kliknij aby dodać obrazek wyróżniający
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                PNG, JPG, GIF do 5MB
+                              </p>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Lub wklej URL obrazka:
+                            </div>
+                            <Input
+                              type="url"
+                              placeholder="https://example.com/image.jpg"
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                if (e.target.value) {
+                                  setImagePreview(e.target.value)
+                                }
+                              }}
+                            />
+                          </div>
+                        )}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageUpload}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

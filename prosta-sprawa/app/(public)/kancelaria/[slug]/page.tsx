@@ -1076,13 +1076,25 @@ export default function LawFirmProfilePage() {
 
                         {review.odpowiedz && (
                           <div className="bg-muted p-4 rounded-lg">
-                            <p className="font-semibold mb-2">Odpowiedź kancelarii:</p>
-                            <p className="text-sm">{review.odpowiedz}</p>
-                            {review.dataOdpowiedzi && (
-                              <p className="text-xs text-muted-foreground mt-2">
-                                {formatDate(review.dataOdpowiedzi)}
-                              </p>
-                            )}
+                            <div className="flex items-start gap-3 mb-2">
+                              <Avatar className="h-10 w-10 flex-shrink-0">
+                                {lawFirm.logo ? (
+                                  <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
+                                ) : null}
+                                <AvatarFallback className="bg-primary text-primary-foreground">
+                                  {lawFirm.nazwa.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <p className="font-semibold">Odpowiedź kancelarii:</p>
+                                <p className="text-sm mt-2">{review.odpowiedz}</p>
+                                {review.dataOdpowiedzi && (
+                                  <p className="text-xs text-muted-foreground mt-2">
+                                    {formatDate(review.dataOdpowiedzi)}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
                       </CardContent>
@@ -1174,8 +1186,14 @@ export default function LawFirmProfilePage() {
                   <div>
                     <p className="font-medium">Adres</p>
                     <p className="text-sm text-muted-foreground">
-                      {lawFirm.adres}<br />
-                      {lawFirm.kodPocztowy} {lawFirm.miasto}
+                      {session?.user ? (
+                        <>
+                          {lawFirm.adres}<br />
+                          {lawFirm.kodPocztowy} {lawFirm.miasto}
+                        </>
+                      ) : (
+                        "[dane ukryte]"
+                      )}
                     </p>
                   </div>
                 </div>
@@ -1186,9 +1204,15 @@ export default function LawFirmProfilePage() {
                   <Phone className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Telefon</p>
-                    <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu}</p>
-                    {lawFirm.numerTelefonu2 && (
-                      <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu2}</p>
+                    {session?.user ? (
+                      <>
+                        <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu}</p>
+                        {lawFirm.numerTelefonu2 && (
+                          <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu2}</p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">[dane ukryte]</p>
                     )}
                   </div>
                 </div>
@@ -1199,7 +1223,9 @@ export default function LawFirmProfilePage() {
                   <Mail className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">{lawFirm.emailKontakt}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {session?.user ? lawFirm.emailKontakt : "[dane ukryte]"}
+                    </p>
                   </div>
                 </div>
 
@@ -1337,14 +1363,15 @@ export default function LawFirmProfilePage() {
             </Card>
 
             {/* Contact Form */}
-            <Card id="contact-form">
-              <CardHeader>
-                <CardTitle>Skontaktuj się z kancelarią</CardTitle>
-                <CardDescription>
-                  Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+            {session?.user && (
+              <Card id="contact-form">
+                <CardHeader>
+                  <CardTitle>Skontaktuj się z kancelarią</CardTitle>
+                  <CardDescription>
+                    Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   <div>
                     <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
@@ -1466,6 +1493,7 @@ export default function LawFirmProfilePage() {
                 </form>
               </CardContent>
             </Card>
+            )}
           </div>
         </div>
       </div>
