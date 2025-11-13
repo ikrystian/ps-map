@@ -261,6 +261,7 @@ model LawFirm {
   documents             Document[]
   stats                 LawFirmStats[]        // Statystyki miesięczne
   categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
+  partnerProgram        PartnerProgram?       // Program partnerski
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -1509,4 +1510,57 @@ enum LogLevel {
   WARNING     // Ostrzeżenia, które nie są błędami
   ERROR       // Błędy, które nie zatrzymują działania systemu
   CRITICAL    // Krytyczne błędy wymagające natychmiastowej uwagi
+}
+
+// ============================================================================
+// PROGRAM PARTNERSKI
+// ============================================================================
+
+model PartnerProgram {
+  id                      String   @id @default(uuid())
+  lawFirmId               String   @unique
+  lawFirm                 LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  // Informacje o bannerze
+  bannerCode              String   @unique // Unikalny kod do weryfikacji obecności bannera
+  bannerPlaced            Boolean  @default(false) // Czy banner jest umieszczony
+  lastVerificationDate    DateTime? // Data ostatniej weryfikacji
+  lastVerificationStatus  Boolean  @default(false) // Status ostatniej weryfikacji
+  verificationFailCount   Int      @default(0) // Licznik nieudanych weryfikacji
+
+  // Status programu
+  active                  Boolean  @default(true)
+  monthlyPoints           Int      @default(100) // Punkty przyznawane miesięcznie
+
+  // Daty
+  joinedAt                DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  // Relacje
+  pointsHistory           PartnerPointsHistory[]
+
+  @@index([lawFirmId])
+  @@index([active])
+  @@index([bannerCode])
+}
+
+model PartnerPointsHistory {
+  id                    String   @id @default(uuid())
+  partnerProgramId      String
+  partnerProgram        PartnerProgram @relation(fields: [partnerProgramId], references: [id], onDelete: Cascade)
+
+  // Przyznane punkty
+  pointsAwarded         Int
+  month                 Int      // 1-12
+  year                  Int
+
+  // Weryfikacja
+  verificationUrl       String?  // URL gdzie banner został zweryfikowany
+  verificationStatus    Boolean  @default(true)
+
+  createdAt             DateTime @default(now())
+
+  @@unique([partnerProgramId, year, month])
+  @@index([partnerProgramId])
+  @@index([year, month])
 }
