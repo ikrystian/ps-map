@@ -305,7 +305,7 @@ export default function LawFirmProfilePage() {
 
     if (!session?.user) {
       toast.error("Musisz być zalogowany jako klient, aby wystawić opinię")
-      router.push("/auth/login")
+      router.push("/logowanie")
       return
     }
 
@@ -386,7 +386,7 @@ export default function LawFirmProfilePage() {
   const handleToggleFavorite = async () => {
     if (!session?.user) {
       toast.error("Musisz być zalogowany, aby dodać kancelarię do ulubionych")
-      router.push("/auth/login")
+      router.push("/logowanie")
       return
     }
 

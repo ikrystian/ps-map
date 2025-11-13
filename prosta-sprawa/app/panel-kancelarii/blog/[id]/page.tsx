@@ -371,10 +371,13 @@ export default function LawFirmEditBlogPostPage() {
 
                       <FormControl>
                         <Textarea
-                          ref={textareaRef}
-                          placeholder="Treść artykułu w formacie Markdown...&#10;&#10;Przykłady:&#10;# Nagłówek 1&#10;## Nagłówek 2&#10;**Pogrubienie**&#10;_Kursywa_&#10;- Element listy&#10;[Tekst linku](https://example.com)"
+                          placeholder="Treść artykułu w formacie Markdown...&#10;&#10;Przykłady:&#10;# Nagłówek 1&#10;## Nagłóbek 2&#10;**Pogrubienie**&#10;_Kursywa_&#10;- Element listy&#10;[Tekst linku](https://example.com)"
                           className="min-h-[400px] resize-y font-mono"
                           {...field}
+                          ref={(e) => {
+                            field.ref(e);
+                            textareaRef.current = e;
+                          }}
                         />
                       </FormControl>
                       <p className="text-xs text-muted-foreground">
