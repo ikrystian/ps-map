@@ -159,7 +159,7 @@ export async function PUT(
         slug,
         tresc,
         categoryId: categoryId || null,
-        tagi: tagi ? JSON.stringify(tagi) : null,
+        tagi: tagi && Array.isArray(tagi) && tagi.length > 0 ? JSON.stringify(tagi) : null,
         obrazekWyrozniajacy,
         metaTitle,
         metaDescription,

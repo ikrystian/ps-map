@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
         tresc,
         lawFirmId: lawFirm.id,
         categoryId: categoryId || null,
-        tagi: tagi ? JSON.stringify(tagi) : null,
+        tagi: tagi && Array.isArray(tagi) && tagi.length > 0 ? JSON.stringify(tagi) : null,
         obrazekWyrozniajacy,
         metaTitle,
         metaDescription,

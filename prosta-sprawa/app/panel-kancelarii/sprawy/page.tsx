@@ -401,12 +401,11 @@ const SprawyPage = () => {
                 key={sprawa.id}
                 className={cn(
                   "overflow-hidden",
-                  isAccepted && "border-green-500 border-2 bg-green-50/50"
+                  isAccepted && "border-green-500 border-2 "
                 )}
               >
                 <CardHeader className={cn(
                   "flex flex-row items-start justify-between px-6 py-3",
-                  isAccepted ? "bg-green-100/70" : "bg-muted/50"
                 )}>
                   <div className="flex flex-wrap items-center gap-2">
                     {isAccepted && (

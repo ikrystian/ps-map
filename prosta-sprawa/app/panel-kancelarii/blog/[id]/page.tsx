@@ -37,6 +37,7 @@ const postSchema = z.object({
   tresc: z.string().min(100, "Treść musi mieć minimum 100 znaków"),
   categoryId: z.string().optional(),
   obrazekWyrozniajacy: z.string().optional().or(z.literal("")),
+  tagi: z.array(z.string()).optional(),
   metaTitle: z.string().max(70, "Meta tytuł może mieć maksymalnie 70 znaków").optional(),
   metaDescription: z.string().max(160, "Meta opis może mieć maksymalnie 160 znaków").optional(),
   opublikowany: z.boolean(),
@@ -66,6 +67,7 @@ export default function LawFirmEditBlogPostPage() {
       tresc: "",
       categoryId: "",
       obrazekWyrozniajacy: "",
+      tagi: [],
       metaTitle: "",
       metaDescription: "",
       opublikowany: false,
@@ -103,11 +105,22 @@ export default function LawFirmEditBlogPostPage() {
 
       if (response.ok) {
         const post = await response.json()
+        // Parse tagi from JSON string if it exists
+        let parsedTagi: string[] = []
+        if (post.tagi) {
+          try {
+            parsedTagi = JSON.parse(post.tagi)
+          } catch (e) {
+            console.error("Error parsing tags:", e)
+          }
+        }
+
         form.reset({
           tytul: post.tytul || "",
           tresc: post.tresc || "",
           categoryId: post.categoryId || "",
           obrazekWyrozniajacy: post.obrazekWyrozniajacy || "",
+          tagi: parsedTagi,
           metaTitle: post.metaTitle || "",
           metaDescription: post.metaDescription || "",
           opublikowany: post.opublikowany || false,
@@ -135,6 +148,7 @@ export default function LawFirmEditBlogPostPage() {
           ...values,
           categoryId: values.categoryId || null,
           obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
+          tagi: values.tagi,
           metaTitle: values.metaTitle || null,
           metaDescription: values.metaDescription || null,
         }),
@@ -275,8 +289,82 @@ export default function LawFirmEditBlogPostPage() {
           <Card>
             <CardHeader>
               <CardTitle>SEO</CardTitle>
+              <CardDescription>
+                Opcjonalne ustawienia SEO dla lepszej widoczności w wyszukiwarkach
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="tagi"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Słowa kluczowe (tagi)</FormLabel>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <Input
+                            id="tag-input"
+                            placeholder="Dodaj słowo kluczowe..."
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault()
+                                const value = e.currentTarget.value.trim()
+                                const currentTags = field.value || []
+                                if (value && !currentTags.includes(value)) {
+                                  field.onChange([...currentTags, value])
+                                  e.currentTarget.value = ""
+                                }
+                              }
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              const input = document.getElementById("tag-input") as HTMLInputElement
+                              const value = input.value.trim()
+                              const currentTags = field.value || []
+                              if (value && !currentTags.includes(value)) {
+                                field.onChange([...currentTags, value])
+                                input.value = ""
+                              }
+                            }}
+                          >
+                            Dodaj
+                          </Button>
+                        </div>
+                        {field.value && field.value.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {field.value.map((tag, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
+                              >
+                                <span>{tag}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const currentTags = field.value || []
+                                    field.onChange(currentTags.filter((_, i) => i !== index))
+                                  }}
+                                  className="ml-1 hover:text-destructive"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Naciśnij Enter lub kliknij "Dodaj" aby dodać słowo kluczowe
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="metaTitle"
@@ -286,6 +374,9 @@ export default function LawFirmEditBlogPostPage() {
                     <FormControl>
                       <Input placeholder="Tytuł dla wyszukiwarek" {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Jeśli puste, zostanie użyty tytuł artykułu (max 70 znaków)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -300,6 +391,9 @@ export default function LawFirmEditBlogPostPage() {
                     <FormControl>
                       <Textarea placeholder="Opis dla wyszukiwarek" className="resize-none" rows={3} {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Zachęcający opis pojawi się w wynikach wyszukiwania (max 160 znaków)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
