@@ -534,7 +534,7 @@ export default function AdminCategoriesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
+                          <SelectItem value="">Brak kategorii nadrzędnej</SelectItem>
                           {getParentCategories().map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.nazwa}

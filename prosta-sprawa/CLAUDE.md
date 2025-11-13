@@ -14,7 +14,7 @@
 ## Architektura Aplikacji
 
 ### Stack Technologiczny
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16
 - **Język**: TypeScript
 - **Baza danych**: SQLite (Prisma ORM)
 - **Autoryzacja**: NextAuth.js
