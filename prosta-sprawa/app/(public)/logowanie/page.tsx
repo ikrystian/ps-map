@@ -24,6 +24,10 @@ export default function LoginPage() {
   useEffect(() => {
     if (registered === "true") {
       toast.success("Rejestracja przebiegła pomyślnie! Możesz teraz się zalogować.")
+      // Remove the registered parameter from URL to prevent duplicate toasts
+      const url = new URL(window.location.href)
+      url.searchParams.delete("registered")
+      window.history.replaceState({}, "", url.toString())
     }
   }, [registered])
 

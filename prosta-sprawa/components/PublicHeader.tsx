@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Search, ChevronDown, User } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface Category {
   id: string
@@ -32,9 +33,11 @@ interface Category {
 interface PublicHeaderProps {
   isAuthenticated?: boolean
   userRole?: "CLIENT" | "LAW_FIRM" | "ADMIN" | null
+  userName?: string | null
+  userImage?: string | null
 }
 
-export default function PublicHeader({ isAuthenticated = false, userRole = null }: PublicHeaderProps) {
+export default function PublicHeader({ isAuthenticated = false, userRole = null, userName = null, userImage = null }: PublicHeaderProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
@@ -202,8 +205,13 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={userImage || undefined} alt={userName || "User"} />
+                      <AvatarFallback>
+                        <User className="h-5 w-5" />
+                      </AvatarFallback>
+                    </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
