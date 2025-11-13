@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 // PATCH /api/conversations/[id]/read - Oznacz wszystkie wiadomości jako przeczytane
@@ -23,7 +23,7 @@ export async function PATCH(
       )
     }
 
-    const conversationId = params.id
+    const { id: conversationId } = await params
     const userId = session.user.id
 
     // Sprawdź, czy użytkownik jest uczestnikiem konwersacji

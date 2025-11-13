@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 // GET /api/conversations/[id]/messages - Pobierz wiadomości z konwersacji
@@ -23,7 +23,7 @@ export async function GET(
       )
     }
 
-    const conversationId = params.id
+    const { id: conversationId } = await params
     const userId = session.user.id
 
     // Sprawdź, czy użytkownik jest uczestnikiem konwersacji
@@ -89,7 +89,7 @@ export async function POST(
       )
     }
 
-    const conversationId = params.id
+    const { id: conversationId } = await params
     const userId = session.user.id
 
     // Sprawdź, czy użytkownik jest uczestnikiem konwersacji
