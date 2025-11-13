@@ -122,7 +122,7 @@ export default function ClientPanelLayout({
 
           {/* User menu */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
+            <DropdownMenuTrigger className="focus:outline-none" id="user-menu-button">
               <Avatar className="h-9 w-9 cursor-pointer">
                 <AvatarImage src="/avatars/client.jpg" alt="Klient" />
                 <AvatarFallback>KL</AvatarFallback>

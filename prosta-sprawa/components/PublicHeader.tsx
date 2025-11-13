@@ -205,65 +205,9 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null,
           {/* Right Side - User Menu / Login */}
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
-                  <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={userImage || undefined} alt={userName || "User"} />
-                    <AvatarFallback>
-                      {userName ? userName.substring(0, 2).toUpperCase() : <User className="h-5 w-5" />}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={userRole === "LAW_FIRM" ? "/panel-kancelarii" : "/panel-klienta"} className="flex items-center gap-2">
-                      <LayoutDashboard className="h-4 w-4" />
-                      Panel użytkownika
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={userRole === "LAW_FIRM" ? "/panel-kancelarii/sprawy" : "/panel-klienta/sprawy"} className="flex items-center gap-2">
-                      <Briefcase className="h-4 w-4" />
-                      Moje sprawy
-                    </Link>
-                  </DropdownMenuItem>
-                  {userRole === "LAW_FIRM" && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/panel-kancelarii/dokumenty" className="flex items-center gap-2">
-                        <FileStack className="h-4 w-4" />
-                        Dokumenty
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link href={userRole === "LAW_FIRM" ? "/panel-kancelarii/wiadomosci" : "/panel-klienta/wiadomosci"} className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      Wiadomości
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={userRole === "LAW_FIRM" ? "/panel-kancelarii/ustawienia" : "/panel-klienta/profil"} className="flex items-center gap-2">
-                      <Settings className="h-4 w-4" />
-                      {userRole === "LAW_FIRM" ? "Ustawienia" : "Moje konto"}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={userRole === "LAW_FIRM" ? "/panel-kancelarii/pomoc" : "/panel-klienta/pomoc"} className="flex items-center gap-2">
-                      <HelpCircle className="h-4 w-4" />
-                      Centrum pomocy
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/api/auth/logout" className="flex items-center gap-2 cursor-pointer">
-                      <LogOut className="h-4 w-4" />
-                      Wyloguj
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div id="user-avatar">
+                {/* // avatar uzytkownika */}
+              </div>
             ) : (
               <>
                 <Link href="/dodaj-sprawe">
