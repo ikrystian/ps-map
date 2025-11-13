@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -73,6 +73,30 @@ export default function ClientAddCasePage() {
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
+
+  // Pobierz dane użytkownika i uzupełnij dane kontaktowe
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("/api/clients/me")
+        if (response.ok) {
+          const userData = await response.json()
+
+          // Uzupełnij dane kontaktowe danymi użytkownika
+          setFormData(prev => ({
+            ...prev,
+            imieNazwisko: `${userData.imie || ""} ${userData.nazwisko || ""}`.trim(),
+            emailKontakt: userData.user?.email || "",
+            telefonKontakt: userData.telefon || "",
+          }))
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error)
+      }
+    }
+
+    fetchUserData()
+  }, [])
 
   const handleNext = () => {
     if (validateStep(currentStep)) {

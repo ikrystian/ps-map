@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Tags,
+  CreditCard,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -40,10 +41,11 @@ const navigation = [
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Kancelarie", href: "/admin/law-firms", icon: Building2 },
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
+  { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
-  { name: "Kategorie bloga", href: "/admin/blog-categories", icon: Tags },
+  { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
   { name: "Pakiety", href: "/admin/pakiety", icon: Shield }

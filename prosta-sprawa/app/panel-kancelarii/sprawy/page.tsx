@@ -99,6 +99,11 @@ const SprawyPage = () => {
       if (response.ok) {
         const data = await response.json()
 
+        // Pobierz odrzucone sprawy z localStorage
+        const rejectedCases = new Set(
+          JSON.parse(localStorage.getItem("rejectedCases") || "[]")
+        )
+
         // Dodaj licznik ofert
         const casesWithCount = await Promise.all(
           data.map(async (caseItem: Case) => {
@@ -119,7 +124,9 @@ const SprawyPage = () => {
           })
         )
 
-        setCases(casesWithCount)
+        // Filtruj odrzucone sprawy
+        const filteredCases = casesWithCount.filter((c) => !rejectedCases.has(c.id))
+        setCases(filteredCases)
       }
     } catch (error) {
       console.error("Error fetching cases:", error)
