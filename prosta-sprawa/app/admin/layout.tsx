@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Tags,
   CreditCard,
+  HelpCircle,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -47,6 +48,7 @@ const navigation = [
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
   { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
+  { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
   { name: "Pakiety", href: "/admin/pakiety", icon: Shield }
 ]

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   LayoutDashboard,
   Briefcase,
@@ -50,6 +51,7 @@ const navigation = [
   { name: "Blog", href: "/panel-kancelarii/blog", icon: BookOpen },
   { name: "Opinie", href: "/panel-kancelarii/opinie", icon: Star },
   { name: "Certyfikaty", href: "/panel-kancelarii/certyfikaty", icon: Award },
+  { name: "Dokumenty", href: "/panel-kancelarii/dokumenty", icon: FileStack },
   { name: "Punkty", href: "/panel-kancelarii/punkty", icon: Coins },
   { name: "Pakiet", href: "/panel-kancelarii/pakiet", icon: Package },
   { name: "Promowanie", href: "/panel-kancelarii/promowanie", icon: TrendingUp },
@@ -67,6 +69,25 @@ export default function LawFirmPanelLayout({
   const pathname = usePathname()
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [punktySaldo, setPunktySaldo] = useState<number>(0)
+
+  useEffect(() => {
+    const fetchLawFirmData = async () => {
+      try {
+        const response = await fetch("/api/law-firms/me")
+        if (response.ok) {
+          const data = await response.json()
+          setPunktySaldo(data.punktySaldo || 0)
+        }
+      } catch (error) {
+        console.error("Error fetching law firm data:", error)
+      }
+    }
+
+    if (session?.user?.role === "LAW_FIRM") {
+      fetchLawFirmData()
+    }
+  }, [session])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
@@ -166,8 +187,18 @@ export default function LawFirmPanelLayout({
             </Link>
           </div>
 
-          {/* User menu */}
-          <DropdownMenu>
+          <div className="flex items-center gap-4">
+            {/* Points Counter */}
+            <Link href="/panel-kancelarii/punkty">
+              <Badge variant="outline" className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer">
+                <Coins className="h-4 w-4 text-primary" />
+                <span className="font-semibold">{punktySaldo}</span>
+                <span className="text-muted-foreground">punktów</span>
+              </Badge>
+            </Link>
+
+            {/* User menu */}
+            <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none">
               <Avatar className="h-9 w-9 cursor-pointer">
                 <AvatarImage src="/avatars/user.jpg" alt="User" />
@@ -220,6 +251,7 @@ export default function LawFirmPanelLayout({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </header>
 
         {/* Main content */}

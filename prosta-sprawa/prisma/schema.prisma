@@ -251,6 +251,7 @@ model LawFirm {
   invoices              Invoice[]
   promotions            Promotion[]
   favoritedBy           FavoriteLawFirm[]
+  documents             Document[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -940,6 +941,11 @@ model NotificationSettings {
   // Ustawienia ogłoszenia
   ustawieniaOgloszenia        Boolean  @default(true)
 
+  // Dodatkowe ustawienia powiadomień dla ogłoszeń
+  powiadomieniaSmNowa         Boolean  @default(false)  // SMS przy nowej wiadomości
+  wiadomosciZbiorcze          Boolean  @default(true)   // E-mail - wiadomości zbiorcze
+  urlop                       Boolean  @default(false)  // Tryb urlopowy
+
   updatedAt         DateTime @updatedAt
 
   @@index([userId])
@@ -1135,4 +1141,75 @@ enum ContactSubject {
   WSPOLPRACA
   REKLAMACJA
   INNE
+}
+
+// ============================================================================
+// CENTRUM POMOCY
+// ============================================================================
+
+model HelpCategory {
+  id          String   @id @default(uuid())
+  nazwa       String
+  slug        String   @unique
+  opis        String?
+  ikona       String?  // Nazwa ikony z Lucide
+  kolejnosc   Int      @default(0)
+  aktywna     Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacje
+  questions   HelpQuestion[]
+
+  @@index([slug])
+  @@index([aktywna])
+  @@index([kolejnosc])
+}
+
+model HelpQuestion {
+  id          String   @id @default(uuid())
+  categoryId  String
+  category    HelpCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  pytanie     String
+  odpowiedz   String   // Treść w markdown/HTML
+  slug        String   @unique
+  kolejnosc   Int      @default(0)
+  aktywna     Boolean  @default(true)
+
+  // Statystyki
+  wyswietlenia Int     @default(0)
+  pomocne     Int      @default(0)
+  niepomocne  Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([slug])
+  @@index([aktywna])
+  @@index([kolejnosc])
+}
+
+// ============================================================================
+// DOKUMENTY KANCELARII
+// ============================================================================
+
+model Document {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  nazwa           String
+  typDokumentu    String   // np. "umowa", "regulamin", "wzór pisma", etc.
+  rozmiar         Int      // Rozmiar w bajtach
+  sciezka         String   // Ścieżka do pliku
+  rozszerzenie    String   // np. "pdf", "docx", "txt"
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([createdAt])
 }
