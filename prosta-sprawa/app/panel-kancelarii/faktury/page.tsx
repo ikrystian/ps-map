@@ -92,8 +92,10 @@ export default function InvoicesPage() {
   }
 
   const handleDownload = (invoice: Invoice) => {
-    // W prawdziwej aplikacji tutaj byłoby pobieranie PDF
-    toast.success(`Faktura ${invoice.invoiceNumber} zostanie pobrana (w prawdziwej aplikacji)`)
+    // Otwórz stronę do drukowania w nowym oknie
+    const printUrl = `/panel-kancelarii/faktury/${invoice.id}/drukuj`
+    window.open(printUrl, "_blank", "width=1000,height=800")
+    toast.success(`Otwarto podgląd faktury ${invoice.invoiceNumber}`)
   }
 
   if (loading) {
