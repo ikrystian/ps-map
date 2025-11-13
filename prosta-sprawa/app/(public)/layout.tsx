@@ -13,6 +13,8 @@ export default async function PublicLayout({
       <PublicHeader
         isAuthenticated={!!session}
         userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}
+        userName={session?.user?.name}
+        userImage={session?.user?.image}
       />
       <main className="flex-1 pt-[65px]">
         {children}

@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
+import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
 
 const postSchema = z.object({
   tytul: z.string().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
@@ -203,14 +204,15 @@ export default function LawFirmNewBlogPostPage() {
                   <FormItem>
                     <FormLabel>Treść artykułu *</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <WysiwygEditor
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="Napisz treść swojego artykułu..."
-                        className="min-h-[400px] resize-y font-mono"
-                        {...field}
+                        minHeight="400px"
                       />
                     </FormControl>
                     <FormDescription>
-                      Minimum 100 znaków. Możesz użyć formatowania markdown.
+                      Minimum 100 znaków. Użyj paska narzędzi do formatowania tekstu.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
