@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -15,9 +15,6 @@ import {
   Mail,
   Settings,
   Shield,
-  LogOut,
-  FileText,
-  User,
   ChevronLeft,
   ChevronRight,
   Tags,
@@ -27,18 +24,8 @@ import {
   LayoutTemplate,
   FileCode,
 } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { signOut } from "next-auth/react"
+import UserMenu from "@/components/UserMenu"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -65,12 +52,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const router = useRouter()
   const [isCollapsed, setIsCollapsed] = useState(false)
-
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -139,56 +121,7 @@ export default function AdminLayout({
           </div>
 
           {/* User menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
-              <Avatar className="h-9 w-9 cursor-pointer">
-                <AvatarImage src="/avatars/admin.jpg" alt="Admin" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Panel administracyjny</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/admin" className="flex items-center gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/admin/users" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Użytkownicy
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/admin/settings" className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Ustawienia
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/admin/logs" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Logi systemowe
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/admin/profil" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Mój profil
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <LogOut className="h-4 w-4" />
-                Wyloguj
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserMenu userRole="ADMIN" />
         </header>
 
         {/* Main content */}

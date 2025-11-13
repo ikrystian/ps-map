@@ -18,8 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, ChevronDown, User, LayoutDashboard, Briefcase, MessageSquare, HelpCircle, LogOut, FileStack, Settings } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Search, ChevronDown } from "lucide-react"
+import UserMenu from "@/components/UserMenu"
 
 interface Category {
   id: string
@@ -37,9 +37,18 @@ interface PublicHeaderProps {
   userRole?: "CLIENT" | "LAW_FIRM" | "ADMIN" | null
   userName?: string | null
   userImage?: string | null
+  punktySaldo?: number
+  userId?: string
 }
 
-export default function PublicHeader({ isAuthenticated = false, userRole = null, userName = null, userImage = null }: PublicHeaderProps) {
+export default function PublicHeader({
+  isAuthenticated = false,
+  userRole = null,
+  userName = null,
+  userImage = null,
+  punktySaldo = 0,
+  userId
+}: PublicHeaderProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
@@ -204,10 +213,14 @@ export default function PublicHeader({ isAuthenticated = false, userRole = null,
 
           {/* Right Side - User Menu / Login */}
           <div className="flex items-center gap-4">
-            {isAuthenticated ? (
-              <div id="user-avatar">
-                {/* // avatar uzytkownika */}
-              </div>
+            {isAuthenticated && userRole ? (
+              <UserMenu
+                userRole={userRole}
+                userName={userName}
+                userImage={userImage}
+                punktySaldo={punktySaldo}
+                userId={userId}
+              />
             ) : (
               <>
                 <Link href="/dodaj-sprawe">

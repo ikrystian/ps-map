@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   LayoutDashboard,
   Briefcase,
@@ -30,17 +29,8 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
-  Menu,
 } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import UserMenu from "@/components/UserMenu"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
@@ -187,71 +177,11 @@ export default function LawFirmPanelLayout({
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Points Counter */}
-            <Link href="/panel-kancelarii/punkty">
-              <Badge variant="outline" className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer">
-                <Coins className="h-4 w-4 text-primary" />
-                <span className="font-semibold">{punktySaldo}</span>
-                <span className="text-muted-foreground">punktów</span>
-              </Badge>
-            </Link>
-
-            {/* User menu */}
-            <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none" id="user-menu-button">
-              <Avatar className="h-9 w-9 cursor-pointer">
-                <AvatarImage src="/avatars/user.jpg" alt="User" />
-                <AvatarFallback>KA</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii" className="flex items-center gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Panel użytkownika
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii/sprawy" className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4" />
-                  Moje sprawy
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii/dokumenty" className="flex items-center gap-2">
-                  <FileStack className="h-4 w-4" />
-                  Dokumenty
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii/faktury" className="flex items-center gap-2">
-                  <Receipt className="h-4 w-4" />
-                  Faktury
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii/pomoc" className="flex items-center gap-2">
-                  <HelpCircle className="h-4 w-4" />
-                  Centrum pomocy
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/panel-kancelarii/profil" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Konto
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
-                <LogOut className="h-4 w-4" />
-                Wyloguj
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
+          <UserMenu
+            userRole="LAW_FIRM"
+            punktySaldo={punktySaldo}
+            userId={session?.user?.id}
+          />
         </header>
 
         {/* Main content */}
