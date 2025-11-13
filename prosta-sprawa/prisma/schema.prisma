@@ -872,6 +872,41 @@ enum PromotionType {
 }
 
 // ============================================================================
+// KONFIGURACJA TYPÓW PROMOCJI (ZARZĄDZANE PRZEZ ADMINA)
+// ============================================================================
+
+model PromotionConfig {
+  id                String   @id @default(uuid())
+
+  // Typ promocji
+  type              PromotionType @unique
+  label             String
+  description       String
+
+  // Koszt
+  pointsPerDay      Int?     // Dla promocji rozliczanych dziennie
+  pointsPerWeek     Int?     // Dla promocji rozliczanych tygodniowo
+
+  // Cechy/Features (JSON array stringów)
+  features          String   // JSON: ["Feature 1", "Feature 2", ...]
+
+  // Ikona i wygląd
+  icon              String?  // Nazwa ikony lub URL
+  color             String?  // Kolor tła ikony (hex)
+
+  // Status
+  aktywna           Boolean  @default(true)
+  kolejnosc         Int      @default(0)  // Kolejność wyświetlania
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([type])
+  @@index([aktywna])
+  @@index([kolejnosc])
+}
+
+// ============================================================================
 // POWIADOMIENIA
 // ============================================================================
 
