@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
+import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -141,6 +142,48 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full h-11" disabled={isLoading}>
                   {isLoading ? "Logowanie..." : "Zaloguj się"}
                 </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Lub zaloguj się przez
+                    </span>
+                  </div>
+                </div>
+
+                {/* Social Login Buttons */}
+                <div className="grid grid-cols-3 gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11"
+                    onClick={() => signIn("google", { callbackUrl })}
+                    disabled={isLoading}
+                  >
+                    <FaGoogle className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11"
+                    onClick={() => signIn("facebook", { callbackUrl })}
+                    disabled={isLoading}
+                  >
+                    <FaFacebook className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11"
+                    onClick={() => signIn("apple", { callbackUrl })}
+                    disabled={isLoading}
+                  >
+                    <FaApple className="h-5 w-5" />
+                  </Button>
+                </div>
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
