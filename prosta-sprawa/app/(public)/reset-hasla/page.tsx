@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react"
+import { AuthLayout } from "@/components/auth"
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -100,166 +101,154 @@ function ResetPasswordForm() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-[calc(100dvh-65px)] flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo/Brand */}
-          <div className="text-center">
-            <Link href="/" className="inline-block">
-              <h1 className="text-3xl font-bold">ProstaSprawa</h1>
-            </Link>
-          </div>
-
-          {/* Success Card */}
-          <Card className="border-none shadow-lg">
-            <CardHeader className="space-y-1 text-center">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
-              </div>
-              <CardTitle className="text-2xl font-bold">Hasło zostało zmienione!</CardTitle>
-              <CardDescription className="text-base">
-                Twoje hasło zostało pomyślnie zresetowane. Za chwilę zostaniesz przekierowany do strony logowania.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                type="button"
-                className="w-full"
-                onClick={() => router.push("/logowanie")}
-              >
-                Przejdź do logowania
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <AuthLayout
+        heroTitle="Bezpieczeństwo przede wszystkim"
+        heroDescription="Twoje konto jest teraz zabezpieczone nowym hasłem. Możesz teraz zalogować się i korzystać z naszych usług."
+      >
+        {/* Success Card */}
+        <Card className="border-none shadow-none bg-transparent">
+          <CardHeader className="space-y-1 px-0 text-center">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Hasło zostało zmienione!</CardTitle>
+            <CardDescription className="text-base">
+              Twoje hasło zostało pomyślnie zresetowane. Za chwilę zostaniesz przekierowany do strony logowania.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-0">
+            <Button
+              type="button"
+              className="w-full h-11"
+              onClick={() => router.push("/logowanie")}
+            >
+              Przejdź do logowania
+            </Button>
+          </CardContent>
+        </Card>
+      </AuthLayout>
     )
   }
 
   return (
-    <div className="min-h-[calc(100dvh-65px)] flex items-center justify-center p-8 bg-background">
-      <div className="w-full max-w-md space-y-8">
-        {/* Logo/Brand */}
-        <div className="text-center">
-          <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold">ProstaSprawa</h1>
-          </Link>
-        </div>
-
-        {/* Form Card */}
-        <Card className="border-none shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Ustaw nowe hasło</CardTitle>
-            <CardDescription>
-              Wprowadź nowe hasło do swojego konta
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Nowe hasło</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Wprowadź nowe hasło"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading || !token}
-                    required
-                    className="h-11 pr-10"
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
+    <AuthLayout
+      heroTitle="Bezpieczeństwo przede wszystkim"
+      heroDescription="Ustaw nowe, bezpieczne hasło do swojego konta. Twoje dane są u nas bezpieczne."
+    >
+      {/* Form Card */}
+      <Card className="border-none shadow-none bg-transparent">
+        <CardHeader className="space-y-1 px-0">
+          <CardTitle className="text-2xl font-bold">Ustaw nowe hasło</CardTitle>
+          <CardDescription>
+            Wprowadź nowe hasło do swojego konta
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-0">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
+                {error}
               </div>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Potwierdź nowe hasło</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Wprowadź hasło ponownie"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isLoading || !token}
-                    required
-                    className="h-11 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    tabIndex={-1}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900 border border-blue-200">
-                <p className="font-medium mb-1">Wymagania dotyczące hasła:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>Co najmniej 8 znaków</li>
-                  <li>Przynajmniej jedna wielka litera</li>
-                  <li>Przynajmniej jedna mała litera</li>
-                  <li>Przynajmniej jedna cyfra</li>
-                </ul>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-11"
-                disabled={isLoading || !token}
-              >
-                {isLoading ? "Resetowanie..." : "Resetuj hasło"}
-              </Button>
-
-              <div className="text-center">
-                <Link
-                  href="/logowanie"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+            <div className="space-y-2">
+              <Label htmlFor="password">Nowe hasło</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Wprowadź nowe hasło"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading || !token}
+                  required
+                  className="h-11 pr-10"
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
                 >
-                  <ArrowLeft className="w-4 h-4 mr-1" />
-                  Wróć do logowania
-                </Link>
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            </div>
 
-        {/* Help Text */}
-        <div className="text-center text-sm text-muted-foreground">
-          <p>
-            Link wygasł?{" "}
-            <Link href="/moje-konto/lost-password" className="underline hover:text-primary">
-              Wyślij nowy link
-            </Link>
-          </p>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Potwierdź nowe hasło</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Wprowadź hasło ponownie"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading || !token}
+                  required
+                  className="h-11 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900 border border-blue-200">
+              <p className="font-medium mb-1">Wymagania dotyczące hasła:</p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Co najmniej 8 znaków</li>
+                <li>Przynajmniej jedna wielka litera</li>
+                <li>Przynajmniej jedna mała litera</li>
+                <li>Przynajmniej jedna cyfra</li>
+              </ul>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-11"
+              disabled={isLoading || !token}
+            >
+              {isLoading ? "Resetowanie..." : "Resetuj hasło"}
+            </Button>
+
+            <div className="text-center">
+              <Link
+                href="/logowanie"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Wróć do logowania
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Help Text */}
+      <div className="text-center text-sm text-muted-foreground">
+        <p>
+          Link wygasł?{" "}
+          <Link href="/moje-konto/lost-password" className="underline hover:text-primary">
+            Wyślij nowy link
+          </Link>
+        </p>
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 
