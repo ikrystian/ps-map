@@ -140,7 +140,7 @@ export default function ClientPanelLayout({
           {/* Logo */}
           <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <Image src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
           </Link>
           </div>
 
