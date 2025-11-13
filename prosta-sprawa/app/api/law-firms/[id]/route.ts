@@ -112,6 +112,7 @@ export async function GET(
     // Parse JSON fields
     const parsedLawFirm = {
       ...lawFirm,
+      userId: lawFirm.userId, // Include userId for chat functionality
       galeriaZdjec: lawFirm.galeriaZdjec ? JSON.parse(lawFirm.galeriaZdjec) : [],
       slowaKluczowe: lawFirm.slowaKluczowe ? JSON.parse(lawFirm.slowaKluczowe) : [],
       godzinyOtwarcia: lawFirm.godzinyOtwarcia ? JSON.parse(lawFirm.godzinyOtwarcia) : null,

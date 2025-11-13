@@ -42,6 +42,11 @@ model User {
   notifications Notification[]
   notificationSettings NotificationSettings?
 
+  // Chat relations
+  clientConversations     Conversation[] @relation("ClientConversations")
+  lawFirmConversations    Conversation[] @relation("LawFirmConversations")
+  sentChatMessages        ChatMessage[]  @relation("SentChatMessages")
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -588,6 +593,60 @@ model Message {
   @@index([caseId])
   @@index([przeczytana])
   @@index([createdAt])
+}
+
+// ============================================================================
+// KONWERSACJE (MESSENGER-STYLE CHAT)
+// ============================================================================
+
+model Conversation {
+  id                String   @id @default(uuid())
+
+  // Uczestnicy konwersacji (klient i kancelaria)
+  clientUserId      String
+  clientUser        User     @relation("ClientConversations", fields: [clientUserId], references: [id], onDelete: Cascade)
+
+  lawFirmUserId     String
+  lawFirmUser       User     @relation("LawFirmConversations", fields: [lawFirmUserId], references: [id], onDelete: Cascade)
+
+  // Ostatnia wiadomość (denormalizacja dla wydajności)
+  lastMessageText   String?
+  lastMessageAt     DateTime?
+  lastMessageSenderId String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relacje
+  messages          ChatMessage[]
+
+  @@unique([clientUserId, lawFirmUserId])
+  @@index([clientUserId])
+  @@index([lawFirmUserId])
+  @@index([lastMessageAt])
+}
+
+model ChatMessage {
+  id              String   @id @default(uuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId        String
+  sender          User     @relation("SentChatMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  content         String
+  attachments     String?  // JSON array URL-i
+
+  isRead          Boolean  @default(false)
+  readAt          DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([isRead])
 }
 
 // ============================================================================

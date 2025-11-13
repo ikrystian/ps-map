@@ -203,6 +203,7 @@ export default function LawFirmProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
+  const [isStartingChat, setIsStartingChat] = useState(false)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -424,6 +425,58 @@ export default function LawFirmProfilePage() {
     }
   }
 
+  const handleStartChat = async () => {
+    if (!session?.user) {
+      toast.error("Musisz być zalogowany, aby rozpocząć czat")
+      router.push("/logowanie")
+      return
+    }
+
+    if (session.user.role !== "CLIENT") {
+      toast.error("Tylko klienci mogą rozpocząć czat z kancelariami")
+      return
+    }
+
+    if (!lawFirm) return
+
+    setIsStartingChat(true)
+
+    try {
+      // Pobierz ID użytkownika kancelarii
+      const lawFirmUserResponse = await fetch(`/api/law-firms/${lawFirm.id}`)
+      if (!lawFirmUserResponse.ok) {
+        throw new Error("Nie udało się pobrać danych kancelarii")
+      }
+
+      const lawFirmData = await lawFirmUserResponse.json()
+
+      // Utwórz lub pobierz konwersację
+      const response = await fetch("/api/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lawFirmUserId: lawFirmData.userId,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się rozpocząć czatu")
+      }
+
+      const conversation = await response.json()
+
+      // Przekieruj do panelu klienta z otwartą konwersacją
+      router.push(`/panel-klienta/wiadomosci?conversationId=${conversation.id}`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
+    } finally {
+      setIsStartingChat(false)
+    }
+  }
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-1">
@@ -561,10 +614,17 @@ export default function LawFirmProfilePage() {
                     <Share2 className="h-5 w-5" />
                   </Button>
 
-                  <Button>
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Kontakt
-                  </Button>
+                  {session?.user?.role === "CLIENT" ? (
+                    <Button onClick={handleStartChat} disabled={isStartingChat}>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      {isStartingChat ? "Przechodzę..." : "Rozpocznij czat"}
+                    </Button>
+                  ) : (
+                    <Button>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      Kontakt
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
