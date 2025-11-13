@@ -3,269 +3,14 @@ import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
-const wojewodztwa = [
-  { nazwa: 'Dolnośląskie', slug: 'dolnoslaskie' },
-  { nazwa: 'Kujawsko-Pomorskie', slug: 'kujawsko-pomorskie' },
-  { nazwa: 'Lubelskie', slug: 'lubelskie' },
-  { nazwa: 'Lubuskie', slug: 'lubuskie' },
-  { nazwa: 'Łódzkie', slug: 'lodzkie' },
-  { nazwa: 'Małopolskie', slug: 'malopolskie' },
-  { nazwa: 'Mazowieckie', slug: 'mazowieckie' },
-  { nazwa: 'Opolskie', slug: 'opolskie' },
-  { nazwa: 'Podkarpackie', slug: 'podkarpackie' },
-  { nazwa: 'Podlaskie', slug: 'podlaskie' },
-  { nazwa: 'Pomorskie', slug: 'pomorskie' },
-  { nazwa: 'Śląskie', slug: 'slaskie' },
-  { nazwa: 'Świętokrzyskie', slug: 'swietokrzyskie' },
-  { nazwa: 'Warmińsko-Mazurskie', slug: 'warminsko-mazurskie' },
-  { nazwa: 'Wielkopolskie', slug: 'wielkopolskie' },
-  { nazwa: 'Zachodniopomorskie', slug: 'zachodniopomorskie' },
-]
-
-const kategorie = [
-  {
-    nazwa: 'Prawo cywilne',
-    slug: 'prawo-cywilne',
-    opis: 'Sprawy związane z prawem cywilnym, kontraktami, roszczeniami',
-  },
-  {
-    nazwa: 'Prawo karne',
-    slug: 'prawo-karne',
-    opis: 'Obrona w sprawach karnych, postępowania karne',
-  },
-  {
-    nazwa: 'Prawo rodzinne',
-    slug: 'prawo-rodzinne',
-    opis: 'Rozwody, alimenty, sprawy opiekuńcze',
-  },
-  {
-    nazwa: 'Prawo pracy',
-    slug: 'prawo-pracy',
-    opis: 'Sprawy pracownicze, mobbing, wypowiedzenia',
-  },
-  {
-    nazwa: 'Prawo gospodarcze',
-    slug: 'prawo-gospodarcze',
-    opis: 'Sprawy firmowe, umowy handlowe, spory gospodarcze',
-  },
-  {
-    nazwa: 'Prawo administracyjne',
-    slug: 'prawo-administracyjne',
-    opis: 'Sprawy z urzędami, decyzje administracyjne',
-  },
-  {
-    nazwa: 'Prawo podatkowe',
-    slug: 'prawo-podatkowe',
-    opis: 'Podatki, kontrole skarbowe, optymalizacja podatkowa',
-  },
-  {
-    nazwa: 'Prawo medyczne',
-    slug: 'prawo-medyczne',
-    opis: 'Błędy medyczne, odpowiedzialność lekarzy',
-  },
-  {
-    nazwa: 'Prawo nieruchomości',
-    slug: 'prawo-nieruchomosci',
-    opis: 'Kupno, sprzedaż, wynajem nieruchomości',
-  },
-  {
-    nazwa: 'Prawo spadkowe',
-    slug: 'prawo-spadkowe',
-    opis: 'Spadki, testamenty, dziedziczenie',
-  },
-  {
-    nazwa: 'Prawo konsumenckie',
-    slug: 'prawo-konsumenckie',
-    opis: 'Ochrona konsumentów, reklamacje',
-  },
-  {
-    nazwa: 'Prawo ubezpieczeniowe',
-    slug: 'prawo-ubezpieczeniowe',
-    opis: 'Sprawy z ubezpieczycielami, odszkodowania',
-  },
-]
-
-const promotionConfigs = [
-  {
-    type: 'PODBICIE_OGLOSZENIA',
-    label: 'Podbicie ogłoszenia',
-    description: 'Twój profil pojawi się wyżej w wynikach wyszukiwania',
-    pointsPerDay: 20,
-    pointsPerWeek: null,
-    features: JSON.stringify([
-      'Wyższa pozycja w wynikach wyszukiwania',
-      'Zwiększona widoczność profilu',
-      'Oznaczenie jako aktywna kancelaria',
-    ]),
-    icon: 'TrendingUp',
-    color: '#3b82f6',
-    aktywna: true,
-    kolejnosc: 0,
-  },
-  {
-    type: 'WYROZNIENIE',
-    label: 'Wyróżnienie',
-    description: 'Twój profil zostanie wyróżniony wizualnie',
-    pointsPerDay: null,
-    pointsPerWeek: 50,
-    features: JSON.stringify([
-      'Kolorowa ramka wokół profilu',
-      'Ikona wyróżnienia',
-      'Wyższa pozycja niż standardowe profile',
-      'Zwiększenie CTR o 30-50%',
-    ]),
-    icon: 'Sparkles',
-    color: '#a855f7',
-    aktywna: true,
-    kolejnosc: 1,
-  },
-  {
-    type: 'TOP_LISTA',
-    label: 'TOP Lista',
-    description: 'Pojaw się w TOP 3 wyników w swojej kategorii',
-    pointsPerDay: null,
-    pointsPerWeek: 100,
-    features: JSON.stringify([
-      'Gwarantowana pozycja w TOP 3',
-      'Specjalne wyróżnienie wizualne',
-      'Badge "TOP Kancelaria"',
-      'Priorytetowe wyświetlanie',
-      'Zwiększenie CTR o 70-100%',
-    ]),
-    icon: 'Award',
-    color: '#f97316',
-    aktywna: true,
-    kolejnosc: 2,
-  },
-  {
-    type: 'STRONA_GLOWNA',
-    label: 'Strona główna',
-    description: 'Wyświetl swój profil na stronie głównej portalu',
-    pointsPerDay: null,
-    pointsPerWeek: 200,
-    features: JSON.stringify([
-      'Wyświetlanie na stronie głównej',
-      'Maksymalna widoczność',
-      'Badge "Polecana Kancelaria"',
-      'Dotarcie do wszystkich użytkowników',
-      'Największy wzrost zapytań',
-    ]),
-    icon: 'Home',
-    color: '#ef4444',
-    aktywna: true,
-    kolejnosc: 3,
-  },
-]
-
-const blogCategories = [
-  {
-    nazwa: 'Prawo i Technologia',
-    slug: 'prawo-i-technologia',
-    opis: 'Najnowsze trendy na styku prawa i nowych technologii, RODO, AI, e-commerce.',
-  },
-  {
-    nazwa: 'Porady Prawne dla Biznesu',
-    slug: 'porady-prawne-dla-biznesu',
-    opis: 'Praktyczne porady dla przedsiębiorców, zakładanie firmy, umowy, podatki.',
-  },
-  {
-    nazwa: 'Prawo w Życiu Codziennym',
-    slug: 'prawo-w-zyciu-codziennym',
-    opis: 'Sprawy, z którymi każdy z nas może się spotkać: spadki, darowizny, reklamacje.',
-  },
-  {
-    nazwa: 'Nieruchomości i Prawo Budowlane',
-    slug: 'nieruchomosci-i-prawo-budowlane',
-    opis: 'Kupno, sprzedaż, najem nieruchomości, proces budowlany, umowy deweloperskie.',
-  },
-  {
-    nazwa: 'Prawo Pracy dla Pracownika i Pracodawcy',
-    slug: 'prawo-pracy-dla-pracownika-i-pracodawcy',
-    opis: 'Prawa i obowiązki w stosunku pracy, mobbing, zwolnienia, umowy o pracę.',
-  },
-  {
-    nazwa: 'Prawo Podatkowe bez Tajemnic',
-    slug: 'prawo-podatkowe-bez-tajemnic',
-    opis: 'Wyjaśnienie zawiłości systemu podatkowego, optymalizacja, ulgi i odliczenia.',
-  },
-]
-
-const helpData = [
-  {
-    category: {
-      nazwa: 'Konto i Profil',
-      slug: 'konto-i-profil',
-      opis: 'Wszystko na temat zarządzania kontem i profilem użytkownika.',
-      ikona: 'User',
-      kolejnosc: 0,
-    },
-    questions: [
-      {
-        pytanie: 'Jak zresetować hasło?',
-        odpowiedz:
-          'Aby zresetować hasło, przejdź do strony logowania i kliknij link "Nie pamiętasz hasła?". Następnie postępuj zgodnie z instrukcjami wysłanymi na Twój adres e-mail.',
-        slug: 'jak-zresetowac-haslo',
-        kolejnosc: 0,
-      },
-      {
-        pytanie: 'Jak mogę zmienić mój adres e-mail?',
-        odpowiedz:
-          'Zmiana adresu e-mail jest możliwa w ustawieniach konta. Przejdź do sekcji "Profil", a następnie znajdź opcję "Zmień e-mail". Będziesz musiał potwierdzić zmianę, klikając w link weryfikacyjny.',
-        slug: 'jak-zmienic-email',
-        kolejnosc: 1,
-      },
-    ],
-  },
-  {
-    category: {
-      nazwa: 'Zarządzanie Sprawami',
-      slug: 'zarzadzanie-sprawami',
-      opis: 'Pomoc dotycząca dodawania, edytowania i monitorowania spraw.',
-      ikona: 'FileText',
-      kolejnosc: 1,
-    },
-    questions: [
-      {
-        pytanie: 'Jak dodać nową sprawę?',
-        odpowiedz:
-          'Aby dodać nową sprawę, zaloguj się na swoje konto i przejdź do panelu klienta. Następnie kliknij przycisk "Dodaj nową sprawę" i wypełnij formularz, podając wszystkie wymagane informacje.',
-        slug: 'jak-dodac-nowa-sprawe',
-        kolejnosc: 0,
-      },
-    ],
-  },
-  {
-    category: {
-      nazwa: 'Płatności i Pakiety',
-      slug: 'platnosci-i-pakiety',
-      opis: 'Informacje na temat płatności, faktur i dostępnych pakietów.',
-      ikona: 'CreditCard',
-      kolejnosc: 2,
-    },
-    questions: [
-      {
-        pytanie: 'Jakie są dostępne metody płatności?',
-        odpowiedz:
-          'Akceptujemy płatności za pośrednictwem Przelewy24, PayU, karty kredytowej oraz tradycyjnego przelewu bankowego. Wszystkie dostępne opcje znajdziesz podczas finalizacji zamówienia.',
-        slug: 'jakie-sa-dostepne-metody-platnosci',
-        kolejnosc: 0,
-      },
-    ],
-  },
-]
-
 async function main() {
   console.log('Start seeding...')
 
-  // Seed użytkownika admina
-  console.log('Seeding admin user...')
+  // Seed admina
   const hashedPassword = await bcrypt.hash('admin123', 10)
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@bpcoders.pl' },
-    update: {
-      password: hashedPassword,
-      role: 'ADMIN',
-    },
+    update: { password: hashedPassword, role: 'ADMIN' },
     create: {
       email: 'admin@bpcoders.pl',
       name: 'Administrator',
@@ -274,893 +19,544 @@ async function main() {
       emailVerified: new Date(),
     },
   })
-  console.log(`Created/Updated admin user: ${adminUser.email}`)
+  console.log(`✓ Admin: ${adminUser.email}`)
 
-  // Seed województwa
-  console.log('Seeding województwa...')
+  // Seed województw
+  const wojewodztwa = [
+    { nazwa: 'Dolnośląskie', slug: 'dolnoslaskie' },
+    { nazwa: 'Kujawsko-Pomorskie', slug: 'kujawsko-pomorskie' },
+    { nazwa: 'Lubelskie', slug: 'lubelskie' },
+    { nazwa: 'Lubuskie', slug: 'lubuskie' },
+    { nazwa: 'Łódzkie', slug: 'lodzkie' },
+    { nazwa: 'Małopolskie', slug: 'malopolskie' },
+    { nazwa: 'Mazowieckie', slug: 'mazowieckie' },
+    { nazwa: 'Opolskie', slug: 'opolskie' },
+    { nazwa: 'Podkarpackie', slug: 'podkarpackie' },
+    { nazwa: 'Podlaskie', slug: 'podlaskie' },
+    { nazwa: 'Pomorskie', slug: 'pomorskie' },
+    { nazwa: 'Śląskie', slug: 'slaskie' },
+    { nazwa: 'Świętokrzyskie', slug: 'swietokrzyskie' },
+    { nazwa: 'Warmińsko-Mazurskie', slug: 'warminsko-mazurskie' },
+    { nazwa: 'Wielkopolskie', slug: 'wielkopolskie' },
+    { nazwa: 'Zachodniopomorskie', slug: 'zachodniopomorskie' },
+  ]
+
   for (const woj of wojewodztwa) {
-    const voivodeship = await prisma.voivodeship.upsert({
+    await prisma.voivodeship.upsert({
       where: { slug: woj.slug },
       update: {},
       create: woj,
     })
-    console.log(`Created/Updated voivodeship: ${voivodeship.nazwa}`)
   }
+  console.log('✓ Województwa')
 
-  // Seed kategorie prawne
-  console.log('Seeding kategorie prawne...')
+  // Seed kategorii
+  const kategorie = [
+    { nazwa: 'Prawo cywilne', slug: 'prawo-cywilne', opis: 'Sprawy związane z prawem cywilnym, kontraktami, roszczeniami' },
+    { nazwa: 'Prawo karne', slug: 'prawo-karne', opis: 'Obrona w sprawach karnych, postępowania karne' },
+    { nazwa: 'Prawo rodzinne', slug: 'prawo-rodzinne', opis: 'Rozwody, alimenty, sprawy opiekuńcze' },
+    { nazwa: 'Prawo pracy', slug: 'prawo-pracy', opis: 'Sprawy pracownicze, mobbing, wypowiedzenia' },
+  ]
+
   for (const kat of kategorie) {
-    const category = await prisma.category.upsert({
+    await prisma.category.upsert({
       where: { slug: kat.slug },
       update: {},
       create: kat,
     })
-    console.log(`Created/Updated category: ${category.nazwa}`)
   }
+  console.log('✓ Kategorie')
 
-  // Seed kategorie bloga
-  console.log('Seeding kategorie bloga...')
-  for (const kat of blogCategories) {
-    const blogCategory = await prisma.blogCategory.upsert({
-      where: { slug: kat.slug },
-      update: {},
-      create: kat,
-    })
-    console.log(`Created/Updated blog category: ${blogCategory.nazwa}`)
-  }
+  // Pobierz kategorie i województwa
+  const prawoCywilne = await prisma.category.findUnique({ where: { slug: 'prawo-cywilne' } })
+  const prawoKarne = await prisma.category.findUnique({ where: { slug: 'prawo-karne' } })
+  const prawoRodzinne = await prisma.category.findUnique({ where: { slug: 'prawo-rodzinne' } })
+  const prawoPracy = await prisma.category.findUnique({ where: { slug: 'prawo-pracy' } })
 
-  // Seed promotion configs
-  console.log('Seeding promotion configs...')
-  for (const config of promotionConfigs) {
-    const promotionConfig = await prisma.promotionConfig.upsert({
-      where: { type: config.type as any },
-      update: {
-        label: config.label,
-        description: config.description,
-        pointsPerDay: config.pointsPerDay,
-        pointsPerWeek: config.pointsPerWeek,
-        features: config.features,
-        icon: config.icon,
-        color: config.color,
-        aktywna: config.aktywna,
-        kolejnosc: config.kolejnosc,
-      },
-      create: config as any,
-    })
-    console.log(`Created/Updated promotion config: ${promotionConfig.label}`)
-  }
+  const mazowieckie = await prisma.voivodeship.findUnique({ where: { slug: 'mazowieckie' } })
+  const malopolskie = await prisma.voivodeship.findUnique({ where: { slug: 'malopolskie' } })
+  const dolnoslaskie = await prisma.voivodeship.findUnique({ where: { slug: 'dolnoslaskie' } })
+  const wielkopolskie = await prisma.voivodeship.findUnique({ where: { slug: 'wielkopolskie' } })
+  const pomorskie = await prisma.voivodeship.findUnique({ where: { slug: 'pomorskie' } })
+  const slaskie = await prisma.voivodeship.findUnique({ where: { slug: 'slaskie' } })
+  const lodzkie = await prisma.voivodeship.findUnique({ where: { slug: 'lodzkie' } })
 
-  // Seed użytkownika klienta
-  console.log('Seeding client user...')
-  const clientPassword = await bcrypt.hash('KUdziak1991!', 10)
-  const clientUser = await prisma.user.upsert({
-    where: { email: 'klient@bpcoders.pl' },
-    update: {
-      password: clientPassword,
-      role: 'CLIENT',
-    },
-    create: {
-      email: 'klient@bpcoders.pl',
-      name: 'Jan Kowalski',
-      password: clientPassword,
-      role: 'CLIENT',
-      emailVerified: new Date(),
-    },
-  })
-  console.log(`Created/Updated client user: ${clientUser.email}`)
+  // Dane kancelarii - 5 na kategorię
+  const lawFirmsData = [
+    // PRAWO CYWILNE (5)
+    { email: 'kontakt@kancelaria-kowalski.pl', name: 'Kancelaria Kowalski', miasto: 'Poznań', voivodeship: wielkopolskie, category: prawoCywilne, nip: '1234567890' },
+    { email: 'biuro@lexcivil.pl', name: 'Lex Civil', miasto: 'Warszawa', voivodeship: mazowieckie, category: prawoCywilne, nip: '2345678901' },
+    { email: 'kontakt@prawo-dla-ciebie.pl', name: 'Prawo dla Ciebie', miasto: 'Kraków', voivodeship: malopolskie, category: prawoCywilne, nip: '3456789012' },
+    { email: 'biuro@kancelaria-wisniewski.pl', name: 'Kancelaria Wiśniewski', miasto: 'Wrocław', voivodeship: dolnoslaskie, category: prawoCywilne, nip: '4567890123' },
+    { email: 'kontakt@civil-law.pl', name: 'Civil Law Partners', miasto: 'Gdańsk', voivodeship: pomorskie, category: prawoCywilne, nip: '5678901234' },
+    // PRAWO KARNE (5)
+    { email: 'obrona@kancelaria-karna.pl', name: 'Kancelaria Karna', miasto: 'Warszawa', voivodeship: mazowieckie, category: prawoKarne, nip: '6789012345' },
+    { email: 'kontakt@adwokat-kaminski.pl', name: 'Adwokat Kamiński', miasto: 'Katowice', voivodeship: slaskie, category: prawoKarne, nip: '7890123456' },
+    { email: 'biuro@lex-defense.pl', name: 'Lex Defense', miasto: 'Poznań', voivodeship: wielkopolskie, category: prawoKarne, nip: '8901234567' },
+    { email: 'kontakt@kancelaria-lewandowski.pl', name: 'Kancelaria Lewandowski', miasto: 'Łódź', voivodeship: lodzkie, category: prawoKarne, nip: '9012345678' },
+    { email: 'biuro@criminal-law.pl', name: 'Criminal Law Experts', miasto: 'Kraków', voivodeship: malopolskie, category: prawoKarne, nip: '0123456789' },
+    // PRAWO RODZINNE (5)
+    { email: 'kontakt@rodzina-prawo.pl', name: 'Rodzina i Prawo', miasto: 'Warszawa', voivodeship: mazowieckie, category: prawoRodzinne, nip: '1230987654' },
+    { email: 'biuro@kancelaria-rodzinna.pl', name: 'Kancelaria Rodzinna', miasto: 'Gdańsk', voivodeship: pomorskie, category: prawoRodzinne, nip: '2341098765' },
+    { email: 'kontakt@rozwody-alimenty.pl', name: 'Rozwody i Alimenty', miasto: 'Wrocław', voivodeship: dolnoslaskie, category: prawoRodzinne, nip: '3452109876' },
+    { email: 'biuro@family-law.pl', name: 'Family Law Partners', miasto: 'Poznań', voivodeship: wielkopolskie, category: prawoRodzinne, nip: '4563210987' },
+    { email: 'kontakt@kancelaria-zielinska.pl', name: 'Kancelaria Zielińska', miasto: 'Kraków', voivodeship: malopolskie, category: prawoRodzinne, nip: '5674321098' },
+    // PRAWO PRACY (5)
+    { email: 'kontakt@prawo-pracy-expert.pl', name: 'Prawo Pracy Expert', miasto: 'Warszawa', voivodeship: mazowieckie, category: prawoPracy, nip: '6785432109' },
+    { email: 'biuro@kancelaria-pracownicza.pl', name: 'Kancelaria Pracownicza', miasto: 'Katowice', voivodeship: slaskie, category: prawoPracy, nip: '7896543210' },
+    { email: 'kontakt@labor-law.pl', name: 'Labor Law Specialists', miasto: 'Poznań', voivodeship: wielkopolskie, category: prawoPracy, nip: '8907654321' },
+    { email: 'biuro@kancelaria-szymanski.pl', name: 'Kancelaria Szymański', miasto: 'Wrocław', voivodeship: dolnoslaskie, category: prawoPracy, nip: '9018765432' },
+    { email: 'kontakt@employment-law.pl', name: 'Employment Law Group', miasto: 'Gdańsk', voivodeship: pomorskie, category: prawoPracy, nip: '0129876543' },
+  ]
 
-  // Pobierz województwo dla klienta
-  const mazowieckieVoivodeship = await prisma.voivodeship.findFirst({
-    where: { slug: 'mazowieckie' },
-  })
-
-  // Seed profilu klienta
-  console.log('Seeding client profile...')
-  const client = await prisma.client.upsert({
-    where: { userId: clientUser.id },
-    update: {
-      imie: 'Jan',
-      nazwisko: 'Kowalski',
-      telefon: '+48 123 456 789',
-      adres: 'ul. Testowa 123',
-      kodPocztowy: '00-001',
-      miasto: 'Warszawa',
-      voivodeshipId: mazowieckieVoivodeship?.id,
-      zgodaRegulamin: true,
-      zgodaNewsletter: true,
-      zgodaMarketing: false,
-    },
-    create: {
-      userId: clientUser.id,
-      imie: 'Jan',
-      nazwisko: 'Kowalski',
-      telefon: '+48 123 456 789',
-      adres: 'ul. Testowa 123',
-      kodPocztowy: '00-001',
-      miasto: 'Warszawa',
-      voivodeshipId: mazowieckieVoivodeship?.id,
-      zgodaRegulamin: true,
-      zgodaNewsletter: true,
-      zgodaMarketing: false,
-    },
-  })
-  console.log(`Created/Updated client profile: ${client.imie} ${client.nazwisko}`)
-
-  // Seed użytkownika kancelarii
-  console.log('Seeding law firm user...')
-  const lawFirmPassword = await bcrypt.hash('KUdziak1991!', 10)
-  const lawFirmUser = await prisma.user.upsert({
-    where: { email: 'kancelaria@bpcoders.pl' },
-    update: {
-      password: lawFirmPassword,
-      role: 'LAW_FIRM',
-    },
-    create: {
-      email: 'kancelaria@bpcoders.pl',
-      name: 'Kancelaria Prawna Kowalski i Wspólnicy',
-      password: lawFirmPassword,
-      role: 'LAW_FIRM',
-      emailVerified: new Date(),
-    },
-  })
-  console.log(`Created/Updated law firm user: ${lawFirmUser.email}`)
-
-  // Pobierz województwo dla kancelarii
-  const wielkopolskieVoivodeship = await prisma.voivodeship.findFirst({
-    where: { slug: 'wielkopolskie' },
-  })
-
-  // Seed profilu kancelarii
-  console.log('Seeding law firm profile...')
-  const lawFirm = await prisma.lawFirm.upsert({
-    where: { userId: lawFirmUser.id },
-    update: {
-      typ: 'SPOLKA_PARTNERSKA',
-      nazwa: 'Kancelaria Prawna Kowalski i Wspólnicy',
-      nazwaFirmy: 'Kowalski i Wspólnicy Sp. p.',
-      nip: '1234567890',
-      regon: '123456789',
-      krs: '0000123456',
-      imieKontakt: 'Anna',
-      nazwiskoKontakt: 'Kowalska',
-      stanowisko: 'Partner zarządzający',
-      numerTelefonu: '+48 61 123 45 67',
-      numerTelefonu2: '+48 500 123 456',
-      emailKontakt: 'kontakt@kancelaria-kowalski.pl',
-      adres: 'ul. Prawnicza 15',
-      kodPocztowy: '61-001',
-      miasto: 'Poznań',
-      voivodeshipId: wielkopolskieVoivodeship?.id || '',
-      opis: 'Jesteśmy doświadczoną kancelarią prawną z ponad 15-letnim stażem. Specjalizujemy się w prawie cywilnym, rodzinnym oraz gospodarczym. Nasz zespół składa się z wykwalifikowanych prawników, którzy z pasją i zaangażowaniem podchodzą do każdej sprawy. Oferujemy kompleksową obsługę prawną zarówno dla osób prywatnych, jak i przedsiębiorców.',
-      logo: '/uploads/law-firms/logo-kowalski.png',
-      zdjecieGlowne: '/uploads/law-firms/office-kowalski.jpg',
-      statusGodzinyOtwarcia: true,
-      godzinyOtwarcia: JSON.stringify({
-        poniedzialek: '9:00-17:00',
-        wtorek: '9:00-17:00',
-        sroda: '9:00-17:00',
-        czwartek: '9:00-17:00',
-        piatek: '9:00-15:00',
-        sobota: 'Zamknięte',
-        niedziela: 'Zamknięte',
-      }),
-      linkLinkedIn: 'https://linkedin.com/company/kancelaria-kowalski',
-      linkFacebook: 'https://facebook.com/kancelaria.kowalski',
-      stronaWww: 'https://kancelaria-kowalski.pl',
-      edukacja: JSON.stringify([
-        {
-          uczelnia: 'Uniwersytet im. Adama Mickiewicza w Poznaniu',
-          wydzial: 'Wydział Prawa i Administracji',
-          rokOd: 1995,
-          rokDo: 2000,
-        },
-      ]),
-      oirpMiasto: 'Poznań',
-      oirpWpis: 'PO/1234/2005',
-      oirpStatus: true,
-      unikatowyOpisUslugi: 'Kompleksowa obsługa prawna z indywidualnym podejściem do każdego klienta',
-      slowaKluczowe: JSON.stringify(['prawo cywilne', 'prawo rodzinne', 'prawo gospodarcze', 'rozwody', 'umowy']),
-      callaPolska: false,
-      onlineOnly: false,
-      typOferty: 'WSZYSTKIE',
-      punktySaldo: 500,
-      pakietSubskrypcji: 'PREMIUM',
-      dataPakietuOd: new Date(),
-      dataPakietuDo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      zgodaRegulamin: true,
-      zgodaPrzetwarzanie: true,
-      zweryfikowana: true,
-      aktywna: true,
-    },
-    create: {
-      userId: lawFirmUser.id,
-      typ: 'SPOLKA_PARTNERSKA',
-      nazwa: 'Kancelaria Prawna Kowalski i Wspólnicy',
-      nazwaFirmy: 'Kowalski i Wspólnicy Sp. p.',
-      nip: '1234567890',
-      regon: '123456789',
-      krs: '0000123456',
-      imieKontakt: 'Anna',
-      nazwiskoKontakt: 'Kowalska',
-      stanowisko: 'Partner zarządzający',
-      numerTelefonu: '+48 61 123 45 67',
-      numerTelefonu2: '+48 500 123 456',
-      emailKontakt: 'kontakt@kancelaria-kowalski.pl',
-      adres: 'ul. Prawnicza 15',
-      kodPocztowy: '61-001',
-      miasto: 'Poznań',
-      voivodeshipId: wielkopolskieVoivodeship?.id || '',
-      opis: 'Jesteśmy doświadczoną kancelarią prawną z ponad 15-letnim stażem. Specjalizujemy się w prawie cywilnym, rodzinnym oraz gospodarczym. Nasz zespół składa się z wykwalifikowanych prawników, którzy z pasją i zaangażowaniem podchodzą do każdej sprawy. Oferujemy kompleksową obsługę prawną zarówno dla osób prywatnych, jak i przedsiębiorców.',
-      logo: '/uploads/law-firms/logo-kowalski.png',
-      zdjecieGlowne: '/uploads/law-firms/office-kowalski.jpg',
-      statusGodzinyOtwarcia: true,
-      godzinyOtwarcia: JSON.stringify({
-        poniedzialek: '9:00-17:00',
-        wtorek: '9:00-17:00',
-        sroda: '9:00-17:00',
-        czwartek: '9:00-17:00',
-        piatek: '9:00-15:00',
-        sobota: 'Zamknięte',
-        niedziela: 'Zamknięte',
-      }),
-      linkLinkedIn: 'https://linkedin.com/company/kancelaria-kowalski',
-      linkFacebook: 'https://facebook.com/kancelaria.kowalski',
-      stronaWww: 'https://kancelaria-kowalski.pl',
-      edukacja: JSON.stringify([
-        {
-          uczelnia: 'Uniwersytet im. Adama Mickiewicza w Poznaniu',
-          wydzial: 'Wydział Prawa i Administracji',
-          rokOd: 1995,
-          rokDo: 2000,
-        },
-      ]),
-      oirpMiasto: 'Poznań',
-      oirpWpis: 'PO/1234/2005',
-      oirpStatus: true,
-      unikatowyOpisUslugi: 'Kompleksowa obsługa prawna z indywidualnym podejściem do każdego klienta',
-      slowaKluczowe: JSON.stringify(['prawo cywilne', 'prawo rodzinne', 'prawo gospodarcze', 'rozwody', 'umowy']),
-      callaPolska: false,
-      onlineOnly: false,
-      typOferty: 'WSZYSTKIE',
-      punktySaldo: 500,
-      pakietSubskrypcji: 'PREMIUM',
-      dataPakietuOd: new Date(),
-      dataPakietuDo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      zgodaRegulamin: true,
-      zgodaPrzetwarzanie: true,
-      zweryfikowana: true,
-      aktywna: true,
-    },
-  })
-  console.log(`Created/Updated law firm profile: ${lawFirm.nazwa}`)
-
-  // --- Kancelaria 2: Nowoczesne Prawo (Warszawa) ---
-  console.log('Seeding law firm 2 user...')
-  const lawFirm2Password = await bcrypt.hash('Prawo2024!', 10)
-  const lawFirm2User = await prisma.user.upsert({
-    where: { email: 'biuro@nowoczesneprawo.pl' },
-    update: {},
-    create: {
-      email: 'biuro@nowoczesneprawo.pl',
-      name: 'Nowoczesne Prawo Kancelaria Podatkowa',
-      password: lawFirm2Password,
-      role: 'LAW_FIRM',
-      emailVerified: new Date(),
-    },
-  })
-  console.log(`Created law firm user: ${lawFirm2User.email}`)
-
-  const lawFirm2 = await prisma.lawFirm.upsert({
-    where: { userId: lawFirm2User.id },
-    update: {},
-    create: {
-      userId: lawFirm2User.id,
-      typ: 'OSOBA_FIZYCZNA',
-      nazwa: 'Nowoczesne Prawo Kancelaria Podatkowa',
-      nazwaFirmy: 'Nowoczesne Prawo Jan Nowak',
-      nip: '9876543210',
-      imieKontakt: 'Jan',
-      nazwiskoKontakt: 'Nowak',
-      numerTelefonu: '+48 22 987 65 43',
-      emailKontakt: 'jan.nowak@nowoczesneprawo.pl',
-      adres: 'ul. Finansowa 1',
-      kodPocztowy: '02-001',
-      miasto: 'Warszawa',
-      voivodeshipId: mazowieckieVoivodeship?.id || '',
-      opis: 'Specjalizujemy się w optymalizacji podatkowej dla firm i osób prywatnych. Oferujemy również pełne wsparcie w zakresie prawa pracy.',
-      typOferty: 'STALA_WSPOLPRACA',
-      pakietSubskrypcji: 'STANDARD',
-      zgodaRegulamin: true,
-      zgodaPrzetwarzanie: true,
-      zweryfikowana: true,
-      aktywna: true,
-    },
-  })
-  console.log(`Created law firm profile: ${lawFirm2.nazwa}`)
-
-  // --- Kancelaria 3: Lex Secure (Kraków) ---
-  console.log('Seeding law firm 3 user...')
-  const lawFirm3Password = await bcrypt.hash('LexSecure#1', 10)
-  const lawFirm3User = await prisma.user.upsert({
-    where: { email: 'kontakt@lexsecure.pl' },
-    update: {},
-    create: {
-      email: 'kontakt@lexsecure.pl',
-      name: 'Lex Secure Kancelaria Adwokacka',
-      password: lawFirm3Password,
-      role: 'LAW_FIRM',
-      emailVerified: new Date(),
-    },
-  })
-  console.log(`Created law firm user: ${lawFirm3User.email}`)
-
-  const malopolskieVoivodeship = await prisma.voivodeship.findFirst({
-    where: { slug: 'malopolskie' },
-  })
-
-  const lawFirm3 = await prisma.lawFirm.upsert({
-    where: { userId: lawFirm3User.id },
-    update: {},
-    create: {
-      userId: lawFirm3User.id,
-      typ: 'SPOLKA_ZOO',
-      nazwa: 'Lex Secure Kancelaria Adwokacka',
-      nazwaFirmy: 'Lex Secure Sp. z o.o.',
-      nip: '1122334455',
-      imieKontakt: 'Katarzyna',
-      nazwiskoKontakt: 'Wiśniewska',
-      numerTelefonu: '+48 12 111 22 33',
-      emailKontakt: 'k.wisniewska@lexsecure.pl',
-      adres: 'ul. Bezpieczna 10',
-      kodPocztowy: '30-001',
-      miasto: 'Kraków',
-      voivodeshipId: malopolskieVoivodeship?.id || '',
-      opis: 'Obrona w sprawach karnych na każdym etapie postępowania. Reprezentujemy również pacjentów w sprawach o błędy medyczne.',
-      typOferty: 'JEDNORAZOWA_USLUGA',
-      pakietSubskrypcji: 'PODSTAWOWY',
-      zgodaRegulamin: true,
-      zgodaPrzetwarzanie: true,
-      zweryfikowana: false,
-      aktywna: true,
-    },
-  })
-  console.log(`Created law firm profile: ${lawFirm3.nazwa}`)
-
-  // Przypisz kategorie do kancelarii
-  console.log('Assigning categories to law firm...')
-  const prawoCywilne = await prisma.category.findFirst({ where: { slug: 'prawo-cywilne' } })
-  const prawoRodzinne = await prisma.category.findFirst({ where: { slug: 'prawo-rodzinne' } })
-  const prawoGospodarcze = await prisma.category.findFirst({ where: { slug: 'prawo-gospodarcze' } })
-  const prawoPodatkowe = await prisma.category.findFirst({ where: { slug: 'prawo-podatkowe' } })
-  const prawoPracy = await prisma.category.findFirst({ where: { slug: 'prawo-pracy' } })
-  const prawoKarne = await prisma.category.findFirst({ where: { slug: 'prawo-karne' } })
-  const prawoMedyczne = await prisma.category.findFirst({ where: { slug: 'prawo-medyczne' } })
-
-  if (prawoCywilne) {
-    await prisma.lawFirmCategory.upsert({
-      where: {
-        lawFirmId_categoryId: {
-          lawFirmId: lawFirm.id,
-          categoryId: prawoCywilne.id,
-        },
-      },
+  const createdLawFirms = []
+  for (const firmData of lawFirmsData) {
+    const userPassword = await bcrypt.hash('Haslo123!', 10)
+    const user = await prisma.user.upsert({
+      where: { email: firmData.email },
       update: {},
       create: {
-        lawFirmId: lawFirm.id,
-        categoryId: prawoCywilne.id,
-        kolejnosc: 0,
+        email: firmData.email,
+        name: firmData.name,
+        password: userPassword,
+        role: 'LAW_FIRM',
+        emailVerified: new Date(),
       },
     })
-  }
 
-  if (prawoRodzinne) {
-    await prisma.lawFirmCategory.upsert({
-      where: {
-        lawFirmId_categoryId: {
-          lawFirmId: lawFirm.id,
-          categoryId: prawoRodzinne.id,
-        },
-      },
+    const lawFirm = await prisma.lawFirm.upsert({
+      where: { userId: user.id },
       update: {},
       create: {
-        lawFirmId: lawFirm.id,
-        categoryId: prawoRodzinne.id,
-        kolejnosc: 1,
+        userId: user.id,
+        typ: 'OSOBA_FIZYCZNA',
+        nazwa: firmData.name,
+        nazwaFirmy: firmData.name,
+        nip: firmData.nip,
+        imieKontakt: 'Jan',
+        nazwiskoKontakt: 'Kowalski',
+        stanowisko: 'Partner zarządzający',
+        numerTelefonu: '+48 123 456 789',
+        numerTelefonu2: '+48 500 123 456',
+        emailKontakt: firmData.email,
+        adres: 'ul. Prawnicza 15',
+        kodPocztowy: '00-001',
+        miasto: firmData.miasto,
+        voivodeshipId: firmData.voivodeship?.id || '',
+        opis: `Profesjonalna kancelaria prawna w ${firmData.miasto}. Specjalizujemy się w ${firmData.category?.nazwa.toLowerCase()}. Oferujemy kompleksową obsługę prawną z wieloletnim doświadczeniem. Nasz zespół składa się z wykwalifikowanych prawników, którzy z pasją i zaangażowaniem podchodzą do każdej sprawy.`,
+        logo: '/uploads/law-firms/logo-placeholder.png',
+        zdjecieGlowne: '/uploads/law-firms/office-placeholder.jpg',
+        galeriaZdjec: JSON.stringify([
+          '/uploads/law-firms/gallery-1.jpg',
+          '/uploads/law-firms/gallery-2.jpg',
+          '/uploads/law-firms/gallery-3.jpg',
+        ]),
+        statusGodzinyOtwarcia: true,
+        godzinyOtwarcia: JSON.stringify({
+          poniedzialek: '9:00-17:00',
+          wtorek: '9:00-17:00',
+          sroda: '9:00-17:00',
+          czwartek: '9:00-17:00',
+          piatek: '9:00-15:00',
+          sobota: 'Zamknięte',
+          niedziela: 'Zamknięte',
+        }),
+        linkLinkedIn: `https://linkedin.com/company/${firmData.name.toLowerCase().replace(/\s+/g, '-')}`,
+        linkFacebook: `https://facebook.com/${firmData.name.toLowerCase().replace(/\s+/g, '.')}`,
+        stronaWww: `https://${firmData.name.toLowerCase().replace(/\s+/g, '-')}.pl`,
+        edukacja: JSON.stringify([
+          {
+            uczelnia: 'Uniwersytet Warszawski',
+            wydzial: 'Wydział Prawa i Administracji',
+            rokOd: 2000,
+            rokDo: 2005,
+          },
+        ]),
+        oirpMiasto: firmData.miasto,
+        oirpWpis: `${firmData.miasto.substring(0, 2).toUpperCase()}/1234/2010`,
+        oirpStatus: true,
+        unikatowyOpisUslugi: `Kompleksowa obsługa prawna z indywidualnym podejściem do każdego klienta. Specjalizujemy się w ${firmData.category?.nazwa.toLowerCase()} i oferujemy profesjonalne doradztwo na najwyższym poziomie.`,
+        slowaKluczowe: JSON.stringify([
+          firmData.category?.nazwa.toLowerCase() || 'prawo',
+          'doradztwo prawne',
+          'kancelaria',
+          firmData.miasto.toLowerCase(),
+          'profesjonalna obsługa',
+        ]),
+        callaPolska: false,
+        onlineOnly: false,
+        typOferty: 'WSZYSTKIE',
+        pakietSubskrypcji: 'PREMIUM',
+        punktySaldo: 500,
+        zgodaRegulamin: true,
+        zgodaPrzetwarzanie: true,
+        zweryfikowana: true,
+        aktywna: true,
       },
     })
-  }
 
-  if (prawoGospodarcze) {
-    await prisma.lawFirmCategory.upsert({
-      where: {
-        lawFirmId_categoryId: {
-          lawFirmId: lawFirm.id,
-          categoryId: prawoGospodarcze.id,
+    if (firmData.category) {
+      await prisma.lawFirmCategory.upsert({
+        where: {
+          lawFirmId_categoryId: {
+            lawFirmId: lawFirm.id,
+            categoryId: firmData.category.id,
+          },
         },
-      },
-      update: {},
-      create: {
-        lawFirmId: lawFirm.id,
-        categoryId: prawoGospodarcze.id,
-        kolejnosc: 2,
-      },
-    })
-  }
-
-  // Kategorie dla Kancelarii 2
-  if (prawoPodatkowe) {
-    await prisma.lawFirmCategory.upsert({
-      where: { lawFirmId_categoryId: { lawFirmId: lawFirm2.id, categoryId: prawoPodatkowe.id } },
-      update: {},
-      create: { lawFirmId: lawFirm2.id, categoryId: prawoPodatkowe.id },
-    })
-  }
-  if (prawoPracy) {
-    await prisma.lawFirmCategory.upsert({
-      where: { lawFirmId_categoryId: { lawFirmId: lawFirm2.id, categoryId: prawoPracy.id } },
-      update: {},
-      create: { lawFirmId: lawFirm2.id, categoryId: prawoPracy.id },
-    })
-  }
-
-  // Kategorie dla Kancelarii 3
-  if (prawoKarne) {
-    await prisma.lawFirmCategory.upsert({
-      where: { lawFirmId_categoryId: { lawFirmId: lawFirm3.id, categoryId: prawoKarne.id } },
-      update: {},
-      create: { lawFirmId: lawFirm3.id, categoryId: prawoKarne.id },
-    })
-  }
-  if (prawoMedyczne) {
-    await prisma.lawFirmCategory.upsert({
-      where: { lawFirmId_categoryId: { lawFirmId: lawFirm3.id, categoryId: prawoMedyczne.id } },
-      update: {},
-      create: { lawFirmId: lawFirm3.id, categoryId: prawoMedyczne.id },
-    })
-  }
-
-  // Przypisz województwa działania do kancelarii
-  console.log('Assigning voivodeships to law firm...')
-  if (wielkopolskieVoivodeship) {
-    await prisma.lawFirmVoivodeship.upsert({
-      where: {
-        lawFirmId_voivodeshipId: {
-          lawFirmId: lawFirm.id,
-          voivodeshipId: wielkopolskieVoivodeship.id,
-        },
-      },
-      update: {},
-      create: {
-        lawFirmId: lawFirm.id,
-        voivodeshipId: wielkopolskieVoivodeship.id,
-      },
-    })
-  }
-
-  if (mazowieckieVoivodeship) {
-    await prisma.lawFirmVoivodeship.upsert({
-      where: {
-        lawFirmId_voivodeshipId: {
-          lawFirmId: lawFirm.id,
-          voivodeshipId: mazowieckieVoivodeship.id,
-        },
-      },
-      update: {},
-      create: {
-        lawFirmId: lawFirm.id,
-        voivodeshipId: mazowieckieVoivodeship.id,
-      },
-    })
-  }
-
-  // Województwa dla Kancelarii 2
-  if (mazowieckieVoivodeship) {
-    await prisma.lawFirmVoivodeship.upsert({
-      where: { lawFirmId_voivodeshipId: { lawFirmId: lawFirm2.id, voivodeshipId: mazowieckieVoivodeship.id } },
-      update: {},
-      create: { lawFirmId: lawFirm2.id, voivodeshipId: mazowieckieVoivodeship.id },
-    })
-  }
-
-  // Województwa dla Kancelarii 3
-  if (malopolskieVoivodeship) {
-    await prisma.lawFirmVoivodeship.upsert({
-      where: { lawFirmId_voivodeshipId: { lawFirmId: lawFirm3.id, voivodeshipId: malopolskieVoivodeship.id } },
-      update: {},
-      create: { lawFirmId: lawFirm3.id, voivodeshipId: malopolskieVoivodeship.id },
-    })
-  }
-
-  // Seed usług kancelarii
-  console.log('Seeding law firm services...')
-  await prisma.service.upsert({
-    where: { id: 'service-1' },
-    update: {},
-    create: {
-      id: 'service-1',
-      lawFirmId: lawFirm.id,
-      nazwaUslugi: 'Konsultacja prawna',
-      opisUslugi: 'Profesjonalna konsultacja prawna w zakresie prawa cywilnego i rodzinnego',
-      cenaOd: 200,
-      cenaDo: 500,
-      jednostka: 'ZA_GODZINE',
-      aktywna: true,
-    },
-  })
-
-  await prisma.service.upsert({
-    where: { id: 'service-2' },
-    update: {},
-    create: {
-      id: 'service-2',
-      lawFirmId: lawFirm.id,
-      nazwaUslugi: 'Reprezentacja w sądzie',
-      opisUslugi: 'Kompleksowa reprezentacja procesowa w sprawach cywilnych',
-      cenaOd: 2000,
-      cenaDo: 10000,
-      jednostka: 'ZA_USLUGE',
-      aktywna: true,
-    },
-  })
-
-  await prisma.service.upsert({
-    where: { id: 'service-3' },
-    update: {},
-    create: {
-      id: 'service-3',
-      lawFirmId: lawFirm.id,
-      nazwaUslugi: 'Sporządzenie umowy',
-      opisUslugi: 'Przygotowanie profesjonalnych umów cywilnoprawnych',
-      cenaOd: 500,
-      cenaDo: 3000,
-      jednostka: 'ZA_USLUGE',
-      aktywna: true,
-    },
-  })
-
-  // Seed spraw
-  console.log('Seeding cases...')
-  const case1 = await prisma.case.create({
-    data: {
-      clientId: client.id,
-      typSprawy: 'OSOBA_PRYWATNA',
-      categoryId: prawoRodzinne?.id || '',
-      nazwaSprawy: 'Sprawa rozwodowa z podziałem majątku',
-      opisSprawy: 'Potrzebuję pomocy prawnej w sprawie rozwodu. Małżeństwo trwa 10 lat, mamy dwoje dzieci. Chciałbym uzyskać rozwód z orzeczeniem o winie oraz sprawiedliwy podział majątku wspólnego, który obejmuje mieszkanie oraz samochód. Sprawa jest skomplikowana ze względu na brak porozumienia między stronami.',
-      oczekiwanyTerminRealizacji: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-      trybPilny: false,
-      budzetOd: 3000,
-      budzetDo: 8000,
-      doNegocjacji: true,
-      imieNazwisko: 'Jan Kowalski',
-      emailKontakt: 'klient@bpcoders.pl',
-      telefonKontakt: '+48 123 456 789',
-      preferowanyKontakt: 'OBA',
-      voivodeshipId: mazowieckieVoivodeship?.id || '',
-      status: 'OFERTY_OTRZYMANE',
-      akceptujeKlauzule: true,
-    },
-  })
-  console.log(`Created case: ${case1.nazwaSprawy}`)
-
-  const case2 = await prisma.case.create({
-    data: {
-      clientId: client.id,
-      typSprawy: 'OSOBA_PRYWATNA',
-      categoryId: prawoCywilne?.id || '',
-      nazwaSprawy: 'Dochodzenie odszkodowania za wypadek komunikacyjny',
-      opisSprawy: 'Uległem wypadkowi komunikacyjnemu, w którym doznałem obrażeń ciała. Sprawca wypadku był ubezpieczony. Potrzebuję pomocy w dochodzeniu odszkodowania oraz zadośćuczynienia za poniesione szkody materialne i niematerialne. Posiadam dokumentację medyczną oraz protokół policyjny z miejsca zdarzenia.',
-      oczekiwanyTerminRealizacji: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-      trybPilny: true,
-      budzetOd: 2000,
-      budzetDo: 5000,
-      doNegocjacji: false,
-      imieNazwisko: 'Jan Kowalski',
-      emailKontakt: 'klient@bpcoders.pl',
-      telefonKontakt: '+48 123 456 789',
-      preferowanyKontakt: 'TELEFON',
-      voivodeshipId: mazowieckieVoivodeship?.id || '',
-      status: 'NOWA',
-      akceptujeKlauzule: true,
-    },
-  })
-  console.log(`Created case: ${case2.nazwaSprawy}`)
-
-  const case3 = await prisma.case.create({
-    data: {
-      clientId: client.id,
-      typSprawy: 'FIRMA',
-      categoryId: prawoGospodarcze?.id || '',
-      nazwaSprawy: 'Windykacja należności od kontrahenta',
-      opisSprawy: 'Prowadzę małą firmę i mam problem z odzyskaniem należności od kontrahenta, który nie płaci za dostarczone towary. Wartość należności to 25 000 zł. Posiadam faktury VAT oraz potwierdzenia dostawy. Kontrahent ignoruje wezwania do zapłaty. Potrzebuję pomocy w windykacji należności, ewentualnie w przygotowaniu pozwu do sądu.',
-      oczekiwanyTerminRealizacji: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      trybPilny: true,
-      budzetOd: 1500,
-      budzetDo: 4000,
-      doNegocjacji: true,
-      imieNazwisko: 'Jan Kowalski',
-      emailKontakt: 'klient@bpcoders.pl',
-      telefonKontakt: '+48 123 456 789',
-      preferowanyKontakt: 'EMAIL',
-      voivodeshipId: mazowieckieVoivodeship?.id || '',
-      status: 'NOWA',
-      akceptujeKlauzule: true,
-    },
-  })
-  console.log(`Created case: ${case3.nazwaSprawy}`)
-
-  // Seed ofert
-  console.log('Seeding offers...')
-  const offer1 = await prisma.offer.create({
-    data: {
-      caseId: case1.id,
-      lawFirmId: lawFirm.id,
-      kwotaNetto: 5000,
-      vat: 23,
-      kwotaBrutto: 6150,
-      terminRealizacjiDni: 90,
-      opisOferty: 'Oferujemy kompleksową obsługę prawną w sprawie rozwodowej. Nasze usługi obejmują: przygotowanie pozwu rozwodowego z orzeczeniem o winie, reprezentację przed sądem na wszystkich rozprawach, przygotowanie wniosku o podział majątku wspólnego, negocjacje w sprawie alimentów i kontaktów z dziećmi. Posiadamy bogate doświadczenie w sprawach rodzinnych i gwarantujemy profesjonalne podejście oraz dyskrecję.',
-      zakresUslug: 'Pozew rozwodowy, reprezentacja sądowa, podział majątku, alimenty',
-      warunkiPlatnosci: 'RATY',
-      dodatkoweWarunki: 'Możliwość rozłożenia płatności na 3 raty: 40% przed złożeniem pozwu, 30% po pierwszej rozprawie, 30% po zakończeniu sprawy',
-      wyroznienie: true,
-      punktyWyroznienia: 50,
-      status: 'ZLOZONA',
-    },
-  })
-  console.log(`Created offer for case: ${case1.nazwaSprawy}`)
-
-  const offer2 = await prisma.offer.create({
-    data: {
-      caseId: case1.id,
-      lawFirmId: lawFirm.id,
-      kwotaNetto: 4000,
-      vat: 23,
-      kwotaBrutto: 4920,
-      terminRealizacjiDni: 120,
-      opisOferty: 'Proponujemy obsługę prawną w sprawie rozwodowej w korzystnej cenie. Zakres usług obejmuje przygotowanie dokumentacji, reprezentację w sądzie oraz doradztwo na każdym etapie postępowania. Jesteśmy otwarci na negocjacje warunków współpracy. Nasz zespół specjalizuje się w prawie rodzinnym i zapewnia indywidualne podejście do każdego klienta.',
-      zakresUslug: 'Pozew rozwodowy, reprezentacja sądowa, doradztwo prawne',
-      warunkiPlatnosci: 'PRZELEW_14',
-      status: 'ZLOZONA',
-    },
-  })
-  console.log(`Created second offer for case: ${case1.nazwaSprawy}`)
-
-  // Seed opinii
-  console.log('Seeding reviews...')
-  await prisma.review.create({
-    data: {
-      lawFirmId: lawFirm.id,
-      clientId: client.id,
-      ocenaOgolna: 5,
-      profesjonalizm: 5,
-      komunikacja: 5,
-      terminowosc: 5,
-      stosunekJakosci: 5,
-      tytulOpinii: 'Profesjonalna obsługa i doskonałe rezultaty',
-      trescOpinii: 'Kancelaria Kowalski i Wspólnicy to prawdziwi profesjonaliści. Pomogли mi w skomplikowanej sprawie rozwodowej. Byłem pod wrażeniem ich zaangażowania, wiedzy prawniczej oraz indywidualnego podejścia. Wszystko zostało załatwione sprawnie i zgodnie z moimi oczekiwaniami. Szczególnie doceniam jasną komunikację i terminowość. Gorąco polecam!',
-      polecam: true,
-      anonimowa: false,
-      odpowiedz: 'Dziękujemy za miłe słowa! Cieszymy się, że mogliśmy pomóc w Pana sprawie. Profesjonalizm i indywidualne podejście do klienta to podstawa naszej pracy.',
-      dataOdpowiedzi: new Date(),
-      zweryfikowana: true,
-      aktywna: true,
-    },
-  })
-
-  // Seed ustawień powiadomień
-  console.log('Seeding notification settings...')
-  await prisma.notificationSettings.upsert({
-    where: { userId: clientUser.id },
-    update: {},
-    create: {
-      userId: clientUser.id,
-      emailNoweOferty: true,
-      emailWiadomosci: true,
-      emailStatusy: true,
-      smsPilne: false,
-      kontaktKlienci: true,
-      kluczowe: true,
-      wskazowkiPorady: true,
-      ofertPromocje: true,
-      przypomnienieWiadomosci: true,
-      noweFunkcje: true,
-      zmianyCenniki: true,
-      zmianyRegulamin: true,
-      kontaktDoradca: false,
-      wyswietlanieAwatara: true,
-      autoProsbOpinie: false,
-      powiadomienieDzwiekowe: false,
-      ustawieniaOgloszenia: true,
-      powiadomieniaSmNowa: false,
-      wiadomosciZbiorcze: true,
-      urlop: false,
-    },
-  })
-
-  await prisma.notificationSettings.upsert({
-    where: { userId: lawFirmUser.id },
-    update: {},
-    create: {
-      userId: lawFirmUser.id,
-      emailNoweOferty: true,
-      emailWiadomosci: true,
-      emailStatusy: true,
-      smsPilne: true,
-      kontaktKlienci: true,
-      kluczowe: true,
-      wskazowkiPorady: true,
-      ofertPromocje: true,
-      przypomnienieWiadomosci: true,
-      noweFunkcje: true,
-      zmianyCenniki: true,
-      zmianyRegulamin: true,
-      kontaktDoradca: true,
-      wyswietlanieAwatara: true,
-      autoProsbOpinie: true,
-      powiadomienieDzwiekowe: true,
-      ustawieniaOgloszenia: true,
-      powiadomieniaSmNowa: true,
-      wiadomosciZbiorcze: false,
-      urlop: false,
-    },
-  })
-
-  // Seed pakietów subskrypcji
-  console.log('Seeding subscription plans...')
-  await prisma.subscriptionPlan.upsert({
-    where: { typ: 'PODSTAWOWY' },
-    update: {},
-    create: {
-      typ: 'PODSTAWOWY',
-      nazwa: 'Pakiet Podstawowy',
-      cena12Miesiecy: 440,
-      aktywny: true,
-      dostepDoSpraw: 10,
-      kategorieSpraw: 3,
-      wojewodztwa: 1,
-      miasta: 5,
-      priorytetWyszukiwanie: false,
-      osobistyOpiekun: 0,
-      artykutySponsoro: false,
-      specjalneOznaczenie: null,
-      statystykiAnalizy: false,
-      mozliwoscBloga: false,
-      wsparcieMarketingowe: false,
-      promowanieProfilu: false,
-      powiadomieniaSprawy: 0,
-      liczbaTakow: 0,
-      zalaczniki: false,
-      coverBaner: false,
-      wyswietlanieReklam: true,
-      punktyGratis: 0,
-      skillLawFocus: false,
-    },
-  })
-
-  await prisma.subscriptionPlan.upsert({
-    where: { typ: 'STANDARD' },
-    update: {},
-    create: {
-      typ: 'STANDARD',
-      nazwa: 'Pakiet Standard',
-      cena12Miesiecy: 880,
-      aktywny: true,
-      dostepDoSpraw: 25,
-      kategorieSpraw: 5,
-      wojewodztwa: 3,
-      miasta: 15,
-      priorytetWyszukiwanie: true,
-      osobistyOpiekun: 1,
-      artykutySponsoro: false,
-      specjalneOznaczenie: 'Podstawowe',
-      statystykiAnalizy: true,
-      mozliwoscBloga: true,
-      wsparcieMarketingowe: false,
-      promowanieProfilu: false,
-      powiadomieniaSprawy: 1,
-      liczbaTakow: 3,
-      zalaczniki: true,
-      coverBaner: false,
-      wyswietlanieReklam: true,
-      punktyGratis: 100,
-      skillLawFocus: false,
-    },
-  })
-
-  await prisma.subscriptionPlan.upsert({
-    where: { typ: 'PREMIUM' },
-    update: {},
-    create: {
-      typ: 'PREMIUM',
-      nazwa: 'Pakiet Premium',
-      cena12Miesiecy: 1320,
-      aktywny: true,
-      dostepDoSpraw: null,
-      kategorieSpraw: null,
-      wojewodztwa: 16,
-      miasta: 50,
-      priorytetWyszukiwanie: true,
-      osobistyOpiekun: 2,
-      artykutySponsoro: true,
-      specjalneOznaczenie: 'Rozszerzone',
-      statystykiAnalizy: true,
-      mozliwoscBloga: true,
-      wsparcieMarketingowe: true,
-      promowanieProfilu: true,
-      powiadomieniaSprawy: 2,
-      liczbaTakow: 5,
-      zalaczniki: true,
-      coverBaner: true,
-      wyswietlanieReklam: false,
-      punktyGratis: 250,
-      skillLawFocus: false,
-    },
-  })
-
-  await prisma.subscriptionPlan.upsert({
-    where: { typ: 'BIZNES' },
-    update: {},
-    create: {
-      typ: 'BIZNES',
-      nazwa: 'Pakiet Biznes',
-      cena12Miesiecy: 1980,
-      aktywny: true,
-      dostepDoSpraw: null,
-      kategorieSpraw: null,
-      wojewodztwa: 16,
-      miasta: 100,
-      priorytetWyszukiwanie: true,
-      osobistyOpiekun: 3,
-      artykutySponsoro: true,
-      specjalneOznaczenie: 'Rozszerzone',
-      statystykiAnalizy: true,
-      mozliwoscBloga: true,
-      wsparcieMarketingowe: true,
-      promowanieProfilu: true,
-      powiadomieniaSprawy: 3,
-      liczbaTakow: 10,
-      zalaczniki: true,
-      coverBaner: true,
-      wyswietlanieReklam: false,
-      punktyGratis: 500,
-      skillLawFocus: true,
-    },
-  })
-
-  // Seed centrum pomocy
-  console.log('Seeding help center...')
-  for (const data of helpData) {
-    const helpCategory = await prisma.helpCategory.upsert({
-      where: { slug: data.category.slug },
-      update: {
-        nazwa: data.category.nazwa,
-        opis: data.category.opis,
-        ikona: data.category.ikona,
-        kolejnosc: data.category.kolejnosc,
-      },
-      create: data.category,
-    })
-    console.log(`Created/Updated help category: ${helpCategory.nazwa}`)
-
-    for (const q of data.questions) {
-      const helpQuestion = await prisma.helpQuestion.upsert({
-        where: { slug: q.slug },
-        update: {
-          pytanie: q.pytanie,
-          odpowiedz: q.odpowiedz,
-          kolejnosc: q.kolejnosc,
-        },
+        update: {},
         create: {
-          ...q,
-          categoryId: helpCategory.id,
+          lawFirmId: lawFirm.id,
+          categoryId: firmData.category.id,
         },
       })
-      console.log(`  - Created/Updated help question: ${helpQuestion.pytanie}`)
+    }
+
+    if (firmData.voivodeship) {
+      await prisma.lawFirmVoivodeship.upsert({
+        where: {
+          lawFirmId_voivodeshipId: {
+            lawFirmId: lawFirm.id,
+            voivodeshipId: firmData.voivodeship.id,
+          },
+        },
+        update: {},
+        create: {
+          lawFirmId: lawFirm.id,
+          voivodeshipId: firmData.voivodeship.id,
+        },
+      })
+    }
+
+    createdLawFirms.push(lawFirm)
+  }
+  console.log(`✓ Kancelarie: ${createdLawFirms.length}`)
+
+  // Dane klientów - 20 klientów
+  const clientsData = [
+    { email: 'jan.kowalski@example.com', name: 'Jan Kowalski', imie: 'Jan', nazwisko: 'Kowalski', miasto: 'Warszawa', voivodeship: mazowieckie },
+    { email: 'anna.nowak@example.com', name: 'Anna Nowak', imie: 'Anna', nazwisko: 'Nowak', miasto: 'Kraków', voivodeship: malopolskie },
+    { email: 'piotr.wisniewski@example.com', name: 'Piotr Wiśniewski', imie: 'Piotr', nazwisko: 'Wiśniewski', miasto: 'Wrocław', voivodeship: dolnoslaskie },
+    { email: 'maria.wojcik@example.com', name: 'Maria Wójcik', imie: 'Maria', nazwisko: 'Wójcik', miasto: 'Poznań', voivodeship: wielkopolskie },
+    { email: 'tomasz.kaminski@example.com', name: 'Tomasz Kamiński', imie: 'Tomasz', nazwisko: 'Kamiński', miasto: 'Gdańsk', voivodeship: pomorskie },
+    { email: 'katarzyna.lewandowska@example.com', name: 'Katarzyna Lewandowska', imie: 'Katarzyna', nazwisko: 'Lewandowska', miasto: 'Łódź', voivodeship: lodzkie },
+    { email: 'marcin.zielinski@example.com', name: 'Marcin Zieliński', imie: 'Marcin', nazwisko: 'Zieliński', miasto: 'Katowice', voivodeship: slaskie },
+    { email: 'agnieszka.szymanska@example.com', name: 'Agnieszka Szymańska', imie: 'Agnieszka', nazwisko: 'Szymańska', miasto: 'Warszawa', voivodeship: mazowieckie },
+    { email: 'krzysztof.wozniak@example.com', name: 'Krzysztof Woźniak', imie: 'Krzysztof', nazwisko: 'Woźniak', miasto: 'Kraków', voivodeship: malopolskie },
+    { email: 'magdalena.dabrowa@example.com', name: 'Magdalena Dąbrowa', imie: 'Magdalena', nazwisko: 'Dąbrowa', miasto: 'Wrocław', voivodeship: dolnoslaskie },
+    { email: 'robert.kozlowski@example.com', name: 'Robert Kozłowski', imie: 'Robert', nazwisko: 'Kozłowski', miasto: 'Poznań', voivodeship: wielkopolskie },
+    { email: 'joanna.jankowska@example.com', name: 'Joanna Jankowska', imie: 'Joanna', nazwisko: 'Jankowska', miasto: 'Gdańsk', voivodeship: pomorskie },
+    { email: 'pawel.mazur@example.com', name: 'Paweł Mazur', imie: 'Paweł', nazwisko: 'Mazur', miasto: 'Łódź', voivodeship: lodzkie },
+    { email: 'beata.krawczyk@example.com', name: 'Beata Krawczyk', imie: 'Beata', nazwisko: 'Krawczyk', miasto: 'Katowice', voivodeship: slaskie },
+    { email: 'adam.piotrowski@example.com', name: 'Adam Piotrowski', imie: 'Adam', nazwisko: 'Piotrowski', miasto: 'Warszawa', voivodeship: mazowieckie },
+    { email: 'ewa.grabowska@example.com', name: 'Ewa Grabowska', imie: 'Ewa', nazwisko: 'Grabowska', miasto: 'Kraków', voivodeship: malopolskie },
+    { email: 'lukasz.pawlak@example.com', name: 'Łukasz Pawlak', imie: 'Łukasz', nazwisko: 'Pawlak', miasto: 'Wrocław', voivodeship: dolnoslaskie },
+    { email: 'monika.michalska@example.com', name: 'Monika Michalska', imie: 'Monika', nazwisko: 'Michalska', miasto: 'Poznań', voivodeship: wielkopolskie },
+    { email: 'grzegorz.nowicki@example.com', name: 'Grzegorz Nowicki', imie: 'Grzegorz', nazwisko: 'Nowicki', miasto: 'Gdańsk', voivodeship: pomorskie },
+    { email: 'dorota.adamczyk@example.com', name: 'Dorota Adamczyk', imie: 'Dorota', nazwisko: 'Adamczyk', miasto: 'Łódź', voivodeship: lodzkie },
+  ]
+
+  const createdClients = []
+  for (const clientData of clientsData) {
+    const userPassword = await bcrypt.hash('Klient123!', 10)
+    const user = await prisma.user.upsert({
+      where: { email: clientData.email },
+      update: {},
+      create: {
+        email: clientData.email,
+        name: clientData.name,
+        password: userPassword,
+        role: 'CLIENT',
+        emailVerified: new Date(),
+      },
+    })
+
+    const client = await prisma.client.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: {
+        userId: user.id,
+        imie: clientData.imie,
+        nazwisko: clientData.nazwisko,
+        telefon: '+48 500 000 000',
+        miasto: clientData.miasto,
+        voivodeshipId: clientData.voivodeship?.id,
+        zgodaRegulamin: true,
+      },
+    })
+
+    createdClients.push(client)
+  }
+  console.log(`✓ Klienci: ${createdClients.length}`)
+
+  // Sprawy - każdy klient ma 3 sprawy (60 spraw)
+  const caseTemplates = [
+    { nazwa: 'Sprawa rozwodowa', opis: 'Potrzebuję pomocy w sprawie rozwodu z podziałem majątku.', category: prawoRodzinne, budzet: [3000, 8000] },
+    { nazwa: 'Dochodzenie odszkodowania', opis: 'Sprawa o odszkodowanie po wypadku komunikacyjnym.', category: prawoCywilne, budzet: [2000, 5000] },
+    { nazwa: 'Sprawa o mobbing', opis: 'Mobbing w miejscu pracy, potrzebuję reprezentacji.', category: prawoPracy, budzet: [2500, 6000] },
+    { nazwa: 'Obrona w sprawie karnej', opis: 'Potrzebuję obrony w postępowaniu karnym.', category: prawoKarne, budzet: [4000, 10000] },
+    { nazwa: 'Spór o alimenty', opis: 'Sprawa o ustalenie wysokości alimentów na dzieci.', category: prawoRodzinne, budzet: [1500, 4000] },
+    { nazwa: 'Windykacja należności', opis: 'Dochodzenie należności od kontrahenta.', category: prawoCywilne, budzet: [1500, 4000] },
+    { nazwa: 'Niezgodne wypowiedzenie', opis: 'Sprawa o przywrócenie do pracy po niezgodnym wypowiedzeniu.', category: prawoPracy, budzet: [2000, 5000] },
+    { nazwa: 'Sprawa o zniesławienie', opis: 'Obrona w sprawie o zniesławienie.', category: prawoKarne, budzet: [3000, 7000] },
+  ]
+
+  let caseCount = 0
+  for (const client of createdClients) {
+    for (let i = 0; i < 3; i++) {
+      const template = caseTemplates[caseCount % caseTemplates.length]
+      await prisma.case.create({
+        data: {
+          clientId: client.id,
+          typSprawy: 'OSOBA_PRYWATNA',
+          categoryId: template.category?.id || '',
+          nazwaSprawy: template.nazwa,
+          opisSprawy: template.opis,
+          oczekiwanyTerminRealizacji: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+          budzetOd: template.budzet[0],
+          budzetDo: template.budzet[1],
+          imieNazwisko: `${client.imie} ${client.nazwisko}`,
+          emailKontakt: client.userId,
+          telefonKontakt: client.telefon || '+48 500 000 000',
+          preferowanyKontakt: 'OBA',
+          voivodeshipId: client.voivodeshipId || '',
+          status: i === 0 ? 'OFERTY_OTRZYMANE' : 'NOWA',
+          akceptujeKlauzule: true,
+        },
+      })
+      caseCount++
     }
   }
+  console.log(`✓ Sprawy: ${caseCount}`)
 
-  console.log('Seeding finished.')
+  // Opinie - każda kancelaria dostaje 2-3 opinie
+  const reviewTexts = [
+    { tytul: 'Profesjonalna obsługa', tresc: 'Bardzo profesjonalna kancelaria. Polecam!', ocena: 5 },
+    { tytul: 'Skuteczna pomoc', tresc: 'Dzięki tej kancelarii wygrałem sprawę. Jestem bardzo zadowolony.', ocena: 5 },
+    { tytul: 'Dobra komunikacja', tresc: 'Świetny kontakt, wszystko jasno wytłumaczone.', ocena: 4 },
+    { tytul: 'Polecam', tresc: 'Solidna kancelaria, terminowa i rzetelna.', ocena: 5 },
+    { tytul: 'Bardzo dobra obsługa', tresc: 'Profesjonalizm na najwyższym poziomie.', ocena: 5 },
+  ]
+
+  let reviewCount = 0
+  for (let i = 0; i < createdLawFirms.length; i++) {
+    const lawFirm = createdLawFirms[i]
+    const reviewsToCreate = 2 + (i % 2) // 2 lub 3 opinie
+
+    for (let j = 0; j < reviewsToCreate; j++) {
+      const clientIndex = (i * 3 + j) % createdClients.length
+      const client = createdClients[clientIndex]
+      const review = reviewTexts[reviewCount % reviewTexts.length]
+
+      await prisma.review.create({
+        data: {
+          lawFirmId: lawFirm.id,
+          clientId: client.id,
+          ocenaOgolna: review.ocena,
+          profesjonalizm: review.ocena,
+          komunikacja: review.ocena,
+          terminowosc: review.ocena,
+          stosunekJakosci: review.ocena,
+          tytulOpinii: review.tytul,
+          trescOpinii: review.tresc,
+          polecam: true,
+          anonimowa: false,
+          zweryfikowana: true,
+          aktywna: true,
+        },
+      })
+      reviewCount++
+    }
+  }
+  console.log(`✓ Opinie: ${reviewCount}`)
+
+  // Kategorie bloga - minimum 5
+  const blogCategories = [
+    {
+      nazwa: 'Prawo i Technologia',
+      slug: 'prawo-i-technologia',
+      opis: 'Najnowsze trendy na styku prawa i nowych technologii, RODO, AI, e-commerce.',
+    },
+    {
+      nazwa: 'Porady Prawne dla Biznesu',
+      slug: 'porady-prawne-dla-biznesu',
+      opis: 'Praktyczne porady dla przedsiębiorców, zakładanie firmy, umowy, podatki.',
+    },
+    {
+      nazwa: 'Prawo w Życiu Codziennym',
+      slug: 'prawo-w-zyciu-codziennym',
+      opis: 'Sprawy, z którymi każdy z nas może się spotkać: spadki, darowizny, reklamacje.',
+    },
+    {
+      nazwa: 'Nieruchomości i Prawo Budowlane',
+      slug: 'nieruchomosci-i-prawo-budowlane',
+      opis: 'Kupno, sprzedaż, najem nieruchomości, proces budowlany, umowy deweloperskie.',
+    },
+    {
+      nazwa: 'Prawo Pracy',
+      slug: 'prawo-pracy-blog',
+      opis: 'Prawa i obowiązki w stosunku pracy, mobbing, zwolnienia, umowy o pracę.',
+    },
+    {
+      nazwa: 'Prawo Rodzinne i Spadkowe',
+      slug: 'prawo-rodzinne-i-spadkowe',
+      opis: 'Rozwody, alimenty, spadki, testamenty i sprawy opiekuńcze.',
+    },
+  ]
+
+  const createdBlogCategories = []
+  for (const cat of blogCategories) {
+    const blogCategory = await prisma.blogCategory.upsert({
+      where: { slug: cat.slug },
+      update: {},
+      create: cat,
+    })
+    createdBlogCategories.push(blogCategory)
+  }
+  console.log(`✓ Kategorie bloga: ${createdBlogCategories.length}`)
+
+  // Wpisy blogowe - minimum 15
+  const blogPosts = [
+    {
+      tytul: 'RODO w praktyce - jak chronić dane osobowe w firmie',
+      slug: 'rodo-w-praktyce-jak-chronic-dane-osobowe',
+      skrot: 'Poznaj najważniejsze zasady ochrony danych osobowych zgodnie z RODO. Praktyczny przewodnik dla przedsiębiorców.',
+      tresc: '<h2>Wprowadzenie do RODO</h2><p>RODO, czyli Rozporządzenie o Ochronie Danych Osobowych, to kluczowy akt prawny regulujący przetwarzanie danych osobowych w Unii Europejskiej. Każda firma, która przetwarza dane osobowe, musi przestrzegać jego przepisów.</p><h2>Podstawowe zasady</h2><p>Dane osobowe muszą być przetwarzane zgodnie z prawem, rzetelnie i w sposób przejrzysty. Należy zbierać je tylko w konkretnych celach i nie przetwarzać dalej w sposób niezgodny z tymi celami.</p>',
+      categoryId: createdBlogCategories[0].id,
+      lawFirmId: createdLawFirms[0].id,
+    },
+    {
+      tytul: 'Jak założyć spółkę z o.o. - krok po kroku',
+      slug: 'jak-zalozyc-spolke-z-oo-krok-po-kroku',
+      skrot: 'Kompletny przewodnik po zakładaniu spółki z ograniczoną odpowiedzialnością. Wszystkie formalności i koszty.',
+      tresc: '<h2>Przygotowanie dokumentów</h2><p>Pierwszym krokiem jest przygotowanie umowy spółki oraz statutu. Można to zrobić samodzielnie lub skorzystać z pomocy prawnika.</p><h2>Kapitał zakładowy</h2><p>Minimalny kapitał zakładowy to 5000 zł. Można go wnieść w formie pieniężnej lub aportu.</p>',
+      categoryId: createdBlogCategories[1].id,
+      lawFirmId: createdLawFirms[1].id,
+    },
+    {
+      tytul: 'Umowa o pracę vs umowa zlecenie - co wybrać?',
+      slug: 'umowa-o-prace-vs-umowa-zlecenie',
+      skrot: 'Porównanie najpopularniejszych form zatrudnienia. Zalety i wady każdego rozwiązania.',
+      tresc: '<h2>Umowa o pracę</h2><p>Zapewnia największą stabilność i ochronę pracownika. Pracodawca odprowadza wszystkie składki.</p><h2>Umowa zlecenie</h2><p>Większa elastyczność, ale mniejsza ochrona. Brak prawa do urlopu i zwolnień lekarskich.</p>',
+      categoryId: createdBlogCategories[4].id,
+      lawFirmId: createdLawFirms[15].id,
+    },
+    {
+      tytul: 'Rozwód bez orzekania o winie - kiedy jest możliwy?',
+      slug: 'rozwod-bez-orzekania-o-winie',
+      skrot: 'Dowiedz się, kiedy możliwy jest rozwód bez orzekania o winie i jakie są jego konsekwencje.',
+      tresc: '<h2>Przesłanki rozwodu</h2><p>Rozwód bez orzekania o winie jest możliwy, gdy małżonkowie zgodnie wyrażają taką wolę lub gdy oboje są winni rozkładu pożycia.</p><h2>Konsekwencje</h2><p>Brak orzeczenia o winie wpływa na kwestie alimentacyjne i podział majątku.</p>',
+      categoryId: createdBlogCategories[5].id,
+      lawFirmId: createdLawFirms[10].id,
+    },
+    {
+      tytul: 'Jak dochodzić odszkodowania po wypadku komunikacyjnym',
+      slug: 'jak-dochodzic-odszkodowania-po-wypadku',
+      skrot: 'Praktyczny poradnik dla poszkodowanych w wypadkach drogowych. Krok po kroku przez proces dochodzenia odszkodowania.',
+      tresc: '<h2>Dokumentacja</h2><p>Zbierz wszystkie dokumenty: protokół policyjny, dokumentację medyczną, rachunki za leczenie.</p><h2>Zgłoszenie szkody</h2><p>Zgłoś szkodę do ubezpieczyciela sprawcy w ciągu 3 dni od wypadku.</p>',
+      categoryId: createdBlogCategories[2].id,
+      lawFirmId: createdLawFirms[2].id,
+    },
+    {
+      tytul: 'Sztuczna inteligencja a prawo autorskie',
+      slug: 'sztuczna-inteligencja-a-prawo-autorskie',
+      skrot: 'Czy AI może być autorem? Analiza prawnych aspektów twórczości generowanej przez sztuczną inteligencję.',
+      tresc: '<h2>Status prawny AI</h2><p>Obecnie AI nie może być uznana za autora w rozumieniu prawa autorskiego. Autorem może być tylko człowiek.</p><h2>Kto jest właścicielem?</h2><p>Prawa do dzieł stworzonych przez AI mogą należeć do twórcy algorytmu lub użytkownika systemu.</p>',
+      categoryId: createdBlogCategories[0].id,
+      lawFirmId: createdLawFirms[3].id,
+    },
+    {
+      tytul: 'Mobbing w pracy - jak się bronić?',
+      slug: 'mobbing-w-pracy-jak-sie-bronic',
+      skrot: 'Kompleksowy przewodnik dla ofiar mobbingu. Dowiedz się, jak udokumentować mobbing i dochodzić swoich praw.',
+      tresc: '<h2>Czym jest mobbing?</h2><p>Mobbing to uporczywe i długotrwałe nękanie lub zastraszanie pracownika.</p><h2>Jak się bronić?</h2><p>Dokumentuj wszystkie incydenty, zbieraj świadków, zgłoś sprawę pracodawcy na piśmie.</p>',
+      categoryId: createdBlogCategories[4].id,
+      lawFirmId: createdLawFirms[16].id,
+    },
+    {
+      tytul: 'Kupno mieszkania - na co zwrócić uwagę?',
+      slug: 'kupno-mieszkania-na-co-zwrocic-uwage',
+      skrot: 'Najważniejsze kwestie prawne przy zakupie nieruchomości. Uniknij pułapek i zabezpiecz swoje interesy.',
+      tresc: '<h2>Sprawdzenie stanu prawnego</h2><p>Przed zakupem sprawdź księgę wieczystą i upewnij się, że nieruchomość jest wolna od obciążeń.</p><h2>Umowa przedwstępna</h2><p>Zabezpiecz się umową przedwstępną z zadatkiem lub zaliczką.</p>',
+      categoryId: createdBlogCategories[3].id,
+      lawFirmId: createdLawFirms[4].id,
+    },
+    {
+      tytul: 'Obrona w postępowaniu karnym - twoje prawa',
+      slug: 'obrona-w-postepowaniu-karnym-twoje-prawa',
+      skrot: 'Poznaj swoje prawa jako oskarżony w postępowaniu karnym. Co ci przysługuje i jak z tego skorzystać?',
+      tresc: '<h2>Prawo do obrony</h2><p>Każdy oskarżony ma prawo do obrony, w tym prawo do adwokata lub radcy prawnego.</p><h2>Prawo do milczenia</h2><p>Nie musisz odpowiadać na pytania, jeśli mogłoby to cię obciążyć.</p>',
+      categoryId: createdBlogCategories[2].id,
+      lawFirmId: createdLawFirms[5].id,
+    },
+    {
+      tytul: 'Testament - jak go sporządzić prawidłowo?',
+      slug: 'testament-jak-go-sporzadzic-prawidlowo',
+      skrot: 'Wszystko o testamentach: formy, wymogi, najczęstsze błędy. Zadbaj o przyszłość swoich bliskich.',
+      tresc: '<h2>Formy testamentu</h2><p>Testament może być holograficzny (własnoręczny), allograficzny (notarialny) lub ustny.</p><h2>Wymogi formalne</h2><p>Testament holograficzny musi być napisany w całości własnoręcznie, datowany i podpisany.</p>',
+      categoryId: createdBlogCategories[5].id,
+      lawFirmId: createdLawFirms[11].id,
+    },
+    {
+      tytul: 'E-commerce a prawo konsumenckie',
+      slug: 'e-commerce-a-prawo-konsumenckie',
+      skrot: 'Obowiązki sprzedawcy internetowego wobec konsumentów. Co musisz wiedzieć prowadząc sklep online?',
+      tresc: '<h2>Prawo odstąpienia</h2><p>Konsument ma prawo odstąpić od umowy zawartej na odległość w ciągu 14 dni bez podania przyczyny.</p><h2>Obowiązek informacyjny</h2><p>Sprzedawca musi jasno informować o cenie, kosztach dostawy i warunkach zwrotu.</p>',
+      categoryId: createdBlogCategories[0].id,
+      lawFirmId: createdLawFirms[1].id,
+    },
+    {
+      tytul: 'Alimenty na dzieci - jak je ustalić?',
+      slug: 'alimenty-na-dzieci-jak-je-ustalic',
+      skrot: 'Przewodnik po alimentach na dzieci. Wysokość, zasady ustalania i egzekucja.',
+      tresc: '<h2>Zasady ustalania</h2><p>Wysokość alimentów zależy od usprawiedliwionych potrzeb dziecka i możliwości zarobkowych rodziców.</p><h2>Egzekucja</h2><p>Alimenty można egzekwować przez komornika lub fundusz alimentacyjny.</p>',
+      categoryId: createdBlogCategories[5].id,
+      lawFirmId: createdLawFirms[12].id,
+    },
+    {
+      tytul: 'Umowy handlowe - najczęstsze błędy',
+      slug: 'umowy-handlowe-najczestsze-bledy',
+      skrot: 'Poznaj najczęstsze błędy w umowach handlowych i dowiedz się, jak ich unikać.',
+      tresc: '<h2>Brak precyzji</h2><p>Umowy często są zbyt ogólne i nie precyzują wszystkich istotnych kwestii.</p><h2>Kary umowne</h2><p>Nieprawidłowo sformułowane klauzule o karach umownych mogą być niewykonalne.</p>',
+      categoryId: createdBlogCategories[1].id,
+      lawFirmId: createdLawFirms[2].id,
+    },
+    {
+      tytul: 'Wypowiedzenie umowy o pracę - co musisz wiedzieć?',
+      slug: 'wypowiedzenie-umowy-o-prace',
+      skrot: 'Wszystko o wypowiedzeniu umowy o pracę: okresy wypowiedzenia, forma, ochrona przed zwolnieniem.',
+      tresc: '<h2>Okresy wypowiedzenia</h2><p>Okres wypowiedzenia zależy od stażu pracy i wynosi od 2 tygodni do 3 miesięcy.</p><h2>Forma wypowiedzenia</h2><p>Wypowiedzenie musi być złożone na piśmie i zawierać uzasadnienie.</p>',
+      categoryId: createdBlogCategories[4].id,
+      lawFirmId: createdLawFirms[17].id,
+    },
+    {
+      tytul: 'Prawo budowlane - pozwolenie na budowę',
+      slug: 'prawo-budowlane-pozwolenie-na-budowe',
+      skrot: 'Kiedy potrzebne jest pozwolenie na budowę? Procedura krok po kroku.',
+      tresc: '<h2>Kiedy potrzebne?</h2><p>Pozwolenie na budowę jest wymagane przy większości inwestycji budowlanych, z wyjątkiem domów do 70 m².</p><h2>Procedura</h2><p>Wniosek składa się do starostwa powiatowego wraz z projektem budowlanym.</p>',
+      categoryId: createdBlogCategories[3].id,
+      lawFirmId: createdLawFirms[3].id,
+    },
+  ]
+
+  let blogPostCount = 0
+  for (const post of blogPosts) {
+    await prisma.blogPost.create({
+      data: {
+        tytul: post.tytul,
+        slug: post.slug,
+        tresc: post.tresc,
+        categoryId: post.categoryId,
+        lawFirmId: post.lawFirmId,
+        obrazekWyrozniajacy: '/images/blog-placeholder.jpg',
+        opublikowany: true,
+        dataPublikacji: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Losowa data z ostatnich 30 dni
+      },
+    })
+    blogPostCount++
+  }
+  console.log(`✓ Wpisy blogowe: ${blogPostCount}`)
+
+  console.log('✅ Seeding zakończony pomyślnie!')
 }
 
 main()
@@ -1168,7 +564,7 @@ main()
     await prisma.$disconnect()
   })
   .catch(async (e) => {
-    console.error(e)
+    console.error('❌ Błąd podczas seedowania:', e)
     await prisma.$disconnect()
     process.exit(1)
   })
