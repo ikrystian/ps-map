@@ -533,8 +533,8 @@ export default function LawFirmProfilePage() {
 
                   {/* Słowa kluczowe */}
                   {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-                    <div className="mt-4">
-                      <div className="flex flex-wrap gap-2 hidden">
+                    <div className="mt-2">
+                      <div className="flex flex-wrap gap-2">
                         {lawFirm.slowaKluczowe.map((keyword, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
                             {keyword}
