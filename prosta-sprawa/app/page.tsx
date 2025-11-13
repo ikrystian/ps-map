@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -57,6 +58,7 @@ interface Category {
 }
 
 export default function HomePage() {
+  const { data: session } = useSession()
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -118,7 +120,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <PublicHeader />
+      <PublicHeader
+        isAuthenticated={!!session}
+        userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}
+        userName={session?.user?.name}
+        userImage={session?.user?.image}
+      />
 
       {/* SECTION 1: Hero Section */}
       <section className="relative from-primary/10 via-background to-secondary/10 py-20 md:py-32 hero-image">

@@ -18,7 +18,6 @@ import {
   ArrowRight,
 } from "lucide-react"
 import Link from "next/link"
-import PublicHeader from "@/components/PublicHeader"
 
 export default function WinWithUsPage() {
   return (
