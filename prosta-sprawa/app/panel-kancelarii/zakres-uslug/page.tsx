@@ -38,6 +38,7 @@ export default function LawFirmServicesPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
+  const [maxCategories, setMaxCategories] = useState(10)
 
   useEffect(() => {
     fetchData()
@@ -58,6 +59,14 @@ export default function LawFirmServicesPage() {
         const selectedData = await selectedResponse.json()
         setSelectedCategories(selectedData)
       }
+
+      // Fetch settings for max categories
+      const settingsResponse = await fetch("/api/settings")
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json()
+        const maxCat = parseInt(settingsData.maxLawFirmCategories || "10")
+        setMaxCategories(maxCat)
+      }
     } catch (error) {
       console.error("Error fetching data:", error)
       toast.error("Nie udało się pobrać danych")
@@ -75,6 +84,12 @@ export default function LawFirmServicesPage() {
       // Remove category
       setSelectedCategories(selectedCategories.filter(sc => sc.categoryId !== category.id))
     } else {
+      // Sprawdź czy nie przekroczono limitu
+      if (selectedCategories.length >= maxCategories) {
+        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Odznacz jedną z wybranych kategorii, aby dodać nową.`)
+        return
+      }
+
       // Add category with next kolejnosc
       const maxKolejnosc = selectedCategories.reduce((max, sc) => Math.max(max, sc.kolejnosc), -1)
       setSelectedCategories([
@@ -254,9 +269,14 @@ export default function LawFirmServicesPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Wybrane kategorie ({selectedCategories.length})</CardTitle>
+              <CardTitle>
+                Wybrane kategorie ({selectedCategories.length}/{maxCategories})
+              </CardTitle>
               <CardDescription>
-                Zmień kolejność kategorii przeciągając lub używając strzałek
+                Zmień kolejność kategorii przeciągając lub używając strzałek.
+                {selectedCategories.length >= maxCategories && (
+                  <span className="text-destructive font-medium"> Osiągnięto limit kategorii.</span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
