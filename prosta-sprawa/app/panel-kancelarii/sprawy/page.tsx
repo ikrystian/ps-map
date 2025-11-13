@@ -401,7 +401,7 @@ const SprawyPage = () => {
                 key={sprawa.id}
                 className={cn(
                   "overflow-hidden",
-                  isAccepted && "border-green-500 border-2 "
+                  isAccepted && "border-primary border-2 "
                 )}
               >
                 <CardHeader className={cn(
