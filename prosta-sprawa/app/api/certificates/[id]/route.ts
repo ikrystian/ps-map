@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 // GET /api/certificates/[id] - Get a single certificate
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -27,6 +27,7 @@ export async function GET(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
+    const params = await context.params;
     // Get certificate
     const certificate = await prisma.certificate.findFirst({
       where: {
@@ -52,7 +53,7 @@ export async function GET(
 // PUT /api/certificates/[id] - Update a certificate
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -74,6 +75,7 @@ export async function PUT(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
+    const params = await context.params;
     // Check if certificate exists and belongs to the law firm
     const existingCertificate = await prisma.certificate.findFirst({
       where: {
@@ -115,7 +117,7 @@ export async function PUT(
 // DELETE /api/certificates/[id] - Delete (soft delete) a certificate
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -137,6 +139,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
+    const params = await context.params;
     // Check if certificate exists and belongs to the law firm
     const existingCertificate = await prisma.certificate.findFirst({
       where: {
