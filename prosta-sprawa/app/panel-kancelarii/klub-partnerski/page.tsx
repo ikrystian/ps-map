@@ -209,7 +209,7 @@ export default function KlubPartnerskiPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -228,7 +228,7 @@ export default function KlubPartnerskiPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-amber-600" />
+              <Award className="h-5 w-5 text-primary" />
               Dołącz do Klubu Partnerskiego
             </CardTitle>
             <CardDescription>
@@ -257,19 +257,19 @@ export default function KlubPartnerskiPage() {
               <h3 className="font-semibold text-lg">Korzyści programu:</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
-                  <Gift className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <Gift className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <span><strong>100 punktów miesięcznie</strong> za umieszczenie i utrzymanie bannera na stronie</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <TrendingUp className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <TrendingUp className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <span><strong>Automatyczne przyznawanie</strong> punktów co miesiąc</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <span><strong>Prosta weryfikacja</strong> - automatyczne sprawdzanie obecności bannera</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Award className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <Award className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <span><strong>Dodatkowe korzyści</strong> - wsparcie marketingowe i promocja Twojej kancelarii</span>
                 </li>
               </ul>
@@ -302,7 +302,7 @@ export default function KlubPartnerskiPage() {
             <Button
               onClick={handleJoinProgram}
               disabled={joining || !partnerStatus?.hasWebsite}
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full"
               size="lg"
             >
               {joining && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -356,7 +356,7 @@ export default function KlubPartnerskiPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <Gift className="h-5 w-5 text-amber-600" />
+              <Gift className="h-5 w-5 text-primary" />
               <span className="text-2xl font-bold">{partnerStatus.monthlyPoints} pkt</span>
             </div>
           </CardContent>
@@ -368,7 +368,7 @@ export default function KlubPartnerskiPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-amber-600" />
+              <TrendingUp className="h-5 w-5 text-primary" />
               <span className="text-2xl font-bold">{partnerStatus.totalPointsEarned} pkt</span>
             </div>
           </CardContent>
@@ -379,7 +379,7 @@ export default function KlubPartnerskiPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-amber-600" />
+            <Globe className="h-5 w-5 text-primary" />
             Status weryfikacji bannera
           </CardTitle>
           <CardDescription>
@@ -388,7 +388,7 @@ export default function KlubPartnerskiPage() {
                 href={partnerStatus.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amber-600 hover:underline flex items-center gap-1"
+                className="text-primary hover:underline flex items-center gap-1"
               >
                 {partnerStatus.websiteUrl}
                 <ExternalLink className="h-3 w-3" />
@@ -407,8 +407,8 @@ export default function KlubPartnerskiPage() {
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-5 w-5 text-amber-600" />
-                    <span className="font-semibold text-amber-600">Banner nie został jeszcze zweryfikowany</span>
+                    <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-semibold text-muted-foreground">Banner nie został jeszcze zweryfikowany</span>
                   </>
                 )}
               </div>
@@ -430,7 +430,7 @@ export default function KlubPartnerskiPage() {
               onClick={handleVerifyBanner}
               disabled={verifying}
               variant="outline"
-              className="border-amber-600 text-amber-600 hover:bg-amber-50"
+              className="border-primary text-primary hover:bg-primary/10"
             >
               {verifying ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -458,7 +458,7 @@ export default function KlubPartnerskiPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Code className="h-5 w-5 text-amber-600" />
+            <Code className="h-5 w-5 text-primary" />
             Kod bannera do umieszczenia
           </CardTitle>
           <CardDescription>
@@ -536,7 +536,7 @@ export default function KlubPartnerskiPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-amber-600" />
+              <Calendar className="h-5 w-5 text-primary" />
               Historia przyznanych punktów
             </CardTitle>
             <CardDescription>
@@ -560,7 +560,7 @@ export default function KlubPartnerskiPage() {
                       {MONTH_NAMES[history.month - 1]} {history.year}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary">
                         +{history.pointsAwarded} pkt
                       </Badge>
                     </TableCell>
@@ -589,16 +589,16 @@ export default function KlubPartnerskiPage() {
       )}
 
       {/* Info Card */}
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="border-primary/20 bg-primary/5">
         <CardHeader>
-          <CardTitle className="text-amber-900">Jak zdobywać punkty?</CardTitle>
+          <CardTitle className="text-foreground">Jak zdobywać punkty?</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-amber-900">
+        <CardContent className="space-y-2 text-sm text-foreground">
           <p>✓ Upewnij się, że banner jest umieszczony na Twojej stronie</p>
           <p>✓ Co miesiąc automatycznie weryfikujemy obecność bannera</p>
           <p>✓ Jeśli banner jest aktywny, otrzymujesz {partnerStatus.monthlyPoints} punktów</p>
           <p>✓ Możesz w każdej chwili samodzielnie zweryfikować banner</p>
-          <p className="text-amber-700 font-semibold mt-4">
+          <p className="text-destructive font-semibold mt-4">
             ⚠️ Uwaga: Po 3 nieudanych weryfikacjach program zostanie automatycznie dezaktywowany
           </p>
         </CardContent>

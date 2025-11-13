@@ -100,7 +100,8 @@ export async function POST(
         include: {
           case: {
             select: {
-              nazwaSprawy: true
+              nazwaSprawy: true,
+              categoryId: true
             }
           },
           lawFirm: {
@@ -156,6 +157,55 @@ export async function POST(
           data: {
             konwersja
           }
+        })
+      }
+
+      // Get current date info for stats
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = now.getMonth() + 1 // 1-12
+
+      // Update monthly stats
+      await tx.lawFirmStats.upsert({
+        where: {
+          lawFirmId_year_month: {
+            lawFirmId: offer.lawFirmId,
+            year,
+            month,
+          },
+        },
+        update: {
+          offersAccepted: { increment: 1 },
+        },
+        create: {
+          lawFirmId: offer.lawFirmId,
+          year,
+          month,
+          offersAccepted: 1,
+        },
+      })
+
+      // Update category stats if case has a category
+      if (updated.case.categoryId) {
+        await tx.lawFirmCategoryStats.upsert({
+          where: {
+            lawFirmId_categoryId_year_month: {
+              lawFirmId: offer.lawFirmId,
+              categoryId: updated.case.categoryId,
+              year,
+              month,
+            },
+          },
+          update: {
+            offersAccepted: { increment: 1 },
+          },
+          create: {
+            lawFirmId: offer.lawFirmId,
+            categoryId: updated.case.categoryId,
+            year,
+            month,
+            offersAccepted: 1,
+          },
         })
       }
 

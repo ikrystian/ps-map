@@ -301,8 +301,8 @@ export default function LawFirmStatsPage() {
             <CardContent>
               <div className="space-y-4">
                 {monthlyOffers.map((item) => {
-                  const totalPercentage = (item.total / maxOffers) * 100
-                  const acceptedPercentage = (item.accepted / item.total) * 100
+                  const totalPercentage = maxOffers > 0 ? (item.total / maxOffers) * 100 : 0
+                  const acceptedPercentage = item.total > 0 ? (item.accepted / item.total) * 100 : 0
                   return (
                     <div key={item.month}>
                       <div className="flex items-center justify-between mb-2">
@@ -359,7 +359,11 @@ export default function LawFirmStatsPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {((monthlyOffers.reduce((sum, m) => sum + m.accepted, 0) / monthlyOffers.reduce((sum, m) => sum + m.total, 0)) * 100).toFixed(1)}%
+                    {(() => {
+                      const totalOffers = monthlyOffers.reduce((sum, m) => sum + m.total, 0)
+                      const acceptedOffers = monthlyOffers.reduce((sum, m) => sum + m.accepted, 0)
+                      return totalOffers > 0 ? ((acceptedOffers / totalOffers) * 100).toFixed(1) : '0.0'
+                    })()}%
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Skuteczność
@@ -382,7 +386,7 @@ export default function LawFirmStatsPage() {
             <CardContent>
               <div className="space-y-6">
                 {categoryStats.map((item) => {
-                  const winRate = (item.won / item.offers) * 100
+                  const winRate = item.offers > 0 ? (item.won / item.offers) * 100 : 0
                   return (
                     <div key={item.category} className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -417,7 +421,11 @@ export default function LawFirmStatsPage() {
                 </div>
                 <div className="space-y-2">
                   {categoryStats
-                    .sort((a, b) => (b.won / b.offers) - (a.won / a.offers))
+                    .sort((a, b) => {
+                      const aRate = a.offers > 0 ? a.won / a.offers : 0
+                      const bRate = b.offers > 0 ? b.won / b.offers : 0
+                      return bRate - aRate
+                    })
                     .slice(0, 3)
                     .map((item, index) => (
                       <div key={item.category} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
@@ -431,7 +439,7 @@ export default function LawFirmStatsPage() {
                         <div className="flex-1">
                           <div className="font-medium">{item.category}</div>
                           <div className="text-xs text-muted-foreground">
-                            {((item.won / item.offers) * 100).toFixed(0)}% skuteczności
+                            {item.offers > 0 ? ((item.won / item.offers) * 100).toFixed(0) : '0'}% skuteczności
                           </div>
                         </div>
                         <Trophy className={`h-5 w-5 ${

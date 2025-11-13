@@ -45,6 +45,7 @@ interface Category {
   id: string
   nazwa: string
   slug: string
+  ikona?: string | null
 }
 
 interface Voivodeship {
@@ -204,7 +205,10 @@ export default function SearchLawyerPage() {
                     <SelectItem value="all">Wszystkie</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.slug}>
-                        {category.nazwa}
+                        <div className="flex items-center gap-2">
+                          {category.ikona && <span>{category.ikona}</span>}
+                          <span>{category.nazwa}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>

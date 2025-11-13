@@ -263,6 +263,7 @@ export async function POST(request: NextRequest) {
           case: {
             select: {
               nazwaSprawy: true,
+              categoryId: true,
               category: {
                 select: {
                   nazwa: true
@@ -286,6 +287,55 @@ export async function POST(request: NextRequest) {
           punktySaldo: wyroznienie ? { decrement: punktyWyroznienia! } : undefined
         }
       })
+
+      // Get current date info for stats
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = now.getMonth() + 1 // 1-12
+
+      // Update monthly stats
+      await tx.lawFirmStats.upsert({
+        where: {
+          lawFirmId_year_month: {
+            lawFirmId: lawFirm.id,
+            year,
+            month,
+          },
+        },
+        update: {
+          offersSubmitted: { increment: 1 },
+        },
+        create: {
+          lawFirmId: lawFirm.id,
+          year,
+          month,
+          offersSubmitted: 1,
+        },
+      })
+
+      // Update category stats if case has a category
+      if (newOffer.case.categoryId) {
+        await tx.lawFirmCategoryStats.upsert({
+          where: {
+            lawFirmId_categoryId_year_month: {
+              lawFirmId: lawFirm.id,
+              categoryId: newOffer.case.categoryId,
+              year,
+              month,
+            },
+          },
+          update: {
+            offersSubmitted: { increment: 1 },
+          },
+          create: {
+            lawFirmId: lawFirm.id,
+            categoryId: newOffer.case.categoryId,
+            year,
+            month,
+            offersSubmitted: 1,
+          },
+        })
+      }
 
       // Zaktualizuj status sprawy
       await tx.case.update({
