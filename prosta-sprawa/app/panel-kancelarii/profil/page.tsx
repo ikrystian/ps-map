@@ -16,6 +16,7 @@ import { toast } from "sonner"
 import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 interface Voivodeship {
   id: string
@@ -448,12 +449,11 @@ export default function LawFirmProfilePage() {
 
                 <div className="grid gap-2">
                   <Label htmlFor="opis">Opis kancelarii</Label>
-                  <Textarea
-                    id="opis"
+                  <RichTextEditor
                     value={formData.opis}
-                    onChange={(e) => handleInputChange("opis", e.target.value)}
-                    rows={6}
+                    onChange={(value) => handleInputChange("opis", value)}
                     placeholder="Opisz swoją kancelarię..."
+                    minHeight="300px"
                   />
                 </div>
               </div>

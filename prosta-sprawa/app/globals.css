@@ -183,3 +183,79 @@
   background: url('/images/hero.webp') center no-repeat;
   background-size: cover;
 }
+
+/* Rich Text Editor Styles */
+.rich-text-editor-content .tiptap {
+  outline: none;
+}
+
+.rich-text-editor-content .tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.rich-text-editor-content .tiptap h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.rich-text-editor-content .tiptap h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-editor-content .tiptap p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.rich-text-editor-content .tiptap ul,
+.rich-text-editor-content .tiptap ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-editor-content .tiptap ul {
+  list-style-type: disc;
+}
+
+.rich-text-editor-content .tiptap ol {
+  list-style-type: decimal;
+}
+
+.rich-text-editor-content .tiptap li {
+  margin-bottom: 0.25rem;
+}
+
+.rich-text-editor-content .tiptap blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+
+.rich-text-editor-content .tiptap strong {
+  font-weight: 700;
+}
+
+.rich-text-editor-content .tiptap em {
+  font-style: italic;
+}
+
+.rich-text-editor-content .tiptap code {
+  background-color: var(--muted);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
