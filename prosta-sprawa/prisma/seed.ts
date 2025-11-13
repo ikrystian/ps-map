@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { seedVoivodeships } from './seeds/voivodeships'
+import { seedCategories } from './seeds/categories'
+import { seedPromotionConfigs } from './seeds/promotions'
+import { seedPackages } from './seed-packages' // Importuj istniejący seeder pakietów
+import { seedTestData } from './seeds/test-data' // Importuj nowy seeder danych testowych
+import { seedHelpCenter } from './seeds/help-center' // Importuj nowy seeder centrum pomocy
+import { seedBlogCategories } from './seeds/blog-categories' // Importuj nowy seeder kategorii bloga
 
 const prisma = new PrismaClient()
 
@@ -44,6 +51,15 @@ async function main() {
   await prisma.settings.deleteMany()
   await prisma.favoriteLawFirm.deleteMany()
   await prisma.negotiation.deleteMany()
+
+  // Seedowanie danych
+  await seedVoivodeships(prisma)
+  await seedCategories(prisma)
+  await seedPromotionConfigs(prisma)
+  await seedPackages(prisma) // Wywołaj seeder pakietów
+  await seedTestData(prisma) // Wywołaj seeder danych testowych
+  await seedHelpCenter(prisma) // Wywołaj seeder centrum pomocy
+  await seedBlogCategories(prisma) // Wywołaj seeder kategorii bloga
 
   // Seed admina
   const hashedPassword = await bcrypt.hash('ADmin123', 10)

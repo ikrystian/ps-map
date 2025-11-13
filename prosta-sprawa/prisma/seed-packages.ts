@@ -1,8 +1,6 @@
 import { PrismaClient, SubscriptionPackage } from '@prisma/client'
 
-const prisma = new PrismaClient()
-
-async function seedPackages() {
+export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono nazwę parametru na prismaClient
   console.log('Seeding subscription packages...')
 
   const packages = [
@@ -113,7 +111,7 @@ async function seedPackages() {
   ]
 
   for (const pkg of packages) {
-    await prisma.subscriptionPlan.upsert({
+    await prismaClient.subscriptionPlan.upsert({ // Użyj prismaClient
       where: { typ: pkg.typ },
       update: pkg,
       create: pkg,
@@ -123,11 +121,5 @@ async function seedPackages() {
   console.log('Subscription packages seeded successfully!')
 }
 
-seedPackages()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+// Usunięto bezpośrednie wywołanie seedPackages() i disconnect()
+// Będą one wywoływane z głównego seed.ts

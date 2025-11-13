@@ -1,0 +1,89 @@
+import { PrismaClient, CategoryType } from '@prisma/client'
+
+export async function seedCategories(prisma: PrismaClient) {
+  console.log('Seeding categories...')
+
+  const categories = [
+    {
+      nazwa: 'Prawo Cywilne',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Sprawy związane z prawem cywilnym, takie jak umowy, odszkodowania, spadki.',
+      metaTitle: 'Prawo Cywilne - Kancelarie',
+      metaDescription: 'Znajdź kancelarie specjalizujące się w prawie cywilnym.',
+    },
+    {
+      nazwa: 'Prawo Rodzinne',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Sprawy dotyczące rozwodów, alimentów, opieki nad dziećmi.',
+      metaTitle: 'Prawo Rodzinne - Adwokaci',
+      metaDescription: 'Adwokaci specjalizujący się w prawie rodzinnym.',
+    },
+    {
+      nazwa: 'Prawo Pracy',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Sprawy związane z zatrudnieniem, zwolnieniami, mobbingiem.',
+      metaTitle: 'Prawo Pracy - Prawnicy',
+      metaDescription: 'Prawnicy oferujący pomoc w sprawach z zakresu prawa pracy.',
+    },
+    {
+      nazwa: 'Prawo Karne',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Obrona w sprawach karnych, przestępstwa, wykroczenia.',
+      metaTitle: 'Prawo Karne - Obrońcy',
+      metaDescription: 'Doświadczeni obrońcy w sprawach karnych.',
+    },
+    {
+      nazwa: 'Prawo Gospodarcze',
+      typ: CategoryType.SPRAWY_FIRMOWE,
+      opis: 'Obsługa prawna firm, zakładanie spółek, windykacja.',
+      metaTitle: 'Prawo Gospodarcze - Doradztwo',
+      metaDescription: 'Doradztwo prawne dla firm w zakresie prawa gospodarczego.',
+    },
+    {
+      nazwa: 'Prawo Nieruchomości',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Kupno, sprzedaż, najem nieruchomości, spory o nieruchomości.',
+      metaTitle: 'Prawo Nieruchomości - Specjaliści',
+      metaDescription: 'Specjaliści od prawa nieruchomości.',
+    },
+    {
+      nazwa: 'Prawo Administracyjne',
+      typ: CategoryType.SPRAWY_FIRMOWE,
+      opis: 'Sprawy z urzędami, pozwolenia, koncesje.',
+      metaTitle: 'Prawo Administracyjne - Pomoc',
+      metaDescription: 'Pomoc prawna w sprawach administracyjnych.',
+    },
+    {
+      nazwa: 'Prawo Podatkowe',
+      typ: CategoryType.SPRAWY_FIRMOWE,
+      opis: 'Doradztwo podatkowe, optymalizacja, spory z urzędem skarbowym.',
+      metaTitle: 'Prawo Podatkowe - Doradcy',
+      metaDescription: 'Doradcy podatkowi dla firm i osób prywatnych.',
+    },
+    {
+      nazwa: 'Prawo Medyczne',
+      typ: CategoryType.SPRAWY_PRYWATNE,
+      opis: 'Błędy medyczne, odszkodowania, prawa pacjenta.',
+      metaTitle: 'Prawo Medyczne - Prawnicy',
+      metaDescription: 'Prawnicy specjalizujący się w prawie medycznym.',
+    },
+    {
+      nazwa: 'Prawo Upadłościowe',
+      typ: CategoryType.SPRAWY_FIRMOWE,
+      opis: 'Upadłość konsumencka, restrukturyzacja firm.',
+      metaTitle: 'Prawo Upadłościowe - Doradztwo',
+      metaDescription: 'Doradztwo w sprawach upadłościowych i restrukturyzacyjnych.',
+    },
+  ]
+
+  for (const category of categories) {
+    const slug = category.nazwa.toLowerCase().replace(/\s/g, '-')
+    await prisma.category.upsert({
+      where: { slug: slug },
+      update: { ...category, slug: slug },
+      create: { ...category, slug: slug },
+    })
+  }
+
+  console.log('Categories seeded successfully!')
+}
