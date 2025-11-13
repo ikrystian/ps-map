@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -52,6 +53,8 @@ export default function PublicHeader({
   const [categories, setCategories] = useState<Category[]>([])
   const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
+  const [searchFormOpen, setSearchFormOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -73,6 +76,13 @@ export default function PublicHeader({
   const firmoweCat = categories.slice(0, Math.ceil(categories.length / 2))
   const prywatneCat = categories.slice(Math.ceil(categories.length / 2))
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      window.location.href = `/szukaj-prawnika?q=${encodeURIComponent(searchQuery)}`
+    }
+  }
+
   return (
     <header className="border-b bg-background fixed left-0 top-0 right-0 z-30 flex-shrink-0 backdrop-blur-md">
       <div className="container mx-auto px-4">
@@ -87,12 +97,13 @@ export default function PublicHeader({
             <NavigationMenuList className="flex gap-6">
               {/* Szukaj Button */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/szukaj-prawnika" className="flex items-center gap-2 px-4 py-2 hover:text-primary">
-                    <Search className="h-4 w-4" />
-                    Szukaj
-                  </Link>
-                </NavigationMenuLink>
+                <button
+                  onClick={() => setSearchFormOpen(!searchFormOpen)}
+                  className="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                >
+                  <Search className="h-4 w-4" />
+                  Szukaj
+                </button>
               </NavigationMenuItem>
 
               {/* Sprawy Firmowe - Mega Menu */}
@@ -231,6 +242,30 @@ export default function PublicHeader({
                 </Link>
               </>
             )}
+          </div>
+        </div>
+
+        {/* Search Form - Slide Down */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            searchFormOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="border-t py-4">
+            <form onSubmit={handleSearchSubmit} className="flex gap-3 max-w-2xl mx-auto">
+              <Input
+                type="text"
+                placeholder="Wyszukaj prawnika lub specjalizację..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1"
+                autoFocus={searchFormOpen}
+              />
+              <Button type="submit" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Wyszukaj
+              </Button>
+            </form>
           </div>
         </div>
       </div>
