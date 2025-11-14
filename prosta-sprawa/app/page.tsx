@@ -820,7 +820,7 @@ export default function HomePage() {
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground mb-2">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {firm.miasto}, {firm.voivodeship.nazwa}
+                        {firm.miasto}{firm.voivodeship?.nazwa && `, ${firm.voivodeship.nazwa}`}
                       </div>
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />

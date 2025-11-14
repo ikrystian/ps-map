@@ -198,3 +198,713 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 
   return { subject, html, text }
 }
+
+/**
+ * Generuje HTML dla emaila aktywacji promocji
+ */
+export function generatePromotionActivatedEmail(
+  lawFirmName: string,
+  promotionType: string,
+  promotionLabel: string,
+  startDate: Date,
+  endDate: Date,
+  cost: number
+): { subject: string; html: string; text: string } {
+  const subject = `Twoja promocja ${promotionLabel} została aktywowana!`
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pl-PL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .success-badge {
+            background-color: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 500;
+            margin-bottom: 20px;
+          }
+          .info-box {
+            background-color: #f3f4f6;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+          }
+          .info-row:last-child {
+            border-bottom: none;
+          }
+          .info-label {
+            font-weight: 500;
+            color: #6b7280;
+          }
+          .info-value {
+            color: #111827;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+          </div>
+
+          <div class="content">
+            <div class="success-badge">✓ Promocja aktywna</div>
+
+            <h2>Promocja została pomyślnie aktywowana!</h2>
+
+            <p>Witaj ${lawFirmName},</p>
+
+            <p>Twoja promocja <strong>${promotionLabel}</strong> została właśnie aktywowana i jest już widoczna dla potencjalnych klientów!</p>
+
+            <div class="info-box">
+              <div class="info-row">
+                <span class="info-label">Typ promocji:</span>
+                <span class="info-value">${promotionLabel}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Data rozpoczęcia:</span>
+                <span class="info-value">${formatDate(startDate)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Data zakończenia:</span>
+                <span class="info-value">${formatDate(endDate)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Koszt:</span>
+                <span class="info-value">${cost} punktów</span>
+              </div>
+            </div>
+
+            <p><strong>Co dalej?</strong></p>
+            <ul>
+              <li>Twój profil jest teraz wyświetlany z większą widocznością</li>
+              <li>Możesz śledzić statystyki promocji w panelu kancelarii</li>
+              <li>Promocja odnowi się automatycznie, jeśli włączyłeś automatyczne odnowienie</li>
+            </ul>
+
+            <div class="button-container">
+              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie" class="button">
+                Zobacz statystyki promocji
+              </a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Promocja została pomyślnie aktywowana!
+
+Witaj ${lawFirmName},
+
+Twoja promocja ${promotionLabel} została właśnie aktywowana i jest już widoczna dla potencjalnych klientów!
+
+Szczegóły:
+- Typ promocji: ${promotionLabel}
+- Data rozpoczęcia: ${formatDate(startDate)}
+- Data zakończenia: ${formatDate(endDate)}
+- Koszt: ${cost} punktów
+
+Co dalej?
+- Twój profil jest teraz wyświetlany z większą widocznością
+- Możesz śledzić statystyki promocji w panelu kancelarii
+- Promocja odnowi się automatycznie, jeśli włączyłeś automatyczne odnowienie
+
+Zobacz statystyki: ${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+/**
+ * Generuje HTML dla emaila odnowienia promocji
+ */
+export function generatePromotionRenewedEmail(
+  lawFirmName: string,
+  promotionLabel: string,
+  newEndDate: Date,
+  cost: number,
+  remainingPoints: number
+): { subject: string; html: string; text: string } {
+  const subject = `Twoja promocja ${promotionLabel} została odnowiona`
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pl-PL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .success-badge {
+            background-color: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 500;
+            margin-bottom: 20px;
+          }
+          .info-box {
+            background-color: #f3f4f6;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+          </div>
+
+          <div class="content">
+            <div class="success-badge">✓ Promocja odnowiona</div>
+
+            <h2>Promocja została automatycznie odnowiona</h2>
+
+            <p>Witaj ${lawFirmName},</p>
+
+            <p>Twoja promocja <strong>${promotionLabel}</strong> została automatycznie odnowiona zgodnie z ustawieniami.</p>
+
+            <div class="info-box">
+              <p><strong>Szczegóły odnowienia:</strong></p>
+              <ul>
+                <li>Nowa data zakończenia: <strong>${formatDate(newEndDate)}</strong></li>
+                <li>Koszt odnowienia: <strong>${cost} punktów</strong></li>
+                <li>Pozostałe punkty: <strong>${remainingPoints} punktów</strong></li>
+              </ul>
+            </div>
+
+            <p>Twoja promocja nadal jest aktywna i działa z pełną mocą!</p>
+
+            <div class="button-container">
+              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie" class="button">
+                Zarządzaj promocjami
+              </a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Promocja została automatycznie odnowiona
+
+Witaj ${lawFirmName},
+
+Twoja promocja ${promotionLabel} została automatycznie odnowiona zgodnie z ustawieniami.
+
+Szczegóły odnowienia:
+- Nowa data zakończenia: ${formatDate(newEndDate)}
+- Koszt odnowienia: ${cost} punktów
+- Pozostałe punkty: ${remainingPoints} punktów
+
+Twoja promocja nadal jest aktywna i działa z pełną mocą!
+
+Zarządzaj promocjami: ${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+/**
+ * Generuje HTML dla emaila niepowodzenia odnowienia promocji
+ */
+export function generatePromotionRenewalFailedEmail(
+  lawFirmName: string,
+  promotionLabel: string,
+  requiredPoints: number,
+  currentPoints: number
+): { subject: string; html: string; text: string } {
+  const subject = `Nie udało się odnowić promocji ${promotionLabel}`
+
+  const pointsNeeded = requiredPoints - currentPoints
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .warning-badge {
+            background-color: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 500;
+            margin-bottom: 20px;
+          }
+          .warning-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+          </div>
+
+          <div class="content">
+            <div class="warning-badge">⚠ Niewystarczające punkty</div>
+
+            <h2>Nie udało się odnowić promocji</h2>
+
+            <p>Witaj ${lawFirmName},</p>
+
+            <p>Niestety, nie mogliśmy automatycznie odnowić Twojej promocji <strong>${promotionLabel}</strong> z powodu niewystarczającej liczby punktów.</p>
+
+            <div class="warning-box">
+              <p><strong>Szczegóły:</strong></p>
+              <ul>
+                <li>Wymagane punkty: <strong>${requiredPoints} punktów</strong></li>
+                <li>Twoje punkty: <strong>${currentPoints} punktów</strong></li>
+                <li>Brakuje: <strong>${pointsNeeded} punktów</strong></li>
+              </ul>
+            </div>
+
+            <p><strong>Co się stało?</strong></p>
+            <ul>
+              <li>Promocja została dezaktywowana</li>
+              <li>Automatyczne odnowienie zostało wyłączone</li>
+              <li>Możesz ją ponownie aktywować po doładowaniu punktów</li>
+            </ul>
+
+            <p><strong>Co możesz zrobić?</strong></p>
+            <ul>
+              <li>Dokup punkty w panelu kancelarii</li>
+              <li>Aktywuj promocję ponownie</li>
+            </ul>
+
+            <div class="button-container">
+              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/punkty" class="button">
+                Dokup punkty
+              </a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Nie udało się odnowić promocji
+
+Witaj ${lawFirmName},
+
+Niestety, nie mogliśmy automatycznie odnowić Twojej promocji ${promotionLabel} z powodu niewystarczającej liczby punktów.
+
+Szczegóły:
+- Wymagane punkty: ${requiredPoints} punktów
+- Twoje punkty: ${currentPoints} punktów
+- Brakuje: ${pointsNeeded} punktów
+
+Co się stało?
+- Promocja została dezaktywowana
+- Automatyczne odnowienie zostało wyłączone
+- Możesz ją ponownie aktywować po doładowaniu punktów
+
+Co możesz zrobić?
+- Dokup punkty w panelu kancelarii
+- Aktywuj promocję ponownie
+
+Dokup punkty: ${process.env.NEXTAUTH_URL}/panel-kancelarii/punkty
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+/**
+ * Generuje HTML dla emaila formularza kontaktowego
+ */
+export function generateContactFormEmail(
+  lawFirmName: string,
+  lawFirmEmail: string,
+  senderName: string,
+  senderEmail: string,
+  senderPhone: string | null,
+  subject: string,
+  message: string
+): { subject: string; html: string; text: string } {
+  const emailSubject = `Nowa wiadomość z formularza kontaktowego - ${senderName}`
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #2563eb;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .info-box {
+            background-color: #f3f4f6;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          .info-row {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+          }
+          .info-row:last-child {
+            border-bottom: none;
+          }
+          .info-label {
+            font-weight: 500;
+            color: #6b7280;
+            display: inline-block;
+            width: 120px;
+          }
+          .info-value {
+            color: #111827;
+          }
+          .message-box {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+            <p style="margin: 5px 0 0 0; font-size: 14px;">Nowa wiadomość kontaktowa</p>
+          </div>
+
+          <div class="content">
+            <h2>Witaj ${lawFirmName}!</h2>
+
+            <p>Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu:</p>
+
+            <div class="info-box">
+              <div class="info-row">
+                <span class="info-label">Od:</span>
+                <span class="info-value">${senderName}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value"><a href="mailto:${senderEmail}">${senderEmail}</a></span>
+              </div>
+              ${senderPhone ? `
+              <div class="info-row">
+                <span class="info-label">Telefon:</span>
+                <span class="info-value"><a href="tel:${senderPhone}">${senderPhone}</a></span>
+              </div>
+              ` : ''}
+              <div class="info-row">
+                <span class="info-label">Temat:</span>
+                <span class="info-value">${subject}</span>
+              </div>
+            </div>
+
+            <h3>Treść wiadomości:</h3>
+            <div class="message-box">${message}</div>
+
+            <p><strong>Pamiętaj:</strong> Szybka odpowiedź zwiększa szansę na pozyskanie klienta!</p>
+
+            <div class="button-container">
+              <a href="mailto:${senderEmail}" class="button">
+                Odpowiedz na email
+              </a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Nowa wiadomość z formularza kontaktowego
+
+Witaj ${lawFirmName}!
+
+Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu:
+
+Od: ${senderName}
+Email: ${senderEmail}
+${senderPhone ? `Telefon: ${senderPhone}` : ''}
+Temat: ${subject}
+
+Treść wiadomości:
+${message}
+
+Pamiętaj: Szybka odpowiedź zwiększa szansę na pozyskanie klienta!
+
+Odpowiedz na email: ${senderEmail}
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject: emailSubject, html, text }
+}

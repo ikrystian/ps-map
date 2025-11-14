@@ -319,14 +319,120 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth()
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const { id } = await params
 
-    // TODO: Implementuj usuwanie kancelarii
-    return NextResponse.json({ message: "Delete law firm", id })
+    // Sprawdź, czy kancelaria istnieje
+    const existingLawFirm = await prisma.lawFirm.findUnique({
+      where: { id },
+      include: {
+        user: true,
+      },
+    })
+
+    if (!existingLawFirm) {
+      return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+    }
+
+    // Sprawdź uprawnienia (właściciel lub admin)
+    const isOwner = session.user.role === "LAW_FIRM" && existingLawFirm.userId === session.user.id
+    const isAdmin = session.user.role === "ADMIN"
+
+    if (!isOwner && !isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    // Get query params to determine delete type
+    const { searchParams } = new URL(request.url)
+    const deleteType = searchParams.get("type") || "soft" // soft or hard
+
+    if (deleteType === "hard") {
+      // Hard delete (admin only)
+      if (session.user.role !== "ADMIN") {
+        return NextResponse.json(
+          { error: "Only admins can perform hard delete" },
+          { status: 403 }
+        )
+      }
+
+      // Hard delete - actually remove from database
+      // This will cascade delete related records (offers, promotions, etc.) due to onDelete: Cascade
+      await prisma.lawFirm.delete({
+        where: { id },
+      })
+
+      // Also soft delete the user account
+      await prisma.user.update({
+        where: { id: existingLawFirm.userId },
+        data: {
+          deletedAt: new Date(),
+          status: "SUSPENDED",
+        },
+      })
+
+      return NextResponse.json({
+        message: "Law firm permanently deleted",
+        id,
+        type: "hard",
+      })
+    } else {
+      // Soft delete - set aktywna to false
+      await prisma.lawFirm.update({
+        where: { id },
+        data: {
+          aktywna: false,
+          updatedAt: new Date(),
+        },
+      })
+
+      // Also soft delete the user account if owner is deleting
+      if (isOwner) {
+        await prisma.user.update({
+          where: { id: existingLawFirm.userId },
+          data: {
+            deletedAt: new Date(),
+            status: "SUSPENDED",
+          },
+        })
+      }
+
+      // Cancel all active promotions
+      await prisma.promotion.updateMany({
+        where: {
+          lawFirmId: id,
+          aktywna: true,
+        },
+        data: {
+          aktywna: false,
+        },
+      })
+
+      // Create notification for law firm
+      await prisma.notification.create({
+        data: {
+          userId: existingLawFirm.userId,
+          typ: "ZMIANA_STATUSU",
+          tytul: "Profil kancelarii został usunięty",
+          tresc: "Twój profil kancelarii został dezaktywowany. Skontaktuj się z administracją aby go przywrócić.",
+          linkUrl: "/kontakt",
+        },
+      })
+
+      return NextResponse.json({
+        message: "Law firm deactivated (soft delete)",
+        id,
+        type: "soft",
+      })
+    }
   } catch (error) {
     console.error("Error deleting law firm:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

@@ -12,6 +12,8 @@ export async function POST(
     const now = new Date()
     const year = now.getFullYear()
     const month = now.getMonth() + 1 // 1-12
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
     // Update or create stats entry
     await prisma.$transaction(async (tx) => {
@@ -42,6 +44,40 @@ export async function POST(
           profileViews: 1,
         },
       })
+
+      // Track promotion stats if law firm has active promotions
+      const activePromotions = await tx.promotion.findMany({
+        where: {
+          lawFirmId: id,
+          aktywna: true,
+          startPromocji: {
+            lte: now,
+          },
+          koniecPromocji: {
+            gte: now,
+          },
+        },
+      })
+
+      // Update stats for each active promotion
+      for (const promotion of activePromotions) {
+        await tx.promotionStats.upsert({
+          where: {
+            promotionId_date: {
+              promotionId: promotion.id,
+              date: today,
+            },
+          },
+          update: {
+            profileViews: { increment: 1 },
+          },
+          create: {
+            promotionId: promotion.id,
+            date: today,
+            profileViews: 1,
+          },
+        })
+      }
     })
 
     return Response.json({ success: true })

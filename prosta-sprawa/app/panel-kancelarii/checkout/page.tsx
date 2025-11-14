@@ -81,7 +81,7 @@ export default function CheckoutPage() {
       setPaymentMethod(data.metodaPlatnosci || "PRZELEWY24")
     } catch (err) {
       console.error("Error parsing order data:", err)
-      router.push(data?.type === "PACKAGE" ? "/panel-kancelarii/pakiet" : "/panel-kancelarii/punkty")
+      router.push("/panel-kancelarii/punkty")
       return
     }
 

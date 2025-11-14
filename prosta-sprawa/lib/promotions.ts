@@ -6,6 +6,11 @@
 
 import { prisma } from "@/lib/prisma"
 import { PromotionType } from "@prisma/client"
+import {
+  sendEmail,
+  generatePromotionRenewedEmail,
+  generatePromotionRenewalFailedEmail,
+} from "@/lib/email"
 
 // ============================================================================
 // TYPY
@@ -361,7 +366,51 @@ export async function renewExpiredPromotions() {
           reason: "Niewystarczająca liczba punktów",
         })
 
-        // TODO: Wyślij powiadomienie do kancelarii
+        // Get promotion label
+        const promotionLabels = {
+          PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
+          WYROZNIENIE: 'Wyróżnienie profilu',
+          TOP_LISTA: 'Top Lista',
+          STRONA_GLOWNA: 'Strona Główna Premium',
+        }
+        const promotionLabel = promotionLabels[promotion.typPromocji]
+
+        // Create in-app notification
+        await prisma.notification.create({
+          data: {
+            userId: promotion.lawFirm.userId,
+            typ: 'ZMIANA_STATUSU',
+            tytul: 'Nie udało się odnowić promocji',
+            tresc: `Promocja "${promotionLabel}" nie została odnowiona z powodu niewystarczającej liczby punktów. Potrzebujesz ${promotion.kosztPunktow} punktów, masz ${promotion.lawFirm.punktySaldo} punktów.`,
+            linkUrl: '/panel-kancelarii/punkty',
+          },
+        })
+
+        // Get user email
+        const user = await prisma.user.findUnique({
+          where: { id: promotion.lawFirm.userId },
+          select: { email: true },
+        })
+
+        // Send email notification
+        if (user?.email) {
+          const emailData = generatePromotionRenewalFailedEmail(
+            promotion.lawFirm.nazwa,
+            promotionLabel,
+            promotion.kosztPunktow,
+            promotion.lawFirm.punktySaldo
+          )
+
+          sendEmail({
+            to: user.email,
+            subject: emailData.subject,
+            html: emailData.html,
+            text: emailData.text,
+          }).catch((error) => {
+            console.error('Error sending promotion renewal failure email:', error)
+          })
+        }
+
         continue
       }
 
@@ -405,7 +454,57 @@ export async function renewExpiredPromotions() {
 
       results.renewed.push(promotion.id)
 
-      // TODO: Wyślij powiadomienie o odnowieniu
+      // Get promotion label
+      const promotionLabels = {
+        PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
+        WYROZNIENIE: 'Wyróżnienie profilu',
+        TOP_LISTA: 'Top Lista',
+        STRONA_GLOWNA: 'Strona Główna Premium',
+      }
+      const promotionLabel = promotionLabels[promotion.typPromocji]
+
+      // Get updated law firm balance
+      const updatedLawFirm = await prisma.lawFirm.findUnique({
+        where: { id: promotion.lawFirmId },
+        select: { punktySaldo: true },
+      })
+
+      // Create in-app notification
+      await prisma.notification.create({
+        data: {
+          userId: promotion.lawFirm.userId,
+          typ: 'ZMIANA_STATUSU',
+          tytul: 'Promocja została odnowiona',
+          tresc: `Twoja promocja "${promotionLabel}" została automatycznie odnowiona. Koszt: ${promotion.kosztPunktow} punktów. Pozostałe punkty: ${updatedLawFirm?.punktySaldo || 0}.`,
+          linkUrl: '/panel-kancelarii/promowanie',
+        },
+      })
+
+      // Get user email
+      const user = await prisma.user.findUnique({
+        where: { id: promotion.lawFirm.userId },
+        select: { email: true },
+      })
+
+      // Send email notification
+      if (user?.email) {
+        const emailData = generatePromotionRenewedEmail(
+          promotion.lawFirm.nazwa,
+          promotionLabel,
+          newEnd,
+          promotion.kosztPunktow,
+          updatedLawFirm?.punktySaldo || 0
+        )
+
+        sendEmail({
+          to: user.email,
+          subject: emailData.subject,
+          html: emailData.html,
+          text: emailData.text,
+        }).catch((error) => {
+          console.error('Error sending promotion renewal email:', error)
+        })
+      }
     } catch (error) {
       console.error(`Error renewing promotion ${promotion.id}:`, error)
       results.failed.push({

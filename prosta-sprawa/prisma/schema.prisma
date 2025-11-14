@@ -939,6 +939,9 @@ model Promotion {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
+  // Statystyki promocji
+  stats                   PromotionStats[]
+
   @@index([lawFirmId])
   @@index([aktywna])
   @@index([startPromocji])
@@ -985,6 +988,32 @@ model PromotionConfig {
   @@index([type])
   @@index([aktywna])
   @@index([kolejnosc])
+}
+
+// ============================================================================
+// STATYSTYKI PROMOCJI
+// ============================================================================
+
+model PromotionStats {
+  id                String   @id @default(uuid())
+  promotionId       String
+  promotion         Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  // Data dla której zbierane są statystyki (dzień)
+  date              DateTime
+
+  // Statystyki
+  profileViews      Int      @default(0)  // Wyświetlenia profilu
+  profileClicks     Int      @default(0)  // Kliknięcia w profil
+  contactClicks     Int      @default(0)  // Kliknięcia "Kontakt"
+  offersSent        Int      @default(0)  // Wysłane oferty (dla PODBICIE_OGLOSZENIA)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([promotionId, date])
+  @@index([promotionId])
+  @@index([date])
 }
 
 // ============================================================================

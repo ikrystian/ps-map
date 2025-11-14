@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { sendEmail, generateContactFormEmail } from "@/lib/email"
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,13 +73,28 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // TODO: Wysyłanie emaila do kancelarii
-    // Tutaj można dodać integrację z serwisem email (np. SendGrid, AWS SES)
-    // await sendEmail({
-    //   to: lawFirm.emailKontakt,
-    //   subject: `Nowa wiadomość z formularza kontaktowego - ${imieNazwisko}`,
-    //   html: emailTemplate,
-    // })
+    // Send email to law firm
+    if (lawFirm.emailKontakt) {
+      const emailData = generateContactFormEmail(
+        lawFirm.nazwa,
+        lawFirm.emailKontakt,
+        imieNazwisko,
+        email,
+        telefon,
+        typSprawy || "Kontakt przez formularz",
+        tresc
+      )
+
+      // Send email asynchronously (don't wait for it)
+      sendEmail({
+        to: lawFirm.emailKontakt,
+        subject: emailData.subject,
+        html: emailData.html,
+        text: emailData.text,
+      }).catch((error) => {
+        console.error('Error sending contact form email:', error)
+      })
+    }
 
     return Response.json(
       {

@@ -308,7 +308,7 @@ export default function ClientOffersPage() {
                 </div>
 
                 <div className="text-xs text-muted-foreground">
-                  Złożona: {formatDate(offer.createdAt)}
+                  Złożona: {formatDate(offer.createdAt.toString())}
                 </div>
               </CardContent>
 

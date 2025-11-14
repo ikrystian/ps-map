@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { PromotionType } from "@prisma/client"
+import { sendEmail, generatePromotionActivatedEmail } from "@/lib/email"
 
 // Koszty punktów za typy promocji
 const PROMOTION_COSTS = {
@@ -166,6 +167,55 @@ export async function POST(request: NextRequest) {
         },
       }),
     ])
+
+    // Get promotion label for notification
+    const promotionLabels = {
+      PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
+      WYROZNIENIE: 'Wyróżnienie profilu',
+      TOP_LISTA: 'Top Lista',
+      STRONA_GLOWNA: 'Strona Główna Premium',
+    }
+
+    const promotionLabel = promotionLabels[typPromocji as keyof typeof promotionLabels]
+
+    // Create in-app notification
+    await prisma.notification.create({
+      data: {
+        userId: session.user.id,
+        typ: 'ZMIANA_STATUSU',
+        tytul: 'Promocja została aktywowana',
+        tresc: `Twoja promocja "${promotionLabel}" została pomyślnie aktywowana i jest już widoczna dla klientów.`,
+        linkUrl: '/panel-kancelarii/promowanie',
+      },
+    })
+
+    // Get user email for sending notification
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { email: true },
+    })
+
+    // Send email notification
+    if (user?.email) {
+      const emailData = generatePromotionActivatedEmail(
+        lawFirm.nazwa,
+        typPromocji,
+        promotionLabel,
+        start,
+        end,
+        kosztPunktow
+      )
+
+      // Send email asynchronously (don't wait for it)
+      sendEmail({
+        to: user.email,
+        subject: emailData.subject,
+        html: emailData.html,
+        text: emailData.text,
+      }).catch((error) => {
+        console.error('Error sending promotion activation email:', error)
+      })
+    }
 
     return Response.json(promotion, { status: 201 })
   } catch (error) {

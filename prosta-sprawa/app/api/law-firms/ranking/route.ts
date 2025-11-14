@@ -36,17 +36,14 @@ export async function GET(request: NextRequest) {
           },
           take: 5,
         },
-        subscriptionPlan: {
-          select: {
-            typ: true,
-          },
-        },
+        pakietSubskrypcji: true,
         reviews: {
           where: {
-            approved: true,
+            zweryfikowana: true,
+            aktywna: true,
           },
           select: {
-            ocena: true,
+            ocenaOgolna: true,
           },
         },
       },
@@ -60,7 +57,7 @@ export async function GET(request: NextRequest) {
     const rankedLawFirms = lawFirms.map((firm, index) => {
       const reviewCount = firm.reviews.length
       const avgRating = reviewCount > 0
-        ? Math.round((firm.reviews.reduce((sum, r) => sum + r.ocena, 0) / reviewCount) * 10) / 10
+        ? Math.round((firm.reviews.reduce((sum, r) => sum + r.ocenaOgolna, 0) / reviewCount) * 10) / 10
         : 0
 
       return {
@@ -73,7 +70,7 @@ export async function GET(request: NextRequest) {
         miasto: firm.miasto,
         punktySaldo: firm.punktySaldo,
         zweryfikowana: firm.zweryfikowana,
-        subscriptionType: firm.subscriptionPlan?.typ || null,
+        subscriptionType: firm.pakietSubskrypcji || null,
         voivodeship: firm.voivodeship,
         categories: firm.categories.map(c => ({ nazwa: c.category.nazwa })),
         avgRating,
