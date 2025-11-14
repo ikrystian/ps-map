@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,6 +23,7 @@ import {
   X,
   Gift,
   ShoppingCart,
+  ArrowRight,
 } from "lucide-react"
 import {
   AlertDialog,
@@ -87,6 +89,7 @@ const renderValue = (value: any): string => {
 
 export default function LawFirmPackagePage() {
   const { data: session } = useSession()
+  const router = useRouter()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [plans, setPlans] = useState<SubscriptionPlan[]>([])
   const [selectedPeriods, setSelectedPeriods] = useState<Record<string, string>>({})
@@ -179,43 +182,37 @@ export default function LawFirmPackagePage() {
     setShowConfirmDialog(true)
   }
 
-  const handleConfirmPurchase = async () => {
+  const handleConfirmPurchase = () => {
     if (!selectedPlan) return
 
-    setPurchasing(true)
-    setShowConfirmDialog(false)
+    const period = parseInt(selectedPeriods[selectedPlan.id] || "12")
+    const price = getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")
 
-    try {
-      const period = parseInt(selectedPeriods[selectedPlan.id] || "12")
-
-      const response = await fetch("/api/law-firms/me/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planId: selectedPlan.id,
-          period: period,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Wystąpił błąd")
+    // Zapisz dane zamówienia w sessionStorage
+    const orderData = {
+      type: "PACKAGE",
+      planId: selectedPlan.id,
+      planName: selectedPlan.nazwa,
+      planType: selectedPlan.typ,
+      period: period,
+      periodLabel: getPeriodLabel(selectedPeriods[selectedPlan.id] || "12"),
+      price: price,
+      punktyGratis: selectedPlan.punktyGratis,
+      features: {
+        dostepDoSpraw: selectedPlan.dostepDoSpraw,
+        kategorieSpraw: selectedPlan.kategorieSpraw,
+        wojewodztwa: selectedPlan.wojewodztwa,
+        miasta: selectedPlan.miasta,
+        priorytetWyszukiwanie: selectedPlan.priorytetWyszukiwanie,
+        statystykiAnalizy: selectedPlan.statystykiAnalizy,
+        mozliwoscBloga: selectedPlan.mozliwoscBloga,
       }
-
-      const data = await response.json()
-
-      toast.success(`Gratulacje! Aktywowałeś pakiet ${data.plan.nazwa}. Otrzymałeś ${data.plan.punktyGratis} punktów gratis!`)
-
-      // Odśwież dane
-      await fetchData()
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się aktywować pakietu")
-    } finally {
-      setPurchasing(false)
-      setSelectedPlan(null)
     }
+
+    sessionStorage.setItem("pendingOrder", JSON.stringify(orderData))
+
+    // Przekieruj do strony checkout
+    window.location.href = "/panel-kancelarii/checkout"
   }
 
   if (loading) {
@@ -484,7 +481,8 @@ export default function LawFirmPackagePage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmPurchase}>
-              Aktywuj pakiet
+              <ArrowRight className="mr-2 h-4 w-4" />
+              Przejdź do podsumowania
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

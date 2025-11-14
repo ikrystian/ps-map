@@ -26,3 +26,43 @@ export function generateSlug(text: string): string {
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '')
 }
+
+/**
+ * Returns the border color class based on subscription package
+ */
+export function getSubscriptionBorderColor(subscriptionType?: string | null): string {
+  if (!subscriptionType) return 'border-gray-300'
+
+  switch (subscriptionType) {
+    case 'PODSTAWOWY':
+      return 'border-slate-400'
+    case 'STANDARD':
+      return 'border-blue-500'
+    case 'PREMIUM':
+      return 'border-purple-500'
+    case 'BIZNES':
+      return 'border-gradient-animated' // Special animated gradient for BIZNES
+    default:
+      return 'border-gray-300'
+  }
+}
+
+/**
+ * Returns the ring color class for subscription package (for hover effects)
+ */
+export function getSubscriptionRingColor(subscriptionType?: string | null): string {
+  if (!subscriptionType) return 'ring-gray-300'
+
+  switch (subscriptionType) {
+    case 'PODSTAWOWY':
+      return 'ring-slate-400'
+    case 'STANDARD':
+      return 'ring-blue-500'
+    case 'PREMIUM':
+      return 'ring-purple-500'
+    case 'BIZNES':
+      return 'ring-purple-500'
+    default:
+      return 'ring-gray-300'
+  }
+}

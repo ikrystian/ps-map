@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
             category: true,
           },
         },
+        subscriptionPlan: true,
       },
     })
 

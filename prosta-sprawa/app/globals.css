@@ -285,3 +285,18 @@ a .bg-card {
 .animate-gradient {
   animation: gradient 3s ease infinite;
 }
+
+/* Gradient border for BIZNES subscription */
+.border-gradient-animated {
+  position: relative;
+  border: 3px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(90deg, #fbbf24, #c026d3, #3b82f6, #fbbf24) border-box;
+  background-size: 300% 300%;
+  animation: gradient 3s ease infinite;
+}
+
+.dark .border-gradient-animated {
+  background: linear-gradient(#282825, #282825) padding-box,
+              linear-gradient(90deg, #fbbf24, #c026d3, #3b82f6, #fbbf24) border-box;
+}

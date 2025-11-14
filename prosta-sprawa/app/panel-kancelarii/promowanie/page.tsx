@@ -190,6 +190,9 @@ export default function LawFirmPromotionPage() {
   const [promotionToCancel, setPromotionToCancel] = useState<Promotion | null>(null)
   const [cancelling, setCancelling] = useState(false)
 
+  // Dialog potwierdzenia utworzenia promocji
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+
   useEffect(() => {
     fetchData()
   }, [session])
@@ -251,7 +254,7 @@ export default function LawFirmPromotionPage() {
     }
   }
 
-  const handleSubmit = async () => {
+  const handleOpenConfirmation = () => {
     if (!selectedType || !startDate) {
       setError("Wypełnij wszystkie wymagane pola")
       return
@@ -263,8 +266,14 @@ export default function LawFirmPromotionPage() {
       return
     }
 
+    // Show confirmation dialog
+    setConfirmDialogOpen(true)
+  }
+
+  const handleSubmit = async () => {
     setSubmitting(true)
     setError(null)
+    setConfirmDialogOpen(false)
 
     try {
       const response = await fetch("/api/promotions", {
@@ -291,6 +300,11 @@ export default function LawFirmPromotionPage() {
       setDialogOpen(false)
       resetForm()
       await fetchData()
+
+      toast({
+        title: "Sukces",
+        description: "Promocja została utworzona pomyślnie",
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
@@ -941,9 +955,89 @@ export default function LawFirmPromotionPage() {
               Anuluj
             </Button>
             <Button
-              onClick={handleSubmit}
+              onClick={handleOpenConfirmation}
               disabled={submitting || !selectedType || !startDate || (lawFirm ? lawFirm.punktySaldo < calculateCost() : false)}
             >
+              Dalej
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Potwierdź utworzenie promocji</DialogTitle>
+            <DialogDescription>
+              Sprawdź szczegóły promocji przed utworzeniem
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Typ promocji:</span>
+                <span className="font-medium">{getPromotionTypeLabel(selectedType, promotionTypes)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Czas trwania:</span>
+                <span className="font-medium">{duration} dni</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Data rozpoczęcia:</span>
+                <span className="font-medium">{startDate ? formatDate(new Date(startDate)) : '-'}</span>
+              </div>
+              {selectedCategory && selectedCategory !== "all" && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Kategoria:</span>
+                  <span className="font-medium">
+                    {categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
+                  </span>
+                </div>
+              )}
+              {selectedVoivodeship && selectedVoivodeship !== "all" && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Województwo:</span>
+                  <span className="font-medium">
+                    {voivodeships.find(v => v.id === selectedVoivodeship)?.nazwa || selectedVoivodeship}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Automatyczne odnowienie:</span>
+                <span className="font-medium">{autoRenewal ? "Tak" : "Nie"}</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="bg-muted p-4 rounded-lg space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Koszt promocji:</span>
+                <span className="font-bold text-lg">{calculateCost()} punktów</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Twoje saldo po utworzeniu:</span>
+                <span className="font-medium">{lawFirm ? lawFirm.punktySaldo - calculateCost() : 0} punktów</span>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+              <div className="flex gap-2">
+                <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <strong>Uwaga:</strong> Po utworzeniu promocji punkty zostaną natychmiast potrącone z Twojego salda.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDialogOpen(false)} disabled={submitting}>
+              Wróć
+            </Button>
+            <Button onClick={handleSubmit} disabled={submitting}>
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Utwórz promocję
             </Button>

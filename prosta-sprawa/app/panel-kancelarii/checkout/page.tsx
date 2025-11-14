@@ -26,11 +26,29 @@ const formatCurrency = (amount: number) => {
 }
 
 interface OrderData {
-  pakietPunktow: string
-  pakietLabel: string
-  liczbaPunktow: number
-  kwota: number
-  metodaPlatnosci: string
+  type?: string // "POINTS" or "PACKAGE"
+  pakietPunktow?: string
+  pakietLabel?: string
+  liczbaPunktow?: number
+  kwota?: number
+  price?: number
+  metodaPlatnosci?: string
+  // Package specific fields
+  planId?: string
+  planName?: string
+  planType?: string
+  period?: number
+  periodLabel?: string
+  punktyGratis?: number
+  features?: {
+    dostepDoSpraw?: number | null
+    kategorieSpraw?: number | null
+    wojewodztwa?: number
+    miasta?: number
+    priorytetWyszukiwanie?: boolean
+    statystykiAnalizy?: boolean
+    mozliwoscBloga?: boolean
+  }
 }
 
 interface LawFirm {
@@ -63,7 +81,7 @@ export default function CheckoutPage() {
       setPaymentMethod(data.metodaPlatnosci || "PRZELEWY24")
     } catch (err) {
       console.error("Error parsing order data:", err)
-      router.push("/panel-kancelarii/punkty")
+      router.push(data?.type === "PACKAGE" ? "/panel-kancelarii/pakiet" : "/panel-kancelarii/punkty")
       return
     }
 
@@ -92,54 +110,82 @@ export default function CheckoutPage() {
     setError(null)
 
     try {
-      // Utwórz zamówienie
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...orderData,
-          metodaPlatnosci: paymentMethod,
-        }),
-      })
+      const isPackage = orderData.type === "PACKAGE"
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Nie udało się utworzyć zamówienia")
-      }
-
-      const order = await response.json()
-
-      // Jeśli płatność przez Przelewy24, inicjuj transakcję
-      if (paymentMethod === "PRZELEWY24") {
-        const paymentResponse = await fetch("/api/payments/przelewy24/init", {
+      if (isPackage) {
+        // Handle package subscription
+        const response = await fetch("/api/law-firms/me/subscribe", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            orderId: order.id,
+            planId: orderData.planId,
+            period: orderData.period,
+            metodaPlatnosci: paymentMethod,
           }),
         })
 
-        if (!paymentResponse.ok) {
-          const errorData = await paymentResponse.json()
-          throw new Error(errorData.error || "Nie udało się zainicjować płatności")
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Wystąpił błąd")
         }
 
-        const paymentData = await paymentResponse.json()
+        const data = await response.json()
 
-        // Przekieruj do Przelewy24
-        if (paymentData.redirectUrl) {
-          window.location.href = paymentData.redirectUrl
-        } else {
-          throw new Error("Brak adresu przekierowania do płatności")
-        }
-      } else {
-        // Dla innych metod płatności przekieruj do potwierdzenia
+        // Dla pakietów, przekieruj do strony sukcesu
         sessionStorage.removeItem("pendingOrder")
-        router.push(`/panel-kancelarii/checkout/success?orderId=${order.id}`)
+        router.push(`/panel-kancelarii/checkout/success?type=package&planName=${encodeURIComponent(orderData.planName || '')}`)
+      } else {
+        // Handle points purchase (existing logic)
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...orderData,
+            metodaPlatnosci: paymentMethod,
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Nie udało się utworzyć zamówienia")
+        }
+
+        const order = await response.json()
+
+        // Jeśli płatność przez Przelewy24, inicjuj transakcję
+        if (paymentMethod === "PRZELEWY24") {
+          const paymentResponse = await fetch("/api/payments/przelewy24/init", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: order.id,
+            }),
+          })
+
+          if (!paymentResponse.ok) {
+            const errorData = await paymentResponse.json()
+            throw new Error(errorData.error || "Nie udało się zainicjować płatności")
+          }
+
+          const paymentData = await paymentResponse.json()
+
+          // Przekieruj do Przelewy24
+          if (paymentData.redirectUrl) {
+            window.location.href = paymentData.redirectUrl
+          } else {
+            throw new Error("Brak adresu przekierowania do płatności")
+          }
+        } else {
+          // Dla innych metod płatności przekieruj do potwierdzenia
+          sessionStorage.removeItem("pendingOrder")
+          router.push(`/panel-kancelarii/checkout/success?orderId=${order.id}`)
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
@@ -166,7 +212,7 @@ export default function CheckoutPage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => router.push("/panel-kancelarii/punkty")}
+          onClick={() => router.push(orderData?.type === "PACKAGE" ? "/panel-kancelarii/pakiet" : "/panel-kancelarii/punkty")}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
@@ -200,7 +246,7 @@ export default function CheckoutPage() {
                 Metoda płatności
               </CardTitle>
               <CardDescription>
-                Wybierz sposób płatności za punkty
+                Wybierz sposób płatności {orderData.type === "PACKAGE" ? "za pakiet" : "za punkty"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -267,33 +313,80 @@ export default function CheckoutPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Pakiet:</span>
-                  <span className="font-medium">{orderData.pakietLabel}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Punkty:</span>
-                  <span className="font-medium">+{orderData.liczbaPunktow} pkt</span>
-                </div>
-                {lawFirm && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Stan po zakupie:</span>
-                    <span className="font-medium text-green-600">
-                      {lawFirm.punktySaldo + orderData.liczbaPunktow} pkt
+              {orderData.type === "PACKAGE" ? (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Pakiet:</span>
+                      <span className="font-medium">{orderData.planName}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Okres:</span>
+                      <span className="font-medium">{orderData.periodLabel}</span>
+                    </div>
+                    {orderData.punktyGratis && orderData.punktyGratis > 0 && (
+                      <div className="flex items-center justify-between text-sm text-green-600">
+                        <span>Punkty gratis:</span>
+                        <span className="font-medium">+{orderData.punktyGratis} pkt</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {orderData.features && (
+                    <>
+                      <Separator />
+                      <div className="space-y-1 text-xs text-muted-foreground">
+                        <div className="font-semibold text-foreground mb-2">Korzyści:</div>
+                        <div>✓ Dostęp do {orderData.features.dostepDoSpraw ?? "∞"} spraw</div>
+                        <div>✓ {orderData.features.kategorieSpraw ?? "∞"} kategorii spraw</div>
+                        <div>✓ {orderData.features.wojewodztwa} województw</div>
+                        {orderData.features.priorytetWyszukiwanie && <div>✓ Priorytet w wyszukiwaniu</div>}
+                        {orderData.features.statystykiAnalizy && <div>✓ Statystyki i analizy</div>}
+                        {orderData.features.mozliwoscBloga && <div>✓ Możliwość prowadzenia bloga</div>}
+                      </div>
+                    </>
+                  )}
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold">Do zapłaty:</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {formatCurrency(orderData.price || 0)}
                     </span>
                   </div>
-                )}
-              </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Pakiet:</span>
+                      <span className="font-medium">{orderData.pakietLabel}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Punkty:</span>
+                      <span className="font-medium">+{orderData.liczbaPunktow} pkt</span>
+                    </div>
+                    {lawFirm && orderData.liczbaPunktow && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Stan po zakupie:</span>
+                        <span className="font-medium text-green-600">
+                          {lawFirm.punktySaldo + orderData.liczbaPunktow} pkt
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-              <Separator />
+                  <Separator />
 
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Do zapłaty:</span>
-                <span className="text-2xl font-bold text-primary">
-                  {formatCurrency(orderData.kwota)}
-                </span>
-              </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold">Do zapłaty:</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {formatCurrency(orderData.kwota || 0)}
+                    </span>
+                  </div>
+                </>
+              )}
 
               <Button
                 className="w-full"
@@ -309,7 +402,7 @@ export default function CheckoutPage() {
                 ) : (
                   <>
                     <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Zapłać {formatCurrency(orderData.kwota)}
+                    Zapłać {formatCurrency(orderData.type === "PACKAGE" ? (orderData.price || 0) : (orderData.kwota || 0))}
                   </>
                 )}
               </Button>
