@@ -8,6 +8,7 @@ import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePermissions } from "@/hooks/usePermissions"
 import { ExpiredPackageModal } from "@/components/permissions"
 import {
@@ -33,6 +34,7 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  Menu,
 } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 
@@ -127,11 +129,83 @@ export default function LawFirmPanelLayout({
     await signOut({ callbackUrl: "/" })
   }
 
+  // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
+  const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
+    <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+      {navigation.map((item) => {
+        const isActive = pathname === item.href ||
+          (item.href !== "/panel-kancelarii" && pathname.startsWith(item.href))
+        const isMessagesItem = item.href === "/panel-kancelarii/wiadomosci"
+        const showBadge = isMessagesItem && unreadCount > 0
+
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative",
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              !inSheet && isCollapsed && "justify-center"
+            )}
+            title={!inSheet && isCollapsed ? item.name : undefined}
+          >
+            <item.icon className="h-5 w-5 flex-shrink-0" />
+            {(inSheet || !isCollapsed) && <span>{item.name}</span>}
+            {showBadge && (
+              <span className={cn(
+                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white",
+                !inSheet && isCollapsed && "absolute -right-1 -top-1"
+              )}>
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </Link>
+        )
+      })}
+
+      {/* Link do publicznej strony kancelarii */}
+      {lawFirmSlug && (
+        <>
+          <div className="border-t border-border my-2" />
+          <Link
+            href={`/kancelaria/${lawFirmSlug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              !inSheet && isCollapsed && "justify-center"
+            )}
+            title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
+          >
+            <ExternalLink className="h-5 w-5 flex-shrink-0" />
+            {(inSheet || !isCollapsed) && <span>Mój profil publiczny</span>}
+          </Link>
+        </>
+      )}
+
+      <div className="border-t border-border my-2" />
+      <Button
+        onClick={handleLogout}
+        className={cn(
+          "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          !inSheet && isCollapsed && "justify-center"
+        )}
+        variant="ghost"
+        title={!inSheet && isCollapsed ? "Wyloguj" : undefined}
+      >
+        <LogOut className="h-5 w-5 flex-shrink-0" />
+        {(inSheet || !isCollapsed) && <span>Wyloguj</span>}
+      </Button>
+    </nav>
+  )
+
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar */}
+      {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
-        "border-r border-border bg-card transition-all duration-300 ease-in-out",
+        "hidden md:block border-r border-border bg-card transition-all duration-300 ease-in-out",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex h-full flex-col">
@@ -149,86 +223,42 @@ export default function LawFirmPanelLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href ||
-                (item.href !== "/panel-kancelarii" && pathname.startsWith(item.href))
-              const isMessagesItem = item.href === "/panel-kancelarii/wiadomosci"
-              const showBadge = isMessagesItem && unreadCount > 0
-
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    isCollapsed && "justify-center"
-                  )}
-                  title={isCollapsed ? item.name : undefined}
-                >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {!isCollapsed && <span>{item.name}</span>}
-                  {showBadge && (
-                    <span className={cn(
-                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white",
-                      isCollapsed && "absolute -right-1 -top-1"
-                    )}>
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
-                </Link>
-              )
-            })}
-
-            {/* Link do publicznej strony kancelarii */}
-            {lawFirmSlug && (
-              <>
-                <div className="border-t border-border my-2" />
-                <Link
-                  href={`/kancelaria/${lawFirmSlug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    isCollapsed && "justify-center"
-                  )}
-                  title={isCollapsed ? "Mój profil publiczny" : undefined}
-                >
-                  <ExternalLink className="h-5 w-5 flex-shrink-0" />
-                  {!isCollapsed && <span>Mój profil publiczny</span>}
-                </Link>
-              </>
-            )}
-
-            <div className="border-t border-border my-2" />
-            <Button
-              onClick={handleLogout}
-              className={cn(
-                "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                isCollapsed && "justify-center"
-              )}
-              variant="ghost"
-              title={isCollapsed ? "Wyloguj" : undefined}
-            >
-              <LogOut className="h-5 w-5 flex-shrink-0" />
-              {!isCollapsed && <span>Wyloguj</span>}
-            </Button>
-          </nav>
+          <NavigationItems />
         </div>
       </aside>
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
-          {/* Logo */}
-          <div className="flex items-center">
-          <Link href="/" className="flex items-center">
-            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-          </Link>
+        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
+          {/* Mobile Menu Button + Logo */}
+          <div className="flex items-center gap-2">
+            {/* Mobile Menu Sheet */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0">
+                <div className="flex h-full flex-col">
+                  <div className="flex h-16 items-center border-b border-border px-4">
+                    <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
+                  </div>
+                  <NavigationItems inSheet />
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Link href="/" className="flex items-center">
+              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={150} height={38} />
+              <span className="sm:hidden text-lg font-semibold">PS</span>
+            </Link>
           </div>
 
           <UserMenu
@@ -242,7 +272,7 @@ export default function LawFirmPanelLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container mx-auto p-6">
+          <div className="container mx-auto p-4 sm:p-6">
             {children}
           </div>
         </main>

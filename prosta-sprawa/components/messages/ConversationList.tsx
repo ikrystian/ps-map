@@ -6,23 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-
-interface Conversation {
-  id: string
-  otherUser: {
-    id: string
-    name: string
-    image?: string
-  }
-  lastMessage: {
-    content: string
-    createdAt: string
-    isFromMe: boolean
-    isRead: boolean
-  } | null
-  unreadCount: number
-  updatedAt: string
-}
+import type { Conversation } from "@/types/conversations"
 
 interface ConversationListProps {
   conversations: Conversation[]
