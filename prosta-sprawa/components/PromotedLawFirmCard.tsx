@@ -5,6 +5,7 @@ import { MapPin, Star, CheckCircle2 } from "lucide-react"
 import { PromotionBadge } from "./PromotionBadge"
 import { PromotionType } from "@prisma/client"
 import Link from "next/link"
+import { cn, getSubscriptionBorderColor } from "@/lib/utils"
 
 interface PromotedLawFirmCardProps {
   lawFirm: {
@@ -20,12 +21,16 @@ interface PromotedLawFirmCardProps {
     categories: Array<{ nazwa: string }>
     promoted?: boolean
     highlightType?: PromotionType | null
+    subscriptionType?: string | null
   }
   className?: string
 }
 
 export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirmCardProps) {
   const isPromoted = lawFirm.promoted && lawFirm.highlightType
+
+  // Get subscription border color for logo
+  const logoBorderColor = getSubscriptionBorderColor(lawFirm.subscriptionType)
 
   // Determine card styling based on promotion type
   const getCardStyle = () => {
@@ -61,10 +66,10 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
             <img
               src={lawFirm.logo}
               alt={lawFirm.nazwa}
-              className="w-16 h-16 rounded-lg object-cover border"
+              className={cn("w-16 h-16 rounded-lg object-cover border-2", logoBorderColor)}
             />
           ) : (
-            <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border">
+            <div className={cn("w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border-2", logoBorderColor)}>
               <span className="text-2xl font-bold text-muted-foreground">
                 {lawFirm.nazwa.charAt(0)}
               </span>

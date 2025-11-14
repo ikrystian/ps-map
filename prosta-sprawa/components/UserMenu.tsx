@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { cn, getSubscriptionBorderColor } from "@/lib/utils"
 
 interface UserMenuProps {
   userRole: "CLIENT" | "LAW_FIRM" | "ADMIN"
@@ -37,6 +38,7 @@ interface UserMenuProps {
   userImage?: string | null
   punktySaldo?: number
   userId?: string
+  subscriptionType?: string | null
 }
 
 export default function UserMenu({
@@ -45,8 +47,12 @@ export default function UserMenu({
   userImage,
   punktySaldo = 0,
   userId,
+  subscriptionType,
 }: UserMenuProps) {
   const { theme, setTheme } = useTheme()
+
+  // Get subscription border color
+  const borderColor = getSubscriptionBorderColor(subscriptionType)
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/wylogowano" })
@@ -78,7 +84,7 @@ export default function UserMenu({
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
           {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
-          <Avatar className="h-9 w-9 cursor-pointer">
+          <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
             <AvatarImage src={userImage || "/avatars/client.jpg"} alt="Klient" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
           </Avatar>
@@ -150,7 +156,7 @@ export default function UserMenu({
         <DropdownMenu>
           <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
             {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
-            <Avatar className="h-9 w-9 cursor-pointer">
+            <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
               <AvatarImage src={userImage || "/avatars/user.jpg"} alt="User" />
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
@@ -224,7 +230,7 @@ export default function UserMenu({
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
           {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
-          <Avatar className="h-9 w-9 cursor-pointer">
+          <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
             <AvatarImage src={userImage || "/avatars/admin.jpg"} alt="Admin" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
           </Avatar>

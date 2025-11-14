@@ -67,6 +67,7 @@ export default function LawFirmPanelLayout({
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [punktySaldo, setPunktySaldo] = useState<number>(0)
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
+  const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const [showExpiredModal, setShowExpiredModal] = useState(false)
 
@@ -81,6 +82,7 @@ export default function LawFirmPanelLayout({
           const data = await response.json()
           setPunktySaldo(data.punktySaldo || 0)
           setLawFirmSlug(data.slug || "")
+          setSubscriptionType(data.subscriptionPlan?.typ || null)
         }
       } catch (error) {
         console.error("Error fetching law firm data:", error)
@@ -267,6 +269,7 @@ export default function LawFirmPanelLayout({
             userImage={session?.user?.image}
             punktySaldo={punktySaldo}
             userId={session?.user?.id}
+            subscriptionType={subscriptionType}
           />
         </header>
 
