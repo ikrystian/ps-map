@@ -2,10 +2,16 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { Calendar, Eye, User, Tag } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Calendar, Eye, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid"
+import {
+  IconArticle,
+  IconScale,
+  IconGavel,
+  IconFileText,
+} from "@tabler/icons-react"
 
 interface BlogPost {
   id: string
@@ -115,6 +121,22 @@ export default function BlogPage() {
     return stripped.slice(0, maxLength) + "..."
   }
 
+  const getCategoryIcon = (categoryName: string | undefined) => {
+    if (!categoryName) return <IconArticle className="h-4 w-4 text-neutral-500" />
+
+    const name = categoryName.toLowerCase()
+    if (name.includes("prawo") || name.includes("cywilne")) {
+      return <IconScale className="h-4 w-4 text-neutral-500" />
+    }
+    if (name.includes("karne") || name.includes("sąd")) {
+      return <IconGavel className="h-4 w-4 text-neutral-500" />
+    }
+    if (name.includes("dokument") || name.includes("umowa")) {
+      return <IconFileText className="h-4 w-4 text-neutral-500" />
+    }
+    return <IconArticle className="h-4 w-4 text-neutral-500" />
+  }
+
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Header */}
@@ -150,70 +172,74 @@ export default function BlogPage() {
           <div className="text-lg">Ładowanie artykułów...</div>
         </div>
       ) : posts.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <p className="text-lg text-muted-foreground">
-              Brak artykułów w tej kategorii.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground">
+            Brak artykułów w tej kategorii.
+          </p>
+        </div>
       ) : (
         <>
-          {/* Blog Posts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {posts.map((post) => (
+          {/* Blog Posts Bento Grid */}
+          <BentoGrid className="max-w-7xl mx-auto mb-12">
+            {posts.map((post, i) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                  {post.obrazekWyrozniajacy && (
-                    <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                      <img
-                        src={post.obrazekWyrozniajacy}
-                        alt={post.tytul}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {post.category && (
-                        <Badge variant="secondary">{post.category.nazwa}</Badge>
-                      )}
-                    </div>
-                    <CardTitle className="line-clamp-2">{post.tytul}</CardTitle>
-                    <CardDescription className="line-clamp-3">
-                      {getExcerpt(post.tresc)}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
+                <BentoGridItem
+                  title={post.tytul}
+                  description={
+                    <div className="space-y-2">
+                      <p className="line-clamp-2">{getExcerpt(post.tresc)}</p>
+                      <div className="flex items-center gap-2 text-xs">
                         {post.lawFirm.logo ? (
                           <img
                             src={post.lawFirm.logo}
                             alt={post.lawFirm.nazwa}
-                            className="w-6 h-6 rounded-full object-cover"
+                            className="w-4 h-4 rounded-full object-cover"
                           />
                         ) : (
-                          <User className="w-4 h-4" />
+                          <User className="w-3 h-3" />
                         )}
-                        <span className="text-xs">{post.lawFirm.nazwa}</span>
+                        <span>{post.lawFirm.nazwa}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {formatDate(post.dataPublikacji)}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-3 h-3" />
+                          {post.wyswietlenia}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {formatDate(post.dataPublikacji)}
+                  }
+                  header={
+                    post.obrazekWyrozniajacy ? (
+                      <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
+                        <img
+                          src={post.obrazekWyrozniajacy}
+                          alt={post.tytul}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {post.wyswietlenia}
-                      </div>
+                    ) : (
+                      <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
+                    )
+                  }
+                  icon={
+                    <div className="flex items-center gap-2">
+                      {getCategoryIcon(post.category?.nazwa)}
+                      {post.category && (
+                        <Badge variant="secondary" className="text-xs">
+                          {post.category.nazwa}
+                        </Badge>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
+                  }
+                  className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                />
               </Link>
             ))}
-          </div>
+          </BentoGrid>
 
           {/* Pagination */}
           {pagination.pages > 1 && (
