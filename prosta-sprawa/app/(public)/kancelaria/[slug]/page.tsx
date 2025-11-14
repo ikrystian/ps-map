@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -567,14 +568,24 @@ export default function LawFirmProfilePage() {
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Logo */}
             {lawFirm.logo && (
-              <div className="relative h-32 w-32 rounded-lg overflow-hidden border-2 border-border bg-card flex-shrink-0">
-                <Image
-                  src={lawFirm.logo}
-                  alt={lawFirm.nazwa}
-                  id="logo-photo"
-                  fill
-                  className="object-contain p-2"
-                />
+              <div className={cn(
+                "relative h-32 w-32 rounded-lg overflow-hidden bg-card flex-shrink-0",
+                lawFirm.pakietSubskrypcji === "BIZNES"
+                  ? "p-[3px] animate-gradient-border"
+                  : "border-2 border-border"
+              )}>
+                {lawFirm.pakietSubskrypcji === "BIZNES" && (
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
+                )}
+                <div className="relative h-full w-full rounded-lg bg-card overflow-hidden">
+                  <Image
+                    src={lawFirm.logo}
+                    alt={lawFirm.nazwa}
+                    id="logo-photo"
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
               </div>
             )}
 
