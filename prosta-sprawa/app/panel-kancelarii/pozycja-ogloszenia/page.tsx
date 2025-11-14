@@ -121,7 +121,7 @@ export default function LawFirmRankingPage() {
     setError(null)
 
     try {
-      const response = await fetch("/api/law-firms/ranking")
+      const response = await fetch("/api/law-firms/my-ranking")
       if (!response.ok) {
         throw new Error("Nie udało się pobrać danych rankingu")
       }
@@ -143,13 +143,13 @@ export default function LawFirmRankingPage() {
     )
   }
 
-  if (error || !data) {
+  if (error || !data || !data.overallRanking) {
     return (
       <Card className="border-destructive">
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 text-destructive">
             <AlertCircle className="h-5 w-5" />
-            <p>{error || "Nie udało się załadować danych"}</p>
+            <p>{error || "Nie udało się załadować danych rankingu."}</p>
           </div>
         </CardContent>
       </Card>

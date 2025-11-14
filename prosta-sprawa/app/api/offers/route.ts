@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server"
+nel-kancelarii/pozycja-ogloszeniaimport { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
       where.lawFirmId = lawFirmId
     }
 
-    if (status) {
+    const validStatuses = ["ZLOZONA", "ZAAKCEPTOWANA", "ODRZUCONA", "NEGOCJACJE", "WYGASLA"]
+    if (status && validStatuses.includes(status)) {
       where.status = status
     }
 

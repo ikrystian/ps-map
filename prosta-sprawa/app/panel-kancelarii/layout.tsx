@@ -70,6 +70,11 @@ export default function LawFirmPanelLayout({
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
   const [showExpiredModal, setShowExpiredModal] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Hook do sprawdzania uprawnień
   const { packageExpired, expiryDate, packageName, loading: permissionsLoading } = usePermissions()
@@ -236,26 +241,28 @@ export default function LawFirmPanelLayout({
           {/* Mobile Menu Button + Logo */}
           <div className="flex items-center gap-2">
             {/* Mobile Menu Sheet */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white">
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
-                <div className="flex h-full flex-col">
-                  <div className="flex h-16 items-center border-b border-border px-4">
-                    <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
+            {isClient && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-64 p-0">
+                  <div className="flex h-full flex-col">
+                    <div className="flex h-16 items-center border-b border-border px-4">
+                      <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
+                    </div>
+                    <NavigationItems inSheet />
                   </div>
-                  <NavigationItems inSheet />
-                </div>
-              </SheetContent>
-            </Sheet>
+                </SheetContent>
+              </Sheet>
+            )}
 
             <Link href="/" className="flex items-center">
               <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={150} height={38} />
