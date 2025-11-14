@@ -166,6 +166,7 @@ export async function GET(request: NextRequest) {
 
         return {
           id: firm.id,
+          slug: firm.slug,
           nazwa: firm.nazwa,
           nazwaFirmy: firm.nazwaFirmy,
           logo: firm.logo,
