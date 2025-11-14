@@ -32,49 +32,9 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react"
+import type { OfferWithCase, OffersResponse } from "@/types/offers"
 
-interface Offer {
-  id: string
-  kwotaNetto: number
-  vat: number
-  kwotaBrutto: number
-  terminRealizacjiDni: number
-  opisOferty: string
-  zakresUslug: string
-  warunkiPlatnosci: string
-  dodatkoweWarunki?: string
-  wyroznienie: boolean
-  status: string
-  createdAt: string
-  case: {
-    id: string
-    nazwaSprawy: string
-    status: string
-    category: {
-      nazwa: string
-    }
-  }
-  lawFirm: {
-    id: string
-    slug: string
-    nazwa: string
-    logo?: string
-    miasto: string
-    voivodeship: {
-      nazwa: string
-    }
-  }
-}
-
-interface OffersResponse {
-  offers: Offer[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-}
+type Offer = OfferWithCase
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("pl-PL", {

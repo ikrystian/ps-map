@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, Paperclip } from "lucide-react"
+import { Send, Paperclip, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -49,9 +49,10 @@ interface Conversation {
 interface ChatAreaProps {
   conversationId: string
   onMessageSent?: () => void
+  onBack?: () => void
 }
 
-export function ChatArea({ conversationId, onMessageSent }: ChatAreaProps) {
+export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProps) {
   const { data: session } = useSession()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -236,6 +237,17 @@ export function ChatArea({ conversationId, onMessageSent }: ChatAreaProps) {
     <div className="flex flex-col h-full">
       {/* Nagłówek z informacją o rozmówcy */}
       <div className="p-4 border-b flex items-center gap-3">
+        {/* Back button for mobile */}
+        {onBack && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            className="md:hidden -ml-2"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
         <Avatar className="h-10 w-10">
           {otherUserImage && (
             <AvatarImage src={otherUserImage} alt={otherUserName} />

@@ -5,23 +5,7 @@ import { useSession } from "next-auth/react"
 import { ConversationList } from "./ConversationList"
 import { ChatArea } from "./ChatArea"
 import { Card } from "@/components/ui/card"
-
-interface Conversation {
-  id: string
-  otherUser: {
-    id: string
-    name: string
-    image?: string
-  }
-  lastMessage: {
-    content: string
-    createdAt: string
-    isFromMe: boolean
-    isRead: boolean
-  } | null
-  unreadCount: number
-  updatedAt: string
-}
+import type { Conversation } from "@/types/conversations"
 
 export function MessengerLayout() {
   const { data: session } = useSession()
@@ -71,7 +55,7 @@ export function MessengerLayout() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px]">
+      <div className="flex items-center justify-center min-h-[400px] h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Ładowanie wiadomości...</p>
@@ -81,10 +65,10 @@ export function MessengerLayout() {
   }
 
   return (
-    <div className="h-[calc(100vh-200px)] min-h-[600px]">
-      <Card className="h-full flex overflow-hidden">
-        {/* Lista konwersacji - lewa strona */}
-        <div className="w-full md:w-80 lg:w-96 border-r flex-shrink-0">
+    <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] min-h-[500px]">
+      <Card className="h-full flex flex-col md:flex-row overflow-hidden">
+        {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
+        <div className={`w-full md:w-80 lg:w-96 md:border-r flex-shrink-0 ${selectedConversationId ? 'hidden md:block' : 'block'}`}>
           <ConversationList
             conversations={conversations}
             selectedConversationId={selectedConversationId}
@@ -92,15 +76,16 @@ export function MessengerLayout() {
           />
         </div>
 
-        {/* Obszar czatu - prawa strona */}
-        <div className="flex-1 flex flex-col">
+        {/* Obszar czatu - prawa strona (hidden on mobile when no chat selected) */}
+        <div className={`flex-1 flex flex-col ${!selectedConversationId ? 'hidden md:flex' : 'flex'}`}>
           {selectedConversationId ? (
             <ChatArea
               conversationId={selectedConversationId}
               onMessageSent={handleMessageSent}
+              onBack={() => setSelectedConversationId(null)}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
               <div className="text-center">
                 <p className="text-lg font-medium">Wybierz konwersację</p>
                 <p className="text-sm mt-2">Wybierz konwersację z listy, aby rozpocząć czat</p>

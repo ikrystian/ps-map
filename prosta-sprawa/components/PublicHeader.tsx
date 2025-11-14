@@ -21,17 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Search, ChevronDown } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
-
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  parentId: string | null
-  children: Array<{
-    id: string
-    nazwa: string
-  }>
-}
+import type { CategoryWithChildren } from "@/types/categories"
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -50,7 +40,7 @@ export default function PublicHeader({
   punktySaldo = 0,
   userId
 }: PublicHeaderProps) {
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<CategoryWithChildren[]>([])
   const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
   const [searchFormOpen, setSearchFormOpen] = useState(false)
@@ -62,7 +52,7 @@ export default function PublicHeader({
         const response = await fetch("/api/categories")
         if (response.ok) {
           const data = await response.json()
-          setCategories(data.filter((cat: Category) => !cat.parentId))
+          setCategories(data.filter((cat: CategoryWithChildren) => !cat.parentId))
         }
       } catch (error) {
         console.error("Error fetching categories:", error)

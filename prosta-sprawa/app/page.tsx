@@ -31,34 +31,8 @@ import Image from "next/image"
 import PublicHeader from "@/components/PublicHeader"
 import { toast } from "sonner"
 import PublicFooter from "@/components/PublicFooter"
-
-interface LawFirm {
-  id: string
-  slug: string
-  nazwa: string
-  nazwaFirmy: string
-  logo?: string
-  opis?: string
-  miasto: string
-  voivodeship: {
-    nazwa: string
-  }
-  zweryfikowana: boolean
-  categories: Array<{
-    nazwa: string
-    slug: string
-  }>
-  avgRating: number
-  reviewCount: number
-}
-
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string
-  aktywna: boolean
-}
+import type { LawFirm } from "@/types/lawfirms"
+import type { Category } from "@/types/categories"
 
 export default function HomePage() {
   const { data: session } = useSession()
