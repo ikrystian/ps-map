@@ -552,14 +552,16 @@ export default function LawFirmProfilePage() {
       {/* Header Image */}
 
       <div className="relative h-64 md:h-96 w-full flex items-end">
-        {lawFirm.zdjecieGlowne && (
+        {lawFirm.zdjecieGlowne ? (
           <Image
             src={lawFirm.zdjecieGlowne}
             alt={lawFirm.nazwa}
             fill
             id="cover-photo"
-            className="object-cover z-[-1]] opacity-75"
+            className="object-cover z-[-1] opacity-75"
           />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 z-[-1]" />
         )}
       <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
 

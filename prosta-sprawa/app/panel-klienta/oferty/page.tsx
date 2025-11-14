@@ -100,6 +100,7 @@ export default function ClientOffersPage() {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
   const [actionType, setActionType] = useState<"accept" | "reject" | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [expandedOffers, setExpandedOffers] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchOffers()
@@ -143,6 +144,18 @@ export default function ClientOffersPage() {
     setSelectedOffer(offer)
     setActionType("reject")
     setConfirmDialogOpen(true)
+  }
+
+  const toggleOfferExpansion = (offerId: string) => {
+    setExpandedOffers((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(offerId)) {
+        newSet.delete(offerId)
+      } else {
+        newSet.add(offerId)
+      }
+      return newSet
+    })
   }
 
   const confirmAction = async () => {
@@ -247,27 +260,26 @@ export default function ClientOffersPage() {
 
               <CardContent className="space-y-4">
                 {/* Informacje o kancelarii */}
-                <div className="flex items-center gap-4">
-                  {offer.lawFirm.logo && (
-                    <div className="relative h-12 w-12 rounded-lg overflow-hidden border flex-shrink-0">
-                      <Image
-                        src={offer.lawFirm.logo}
-                        alt={offer.lawFirm.nazwa}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    {offer.lawFirm.logo && (
+                      <div className="relative h-6 w-6 rounded overflow-hidden border flex-shrink-0">
+                        <Image
+                          src={offer.lawFirm.logo}
+                          alt={offer.lawFirm.nazwa}
+                          fill
+                          className="object-contain p-0.5"
+                        />
+                      </div>
+                    )}
                     <p className="font-semibold flex items-center gap-2">
-                      <Building2 className="h-4 w-4" />
                       {offer.lawFirm.nazwa}
                     </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <MapPin className="h-3 w-3" />
-                      {offer.lawFirm.miasto}, {offer.lawFirm.voivodeship.nazwa}
-                    </p>
                   </div>
+                  <p className="text-sm text-muted-foreground flex items-center gap-2 ml-8">
+                    <MapPin className="h-3 w-3" />
+                    {offer.lawFirm.miasto}, {offer.lawFirm.voivodeship.nazwa}
+                  </p>
                 </div>
 
                 <Separator />
@@ -301,10 +313,40 @@ export default function ClientOffersPage() {
                   </div>
                 </div>
 
-                {/* Krótki opis */}
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Opis oferty</p>
-                  <p className="text-sm line-clamp-3">{offer.opisOferty}</p>
+                {/* Rozwijane szczegóły */}
+                <div className="relative">
+                  <div className={cn(
+                    "space-y-3 transition-all",
+                    !expandedOffers.has(offer.id) && "max-h-20 overflow-hidden"
+                  )}>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Opis oferty</p>
+                      <p className="text-sm whitespace-pre-wrap">{offer.opisOferty}</p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Zakres usług</p>
+                      <p className="text-sm whitespace-pre-wrap">{offer.zakresUslug}</p>
+                    </div>
+
+                    {offer.dodatkoweWarunki && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Warunki płatności</p>
+                        <p className="text-sm whitespace-pre-wrap">{offer.dodatkoweWarunki}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleOfferExpansion(offer.id)}
+                      className="text-xs h-7"
+                    >
+                      {expandedOffers.has(offer.id) ? "Mniej" : "Więcej"}
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="text-xs text-muted-foreground">
@@ -394,23 +436,23 @@ export default function ClientOffersPage() {
               {/* Informacje o kancelarii */}
               <div>
                 <h3 className="font-semibold mb-2">Kancelaria</h3>
-                <div className="flex items-center gap-4 p-4 border rounded-lg">
-                  {selectedOffer.lawFirm.logo && (
-                    <div className="relative h-16 w-16 rounded-lg overflow-hidden border flex-shrink-0">
-                      <Image
-                        src={selectedOffer.lawFirm.logo}
-                        alt={selectedOffer.lawFirm.nazwa}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <div>
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    {selectedOffer.lawFirm.logo && (
+                      <div className="relative h-8 w-8 rounded overflow-hidden border flex-shrink-0">
+                        <Image
+                          src={selectedOffer.lawFirm.logo}
+                          alt={selectedOffer.lawFirm.nazwa}
+                          fill
+                          className="object-contain p-0.5"
+                        />
+                      </div>
+                    )}
                     <p className="font-semibold text-lg">{selectedOffer.lawFirm.nazwa}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedOffer.lawFirm.miasto}, {selectedOffer.lawFirm.voivodeship.nazwa}
-                    </p>
                   </div>
+                  <p className="text-sm text-muted-foreground ml-10">
+                    {selectedOffer.lawFirm.miasto}, {selectedOffer.lawFirm.voivodeship.nazwa}
+                  </p>
                 </div>
               </div>
 
