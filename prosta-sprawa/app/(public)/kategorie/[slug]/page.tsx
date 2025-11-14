@@ -226,7 +226,10 @@ export default function CategoryPage() {
 
             <h1 className="text-4xl font-bold mb-4">{category.nazwa}</h1>
             {category.opis && (
-              <p className="text-lg text-muted-foreground mb-4">{category.opis}</p>
+              <div
+                className="text-lg text-muted-foreground mb-4 prose prose-sm max-w-none dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: category.opis }}
+              />
             )}
 
             <div className="flex flex-wrap gap-4 text-sm">
