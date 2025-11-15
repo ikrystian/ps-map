@@ -627,16 +627,32 @@ model Conversation {
   lastMessageAt     DateTime?
   lastMessageSenderId String?
 
+  // Archiwizacja i usuwanie (per user)
+  isArchivedByClient    Boolean  @default(false)
+  archivedByClientAt    DateTime?
+  isArchivedByLawFirm   Boolean  @default(false)
+  archivedByLawFirmAt   DateTime?
+
+  isDeletedByClient     Boolean  @default(false)
+  deletedByClientAt     DateTime?
+  isDeletedByLawFirm    Boolean  @default(false)
+  deletedByLawFirmAt    DateTime?
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   // Relacje
   messages          ChatMessage[]
+  typingIndicators  TypingIndicator[]
 
   @@unique([clientUserId, lawFirmUserId])
   @@index([clientUserId])
   @@index([lawFirmUserId])
   @@index([lastMessageAt])
+  @@index([isArchivedByClient])
+  @@index([isArchivedByLawFirm])
+  @@index([isDeletedByClient])
+  @@index([isDeletedByLawFirm])
 }
 
 model ChatMessage {
@@ -647,9 +663,13 @@ model ChatMessage {
   senderId        String
   sender          User     @relation("SentChatMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
-  content         String
-  attachments     String?  // JSON array URL-i
+  content         String   // Encrypted content (AES-256-CBC)
+  contentIv       String?  // Initialization vector for encryption
+  attachments     String?  // JSON array URL-i (pliki PDF)
 
+  // Status wiadomości
+  status          MessageStatus @default(SENT)
+  deliveredAt     DateTime?
   isRead          Boolean  @default(false)
   readAt          DateTime?
 
@@ -660,6 +680,70 @@ model ChatMessage {
   @@index([senderId])
   @@index([createdAt])
   @@index([isRead])
+  @@index([status])
+}
+
+enum MessageStatus {
+  SENDING       // Wysyłanie (tymczasowy status)
+  SENT          // Wysłano
+  DELIVERED     // Dostarczono (zapisano w bazie)
+  READ          // Przeczytano
+  ERROR         // Błąd wysyłania
+}
+
+// ============================================================================
+// BLOKOWANIE UŻYTKOWNIKÓW
+// ============================================================================
+
+model UserBlock {
+  id              String   @id @default(uuid())
+
+  blockerId       String   // Użytkownik, który blokuje
+  blockedId       String   // Użytkownik zablokowany
+
+  createdAt       DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+}
+
+// ============================================================================
+// STATUS ONLINE UŻYTKOWNIKÓW
+// ============================================================================
+
+model UserOnlineStatus {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+
+  isOnline        Boolean  @default(false)
+  lastSeen        DateTime @default(now())
+
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isOnline])
+  @@index([lastSeen])
+}
+
+// ============================================================================
+// WSKAŹNIK PISANIA (TYPING INDICATOR)
+// ============================================================================
+
+model TypingIndicator {
+  id              String   @id @default(uuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  userId          String   // Użytkownik, który pisze
+  isTyping        Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([conversationId, userId])
+  @@index([conversationId])
+  @@index([userId])
 }
 
 // ============================================================================
