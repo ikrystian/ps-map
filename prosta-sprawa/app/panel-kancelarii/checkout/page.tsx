@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import {
   AlertCircle,
@@ -66,6 +67,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   useEffect(() => {
     // Pobierz dane zamówienia z sessionStorage
@@ -388,28 +390,45 @@ export default function CheckoutPage() {
                 </>
               )}
 
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={handleSubmitOrder}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Przetwarzanie...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Zapłać {formatCurrency(orderData.type === "PACKAGE" ? (orderData.price || 0) : (orderData.kwota || 0))}
-                  </>
-                )}
-              </Button>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+                  />
+                  <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight">
+                    Akceptuję{" "}
+                    <a href="/regulamin" target="_blank" className="underline text-primary">
+                      regulamin
+                    </a>
+                    {" "}i{" "}
+                    <a href="/polityka-prywatnosci" target="_blank" className="underline text-primary">
+                      politykę prywatności
+                    </a>
+                    {" "}*
+                  </Label>
+                </div>
 
-              <p className="text-xs text-muted-foreground text-center">
-                Klikając &quot;Zapłać&quot; akceptujesz regulamin i politykę prywatności
-              </p>
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleSubmitOrder}
+                  disabled={submitting || !termsAccepted}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Przetwarzanie...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Zapłać {formatCurrency(orderData.type === "PACKAGE" ? (orderData.price || 0) : (orderData.kwota || 0))}
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
