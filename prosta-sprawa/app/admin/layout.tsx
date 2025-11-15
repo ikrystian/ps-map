@@ -25,6 +25,7 @@ import {
   HelpCircle,
   LayoutTemplate,
   FileCode,
+  UserCog,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -33,6 +34,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Kancelarie", href: "/admin/law-firms", icon: Building2 },
+  { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
   { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },

@@ -244,6 +244,10 @@ model LawFirm {
   zweryfikowana         Boolean  @default(false)
   aktywna               Boolean  @default(true)
 
+  // Opiekun kancelarii
+  accountManagerId      String?
+  accountManager        AccountManager? @relation(fields: [accountManagerId], references: [id])
+
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -269,6 +273,7 @@ model LawFirm {
   @@index([nip])
   @@index([zweryfikowana])
   @@index([aktywna])
+  @@index([accountManagerId])
 }
 
 enum LawFirmType {
@@ -1594,4 +1599,27 @@ model PartnerPointsHistory {
   @@unique([partnerProgramId, year, month])
   @@index([partnerProgramId])
   @@index([year, month])
+}
+
+// ============================================================================
+// OPIEKUNOWIE KANCELARII (ACCOUNT MANAGERS)
+// ============================================================================
+
+model AccountManager {
+  id                    String   @id @default(uuid())
+  imie                  String
+  nazwisko              String
+  email                 String   @unique
+  telefon               String?
+  avatar                String?  // URL do avatara
+  aktywny               Boolean  @default(true)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relacje
+  lawFirms              LawFirm[]
+
+  @@index([email])
+  @@index([aktywny])
 }

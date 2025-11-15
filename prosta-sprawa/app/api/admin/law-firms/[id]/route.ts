@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
@@ -29,6 +29,16 @@ export async function GET(
             createdAt: true,
             updatedAt: true,
             lastLogin: true,
+          },
+        },
+        accountManager: {
+          select: {
+            id: true,
+            imie: true,
+            nazwisko: true,
+            email: true,
+            telefon: true,
+            avatar: true,
           },
         },
         voivodeship: true,
@@ -332,8 +342,12 @@ export async function PUT(
     // Points and subscription
     if (body.punktySaldo !== undefined) lawFirmUpdateData.punktySaldo = body.punktySaldo
     if (body.pakietSubskrypcji !== undefined) lawFirmUpdateData.pakietSubskrypcji = body.pakietSubskrypcji
-    if (body.dataPakietuOd !== undefined) lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd
-    if (body.dataPakietuDo !== undefined) lawFirmUpdateData.dataPakietuDo = body.dataPakietuDo
+    if (body.dataPakietuOd !== undefined) {
+      lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd === "" ? null : body.dataPakietuOd
+    }
+    if (body.dataPakietuDo !== undefined) {
+      lawFirmUpdateData.dataPakietuDo = body.dataPakietuDo === "" ? null : body.dataPakietuDo
+    }
 
     // Statistics
     if (body.wyswietleniaProfilu !== undefined) lawFirmUpdateData.wyswietleniaProfilu = body.wyswietleniaProfilu
@@ -349,6 +363,11 @@ export async function PUT(
     // Status
     if (body.zweryfikowana !== undefined) lawFirmUpdateData.zweryfikowana = body.zweryfikowana
     if (body.aktywna !== undefined) lawFirmUpdateData.aktywna = body.aktywna
+
+    // Account Manager
+    if (body.accountManagerId !== undefined) {
+      lawFirmUpdateData.accountManagerId = body.accountManagerId || null
+    }
 
     // Perform update in a transaction (might need to update user too)
     const result = await prisma.$transaction(async (tx) => {

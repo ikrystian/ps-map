@@ -29,7 +29,7 @@ import { ImageUpload } from "@/components/ui/image-upload"
 const lawFirmSchema = z.object({
   // User credentials
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
 
   // Basic info
@@ -112,6 +112,9 @@ const lawFirmSchema = z.object({
   // Status
   zweryfikowana: z.boolean(),
   aktywna: z.boolean(),
+
+  // Account Manager
+  accountManagerId: z.string().optional(),
 })
 
 type LawFirmFormValues = z.infer<typeof lawFirmSchema>
@@ -119,6 +122,14 @@ type LawFirmFormValues = z.infer<typeof lawFirmSchema>
 interface Voivodeship {
   id: string
   nazwa: string
+}
+
+interface AccountManager {
+  id: string
+  imie: string
+  nazwisko: string
+  email: string
+  aktywny: boolean
 }
 
 interface NotificationSettings {
@@ -150,6 +161,7 @@ export default function EditLawFirmPage() {
   const params = useParams()
   const router = useRouter()
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettings | null>(null)
@@ -221,6 +233,7 @@ export default function EditLawFirmPage() {
       zgodaPrzetwarzanie: false,
       zweryfikowana: false,
       aktywna: true,
+      accountManagerId: "",
     },
   })
 
@@ -238,6 +251,22 @@ export default function EditLawFirmPage() {
       }
     }
     fetchVoivodeships()
+  }, [])
+
+  // Fetch account managers
+  useEffect(() => {
+    const fetchAccountManagers = async () => {
+      try {
+        const response = await fetch("/api/admin/account-managers")
+        if (response.ok) {
+          const data = await response.json()
+          setAccountManagers(data.filter((am: AccountManager) => am.aktywny))
+        }
+      } catch (error) {
+        console.error("Error fetching account managers:", error)
+      }
+    }
+    fetchAccountManagers()
   }, [])
 
   // Fetch law firm data
@@ -305,6 +334,7 @@ export default function EditLawFirmPage() {
             zgodaPrzetwarzanie: lawFirm.zgodaPrzetwarzanie || false,
             zweryfikowana: lawFirm.zweryfikowana,
             aktywna: lawFirm.aktywna,
+            accountManagerId: lawFirm.accountManagerId || "",
           })
 
           // Set statistics
@@ -932,6 +962,38 @@ export default function EditLawFirmPage() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="accountManagerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opiekun kancelarii</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
+                      value={field.value || "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wybierz opiekuna (opcjonalnie)" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">Brak opiekuna</SelectItem>
+                        {accountManagers.map((manager) => (
+                          <SelectItem key={manager.id} value={manager.id}>
+                            {manager.imie} {manager.nazwisko} ({manager.email})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Przypisz opiekuna do tej kancelarii. Opiekun będzie widoczny w panelu kancelarii.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

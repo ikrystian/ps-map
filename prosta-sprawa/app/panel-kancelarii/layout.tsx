@@ -37,6 +37,7 @@ import {
   Menu,
 } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
+import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
@@ -295,6 +296,9 @@ export default function LawFirmPanelLayout({
         packageName={packageName || ""}
         expiryDate={expiryDate}
       />
+
+      {/* Account Manager Widget */}
+      <AccountManagerWidget />
     </div>
   )
 }
