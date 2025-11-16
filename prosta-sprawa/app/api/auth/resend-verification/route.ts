@@ -6,7 +6,7 @@ import { UserRole } from "@prisma/client"
 
 /**
  * POST /api/auth/resend-verification
- * WysyBa ponownie email weryfikacyjny
+ * Resends email verification
  */
 export async function POST(request: NextRequest) {
   try {
@@ -15,43 +15,43 @@ export async function POST(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json(
-        { error: "Email jest wymagany" },
+        { error: "Email is required" },
         { status: 400 }
       )
     }
 
-    // Znajdz u|ytkownika
+    // Find user
     const user = await prisma.user.findUnique({
       where: { email },
     })
 
     if (!user) {
-      // Ze wzgldów bezpieczeDstwa nie informujemy, |e u|ytkownik nie istnieje
+      // For security reasons, don't reveal if user exists
       return NextResponse.json(
-        { message: "Je[li konto o tym adresie email istnieje, wysBali[my nowy link weryfikacyjny." },
+        { message: "If an account with this email exists, we have sent a new verification link." },
         { status: 200 }
       )
     }
 
-    // Sprawdz czy email nie zostaB ju| zweryfikowany
+    // Check if email is already verified
     if (user.emailVerified) {
       return NextResponse.json(
-        { error: "Email zostaB ju| zweryfikowany. Mo|esz si zalogowa." },
+        { error: "Email is already verified. You can log in." },
         { status: 400 }
       )
     }
 
-    // UsuD stare tokeny weryfikacyjne dla tego u|ytkownika
+    // Delete old verification tokens for this user
     await prisma.verificationToken.deleteMany({
       where: { identifier: user.email },
     })
 
-    // Generuj nowy token weryfikacyjny
+    // Generate new verification token
     const verificationToken = crypto.randomBytes(32).toString('hex')
     const verificationExpiry = new Date()
-    verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token wa|ny 24 godziny
+    verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token valid for 24 hours
 
-    // Zapisz nowy token
+    // Save new token
     await prisma.verificationToken.create({
       data: {
         identifier: user.email,
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Wy[lij email weryfikacyjny
+    // Send verification email
     const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
     const isLawFirm = user.role === UserRole.LAW_FIRM
     const emailContent = generateEmailVerificationEmail(
@@ -77,13 +77,13 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { message: "Link weryfikacyjny zostaB wysBany na Twój adres email." },
+      { message: "Verification link has been sent to your email address." },
       { status: 200 }
     )
   } catch (error) {
     console.error("Resend verification error:", error)
     return NextResponse.json(
-      { error: "WystpiB bBd podczas wysyBania emaila weryfikacyjnego" },
+      { error: "An error occurred while sending verification email" },
       { status: 500 }
     )
   }

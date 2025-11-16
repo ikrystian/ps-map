@@ -201,6 +201,15 @@ export default function PublicHeader({
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
+              {/* Mapa */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link href="/mapa" className="px-4 py-2 hover:text-primary">
+                    Mapa
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
               {/* Dla prawnika */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -237,9 +246,8 @@ export default function PublicHeader({
 
         {/* Search Form - Slide Down */}
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            searchFormOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${searchFormOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+            }`}
         >
           <div className="border-t py-4">
             <form onSubmit={handleSearchSubmit} className="flex gap-3 max-w-2xl mx-auto">

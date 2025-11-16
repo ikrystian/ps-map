@@ -60,11 +60,17 @@ export default function LawFirmMap({
 }: LawFirmMapProps) {
   const [lawFirms, setLawFirms] = useState<LawFirmLocation[]>(initialLawFirms || [])
   const [loading, setLoading] = useState(!initialLawFirms)
+  const mapInitialized = useRef(false)
 
   useEffect(() => {
     // If law firms weren't provided as props, fetch them
     if (!initialLawFirms) {
       fetchLawFirms()
+    }
+
+    return () => {
+      // Cleanup on unmount
+      mapInitialized.current = false
     }
   }, [initialLawFirms])
 
@@ -105,6 +111,7 @@ export default function LawFirmMap({
   return (
     <div className="relative rounded-lg overflow-hidden shadow-lg" style={{ height }}>
       <MapContainer
+        key={`map-${Date.now()}`}
         center={center}
         zoom={zoom}
         style={{ height: "100%", width: "100%" }}
