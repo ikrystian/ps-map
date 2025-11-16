@@ -1721,3 +1721,43 @@ model AccountManager {
   @@index([email])
   @@index([aktywny])
 }
+
+// ============================================================================
+// SZABLONY EMAILI
+// ============================================================================
+
+model EmailTemplate {
+  id                String   @id @default(uuid())
+  nazwa             String   // Nazwa szablonu
+  temat             String   // Temat emaila
+  tresc             String   // Treść tekstowa emaila
+  trescHtml         String?  // Treść HTML emaila
+  typ               EmailType // Typ emaila
+  aktywny           Boolean  @default(true) // Czy szablon jest aktywny
+  triggery          String?  // JSON array triggerów (np. ["case_created"])
+  zmienne           String?  // JSON array dostępnych zmiennych (np. ["{nazwaSprawi}", "{klient}"])
+  opisZmiennych     String?  // JSON object z opisami zmiennych
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([typ])
+  @@index([aktywny])
+}
+
+enum EmailType {
+  NOWA_SPRAWA              // Email do kancelarii o nowej sprawie
+  NOWA_OFERTA              // Email do klienta o nowej ofercie
+  AKCEPTACJA_OFERTY        // Email do kancelarii o akceptacji oferty
+  ODRZUCENIE_OFERTY        // Email do kancelarii o odrzuceniu oferty
+  NOWA_WIADOMOSC           // Email o nowej wiadomości
+  NOWA_OPINIA              // Email o nowej opinii
+  REJESTRACJA_KLIENT       // Email powitalny dla klienta
+  REJESTRACJA_KANCELARIA   // Email powitalny dla kancelarii
+  RESET_HASLA              // Email z linkiem do resetu hasła
+  POTWIERDZENIE_EMAIL      // Email z linkiem do potwierdzenia adresu email
+  PLATNOSC_POTWIERDZONA    // Email o potwierdzeniu płatności
+  SUBSKRYPCJA_WYGASA       // Email o wygasającej subskrypcji
+  NISKI_STAN_PUNKTOW       // Email o niskim stanie punktów
+  CUSTOM                   // Własny szablon
+}
