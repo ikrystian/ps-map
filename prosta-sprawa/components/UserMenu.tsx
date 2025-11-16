@@ -83,11 +83,12 @@ export default function UserMenu({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
-          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
           <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
             <AvatarImage src={userImage || "/avatars/client.jpg"} alt="Klient" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
           </Avatar>
+          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
+
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
@@ -155,12 +156,12 @@ export default function UserMenu({
         {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
-            {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
             <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
               <AvatarImage src={userImage || "/avatars/user.jpg"} alt="User" />
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
-          </DropdownMenuTrigger>
+            {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
+                      </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -229,11 +230,12 @@ export default function UserMenu({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none flex items-center gap-2" id="user-menu-button">
-          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
           <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
             <AvatarImage src={userImage || "/avatars/admin.jpg"} alt="Admin" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
-          </Avatar>
+         </Avatar>
+          {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
+
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Panel administracyjny</DropdownMenuLabel>
