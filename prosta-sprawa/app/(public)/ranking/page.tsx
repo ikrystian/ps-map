@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Trophy, Medal, Award, MapPin, Star, CheckCircle2, TrendingUp, Coins } from "lucide-react"
+import { Trophy, Medal, Award, MapPin, Star, CheckCircle2, TrendingUp, Coins, Sparkles } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn, getSubscriptionBorderColor } from "@/lib/utils"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 
 interface LawFirm {
   id: string
@@ -20,7 +21,7 @@ interface LawFirm {
   miasto: string
   punktySaldo: number
   zweryfikowana: boolean
-  subscriptionType?: string | null
+  subscriptionType?: string
   voivodeship: {
     nazwa: string
   }
@@ -132,122 +133,130 @@ export default function RankingPage() {
               const isTopThree = firm.rank <= 3
 
               return (
-                <Card
-                  key={firm.id}
-                  className={cn(
-                    "transition-all hover:shadow-lg",
-                    isTopThree && "border-2"
-                  )}
-                >
-                  <CardContent className="p-4 md:p-6">
-                    <div className="flex items-start gap-4">
-                      {/* Rank Badge */}
-                      <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                        <div
-                          className={cn(
-                            "flex items-center justify-center w-12 h-12 rounded-full font-bold text-lg",
-                            getRankBadge(firm.rank)
-                          )}
-                        >
-                          {getRankIcon(firm.rank) || `#${firm.rank}`}
-                        </div>
-                        <div className="text-xs text-center text-muted-foreground">
-                          <Coins className="h-3 w-3 inline mr-1" />
-                          {firm.punktySaldo}
-                        </div>
-                      </div>
-
-                      {/* Logo */}
-                      <div className="flex-shrink-0">
-                        {firm.logo ? (
-                          <div className={cn("rounded-lg overflow-hidden border-2", borderColor)}>
-                            <img
-                              src={firm.logo}
-                              alt={firm.nazwa}
-                              className="w-16 h-16 object-cover"
-                            />
+                <LawFirmCardWrapper key={firm.id} pakietSubskrypcji={firm.subscriptionType} className="rounded-lg">
+                  <Card
+                    className={cn(
+                      "transition-all hover:shadow-lg",
+                      isTopThree && "border-2",
+                      firm.subscriptionType === "BIZNES" && "border-0"
+                    )}
+                  >
+                    <CardContent className="p-4 md:p-6">
+                      <div className="flex items-start gap-4">
+                        {/* Rank Badge */}
+                        <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                          <div
+                            className={cn(
+                              "flex items-center justify-center w-12 h-12 rounded-full font-bold text-lg",
+                              getRankBadge(firm.rank)
+                            )}
+                          >
+                            {getRankIcon(firm.rank) || `#${firm.rank}`}
                           </div>
-                        ) : (
-                          <div className={cn(
-                            "w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border-2",
-                            borderColor
-                          )}>
-                            <span className="text-2xl font-bold text-muted-foreground">
-                              {firm.nazwa.charAt(0)}
-                            </span>
+                          <div className="text-xs text-center text-muted-foreground">
+                            <Coins className="h-3 w-3 inline mr-1" />
+                            {firm.punktySaldo}
                           </div>
-                        )}
-                      </div>
+                        </div>
 
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <Link
-                                href={`/kancelaria/${firm.slug}`}
-                                className="text-lg md:text-xl font-bold hover:text-primary transition-colors"
-                              >
-                                {firm.nazwa}
-                              </Link>
-                              {firm.zweryfikowana && (
-                                <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                              )}
+                        {/* Logo */}
+                        <div className="flex-shrink-0">
+                          {firm.logo ? (
+                            <div className={cn("rounded-lg overflow-hidden border-2", borderColor)}>
+                              <img
+                                src={firm.logo}
+                                alt={firm.nazwa}
+                                className="w-16 h-16 object-cover"
+                              />
                             </div>
-                            <p className="text-sm text-muted-foreground">{firm.nazwaFirmy}</p>
-                          </div>
-                        </div>
-
-                        {/* Location and Rating */}
-                        <div className="flex flex-wrap items-center gap-3 mb-3 text-sm">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <MapPin className="h-4 w-4" />
-                            <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
-                          </div>
-                          {firm.reviewCount > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="font-semibold">{firm.avgRating}</span>
-                              <span className="text-muted-foreground">
-                                ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
+                          ) : (
+                            <div className={cn(
+                              "w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border-2",
+                              borderColor
+                            )}>
+                              <span className="text-2xl font-bold text-muted-foreground">
+                                {firm.nazwa.charAt(0)}
                               </span>
                             </div>
                           )}
                         </div>
 
-                        {/* Categories */}
-                        {firm.categories.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {firm.categories.slice(0, 3).map((category, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {category.nazwa}
-                              </Badge>
-                            ))}
-                            {firm.categories.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{firm.categories.length - 3}
-                              </Badge>
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <Link
+                                  href={`/kancelaria/${firm.slug}`}
+                                  className="text-lg md:text-xl font-bold hover:text-primary transition-colors"
+                                >
+                                  {firm.nazwa}
+                                </Link>
+                                {firm.zweryfikowana && (
+                                  <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                                )}
+                                {firm.subscriptionType === "BIZNES" && (
+                                  <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                    <Sparkles className="w-3 h-3 mr-1" />
+                                    Biznes
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{firm.nazwaFirmy}</p>
+                            </div>
+                          </div>
+
+                          {/* Location and Rating */}
+                          <div className="flex flex-wrap items-center gap-3 mb-3 text-sm">
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <MapPin className="h-4 w-4" />
+                              <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
+                            </div>
+                            {firm.reviewCount > 0 && (
+                              <div className="flex items-center gap-1">
+                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                <span className="font-semibold">{firm.avgRating}</span>
+                                <span className="text-muted-foreground">
+                                  ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
+                                </span>
+                              </div>
                             )}
                           </div>
-                        )}
 
-                        {/* Description */}
-                        {firm.opis && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                            {firm.opis}
-                          </p>
-                        )}
+                          {/* Categories */}
+                          {firm.categories.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              {firm.categories.slice(0, 3).map((category, index) => (
+                                <Badge key={index} variant="secondary" className="text-xs">
+                                  {category.nazwa}
+                                </Badge>
+                              ))}
+                              {firm.categories.length > 3 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{firm.categories.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
 
-                        {/* Action Button */}
-                        <Link href={`/kancelaria/${firm.slug}`}>
-                          <Button variant={isTopThree ? "default" : "outline"} size="sm">
-                            Zobacz profil
-                          </Button>
-                        </Link>
+                          {/* Description */}
+                          {firm.opis && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                              {firm.opis}
+                            </p>
+                          )}
+
+                          {/* Action Button */}
+                          <Link href={`/kancelaria/${firm.slug}`}>
+                            <Button variant={isTopThree ? "default" : "outline"} size="sm">
+                              Zobacz profil
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </LawFirmCardWrapper>
               )
             })}
           </div>

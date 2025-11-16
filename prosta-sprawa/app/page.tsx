@@ -24,13 +24,15 @@ import {
   Building2,
   UserCheck,
   Home,
-  Briefcase
+  Briefcase,
+  Sparkles
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import PublicHeader from "@/components/PublicHeader"
 import { toast } from "sonner"
 import PublicFooter from "@/components/PublicFooter"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
 
@@ -800,58 +802,68 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {lawFirms.slice(0, 3).map((firm) => (
-              <Card key={firm.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-16 w-16">
-                      {firm.logo && (
-                        <AvatarImage src={firm.logo} alt={firm.nazwa} />
+              <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji}>
+                  <Card className={`hover:shadow-lg transition-shadow ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-16 w-16">
+                          {firm.logo && (
+                            <AvatarImage src={firm.logo} alt={firm.nazwa} />
+                          )}
+                          <AvatarFallback className="text-lg">
+                            {firm.nazwa.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
+                            {firm.zweryfikowana && (
+                              <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                            )}
+                            {firm.pakietSubskrypcji === "BIZNES" && (
+                              <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                <Sparkles className="w-3 h-3 mr-1" />
+                                Biznes
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center text-sm text-muted-foreground mb-2">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {firm.miasto}{firm.voivodeship?.nazwa && `, ${firm.voivodeship.nazwa}`}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
+                            <span className="text-sm text-muted-foreground">
+                              ({firm.reviewCount} opinii)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {firm.opis && (
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                          {firm.opis}
+                        </p>
                       )}
-                      <AvatarFallback className="text-lg">
-                        {firm.nazwa.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
-                        {firm.zweryfikowana && (
-                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                        )}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {firm.categories.slice(0, 3).map((cat) => (
+                          <Badge key={cat.slug} variant="secondary">
+                            {cat.nazwa}
+                          </Badge>
+                        ))}
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground mb-2">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {firm.miasto}{firm.voivodeship?.nazwa && `, ${firm.voivodeship.nazwa}`}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
-                        <span className="text-sm text-muted-foreground">
-                          ({firm.reviewCount} opinii)
+                      <Button asChild className="w-full">
+                        <span>
+                          Zobacz profil
                         </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {firm.opis && (
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                      {firm.opis}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {firm.categories.slice(0, 3).map((cat) => (
-                      <Badge key={cat.slug} variant="secondary">
-                        {cat.nazwa}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button asChild className="w-full">
-                    <Link href={`/kancelaria/${firm.slug}`}>
-                      Zobacz profil
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </LawFirmCardWrapper>
+              </Link>
             ))}
           </div>
         </div>
@@ -882,41 +894,53 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {lawFirms.slice(0, 3).map((firm) => (
-                    <Card key={firm.id} className="hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            {firm.logo && (
-                              <AvatarImage src={firm.logo} alt={firm.nazwa} />
-                            )}
-                            <AvatarFallback>
-                              {firm.nazwa.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <CardTitle className="text-base">{firm.nazwa}</CardTitle>
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {firm.miasto}
-                            </div>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center gap-1 mb-3">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
-                        </div>
-                        <Button asChild size="sm" className="w-full">
-                          <Link href={`/kancelaria/${firm.slug}`}>
-                            Zobacz profil
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                   {lawFirms.slice(0, 3).map((firm) => (
+                     <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                       <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg h-full">
+                         <Card className={`hover:shadow-lg transition-shadow h-full ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
+                           <CardHeader>
+                             <div className="flex items-center gap-3">
+                               <Avatar>
+                                 {firm.logo && (
+                                   <AvatarImage src={firm.logo} alt={firm.nazwa} />
+                                 )}
+                                 <AvatarFallback>
+                                   {firm.nazwa.substring(0, 2).toUpperCase()}
+                                 </AvatarFallback>
+                               </Avatar>
+                               <div className="flex-1">
+                                 <div className="flex items-center gap-2">
+                                   <CardTitle className="text-base">{firm.nazwa}</CardTitle>
+                                   {firm.pakietSubskrypcji === "BIZNES" && (
+                                     <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                       <Sparkles className="w-3 h-3 mr-1" />
+                                       Biznes
+                                     </Badge>
+                                   )}
+                                 </div>
+                                 <div className="flex items-center text-sm text-muted-foreground">
+                                   <MapPin className="h-3 w-3 mr-1" />
+                                   {firm.miasto}
+                                 </div>
+                               </div>
+                             </div>
+                           </CardHeader>
+                           <CardContent>
+                             <div className="flex items-center gap-1 mb-3">
+                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                               <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
+                             </div>
+                             <Button asChild size="sm" className="w-full">
+                               <span>
+                                 Zobacz profil
+                               </span>
+                             </Button>
+                           </CardContent>
+                         </Card>
+                       </LawFirmCardWrapper>
+                     </Link>
+                   ))}
+                 </div>
               </div>
             ))}
           </div>
@@ -959,38 +983,50 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {newLawFirms.map((firm) => (
-              <Card key={firm.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex flex-col items-center text-center">
-                    <Avatar className="h-20 w-20 mb-3">
-                      {firm.logo && (
-                        <AvatarImage src={firm.logo} alt={firm.nazwa} />
-                      )}
-                      <AvatarFallback className="text-xl">
-                        {firm.nazwa.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <CardTitle className="text-lg mb-1">{firm.nazwa}</CardTitle>
-                    <div className="flex items-center text-sm text-muted-foreground mb-2">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      {firm.miasto}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-sm">
-                        {firm.avgRating.toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild size="sm" className="w-full">
-                    <Link href={`/kancelaria/${firm.slug}`}>
-                      Zobacz profil
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg h-full">
+                  <Card className={`hover:shadow-lg transition-shadow h-full ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
+                    <CardHeader>
+                      <div className="flex flex-col items-center text-center">
+                        <Avatar className="h-20 w-20 mb-3">
+                          {firm.logo && (
+                            <AvatarImage src={firm.logo} alt={firm.nazwa} />
+                          )}
+                          <AvatarFallback className="text-xl">
+                            {firm.nazwa.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex items-center gap-2 justify-center mb-1">
+                          <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
+                          {firm.pakietSubskrypcji === "BIZNES" && (
+                            <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                              <Sparkles className="w-3 h-3 mr-1" />
+                              Biznes
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {firm.miasto}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-semibold text-sm">
+                            {firm.avgRating.toFixed(1)}
+                          </span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Button asChild size="sm" className="w-full">
+                        <span>
+                          Zobacz profil
+                        </span>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </LawFirmCardWrapper>
+              </Link>
             ))}
           </div>
         </div>

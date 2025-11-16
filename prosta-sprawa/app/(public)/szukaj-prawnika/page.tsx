@@ -18,7 +18,8 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles } from "lucide-react"
+import { MagicCard } from "@/components/magic-card"
 
 interface LawFirm {
   id: string
@@ -39,6 +40,7 @@ interface LawFirm {
   }>
   avgRating: number
   reviewCount: number
+  pakietSubskrypcji?: string
 }
 
 interface Category {
@@ -352,9 +354,11 @@ export default function SearchLawyerPage() {
             <>
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                  {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  {lawFirms.map((firm) => {
+                    const isBiznesPlan = firm.pakietSubskrypcji === "BIZNES"
+
+                    const cardContent = (
+                      <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${isBiznesPlan ? "border-0" : ""}`}>
                         <CardHeader>
                           {firm.logo ? (
                             <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
@@ -437,19 +441,44 @@ export default function SearchLawyerPage() {
                                   Online
                                 </Badge>
                               )}
+                              {isBiznesPlan && (
+                                <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                  <Sparkles className="w-3 h-3 mr-1" />
+                                  Biznes
+                                </Badge>
+                              )}
                             </div>
                           </div>
                         </CardContent>
                       </Card>
-                    </Link>
-                  ))}
+                    )
+
+                    return (
+                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                        {isBiznesPlan ? (
+                          <MagicCard
+                            className="h-full rounded-lg"
+                            gradientFrom="#9E7AFF"
+                            gradientTo="#FE8BBB"
+                            gradientSize={200}
+                          >
+                            {cardContent}
+                          </MagicCard>
+                        ) : (
+                          cardContent
+                        )}
+                      </Link>
+                    )
+                  })}
                 </div>
               ) : (
                 /* Law Firms List View */
                 <div className="space-y-4 mb-8">
-                  {lawFirms.map((firm) => (
-                    <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                  {lawFirms.map((firm) => {
+                    const isBiznesPlan = firm.pakietSubskrypcji === "BIZNES"
+
+                    const listCardContent = (
+                      <Card className={`hover:shadow-lg transition-shadow cursor-pointer ${isBiznesPlan ? "border-0" : ""}`}>
                         <CardContent className="p-6">
                           <div className="flex gap-6">
                             {/* Logo */}
@@ -475,6 +504,12 @@ export default function SearchLawyerPage() {
                                     <h3 className="text-xl font-semibold">{firm.nazwa}</h3>
                                     {firm.zweryfikowana && (
                                       <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                                    )}
+                                    {isBiznesPlan && (
+                                      <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                        <Sparkles className="w-3 h-3 mr-1" />
+                                        Biznes
+                                      </Badge>
                                     )}
                                   </div>
                                   {firm.categories.length > 0 && (
@@ -534,8 +569,25 @@ export default function SearchLawyerPage() {
                           </div>
                         </CardContent>
                       </Card>
-                    </Link>
-                  ))}
+                    )
+
+                    return (
+                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                        {isBiznesPlan ? (
+                          <MagicCard
+                            className="rounded-lg"
+                            gradientFrom="#9E7AFF"
+                            gradientTo="#FE8BBB"
+                            gradientSize={200}
+                          >
+                            {listCardContent}
+                          </MagicCard>
+                        ) : (
+                          listCardContent
+                        )}
+                      </Link>
+                    )
+                  })}
                 </div>
               )}
 

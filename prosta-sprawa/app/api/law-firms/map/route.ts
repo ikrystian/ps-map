@@ -22,6 +22,7 @@ export async function GET() {
         opis: true,
         numerTelefonu: true,
         emailKontakt: true,
+        pakietSubskrypcji: true,
         voivodeship: {
           select: {
             nazwa: true,
@@ -70,6 +71,7 @@ export async function GET() {
         opis: firm.opis,
         numerTelefonu: firm.numerTelefonu,
         emailKontakt: firm.emailKontakt,
+        pakietSubskrypcji: firm.pakietSubskrypcji,
         voivodeship: firm.voivodeship.nazwa,
         categories: firm.categories.map((c) => c.category.nazwa),
         avgRating: Math.round(avgRating * 10) / 10,

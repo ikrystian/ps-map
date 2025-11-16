@@ -39,6 +39,7 @@ export interface LawFirm extends LawFirmWithLocation {
   avgRating: number
   reviewCount: number
   profilViews?: number
+  pakietSubskrypcji?: string
 }
 
 /**

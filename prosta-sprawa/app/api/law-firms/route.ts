@@ -183,6 +183,7 @@ export async function GET(request: NextRequest) {
           wyswietleniaProfilu: firm.wyswietleniaProfilu,
           zlozoneOferty: firm.zlozoneOferty,
           wygraneOferty: firm.wygraneOferty,
+          pakietSubskrypcji: firm.pakietSubskrypcji,
           // Promotion data
           promoted: boost.hasBoost,
           promotionBoost: boost.boostMultiplier,
