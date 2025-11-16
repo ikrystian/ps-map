@@ -23,6 +23,14 @@ export function createRandomLawFirm() {
     const hasOirp = faker.datatype.boolean();
     const hasOra = faker.datatype.boolean();
 
+
+const paragraphCount = faker.number.int({ min: 3, max: 7 }); // Losowa liczba akapitów (3 do 5)
+const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
+    // Zamień podwójne nowej linie ('\n\n') na znaczniki akapitu
+    .split('\n\n')
+    .map(p => `<p>${p}</p>`)
+    .join('');
+
   return {
     typ: faker.helpers.arrayElement(Object.values(LawFirmType)),
     nazwa: companyName,
@@ -39,11 +47,11 @@ export function createRandomLawFirm() {
     adres: faker.location.streetAddress(),
     kodPocztowy: faker.location.zipCode(),
     miasto: faker.location.city(),
-    opis: faker.lorem.paragraphs(3),
-    logo: faker.image.url(),
-    zdjecieGlowne: faker.image.url(),
+    opis: descriptionHtml,
+    logo: faker.image.avatar(),
+    zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),
     galeriaZdjec: JSON.stringify(Array.from({ length: faker.number.int({ min: 2, max: 6 }) }, () => faker.image.url())),
-    filmYouTube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    filmYouTube: faker.datatype.boolean() ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : '',
     okladkaFilmu: faker.image.url(),
     statusGodzinyOtwarcia: faker.datatype.boolean(),
     godzinyOtwarcia: JSON.stringify({
@@ -59,7 +67,7 @@ export function createRandomLawFirm() {
     linkFacebook: `https://facebook.com/${faker.internet.username()}`,
     linkInstagram: `https://instagram.com/${faker.internet.username()}`,
     stronaWww: faker.internet.url(),
-    edukacja: JSON.stringify(Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, () => ({
+    edukacja: JSON.stringify(Array.from({ length: faker.number.int({ min: 1, max: 6 }) }, () => ({
         uczelnia: `Uniwersytet ${faker.location.city()}`,
         wydzial: `Wydział Prawa i Administracji`,
         stopien: "magister",
@@ -73,7 +81,7 @@ export function createRandomLawFirm() {
     oraWpis: hasOra ? `WAW/${faker.string.numeric(5)}` : undefined,
     oraStatus: hasOra,
     unikatowyOpisUslugi: faker.lorem.sentences(2),
-    slowaKluczowe: JSON.stringify(faker.lorem.words(10).split(' ')),
+    slowaKluczowe: JSON.stringify(faker.lorem.words(3).split(' ')),
     onlineOnly: faker.datatype.boolean(),
     typOferty: faker.helpers.arrayElement(Object.values(OfferType)),
     pakietSubskrypcji: faker.helpers.arrayElement(Object.values(SubscriptionPackage)),
