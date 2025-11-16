@@ -186,7 +186,7 @@ export default function EmailManagementPage() {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || "Failed to save template")
+        throw new Error(error.error || error.message || "Failed to save template")
       }
 
       toast.success(
