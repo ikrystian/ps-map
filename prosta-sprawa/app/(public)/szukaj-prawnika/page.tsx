@@ -19,13 +19,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon } from "lucide-react"
-import dynamic from "next/dynamic"
-
-// Dynamic import of map component to avoid SSR issues
-const LawFirmMap = dynamic(
-  () => import("@/components/map/LawFirmMap"),
-  { ssr: false, loading: () => <div className="h-[600px] bg-gray-100 rounded-lg flex items-center justify-center">Ładowanie mapy...</div> }
-)
 
 interface LawFirm {
   id: string
@@ -69,7 +62,7 @@ export default function SearchLawyerPage() {
   const [total, setTotal] = useState(0)
 
   // View mode
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -322,31 +315,31 @@ export default function SearchLawyerPage() {
             </p>
 
             {/* View Toggle */}
-            <div className="flex items-center gap-1 border rounded-md p-1">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="px-3"
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="px-3"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "map" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("map")}
-                className="px-3"
-              >
-                <MapIcon className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 border rounded-md p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="px-3"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="px-3"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+              <Link href="/mapa">
+                <Button variant="outline" size="sm" className="px-3">
+                  <MapIcon className="h-4 w-4 mr-2" />
+                  Mapa
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -357,12 +350,7 @@ export default function SearchLawyerPage() {
             </div>
           ) : lawFirms.length > 0 ? (
             <>
-              {/* Map View */}
-              {viewMode === "map" ? (
-                <div className="mb-8">
-                  <LawFirmMap />
-                </div>
-              ) : viewMode === "grid" ? (
+              {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                   {lawFirms.map((firm) => (
                     <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
