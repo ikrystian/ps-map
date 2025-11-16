@@ -5,7 +5,8 @@ import Link from "next/link"
 import { Calendar, Eye, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid"
+import { MasonryGrid, MasonryGridItem } from "@/components/ui/masonry-grid"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   IconArticle,
   IconScale,
@@ -179,67 +180,79 @@ export default function BlogPage() {
         </div>
       ) : (
         <>
-          {/* Blog Posts Bento Grid */}
-          <BentoGrid className="max-w-7xl mx-auto mb-12">
-            {posts.map((post, i) => (
-              <Link key={post.id} href={`/blog/${post.slug}`}>
-                <BentoGridItem
-                  title={post.tytul}
-                  description={
-                    <div className="space-y-2">
-                      <p className="line-clamp-2">{getExcerpt(post.tresc)}</p>
-                      <div className="flex items-center gap-2 text-xs">
+          {/* Blog Posts Masonry Grid */}
+          <MasonryGrid className="max-w-7xl mx-auto mb-12">
+            {posts.map((post) => (
+              <MasonryGridItem key={post.id}>
+                <Link href={`/blog/${post.slug}`}>
+                  <Card className="group overflow-hidden transition-all duration-200 hover:shadow-xl">
+                    {/* Featured Image */}
+                    {post.obrazekWyrozniajacy ? (
+                      <div className="relative aspect-video overflow-hidden">
+                        <img
+                          src={post.obrazekWyrozniajacy}
+                          alt={post.tytul}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative aspect-video bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
+                    )}
+
+                    <CardHeader className="space-y-3">
+                      {/* Category Badge */}
+                      <div className="flex items-center gap-2">
+                        {getCategoryIcon(post.category?.nazwa)}
+                        {post.category && (
+                          <Badge variant="secondary" className="text-xs">
+                            {post.category.nazwa}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-bold text-lg leading-tight text-neutral-800 dark:text-neutral-100 group-hover:text-primary transition-colors">
+                        {post.tytul}
+                      </h3>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4">
+                      {/* Excerpt */}
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 line-clamp-3">
+                        {getExcerpt(post.tresc)}
+                      </p>
+
+                      {/* Author */}
+                      <div className="flex items-center gap-2 text-xs text-neutral-500">
                         {post.lawFirm.logo ? (
                           <img
                             src={post.lawFirm.logo}
                             alt={post.lawFirm.nazwa}
-                            className="w-4 h-4 rounded-full object-cover"
+                            className="w-5 h-5 rounded-full object-cover"
                           />
                         ) : (
-                          <User className="w-3 h-3" />
+                          <User className="w-4 h-4" />
                         )}
-                        <span>{post.lawFirm.nazwa}</span>
+                        <span className="font-medium">{post.lawFirm.nazwa}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-xs">
+
+                      {/* Meta Info */}
+                      <div className="flex items-center gap-4 text-xs text-neutral-500 pt-2 border-t">
                         <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
+                          <Calendar className="w-3.5 h-3.5" />
                           {formatDate(post.dataPublikacji)}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
+                          <Eye className="w-3.5 h-3.5" />
                           {post.wyswietlenia}
                         </div>
                       </div>
-                    </div>
-                  }
-                  header={
-                    post.obrazekWyrozniajacy ? (
-                      <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
-                        <img
-                          src={post.obrazekWyrozniajacy}
-                          alt={post.tytul}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
-                    )
-                  }
-                  icon={
-                    <div className="flex items-center gap-2">
-                      {getCategoryIcon(post.category?.nazwa)}
-                      {post.category && (
-                        <Badge variant="secondary" className="text-xs">
-                          {post.category.nazwa}
-                        </Badge>
-                      )}
-                    </div>
-                  }
-                  className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-                />
-              </Link>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </MasonryGridItem>
             ))}
-          </BentoGrid>
+          </MasonryGrid>
 
           {/* Pagination */}
           {pagination.pages > 1 && (
