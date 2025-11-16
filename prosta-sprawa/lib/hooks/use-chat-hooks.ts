@@ -114,7 +114,7 @@ export function useTypingIndicator(conversationId: string | null) {
   const { data: session } = useSession()
   const [isTyping, setIsTyping] = useState(false)
   const [otherUserTyping, setOtherUserTyping] = useState(false)
-  const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const notifyTyping = useCallback(async () => {
     if (!conversationId || !session?.user?.id) return
