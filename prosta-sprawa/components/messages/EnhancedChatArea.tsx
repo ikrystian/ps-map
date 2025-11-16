@@ -199,6 +199,43 @@ export function EnhancedChatArea({
     }
   }, [conversationId])
 
+  // Real-time message polling for active conversation
+  useEffect(() => {
+    if (!conversationId) return
+
+    // Poll for new messages every 2 seconds when conversation is active
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(
+          `/api/conversations/${conversationId}/messages?limit=5&offset=0`
+        )
+        if (response.ok) {
+          const data = await response.json()
+          if (data.messages.length > 0) {
+            // Check if there are new messages
+            const latestMessageId = messages[messages.length - 1]?.id
+            const hasNewMessages = data.messages.some(
+              (msg: Message) => msg.id !== latestMessageId && msg.senderId !== session?.user?.id
+            )
+
+            if (hasNewMessages) {
+              // Play notification sound for new messages from other user
+              if (notificationSound.current && data.messages[0].senderId !== session?.user?.id) {
+                notificationSound.current.play().catch(() => {})
+              }
+              // Refresh messages
+              fetchMessages()
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error polling messages:", error)
+      }
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [conversationId, messages, session])
+
   // Update online status
   useEffect(() => {
     const updateOnlineStatus = async () => {

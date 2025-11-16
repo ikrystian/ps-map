@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePermissions } from "@/hooks/usePermissions"
 import { ExpiredPackageModal } from "@/components/permissions"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import {
   LayoutDashboard,
   Briefcase,
@@ -69,9 +70,13 @@ export default function LawFirmPanelLayout({
   const [punktySaldo, setPunktySaldo] = useState<number>(0)
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
-  const [unreadCount, setUnreadCount] = useState(0)
   const [showExpiredModal, setShowExpiredModal] = useState(false)
   const [isClient, setIsClient] = useState(false)
+
+  // Real-time unread messages count
+  const { unreadCount } = useRealtimeMessages({
+    enabled: !!session?.user && session.user.role === "LAW_FIRM",
+  })
 
   useEffect(() => {
     setIsClient(true)
@@ -97,27 +102,6 @@ export default function LawFirmPanelLayout({
 
     if (session?.user?.role === "LAW_FIRM") {
       fetchLawFirmData()
-    }
-  }, [session])
-
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const response = await fetch("/api/conversations/unread-count")
-        if (response.ok) {
-          const data = await response.json()
-          setUnreadCount(data.unreadCount || 0)
-        }
-      } catch (error) {
-        console.error("Error fetching unread count:", error)
-      }
-    }
-
-    if (session?.user) {
-      fetchUnreadCount()
-      // Odświeżaj co 30 sekund
-      const interval = setInterval(fetchUnreadCount, 30000)
-      return () => clearInterval(interval)
     }
   }, [session])
 

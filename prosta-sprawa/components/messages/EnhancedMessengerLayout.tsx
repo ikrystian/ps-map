@@ -1,10 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { EnhancedConversationList } from "./EnhancedConversationList"
 import { EnhancedChatArea } from "./EnhancedChatArea"
 import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { Wifi, WifiOff } from "lucide-react"
+import { toast } from "sonner"
 import type { Conversation } from "@/types/conversations"
 
 export function EnhancedMessengerLayout() {
@@ -14,10 +18,15 @@ export function EnhancedMessengerLayout() {
   const [deletedConversations, setDeletedConversations] = useState<Conversation[]>([])
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [lastFetchTime, setLastFetchTime] = useState<Date>(new Date())
 
   // Pobierz wszystkie konwersacje
-  const fetchAllConversations = async () => {
+  const fetchAllConversations = useCallback(async (silent = true) => {
     try {
+      if (!silent) {
+        setIsLoading(true)
+      }
+
       const [activeRes, archivedRes, deletedRes] = await Promise.all([
         fetch("/api/conversations?filter=active"),
         fetch("/api/conversations?filter=archived"),
@@ -38,22 +47,56 @@ export function EnhancedMessengerLayout() {
         const data = await deletedRes.json()
         setDeletedConversations(data)
       }
+
+      setLastFetchTime(new Date())
     } catch (error) {
       console.error("Error fetching conversations:", error)
+      if (!silent) {
+        toast.error("Błąd podczas ładowania wiadomości")
+      }
     } finally {
-      setIsLoading(false)
+      if (!silent) {
+        setIsLoading(false)
+      }
     }
-  }
+  }, [])
 
+  // Real-time updates hook
+  const { unreadCount, isConnected, lastUpdate } = useRealtimeMessages({
+    onUpdate: () => {
+      // Refresh conversations when real-time update detected
+      fetchAllConversations(true)
+    },
+    onNewMessage: (data) => {
+      // Show notification for new message
+      if (Notification.permission === "granted") {
+        new Notification("Nowa wiadomość", {
+          body: "Otrzymałeś nową wiadomość",
+          icon: "/favicon.ico",
+        })
+      }
+      // Play sound
+      const audio = new Audio("/sounds/notification.mp3")
+      audio.play().catch(() => {
+        // Ignore errors if sound can't play
+      })
+    },
+    enabled: !!session?.user,
+  })
+
+  // Initial load
   useEffect(() => {
     if (session?.user) {
-      fetchAllConversations()
-
-      // Poll for updates every 30 seconds
-      const interval = setInterval(fetchAllConversations, 30000)
-      return () => clearInterval(interval)
+      fetchAllConversations(false)
     }
-  }, [session])
+  }, [session, fetchAllConversations])
+
+  // Request notification permission
+  useEffect(() => {
+    if (typeof window !== "undefined" && Notification.permission === "default") {
+      Notification.requestPermission()
+    }
+  }, [])
 
   // Check URL for conversationId parameter
   useEffect(() => {
@@ -92,6 +135,28 @@ export function EnhancedMessengerLayout() {
 
   return (
     <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] min-h-[500px]">
+      {/* Connection status indicator */}
+      <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          {isConnected ? (
+            <>
+              <Wifi className="h-3 w-3 text-green-500" />
+              <span>Połączono (w czasie rzeczywistym)</span>
+            </>
+          ) : (
+            <>
+              <WifiOff className="h-3 w-3 text-orange-500" />
+              <span>Odświeżanie co 5 sekund</span>
+            </>
+          )}
+        </div>
+        {unreadCount > 0 && (
+          <Badge variant="destructive" className="h-5">
+            {unreadCount} nieprzeczytanych
+          </Badge>
+        )}
+      </div>
+
       <Card className="h-full flex flex-col md:flex-row overflow-hidden">
         {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
         <div

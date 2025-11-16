@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
@@ -35,28 +36,11 @@ export default function ClientPanelLayout({
   const pathname = usePathname()
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
 
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const response = await fetch("/api/conversations/unread-count")
-        if (response.ok) {
-          const data = await response.json()
-          setUnreadCount(data.unreadCount || 0)
-        }
-      } catch (error) {
-        console.error("Error fetching unread count:", error)
-      }
-    }
-
-    if (session?.user) {
-      fetchUnreadCount()
-      // Odświeżaj co 30 sekund
-      const interval = setInterval(fetchUnreadCount, 30000)
-      return () => clearInterval(interval)
-    }
-  }, [session])
+  // Real-time unread messages count
+  const { unreadCount } = useRealtimeMessages({
+    enabled: !!session?.user && session.user.role === "CLIENT",
+  })
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
