@@ -1,0 +1,1372 @@
+# DOKUMENTACJA FUNKCJONALNOŚCI - USTAWIENIA SYSTEMOWE I LOGI
+
+## SPIS TREŚCI
+1. [Ustawienia Systemowe (/admin/settings)](#ustawienia-systemowe)
+2. [Logi Systemowe (/admin/logs)](#logi-systemowe)
+3. [Modele Bazy Danych](#modele-bazy-danych)
+4. [API Endpoints](#api-endpoints)
+
+---
+
+## USTAWIENIA SYSTEMOWE
+**Ścieżka:** `/admin/settings`
+**Dostęp:** Wyłącznie administratorzy (rola ADMIN)
+**Plik:** `/prosta-sprawa/app/admin/settings/page.tsx`
+
+### OPIS OGÓLNY
+Panel ustawień systemowych umożliwia administratorom konfigurację globalnych parametrów platformy Prosta Sprawa. Wszystkie ustawienia są przechowywane w bazie danych w modelu `Settings` w formacie klucz-wartość z opcjonalnym opisem.
+
+### FUNKCJONALNOŚCI
+
+#### 1. USTAWIENIA OGÓLNE
+
+**Nazwa serwisu (siteName)**
+- **Typ:** Pole tekstowe
+- **Domyślna wartość:** "Prosta Sprawa"
+- **Zastosowanie:** Nazwa wyświetlana w:
+  - Nagłówku strony (header)
+  - Meta tagach SEO (title, og:title)
+  - Emailach systemowych
+  - Stopce (footer)
+- **Walidacja:** Brak walidacji (może być puste)
+- **Pole w bazie:** `key: "siteName"`, `value: "<nazwa>"`
+
+**Email kontaktowy (contactEmail)**
+- **Typ:** Pole email
+- **Domyślna wartość:** "kontakt@prostasprawa.pl"
+- **Zastosowanie:**
+  - Główny adres kontaktowy wyświetlany na stronie
+  - Używany w formularzach kontaktowych
+  - Pokazywany w stopce strony
+- **Walidacja:**
+  - Wymagane pole (nie może być puste)
+  - Walidacja formatu email (podstawowa)
+- **Pole w bazie:** `key: "contactEmail"`, `value: "<email>"`
+
+**Email wsparcia (supportEmail)**
+- **Typ:** Pole email
+- **Domyślna wartość:** "pomoc@prostasprawa.pl"
+- **Zastosowanie:**
+  - Email wsparcia technicznego
+  - Adres do zgłoszeń problemów
+  - Pokazywany w sekcji pomocy
+- **Walidacja:**
+  - Wymagane pole (nie może być puste)
+  - Walidacja formatu email
+- **Pole w bazie:** `key: "supportEmail"`, `value: "<email>"`
+
+#### 2. USTAWIENIA KANCELARII
+
+**Maksymalna liczba kategorii dla kancelarii (maxLawFirmCategories)**
+- **Typ:** Pole numeryczne (input type="number")
+- **Domyślna wartość:** 10
+- **Zakres wartości:** 1-100
+- **Zastosowanie:**
+  - Określa limit kategorii prawnych, które kancelaria może wybrać
+  - Kontroluje w formularzu edycji profilu kancelarii
+  - Zapobiega nadmiernemu rozproszeniu oferty kancelarii
+- **Walidacja:**
+  - Musi być liczbą całkowitą
+  - Zakres: minimum 1, maksimum 100
+  - Komunikat błędu: "Maksymalna liczba kategorii musi być liczbą od 1 do 100"
+- **Pole w bazie:** `key: "maxLawFirmCategories"`, `value: "10"`
+- **Opis w bazie:** "Maksymalna liczba kategorii, które może zaznaczyć kancelaria"
+
+#### 3. USTAWIENIA OPINII
+
+**Liczba opinii na stronę (reviewsPerPage)**
+- **Typ:** Pole numeryczne
+- **Domyślna wartość:** 10
+- **Zakres wartości:** 5-50
+- **Zastosowanie:**
+  - Kontroluje paginację opinii na:
+    - Profilach kancelarii
+    - Liście opinii w panelu administracyjnym
+    - Sekcji opinii klientów
+- **Walidacja:**
+  - Musi być liczbą całkowitą
+  - Zakres: minimum 5, maksimum 50
+  - Komunikat błędu: "Liczba opinii na stronę musi być liczbą od 5 do 50"
+- **Pole w bazie:** `key: "reviewsPerPage"`, `value: "10"`
+- **Opis w bazie:** "Liczba opinii wyświetlanych na jednej stronie"
+
+**Minimalna długość opinii (minReviewLength)**
+- **Typ:** Pole numeryczne
+- **Domyślna wartość:** 50
+- **Zakres wartości:** 10-500 znaków
+- **Zastosowanie:**
+  - Walidacja formularza dodawania opinii
+  - Zapewnia, że opinie są merytoryczne i szczegółowe
+  - Zapobiega spamowi i beztreściowym opiniom
+- **Walidacja:**
+  - Musi być liczbą całkowitą
+  - Zakres: minimum 10, maksimum 500
+  - Komunikat błędu: "Minimalna długość opinii musi być liczbą od 10 do 500"
+- **Pole w bazie:** `key: "minReviewLength"`, `value: "50"`
+- **Opis w bazie:** "Minimalna liczba znaków w opinii"
+
+#### 4. USTAWIENIA WYŚWIETLANIA
+
+**Limit wyróżnionych kategorii (featuredCategoriesLimit)**
+- **Typ:** Pole numeryczne
+- **Domyślna wartość:** 8
+- **Zakres wartości:** 4-20
+- **Zastosowanie:**
+  - Określa liczbę kategorii wyświetlanych na stronie głównej
+  - Kontroluje sekcję "Popularne kategorie"
+  - Wpływa na UX i czytelność strony głównej
+- **Walidacja:**
+  - Musi być liczbą całkowitą
+  - Zakres: minimum 4, maksimum 20
+  - Komunikat błędu: "Limit wyróżnionych kategorii musi być liczbą od 4 do 20"
+- **Pole w bazie:** `key: "featuredCategoriesLimit"`, `value: "8"`
+- **Opis w bazie:** "Maksymalna liczba wyróżnionych kategorii na stronie głównej"
+
+### INTERFEJS UŻYTKOWNIKA
+
+**Nagłówek strony:**
+- Ikona: Settings2 (koło zębate)
+- Tytuł: "Ustawienia systemu"
+- Opis: "Zarządzaj globalnymi ustawieniami platformy"
+
+**Organizacja formularza:**
+- Ustawienia podzielone na 4 sekcje (Cards):
+  1. Ustawienia ogólne
+  2. Ustawienia kancelarii
+  3. Ustawienia opinii
+  4. Ustawienia wyświetlania
+
+**Każde pole zawiera:**
+- Etykietę (Label)
+- Pole input/number
+- Pomocniczy tekst opisujący zastosowanie (text-sm text-muted-foreground)
+
+**Przycisk zapisu:**
+- Lokalizacja: Na dole strony, wyrównany do prawej
+- Wygląd: Duży przycisk (size="lg") z ikoną Save
+- Tekst: "Zapisz wszystkie ustawienia"
+- Stan ładowania:
+  - Podczas zapisywania pokazuje Loader2 (animowany spinner)
+  - Tekst zmienia się na "Zapisuję..."
+  - Przycisk jest wyłączony (disabled)
+
+### STANY APLIKACJI
+
+**Stan ładowania (loading):**
+- Wyświetlany przy pierwszym załadowaniu strony
+- Pokazuje animowany spinner (Loader2) na środku ekranu
+- Komunikat: brak (tylko spinner)
+
+**Stan zapisywania (saving):**
+- Aktywowany po kliknięciu przycisku "Zapisz"
+- Przycisk jest wyłączony
+- Wyświetla animację ładowania
+- Blokuje możliwość ponownego zapisu
+
+**Stan sukcesu:**
+- Toast notification: "Ustawienia zostały zapisane" (zielony)
+- Automatyczne odświeżenie danych z serwera (fetchSettings())
+
+**Stan błędu:**
+- Toast notification z komunikatem błędu (czerwony)
+- Możliwe komunikaty:
+  - "Nie udało się pobrać ustawień" (przy ładowaniu)
+  - "Nie udało się zapisać ustawień" (przy zapisie)
+  - Szczegółowe błędy walidacji (dla każdego pola)
+
+### WALIDACJA
+
+**Walidacja po stronie klienta:**
+
+1. **maxCategories (Maksymalna liczba kategorii):**
+   ```javascript
+   const maxCategoriesNum = parseInt(maxCategories)
+   if (isNaN(maxCategoriesNum) || maxCategoriesNum < 1 || maxCategoriesNum > 100) {
+     toast.error("Maksymalna liczba kategorii musi być liczbą od 1 do 100")
+     return
+   }
+   ```
+
+2. **reviewsPerPage (Liczba opinii na stronę):**
+   ```javascript
+   const reviewsPerPageNum = parseInt(reviewsPerPage)
+   if (isNaN(reviewsPerPageNum) || reviewsPerPageNum < 5 || reviewsPerPageNum > 50) {
+     toast.error("Liczba opinii na stronę musi być liczbą od 5 do 50")
+     return
+   }
+   ```
+
+3. **minReviewLength (Minimalna długość opinii):**
+   ```javascript
+   const minReviewLengthNum = parseInt(minReviewLength)
+   if (isNaN(minReviewLengthNum) || minReviewLengthNum < 10 || minReviewLengthNum > 500) {
+     toast.error("Minimalna długość opinii musi być liczbą od 10 do 500")
+     return
+   }
+   ```
+
+4. **featuredCategoriesLimit (Limit wyróżnionych kategorii):**
+   ```javascript
+   const featuredCategoriesLimitNum = parseInt(featuredCategoriesLimit)
+   if (isNaN(featuredCategoriesLimitNum) || featuredCategoriesLimitNum < 4 || featuredCategoriesLimitNum > 20) {
+     toast.error("Limit wyróżnionych kategorii musi być liczbą od 4 do 20")
+     return
+   }
+   ```
+
+5. **Adresy email:**
+   ```javascript
+   if (!contactEmail || !supportEmail) {
+     toast.error("Adresy email są wymagane")
+     return
+   }
+   ```
+
+### PRZEPŁYW DANYCH
+
+**1. Inicjalizacja komponentu:**
+```
+useEffect → fetchSettings() → GET /api/admin/settings → setState
+```
+
+**2. Pobieranie ustawień:**
+- Wywołanie API: `GET /api/admin/settings`
+- Odpowiedź: Obiekt z kluczami ustawień
+- Aktualizacja stanu: Każde ustawienie zapisane w osobnym useState
+
+**3. Zapisywanie ustawień:**
+```
+handleSave() → walidacja → PUT /api/admin/settings → toast → fetchSettings()
+```
+
+**4. Format danych wysyłanych:**
+```json
+{
+  "settings": {
+    "maxLawFirmCategories": {
+      "value": "10",
+      "description": "Maksymalna liczba kategorii, które może zaznaczyć kancelaria"
+    },
+    "siteName": {
+      "value": "Prosta Sprawa",
+      "description": "Nazwa serwisu wyświetlana w nagłówku i meta tagach"
+    },
+    "contactEmail": {
+      "value": "kontakt@prostasprawa.pl",
+      "description": "Email kontaktowy wyświetlany na stronie"
+    },
+    "supportEmail": {
+      "value": "pomoc@prostasprawa.pl",
+      "description": "Email wsparcia technicznego"
+    },
+    "reviewsPerPage": {
+      "value": "10",
+      "description": "Liczba opinii wyświetlanych na jednej stronie"
+    },
+    "minReviewLength": {
+      "value": "50",
+      "description": "Minimalna długość opinii w znakach"
+    },
+    "featuredCategoriesLimit": {
+      "value": "8",
+      "description": "Maksymalna liczba wyróżnionych kategorii na stronie głównej"
+    }
+  }
+}
+```
+
+---
+
+## LOGI SYSTEMOWE
+**Ścieżka:** `/admin/logs`
+**Dostęp:** Wyłącznie administratorzy (rola ADMIN)
+**Plik:** `/prosta-sprawa/app/admin/logs/page.tsx`
+
+### OPIS OGÓLNY
+System logowania śledzi wszystkie istotne zdarzenia i akcje wykonywane w platformie Prosta Sprawa. Panel logów umożliwia administratorom przeglądanie, filtrowanie i analizę logów systemowych w celu monitorowania aktywności, debugowania problemów i audytu bezpieczeństwa.
+
+### POZIOMY LOGOWANIA (LogLevel)
+
+System obsługuje 5 poziomów logowania, zgodnie z enum LogLevel:
+
+1. **DEBUG** 🐛
+   - **Kolor:** Szary (bg-gray-500)
+   - **Ikona:** Bug
+   - **Zastosowanie:** Szczegółowe informacje diagnostyczne
+   - **Przykłady:**
+     - Szczegóły zapytań do bazy danych
+     - Wartości zmiennych w trakcie wykonywania
+     - Debugowanie złożonych operacji
+
+2. **INFO** ℹ️
+   - **Kolor:** Niebieski (bg-blue-500)
+   - **Ikona:** Info
+   - **Zastosowanie:** Informacje o normalnym działaniu systemu
+   - **Przykłady:**
+     - Logowanie użytkownika
+     - Utworzenie nowej sprawy
+     - Zmiana statusu zamówienia
+
+3. **WARNING** ⚠️
+   - **Kolor:** Żółty (bg-yellow-500)
+   - **Ikona:** AlertTriangle
+   - **Zastosowanie:** Ostrzeżenia, które nie są błędami
+   - **Przykłady:**
+     - Zbliżanie się do limitu zasobów
+     - Przestarzałe API
+     - Nieprawidłowe dane wejściowe (niekrityyczne)
+
+4. **ERROR** ❌
+   - **Kolor:** Pomarańczowy (bg-orange-500)
+   - **Ikona:** XCircle
+   - **Zastosowanie:** Błędy, które nie zatrzymują działania systemu
+   - **Przykłady:**
+     - Nieudane połączenie z zewnętrznym API
+     - Błąd walidacji formularza
+     - Niepowodzenie wysyłki emaila
+
+5. **CRITICAL** 🔴
+   - **Kolor:** Czerwony (bg-red-500)
+   - **Ikona:** AlertCircle
+   - **Zastosowanie:** Krytyczne błędy wymagające natychmiastowej uwagi
+   - **Przykłady:**
+     - Utrata połączenia z bazą danych
+     - Błędy bezpieczeństwa
+     - Awaria płatności
+
+### FUNKCJONALNOŚCI
+
+#### 1. FILTROWANIE LOGÓW
+
+**Filtr poziomu logu (levelFilter):**
+- **Typ:** Select dropdown
+- **Opcje:**
+  - "Wszystkie" (all) - domyślne
+  - "Debug" (DEBUG)
+  - "Info" (INFO)
+  - "Ostrzeżenie" (WARNING)
+  - "Błąd" (ERROR)
+  - "Krytyczny" (CRITICAL)
+- **Działanie:**
+  - Zmiana wartości automatycznie filtruje logi
+  - Resetuje paginację do strony 1
+  - Wywołuje ponowne pobranie danych z API
+
+**Wyszukiwanie tekstowe (searchFilter):**
+- **Typ:** Input tekstowy + przycisk "Szukaj"
+- **Placeholder:** "Szukaj w wiadomościach i akcjach..."
+- **Działanie:**
+  - Wyszukuje w dwóch polach:
+    - `message` - wiadomość logu
+    - `action` - typ akcji
+  - Obsługa Enter - uruchomienie wyszukiwania
+  - Przycisk "Szukaj" z ikoną Search
+  - Resetuje paginację do strony 1
+
+#### 2. STATYSTYKI LOGÓW
+
+Panel statystyk wyświetla 6 kart (Cards):
+
+**Karta "Wszystkie":**
+- Wyświetla całkowitą liczbę logów
+- Ikona: FileText (szara)
+- Dane z pola `pagination.total`
+
+**Karty poziomów logowania (5 kart):**
+- Każda karta reprezentuje jeden poziom (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- Wyświetla odpowiednią ikonę z opacity 50%
+- Wartość: "-" (obecnie nieimplementowane - wymaga dodania zliczania)
+- **Interaktywność:**
+  - Kliknięcie karty ustawia filtr na dany poziom
+  - Cursor: pointer
+  - Hover: bg-muted/50
+
+#### 3. TABELA LOGÓW
+
+**Kolumny tabeli:**
+
+1. **Data (createdAt)**
+   - Szerokość: 120px
+   - Format: "dd.MM.yyyy HH:mm:ss" (polski format)
+   - Biblioteka: date-fns
+   - Przykład: "15.11.2025 14:23:45"
+
+2. **Poziom (level)**
+   - Szerokość: 100px
+   - Wyświetlenie: Badge z odpowiednim kolorem
+   - Zawiera ikonę + nazwę poziomu
+   - Kolory zgodne z levelColors
+
+3. **Akcja (action)**
+   - Szerokość: 200px
+   - Font: monospace (font-mono)
+   - Rozmiar: text-xs
+   - Przykłady wartości:
+     - "USER_LOGIN"
+     - "ORDER_CREATED"
+     - "PAYMENT_STATUS_CHANGED"
+
+4. **Wiadomość (message)**
+   - Szerokość: elastyczna
+   - Wyświetlenie: Tekst z truncate (skrócony)
+   - Maksymalna szerokość: 400px (max-w-md)
+   - **Metadane (metadata):**
+     - Jeśli log posiada metadata, wyświetla element `<details>`
+     - Summary: "Pokaż metadane" (text-xs text-muted-foreground)
+     - Zawartość: Sparsowany JSON w czytelnym formacie
+     - Style: pre-formatted z tłem (bg-muted), zaokrąglony, scrollable
+
+5. **User ID (userId)**
+   - Szerokość: 120px
+   - Font: monospace (font-mono)
+   - Wyświetlenie:
+     - Jeśli istnieje: pierwsze 8 znaków + "..." z title zawierającym pełne ID
+     - Jeśli null: "-" (text-muted-foreground)
+   - Przykład: "a1b2c3d4..." (title: "a1b2c3d4-5e6f-7g8h-9i0j-k1l2m3n4o5p6")
+
+6. **IP (ipAddress)**
+   - Szerokość: 150px
+   - Wyświetlenie adresu IP użytkownika
+   - Jeśli null: "-"
+   - Przykład: "192.168.1.1", "2001:0db8:85a3::8a2e:0370:7334"
+
+**Formatowanie wierszy:**
+- Hover: bg-muted/50
+- Kursor: domyślny
+- Wysokość: automatyczna (dopasowana do zawartości)
+
+#### 4. PAGINACJA
+
+**Mechanizm:**
+- Limit na stronę: 50 logów (pagination.limit)
+- Aktywna strona: pagination.page
+- Całkowita liczba stron: pagination.totalPages
+
+**Interfejs:**
+- Lokalizacja: Pod tabelą
+- Wyświetlenie: Tylko gdy totalPages > 1
+
+**Elementy:**
+1. Informacja tekstowa: "Strona X z Y"
+2. Przycisk "Poprzednia":
+   - Ikona: ChevronLeft
+   - Disabled gdy page === 1
+   - onClick: handlePageChange(page - 1)
+3. Przycisk "Następna":
+   - Ikona: ChevronRight
+   - Disabled gdy page === totalPages
+   - onClick: handlePageChange(page + 1)
+
+### INTERFEJS UŻYTKOWNIKA
+
+**Nagłówek strony:**
+- Ikona: FileText
+- Tytuł: "Logi Systemowe"
+- Opis: "Przeglądaj i filtruj logi aktywności systemu"
+
+**Sekcja filtrów (Card):**
+- Tytuł: "Filtry" z ikoną Filter
+- Layout: Grid 1 kolumna (mobile) / 3 kolumny (desktop)
+- Zawiera:
+  - Select poziomu (1 kolumna)
+  - Input wyszukiwania + przycisk (2 kolumny)
+
+**Sekcja statystyk:**
+- Grid: 1 kolumna (mobile) / 5 kolumn (desktop)
+- 6 kart statystycznych
+
+**Sekcja tabeli (Card):**
+- Tytuł: "Logi (X)" gdzie X = pagination.total
+- Zawartość: Tabela lub stan pusty/ładowanie
+
+### STANY APLIKACJI
+
+**Stan ładowania (loading):**
+- Wyświetlany podczas pobierania logów
+- Pokazuje Loader2 (h-8 w-8 animate-spin) na środku
+- Wysokość: h-64
+
+**Stan pusty (logs.length === 0):**
+- Ikona: FileText (h-16 w-16 opacity-20)
+- Tekst: "Brak logów do wyświetlenia"
+- Wyśrodkowanie: flex flex-col items-center justify-center
+- Wysokość: h-64
+
+**Stan z danymi:**
+- Wyświetla tabelę logów
+- Pokazuje paginację (jeśli totalPages > 1)
+
+**Stan błędu:**
+- Toast notification: "Nie udało się pobrać logów" (czerwony)
+- Konsola: console.error z szczegółami błędu
+
+### PRZEPŁYW DANYCH
+
+**1. Inicjalizacja:**
+```
+useEffect → fetchLogs() → GET /api/admin/logs → setState
+```
+
+**2. Zmiana filtrów:**
+```
+setLevelFilter/setSearchFilter → useEffect → fetchLogs()
+```
+
+**3. Zmiana strony:**
+```
+handlePageChange → setPagination → useEffect → fetchLogs()
+```
+
+**4. Wyszukiwanie:**
+```
+handleSearch → setSearchFilter → setPagination(page: 1) → useEffect → fetchLogs()
+```
+
+**5. Parametry API:**
+```javascript
+const params = new URLSearchParams({
+  page: pagination.page.toString(),     // Numer strony
+  limit: pagination.limit.toString(),   // Limit na stronę (50)
+})
+
+if (levelFilter && levelFilter !== "all") {
+  params.append("level", levelFilter)   // Filtr poziomu
+}
+
+if (searchFilter) {
+  params.append("search", searchFilter) // Wyszukiwanie
+}
+```
+
+**6. Odpowiedź API:**
+```json
+{
+  "logs": [
+    {
+      "id": "uuid",
+      "level": "INFO",
+      "action": "USER_LOGIN",
+      "message": "Użytkownik zalogował się do systemu",
+      "userId": "user-uuid",
+      "metadata": "{\"ip\":\"192.168.1.1\",\"browser\":\"Chrome\"}",
+      "ipAddress": "192.168.1.1",
+      "userAgent": "Mozilla/5.0...",
+      "createdAt": "2025-11-15T14:23:45.123Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 1234,
+    "totalPages": 25
+  }
+}
+```
+
+### PARSOWANIE METADANYCH
+
+```javascript
+const parseMetadata = (metadata: string | null) => {
+  if (!metadata) return null
+  try {
+    return JSON.parse(metadata)
+  } catch {
+    return null
+  }
+}
+```
+
+**Wyświetlanie:**
+```jsx
+{log.metadata && (
+  <details className="mt-1">
+    <summary className="text-xs text-muted-foreground cursor-pointer">
+      Pokaż metadane
+    </summary>
+    <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">
+      {JSON.stringify(parseMetadata(log.metadata), null, 2)}
+    </pre>
+  </details>
+)}
+```
+
+---
+
+## MODELE BAZY DANYCH
+
+### MODEL SETTINGS
+
+**Lokalizacja:** `/prosta-sprawa/prisma/schema.prisma` (linie 1590-1599)
+
+```prisma
+model Settings {
+  id                        String   @id @default(uuid())
+  key                       String   @unique
+  value                     String
+  description               String?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  @@index([key])
+}
+```
+
+**Pola:**
+
+1. **id** (String, UUID)
+   - Klucz główny
+   - Automatycznie generowany (uuid())
+   - Unikalne ID ustawienia
+
+2. **key** (String, UNIQUE)
+   - Klucz ustawienia
+   - Unikalna wartość
+   - Indeksowany dla szybkiego wyszukiwania
+   - Przykłady: "siteName", "maxLawFirmCategories"
+
+3. **value** (String)
+   - Wartość ustawienia
+   - Przechowywana jako string (nawet liczby)
+   - Wymagane pole
+
+4. **description** (String, nullable)
+   - Opcjonalny opis ustawienia
+   - Pomaga administratorom zrozumieć zastosowanie
+   - Może być null
+
+5. **createdAt** (DateTime)
+   - Data utworzenia ustawienia
+   - Automatycznie ustawiana (@default(now()))
+
+6. **updatedAt** (DateTime)
+   - Data ostatniej aktualizacji
+   - Automatycznie aktualizowana (@updatedAt)
+
+**Indeksy:**
+- `@@index([key])` - Indeks na kolumnie key dla szybkiego wyszukiwania
+
+**Przykładowe rekordy:**
+```
+id: "a1b2c3d4-..."
+key: "siteName"
+value: "Prosta Sprawa"
+description: "Nazwa serwisu wyświetlana w nagłówku i meta tagach"
+createdAt: 2025-11-01T10:00:00.000Z
+updatedAt: 2025-11-15T14:30:00.000Z
+
+id: "e5f6g7h8-..."
+key: "maxLawFirmCategories"
+value: "10"
+description: "Maksymalna liczba kategorii, które może zaznaczyć kancelaria"
+createdAt: 2025-11-01T10:00:00.000Z
+updatedAt: 2025-11-10T09:15:00.000Z
+```
+
+### MODEL SYSTEMLOG
+
+**Lokalizacja:** `/prosta-sprawa/prisma/schema.prisma` (linie 1626-1641)
+
+```prisma
+model SystemLog {
+  id          String      @id @default(uuid())
+  level       LogLevel    @default(INFO)
+  action      String      // Rodzaj akcji (np. "USER_LOGIN", "ORDER_CREATED")
+  message     String      // Opis zdarzenia
+  userId      String?     // ID użytkownika, który wykonał akcję (opcjonalne)
+  metadata    String?     // Dodatkowe dane w formacie JSON
+  ipAddress   String?     // Adres IP użytkownika
+  userAgent   String?     // User agent przeglądarki
+  createdAt   DateTime    @default(now())
+
+  @@index([level])
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+}
+```
+
+**Pola:**
+
+1. **id** (String, UUID)
+   - Klucz główny
+   - Automatycznie generowany
+   - Unikalne ID logu
+
+2. **level** (LogLevel enum)
+   - Poziom logowania
+   - Domyślnie: INFO
+   - Wartości: DEBUG, INFO, WARNING, ERROR, CRITICAL
+   - Indeksowany
+
+3. **action** (String)
+   - Rodzaj akcji/zdarzenia
+   - Konwencja nazewnictwa: UPPER_SNAKE_CASE
+   - Przykłady:
+     - "USER_LOGIN"
+     - "USER_LOGOUT"
+     - "CASE_CREATED"
+     - "OFFER_SUBMITTED"
+     - "ORDER_CREATED"
+     - "PAYMENT_STATUS_CHANGED"
+     - "LAW_FIRM_VERIFIED"
+   - Indeksowany dla szybkiego filtrowania
+
+4. **message** (String)
+   - Opis zdarzenia w języku naturalnym
+   - Może zawierać szczegóły akcji
+   - Przykłady:
+     - "Użytkownik zalogował się do systemu"
+     - "Utworzono nową sprawę: Rozwód z orzekaniem"
+     - "Kancelaria wysłała ofertę na sprawę #123"
+
+5. **userId** (String, nullable)
+   - ID użytkownika, który wykonał akcję
+   - Opcjonalne (null dla zdarzeń systemowych)
+   - Indeksowany
+
+6. **metadata** (String, nullable)
+   - Dodatkowe dane w formacie JSON
+   - Przechowuje kontekst akcji
+   - Parsowane przy wyświetlaniu
+   - Przykłady:
+     ```json
+     {
+       "caseId": "uuid",
+       "offerId": "uuid",
+       "amount": 1500,
+       "points": 100
+     }
+     ```
+
+7. **ipAddress** (String, nullable)
+   - Adres IP użytkownika
+   - Opcjonalne
+   - Obsługuje IPv4 i IPv6
+   - Używane do audytu bezpieczeństwa
+
+8. **userAgent** (String, nullable)
+   - User agent przeglądarki
+   - Opcjonalne
+   - Pomaga identyfikować używaną przeglądarkę/urządzenie
+   - Przykład: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36..."
+
+9. **createdAt** (DateTime)
+   - Data i czas utworzenia logu
+   - Automatycznie ustawiana
+   - Indeksowana (sortowanie chronologiczne)
+
+**Indeksy:**
+- `@@index([level])` - Filtrowanie po poziomie
+- `@@index([action])` - Filtrowanie po akcji
+- `@@index([userId])` - Wyszukiwanie logów użytkownika
+- `@@index([createdAt])` - Sortowanie chronologiczne
+
+### ENUM LOGLEVEL
+
+**Lokalizacja:** `/prosta-sprawa/prisma/schema.prisma` (linie 1643-1649)
+
+```prisma
+enum LogLevel {
+  DEBUG       // Szczegółowe informacje diagnostyczne
+  INFO        // Informacje o normalnym działaniu
+  WARNING     // Ostrzeżenia, które nie są błędami
+  ERROR       // Błędy, które nie zatrzymują działania systemu
+  CRITICAL    // Krytyczne błędy wymagające natychmiastowej uwagi
+}
+```
+
+**Wartości:**
+1. **DEBUG** - Diagnostyka i debugowanie
+2. **INFO** - Normalna aktywność systemu
+3. **WARNING** - Ostrzeżenia niewymagające interwencji
+4. **ERROR** - Błędy do naprawy
+5. **CRITICAL** - Krytyczne problemy wymagające natychmiastowej uwagi
+
+---
+
+## API ENDPOINTS
+
+### GET /api/admin/settings
+
+**Plik:** `/prosta-sprawa/app/api/admin/settings/route.ts`
+**Metoda:** GET
+**Autoryzacja:** Wymagana rola ADMIN
+
+**Opis:**
+Pobiera wszystkie ustawienia systemowe z bazy danych i zwraca jako obiekt klucz-wartość.
+
+**Request:**
+```
+GET /api/admin/settings
+Headers:
+  Cookie: session token (automatyczne przez NextAuth)
+```
+
+**Response (200 OK):**
+```json
+{
+  "maxLawFirmCategories": {
+    "value": "10",
+    "description": "Maksymalna liczba kategorii, które może zaznaczyć kancelaria"
+  },
+  "siteName": {
+    "value": "Prosta Sprawa",
+    "description": "Nazwa serwisu wyświetlana w nagłówku i meta tagach"
+  },
+  "contactEmail": {
+    "value": "kontakt@prostasprawa.pl",
+    "description": "Email kontaktowy wyświetlany na stronie"
+  },
+  "supportEmail": {
+    "value": "pomoc@prostasprawa.pl",
+    "description": "Email wsparcia technicznego"
+  },
+  "reviewsPerPage": {
+    "value": "10",
+    "description": "Liczba opinii wyświetlanych na jednej stronie"
+  },
+  "minReviewLength": {
+    "value": "50",
+    "description": "Minimalna długość opinii w znakach"
+  },
+  "featuredCategoriesLimit": {
+    "value": "8",
+    "description": "Maksymalna liczba wyróżnionych kategorii na stronie głównej"
+  }
+}
+```
+
+**Response (401 Unauthorized):**
+```json
+{
+  "error": "Nieautoryzowany dostęp"
+}
+```
+
+**Response (500 Internal Server Error):**
+```json
+{
+  "error": "Wystąpił błąd podczas pobierania ustawień"
+}
+```
+
+**Logika:**
+1. Weryfikacja sesji i roli ADMIN
+2. Pobranie wszystkich ustawień z bazy: `prisma.settings.findMany()`
+3. Konwersja do obiektu klucz-wartość za pomocą reduce()
+4. Dodanie domyślnych wartości dla brakujących ustawień
+5. Zwrócenie obiektu
+
+**Kod:**
+```typescript
+const settings = await prisma.settings.findMany()
+
+const settingsObject = settings.reduce((acc, setting) => {
+  acc[setting.key] = {
+    value: setting.value,
+    description: setting.description,
+  }
+  return acc
+}, {} as Record<string, { value: string; description: string | null }>)
+
+// Domyślne wartości
+if (!settingsObject.maxLawFirmCategories) {
+  settingsObject.maxLawFirmCategories = {
+    value: "10",
+    description: "Maksymalna liczba kategorii, które może zaznaczyć kancelaria",
+  }
+}
+
+return NextResponse.json(settingsObject, { status: 200 })
+```
+
+### PUT /api/admin/settings
+
+**Plik:** `/prosta-sprawa/app/api/admin/settings/route.ts`
+**Metoda:** PUT
+**Autoryzacja:** Wymagana rola ADMIN
+
+**Opis:**
+Aktualizuje ustawienia systemowe. Używa operacji UPSERT (update lub create).
+
+**Request:**
+```
+PUT /api/admin/settings
+Headers:
+  Content-Type: application/json
+  Cookie: session token
+
+Body:
+{
+  "settings": {
+    "maxLawFirmCategories": {
+      "value": "15",
+      "description": "Maksymalna liczba kategorii, które może zaznaczyć kancelaria"
+    },
+    "siteName": {
+      "value": "Prosta Sprawa - Nowa nazwa",
+      "description": "Nazwa serwisu wyświetlana w nagłówku i meta tagach"
+    }
+    // ... inne ustawienia
+  }
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "message": "Ustawienia zostały zaktualizowane"
+}
+```
+
+**Response (400 Bad Request):**
+```json
+{
+  "error": "Nieprawidłowe dane"
+}
+```
+
+**Response (401 Unauthorized):**
+```json
+{
+  "error": "Nieautoryzowany dostęp"
+}
+```
+
+**Response (500 Internal Server Error):**
+```json
+{
+  "error": "Wystąpił błąd podczas aktualizacji ustawień"
+}
+```
+
+**Logika:**
+1. Weryfikacja sesji i roli ADMIN
+2. Parsowanie body requeste'u
+3. Walidacja struktury danych
+4. Iteracja po wszystkich ustawieniach
+5. Dla każdego ustawienia: UPSERT do bazy danych
+6. Zwrócenie komunikatu sukcesu
+
+**Kod UPSERT:**
+```typescript
+for (const [key, data] of Object.entries(settings)) {
+  const { value, description } = data as { value: string; description?: string }
+
+  await prisma.settings.upsert({
+    where: { key },              // Szukaj po kluczu
+    update: {                    // Jeśli istnieje - aktualizuj
+      value,
+      description: description || null,
+    },
+    create: {                    // Jeśli nie istnieje - utwórz
+      key,
+      value,
+      description: description || null,
+    },
+  })
+}
+```
+
+### GET /api/admin/logs
+
+**Plik:** `/prosta-sprawa/app/api/admin/logs/route.ts`
+**Metoda:** GET
+**Autoryzacja:** Wymagana rola ADMIN
+
+**Opis:**
+Pobiera logi systemowe z możliwością filtrowania i paginacji.
+
+**Request:**
+```
+GET /api/admin/logs?page=1&limit=50&level=ERROR&search=payment
+
+Query Parameters:
+  - page (opcjonalne, default: 1) - numer strony
+  - limit (opcjonalne, default: 50) - liczba logów na stronę
+  - level (opcjonalne) - filtr poziomu (DEBUG|INFO|WARNING|ERROR|CRITICAL)
+  - action (opcjonalne) - filtr akcji (zawiera tekst)
+  - userId (opcjonalne) - filtr po ID użytkownika
+  - search (opcjonalne) - wyszukiwanie w message i action
+```
+
+**Response (200 OK):**
+```json
+{
+  "logs": [
+    {
+      "id": "log-uuid-1",
+      "level": "ERROR",
+      "action": "PAYMENT_FAILED",
+      "message": "Płatność nie powiodła się: Brak środków",
+      "userId": "user-uuid",
+      "metadata": "{\"orderId\":\"order-123\",\"amount\":500}",
+      "ipAddress": "192.168.1.100",
+      "userAgent": "Mozilla/5.0...",
+      "createdAt": "2025-11-15T14:23:45.123Z"
+    },
+    // ... więcej logów
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 1234,
+    "totalPages": 25
+  }
+}
+```
+
+**Response (401 Unauthorized):**
+```json
+{
+  "error": "Unauthorized"
+}
+```
+
+**Response (500 Internal Server Error):**
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+**Logika budowania warunków WHERE:**
+```typescript
+const where: any = {}
+
+if (level) {
+  where.level = level
+}
+
+if (action) {
+  where.action = { contains: action }
+}
+
+if (userId) {
+  where.userId = userId
+}
+
+if (search) {
+  where.OR = [
+    { message: { contains: search } },
+    { action: { contains: search } },
+  ]
+}
+```
+
+**Zapytanie do bazy:**
+```typescript
+const [logs, total] = await Promise.all([
+  db.systemLog.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    skip,
+    take: limit,
+  }),
+  db.systemLog.count({ where }),
+])
+```
+
+### POST /api/admin/logs
+
+**Plik:** `/prosta-sprawa/app/api/admin/logs/route.ts`
+**Metoda:** POST
+**Autoryzacja:** Opcjonalna (może być używane przez system)
+
+**Opis:**
+Tworzy nowy log systemowy. Może być używane przez różne części aplikacji do logowania zdarzeń.
+
+**Request:**
+```
+POST /api/admin/logs
+Headers:
+  Content-Type: application/json
+
+Body:
+{
+  "level": "INFO",
+  "action": "USER_LOGIN",
+  "message": "Użytkownik zalogował się do systemu",
+  "userId": "user-uuid",
+  "metadata": {
+    "browser": "Chrome",
+    "os": "Windows"
+  },
+  "ipAddress": "192.168.1.1",
+  "userAgent": "Mozilla/5.0..."
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "log-uuid",
+  "level": "INFO",
+  "action": "USER_LOGIN",
+  "message": "Użytkownik zalogował się do systemu",
+  "userId": "user-uuid",
+  "metadata": "{\"browser\":\"Chrome\",\"os\":\"Windows\"}",
+  "ipAddress": "192.168.1.1",
+  "userAgent": "Mozilla/5.0...",
+  "createdAt": "2025-11-15T14:23:45.123Z"
+}
+```
+
+**Response (400 Bad Request):**
+```json
+{
+  "error": "Action and message are required"
+}
+```
+
+**Response (500 Internal Server Error):**
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+**Walidacja:**
+```typescript
+if (!action || !message) {
+  return NextResponse.json(
+    { error: "Action and message are required" },
+    { status: 400 }
+  )
+}
+```
+
+**Tworzenie logu:**
+```typescript
+const log = await db.systemLog.create({
+  data: {
+    level: level || "INFO",
+    action,
+    message,
+    userId: userId || session?.user?.id,
+    metadata: metadata ? JSON.stringify(metadata) : null,
+    ipAddress,
+    userAgent,
+  },
+})
+```
+
+---
+
+## ZASTOSOWANIA PRAKTYCZNE
+
+### Ustawienia systemowe - Use cases
+
+1. **Zmiana limitu kategorii dla kancelarii:**
+   - Administrator zwiększa limit z 10 do 15
+   - Kancelarie mogą zaznaczyć więcej kategorii w swoim profilu
+   - Wpływa na formularze edycji profilu
+
+2. **Konfiguracja emaili:**
+   - Zmiana adresu kontaktowego po zmianie domeny
+   - Aktualizacja emaila wsparcia po zmianie struktury zespołu
+   - Wszystkie emaile systemowe używają nowych adresów
+
+3. **Dostosowanie paginacji opinii:**
+   - Zwiększenie do 20 opinii na stronę dla lepszej widoczności
+   - Zmniejszenie do 5 dla szybszego ładowania na urządzeniach mobilnych
+
+4. **Kontrola jakości opinii:**
+   - Zwiększenie minimalnej długości do 100 znaków dla bardziej szczegółowych opinii
+   - Zmniejszenie do 30 znaków dla łatwiejszego zbierania feedbacku
+
+5. **Optymalizacja strony głównej:**
+   - Zwiększenie liczby wyróżnionych kategorii do 12 dla większej ekspozycji
+   - Zmniejszenie do 6 dla czystszego designu
+
+### Logi systemowe - Use cases
+
+1. **Audyt bezpieczeństwa:**
+   - Przeglądanie logów logowania (USER_LOGIN)
+   - Wykrywanie prób nieautoryzowanego dostępu
+   - Analiza logów CRITICAL i ERROR
+
+2. **Debugowanie problemów płatności:**
+   - Filtrowanie po akcji zawierającej "PAYMENT"
+   - Sprawdzanie metadanych transakcji
+   - Identyfikacja przyczyn niepowodzeń
+
+3. **Monitorowanie aktywności użytkowników:**
+   - Filtrowanie logów po userId
+   - Śledzenie akcji konkretnego użytkownika
+   - Analiza wzorców zachowań
+
+4. **Analiza błędów systemu:**
+   - Filtrowanie po poziomie ERROR i CRITICAL
+   - Identyfikacja powtarzających się problemów
+   - Priorytetyzacja napraw
+
+5. **Raportowanie statystyk:**
+   - Zliczanie logów poszczególnych typów
+   - Analiza trendów w czasie
+   - Generowanie raportów miesięcznych
+
+---
+
+## BEZPIECZEŃSTWO
+
+### Ustawienia systemowe
+
+**Kontrola dostępu:**
+- Wyłącznie użytkownicy z rolą ADMIN
+- Weryfikacja w middleware NextAuth
+- Sprawdzenie sesji w każdym API endpoint
+
+**Walidacja danych:**
+- Walidacja po stronie klienta (przed wysłaniem)
+- Walidacja po stronie serwera (w API)
+- Sanityzacja wartości przed zapisem do bazy
+
+**Audyt zmian:**
+- Pole updatedAt automatycznie aktualizowane
+- Możliwość rozszerzenia o system wersjonowania
+- Logowanie zmian w SystemLog (do implementacji)
+
+### Logi systemowe
+
+**Kontrola dostępu:**
+- Wyłącznie rola ADMIN może przeglądać logi
+- POST endpoint może być używany przez system (opcjonalnie bez autoryzacji)
+
+**Ochrona danych wrażliwych:**
+- User ID są maskowane (pokazuje tylko 8 znaków)
+- IP adresy są logowane dla celów bezpieczeństwa
+- User agent może zawierać informacje o urządzeniu
+
+**Retencja danych:**
+- Brak automatycznego czyszczenia logów (do implementacji)
+- Zalecane: polityka retencji (np. 90 dni)
+- Możliwość archiwizacji starych logów
+
+**Indeksowanie:**
+- Wszystkie krytyczne pola są indeksowane
+- Szybkie wyszukiwanie i filtrowanie
+- Optymalizacja wydajności dla dużych zbiorów danych
+
+---
+
+## OGRANICZENIA I PRZYSZŁE ROZSZERZENIA
+
+### Ustawienia systemowe
+
+**Obecne ograniczenia:**
+- Brak walidacji zaawansowanej (np. regex dla emaili)
+- Brak grupowania ustawień w kategorie
+- Brak historii zmian
+- Brak możliwości eksportu/importu ustawień
+
+**Potencjalne rozszerzenia:**
+1. System wersjonowania ustawień
+2. Rollback do poprzednich wartości
+3. Eksport ustawień do JSON
+4. Import ustawień z pliku
+5. Walidacja bardziej złożona (regex, custom validators)
+6. Ustawienia specyficzne dla środowiska (dev/staging/prod)
+7. Interfejs dla dodawania nowych ustawień bez zmiany kodu
+
+### Logi systemowe
+
+**Obecne ograniczenia:**
+- Statystyki poziomów pokazują "-" (nieimplementowane)
+- Brak zaawansowanego filtrowania po dacie
+- Brak eksportu logów do pliku
+- Brak alertów dla krytycznych błędów
+- Brak automatycznego czyszczenia starych logów
+
+**Potencjalne rozszerzenia:**
+1. **Statystyki w czasie rzeczywistym:**
+   - Zliczanie logów per poziom
+   - Wykresy aktywności
+   - Dashboard z kluczowymi metrykami
+
+2. **Zaawansowane filtrowanie:**
+   - Zakres dat (od-do)
+   - Filtr po wielu poziomach jednocześnie
+   - Filtrowanie po metadanych
+   - Zapisywanie ulubionych filtrów
+
+3. **Eksport i raportowanie:**
+   - Eksport do CSV/JSON
+   - Generowanie raportów PDF
+   - Automatyczne raporty emailem
+
+4. **Alerty i notyfikacje:**
+   - Email przy logach CRITICAL
+   - Slack/Discord webhooks
+   - Threshold alerts (X błędów w Y minut)
+
+5. **Retencja i archiwizacja:**
+   - Automatyczne czyszczenie logów starszych niż X dni
+   - Archiwizacja do zewnętrznego storage
+   - Kompresja starych logów
+
+6. **Analityka:**
+   - Identyfikacja wzorców błędów
+   - Korelacja zdarzeń
+   - Predykcja problemów
+
+7. **Integracje:**
+   - Sentry/Bugsnag dla error trackingu
+   - ELK Stack (Elasticsearch, Logstash, Kibana)
+   - Grafana dashboards
+
+---
+
+## PODSUMOWANIE
+
+### Ustawienia systemowe (/admin/settings)
+
+**Główne funkcje:**
+- Centralne zarządzanie konfiguracją platformy
+- 7 kluczowych ustawień w 4 kategoriach
+- Walidacja po stronie klienta i serwera
+- Przechowywanie w modelu Settings (key-value)
+
+**Kategorie ustawień:**
+1. Ogólne (nazwa, emaile)
+2. Kancelarie (limity kategorii)
+3. Opinie (paginacja, długość)
+4. Wyświetlanie (wyróżnione kategorie)
+
+**Technologie:**
+- React (client component)
+- NextAuth (autoryzacja)
+- Prisma (ORM)
+- Sonner (toast notifications)
+- Tailwind CSS + shadcn/ui
+
+### Logi systemowe (/admin/logs)
+
+**Główne funkcje:**
+- Przeglądanie logów systemowych
+- 5 poziomów logowania (DEBUG do CRITICAL)
+- Filtrowanie (poziom, wyszukiwanie)
+- Paginacja (50 logów/strona)
+- Wyświetlanie metadanych JSON
+
+**Informacje w logach:**
+- Data i czas zdarzenia
+- Poziom logowania
+- Typ akcji
+- Wiadomość opisowa
+- ID użytkownika
+- Adres IP
+- User agent
+- Dodatkowe metadane
+
+**Technologie:**
+- React (client component)
+- NextAuth (autoryzacja)
+- Prisma (ORM)
+- date-fns (formatowanie dat)
+- Sonner (powiadomienia)
+- Tailwind CSS + shadcn/ui
+
+---
+
+**Koniec dokumentacji**
