@@ -1,0 +1,1825 @@
+# DOKUMENTACJA GŁÓWNYCH FUNKCJONALNOŚCI PANELU ADMINISTRATORA
+# Prosta Sprawa - System Zarządzania Platformą Prawniczą
+
+Data utworzenia: 2025-11-16
+Wersja: 1.0
+
+================================================================================
+SPIS TREŚCI
+================================================================================
+
+1. Dashboard Administratora (/admin)
+2. Profil Administratora (/admin/profil)
+
+================================================================================
+1. DASHBOARD ADMINISTRATORA (/admin)
+================================================================================
+
+## ŚCIEŻKA
+/admin
+
+## PLIK ŹRÓDŁOWY
+/prosta-sprawa/app/admin/page.tsx
+
+## ENDPOINT API
+GET /api/admin/dashboard/stats
+
+## TYP KOMPONENTU
+Client Component ("use client")
+
+## OPIS OGÓLNY
+Dashboard administratora to główny ekran panelu administracyjnego platformy
+Prosta Sprawa. Stanowi centrum kontroli i monitorowania całego systemu,
+prezentując kluczowe metryki, statystyki, wykresy oraz ostatnie aktywności
+w czasie rzeczywistym.
+
+================================================================================
+
+### GŁÓWNE SEKCJE DASHBOARDU
+
+Dashboard składa się z następujących głównych sekcji:
+
+1. **Nagłówek strony**
+   - Tytuł: "Dashboard"
+   - Podtytuł: "Przegląd systemu i statystyki"
+
+2. **Karty statystyk głównych** (4 karty)
+3. **Karty statystyk dodatkowych** (4 karty)
+4. **Sekcja wykresów** (2 wykresy)
+5. **Wykres rejestracji** (1 wykres słupkowy)
+6. **Sekcja ostatnich aktywności** (4 tabele)
+
+================================================================================
+
+### 1. KARTY STATYSTYK GŁÓWNYCH
+
+Górny rząd zawiera 4 kluczowe wskaźniki wyświetlane w osobnych kartach:
+
+---
+
+#### KARTA 1: UŻYTKOWNICY
+**Ikona:** Users (lucide-react)
+**Tytuł:** "Użytkownicy"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalUsers` (łączna liczba użytkowników)
+- Liczba aktywnych: `statistics.activeUsers` (użytkownicy ze statusem ACTIVE)
+- Kolor aktywnych: zielony (text-green-500)
+
+**Format wyświetlania:**
+```
+[Ikona użytkowników]  Użytkownicy
+   123
+   45 aktywnych (w kolorze zielonym)
+```
+
+**Źródło danych:**
+```typescript
+totalUsers: await prisma.user.count()
+activeUsers: await prisma.user.count({ where: { status: 'ACTIVE' } })
+```
+
+---
+
+#### KARTA 2: SPRAWY
+**Ikona:** Briefcase (lucide-react)
+**Tytuł:** "Sprawy"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalCases` (łączna liczba spraw)
+- Liczba oczekujących: `statistics.pendingCases` (sprawy ze statusem NOWA)
+- Kolor oczekujących: żółty (text-yellow-500)
+
+**Format wyświetlania:**
+```
+[Ikona teczki]  Sprawy
+   89
+   12 oczekujących (w kolorze żółtym)
+```
+
+**Źródło danych:**
+```typescript
+totalCases: await prisma.case.count()
+pendingCases: await prisma.case.count({ where: { status: 'NOWA' } })
+```
+
+---
+
+#### KARTA 3: PRZYCHODY
+**Ikona:** TrendingUp (lucide-react)
+**Tytuł:** "Przychody"
+**Dane wyświetlane:**
+- Kwota główna: `statistics.totalRevenue` (suma przychodów w PLN)
+- Liczba zamówień: `statistics.totalOrders`
+- Format waluty: Polski format PLN (np. "12 345,67 zł")
+
+**Format wyświetlania:**
+```
+[Ikona trendu]  Przychody
+   12 345,67 zł
+   156 zamówień
+```
+
+**Źródło danych:**
+```typescript
+totalOrders: await prisma.order.count()
+completedOrders: await prisma.order.findMany({
+  where: { statusPlatnosci: 'ZAPLACONE' },
+  select: { kwota: true }
+})
+totalRevenue: completedOrders.reduce((sum, order) => sum + order.kwota, 0)
+```
+
+---
+
+#### KARTA 4: NIEOPŁACONE
+**Ikona:** AlertCircle (lucide-react)
+**Tytuł:** "Nieopłacone"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.unpaidOrders` (zamówienia do opłacenia)
+- Opis: "zamówień do opłacenia"
+
+**Format wyświetlania:**
+```
+[Ikona ostrzeżenia]  Nieopłacone
+   8
+   zamówień do opłacenia
+```
+
+**Źródło danych:**
+```typescript
+unpaidOrders: await prisma.order.count({
+  where: { statusPlatnosci: 'OCZEKUJE' }
+})
+```
+
+================================================================================
+
+### 2. KARTY STATYSTYK DODATKOWYCH
+
+Drugi rząd zawiera 4 dodatkowe wskaźniki:
+
+---
+
+#### KARTA 5: KLIENCI
+**Ikona:** UserCheck (lucide-react)
+**Tytuł:** "Klienci"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalClients` (łączna liczba klientów)
+
+**Źródło danych:**
+```typescript
+totalClients: await prisma.client.count()
+```
+
+---
+
+#### KARTA 6: KANCELARIE
+**Ikona:** Building2 (lucide-react)
+**Tytuł:** "Kancelarie"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalLawFirms` (łączna liczba kancelarii)
+
+**Źródło danych:**
+```typescript
+totalLawFirms: await prisma.lawFirm.count()
+```
+
+---
+
+#### KARTA 7: ARTYKUŁY
+**Ikona:** FileText (lucide-react)
+**Tytuł:** "Artykuły"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalBlogPosts` (łączna liczba wpisów blog)
+
+**Źródło danych:**
+```typescript
+totalBlogPosts: await prisma.blogPost.count()
+```
+
+---
+
+#### KARTA 8: OPINIE
+**Ikona:** Star (lucide-react)
+**Tytuł:** "Opinie"
+**Dane wyświetlane:**
+- Liczba główna: `statistics.totalReviews` (łączna liczba opinii)
+
+**Źródło danych:**
+```typescript
+totalReviews: await prisma.review.count()
+```
+
+================================================================================
+
+### 3. SEKCJA WYKRESÓW
+
+Dashboard zawiera dwie karty z wykresami przedstawionymi jako poziome paski
+postępu:
+
+---
+
+#### WYKRES 1: SPRAWY WEDŁUG STATUSU
+**Tytuł:** "Sprawy według statusu"
+**Opis:** "Rozkład statusów spraw"
+**Typ wykresu:** Poziome paski postępu z procentami
+
+**Źródło danych:**
+```typescript
+casesByStatus: await prisma.case.groupBy({
+  by: ['status'],
+  _count: { id: true }
+})
+```
+
+**Wyświetlane informacje dla każdego statusu:**
+- Nazwa statusu (np. "NOWA", "W_TRAKCIE", "ZAKONCZONA")
+- Liczba spraw w tym statusie
+- Procentowy udział względem wszystkich spraw
+- Pasek postępu (niebieski, bg-blue-600)
+
+**Format wyświetlania:**
+```
+NOWA                           45 (35%)
+███████████████░░░░░░░░░░░░░░░░░
+
+W_TRAKCIE                      60 (47%)
+████████████████████░░░░░░░░░░░
+
+ZAKONCZONA                     23 (18%)
+████████░░░░░░░░░░░░░░░░░░░░░░░
+```
+
+**Obliczenia:**
+- Suma wszystkich spraw: total = sum(wszystkie liczności)
+- Procent: (liczba_w_statusie / total) * 100
+- Szerokość paska: percentage%
+
+---
+
+#### WYKRES 2: PRZYCHODY MIESIĘCZNE
+**Tytuł:** "Przychody miesięczne"
+**Opis:** "Ostatnie 6 miesięcy"
+**Typ wykresu:** Poziome paski postępu z kwotami
+
+**Źródło danych:**
+```sql
+SELECT
+  strftime('%Y-%m', createdAt) as month,
+  SUM(kwota) as revenue
+FROM "Order"
+WHERE statusPlatnosci = 'ZAPLACONE'
+  AND createdAt >= [6 miesięcy temu]
+GROUP BY strftime('%Y-%m', createdAt)
+ORDER BY month ASC
+```
+
+**Przetwarzanie danych:**
+- Generowane są wszystkie 6 ostatnich miesięcy (nawet jeśli brak danych)
+- Brakujące miesiące otrzymują wartość 0
+- Format miesiąca: "sty 2025", "lut 2025" (polski format skrócony)
+
+**Wyświetlane informacje dla każdego miesiąca:**
+- Nazwa miesiąca (pl-PL format)
+- Kwota przychodów (format PLN)
+- Pasek postępu względem maksymalnego miesiąca (zielony, bg-green-600)
+
+**Format wyświetlania:**
+```
+sty 2025                       8 450,00 zł
+██████████████████████░░░░░░░░
+
+lut 2025                      12 890,00 zł
+████████████████████████████████
+
+mar 2025                       6 230,00 zł
+████████████████░░░░░░░░░░░░░░░
+```
+
+**Obliczenia:**
+- Maksymalna wartość: maxRevenue = max(wszystkie przychody)
+- Procent: (przychód_miesiąca / maxRevenue) * 100
+- Szerokość paska: percentage%
+
+================================================================================
+
+### 4. WYKRES REJESTRACJI UŻYTKOWNIKÓW
+
+**Tytuł:** "Rejestracje użytkowników"
+**Opis:** "Ostatnie 7 dni"
+**Typ wykresu:** Słupkowy pionowy (bar chart)
+
+**Źródło danych:**
+```sql
+SELECT
+  DATE(createdAt) as date,
+  COUNT(*) as count
+FROM "User"
+WHERE DATE(createdAt) >= DATE([7 dni temu])
+GROUP BY DATE(createdAt)
+ORDER BY date ASC
+```
+
+**Przetwarzanie danych:**
+- Generowane są wszystkie 7 ostatnich dni (nawet jeśli brak rejestracji)
+- Brakujące dni otrzymują wartość 0
+- Format daty: YYYY-MM-DD
+
+**Wyświetlanie:**
+- Wysokość kontenera: 192px (h-48)
+- Słupki wyrównane do dołu
+- Wysokość słupka proporcjonalna do maksymalnej wartości
+- Kolor słupków: niebieski (bg-blue-600)
+- Nad słupkiem: liczba rejestracji
+- Pod słupkiem: data (obrócona -45°)
+
+**Wizualizacja:**
+```
+    5      8      3      2      6      4      7
+    █      █      █      █      █      █      █
+    █      █      █      █      █      █      █
+    █      █      █      █      █      █      █
+    █      █      ░      ░      █      █      █
+    █      █      ░      ░      █      ░      █
+  10.11  11.11  12.11  13.11  14.11  15.11  16.11
+```
+
+**Obliczenia:**
+- Maksymalna wartość: maxCount = max(wszystkie liczności)
+- Wysokość słupka: (count / maxCount) * 100%
+
+================================================================================
+
+### 5. SEKCJA OSTATNICH AKTYWNOŚCI
+
+Dashboard zawiera 4 tabele z ostatnimi aktywnościami w systemie.
+Każda tabela pokazuje 5 najnowszych rekordów.
+
+---
+
+#### TABELA 1: NAJNOWSI UŻYTKOWNICY
+**Tytuł:** "Najnowsi użytkownicy"
+**Opis:** "Ostatnio zarejestrowani"
+**Limit:** 5 ostatnich użytkowników
+
+**Źródło danych:**
+```typescript
+recentUsers: await prisma.user.findMany({
+  take: 5,
+  orderBy: { createdAt: 'desc' },
+  select: {
+    id: true,
+    name: true,
+    email: true,
+    role: true,
+    createdAt: true
+  }
+})
+```
+
+**Wyświetlane kolumny:**
+1. **Lewa strona:**
+   - Imię i nazwisko (pogrubione) lub email jeśli brak imienia
+   - Email (mniejsza czcionka, szary kolor)
+
+2. **Prawa strona:**
+   - Badge z rolą (kolorowy - zależny od statusu)
+   - Data rejestracji (format: dd.MM.yyyy)
+
+**Mapa kolorów statusów:**
+```typescript
+ACTIVE: bg-green-500/10 text-green-500 (zielony)
+PENDING: bg-yellow-500/10 text-yellow-500 (żółty)
+COMPLETED: bg-blue-500/10 text-blue-500 (niebieski)
+REJECTED: bg-red-500/10 text-red-500 (czerwony)
+IN_PROGRESS: bg-purple-500/10 text-purple-500 (fioletowy)
+[default]: bg-gray-500/10 text-gray-500 (szary)
+```
+
+**Przykład wiersza:**
+```
+Jan Kowalski                           [CLIENT]
+jan.kowalski@example.com           10.11.2025
+────────────────────────────────────────────────
+```
+
+---
+
+#### TABELA 2: NAJNOWSZE SPRAWY
+**Tytuł:** "Najnowsze sprawy"
+**Opis:** "Ostatnio utworzone"
+**Limit:** 5 ostatnich spraw
+
+**Źródło danych:**
+```typescript
+recentCases: await prisma.case.findMany({
+  take: 5,
+  orderBy: { createdAt: 'desc' },
+  select: {
+    id: true,
+    nazwaSprawy: true,
+    status: true,
+    createdAt: true,
+    client: {
+      select: {
+        user: {
+          select: { name: true }
+        }
+      }
+    }
+  }
+})
+```
+
+**Wyświetlane kolumny:**
+1. **Lewa strona:**
+   - Nazwa sprawy (pogrubiona)
+   - Imię klienta lub "Brak nazwy" (mniejsza czcionka, szary kolor)
+
+2. **Prawa strona:**
+   - Badge ze statusem sprawy (kolorowy)
+   - Data utworzenia (format: dd.MM.yyyy)
+
+**Przykład wiersza:**
+```
+Sprawa alimentacyjna                    [NOWA]
+Jan Kowalski                        10.11.2025
+────────────────────────────────────────────────
+```
+
+---
+
+#### TABELA 3: NAJNOWSZE ZAMÓWIENIA
+**Tytuł:** "Najnowsze zamówienia"
+**Opis:** "Ostatnie transakcje"
+**Limit:** 5 ostatnich zamówień
+
+**Źródło danych:**
+```typescript
+recentOrders: await prisma.order.findMany({
+  take: 5,
+  orderBy: { createdAt: 'desc' },
+  select: {
+    id: true,
+    orderNumber: true,
+    kwota: true,
+    statusPlatnosci: true,
+    createdAt: true,
+    lawFirm: {
+      select: { nazwa: true }
+    }
+  }
+})
+```
+
+**Wyświetlane kolumny:**
+1. **Lewa strona:**
+   - Numer zamówienia (pogrubiony)
+   - Nazwa kancelarii lub "Brak nazwy" (mniejsza czcionka, szary kolor)
+
+2. **Prawa strona:**
+   - Kwota zamówienia (format PLN, pogrubiona)
+   - Badge ze statusem płatności (kolorowy)
+   - Data utworzenia (format: dd.MM.yyyy)
+
+**Przykład wiersza:**
+```
+ORD-2025-001234                    8 450,00 zł
+Kancelaria XYZ                     [ZAPLACONE]
+                                   10.11.2025
+────────────────────────────────────────────────
+```
+
+---
+
+#### TABELA 4: NAJNOWSZE ARTYKUŁY
+**Tytuł:** "Najnowsze artykuły"
+**Opis:** "Ostatnio utworzone wpisy"
+**Limit:** 5 ostatnich wpisów blog
+
+**Źródło danych:**
+```typescript
+recentBlogPosts: await prisma.blogPost.findMany({
+  take: 5,
+  orderBy: { createdAt: 'desc' },
+  select: {
+    id: true,
+    tytul: true,
+    opublikowany: true,
+    createdAt: true,
+    lawFirm: {
+      select: { nazwa: true }
+    }
+  }
+})
+```
+
+**Wyświetlane kolumny:**
+1. **Lewa strona:**
+   - Tytuł artykułu (pogrubiony)
+   - Nazwa kancelarii lub "Brak kancelarii" (mniejsza czcionka, szary kolor)
+
+2. **Prawa strona:**
+   - Badge ze statusem publikacji:
+     * "Opublikowany" (zielony) gdy opublikowany = true
+     * "Szkic" (szary) gdy opublikowany = false
+   - Data utworzenia (format: dd.MM.yyyy)
+
+**Mapa kolorów publikacji:**
+- Opublikowany: bg-green-500/10 text-green-500
+- Szkic: bg-gray-500/10 text-gray-500
+
+**Przykład wiersza:**
+```
+Przewodnik po prawie rodzinnym    [Opublikowany]
+Kancelaria XYZ                        10.11.2025
+────────────────────────────────────────────────
+```
+
+================================================================================
+
+### STAN ŁADOWANIA I BŁĘDÓW
+
+Dashboard obsługuje trzy stany:
+
+#### 1. STAN ŁADOWANIA (loading = true)
+```
+┌────────────────────────────────────┐
+│                                     │
+│        [Ikona ładowania]           │
+│         Ładowanie...               │
+│                                     │
+└────────────────────────────────────┘
+```
+- Wyświetlane po zamontowaniu komponentu
+- Pokazywane podczas pobierania danych z API
+- Wysokość: 384px (h-96)
+- Kolor tekstu: szary (text-gray-500)
+
+#### 2. STAN BŁĘDU (data = null po załadowaniu)
+```
+┌────────────────────────────────────┐
+│                                     │
+│    Błąd wczytywania danych         │
+│                                     │
+└────────────────────────────────────┘
+```
+- Wyświetlane gdy API zwróci błąd
+- Wysokość: 384px (h-96)
+- Kolor tekstu: czerwony (text-red-500)
+
+#### 3. STAN SUKCESU (data załadowane)
+- Wyświetlane wszystkie sekcje opisane powyżej
+- Dane odświeżane przy każdym załadowaniu strony
+
+================================================================================
+
+### FORMATOWANIE DANYCH
+
+Dashboard wykorzystuje następujące funkcje formatujące:
+
+#### 1. FORMAT WALUTY
+```typescript
+formatCurrency(amount: number): string
+```
+**Wykorzystanie:** Intl.NumberFormat
+- Lokalizacja: 'pl-PL'
+- Waluta: 'PLN'
+- Format: "12 345,67 zł"
+
+**Przykład:**
+```typescript
+formatCurrency(12345.67) // "12 345,67 zł"
+formatCurrency(1000) // "1 000,00 zł"
+```
+
+#### 2. FORMAT DATY
+```typescript
+formatDate(date: string): string
+```
+**Wykorzystanie:** Date.toLocaleDateString
+- Lokalizacja: 'pl-PL'
+- Format: { year: 'numeric', month: 'short', day: 'numeric' }
+- Wynik: "10 lis 2025"
+
+**Przykład:**
+```typescript
+formatDate("2025-11-10T12:00:00") // "10 lis 2025"
+```
+
+#### 3. KOLORY STATUSÓW
+```typescript
+getStatusBadge(status: string): string
+```
+**Mapa kolorów:**
+- ACTIVE: "bg-green-500/10 text-green-500"
+- PENDING: "bg-yellow-500/10 text-yellow-500"
+- COMPLETED: "bg-blue-500/10 text-blue-500"
+- REJECTED: "bg-red-500/10 text-red-500"
+- IN_PROGRESS: "bg-purple-500/10 text-purple-500"
+- [default]: "bg-gray-500/10 text-gray-500"
+
+================================================================================
+
+### WYKORZYSTANE KOMPONENTY UI
+
+Dashboard wykorzystuje następujące komponenty z biblioteki shadcn/ui:
+
+1. **Card** - główny kontener dla sekcji
+   - CardHeader - nagłówek karty
+   - CardTitle - tytuł sekcji
+   - CardDescription - opis sekcji
+   - CardContent - zawartość karty
+
+2. **Badge** - etykiety statusów i ról
+
+3. **Ikony** (lucide-react):
+   - Users - użytkownicy
+   - Briefcase - sprawy
+   - TrendingUp - przychody
+   - AlertCircle - ostrzeżenia
+   - UserCheck - klienci
+   - Building2 - kancelarie
+   - FileText - artykuły
+   - Star - opinie
+   - Clock - czas
+
+================================================================================
+
+### RESPONSYWNOŚĆ
+
+Dashboard jest w pełni responsywny z następującymi breakpointami:
+
+#### Karty statystyk:
+```css
+grid gap-4 md:grid-cols-2 lg:grid-cols-4
+```
+- Mobile: 1 kolumna
+- Tablet (md): 2 kolumny
+- Desktop (lg): 4 kolumny
+
+#### Wykresy:
+```css
+grid gap-4 md:grid-cols-2
+```
+- Mobile: 1 kolumna
+- Tablet+ (md): 2 kolumny
+
+#### Tabele aktywności:
+```css
+grid gap-4 md:grid-cols-2
+```
+- Mobile: 1 kolumna
+- Tablet+ (md): 2 kolumny
+
+================================================================================
+
+### CYKL ŻYCIA KOMPONENTU
+
+```
+1. Montowanie komponentu
+   ↓
+2. useEffect → fetchDashboardData()
+   ↓
+3. setLoading(true)
+   ↓
+4. Wywołanie GET /api/admin/dashboard/stats
+   ↓
+5. Przetworzenie odpowiedzi
+   ↓
+6. setData(result)
+   ↓
+7. setLoading(false)
+   ↓
+8. Renderowanie dashboardu z danymi
+```
+
+================================================================================
+
+### ENDPOINT API - SZCZEGÓŁY
+
+**Endpoint:** GET /api/admin/dashboard/stats
+**Plik:** /prosta-sprawa/app/api/admin/dashboard/stats/route.ts
+**Autoryzacja:** Wymagana (rola: ADMIN)
+
+#### Struktura odpowiedzi:
+```typescript
+{
+  statistics: {
+    totalUsers: number
+    totalClients: number
+    totalLawFirms: number
+    totalCases: number
+    totalOrders: number
+    totalBlogPosts: number
+    totalReviews: number
+    activeUsers: number
+    pendingCases: number
+    unpaidOrders: number
+    recentCasesCount: number
+    totalRevenue: number
+  },
+  charts: {
+    monthlyRevenue: Array<{ month: string; revenue: number }>
+    casesByStatus: Array<{ status: string; count: number }>
+    dailyRegistrations: Array<{ date: string; count: number }>
+  },
+  recentActivity: {
+    users: Array<{...}>
+    cases: Array<{...}>
+    orders: Array<{...}>
+    blogPosts: Array<{...}>
+  }
+}
+```
+
+#### Zapytania do bazy danych:
+
+1. **Liczniki podstawowe** (równoległe Promise.all):
+   - totalUsers: count wszystkich użytkowników
+   - totalClients: count wszystkich klientów
+   - totalLawFirms: count wszystkich kancelarii
+   - totalCases: count wszystkich spraw
+   - totalOrders: count wszystkich zamówień
+   - totalBlogPosts: count wszystkich wpisów
+   - totalReviews: count wszystkich opinii
+   - activeUsers: count użytkowników ze statusem ACTIVE
+   - pendingCases: count spraw ze statusem NOWA
+   - unpaidOrders: count zamówień ze statusem OCZEKUJE
+
+2. **Przychody miesięczne** (raw SQL):
+   ```sql
+   SELECT
+     strftime('%Y-%m', createdAt) as month,
+     SUM(kwota) as revenue
+   FROM "Order"
+   WHERE statusPlatnosci = 'ZAPLACONE'
+     AND createdAt >= [6 miesięcy temu]
+   GROUP BY strftime('%Y-%m', createdAt)
+   ORDER BY month ASC
+   ```
+
+3. **Sprawy wg statusu** (groupBy):
+   ```typescript
+   prisma.case.groupBy({
+     by: ['status'],
+     _count: { id: true }
+   })
+   ```
+
+4. **Rejestracje dzienne** (raw SQL):
+   ```sql
+   SELECT
+     DATE(createdAt) as date,
+     COUNT(*) as count
+   FROM "User"
+   WHERE DATE(createdAt) >= DATE([7 dni temu])
+   GROUP BY DATE(createdAt)
+   ORDER BY date ASC
+   ```
+
+5. **Ostatnie aktywności** (4 zapytania findMany):
+   - 5 ostatnich użytkowników
+   - 5 ostatnich spraw
+   - 5 ostatnich zamówień
+   - 5 ostatnich wpisów blog
+
+================================================================================
+
+### UPRAWNIENIA I BEZPIECZEŃSTWO
+
+1. **Wymagana autentykacja:**
+   - Użytkownik musi być zalogowany
+   - Sprawdzane przez NextAuth session
+
+2. **Wymagana rola:**
+   - Tylko użytkownicy z rolą ADMIN
+   - Sprawdzane w API endpoint
+
+3. **Weryfikacja:**
+   ```typescript
+   if (!session || session.user.role !== 'ADMIN') {
+     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+   }
+   ```
+
+================================================================================
+
+### POTENCJALNE ROZSZERZENIA
+
+Dashboard może być rozszerzony o:
+
+1. **Filtry czasowe:**
+   - Wybór zakresu dat dla wykresów
+   - Porównanie okresów
+
+2. **Eksport danych:**
+   - CSV/Excel
+   - PDF raporty
+
+3. **Odświeżanie automatyczne:**
+   - Polling co X sekund
+   - WebSocket real-time updates
+
+4. **Więcej wykresów:**
+   - Rozkład kategorii spraw
+   - Top kancelarie
+   - Średnie wartości ofert
+
+5. **Alerty i powiadomienia:**
+   - Niskie salda punktów
+   - Spam w opiniach
+   - Anomalie w systemie
+
+================================================================================
+================================================================================
+
+
+
+
+
+
+================================================================================
+2. PROFIL ADMINISTRATORA (/admin/profil)
+================================================================================
+
+## ŚCIEŻKA
+/admin/profil
+
+## PLIK ŹRÓDŁOWY
+/prosta-sprawa/app/admin/profil/page.tsx
+
+## ENDPOINTY API
+- GET /api/admin/profile
+- PUT /api/admin/profile
+- POST /api/admin/profile/change-password
+
+## TYP KOMPONENTU
+Client Component ("use client")
+
+## OPIS OGÓLNY
+Strona profilu administratora umożliwia zarządzanie kontem administratora,
+w tym edycję danych osobowych, zmianę hasła oraz przegląd informacji o koncie
+i zabezpieczeniach. Jest to dedykowana strona dla administratora do zarządzania
+swoim własnym profilem.
+
+================================================================================
+
+### GŁÓWNE SEKCJE PROFILU
+
+Profil składa się z następujących sekcji:
+
+1. **Nagłówek strony**
+2. **Karta prezentacji profilu** (Profile Header)
+3. **Karta edycji profilu** (Edit Profile)
+4. **Karta zmiany hasła** (Change Password)
+5. **Karta bezpieczeństwa konta** (Account Security)
+
+================================================================================
+
+### 1. NAGŁÓWEK STRONY
+
+**Struktura:**
+```
+[Ikona User]  Mój Profil
+Zarządzaj swoim kontem administratora
+
+───────────────────────────────────────
+```
+
+**Elementy:**
+- Ikona: User (lucide-react, h-8 w-8)
+- Tytuł: "Mój Profil" (text-3xl, pogrubiony)
+- Podtytuł: "Zarządzaj swoim kontem administratora" (szary kolor)
+- Separator pod nagłówkiem
+
+================================================================================
+
+### 2. KARTA PREZENTACJI PROFILU
+
+Główna karta wyświetlająca pełne informacje o profilu administratora.
+
+---
+
+#### SEKCJA AVATARA I DANYCH PODSTAWOWYCH
+
+**Lewa strona - Avatar:**
+- Okrągły avatar (h-24 w-24)
+- Wyświetla zdjęcie jeśli dostępne: `profile.image`
+- Fallback: inicjały z imienia i nazwiska (text-2xl)
+- Algorytm inicjałów:
+  ```typescript
+  "Jan Kowalski" → "JK"
+  "Administrator" → "A"
+  null → "A"
+  ```
+
+**Prawa strona - Informacje:**
+1. **Imię i nazwisko:**
+   - Font: text-2xl, pogrubiony
+   - Wartość: `profile.name` lub "Administrator"
+
+2. **Email:**
+   - Ikona: Mail (h-4 w-4)
+   - Font: text-muted-foreground
+   - Wartość: `profile.email`
+
+3. **Badges (odznaki):**
+   - **Rola:**
+     * Ikona: Shield (h-3 w-3)
+     * Wariant: default
+     * Wartość: `profile.role` (np. "ADMIN")
+
+   - **Status:**
+     * Wariant: default lub secondary
+     * Kolor: zielony (bg-green-600) dla ACTIVE
+     * Wartość: "Aktywny" dla ACTIVE, lub `profile.status`
+
+**Wizualizacja:**
+```
+┌─────────────────────────────────────────────────┐
+│  ┌────┐                                         │
+│  │ JK │  Jan Kowalski                          │
+│  │    │  [mail icon] admin@example.com         │
+│  └────┘  [ADMIN] [Aktywny]                     │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+#### SEKCJA INFORMACJI CZASOWYCH
+
+Pod separatorem wyświetlane są 3 daty w siatce 3-kolumnowej:
+
+**Kolumna 1: Konto utworzono**
+- Ikona: Calendar (h-4 w-4, szary)
+- Etykieta: "Konto utworzono" (pogrubiona)
+- Wartość: `profile.createdAt` (format: dd.MM.yyyy HH:mm)
+- Przykład: "15.01.2024 10:30"
+
+**Kolumna 2: Ostatnia aktualizacja**
+- Ikona: Calendar (h-4 w-4, szary)
+- Etykieta: "Ostatnia aktualizacja" (pogrubiona)
+- Wartość: `profile.updatedAt` (format: dd.MM.yyyy HH:mm)
+- Przykład: "10.11.2025 14:23"
+
+**Kolumna 3: Ostatnie logowanie**
+- Ikona: User (h-4 w-4, szary)
+- Etykieta: "Ostatnie logowanie" (pogrubiona)
+- Wartość: `profile.lastLogin` (format: dd.MM.yyyy HH:mm) lub "-"
+- Przykład: "16.11.2025 08:15"
+
+**Responsywność:**
+```css
+grid grid-cols-1 md:grid-cols-3 gap-4
+```
+- Mobile: 3 wiersze (każda data w osobnym wierszu)
+- Desktop (md+): 3 kolumny (daty obok siebie)
+
+**Formatowanie dat:**
+```typescript
+formatDate(dateString: string | null): string
+// Używa date-fns:
+format(new Date(dateString), "dd.MM.yyyy HH:mm", { locale: pl })
+// null → "-"
+```
+
+================================================================================
+
+### 3. KARTA EDYCJI PROFILU
+
+Formularz umożliwiający edycję podstawowych danych administratora.
+
+---
+
+#### NAGŁÓWEK KARTY
+- Tytuł: "Edytuj Profil"
+- Opis: "Zaktualizuj swoje dane osobowe"
+
+---
+
+#### POLA FORMULARZA
+
+**Pole 1: Imię i nazwisko**
+- Label: "Imię i nazwisko"
+- ID: "name"
+- Typ: text
+- Placeholder: "Jan Kowalski"
+- Value: `name` (stan komponentu)
+- onChange: aktualizuje stan `name`
+
+**Pole 2: Email**
+- Label: "Email"
+- ID: "email"
+- Typ: email
+- Placeholder: "admin@example.com"
+- Value: `email` (stan komponentu)
+- onChange: aktualizuje stan `email`
+
+---
+
+#### PRZYCISK ZAPISU
+
+**Właściwości:**
+- Tekst: "Zapisz zmiany"
+- Ikona: Save (h-4 w-4, przed tekstem)
+- Disabled: gdy `saving = true`
+- Loading state: pokazuje Loader2 (obracające się kółko)
+- Wyrównanie: do prawej (flex justify-end)
+
+**Stany przycisku:**
+```
+Normalny:      [Save icon] Zapisz zmiany
+Podczas zapisu: [Loader icon] Zapisz zmiany (disabled)
+```
+
+---
+
+#### FUNKCJONALNOŚĆ ZAPISU
+
+**Proces zapisywania:**
+```
+1. Kliknięcie przycisku
+   ↓
+2. setSaving(true)
+   ↓
+3. Wywołanie PUT /api/admin/profile
+   Body: { name, email }
+   ↓
+4. Odpowiedź API:
+   - Sukces (200): toast.success("Profil został zaktualizowany")
+   - Błąd: toast.error("Nie udało się zaktualizować profilu")
+   ↓
+5. fetchProfile() - odświeżenie danych
+   ↓
+6. setSaving(false)
+```
+
+**Endpoint API: PUT /api/admin/profile**
+
+**Walidacja po stronie API:**
+1. Email jest wymagany:
+   ```typescript
+   if (!email) {
+     return { error: "Email jest wymagany" }, 400
+   }
+   ```
+
+2. Email nie może być zajęty przez innego użytkownika:
+   ```typescript
+   existingUser = findFirst({
+     where: { email, NOT: { id: currentUserId } }
+   })
+   if (existingUser) {
+     return { error: "Ten email jest już zajęty" }, 400
+   }
+   ```
+
+3. Aktualizacja w bazie:
+   ```typescript
+   updatedUser = update({
+     where: { id: session.user.id },
+     data: { name, email }
+   })
+   ```
+
+================================================================================
+
+### 4. KARTA ZMIANY HASŁA
+
+Formularz umożliwiający zmianę hasła administratora.
+
+---
+
+#### NAGŁÓWEK KARTY
+- Tytuł: "Zmień Hasło"
+- Ikona: KeyRound (h-5 w-5)
+- Opis: "Zaktualizuj hasło do swojego konta"
+
+---
+
+#### POLA FORMULARZA
+
+**Pole 1: Aktualne hasło**
+- Label: "Aktualne hasło"
+- ID: "currentPassword"
+- Typ: password
+- Placeholder: "••••••••"
+- Value: `currentPassword` (stan komponentu)
+- onChange: aktualizuje stan `currentPassword`
+
+**Pole 2: Nowe hasło**
+- Label: "Nowe hasło"
+- ID: "newPassword"
+- Typ: password
+- Placeholder: "••••••••"
+- Value: `newPassword` (stan komponentu)
+- onChange: aktualizuje stan `newPassword`
+- Wskazówka: "Minimum 8 znaków" (text-sm, text-muted-foreground)
+
+**Pole 3: Potwierdź nowe hasło**
+- Label: "Potwierdź nowe hasło"
+- ID: "confirmPassword"
+- Typ: password
+- Placeholder: "••••••••"
+- Value: `confirmPassword` (stan komponentu)
+- onChange: aktualizuje stan `confirmPassword`
+
+---
+
+#### PRZYCISK ZMIANY HASŁA
+
+**Właściwości:**
+- Tekst: "Zmień hasło"
+- Ikona: KeyRound (h-4 w-4, przed tekstem)
+- Disabled: gdy `changingPassword = true`
+- Loading state: pokazuje Loader2
+- Wyrównanie: do prawej
+
+---
+
+#### WALIDACJA FRONT-END
+
+Przed wysłaniem żądania do API:
+
+1. **Pola wymagane:**
+   ```typescript
+   if (!currentPassword || !newPassword || !confirmPassword) {
+     toast.error("Wszystkie pola są wymagane")
+     return
+   }
+   ```
+
+2. **Zgodność haseł:**
+   ```typescript
+   if (newPassword !== confirmPassword) {
+     toast.error("Nowe hasło i potwierdzenie nie są identyczne")
+     return
+   }
+   ```
+
+3. **Minimalna długość:**
+   ```typescript
+   if (newPassword.length < 8) {
+     toast.error("Nowe hasło musi mieć minimum 8 znaków")
+     return
+   }
+   ```
+
+---
+
+#### FUNKCJONALNOŚĆ ZMIANY HASŁA
+
+**Proces zmiany hasła:**
+```
+1. Walidacja front-end (jak powyżej)
+   ↓
+2. setChangingPassword(true)
+   ↓
+3. Wywołanie POST /api/admin/profile/change-password
+   Body: { currentPassword, newPassword }
+   ↓
+4. Odpowiedź API:
+   - Sukces (200):
+     * toast.success("Hasło zostało zmienione")
+     * Wyczyść pola formularza
+   - Błąd:
+     * toast.error(error.message)
+   ↓
+5. setChangingPassword(false)
+```
+
+**Endpoint API: POST /api/admin/profile/change-password**
+
+**Walidacja po stronie API:**
+
+1. **Pola wymagane:**
+   ```typescript
+   if (!currentPassword || !newPassword) {
+     return { error: "Wszystkie pola są wymagane" }, 400
+   }
+   ```
+
+2. **Minimalna długość:**
+   ```typescript
+   if (newPassword.length < 8) {
+     return { error: "Nowe hasło musi mieć minimum 8 znaków" }, 400
+   }
+   ```
+
+3. **Weryfikacja użytkownika:**
+   ```typescript
+   user = findUnique({ where: { id: session.user.id } })
+   if (!user || !user.password) {
+     return {
+       error: "Użytkownik nie znaleziony lub nie ma ustawionego hasła"
+     }, 404
+   }
+   ```
+
+4. **Weryfikacja obecnego hasła:**
+   ```typescript
+   isPasswordValid = bcrypt.compare(currentPassword, user.password)
+   if (!isPasswordValid) {
+     return { error: "Obecne hasło jest nieprawidłowe" }, 400
+   }
+   ```
+
+5. **Aktualizacja hasła:**
+   ```typescript
+   hashedPassword = bcrypt.hash(newPassword, 10)
+   update({
+     where: { id: session.user.id },
+     data: { password: hashedPassword }
+   })
+   ```
+
+**Bezpieczeństwo:**
+- Hasła hashowane przy użyciu bcrypt
+- Salt rounds: 10
+- Obecne hasło weryfikowane przed zmianą
+- Minimalna długość: 8 znaków
+
+================================================================================
+
+### 5. KARTA BEZPIECZEŃSTWA KONTA
+
+Sekcja informacyjna o przyszłych funkcjach bezpieczeństwa.
+
+---
+
+#### NAGŁÓWEK KARTY
+- Tytuł: "Bezpieczeństwo Konta"
+- Ikona: Shield (h-5 w-5)
+
+---
+
+#### FUNKCJE (OBECNIE NIEAKTYWNE)
+
+**Funkcja 1: Uwierzytelnianie dwuskładnikowe**
+- **Tytuł:** "Uwierzytelnianie dwuskładnikowe"
+- **Opis:** "Dodatkowa warstwa bezpieczeństwa dla Twojego konta"
+- **Status:** Badge "Wkrótce" (variant: secondary)
+- **Wygląd:** Szare tło (bg-muted), zaokrąglone (rounded-lg), padding: p-3
+
+**Funkcja 2: Historia logowań**
+- **Tytuł:** "Historia logowań"
+- **Opis:** "Zobacz ostatnie logowania do konta"
+- **Przycisk:** "Zobacz historię" (outline, size: sm, disabled)
+- **Wygląd:** Szare tło (bg-muted), zaokrąglone (rounded-lg), padding: p-3
+
+**Funkcja 3: Sesje aktywne**
+- **Tytuł:** "Sesje aktywne"
+- **Opis:** "Zarządzaj aktywnymi sesjami w systemie"
+- **Przycisk:** "Wyloguj wszystkie" (outline, size: sm, disabled)
+- **Wygląd:** Szare tło (bg-muted), zaokrąglone (rounded-lg), padding: p-3
+
+**Wizualizacja:**
+```
+┌────────────────────────────────────────────────────┐
+│ [Shield] Bezpieczeństwo Konta                      │
+├────────────────────────────────────────────────────┤
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Uwierzytelnianie dwuskładnikowe      [Wkrótce]│ │
+│ │ Dodatkowa warstwa bezpieczeństwa...            │ │
+│ └────────────────────────────────────────────────┘ │
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Historia logowań          [Zobacz historię]    │ │
+│ │ Zobacz ostatnie logowania...                   │ │
+│ └────────────────────────────────────────────────┘ │
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Sesje aktywne            [Wyloguj wszystkie]   │ │
+│ │ Zarządzaj aktywnymi sesjami...                 │ │
+│ └────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────┘
+```
+
+**Uwaga:** Wszystkie 3 funkcje są obecnie nieaktywne (disabled) i oznaczone
+jako planowane do wdrożenia w przyszłości.
+
+================================================================================
+
+### STAN ŁADOWANIA I BŁĘDÓW
+
+Profil obsługuje trzy stany:
+
+#### 1. STAN ŁADOWANIA (loading = true)
+```
+┌────────────────────────────────────┐
+│                                     │
+│    [Ikona Loader2 obracająca się]  │
+│                                     │
+└────────────────────────────────────┘
+```
+- Wyświetlane podczas pobierania danych
+- Ikona: Loader2 (h-8 w-8, animate-spin)
+- Wysokość: 256px (h-64)
+- Wycentrowane
+
+#### 2. STAN BŁĘDU (profile = null po załadowaniu)
+```
+┌────────────────────────────────────┐
+│                                     │
+│  Nie udało się załadować profilu   │
+│                                     │
+└────────────────────────────────────┘
+```
+- Wyświetlane gdy API zwróci błąd
+- Wysokość: 256px (h-64)
+- Kolor tekstu: text-muted-foreground
+- Wycentrowane
+
+#### 3. STAN SUKCESU (profile załadowany)
+- Wyświetlane wszystkie sekcje profilu
+- Dane synchronizowane ze stanem komponentu
+
+================================================================================
+
+### ZARZĄDZANIE STANEM
+
+Komponent zarządza następującymi stanami:
+
+#### 1. STAN PROFILU
+```typescript
+const [profile, setProfile] = useState<AdminProfile | null>(null)
+```
+**Typ AdminProfile:**
+```typescript
+interface AdminProfile {
+  id: string
+  name: string | null
+  email: string
+  role: string
+  status: string
+  createdAt: string
+  updatedAt: string
+  lastLogin: string | null
+  image: string | null
+}
+```
+
+#### 2. STANY ŁADOWANIA
+```typescript
+const [loading, setLoading] = useState(true)      // Ładowanie profilu
+const [saving, setSaving] = useState(false)        // Zapisywanie profilu
+const [changingPassword, setChangingPassword] = useState(false) // Zmiana hasła
+```
+
+#### 3. STANY FORMULARZY
+```typescript
+// Edycja profilu
+const [name, setName] = useState("")
+const [email, setEmail] = useState("")
+
+// Zmiana hasła
+const [currentPassword, setCurrentPassword] = useState("")
+const [newPassword, setNewPassword] = useState("")
+const [confirmPassword, setConfirmPassword] = useState("")
+```
+
+================================================================================
+
+### CYKL ŻYCIA KOMPONENTU
+
+```
+1. Montowanie komponentu
+   ↓
+2. useEffect (zależność: session)
+   ↓
+3. Jeśli session?.user istnieje → fetchProfile()
+   ↓
+4. setLoading(true)
+   ↓
+5. Wywołanie GET /api/admin/profile
+   ↓
+6. Odpowiedź API:
+   - Sukces:
+     * setProfile(data)
+     * setName(data.name || "")
+     * setEmail(data.email || "")
+   - Błąd:
+     * toast.error("Nie udało się pobrać profilu")
+   ↓
+7. setLoading(false)
+   ↓
+8. Renderowanie profilu z danymi
+```
+
+**useEffect Hook:**
+```typescript
+useEffect(() => {
+  if (session?.user) {
+    fetchProfile()
+  }
+}, [session])
+```
+
+**Trigger:** Zmiana sesji użytkownika (po zalogowaniu)
+
+================================================================================
+
+### ENDPOINTY API - SZCZEGÓŁY
+
+#### 1. GET /api/admin/profile
+
+**Plik:** /prosta-sprawa/app/api/admin/profile/route.ts
+**Metoda:** GET
+**Autoryzacja:** Wymagana (rola: ADMIN)
+
+**Proces:**
+```
+1. Sprawdzenie sesji i roli
+   ↓
+2. Pobranie użytkownika z bazy:
+   prisma.user.findUnique({
+     where: { id: session.user.id },
+     select: {
+       id, name, email, role, status,
+       createdAt, updatedAt, lastLogin, image
+     }
+   })
+   ↓
+3. Zwrócenie danych profilu
+```
+
+**Odpowiedź (200):**
+```json
+{
+  "id": "uuid",
+  "name": "Jan Kowalski",
+  "email": "admin@example.com",
+  "role": "ADMIN",
+  "status": "ACTIVE",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "updatedAt": "2025-11-10T14:23:00.000Z",
+  "lastLogin": "2025-11-16T08:15:00.000Z",
+  "image": null
+}
+```
+
+**Błędy:**
+- 401: Brak autoryzacji lub nie-admin
+- 404: Użytkownik nie znaleziony
+- 500: Błąd serwera
+
+---
+
+#### 2. PUT /api/admin/profile
+
+**Plik:** /prosta-sprawa/app/api/admin/profile/route.ts
+**Metoda:** PUT
+**Autoryzacja:** Wymagana (rola: ADMIN)
+
+**Body:**
+```json
+{
+  "name": "Jan Kowalski",
+  "email": "admin@example.com"
+}
+```
+
+**Walidacja:**
+1. Email wymagany
+2. Email unikalny (oprócz obecnego użytkownika)
+
+**Proces:**
+```
+1. Walidacja danych wejściowych
+   ↓
+2. Sprawdzenie duplikatu email
+   ↓
+3. Aktualizacja w bazie:
+   prisma.user.update({
+     where: { id: session.user.id },
+     data: { name, email }
+   })
+   ↓
+4. Zwrócenie zaktualizowanych danych
+```
+
+**Odpowiedź (200):**
+```json
+{
+  "id": "uuid",
+  "name": "Jan Kowalski",
+  "email": "admin@example.com",
+  ...
+}
+```
+
+**Błędy:**
+- 400: Walidacja nie powiodła się
+- 401: Brak autoryzacji
+- 500: Błąd serwera
+
+---
+
+#### 3. POST /api/admin/profile/change-password
+
+**Plik:** /prosta-sprawa/app/api/admin/profile/change-password/route.ts
+**Metoda:** POST
+**Autoryzacja:** Wymagana (rola: ADMIN)
+
+**Body:**
+```json
+{
+  "currentPassword": "obecne_haslo",
+  "newPassword": "nowe_haslo_min_8_znakow"
+}
+```
+
+**Walidacja:**
+1. Pola wymagane
+2. Nowe hasło minimum 8 znaków
+3. Obecne hasło poprawne
+
+**Proces:**
+```
+1. Walidacja danych wejściowych
+   ↓
+2. Pobranie użytkownika z hasłem
+   ↓
+3. Weryfikacja obecnego hasła (bcrypt.compare)
+   ↓
+4. Hashowanie nowego hasła (bcrypt.hash, 10 rounds)
+   ↓
+5. Aktualizacja w bazie:
+   prisma.user.update({
+     where: { id: session.user.id },
+     data: { password: hashedPassword }
+   })
+   ↓
+6. Zwrócenie potwierdzenia
+```
+
+**Odpowiedź (200):**
+```json
+{
+  "message": "Hasło zostało zmienione"
+}
+```
+
+**Błędy:**
+- 400: Walidacja lub niepoprawne obecne hasło
+- 401: Brak autoryzacji
+- 404: Użytkownik nie znaleziony
+- 500: Błąd serwera
+
+================================================================================
+
+### WYKORZYSTANE KOMPONENTY UI
+
+Profil wykorzystuje następujące komponenty z biblioteki shadcn/ui:
+
+1. **Card** - główny kontener dla sekcji
+   - CardHeader - nagłówek karty
+   - CardTitle - tytuł sekcji
+   - CardDescription - opis sekcji
+   - CardContent - zawartość karty
+
+2. **Button** - przyciski akcji
+   - Warianty: default, outline
+   - Rozmiary: default, sm
+   - Stan disabled
+
+3. **Input** - pola formularza
+   - Typy: text, email, password
+   - Stan kontrolowany (value, onChange)
+
+4. **Label** - etykiety pól formularza
+
+5. **Avatar** - avatar użytkownika
+   - AvatarImage - zdjęcie profilowe
+   - AvatarFallback - inicjały
+
+6. **Badge** - etykiety statusów
+   - Warianty: default, secondary
+
+7. **Separator** - separatory sekcji
+
+8. **Ikony** (lucide-react):
+   - User - profil użytkownika
+   - Mail - email
+   - Calendar - daty
+   - Shield - bezpieczeństwo i rola
+   - Loader2 - ładowanie (animate-spin)
+   - Save - zapisz
+   - KeyRound - hasło
+
+================================================================================
+
+### POWIADOMIENIA (TOAST)
+
+Profil wykorzystuje bibliotekę "sonner" do wyświetlania powiadomień:
+
+#### Typy powiadomień:
+
+**1. Sukces (toast.success):**
+- "Profil został zaktualizowany"
+- "Hasło zostało zmienione"
+
+**2. Błąd (toast.error):**
+- "Nie udało się pobrać profilu"
+- "Nie udało się zaktualizować profilu"
+- "Nie udało się zmienić hasła"
+- "Wszystkie pola są wymagane"
+- "Nowe hasło i potwierdzenie nie są identyczne"
+- "Nowe hasło musi mieć minimum 8 znaków"
+- "[Konkretny błąd z API]"
+
+**Pozycja:** Domyślna (zwykle prawy górny róg)
+**Czas wyświetlania:** Domyślny sonner (ok. 4 sekundy)
+**Zamykanie:** Automatyczne lub manualne (X)
+
+================================================================================
+
+### BEZPIECZEŃSTWO
+
+#### 1. AUTORYZACJA
+- Sprawdzenie sesji NextAuth
+- Wymagana rola: ADMIN
+- Weryfikacja na poziomie API
+
+#### 2. WALIDACJA
+- Front-end: Podstawowa walidacja formularzy
+- Back-end: Pełna walidacja danych
+- Dwustronna weryfikacja zapewnia bezpieczeństwo
+
+#### 3. HASŁA
+- Hashowanie: bcrypt
+- Salt rounds: 10
+- Wymagana weryfikacja obecnego hasła
+- Minimalna długość: 8 znaków
+- Brak przechowywania w plain text
+
+#### 4. EMAIL
+- Sprawdzenie unikalności
+- Walidacja formatu (type="email")
+- Wymagane pole
+
+#### 5. SESJA
+- Integracja z NextAuth
+- useSession hook
+- Aktualizacja w czasie rzeczywistym
+
+================================================================================
+
+### RESPONSYWNOŚĆ
+
+Profil jest w pełni responsywny:
+
+#### 1. Karta prezentacji profilu:
+```css
+/* Avatar i dane */
+flex items-center gap-6
+
+/* Badges */
+flex gap-2 mt-3
+
+/* Daty */
+grid grid-cols-1 md:grid-cols-3 gap-4
+```
+
+#### 2. Formularze:
+```css
+/* Pola */
+space-y-4
+
+/* Przyciski */
+flex justify-end
+```
+
+#### 3. Breakpointy:
+- Mobile: Układy jednkolumnowe
+- Tablet (md): 2-3 kolumny
+- Desktop: Pełna szerokość
+
+================================================================================
+
+### INTEGRACJA Z NEXT-AUTH
+
+Komponent wykorzystuje NextAuth do zarządzania sesją:
+
+```typescript
+import { useSession } from "next-auth/react"
+
+const { data: session } = useSession()
+```
+
+**Wykorzystanie session:**
+1. Trigger fetchProfile() gdy session?.user istnieje
+2. Wyświetlanie informacji o zalogowanym administratorze
+3. Autoryzacja żądań API
+
+**Aktualizacja sesji:**
+- Po zmianie danych profilu sesja może wymagać odświeżenia
+- NextAuth automatycznie synchronizuje dane
+- useSession hook reaguje na zmiany
+
+================================================================================
+
+### POTENCJALNE ROZSZERZENIA
+
+Profil może być rozszerzony o:
+
+1. **Upload zdjęcia profilowego:**
+   - Przycisk zmiany avatara
+   - Kadrowanie obrazu
+   - Zapisywanie w storage
+
+2. **Uwierzytelnianie dwuskładnikowe:**
+   - Konfiguracja 2FA
+   - QR kod z TOTP
+   - Kody zapasowe
+
+3. **Historia logowań:**
+   - Tabela ostatnich logowań
+   - IP, lokalizacja, device
+   - Możliwość wylogowania sesji
+
+4. **Aktywne sesje:**
+   - Lista wszystkich sesji
+   - Szczegóły (device, browser)
+   - Wyloguj wszystkie oprócz obecnej
+
+5. **Preferencje:**
+   - Język interfejsu
+   - Motyw (jasny/ciemny)
+   - Powiadomienia email
+
+6. **Log aktywności:**
+   - Historia działań administratora
+   - Zmiany w systemie
+   - Eksport do CSV
+
+7. **Backup konta:**
+   - Eksport danych
+   - Kod odzyskiwania
+   - Weryfikacja email
+
+================================================================================
+
+### RÓŻNICE MIĘDZY IMPORTAMI AUTH
+
+**UWAGA WAŻNA:** W kodzie są dwie wersje importu auth:
+
+**W page.tsx (profil):**
+```typescript
+import { auth } from "@/lib/auth"
+```
+
+**W API routes:**
+```typescript
+import { auth } from "@/auth"  // POPRAWNE według CLAUDE.md
+```
+
+**Zgodnie z dokumentacją CLAUDE.md:**
+> File: /prosta-sprawa/auth.ts (root level - CURRENT CONFIG)
+> Make sure you're importing from root auth.ts
+> import { auth } from "@/auth"  // Correct
+> NOT from "@/lib/auth"
+
+**Rekomendacja:**
+Strona profilu powinna używać `import { auth } from "@/auth"` dla spójności
+z pozostałymi częściami aplikacji. Jest to prawdopodobnie nieaktualny import.
+
+================================================================================
+
+### PODSUMOWANIE
+
+Strona profilu administratora (/admin/profil) to kompleksowa strona zarządzania
+kontem administratora oferująca:
+
+**Główne funkcje:**
+✓ Wyświetlanie pełnych informacji o profilu
+✓ Edycja danych osobowych (imię, email)
+✓ Zmiana hasła z walidacją
+✓ Przegląd dat kluczowych (utworzenie, aktualizacja, ostatnie logowanie)
+✓ Sekcja bezpieczeństwa (funkcje planowane)
+
+**Bezpieczeństwo:**
+✓ Autoryzacja na poziomie API (tylko ADMIN)
+✓ Walidacja dwustronna (front-end + back-end)
+✓ Hashowanie haseł (bcrypt, 10 rounds)
+✓ Weryfikacja obecnego hasła przed zmianą
+✓ Sprawdzanie unikalności email
+
+**User Experience:**
+✓ Powiadomienia toast (sukces/błąd)
+✓ Stany ładowania (loading spinners)
+✓ Walidacja w czasie rzeczywistym
+✓ Responsywny design
+✓ Czytelne komunikaty błędów
+✓ Intuicyjny interfejs
+
+**Architektura:**
+✓ Client Component (interaktywność)
+✓ Integracja z NextAuth (sesje)
+✓ API routes z pełną walidacją
+✓ Komponenty shadcn/ui
+✓ TypeScript (typy interfejsów)
+✓ date-fns (formatowanie dat)
+✓ sonner (powiadomienia)
+
+================================================================================
+KONIEC DOKUMENTACJI
+================================================================================
