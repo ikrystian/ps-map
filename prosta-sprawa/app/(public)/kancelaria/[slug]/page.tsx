@@ -547,12 +547,42 @@ export default function LawFirmProfilePage() {
     )
   }
 
+  // Helper function to extract YouTube video ID
+  const getYouTubeVideoId = (url: string) => {
+    if (!url) return null
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+    const match = url.match(regExp)
+    return match && match[2].length === 11 ? match[2] : null
+  }
+
+  const youtubeVideoId = lawFirm?.filmYouTube ? getYouTubeVideoId(lawFirm.filmYouTube) : null
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header Image */}
 
-      <div className="relative h-64 md:h-96 w-full flex items-end">
-        {lawFirm.zdjecieGlowne ? (
+      <div className="relative h-64 md:h-96 w-full flex items-end overflow-hidden" id="kancelaria-header">
+        {youtubeVideoId ? (
+          <>
+            <iframe
+              src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&loop=1&playlist=${youtubeVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+              className="absolute inset-0 w-full h-full object-cover z-[0] pointer-events-none"
+              style={{
+                width: '100vw',
+                height: '56.25vw', // 16:9 aspect ratio
+                minHeight: '100%',
+                minWidth: '177.77vh', // 16:9 aspect ratio
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+              allow="autoplay; encrypted-media"
+              frameBorder="0"
+            />
+            <div className="absolute inset-0 bg-black/40 z-[-1]" />
+          </>
+        ) : lawFirm.zdjecieGlowne ? (
           <Image
             src={lawFirm.zdjecieGlowne}
             alt={lawFirm.nazwa}
