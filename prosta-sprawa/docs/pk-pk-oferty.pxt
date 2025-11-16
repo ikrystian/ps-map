@@ -1,0 +1,2008 @@
+# Dokumentacja funkcjonalności: Panel Klienta - Oferty
+
+**Utworzono:** 2025-11-16
+**Wersja:** 1.0
+**Moduł:** Panel Klienta - Zarządzanie Ofertami
+
+---
+
+## Spis treści
+
+1. [Przegląd](#przegląd)
+2. [Adresy URL](#adresy-url)
+3. [Lista ofert (/panel-klienta/oferty)](#lista-ofert)
+4. [Szczegóły oferty (/panel-klienta/oferty/[id])](#szczegóły-oferty)
+5. [Statusy ofert](#statusy-ofert)
+6. [Akcje użytkownika](#akcje-użytkownika)
+7. [Powiadomienia](#powiadomienia)
+8. [API Endpoints](#api-endpoints)
+9. [Modele danych](#modele-danych)
+10. [Przepływy biznesowe](#przepływy-biznesowe)
+
+---
+
+## Przegląd
+
+Moduł ofert w panelu klienta umożliwia klientom:
+- **Przeglądanie** ofert złożonych przez kancelarie do ich spraw
+- **Akceptowanie** wybranych ofert
+- **Odrzucanie** ofert, które nie spełniają oczekiwań
+- **Porównywanie** ofert pod kątem ceny, terminu realizacji i zakresu usług
+- **Rozpoczynanie współpracy** z wybraną kancelarią
+
+### Kluczowe cechy:
+- ✅ System paginacji (10 ofert na stronę)
+- ✅ Filtrowanie po statusie oferty
+- ✅ Podgląd szczegółów oferty w dialogu modalnym
+- ✅ Wyróżnianie ofert premium (ramka w kolorze primary)
+- ✅ Rozwijanienie długich opisów ("Więcej"/"Mniej")
+- ✅ Automatyczne odrzucanie innych ofert przy akceptacji
+- ✅ Potwierdzenia akcji (dialogi potwierdzające)
+- ✅ Real-time powiadomienia dla kancelarii
+- ✅ Aktualizacja statystyk kancelarii
+
+---
+
+## Adresy URL
+
+### 1. Lista ofert
+```
+/panel-klienta/oferty
+```
+**Typ:** Strona kliencka (Client Component)
+**Wymaga autoryzacji:** Tak (rola: CLIENT)
+**Plik:** `/prosta-sprawa/app/panel-klienta/oferty/page.tsx`
+
+### 2. Szczegóły oferty
+```
+/panel-klienta/oferty/[id]
+```
+**Typ:** Strona dynamiczna
+**Wymaga autoryzacji:** Tak (rola: CLIENT)
+**Plik:** `/prosta-sprawa/app/panel-klienta/oferty/[id]/page.tsx`
+**Status:** ⚠️ Obecnie placeholder (tylko "Szczegóły Oferty")
+
+> **Uwaga:** API endpoint dla szczegółów oferty (`GET /api/offers/[id]`) jest w pełni zaimplementowany i zwraca kompletne dane, ale strona frontendowa nie jest jeszcze zbudowana.
+
+---
+
+## Lista ofert
+
+### Ścieżka: `/panel-klienta/oferty`
+
+Jest to główna strona zarządzania ofertami w panelu klienta. Wyświetla wszystkie oferty, które klient otrzymał od kancelarii prawnych w odpowiedzi na swoje zgłoszone sprawy.
+
+### Struktura strony
+
+#### 1. Nagłówek strony
+```
+Tytuł: "Oferty"
+Opis: "Przeglądaj i zarządzaj ofertami otrzymanymi od kancelarii"
+```
+
+#### 2. Lista ofert - Karta pojedynczej oferty
+
+Każda oferta wyświetlana jest jako osobna karta (Card) z następującymi elementami:
+
+##### **Header karty (CardHeader)**
+- **Tytuł sprawy** (`offer.case.nazwaSprawy`) - tekst xl, pogrubiony
+- **Badge "Wyróżniona"** - jeśli `offer.wyroznienie === true` (wariant default, niebieski)
+- **Kategoria sprawy** - ikona FileText + `offer.case.category.nazwa` (muted text)
+- **Status oferty** - kolorowy badge (prawy górny róg):
+  - `ZLOZONA` → Badge secondary, ikona Clock - "Złożona"
+  - `ZAAKCEPTOWANA` → Badge default (zielony), ikona CheckCircle2 - "Zaakceptowana"
+  - `ODRZUCONA` → Badge destructive (czerwony), ikona XCircle - "Odrzucona"
+  - `NEGOCJACJE` → Badge outline, ikona FileText - "Negocjacje"
+  - `WYGASLA` → Badge outline - "Wygasła"
+
+##### **Ramka karty**
+- Standardowa ramka: szara (`border`)
+- **Wyróżniona oferta**: ramka w kolorze primary (`border-primary`)
+  - Kancelaria płaci 50 punktów za wyróżnienie oferty
+
+##### **Content karty (CardContent)**
+
+**1. Informacje o kancelarii:**
+```
+Logo kancelarii (jeśli dostępne):
+- Rozmiar: 24px × 24px (h-6 w-6)
+- Zaokrąglone rogi
+- Border
+- Obiekt-contain z paddingiem
+
+Nazwa kancelarii:
+- Pogrubiona (`font-semibold`)
+
+Lokalizacja:
+- Ikona MapPin (h-3 w-3)
+- Format: "{miasto}, {województwo}"
+- Tekst muted (szary)
+- Margines lewy: 32px (wyrównanie z logo)
+```
+
+**Separator (linia pozioma)**
+
+**2. Szczegóły oferty - Grid 3 kolumny (na desktop):**
+
+**Kolumna 1: Cena**
+```
+Label: "Cena" (muted text, text-sm)
+
+Kwota brutto:
+- Rozmiar: 2xl
+- Pogrubiona
+- Kolor: primary (niebieski)
+- Format: PLN z separatorami tysięcy (np. "5 000,00 zł")
+
+Kwota netto + VAT:
+- Rozmiar: xs
+- Kolor: muted
+- Format: "{kwotaNetto} netto + VAT {vat}%"
+- Jeśli VAT = -1: "zwolniony"
+```
+
+**Kolumna 2: Termin realizacji**
+```
+Label: "Termin realizacji" (muted text, text-sm)
+
+Termin:
+- Rozmiar: lg
+- Pogrubiony
+- Ikona Clock (h-4 w-4)
+- Format: "{terminRealizacjiDni} dni roboczych"
+```
+
+**Kolumna 3: Warunki płatności**
+```
+Label: "Warunki płatności" (muted text, text-sm)
+
+Warunki:
+- Rozmiar: lg
+- Pogrubiony
+- Ikona Euro (h-4 w-4)
+- Mapowanie wartości:
+  - PRZELEW_7 → "Przelew 7 dni"
+  - PRZELEW_14 → "Przelew 14 dni"
+  - PRZELEW_30 → "Przelew 30 dni"
+  - Z_GORY → "Płatność z góry"
+  - RATY → "Raty"
+  - INNY → "Inne"
+```
+
+**3. Rozwijane szczegóły oferty:**
+
+System "Więcej"/"Mniej" - treść jest ukryta po 80px wysokości (max-h-20):
+
+```
+Opis oferty:
+- Label: "Opis oferty" (muted, text-sm)
+- Tekst: whitespace-pre-wrap (zachowuje formatowanie)
+- Rozmiar: text-sm
+
+Zakres usług:
+- Label: "Zakres usług" (muted, text-sm)
+- Tekst: whitespace-pre-wrap
+- Rozmiar: text-sm
+
+Dodatkowe warunki (jeśli istnieją):
+- Label: "Warunki płatności" (muted, text-sm)
+- Tekst: whitespace-pre-wrap
+- Rozmiar: text-sm
+```
+
+**Przycisk rozwijania:**
+- Pozycja: prawy dolny róg
+- Wariant: ghost
+- Rozmiar: sm (h-7)
+- Tekst: "Więcej" / "Mniej"
+- Przełącza widoczność pełnej treści
+
+**4. Data złożenia oferty:**
+```
+Format: "Złożona: {data w formacie polski}"
+Przykład: "Złożona: 15 listopada 2025"
+Rozmiar: xs
+Kolor: muted
+```
+
+##### **Footer karty (CardFooter)**
+
+**Przyciski akcji - zależne od statusu:**
+
+**Zawsze widoczny:**
+```
+Przycisk: "Zobacz szczegóły"
+- Wariant: outline
+- Ikona: Eye (h-4 w-4)
+- Akcja: Otwiera dialog z pełnymi szczegółami oferty
+```
+
+**Jeśli status = "ZLOZONA":**
+```
+Przycisk: "Akceptuj"
+- Wariant: default (niebieski)
+- Ikona: ThumbsUp (h-4 w-4)
+- Akcja: Otwiera dialog potwierdzający akceptację
+
+Przycisk: "Odrzuć"
+- Wariant: outline
+- Ikona: ThumbsDown (h-4 w-4)
+- Akcja: Otwiera dialog potwierdzający odrzucenie
+```
+
+**Jeśli status = "ZAAKCEPTOWANA":**
+```
+Link: "Zobacz profil kancelarii"
+- Wariant: outline
+- Href: /kancelaria/{lawFirm.slug}
+- Otwiera publiczny profil kancelarii
+```
+
+#### 3. Stan pustej listy
+
+Jeśli klient nie ma żadnych ofert:
+```
+Ikona: FileText (h-12 w-12, centered, muted)
+Tekst: "Nie masz jeszcze żadnych ofert"
+Przycisk: "Dodaj sprawę"
+- Link do: /panel-klienta/sprawy/dodaj
+```
+
+#### 4. Paginacja
+
+Wyświetlana tylko jeśli `totalPages > 1`:
+
+```
+Layout: flex, centered, gap-2
+
+Przycisk "Poprzednia":
+- Wariant: outline
+- Disabled jeśli currentPage === 1
+
+Tekst: "Strona {currentPage} z {totalPages}"
+- Rozmiar: text-sm
+- Kolor: muted
+
+Przycisk "Następna":
+- Wariant: outline
+- Disabled jeśli currentPage === totalPages
+```
+
+#### 5. Dialog szczegółów oferty
+
+Modal wyświetlający pełne informacje o ofercie:
+
+**Header:**
+```
+Tytuł: "Szczegóły oferty"
+Opis: "Pełne informacje o ofercie od {nazwa kancelarii}"
+```
+
+**Treść dialogu:**
+
+**Sekcja 1: Informacje o kancelarii**
+```
+Nagłówek: "Kancelaria" (font-semibold)
+
+Karta z obramowaniem (border rounded-lg, padding 16px):
+- Logo kancelarii (32px × 32px)
+- Nazwa kancelarii (text-lg, font-semibold)
+- Lokalizacja (text-sm, muted)
+  Format: "{miasto}, {województwo}"
+```
+
+**Sekcja 2: Wycena**
+```
+Nagłówek: "Wycena" (font-semibold)
+
+Karta z obramowaniem:
+Row 1: Kwota netto
+- Label: "Kwota netto:" (muted)
+- Wartość: {formatCurrency(kwotaNetto)} (font-semibold)
+
+Row 2: VAT
+- Label: "VAT ({vat === -1 ? 'zwolniony' : `${vat}%`}):" (muted)
+- Wartość: obliczona różnica lub "0,00 zł" (font-semibold)
+
+Separator
+
+Row 3: Kwota brutto (większa czcionka)
+- Label: "Kwota brutto:" (font-semibold)
+- Wartość: {formatCurrency(kwotaBrutto)} (font-bold, text-primary, text-lg)
+```
+
+**Sekcja 3: Termin i warunki (Grid 2 kolumny na MD+)**
+```
+Kolumna 1: Termin realizacji
+- Nagłówek: "Termin realizacji" (font-semibold)
+- Wartość: "{terminRealizacjiDni} dni roboczych" (text-2xl, font-bold)
+
+Kolumna 2: Warunki płatności
+- Nagłówek: "Warunki płatności" (font-semibold)
+- Wartość: {getPaymentTermsLabel(warunkiPlatnosci)} (text-lg, font-semibold)
+```
+
+**Sekcja 4: Opis oferty**
+```
+Nagłówek: "Opis oferty" (font-semibold)
+Treść:
+- whitespace-pre-wrap (zachowuje formatowanie)
+- text-sm
+- padding 16px
+- border rounded-lg
+- tło: bg-muted/30 (lekko szare)
+```
+
+**Sekcja 5: Zakres usług**
+```
+Nagłówek: "Zakres usług" (font-semibold)
+Treść:
+- Takie same style jak opis oferty
+```
+
+**Sekcja 6: Dodatkowe warunki** (jeśli istnieją)
+```
+Nagłówek: "Dodatkowe warunki" (font-semibold)
+Treść:
+- Takie same style jak opis oferty
+```
+
+**Footer dialogu:**
+```
+Przycisk "Zamknij" (outline)
+
+Jeśli status = "ZLOZONA":
+  Przycisk "Akceptuj ofertę" (default, ikona ThumbsUp)
+  - Zamyka dialog szczegółów
+  - Otwiera dialog potwierdzenia akceptacji
+
+  Przycisk "Odrzuć ofertę" (outline, ikona ThumbsDown)
+  - Zamyka dialog szczegółów
+  - Otwiera dialog potwierdzenia odrzucenia
+```
+
+#### 6. Dialog potwierdzenia akcji
+
+Modal potwierdzający akceptację lub odrzucenie oferty:
+
+**Header:**
+```
+Tytuł (zależny od akcji):
+- Akceptacja: "Akceptacja oferty"
+- Odrzucenie: "Odrzucenie oferty"
+
+Opis (zależny od akcji):
+- Akceptacja: "Czy na pewno chcesz zaakceptować tę ofertę? Wszystkie pozostałe oferty do tej sprawy zostaną automatycznie odrzucone."
+- Odrzucenie: "Czy na pewno chcesz odrzucić tę ofertę? Tej operacji nie można cofnąć."
+```
+
+**Treść:**
+```
+Karta z podglądem oferty (border, rounded, bg-muted/30):
+- Nazwa kancelarii (font-semibold)
+- Kwota brutto (text-2xl, font-bold, text-primary)
+- Termin realizacji (text-sm, muted)
+  Format: "Termin: {terminRealizacjiDni} dni roboczych"
+```
+
+**Footer:**
+```
+Przycisk "Anuluj" (outline)
+- Disabled podczas submitting
+
+Przycisk akcji (zależny od typu):
+- Akceptacja: "Tak, akceptuj" (default, niebieski)
+- Odrzucenie: "Tak, odrzuć" (destructive, czerwony)
+- Ikona Loader2 (spinning) jeśli submitting
+- Disabled podczas submitting
+```
+
+#### 7. Stany ładowania i błędów
+
+**Ładowanie (loading = true):**
+```
+Centered layout (h-64):
+- Ikona Loader2 (h-8 w-8, animate-spin, text-primary)
+```
+
+**Błąd (error !== null):**
+```
+Card z czerwoną ramką (border-destructive):
+- Ikona AlertCircle (h-5 w-5, text-destructive)
+- Tekst błędu (text-destructive)
+```
+
+#### 8. Toasty (Powiadomienia toast)
+
+**Po akceptacji oferty:**
+```
+Typ: success (zielony)
+Tekst: "Kancelaria została powiadomiona o akceptacji oferty"
+```
+
+**Po odrzuceniu oferty:**
+```
+Typ: success (zielony)
+Tekst: "Kancelaria została powiadomiona o odrzuceniu oferty"
+```
+
+**W przypadku błędu:**
+```
+Typ: error (czerwony)
+Tekst: {error.message} lub "Wystąpił błąd"
+```
+
+---
+
+## Szczegóły oferty
+
+### Ścieżka: `/panel-klienta/oferty/[id]`
+
+**Status implementacji:** ⚠️ **PLACEHOLDER**
+
+#### Stan obecny
+
+Plik: `/prosta-sprawa/app/panel-klienta/oferty/[id]/page.tsx`
+
+```typescript
+export default function ClientOfferDetailsPage() {
+  return <div>Szczegóły Oferty</div>
+}
+```
+
+Strona jest obecnie tylko placeholderem i nie zawiera żadnej funkcjonalności.
+
+#### Stan docelowy (zalecana implementacja)
+
+Powinna być dedykowana strona szczegółów oferty z następującymi elementami:
+
+**1. Header strony**
+- Breadcrumbs: Panel Klienta → Oferty → Szczegóły
+- Przycisk powrotu do listy ofert
+
+**2. Główna treść**
+Powinna zawierać te same sekcje co dialog szczegółów, ale w pełnej szerokości strony:
+- Informacje o kancelarii (z logo i danymi kontaktowymi)
+- Szczegóły sprawy (do której złożono ofertę)
+- Wycena (kwota netto, VAT, brutto)
+- Termin i warunki
+- Opis oferty
+- Zakres usług
+- Dodatkowe warunki
+- Historia negocjacji (jeśli istnieją)
+
+**3. Panel akcji (sticky sidebar)**
+- Akceptuj ofertę
+- Odrzuć ofertę
+- Rozpocznij negocjacje (przyszła funkcja)
+- Zadaj pytanie kancelarii (otwiera czat)
+
+**4. Dodatkowe sekcje**
+- Dane kontaktowe kancelarii
+- Link do pełnego profilu kancelarii
+- Inne oferty do tej samej sprawy (porównanie)
+
+#### API już gotowe
+
+Endpoint `GET /api/offers/[id]` zwraca kompletne dane:
+
+```typescript
+{
+  id: string
+  kwotaNetto: number
+  vat: number
+  kwotaBrutto: number
+  terminRealizacjiDni: number
+  opisOferty: string
+  zakresUslug: string
+  warunkiPlatnosci: string
+  dodatkoweWarunki?: string
+  wyroznienie: boolean
+  status: string
+  createdAt: string
+  case: {
+    id: string
+    clientId: string
+    nazwaSprawy: string
+    opisSprawy: string
+    status: string
+    budzetOd?: number
+    budzetDo?: number
+    oczekiwanyTerminRealizacji?: string
+    category: { nazwa: string }
+    client: {
+      imie: string
+      nazwisko: string
+      telefon: string
+    }
+  }
+  lawFirm: {
+    id: string
+    nazwa: string
+    logo?: string
+    miasto: string
+    adres: string
+    numerTelefonu: string
+    emailKontakt: string
+    voivodeship: { nazwa: string }
+  }
+  negotiations: Array<{
+    id: string
+    message: string
+    createdAt: string
+    client: {
+      imie: string
+      nazwisko: string
+    }
+  }>
+}
+```
+
+---
+
+## Statusy ofert
+
+System zarządzania ofertami rozpoznaje 5 statusów:
+
+### 1. ZLOZONA
+**Opis:** Oferta została złożona przez kancelarię i oczekuje na decyzję klienta
+
+**Właściwości:**
+- Badge: secondary (szary) z ikoną Clock
+- Etykieta: "Złożona"
+- Dostępne akcje:
+  - ✅ Zobacz szczegóły
+  - ✅ Akceptuj
+  - ✅ Odrzuć
+- Czy można edytować (kancelaria): ✅ TAK
+- Czy można usunąć (kancelaria): ✅ TAK
+
+**Moment ustawienia:**
+- Automatycznie przy utworzeniu oferty przez kancelarię
+- API: `POST /api/offers`
+
+### 2. ZAAKCEPTOWANA
+**Opis:** Klient zaakceptował ofertę i wybrał tę kancelarię do obsługi sprawy
+
+**Właściwości:**
+- Badge: default (zielony) z ikoną CheckCircle2
+- Etykieta: "Zaakceptowana"
+- Dostępne akcje:
+  - ✅ Zobacz szczegóły
+  - ✅ Zobacz profil kancelarii
+  - ✅ Rozpocznij czat (przyszła funkcja)
+- Czy można edytować (kancelaria): ❌ NIE
+- Czy można usunąć (kancelaria): ❌ NIE
+
+**Moment ustawienia:**
+- Gdy klient kliknie "Akceptuj ofertę"
+- API: `POST /api/offers/[id]/accept`
+
+**Efekty uboczne:**
+1. Wszystkie inne oferty do tej sprawy zostają automatycznie odrzucone
+2. Status sprawy zmienia się na `W_TRAKCIE`
+3. Statystyka `wygraneOferty` kancelarii +1
+4. Przeliczenie konwersji kancelarii: `(wygraneOferty / zlozoneOferty) × 100`
+5. Aktualizacja miesięcznych statystyk (`LawFirmStats.offersAccepted` +1)
+6. Aktualizacja statystyk kategorii (`LawFirmCategoryStats.offersAccepted` +1)
+7. Utworzenie powiadomienia dla kancelarii:
+   - Typ: `ZMIANA_STATUSU`
+   - Tytuł: "Oferta zaakceptowana!"
+   - Treść: "Twoja oferta do sprawy "{nazwaSprawy}" została zaakceptowana przez klienta"
+   - Link: `/panel-kancelarii/oferty`
+8. Wysłanie powiadomienia real-time przez Socket.IO (WebSocket)
+
+### 3. ODRZUCONA
+**Opis:** Klient odrzucił ofertę lub została automatycznie odrzucona przy akceptacji innej oferty
+
+**Właściwości:**
+- Badge: destructive (czerwony) z ikoną XCircle
+- Etykieta: "Odrzucona"
+- Dostępne akcje:
+  - ✅ Zobacz szczegóły
+- Czy można edytować (kancelaria): ❌ NIE
+- Czy można usunąć (kancelaria): ❌ NIE
+
+**Moment ustawienia:**
+- Gdy klient kliknie "Odrzuć ofertę" - API: `POST /api/offers/[id]/reject`
+- Automatycznie, gdy klient zaakceptuje inną ofertę do tej samej sprawy
+
+**Efekty uboczne (ręczne odrzucenie):**
+1. Pole `odrzuconaData` ustawiane na aktualną datę
+2. Utworzenie powiadomienia dla kancelarii:
+   - Typ: `ZMIANA_STATUSU`
+   - Tytuł: "Oferta odrzucona"
+   - Treść: "Twoja oferta do sprawy "{nazwaSprawy}" została odrzucona przez klienta"
+   - Link: `/panel-kancelarii/oferty`
+
+**Efekty uboczne (automatyczne odrzucenie):**
+1. Pole `odrzuconaData` ustawiane na aktualną datę
+2. Brak powiadomień (cicha operacja)
+
+### 4. NEGOCJACJE
+**Opis:** Klient rozpoczął negocjacje warunków oferty z kancelarią
+
+**Właściwości:**
+- Badge: outline z ikoną FileText
+- Etykieta: "Negocjacje"
+- Dostępne akcje:
+  - ✅ Zobacz szczegóły
+  - ✅ Kontynuuj negocjacje
+  - ✅ Akceptuj (jeśli uzgodniono warunki)
+  - ✅ Odrzuć
+- Czy można edytować (kancelaria): ⚠️ Tylko po konsultacji z klientem
+- Czy można usunąć (kancelaria): ❌ NIE
+
+**Moment ustawienia:**
+- Gdy klient kliknie "Zaproponuj negocjacje" (przyszła funkcja)
+- API: `POST /api/offers/[id]/negotiate`
+
+**Status:** ⚠️ Częściowo zaimplementowane
+- API endpoint istnieje: `/api/offers/[id]/negotiate/route.ts`
+- UI do rozpoczęcia negocjacji nie jest jeszcze zbudowane
+
+### 5. WYGASLA
+**Opis:** Oferta wygasła po określonym czasie (np. 30 dni bez odpowiedzi)
+
+**Właściwości:**
+- Badge: outline (szary)
+- Etykieta: "Wygasła"
+- Dostępne akcje:
+  - ✅ Zobacz szczegóły
+- Czy można edytować (kancelaria): ❌ NIE
+- Czy można usunąć (kancelaria): ❌ NIE
+
+**Moment ustawienia:**
+- Automatycznie przez scheduled job (CRON)
+- Warunek: oferta w statusie `ZLOZONA` starsze niż 30 dni
+
+**Status:** ⚠️ Nie zaimplementowane
+- Brak automatycznego wygaszania ofert
+- Status jest zdefiniowany w typach i UI, ale nie wykorzystywany
+
+---
+
+## Akcje użytkownika
+
+### 1. Przeglądanie listy ofert
+
+**Krok 1:** Klient wchodzi na `/panel-klienta/oferty`
+
+**Proces:**
+1. Komponent wywołuje `useEffect` przy montowaniu
+2. Wywołanie API: `GET /api/offers?page=1&limit=10`
+3. Wyświetlenie loadera (Loader2 spinning)
+4. Otrzymanie odpowiedzi z ofertami i paginacją
+5. Renderowanie listy ofert
+
+**Parametry zapytania:**
+- `page` (number): numer strony (domyślnie 1)
+- `limit` (number): liczba ofert na stronę (domyślnie 10)
+
+**Odpowiedź API:**
+```typescript
+{
+  offers: OfferWithCase[],
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 25,
+    totalPages: 3
+  }
+}
+```
+
+**Bezpieczeństwo:**
+- ✅ Klient widzi TYLKO oferty do swoich spraw
+- ✅ Filtrowanie po `case.clientId` po stronie serwera
+- ✅ Brak możliwości podejrzenia ofert innych klientów
+
+### 2. Rozwijanie/zwijanie szczegółów
+
+**Przycisk:** "Więcej" / "Mniej"
+
+**Stan:** `expandedOffers: Set<string>`
+
+**Proces:**
+1. Klient klika "Więcej"
+2. Wywołanie `toggleOfferExpansion(offerId)`
+3. Dodanie ID oferty do Set lub usunięcie (toggle)
+4. Ponowne renderowanie - klasa `max-h-20` jest usuwana/dodawana
+5. Treść oferty rozwija się/zwija z animacją transition
+
+**Mechanizm:**
+```typescript
+const [expandedOffers, setExpandedOffers] = useState<Set<string>>(new Set())
+
+const toggleOfferExpansion = (offerId: string) => {
+  setExpandedOffers((prev) => {
+    const newSet = new Set(prev)
+    if (newSet.has(offerId)) {
+      newSet.delete(offerId)
+    } else {
+      newSet.add(offerId)
+    }
+    return newSet
+  })
+}
+```
+
+### 3. Zobacz szczegóły oferty
+
+**Przycisk:** "Zobacz szczegóły" (outline, ikona Eye)
+
+**Proces:**
+1. Klient klika przycisk
+2. Wywołanie `handleViewDetails(offer)`
+3. Ustawienie `selectedOffer` na klikniętą ofertę
+4. Ustawienie `detailsDialogOpen = true`
+5. Otwarcie dialogu modalnego z pełnymi szczegółami
+6. Renderowanie wszystkich sekcji oferty
+
+**Dane wyświetlane:**
+- Wszystkie dane z obiektu `offer` (już pobrane)
+- Brak dodatkowego zapytania API
+- Dialog wykorzystuje dane z listy
+
+**Zamknięcie dialogu:**
+- Kliknięcie "Zamknij"
+- Kliknięcie poza dialogiem
+- Klawisz ESC
+- Ustawienie `detailsDialogOpen = false`
+
+### 4. Akceptacja oferty
+
+**Przycisk:** "Akceptuj" (default, ikona ThumbsUp)
+
+**Dostępność:** Tylko dla ofert w statusie `ZLOZONA`
+
+**Proces:**
+
+**Krok 1: Otwarcie dialogu potwierdzenia**
+1. Klient klika "Akceptuj"
+2. Wywołanie `handleAcceptOffer(offer)`
+3. Ustawienie `selectedOffer` na ofertę
+4. Ustawienie `actionType = "accept"`
+5. Ustawienie `confirmDialogOpen = true`
+6. Wyświetlenie dialogu z ostrzeżeniem
+
+**Dialog potwierdzenia wyświetla:**
+- ⚠️ Ostrzeżenie: "Wszystkie pozostałe oferty do tej sprawy zostaną automatycznie odrzucone"
+- Podgląd oferty (nazwa kancelarii, cena, termin)
+- Przyciski: "Anuluj" i "Tak, akceptuj"
+
+**Krok 2: Potwierdzenie akcji**
+1. Klient klika "Tak, akceptuj"
+2. Wywołanie `confirmAction()`
+3. Ustawienie `submitting = true`
+4. Wywołanie API: `POST /api/offers/[id]/accept`
+
+**Przetwarzanie API (transakcja atomowa):**
+1. ✅ Sprawdzenie sesji użytkownika (czy zalogowany, czy CLIENT)
+2. ✅ Pobranie profilu klienta
+3. ✅ Pobranie oferty z relacjami (case, lawFirm)
+4. ✅ Sprawdzenie czy sprawa należy do klienta
+5. ✅ Walidacja statusu oferty (czy ZLOZONA)
+6. ✅ Rozpoczęcie transakcji bazy danych:
+   - Aktualizacja oferty: `status = "ZAAKCEPTOWANA"`, `zaakceptowanaData = now()`
+   - Odrzucenie wszystkich innych ofert: `status = "ODRZUCONA"`, `odrzuconaData = now()`
+   - Aktualizacja statusu sprawy: `status = "W_TRAKCIE"`
+   - Aktualizacja statystyk kancelarii: `wygraneOferty + 1`, przeliczenie `konwersja`
+   - Utworzenie/aktualizacja miesięcznych statystyk: `LawFirmStats.offersAccepted + 1`
+   - Utworzenie/aktualizacja statystyk kategorii: `LawFirmCategoryStats.offersAccepted + 1`
+   - Utworzenie powiadomienia dla kancelarii
+7. ✅ Commit transakcji
+8. ✅ Wysłanie powiadomienia real-time (Socket.IO)
+
+**Krok 3: Obsługa odpowiedzi**
+1. Jeśli sukces (200 OK):
+   - Toast success: "Kancelaria została powiadomiona o akceptacji oferty"
+   - Zamknięcie dialogu potwierdzenia
+   - Wyczyszczenie `selectedOffer` i `actionType`
+   - Odświeżenie listy ofert (`fetchOffers()`)
+   - Status oferty zmienia się na "Zaakceptowana"
+   - Pojawia się przycisk "Zobacz profil kancelarii"
+
+2. Jeśli błąd (4xx/5xx):
+   - Toast error: {error.message}
+   - Dialog pozostaje otwarty
+   - `submitting = false`
+
+**Efekty widoczne dla klienta:**
+- ✅ Zaakceptowana oferta ma zielony badge "Zaakceptowana"
+- ✅ Inne oferty do tej sprawy mają czerwony badge "Odrzucona"
+- ✅ Przyciski "Akceptuj"/"Odrzuć" znikają
+- ✅ Pojawia się przycisk "Zobacz profil kancelarii"
+- ✅ Kancelaria otrzymuje powiadomienie w dzwonku (real-time)
+
+### 5. Odrzucenie oferty
+
+**Przycisk:** "Odrzuć" (outline, ikona ThumbsDown)
+
+**Dostępność:** Tylko dla ofert w statusie `ZLOZONA`
+
+**Proces:**
+
+**Krok 1: Otwarcie dialogu potwierdzenia**
+1. Klient klika "Odrzuć"
+2. Wywołanie `handleRejectOffer(offer)`
+3. Ustawienie `selectedOffer` na ofertę
+4. Ustawienie `actionType = "reject"`
+5. Ustawienie `confirmDialogOpen = true`
+6. Wyświetlenie dialogu z ostrzeżeniem
+
+**Dialog potwierdzenia wyświetla:**
+- ⚠️ Ostrzeżenie: "Tej operacji nie można cofnąć"
+- Podgląd oferty (nazwa kancelarii, cena, termin)
+- Przyciski: "Anuluj" i "Tak, odrzuć" (czerwony)
+
+**Krok 2: Potwierdzenie akcji**
+1. Klient klika "Tak, odrzuć"
+2. Wywołanie `confirmAction()`
+3. Ustawienie `submitting = true`
+4. Wywołanie API: `POST /api/offers/[id]/reject`
+
+**Przetwarzanie API (transakcja atomowa):**
+1. ✅ Sprawdzenie sesji użytkownika (czy zalogowany, czy CLIENT)
+2. ✅ Pobranie profilu klienta
+3. ✅ Pobranie oferty z relacjami (case, lawFirm)
+4. ✅ Sprawdzenie czy sprawa należy do klienta
+5. ✅ Walidacja statusu oferty (czy nie ODRZUCONA, czy nie ZAAKCEPTOWANA)
+6. ✅ Rozpoczęcie transakcji bazy danych:
+   - Aktualizacja oferty: `status = "ODRZUCONA"`, `odrzuconaData = now()`
+   - Utworzenie powiadomienia dla kancelarii
+7. ✅ Commit transakcji
+
+**Krok 3: Obsługa odpowiedzi**
+1. Jeśli sukces (200 OK):
+   - Toast success: "Kancelaria została powiadomiona o odrzuceniu oferty"
+   - Zamknięcie dialogu potwierdzenia
+   - Wyczyszczenie `selectedOffer` i `actionType`
+   - Odświeżenie listy ofert (`fetchOffers()`)
+   - Status oferty zmienia się na "Odrzucona"
+   - Przyciski "Akceptuj"/"Odrzuć" znikają
+
+2. Jeśli błąd (4xx/5xx):
+   - Toast error: {error.message}
+   - Dialog pozostaje otwarty
+   - `submitting = false`
+
+**Efekty widoczne dla klienta:**
+- ✅ Odrzucona oferta ma czerwony badge "Odrzucona"
+- ✅ Przyciski akcji znikają (oprócz "Zobacz szczegóły")
+- ✅ Kancelaria otrzymuje powiadomienie
+
+### 6. Paginacja
+
+**Przyciski:** "Poprzednia" / "Następna"
+
+**Stan:** `currentPage: number`
+
+**Proces:**
+1. Klient klika "Następna"
+2. Wywołanie `setCurrentPage((prev) => prev + 1)`
+3. `useEffect` reaguje na zmianę `currentPage`
+4. Wywołanie `fetchOffers()` z nowym parametrem `page`
+5. Przewinięcie strony do góry (automatyczne)
+6. Wyświetlenie nowych ofert
+
+**Walidacja:**
+- Przycisk "Poprzednia" disabled jeśli `currentPage === 1`
+- Przycisk "Następna" disabled jeśli `currentPage === totalPages`
+
+### 7. Zobacz profil kancelarii
+
+**Przycisk:** "Zobacz profil kancelarii" (outline)
+
+**Dostępność:** Tylko dla ofert w statusie `ZAAKCEPTOWANA`
+
+**Proces:**
+1. Klient klika przycisk
+2. Przekierowanie do `/kancelaria/{lawFirm.slug}`
+3. Otwarcie publicznego profilu kancelarii
+4. Klient może zobaczyć:
+   - Pełny opis kancelarii
+   - Usługi i cennik
+   - Opinie klientów
+   - Blog kancelarii
+   - Certyfikaty
+   - Dane kontaktowe
+
+---
+
+## Powiadomienia
+
+System powiadomień w module ofert używa dwóch mechanizmów:
+1. **Toast notifications** - natychmiastowe informacje dla użytkownika (library: sonner)
+2. **Database notifications** - trwałe powiadomienia zapisywane w bazie danych
+3. **Real-time notifications** - WebSocket (Socket.IO) dla natychmiastowego dostarczania
+
+### Powiadomienia dla klienta (Toast)
+
+**Typ: Success (zielony)**
+```typescript
+toast.success("Kancelaria została powiadomiona o akceptacji oferty")
+toast.success("Kancelaria została powiadomiona o odrzuceniu oferty")
+```
+
+**Typ: Error (czerwony)**
+```typescript
+toast.error(error.message)
+toast.error("Wystąpił błąd")
+```
+
+### Powiadomienia dla kancelarii (Database + Real-time)
+
+#### 1. Nowa oferta złożona do sprawy klienta
+
+**Kiedy:** Kancelaria składa ofertę
+**API:** `POST /api/offers`
+
+**Dane powiadomienia:**
+```typescript
+{
+  userId: client.userId,
+  typ: "NOWA_OFERTA",
+  tytul: "Otrzymałeś nową ofertę",
+  tresc: `Kancelaria ${lawFirm.nazwa} złożyła ofertę do sprawy "${case.nazwaSprawy}"`,
+  linkUrl: `/panel-klienta/oferty/${offer.id}`
+}
+```
+
+**Wyświetlenie:**
+- Dzwonek powiadomień w headerze (czerwona kropka)
+- Lista powiadomień w panelu klienta
+- Kliknięcie przekierowuje do szczegółów oferty
+
+#### 2. Oferta zaakceptowana
+
+**Kiedy:** Klient akceptuje ofertę
+**API:** `POST /api/offers/[id]/accept`
+
+**Dane powiadomienia:**
+```typescript
+{
+  userId: lawFirm.userId,
+  typ: "ZMIANA_STATUSU",
+  tytul: "Oferta zaakceptowana!",
+  tresc: `Twoja oferta do sprawy "${case.nazwaSprawy}" została zaakceptowana przez klienta`,
+  linkUrl: `/panel-kancelarii/oferty`
+}
+```
+
+**Real-time delivery:**
+```typescript
+await emitNewNotification(lawFirm.userId, notification)
+```
+
+**Wyświetlenie:**
+- ✅ Natychmiastowe wyświetlenie w dzwonku (WebSocket)
+- ✅ Dźwięk powiadomienia (opcjonalnie)
+- ✅ Badge z liczbą nieprzeczytanych
+- Lista powiadomień w panelu kancelarii
+- Kliknięcie przekierowuje do listy ofert
+
+#### 3. Oferta odrzucona
+
+**Kiedy:** Klient odrzuca ofertę
+**API:** `POST /api/offers/[id]/reject`
+
+**Dane powiadomienia:**
+```typescript
+{
+  userId: lawFirm.userId,
+  typ: "ZMIANA_STATUSU",
+  tytul: "Oferta odrzucona",
+  tresc: `Twoja oferta do sprawy "${case.nazwaSprawy}" została odrzucona przez klienta`,
+  linkUrl: `/panel-kancelarii/oferty`
+}
+```
+
+**Wyświetlenie:**
+- Dzwonek powiadomień w headerze
+- Lista powiadomień w panelu kancelarii
+- Kliknięcie przekierowuje do listy ofert
+
+**Uwaga:** Automatyczne odrzucenie (gdy akceptowana inna oferta) NIE tworzy powiadomienia - to zmniejsza spam powiadomień dla kancelarii.
+
+### Model powiadomienia (Database)
+
+```typescript
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String   // Odbiorca powiadomienia
+  typ         String   // "NOWA_OFERTA", "ZMIANA_STATUSU", etc.
+  tytul       String   // Krótki tytuł
+  tresc       String   // Pełna treść
+  linkUrl     String?  // Link do powiązanej akcji
+  przeczytane Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, przeczytane])
+}
+```
+
+### Typy powiadomień
+
+| Typ | Opis | Docelowy użytkownik |
+|-----|------|---------------------|
+| `NOWA_OFERTA` | Nowa oferta została złożona | CLIENT |
+| `ZMIANA_STATUSU` | Status oferty się zmienił | LAW_FIRM |
+| `NOWA_WIADOMOSC` | Nowa wiadomość w czacie | CLIENT lub LAW_FIRM |
+| `NOWA_OPINIA` | Nowa opinia została dodana | LAW_FIRM |
+| `NOWA_SPRAWA` | Nowa sprawa w kategorii | LAW_FIRM (subskrypcja) |
+
+---
+
+## API Endpoints
+
+### 1. GET /api/offers
+
+**Opis:** Pobiera listę ofert z paginacją
+
+**Autoryzacja:** Wymagana (CLIENT lub LAW_FIRM lub ADMIN)
+
+**Parametry zapytania:**
+```typescript
+{
+  page?: number        // Numer strony (domyślnie 1)
+  limit?: number       // Ofert na stronę (domyślnie 10)
+  caseId?: string     // Filtruj po ID sprawy
+  lawFirmId?: string  // Filtruj po ID kancelarii
+  status?: string     // Filtruj po statusie (ZLOZONA, ZAAKCEPTOWANA, etc.)
+}
+```
+
+**Filtrowanie według roli:**
+- **CLIENT:** Widzi tylko oferty do swoich spraw (`case.clientId = client.id`)
+- **LAW_FIRM:** Widzi tylko swoje złożone oferty (`lawFirmId = lawFirm.id`)
+- **ADMIN:** Widzi wszystkie oferty (brak filtrowania)
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  offers: [
+    {
+      id: string
+      kwotaNetto: number
+      vat: number
+      kwotaBrutto: number
+      terminRealizacjiDni: number
+      opisOferty: string
+      zakresUslug: string
+      warunkiPlatnosci: string
+      dodatkoweWarunki: string | null
+      wyroznienie: boolean
+      status: string
+      createdAt: Date
+      case: {
+        id: string
+        nazwaSprawy: string
+        status: string
+        category: { nazwa: string }
+        client: { imie: string, nazwisko: string }
+      }
+      lawFirm: {
+        id: string
+        nazwa: string
+        logo: string | null
+        miasto: string
+        voivodeship: { nazwa: string }
+      }
+    }
+  ],
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+```
+
+**Błędy:**
+- `401` - Brak autoryzacji (nie zalogowany)
+- `404` - Nie znaleziono profilu klienta/kancelarii
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/route.ts` (funkcja GET)
+
+---
+
+### 2. POST /api/offers
+
+**Opis:** Tworzy nową ofertę (tylko dla kancelarii)
+
+**Autoryzacja:** Wymagana (tylko LAW_FIRM)
+
+**Body (JSON):**
+```typescript
+{
+  caseId: string             // ID sprawy
+  kwotaNetto: number         // Kwota netto (wymagane)
+  vat: number                // Stawka VAT: 0, 8, 23 lub -1 (zwolniony)
+  terminRealizacjiDni: number // Dni robocze (wymagane)
+  opisOferty: string         // Min. 200 znaków (wymagane)
+  zakresUslug: string        // Wymagane
+  warunkiPlatnosci: string   // Enum: PRZELEW_7, PRZELEW_14, etc.
+  dodatkoweWarunki?: string  // Opcjonalne
+  wyroznienie?: boolean      // Czy wyróżnić ofertę (50 punktów)
+}
+```
+
+**Walidacje:**
+- ✅ Wszystkie wymagane pola obecne
+- ✅ `opisOferty.length >= 200` znaków
+- ✅ Sprawa istnieje
+- ✅ Kancelaria nie złożyła jeszcze oferty do tej sprawy (sprawdzenie duplikatu)
+- ✅ Jeśli `wyroznienie = true`: kancelaria ma >= 50 punktów
+
+**Proces (transakcja atomowa):**
+1. Obliczenie kwoty brutto: `kwotaNetto + (kwotaNetto × vat/100)`
+2. Utworzenie oferty
+3. Aktualizacja licznika `zlozoneOferty` kancelarii (+1)
+4. Pobranie punktów jeśli `wyroznienie = true` (punktySaldo - 50)
+5. Aktualizacja miesięcznych statystyk (`LawFirmStats.offersSubmitted` +1)
+6. Aktualizacja statystyk kategorii (`LawFirmCategoryStats.offersSubmitted` +1)
+7. Zmiana statusu sprawy na `OFERTY_OTRZYMANE`
+8. Utworzenie powiadomienia dla klienta
+
+**Odpowiedź 201 Created:**
+```typescript
+{
+  id: string
+  caseId: string
+  lawFirmId: string
+  kwotaNetto: number
+  vat: number
+  kwotaBrutto: number
+  terminRealizacjiDni: number
+  opisOferty: string
+  zakresUslug: string
+  warunkiPlatnosci: string
+  dodatkoweWarunki: string | null
+  wyroznienie: boolean
+  punktyWyroznienia: number | null
+  status: "ZLOZONA"
+  createdAt: Date
+  case: {
+    nazwaSprawy: string
+    categoryId: string
+    category: { nazwa: string }
+  }
+  lawFirm: { nazwa: string }
+}
+```
+
+**Błędy:**
+- `400` - Brak wymaganych pól / Walidacja nieprawidłowa / Duplikat oferty / Niewystarczające punkty
+- `401` - Brak autoryzacji
+- `403` - Nieprawidłowa rola (nie LAW_FIRM)
+- `404` - Nie znaleziono sprawy/profilu kancelarii
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/route.ts` (funkcja POST)
+
+---
+
+### 3. GET /api/offers/[id]
+
+**Opis:** Pobiera szczegóły pojedynczej oferty
+
+**Autoryzacja:** Wymagana (CLIENT lub LAW_FIRM)
+
+**Parametry URL:**
+- `id` - UUID oferty
+
+**Sprawdzanie uprawnień:**
+- **CLIENT:** Może zobaczyć ofertę tylko jeśli sprawa należy do niego
+- **LAW_FIRM:** Może zobaczyć ofertę tylko jeśli została złożona przez tę kancelarię
+- **ADMIN:** Może zobaczyć wszystkie oferty
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  id: string
+  kwotaNetto: number
+  vat: number
+  kwotaBrutto: number
+  terminRealizacjiDni: number
+  opisOferty: string
+  zakresUslug: string
+  warunkiPlatnosci: string
+  dodatkoweWarunki: string | null
+  wyroznienie: boolean
+  status: string
+  createdAt: Date
+  case: {
+    id: string
+    clientId: string
+    nazwaSprawy: string
+    opisSprawy: string
+    status: string
+    budzetOd: number | null
+    budzetDo: number | null
+    oczekiwanyTerminRealizacji: string | null
+    category: { nazwa: string }
+    client: {
+      imie: string
+      nazwisko: string
+      telefon: string
+    }
+  }
+  lawFirm: {
+    id: string
+    nazwa: string
+    logo: string | null
+    miasto: string
+    adres: string
+    numerTelefonu: string
+    emailKontakt: string
+    voivodeship: { nazwa: string }
+  }
+  negotiations: [
+    {
+      id: string
+      message: string
+      createdAt: Date
+      client: {
+        imie: string
+        nazwisko: string
+      }
+    }
+  ]
+}
+```
+
+**Błędy:**
+- `401` - Brak autoryzacji
+- `403` - Brak dostępu do tej oferty
+- `404` - Nie znaleziono oferty
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/route.ts` (funkcja GET)
+
+---
+
+### 4. PUT /api/offers/[id]
+
+**Opis:** Edytuje ofertę (tylko dla kancelarii)
+
+**Autoryzacja:** Wymagana (tylko LAW_FIRM)
+
+**Parametry URL:**
+- `id` - UUID oferty
+
+**Walidacje:**
+- ✅ Oferta należy do kancelarii
+- ✅ Status oferty nie jest `ZAAKCEPTOWANA` ani `ODRZUCONA`
+
+**Body (JSON) - wszystkie pola opcjonalne:**
+```typescript
+{
+  kwotaNetto?: number
+  vat?: number
+  terminRealizacjiDni?: number
+  opisOferty?: string
+  zakresUslug?: string
+  warunkiPlatnosci?: string
+  dodatkoweWarunki?: string
+}
+```
+
+**Proces:**
+1. Sprawdzenie uprawnień
+2. Walidacja statusu oferty
+3. Przeliczenie kwoty brutto (jeśli zmieniono kwotaNetto lub vat)
+4. Aktualizacja oferty
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  id: string
+  // ... zaktualizowane dane oferty
+  case: {
+    nazwaSprawy: string
+  }
+}
+```
+
+**Błędy:**
+- `400` - Nie można edytować zaakceptowanych/odrzuconych ofert
+- `401` - Brak autoryzacji
+- `403` - Brak dostępu do tej oferty
+- `404` - Nie znaleziono oferty
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/route.ts` (funkcja PUT)
+
+---
+
+### 5. DELETE /api/offers/[id]
+
+**Opis:** Usuwa ofertę (tylko dla kancelarii)
+
+**Autoryzacja:** Wymagana (tylko LAW_FIRM)
+
+**Parametry URL:**
+- `id` - UUID oferty
+
+**Walidacje:**
+- ✅ Oferta należy do kancelarii
+- ✅ Status oferty nie jest `ZAAKCEPTOWANA`
+
+**Proces (transakcja atomowa):**
+1. Sprawdzenie uprawnień
+2. Walidacja statusu
+3. Usunięcie oferty
+4. Zmniejszenie licznika `zlozoneOferty` kancelarii (-1)
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  message: "Oferta została usunięta"
+}
+```
+
+**Błędy:**
+- `400` - Nie można usuwać zaakceptowanych ofert
+- `401` - Brak autoryzacji
+- `403` - Brak dostępu do tej oferty
+- `404` - Nie znaleziono oferty
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/route.ts` (funkcja DELETE)
+
+---
+
+### 6. POST /api/offers/[id]/accept
+
+**Opis:** Akceptuje ofertę (tylko dla klienta)
+
+**Autoryzacja:** Wymagana (tylko CLIENT)
+
+**Parametry URL:**
+- `id` - UUID oferty
+
+**Walidacje:**
+- ✅ Sprawa należy do klienta
+- ✅ Status oferty jest `ZLOZONA`
+- ✅ Oferta nie jest już zaakceptowana
+- ✅ Oferta nie jest odrzucona
+
+**Proces (transakcja atomowa):**
+1. Sprawdzenie uprawnień
+2. Walidacja statusu
+3. Aktualizacja oferty: `status = "ZAAKCEPTOWANA"`, `zaakceptowanaData = now()`
+4. Odrzucenie wszystkich innych ofert do tej sprawy: `status = "ODRZUCONA"`
+5. Zmiana statusu sprawy na `W_TRAKCIE`
+6. Aktualizacja statystyk kancelarii:
+   - `wygraneOferty` +1
+   - Przeliczenie `konwersja = (wygraneOferty / zlozoneOferty) × 100`
+7. Aktualizacja miesięcznych statystyk (`LawFirmStats.offersAccepted` +1)
+8. Aktualizacja statystyk kategorii (`LawFirmCategoryStats.offersAccepted` +1)
+9. Utworzenie powiadomienia dla kancelarii
+10. Wysłanie powiadomienia real-time (Socket.IO)
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  id: string
+  status: "ZAAKCEPTOWANA"
+  zaakceptowanaData: Date
+  // ... pozostałe dane oferty
+}
+```
+
+**Błędy:**
+- `400` - Nieprawidłowy status oferty
+- `401` - Brak autoryzacji
+- `403` - Brak dostępu do tej oferty
+- `404` - Nie znaleziono oferty
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/accept/route.ts`
+
+---
+
+### 7. POST /api/offers/[id]/reject
+
+**Opis:** Odrzuca ofertę (tylko dla klienta)
+
+**Autoryzacja:** Wymagana (tylko CLIENT)
+
+**Parametry URL:**
+- `id` - UUID oferty
+
+**Walidacje:**
+- ✅ Sprawa należy do klienta
+- ✅ Status oferty nie jest `ODRZUCONA`
+- ✅ Status oferty nie jest `ZAAKCEPTOWANA`
+
+**Proces (transakcja atomowa):**
+1. Sprawdzenie uprawnień
+2. Walidacja statusu
+3. Aktualizacja oferty: `status = "ODRZUCONA"`, `odrzuconaData = now()`
+4. Utworzenie powiadomienia dla kancelarii
+
+**Odpowiedź 200 OK:**
+```typescript
+{
+  id: string
+  status: "ODRZUCONA"
+  odrzuconaData: Date
+  // ... pozostałe dane oferty
+}
+```
+
+**Błędy:**
+- `400` - Nieprawidłowy status oferty
+- `401` - Brak autoryzacji
+- `403` - Brak dostępu do tej oferty
+- `404` - Nie znaleziono oferty
+- `500` - Błąd serwera
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/reject/route.ts`
+
+---
+
+### 8. POST /api/offers/[id]/negotiate
+
+**Opis:** Rozpoczyna negocjacje oferty
+
+**Autoryzacja:** Wymagana (CLIENT)
+
+**Status:** ⚠️ Endpoint istnieje, ale funkcjonalność niekompletna
+
+**Plik:** `/prosta-sprawa/app/api/offers/[id]/negotiate/route.ts`
+
+**Uwaga:** Funkcjonalność negocjacji nie jest jeszcze w pełni zaimplementowana w UI.
+
+---
+
+## Modele danych
+
+### Model: Offer
+
+**Plik:** `/prosta-sprawa/prisma/schema.prisma`
+
+```prisma
+model Offer {
+  id                    String    @id @default(uuid())
+  caseId                String
+  lawFirmId             String
+
+  // Wycena
+  kwotaNetto            Decimal   @db.Decimal(10, 2)
+  vat                   Int       // Stawka VAT: 0, 8, 23 lub -1 (zwolniony)
+  kwotaBrutto           Decimal   @db.Decimal(10, 2)
+
+  // Warunki
+  terminRealizacjiDni   Int       // Dni robocze
+  warunkiPlatnosci      String    // Enum: PRZELEW_7, PRZELEW_14, PRZELEW_30, Z_GORY, RATY, INNY
+
+  // Treść
+  opisOferty            String    @db.Text
+  zakresUslug           String    @db.Text
+  dodatkoweWarunki      String?   @db.Text
+
+  // Promowanie
+  wyroznienie           Boolean   @default(false)
+  punktyWyroznienia     Int?
+
+  // Status
+  status                OfferStatus @default(ZLOZONA)
+  zaakceptowanaData     DateTime?
+  odrzuconaData         DateTime?
+
+  // Timestamps
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relacje
+  case                  Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  lawFirm               LawFirm   @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  negotiations          Negotiation[]
+
+  // Indeksy
+  @@index([caseId])
+  @@index([lawFirmId])
+  @@index([status])
+  @@index([createdAt])
+  @@unique([caseId, lawFirmId]) // Jedna oferta na kancelarię-sprawę
+}
+
+enum OfferStatus {
+  ZLOZONA          // Oferta złożona, czeka na decyzję
+  ZAAKCEPTOWANA    // Zaakceptowana przez klienta
+  ODRZUCONA        // Odrzucona przez klienta lub auto-odrzucona
+  NEGOCJACJE       // W trakcie negocjacji
+  WYGASLA          // Wygasła (po 30 dniach)
+}
+```
+
+### Model: Case (fragment związany z ofertami)
+
+```prisma
+model Case {
+  id                    String    @id @default(uuid())
+  clientId              String
+  categoryId            String
+
+  nazwaSprawy           String
+  opisSprawy            String    @db.Text
+
+  budzetOd              Decimal?  @db.Decimal(10, 2)
+  budzetDo              Decimal?  @db.Decimal(10, 2)
+  oczekiwanyTerminRealizacji String?
+
+  status                CaseStatus @default(NOWA)
+
+  // Relacje
+  offers                Offer[]
+  // ... inne relacje
+
+  @@index([status])
+}
+
+enum CaseStatus {
+  NOWA                 // Sprawa nowa
+  OFERTY_OTRZYMANE     // Otrzymano co najmniej jedną ofertę
+  W_TRAKCIE            // Zaakceptowano ofertę, sprawa w realizacji
+  ZAMKNIETA            // Sprawa zakończona
+  ANULOWANA            // Sprawa anulowana przez klienta
+}
+```
+
+### Model: LawFirm (fragment związany z ofertami)
+
+```prisma
+model LawFirm {
+  id                    String    @id @default(uuid())
+  userId                String    @unique
+  nazwa                 String
+  slug                  String    @unique
+
+  // Statystyki
+  zlozoneOferty         Int       @default(0)
+  wygraneOferty         Int       @default(0)
+  konwersja             Decimal?  @db.Decimal(5, 2) // Procent: 0.00-100.00
+  punktySaldo           Int       @default(0)
+
+  // Relacje
+  offers                Offer[]
+  stats                 LawFirmStats[]
+  categoryStats         LawFirmCategoryStats[]
+  // ... inne relacje
+}
+```
+
+### Model: LawFirmStats (statystyki miesięczne)
+
+```prisma
+model LawFirmStats {
+  id                    String    @id @default(uuid())
+  lawFirmId             String
+  year                  Int
+  month                 Int       // 1-12
+
+  offersSubmitted       Int       @default(0)
+  offersAccepted        Int       @default(0)
+  offersRejected        Int       @default(0)
+
+  lawFirm               LawFirm   @relation(fields: [lawFirmId], references: [id])
+
+  @@unique([lawFirmId, year, month])
+  @@index([lawFirmId])
+}
+```
+
+### Model: LawFirmCategoryStats (statystyki per kategoria)
+
+```prisma
+model LawFirmCategoryStats {
+  id                    String    @id @default(uuid())
+  lawFirmId             String
+  categoryId            String
+
+  offersSubmitted       Int       @default(0)
+  offersAccepted        Int       @default(0)
+
+  lawFirm               LawFirm   @relation(fields: [lawFirmId], references: [id])
+  category              Category  @relation(fields: [categoryId], references: [id])
+
+  @@unique([lawFirmId, categoryId])
+}
+```
+
+### Model: Notification
+
+```prisma
+model Notification {
+  id                    String    @id @default(uuid())
+  userId                String
+  typ                   String    // NOWA_OFERTA, ZMIANA_STATUSU, etc.
+  tytul                 String
+  tresc                 String    @db.Text
+  linkUrl               String?
+  przeczytane           Boolean   @default(false)
+  createdAt             DateTime  @default(now())
+
+  user                  User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, przeczytane])
+  @@index([createdAt])
+}
+```
+
+### TypeScript Types
+
+**Plik:** `/prosta-sprawa/types/offers.ts`
+
+```typescript
+/**
+ * Base offer type
+ */
+export interface OfferBase {
+  id: string
+  kwotaNetto: number
+  vat: number
+  kwotaBrutto: number
+  terminRealizacjiDni: number
+  opisOferty: string
+  zakresUslug: string
+  warunkiPlatnosci: string
+  dodatkoweWarunki?: string | null
+  wyroznienie: boolean
+  status: string
+  createdAt: string | Date
+}
+
+/**
+ * Offer with case information (for client view)
+ */
+export interface OfferWithCase extends OfferBase {
+  case: {
+    id: string
+    nazwaSprawy: string
+    status: string
+    category: CategoryReference
+  }
+  lawFirm: LawFirmReference & {
+    miasto: string
+    voivodeship: {
+      nazwa: string
+    }
+  }
+}
+
+/**
+ * Offers response with pagination
+ */
+export interface OffersResponse {
+  offers: OfferWithCase[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+```
+
+---
+
+## Przepływy biznesowe
+
+### 1. Przepływ: Klient otrzymuje i akceptuje ofertę
+
+**Aktorzy:**
+- Klient (CLIENT)
+- Kancelaria (LAW_FIRM)
+- System
+
+**Kroki:**
+
+1. **Klient dodaje sprawę**
+   - Endpoint: `POST /api/cases`
+   - Status sprawy: `NOWA`
+
+2. **Kancelaria widzi sprawę w /panel-kancelarii/sprawy**
+   - Filtrowanie po kategorii i lokalizacji
+   - Podgląd szczegółów sprawy
+
+3. **Kancelaria składa ofertę**
+   - Endpoint: `POST /api/offers`
+   - Wypełnienie formularza oferty
+   - Opcjonalnie: wyróżnienie oferty (-50 punktów)
+   - System:
+     - Tworzy ofertę ze statusem `ZLOZONA`
+     - Zmienia status sprawy na `OFERTY_OTRZYMANE`
+     - Tworzy powiadomienie dla klienta
+     - Aktualizuje statystyki kancelarii
+
+4. **Klient otrzymuje powiadomienie**
+   - Dzwonek w headerze (czerwona kropka)
+   - Treść: "Kancelaria {nazwa} złożyła ofertę do sprawy {nazwa}"
+   - Link: `/panel-klienta/oferty/{id}`
+
+5. **Klient przegląda oferty**
+   - Wchodzi na `/panel-klienta/oferty`
+   - Widzi listę wszystkich ofert do swoich spraw
+   - Porównuje ceny, terminy, zakresy usług
+
+6. **Klient otwiera szczegóły oferty**
+   - Klika "Zobacz szczegóły"
+   - Dialog pokazuje pełne informacje
+   - Sprawdza profil kancelarii (opcjonalnie)
+
+7. **Klient akceptuje ofertę**
+   - Klika "Akceptuj"
+   - Potwierdza akcję w dialogu (ostrzeżenie o odrzuceniu innych ofert)
+   - Endpoint: `POST /api/offers/{id}/accept`
+   - System (transakcja atomowa):
+     - Status oferty → `ZAAKCEPTOWANA`
+     - Wszystkie inne oferty do sprawy → `ODRZUCONA`
+     - Status sprawy → `W_TRAKCIE`
+     - Statystyki kancelarii:
+       - `wygraneOferty` +1
+       - Przeliczenie `konwersja`
+       - Aktualizacja statystyk miesięcznych
+       - Aktualizacja statystyk kategorii
+     - Utworzenie powiadomienia dla kancelarii
+     - Wysłanie powiadomienia real-time (WebSocket)
+
+8. **Kancelaria otrzymuje powiadomienie**
+   - Natychmiastowe wyświetlenie w dzwonku (WebSocket)
+   - Dźwięk powiadomienia
+   - Treść: "Twoja oferta do sprawy {nazwa} została zaakceptowana przez klienta"
+   - Link: `/panel-kancelarii/oferty`
+
+9. **Rozpoczęcie współpracy**
+   - Klient może zobaczyć profil kancelarii
+   - Może rozpocząć czat z kancelarią
+   - Sprawa przechodzi do realizacji
+
+**Diagram przepływu:**
+```
+[Klient]                    [System]                    [Kancelaria]
+    |                           |                           |
+    |-- Dodaje sprawę --------->|                           |
+    |                           |-- Status: NOWA           |
+    |                           |                           |
+    |                           |<-- Widzi nową sprawę -----|
+    |                           |                           |
+    |                           |<-- Składa ofertę ---------|
+    |                           |-- Status: ZLOZONA         |
+    |<-- Powiadomienie ---------|-- -50 pkt (wyróżnienie)  |
+    |                           |-- Status sprawy: OFERTY   |
+    |                           |                           |
+    |-- Przegląda oferty ------>|                           |
+    |<-- Lista ofert ----------|                           |
+    |                           |                           |
+    |-- Akceptuje ofertę ------>|                           |
+    |                           |-- Transakcja START        |
+    |                           |   - Status: ZAAKCEPTOWANA |
+    |                           |   - Odrzuć inne oferty    |
+    |                           |   - Status sprawy: W_TRAKCIE
+    |                           |   - Statystyki +1         |
+    |                           |-- Transakcja COMMIT       |
+    |                           |                           |
+    |<-- Toast success ---------|-- Powiadomienie --------->|
+    |                           |   (WebSocket real-time)   |
+    |                           |                           |
+    |-- Rozpoczyna czat ------->|<-- Rozpoczyna czat -------|
+    |                           |                           |
+```
+
+### 2. Przepływ: Klient odrzuca ofertę
+
+**Kroki:**
+
+1. Klient przegląda oferty
+2. Klika "Odrzuć" na wybranej ofercie
+3. Potwierdza akcję w dialogu
+4. Endpoint: `POST /api/offers/{id}/reject`
+5. System:
+   - Status oferty → `ODRZUCONA`
+   - Utworzenie powiadomienia dla kancelarii
+6. Kancelaria otrzymuje powiadomienie
+7. Status sprawy pozostaje `OFERTY_OTRZYMANE` (mogą być inne oferty)
+
+**Diagram:**
+```
+[Klient]            [System]            [Kancelaria]
+    |                   |                   |
+    |-- Odrzuca ------->|                   |
+    |   ofertę          |-- Status:         |
+    |                   |   ODRZUCONA       |
+    |<-- Toast ---------|                   |
+    |   success         |-- Powiadomienie ->|
+    |                   |                   |
+```
+
+### 3. Przepływ: Automatyczne odrzucenie przy akceptacji
+
+**Scenariusz:** Klient ma 3 oferty (A, B, C) do sprawy. Akceptuje ofertę A.
+
+**Kroki:**
+
+1. Klient akceptuje ofertę A
+2. System wykonuje transakcję:
+   ```sql
+   -- 1. Zaakceptuj ofertę A
+   UPDATE Offer SET status = 'ZAAKCEPTOWANA' WHERE id = 'A'
+
+   -- 2. Odrzuć oferty B i C
+   UPDATE Offer SET status = 'ODRZUCONA'
+   WHERE caseId = 'X' AND id != 'A' AND status != 'ODRZUCONA'
+   ```
+3. Tylko oferta A otrzymuje powiadomienie "Zaakceptowana"
+4. Oferty B i C są cicho odrzucone (bez powiadomień - zmniejsza spam)
+
+**Uzasadnienie:**
+- Kancelarie wiedzą, że to konkurencja
+- Brak powiadomienia o automatycznym odrzuceniu zmniejsza frustrację
+- Kancelarie mogą sami sprawdzić status oferty
+
+### 4. Przepływ: Wyróżnienie oferty
+
+**Koszt:** 50 punktów
+
+**Korzyści dla kancelarii:**
+- Oferta wyświetlana z ramką w kolorze primary (niebieska)
+- Badge "Wyróżniona"
+- Większa widoczność dla klienta
+- Wyższe prawdopodobieństwo akceptacji
+
+**Kroki:**
+
+1. Kancelaria wypełnia formularz oferty
+2. Zaznacza checkbox "Wyróżnij ofertę"
+3. System sprawdza saldo punktów (>= 50)
+4. Jeśli OK:
+   - Tworzy ofertę z `wyroznienie = true`
+   - Odejmuje 50 punktów: `punktySaldo - 50`
+   - Zapisuje koszt w `punktyWyroznienia = 50`
+5. Jeśli brak punktów:
+   - Błąd 400: "Niewystarczająca liczba punktów"
+   - Link do zakupu punktów
+
+**UI klienta:**
+```
+┌─────────────────────────────────────┐
+│ 🎯 WYRÓŻNIONA OFERTA                │ ← Badge niebieski
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │
+│ │ Nazwa sprawy                    │ │
+│ │ Kancelaria XYZ                  │ │
+│ │                                 │ │
+│ │ 5 000,00 zł                     │ │
+│ │ Termin: 14 dni                  │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+   ↑ Ramka w kolorze primary (border-primary)
+```
+
+### 5. Przepływ: Statystyki kancelarii
+
+**Zliczane metryki:**
+
+**1. Łączne (LawFirm.*):**
+- `zlozoneOferty` - Liczba wszystkich złożonych ofert
+- `wygraneOferty` - Liczba zaakceptowanych ofert
+- `konwersja` - Procent zaakceptowanych: `(wygraneOferty / zlozoneOferty) × 100`
+
+**2. Miesięczne (LawFirmStats):**
+- `offersSubmitted` - Oferty złożone w danym miesiącu
+- `offersAccepted` - Oferty zaakceptowane w danym miesiącu
+- `offersRejected` - Oferty odrzucone w danym miesiącu
+
+**3. Per kategoria (LawFirmCategoryStats):**
+- `offersSubmitted` - Oferty złożone w danej kategorii
+- `offersAccepted` - Oferty zaakceptowane w danej kategorii
+
+**Aktualizacje:**
+
+**Przy składaniu oferty:**
+```typescript
+lawFirm.zlozoneOferty += 1
+LawFirmStats[year-month].offersSubmitted += 1
+LawFirmCategoryStats[categoryId].offersSubmitted += 1
+```
+
+**Przy akceptacji oferty:**
+```typescript
+lawFirm.wygraneOferty += 1
+lawFirm.konwersja = (lawFirm.wygraneOferty / lawFirm.zlozoneOferty) × 100
+LawFirmStats[year-month].offersAccepted += 1
+LawFirmCategoryStats[categoryId].offersAccepted += 1
+```
+
+**Wyświetlanie w /panel-kancelarii/statystyki:**
+- Wykres słupkowy: oferty złożone vs zaakceptowane (per miesiąc)
+- Wskaźnik konwersji: {konwersja}%
+- Top 3 kategorie (najwięcej zaakceptowanych ofert)
+- Porównanie z poprzednim miesiącem (+/- %)
+
+---
+
+## Podsumowanie
+
+### Kluczowe funkcjonalności ✅
+
+1. **Lista ofert** - Kompletna implementacja z:
+   - Paginacją
+   - Filtrowaniem po statusie
+   - Rozwijaniem długich opisów
+   - Wyróżnianiem ofert premium
+   - Dialogami szczegółów i potwierdzeń
+
+2. **Akceptacja ofert** - Pełna funkcjonalność z:
+   - Automatycznym odrzucaniem innych ofert
+   - Aktualizacją statystyk kancelarii
+   - Powiadomieniami real-time
+   - Walidacjami bezpieczeństwa
+
+3. **Odrzucanie ofert** - Implementacja z:
+   - Potwierdzeniem akcji
+   - Powiadomieniami dla kancelarii
+   - Trwałością decyzji
+
+4. **Bezpieczeństwo** - Wielopoziomowe zabezpieczenia:
+   - Autoryzacja na poziomie sesji
+   - Filtrowanie danych po stronie serwera
+   - Walidacja uprawnień do każdej oferty
+   - Sprawdzanie statusów przed akcjami
+
+5. **Statystyki** - Automatyczne śledzenie:
+   - Konwersji ofert
+   - Statystyk miesięcznych
+   - Statystyk per kategoria
+   - Rankingu kancelarii
+
+### Do zaimplementowania ⚠️
+
+1. **Strona szczegółów oferty** (`/panel-klienta/oferty/[id]`)
+   - Obecnie tylko placeholder
+   - API gotowe - brakuje UI
+
+2. **Negocjacje**
+   - API częściowo gotowe
+   - Brak UI do rozpoczęcia negocjacji
+   - Brak historii negocjacji w UI
+
+3. **Automatyczne wygaszanie ofert**
+   - Status `WYGASLA` zdefiniowany
+   - Brak CRON job do automatycznego wygaszania
+   - Brak UI dla wygasłych ofert
+
+4. **Filtry i sortowanie**
+   - Brak filtrów po statusie, dacie, cenie
+   - Brak sortowania (np. po dacie, cenie)
+   - Wszystkie oferty wyświetlane razem (brak grupowania po sprawie)
+
+### Metryki wydajności
+
+**Optymalizacje zaimplementowane:**
+- ✅ Eager loading relacji (include w Prisma)
+- ✅ Indeksy na często zapytywanych polach
+- ✅ Paginacja (limit 10 ofert)
+- ✅ Select tylko potrzebnych pól
+- ✅ Transakcje atomowe dla spójności danych
+
+**Do rozważenia:**
+- ⚠️ Cache dla listy ofert (Redis/In-memory)
+- ⚠️ Debouncing dla przycisków akcji
+- ⚠️ Lazy loading obrazków (logo kancelarii)
+- ⚠️ Virtual scrolling dla długich list
+
+---
+
+**Koniec dokumentacji**
+
+*Dokumentacja stworzona na podstawie analizy kodu źródłowego aplikacji Prosta Sprawa.*
+*Wersja: 1.0 | Data: 2025-11-16*
