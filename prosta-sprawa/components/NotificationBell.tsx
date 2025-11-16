@@ -131,19 +131,19 @@ export function NotificationBell() {
   const getNotificationStyle = (typ: string) => {
     switch (typ) {
       case "NOWA_WIADOMOSC":
-        return "text-blue-600"
+        return "text-primary"
       case "NOWA_OFERTA":
         return "text-green-600"
       case "ZMIANA_STATUSU":
-        return "text-orange-600"
-      case "NOWA_OPINIA":
-        return "text-purple-600"
-      case "MALY_STAN_PUNKTOW":
-        return "text-red-600"
-      case "KONIEC_SUBSKRYPCJI":
         return "text-yellow-600"
+      case "NOWA_OPINIA":
+        return "text-secondary-foreground"
+      case "MALY_STAN_PUNKTOW":
+        return "text-destructive"
+      case "KONIEC_SUBSKRYPCJI":
+        return "text-orange-500"
       default:
-        return "text-gray-600"
+        return "text-muted-foreground"
     }
   }
 
@@ -188,7 +188,7 @@ export function NotificationBell() {
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
                 className={`cursor-pointer flex flex-col items-start p-4 ${
-                  !notification.przeczytane ? "bg-blue-50" : ""
+                  !notification.przeczytane ? "bg-primary/10" : ""
                 }`}
               >
                 <div className="flex items-start justify-between w-full mb-1">
@@ -200,7 +200,7 @@ export function NotificationBell() {
                     {notification.tytul}
                   </span>
                   {!notification.przeczytane && (
-                    <div className="w-2 h-2 bg-blue-600 rounded-full ml-2 mt-1 flex-shrink-0" />
+                    <div className="w-2 h-2 bg-primary rounded-full ml-2 mt-1 flex-shrink-0" />
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">
