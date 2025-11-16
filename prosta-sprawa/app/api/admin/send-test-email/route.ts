@@ -114,8 +114,8 @@ export async function POST(request: NextRequest) {
     // Zapisz log w bazie danych (opcjonalnie)
     await prisma.systemLog.create({
       data: {
-        typ: "EMAIL_TESTOWY",
-        opis: `Wysłano testowy email na ${to} (szablon: ${template.nazwa})`,
+        action: "EMAIL_TESTOWY",
+        message: `Wysłano testowy email na ${to} (szablon: ${template.nazwa})`,
         userId: session.user.id,
       },
     }).catch(err => {

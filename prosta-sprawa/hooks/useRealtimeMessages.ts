@@ -28,7 +28,7 @@ export function useRealtimeMessages({
   const [lastUpdate, setLastUpdate] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>()
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectAttempts = useRef(0)
   const maxReconnectAttempts = 5
 

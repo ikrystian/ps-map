@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server"
 // GET /api/email-templates/[id] - Pobierz pojedynczy szablon
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -13,8 +13,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const template = await prisma.emailTemplate.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!template) {
@@ -47,7 +48,7 @@ export async function GET(
 // PUT /api/email-templates/[id] - Aktualizuj szablon
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -55,12 +56,13 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const { nazwa, temat, tresc, trescHtml, typ, aktywny, triggery, zmienne, opisZmiennych } = body
 
     // Check if template exists
     const existingTemplate = await prisma.emailTemplate.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingTemplate) {
@@ -72,7 +74,7 @@ export async function PUT(
 
     // Update template
     const template = await prisma.emailTemplate.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nazwa: nazwa !== undefined ? nazwa : existingTemplate.nazwa,
         temat: temat !== undefined ? temat : existingTemplate.temat,
@@ -109,7 +111,7 @@ export async function PUT(
 // DELETE /api/email-templates/[id] - Usuń szablon
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -117,9 +119,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Check if template exists
     const template = await prisma.emailTemplate.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!template) {
@@ -131,7 +135,7 @@ export async function DELETE(
 
     // Delete template
     await prisma.emailTemplate.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
@@ -147,7 +151,7 @@ export async function DELETE(
 // PATCH /api/email-templates/[id] - Toggle active status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -155,9 +159,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Get current template
     const template = await prisma.emailTemplate.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!template) {
@@ -169,7 +175,7 @@ export async function PATCH(
 
     // Toggle active status
     const updatedTemplate = await prisma.emailTemplate.update({
-      where: { id: params.id },
+      where: { id },
       data: { aktywny: !template.aktywny },
     })
 

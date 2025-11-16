@@ -153,9 +153,6 @@ export function EnhancedConversationList({
               {conversation.otherUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          {conversation.otherUser.isOnline && (
-            <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-background rounded-full" />
-          )}
         </div>
 
         {/* Informacje o konwersacji */}

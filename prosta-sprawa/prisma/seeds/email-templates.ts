@@ -633,7 +633,7 @@ Zespół Prosta Sprawa`,
     await prisma.emailTemplate.upsert({
       where: {
         // Use a unique combination for upsert
-        typ: template.typ as string,
+        typ: template.typ as any,
       },
       update: {
         nazwa: template.nazwa,

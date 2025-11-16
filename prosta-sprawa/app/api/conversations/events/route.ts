@@ -36,31 +36,41 @@ export async function GET(request: NextRequest) {
           if (client) {
             const conversations = await prisma.conversation.findMany({
               where: {
-                clientId: client.userId,
-                archivedByClient: false,
-                deletedByClient: false,
+                clientUserId: client.userId,
+                isArchivedByClient: false,
+                isDeletedByClient: false,
               },
-              select: {
-                unreadByClient: true,
+              include: {
+                messages: {
+                  where: {
+                    isRead: false,
+                    senderId: { not: client.userId },
+                  },
+                },
               },
             })
             unreadCount = conversations.reduce(
-              (sum, conv) => sum + conv.unreadByClient,
+              (sum, conv) => sum + conv.messages.length,
               0
             )
           } else if (lawFirm) {
             const conversations = await prisma.conversation.findMany({
               where: {
-                lawFirmId: lawFirm.userId,
-                archivedByLawFirm: false,
-                deletedByLawFirm: false,
+                lawFirmUserId: lawFirm.userId,
+                isArchivedByLawFirm: false,
+                isDeletedByLawFirm: false,
               },
-              select: {
-                unreadByLawFirm: true,
+              include: {
+                messages: {
+                  where: {
+                    isRead: false,
+                    senderId: { not: lawFirm.userId },
+                  },
+                },
               },
             })
             unreadCount = conversations.reduce(
-              (sum, conv) => sum + conv.unreadByLawFirm,
+              (sum, conv) => sum + conv.messages.length,
               0
             )
           }
@@ -68,15 +78,15 @@ export async function GET(request: NextRequest) {
           // Get latest conversations
           const whereClause = client
             ? {
-                clientId: client.userId,
-                archivedByClient: false,
-                deletedByClient: false,
+                clientUserId: client.userId,
+                isArchivedByClient: false,
+                isDeletedByClient: false,
               }
             : lawFirm
             ? {
-                lawFirmId: lawFirm.userId,
-                archivedByLawFirm: false,
-                deletedByLawFirm: false,
+                lawFirmUserId: lawFirm.userId,
+                isArchivedByLawFirm: false,
+                isDeletedByLawFirm: false,
               }
             : {}
 
