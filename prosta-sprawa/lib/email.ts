@@ -740,6 +740,181 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 }
 
 /**
+ * Generuje HTML dla emaila weryfikacji adresu email
+ */
+export function generateEmailVerificationEmail(
+  verificationUrl: string,
+  userName?: string,
+  isLawFirm?: boolean
+): { subject: string; html: string; text: string } {
+  const subject = 'Potwierdź swój adres email - ProstaSprawa'
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+          .info-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+          </div>
+
+          <div class="content">
+            <h2>Witamy w ProstaSprawa!</h2>
+
+            ${userName ? `<p>Witaj ${userName},</p>` : '<p>Witaj,</p>'}
+
+            <p>Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.</p>
+
+            <p>Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email.</p>
+
+            <div class="button-container">
+              <a href="${verificationUrl}" class="button">Potwierdź adres email</a>
+            </div>
+
+            <p>Lub skopiuj i wklej poniższy link do przeglądarki:</p>
+            <p style="word-break: break-all; color: #2563eb;">${verificationUrl}</p>
+
+            <div class="info-box">
+              <strong>ℹ️ Ważne informacje:</strong>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>Link weryfikacyjny jest ważny przez 24 godziny</li>
+                <li>Bez potwierdzenia emaila nie będziesz mógł się zalogować</li>
+                <li>Jeśli nie rejestrowałeś się w ProstaSprawa, zignoruj tę wiadomość</li>
+              </ul>
+            </div>
+
+            ${isLawFirm ? `
+              <p><strong>Co dalej?</strong></p>
+              <p>Po potwierdzeniu emaila będziesz mógł:</p>
+              <ul>
+                <li>Uzupełnić profil swojej kancelarii</li>
+                <li>Przeglądać dostępne sprawy</li>
+                <li>Składać oferty klientom</li>
+                <li>Aktywować promocje swojego profilu</li>
+              </ul>
+            ` : `
+              <p><strong>Co dalej?</strong></p>
+              <p>Po potwierdzeniu emaila będziesz mógł:</p>
+              <ul>
+                <li>Dodawać sprawy prawne</li>
+                <li>Przeglądać oferty kancelarii</li>
+                <li>Kontaktować się z prawnikami</li>
+                <li>Wystawiać opinie</li>
+              </ul>
+            `}
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Witamy w ProstaSprawa!
+
+${userName ? `Witaj ${userName},` : 'Witaj,'}
+
+Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.
+
+Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email.
+
+Otwórz poniższy link w przeglądarce:
+${verificationUrl}
+
+WAŻNE:
+- Link weryfikacyjny jest ważny przez 24 godziny
+- Bez potwierdzenia emaila nie będziesz mógł się zalogować
+- Jeśli nie rejestrowałeś się w ProstaSprawa, zignoruj tę wiadomość
+
+${isLawFirm ? `
+Co dalej?
+Po potwierdzeniu emaila będziesz mógł:
+- Uzupełnić profil swojej kancelarii
+- Przeglądać dostępne sprawy
+- Składać oferty klientom
+- Aktywować promocje swojego profilu
+` : `
+Co dalej?
+Po potwierdzeniu emaila będziesz mógł:
+- Dodawać sprawy prawne
+- Przeglądać oferty kancelarii
+- Kontaktować się z prawnikami
+- Wystawiać opinie
+`}
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+/**
  * Generuje HTML dla emaila formularza kontaktowego
  */
 export function generateContactFormEmail(
