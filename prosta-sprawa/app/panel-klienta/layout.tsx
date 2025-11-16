@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { NotificationBell } from "@/components/NotificationBell"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
@@ -128,13 +129,16 @@ export default function ClientPanelLayout({
           </Link>
           </div>
 
-          {/* User menu */}
-          <UserMenu
-            userRole="CLIENT"
-            userName={session?.user?.name}
-            userImage={session?.user?.image}
-            userId={session?.user?.id}
-          />
+          {/* Notifications and User menu */}
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <UserMenu
+              userRole="CLIENT"
+              userName={session?.user?.name}
+              userImage={session?.user?.image}
+              userId={session?.user?.id}
+            />
+          </div>
         </header>
 
         {/* Main content */}

@@ -215,6 +215,65 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Utwórz powiadomienie dla klienta o dodaniu sprawy
+    const clientNotification = await prisma.notification.create({
+      data: {
+        userId: session.user.id,
+        typ: "SYSTEM",
+        tytul: "Sprawa dodana pomyślnie",
+        tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Kancelarie prawne mogą teraz składać oferty.`,
+        linkUrl: "/panel-klienta/sprawy",
+      },
+    })
+
+    // Emit notification to client via Socket.IO
+    const { emitNewNotification } = await import("@/lib/socket")
+    await emitNewNotification(session.user.id, clientNotification)
+
+    // Powiadom kancelarie o nowej sprawie (tylko te z pasującą kategorią)
+    const lawFirms = await prisma.lawFirm.findMany({
+      where: {
+        zweryfikowana: true,
+        aktywna: true,
+        user: { deletedAt: null },
+        categories: {
+          some: { categoryId: category.id },
+        },
+      },
+      select: { userId: true },
+      take: 50, // Limit aby nie tworzyć zbyt wielu powiadomień
+    })
+
+    // Utwórz powiadomienia dla kancelarii
+    if (lawFirms.length > 0) {
+      const lawFirmNotifications = await prisma.notification.createMany({
+        data: lawFirms.map((lf) => ({
+          userId: lf.userId,
+          typ: "NOWA_OFERTA",
+          tytul: "Nowa sprawa w Twojej specjalizacji",
+          tresc: `Nowa sprawa: ${body.nazwaSprawy}. Sprawdź szczegóły i złóż ofertę.`,
+          linkUrl: "/panel-kancelarii/sprawy",
+        })),
+      })
+
+      // Emit notifications to law firms via Socket.IO
+      // We need to get the created notifications to emit them
+      const createdNotifications = await prisma.notification.findMany({
+        where: {
+          userId: { in: lawFirms.map((lf) => lf.userId) },
+          typ: "NOWA_OFERTA",
+          tytul: "Nowa sprawa w Twojej specjalizacji",
+        },
+        orderBy: { createdAt: "desc" },
+        take: lawFirms.length,
+      })
+
+      // Emit to each law firm
+      for (const notification of createdNotifications) {
+        await emitNewNotification(notification.userId, notification)
+      }
+    }
+
     return NextResponse.json(newCase, { status: 201 })
   } catch (error) {
     console.error("Error creating case:", error)

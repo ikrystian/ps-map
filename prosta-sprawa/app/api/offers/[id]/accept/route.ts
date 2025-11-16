@@ -235,7 +235,7 @@ export async function POST(
       }
 
       // Utwórz powiadomienie dla kancelarii
-      await tx.notification.create({
+      const notification = await tx.notification.create({
         data: {
           userId: offer.lawFirm.userId,
           typ: "ZMIANA_STATUSU",
@@ -245,10 +245,17 @@ export async function POST(
         }
       })
 
-      return updated
+      return { updated, notification, lawFirmUserId: offer.lawFirm.userId }
     })
 
-    return Response.json(updatedOffer)
+    // Emit notification via Socket.IO (after transaction)
+    const { emitNewNotification } = await import("@/lib/socket")
+    await emitNewNotification(
+      updatedOffer.lawFirmUserId,
+      updatedOffer.notification
+    )
+
+    return Response.json(updatedOffer.updated)
   } catch (error) {
     console.error("Error accepting offer:", error)
     return Response.json(

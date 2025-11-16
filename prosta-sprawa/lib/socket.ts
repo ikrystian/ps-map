@@ -149,3 +149,29 @@ async function updateUnreadCount(userId: string) {
     console.error("[Socket.IO] Error updating unread count:", error)
   }
 }
+
+// Emit new notification
+export async function emitNewNotification(userId: string, notification: any) {
+  const io = getIO()
+  if (!io) {
+    console.warn("[Socket.IO] IO instance not available for notification")
+    return
+  }
+
+  try {
+    // Emit to user's room
+    io.to(`user:${userId}`).emit("new_notification", notification)
+
+    // Also update unread notification count
+    const unreadCount = await prisma.notification.count({
+      where: {
+        userId,
+        przeczytane: false,
+      },
+    })
+
+    io.to(`user:${userId}`).emit("notification_count", { unreadCount })
+  } catch (error) {
+    console.error("[Socket.IO] Error emitting notification:", error)
+  }
+}

@@ -39,6 +39,7 @@ import {
 } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
+import { NotificationBell } from "@/components/NotificationBell"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
@@ -255,14 +256,17 @@ export default function LawFirmPanelLayout({
             </Link>
           </div>
 
-          <UserMenu
-            userRole="LAW_FIRM"
-            userName={session?.user?.name}
-            userImage={session?.user?.image}
-            punktySaldo={punktySaldo}
-            userId={session?.user?.id}
-            subscriptionType={subscriptionType}
-          />
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <UserMenu
+              userRole="LAW_FIRM"
+              userName={session?.user?.name}
+              userImage={session?.user?.image}
+              punktySaldo={punktySaldo}
+              userId={session?.user?.id}
+              subscriptionType={subscriptionType}
+            />
+          </div>
         </header>
 
         {/* Main content */}

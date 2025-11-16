@@ -222,6 +222,35 @@ export async function POST(
       },
     })
 
+    // Utwórz powiadomienie dla odbiorcy wiadomości
+    const recipientId =
+      conversation.clientUserId === userId
+        ? conversation.lawFirmUserId
+        : conversation.clientUserId
+
+    const senderName = session.user.name || "Użytkownik"
+    const messagePreview =
+      content.trim().length > 50
+        ? content.trim().substring(0, 50) + "..."
+        : content.trim()
+
+    const notification = await prisma.notification.create({
+      data: {
+        userId: recipientId,
+        typ: "NOWA_WIADOMOSC",
+        tytul: `Nowa wiadomość od ${senderName}`,
+        tresc: messagePreview,
+        linkUrl:
+          session.user.role === "CLIENT"
+            ? "/panel-kancelarii/wiadomosci"
+            : "/panel-klienta/wiadomosci",
+      },
+    })
+
+    // Emit real-time notification via Socket.IO
+    const { emitNewNotification } = await import("@/lib/socket")
+    await emitNewNotification(recipientId, notification)
+
     // Jeśli klient wysyła załączniki, utwórz dokumenty dla kancelarii
     if (attachments && attachments.length > 0 && session.user.role === "CLIENT") {
       try {

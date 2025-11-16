@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Dodaj punkty do kancelarii
-      await tx.lawFirm.update({
+      const lawFirm = await tx.lawFirm.update({
         where: { id: order.lawFirmId },
         data: {
           punktySaldo: {
@@ -71,7 +71,28 @@ export async function POST(request: NextRequest) {
           },
         },
       })
+
+      // Utwórz powiadomienie o zmianie statusu płatności
+      const notification = await tx.notification.create({
+        data: {
+          userId: lawFirm.userId,
+          typ: "ZMIANA_STATUSU",
+          tytul: "Płatność zakończona pomyślnie",
+          tresc: `Twoja płatność została przetworzona. Dodano ${order.liczbaPunktow || 0} punktów do konta.`,
+          linkUrl: "/panel-kancelarii/punkty",
+        },
+      })
+
+      // Emit real-time notification via Socket.IO (after transaction)
+      return { lawFirm, notification }
     })
+
+    // Emit notification via Socket.IO
+    const { emitNewNotification } = await import("@/lib/socket")
+    await emitNewNotification(
+      result.lawFirm.userId,
+      result.notification
+    )
 
     console.log("Payment verified and order updated:", order.id)
 
