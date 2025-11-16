@@ -190,7 +190,7 @@ export default function CategoryPage() {
 
   if (!category && !isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen  bg-[#0f0f0e]">
         <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="pt-6">
@@ -209,7 +209,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0f0f0e]">
       <div className="container mx-auto px-4 py-8">
         {/* Category Header */}
         {category ? (
@@ -428,7 +428,7 @@ export default function CategoryPage() {
             {isLoading && lawFirms.length === 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                 {[...Array(6)].map((_, i) => (
-                  <Card key={i}>
+                  <Card className="bg-card" key={i}>
                     <CardHeader>
                       <Skeleton className="h-20 w-20 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-48 mx-auto" />
@@ -448,7 +448,7 @@ export default function CategoryPage() {
                      {lawFirms.map((firm) => (
                        <Link key={firm.id} href={`/kancelaria/${firm?.slug}`}>
                          <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
-                           <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
+                           <Card className="bg-card hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
                              <CardHeader>
                                {firm.logo ? (
                                  <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
