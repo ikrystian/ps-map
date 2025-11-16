@@ -63,11 +63,11 @@ export function EnhancedMessengerLayout() {
 
   // Real-time updates hook
   const { unreadCount, isConnected, lastUpdate } = useRealtimeMessages({
-    onUpdate: () => {
+    onUpdate: useCallback(() => {
       // Refresh conversations when real-time update detected
       fetchAllConversations(true)
-    },
-    onNewMessage: (data) => {
+    }, [fetchAllConversations]),
+    onNewMessage: useCallback((data: any) => {
       // Show notification for new message
       if (Notification.permission === "granted") {
         new Notification("Nowa wiadomość", {
@@ -80,7 +80,7 @@ export function EnhancedMessengerLayout() {
       audio.play().catch(() => {
         // Ignore errors if sound can't play
       })
-    },
+    }, []),
     enabled: !!session?.user,
   })
 

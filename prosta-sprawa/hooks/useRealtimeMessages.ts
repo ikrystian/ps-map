@@ -31,6 +31,7 @@ export function useRealtimeMessages({
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectAttempts = useRef(0)
   const maxReconnectAttempts = 5
+  const previousUnreadCountRef = useRef<number>(0)
 
   const connect = useCallback(() => {
     if (!session?.user?.id || !enabled || status !== "authenticated") {
@@ -62,10 +63,15 @@ export function useRealtimeMessages({
           }
 
           if (update.type === "update" && update.data) {
-            setUnreadCount(update.data.unreadCount || 0)
+            const newUnreadCount = update.data.unreadCount || 0
+            const hasCountChanged = newUnreadCount !== previousUnreadCountRef.current
+
+            setUnreadCount(newUnreadCount)
             setLastUpdate(update.data.timestamp || new Date().toISOString())
 
-            if (update.data.hasNewMessages) {
+            // Only trigger onUpdate if unread count actually changed
+            if (hasCountChanged && update.data.hasNewMessages) {
+              previousUnreadCountRef.current = newUnreadCount
               onUpdate?.()
             }
           }
