@@ -46,6 +46,11 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
+        // Sprawdź czy email został zweryfikowany
+        if (!user.emailVerified) {
+          throw new Error("Email nie został zweryfikowany. Sprawdź swoją skrzynkę pocztową i kliknij link weryfikacyjny.")
+        }
+
         // Update last login
         await prisma.user.update({
           where: { id: user.id },

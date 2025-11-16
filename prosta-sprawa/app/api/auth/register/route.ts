@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { UserRole } from "@prisma/client"
+import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
+import crypto from "crypto"
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,6 +33,11 @@ export async function POST(request: NextRequest) {
     // Hashowanie hasła
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    // Generowanie tokenu weryfikacyjnego
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationExpiry = new Date()
+    verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token ważny 24 godziny
+
     // Utworzenie użytkownika
     const user = await prisma.user.create({
       data: {
@@ -38,6 +45,16 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         role: role as UserRole || UserRole.CLIENT,
         name: userData.name || null,
+        emailVerified: null, // Email nie zweryfikowany
+      },
+    })
+
+    // Zapisz token weryfikacyjny
+    await prisma.verificationToken.create({
+      data: {
+        identifier: user.email,
+        token: verificationToken,
+        expires: verificationExpiry,
       },
     })
 
@@ -108,14 +125,38 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Wyślij email weryfikacyjny
+    const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
+    const isLawFirm = user.role === UserRole.LAW_FIRM
+    const emailContent = generateEmailVerificationEmail(
+      verificationUrl,
+      userData.name || user.email,
+      isLawFirm
+    )
+
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+      })
+      console.log(`Verification email sent to: ${user.email}`)
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      // Nie przerywamy rejestracji jeśli email się nie wysłał
+      // Użytkownik może ponownie wysłać email weryfikacyjny
+    }
+
     return NextResponse.json(
       {
-        message: "Użytkownik został zarejestrowany",
+        message: "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email, aby potwierdzić adres.",
         user: {
           id: user.id,
           email: user.email,
           role: user.role,
         },
+        requiresEmailVerification: true,
       },
       { status: 201 }
     )
