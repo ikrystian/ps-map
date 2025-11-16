@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { ConsentManager } from "./consent-manager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +30,20 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="pl" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers session={session}>
-          {children}
-          <Toaster />
-          <Sonner />
-        </Providers>
-      </body>
-    </html>
-  );
+        <html lang="pl" suppressHydrationWarning>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+    		<ConsentManager>
+    			
+            <Providers session={session}>
+              {children}
+              <Toaster />
+              <Sonner />
+            </Providers>
+          
+    		</ConsentManager>
+    	</body>
+        </html>
+      )
 }
