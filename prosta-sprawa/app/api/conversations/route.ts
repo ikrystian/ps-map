@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
+import { auth } from "@/auth"
+import { decryptMessage } from "@/lib/encryption"
 
 // GET /api/conversations - Pobierz wszystkie konwersacje użytkownika
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
@@ -17,14 +18,39 @@ export async function GET() {
     const userId = session.user.id
     const userRole = session.user.role
 
+    // Get filter from query params
+    const { searchParams } = new URL(request.url)
+    const filter = searchParams.get("filter") || "active" // active, archived, deleted
+
+    // Build where clause based on role and filter
+    const isClient = userRole === "CLIENT"
+    const baseWhere = isClient
+      ? { clientUserId: userId }
+      : userRole === "LAW_FIRM"
+      ? { lawFirmUserId: userId }
+      : { OR: [{ clientUserId: userId }, { lawFirmUserId: userId }] }
+
+    let statusFilter = {}
+    if (filter === "active") {
+      statusFilter = isClient
+        ? { isArchivedByClient: false, isDeletedByClient: false }
+        : { isArchivedByLawFirm: false, isDeletedByLawFirm: false }
+    } else if (filter === "archived") {
+      statusFilter = isClient
+        ? { isArchivedByClient: true, isDeletedByClient: false }
+        : { isArchivedByLawFirm: true, isDeletedByLawFirm: false }
+    } else if (filter === "deleted") {
+      statusFilter = isClient
+        ? { isDeletedByClient: true }
+        : { isDeletedByLawFirm: true }
+    }
+
     // Pobierz konwersacje w zależności od roli użytkownika
     const conversations = await prisma.conversation.findMany({
-      where:
-        userRole === "CLIENT"
-          ? { clientUserId: userId }
-          : userRole === "LAW_FIRM"
-          ? { lawFirmUserId: userId }
-          : { OR: [{ clientUserId: userId }, { lawFirmUserId: userId }] },
+      where: {
+        ...baseWhere,
+        ...statusFilter,
+      },
       include: {
         clientUser: {
           select: {
@@ -60,6 +86,7 @@ export async function GET() {
           select: {
             id: true,
             content: true,
+            contentIv: true,
             createdAt: true,
             senderId: true,
             isRead: true,
@@ -87,16 +114,30 @@ export async function GET() {
         (msg) => !msg.isRead && msg.senderId !== userId
       ).length
 
+      // Decrypt last message content
+      let decryptedContent = ""
+      if (lastMessage) {
+        try {
+          decryptedContent = lastMessage.contentIv
+            ? decryptMessage(lastMessage.content, lastMessage.contentIv)
+            : lastMessage.content
+        } catch (error) {
+          console.error("Error decrypting message:", error)
+          decryptedContent = "[Zaszyfrowana wiadomość]"
+        }
+      }
+
       return {
         id: conv.id,
         otherUser: {
           id: otherUser.id,
           name: otherUserName,
           image: otherUserImage,
+          isOnline: false, // Will be updated by frontend
         },
         lastMessage: lastMessage
           ? {
-              content: lastMessage.content,
+              content: decryptedContent,
               createdAt: lastMessage.createdAt,
               isFromMe: lastMessage.senderId === userId,
               isRead: lastMessage.isRead,
