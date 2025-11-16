@@ -124,7 +124,8 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError("Nieprawidłowy email lub hasło")
+        // Wyświetl szczegółowy komunikat błędu z NextAuth
+        setError(result.error)
         setIsLoading(false)
         return
       }
@@ -168,7 +169,15 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
-                {error}
+                <p>{error}</p>
+                {error.includes("nie został zweryfikowany") && (
+                  <Link
+                    href="/auth/resend-verification"
+                    className="mt-2 inline-block text-sm underline hover:text-destructive/80"
+                  >
+                    Wyślij ponownie email weryfikacyjny
+                  </Link>
+                )}
               </div>
             )}
 

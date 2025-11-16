@@ -1,7 +1,6 @@
 import { createServer } from "http"
 import { parse } from "url"
 import next from "next"
-import { initializeSocket } from "./lib/socket"
 
 const dev = process.env.NODE_ENV !== "production"
 const hostname = "localhost"
@@ -22,11 +21,8 @@ app.prepare().then(() => {
     }
   })
 
-  // Initialize Socket.IO
-  initializeSocket(server)
-
   server.listen(port, () => {
     console.log(`> Ready on http://${hostname}:${port}`)
-    console.log(`> Socket.IO initialized on path /api/socket`)
+    console.log(`> Socket.IO will be initialized on first connection to /api/socket`)
   })
 })

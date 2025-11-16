@@ -17,11 +17,11 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     if (!token) {
       setStatus("error")
-      setMessage("Brak tokenu weryfikacyjnego. Link jest nieprawidBowy.")
+      setMessage("Brak tokenu weryfikacyjnego. Link jest nieprawidłowy.")
       return
     }
 
-    // WywoBaj API do weryfikacji emaila
+    // Wywołaj API do weryfikacji emaila
     const verifyEmail = async () => {
       try {
         const response = await fetch(`/api/auth/verify-email?token=${token}`)
@@ -37,12 +37,12 @@ export default function VerifyEmailPage() {
           }
         } else {
           setStatus("error")
-          setMessage(data.error || "WystpiB bBd podczas weryfikacji emaila")
+          setMessage(data.error || "Wystąpił błąd podczas weryfikacji emaila")
         }
       } catch (error) {
         console.error("Verification error:", error)
         setStatus("error")
-        setMessage("WystpiB bBd podczas weryfikacji emaila. Spr�buj ponownie p�zniej.")
+        setMessage("Wystąpił błąd podczas weryfikacji emaila. Spróbuj ponownie później.")
       }
     }
 
@@ -68,7 +68,7 @@ export default function VerifyEmailPage() {
               </div>
               <CardTitle>Weryfikacja emaila...</CardTitle>
               <CardDescription>
-                Prosz czeka, trwa weryfikacja Twojego adresu email
+                Proszę czekać, trwa weryfikacja Twojego adresu email
               </CardDescription>
             </>
           )}
@@ -88,7 +88,7 @@ export default function VerifyEmailPage() {
               <div className="mx-auto mb-4">
                 <AlertCircle className="h-16 w-16 text-blue-600" />
               </div>
-              <CardTitle className="text-blue-600">Email ju| zweryfikowany</CardTitle>
+              <CardTitle className="text-blue-600">Email już zweryfikowany</CardTitle>
               <CardDescription>{message}</CardDescription>
             </>
           )}
@@ -98,7 +98,7 @@ export default function VerifyEmailPage() {
               <div className="mx-auto mb-4">
                 <XCircle className="h-16 w-16 text-red-600" />
               </div>
-              <CardTitle className="text-red-600">BBd weryfikacji</CardTitle>
+              <CardTitle className="text-red-600">Błąd weryfikacji</CardTitle>
               <CardDescription>{message}</CardDescription>
             </>
           )}
@@ -107,17 +107,17 @@ export default function VerifyEmailPage() {
         <CardContent className="space-y-3">
           {(status === "success" || status === "already_verified") && (
             <Button onClick={handleGoToLogin} className="w-full">
-              Przejdz do logowania
+              Przejdź do logowania
             </Button>
           )}
 
           {status === "error" && (
             <>
               <Button onClick={handleResendEmail} className="w-full">
-                Wy[lij ponownie email weryfikacyjny
+                Wyślij ponownie email weryfikacyjny
               </Button>
               <Button onClick={handleGoToLogin} variant="outline" className="w-full">
-                Przejdz do logowania
+                Przejdź do logowania
               </Button>
             </>
           )}

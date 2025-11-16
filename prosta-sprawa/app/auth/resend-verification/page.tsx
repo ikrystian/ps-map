@@ -18,7 +18,7 @@ export default function ResendVerificationPage() {
     e.preventDefault()
 
     if (!email) {
-      toast.error("Wprowadz adres email")
+      toast.error("Wprowadź adres email")
       return
     }
 
@@ -34,18 +34,18 @@ export default function ResendVerificationPage() {
       const data = await response.json()
 
       if (response.ok) {
-        toast.success(data.message || "Link weryfikacyjny zostaB wysBany")
+        toast.success(data.message || "Link weryfikacyjny został wysłany")
         setEmail("")
         // Przekieruj do strony logowania po 2 sekundach
         setTimeout(() => {
           router.push("/logowanie")
         }, 2000)
       } else {
-        toast.error(data.error || "WystpiB bBd")
+        toast.error(data.error || "Wystąpił błąd")
       }
     } catch (error) {
       console.error("Resend verification error:", error)
-      toast.error("WystpiB bBd podczas wysyBania emaila")
+      toast.error("Wystąpił błąd podczas wysyłania emaila")
     } finally {
       setLoading(false)
     }
@@ -58,9 +58,9 @@ export default function ResendVerificationPage() {
           <div className="mx-auto mb-4">
             <Mail className="h-16 w-16 text-blue-600" />
           </div>
-          <CardTitle>Wy[lij ponownie email weryfikacyjny</CardTitle>
+          <CardTitle>Wyślij ponownie email weryfikacyjny</CardTitle>
           <CardDescription>
-            Wprowadz sw�j adres email, a wy[lemy Ci nowy link weryfikacyjny
+            Wprowadź swój adres email, a wyślemy Ci nowy link weryfikacyjny
           </CardDescription>
         </CardHeader>
 
@@ -83,12 +83,12 @@ export default function ResendVerificationPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  WysyBanie...
+                  Wysyłanie...
                 </>
               ) : (
                 <>
                   <Mail className="mr-2 h-4 w-4" />
-                  Wy[lij link weryfikacyjny
+                  Wyślij link weryfikacyjny
                 </>
               )}
             </Button>
@@ -100,7 +100,7 @@ export default function ResendVerificationPage() {
                 onClick={() => router.push("/logowanie")}
                 disabled={loading}
               >
-                Wr� do logowania
+                Wróć do logowania
               </Button>
             </div>
           </form>
