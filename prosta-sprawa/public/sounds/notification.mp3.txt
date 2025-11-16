@@ -1,0 +1,17 @@
+PLACEHOLDER FILE
+
+This file serves as a placeholder for the notification sound.
+Please replace this with an actual notification.mp3 audio file.
+
+You can download free notification sounds from:
+- https://pixabay.com/sound-effects/search/notification/
+- https://freesound.org/
+
+Recommended specs:
+- Format: MP3
+- Duration: 1-2 seconds
+- Size: < 50KB
+- Volume: Moderate
+
+Once you have a notification.mp3 file, place it in this directory
+(/public/sounds/) and remove this .txt file.
