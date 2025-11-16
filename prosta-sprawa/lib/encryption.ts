@@ -14,8 +14,10 @@ const ALGORITHM = "aes-256-cbc"
  * Ensures the encryption key is exactly 32 bytes
  */
 function getEncryptionKey(): Buffer {
-  const key = ENCRYPTION_KEY.slice(0, 64) // Take first 64 hex characters (32 bytes)
-  return Buffer.from(key, "hex")
+  if (ENCRYPTION_KEY.length !== 64) {
+    throw new Error("Encryption key must be 32 bytes (64 hex characters)")
+  }
+  return Buffer.from(ENCRYPTION_KEY, "hex")
 }
 
 /**
