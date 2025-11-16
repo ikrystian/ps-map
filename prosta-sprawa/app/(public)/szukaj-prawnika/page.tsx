@@ -18,7 +18,14 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon } from "lucide-react"
+import dynamic from "next/dynamic"
+
+// Dynamic import of map component to avoid SSR issues
+const LawFirmMap = dynamic(
+  () => import("@/components/map/LawFirmMap"),
+  { ssr: false, loading: () => <div className="h-[600px] bg-gray-100 rounded-lg flex items-center justify-center">Ładowanie mapy...</div> }
+)
 
 interface LawFirm {
   id: string
@@ -62,7 +69,7 @@ export default function SearchLawyerPage() {
   const [total, setTotal] = useState(0)
 
   // View mode
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid")
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -332,6 +339,14 @@ export default function SearchLawyerPage() {
               >
                 <List className="h-4 w-4" />
               </Button>
+              <Button
+                variant={viewMode === "map" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("map")}
+                className="px-3"
+              >
+                <MapIcon className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
@@ -342,8 +357,12 @@ export default function SearchLawyerPage() {
             </div>
           ) : lawFirms.length > 0 ? (
             <>
-              {/* Law Firms Grid View */}
-              {viewMode === "grid" ? (
+              {/* Map View */}
+              {viewMode === "map" ? (
+                <div className="mb-8">
+                  <LawFirmMap />
+                </div>
+              ) : viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                   {lawFirms.map((firm) => (
                     <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
