@@ -48,6 +48,9 @@ model User {
   lawFirmConversations    Conversation[] @relation("LawFirmConversations")
   sentChatMessages        ChatMessage[]  @relation("SentChatMessages")
 
+  // Document relations
+  uploadedDocuments       Document[]     @relation("ClientDocuments")
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -644,6 +647,7 @@ model Conversation {
   // Relacje
   messages          ChatMessage[]
   typingIndicators  TypingIndicator[]
+  documents         Document[]
 
   @@unique([clientUserId, lawFirmUserId])
   @@index([clientUserId])
@@ -1514,12 +1518,22 @@ model Document {
   sciezka         String   // Ścieżka do pliku
   rozszerzenie    String   // np. "pdf", "docx", "txt"
 
+  // Opcjonalne: jeśli dokument pochodzi od klienta
+  zrodlo          String   @default("KANCELARIA") // "KANCELARIA" lub "KLIENT"
+  clientUserId    String?  // ID klienta, który wysłał plik
+  clientUser      User?    @relation("ClientDocuments", fields: [clientUserId], references: [id], onDelete: Cascade)
+  conversationId  String?  // ID konwersacji, w której wysłano plik
+  conversation    Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@index([lawFirmId])
   @@index([createdAt])
   @@index([typDokumentu])
+  @@index([zrodlo])
+  @@index([clientUserId])
+  @@index([conversationId])
 }
 
 model Page {
