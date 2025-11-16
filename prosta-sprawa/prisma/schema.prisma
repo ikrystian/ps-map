@@ -229,7 +229,7 @@ model LawFirm {
 
   // System punktowy i subskrypcja
   punktySaldo           Int      @default(0)
-  pakietSubskrypcji     SubscriptionPackage @default(PODSTAWOWY)
+  pakietSubskrypcji     SubscriptionPackage?
   dataPakietuOd         DateTime?
   dataPakietuDo         DateTime?
   autoRenewal           Boolean  @default(false)  // Automatyczne przedłużanie pakietu

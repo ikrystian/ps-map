@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, Zap, Star, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type PackageType = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES";
+type PackageType = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
 
 interface PackageBadgeProps {
   packageType: PackageType;
@@ -25,6 +25,40 @@ export function PackageBadge({
   showIcon = true,
   size = "md",
 }: PackageBadgeProps) {
+  // Rozmiary
+  const sizeClasses = {
+    sm: {
+      badge: "text-xs px-2 py-0.5",
+      icon: "h-3 w-3",
+    },
+    md: {
+      badge: "text-sm px-2.5 py-1",
+      icon: "h-3.5 w-3.5",
+    },
+    lg: {
+      badge: "text-base px-3 py-1.5",
+      icon: "h-4 w-4",
+    },
+  };
+
+  const sizes = sizeClasses[size];
+
+  // Jeśli brak pakietu, wyświetl odpowiedni badge
+  if (!packageType) {
+    return (
+      <Badge
+        variant="outline"
+        className={cn(
+          "gap-1 font-semibold border-gray-300 text-gray-500 dark:text-gray-400",
+          sizes.badge,
+          className
+        )}
+      >
+        Brak pakietu
+      </Badge>
+    );
+  }
+
   // Konfiguracja dla każdego pakietu
   const packageConfig = {
     PODSTAWOWY: {
@@ -55,24 +89,6 @@ export function PackageBadge({
 
   const config = packageConfig[packageType];
   const Icon = config.icon;
-
-  // Rozmiary
-  const sizeClasses = {
-    sm: {
-      badge: "text-xs px-2 py-0.5",
-      icon: "h-3 w-3",
-    },
-    md: {
-      badge: "text-sm px-2.5 py-1",
-      icon: "h-3.5 w-3.5",
-    },
-    lg: {
-      badge: "text-base px-3 py-1.5",
-      icon: "h-4 w-4",
-    },
-  };
-
-  const sizes = sizeClasses[size];
 
   return (
     <Badge

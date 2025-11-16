@@ -112,7 +112,7 @@ interface LawFirm {
   konwersja: number
   avgRating: number
   reviewCount: number
-  pakietSubskrypcji: string
+  pakietSubskrypcji: string | null
   voivodeship: {
     nazwa: string
   }

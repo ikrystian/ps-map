@@ -108,7 +108,8 @@ export default function LawFirmPanelLayout({
 
   // Sprawdź czy pakiet wygasł i pokaż modal
   useEffect(() => {
-    if (!permissionsLoading && packageExpired && session?.user?.role === "LAW_FIRM") {
+    // Pokaż modal tylko jeśli użytkownik MA pakiet (nie null) i jest wygasły
+    if (!permissionsLoading && packageExpired && packageName && session?.user?.role === "LAW_FIRM") {
       // Pokaż modal tylko raz na sesję (możesz użyć localStorage jeśli chcesz trwałość)
       const hasSeenExpiredModal = sessionStorage.getItem("hasSeenExpiredModal")
       if (!hasSeenExpiredModal) {
@@ -116,7 +117,7 @@ export default function LawFirmPanelLayout({
         sessionStorage.setItem("hasSeenExpiredModal", "true")
       }
     }
-  }, [permissionsLoading, packageExpired, session])
+  }, [permissionsLoading, packageExpired, packageName, session])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })

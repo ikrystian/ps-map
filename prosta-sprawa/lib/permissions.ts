@@ -16,7 +16,7 @@ import { SubscriptionPackage } from "@prisma/client";
  */
 export interface LawFirmPermissionData {
   id: string;
-  pakietSubskrypcji: SubscriptionPackage;
+  pakietSubskrypcji: SubscriptionPackage | null;
   dataPakietuOd: Date | null;
   dataPakietuDo: Date | null;
   autoRenewal: boolean;
@@ -59,7 +59,7 @@ export interface LimitCheckResult {
  */
 export interface PermissionsSet {
   // Informacje o pakiecie
-  packageName: SubscriptionPackage;
+  packageName: SubscriptionPackage | null;
   packageActive: boolean;
   packageExpired: boolean;
   expiryDate: Date | null;
@@ -262,6 +262,41 @@ export function daysUntilExpiry(lawFirm: LawFirmPermissionData): number | null {
  * Pobiera pełny zestaw uprawnień dla kancelarii
  */
 export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): PermissionsSet {
+  // Jeśli kancelaria nie ma pakietu, zwróć zerowe uprawnienia
+  if (!lawFirm.pakietSubskrypcji) {
+    return {
+      packageName: null,
+      packageActive: false,
+      packageExpired: false,
+      expiryDate: null,
+      autoRenewal: false,
+      features: {
+        canAccessBlog: false,
+        canAccessStatistics: false,
+        canPromoteProfile: false,
+        canAccessPrioritySearch: false,
+        canUploadCoverBanner: false,
+        canAccessMarketingSupport: false,
+        canSponsorArticles: false,
+        skillLawFocus: false,
+      },
+      limits: {
+        activeCases: 0,
+        categories: 0,
+        voivodeships: 0,
+        cities: 0,
+      },
+      extras: {
+        personalSupport: 0,
+        caseNotifications: 0,
+        bonusPoints: 0,
+        hideAds: false,
+        allowAttachments: false,
+        specialBadge: null,
+      },
+    };
+  }
+
   const packageConfig = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
   const active = hasActivePackage(lawFirm);
   const expired = isPackageExpired(lawFirm);
@@ -362,7 +397,11 @@ export function isPackageHigherOrEqual(
 /**
  * Zwraca nazwę pakietu po polsku
  */
-export function getPackageDisplayName(packageType: SubscriptionPackage): string {
+export function getPackageDisplayName(packageType: SubscriptionPackage | null): string {
+  if (!packageType) {
+    return 'Brak pakietu';
+  }
+
   const names: Record<SubscriptionPackage, string> = {
     PODSTAWOWY: 'Podstawowy',
     STANDARD: 'Standard',

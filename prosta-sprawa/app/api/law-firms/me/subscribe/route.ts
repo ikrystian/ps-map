@@ -98,10 +98,12 @@ export async function POST(request: NextRequest) {
         (new Date(lawFirm.dataPakietuDo).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
       )
 
-      // Pobierz poprzedni pakiet aby znać jego cenę
-      const previousPlan = await prisma.subscriptionPlan.findUnique({
-        where: { typ: lawFirm.pakietSubskrypcji },
-      })
+      // Pobierz poprzedni pakiet aby znać jego cenę (jeśli istnieje)
+      const previousPlan = lawFirm.pakietSubskrypcji
+        ? await prisma.subscriptionPlan.findUnique({
+            where: { typ: lawFirm.pakietSubskrypcji },
+          })
+        : null
 
       if (previousPlan && remainingDays > 0) {
         // Oblicz dzienną wartość poprzedniego pakietu

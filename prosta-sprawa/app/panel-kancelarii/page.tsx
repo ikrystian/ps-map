@@ -398,8 +398,8 @@ export default function LawFirmDashboardPage() {
               <div>
                 <CardTitle>Twój pakiet i limity</CardTitle>
                 <CardDescription>
-                  Aktualny pakiet: <strong>{packageName}</strong>
-                  {packageExpired && <span className="text-destructive ml-2">(Wygasł!)</span>}
+                  Aktualny pakiet: <strong>{packageName || "Brak pakietu"}</strong>
+                  {packageExpired && packageName && <span className="text-destructive ml-2">(Wygasł!)</span>}
                 </CardDescription>
               </div>
               <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="lg" />
@@ -426,7 +426,7 @@ export default function LawFirmDashboardPage() {
               />
             </div>
 
-            {packageExpired && (
+            {packageExpired && packageName && (
               <div className="mt-4 p-4 bg-destructive/10 border border-destructive rounded-lg">
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
