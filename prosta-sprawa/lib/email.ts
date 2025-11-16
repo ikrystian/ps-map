@@ -1,16 +1,15 @@
 /**
  * Email utility functions
  *
- * UWAGA: Ta implementacja wymaga zainstalowania nodemailer:
- * npm install nodemailer @types/nodemailer
- *
- * Oraz konfiguracji zmiennych środowiskowych:
+ * Konfiguracja zmiennych środowiskowych:
  * EMAIL_SERVER_HOST=smtp.gmail.com
  * EMAIL_SERVER_PORT=587
  * EMAIL_SERVER_USER=your-email@gmail.com
  * EMAIL_SERVER_PASSWORD=your-app-password
  * EMAIL_FROM=noreply@prostaspawa.pl
  */
+
+import { sendSMTPEmail } from './smtp'
 
 interface SendEmailParams {
   to: string
@@ -22,48 +21,64 @@ interface SendEmailParams {
 /**
  * Wysyła email
  *
- * UWAGA: W środowisku development, email jest logowany do konsoli zamiast wysyłany
+ * W środowisku development bez konfiguracji SMTP - loguje do konsoli
+ * W produkcji lub z konfiguracją SMTP - wysyła prawdziwy email
  */
 export async function sendEmail({ to, subject, html, text }: SendEmailParams): Promise<boolean> {
   try {
-    // W środowisku development, loguj email do konsoli
-    if (process.env.NODE_ENV === 'development') {
+    // Sprawdź konfigurację SMTP
+    const smtpConfigured = !!(
+      process.env.EMAIL_SERVER_HOST &&
+      process.env.EMAIL_SERVER_USER &&
+      process.env.EMAIL_SERVER_PASSWORD &&
+      process.env.EMAIL_FROM
+    )
+
+    // W środowisku development bez konfiguracji SMTP - tylko loguj do konsoli
+    if (process.env.NODE_ENV === 'development' && !smtpConfigured) {
       console.log('='.repeat(80))
-      console.log('📧 EMAIL (Development Mode)')
+      console.log('📧 EMAIL (Development Mode - No SMTP configured)')
       console.log('='.repeat(80))
       console.log(`To: ${to}`)
       console.log(`Subject: ${subject}`)
-      console.log(`HTML: ${html}`)
+      console.log(`Text: ${text || html.replace(/<[^>]*>/g, '')}`)
       console.log('='.repeat(80))
       return true
     }
 
-    // W produkcji, tutaj będzie implementacja z nodemailer
-    // Przykładowa implementacja (wymaga instalacji nodemailer):
-    /*
-    const nodemailer = require('nodemailer')
+    // Jeśli SMTP jest skonfigurowany - wyślij prawdziwy email
+    if (!smtpConfigured) {
+      console.error('SMTP not configured. Set EMAIL_SERVER_HOST, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_FROM')
+      return false
+    }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: process.env.EMAIL_SERVER_PORT,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_SERVER_USER,
-        pass: process.env.EMAIL_SERVER_PASSWORD,
+    const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
+    const result = await sendSMTPEmail(
+      {
+        host: process.env.EMAIL_SERVER_HOST!,
+        port,
+        secure: port === 465,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER!,
+          pass: process.env.EMAIL_SERVER_PASSWORD!,
+        },
       },
-    })
+      {
+        from: process.env.EMAIL_FROM!,
+        to,
+        subject,
+        html,
+        text: text || html.replace(/<[^>]*>/g, ''),
+      }
+    )
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to,
-      subject,
-      html,
-      text: text || html.replace(/<[^>]*>/g, ''),
-    })
-    */
+    if (result) {
+      console.log(`✅ Email sent successfully to: ${to}`)
+    } else {
+      console.error(`❌ Failed to send email to: ${to}`)
+    }
 
-    console.log(`Email would be sent to: ${to}`)
-    return true
+    return result
   } catch (error) {
     console.error('Error sending email:', error)
     return false
