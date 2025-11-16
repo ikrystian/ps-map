@@ -1,89 +1,50 @@
 import { PrismaClient } from '@prisma/client'
-import * as fs from 'fs'
-import * as path from 'path'
+import { createRandomBlogPost } from './generators'
+import { faker } from '@faker-js/faker'
 
-interface BlogPostData {
-  lawFirmEmail: string
-  tytul: string
-  slug: string
-  tresc: string
-  categoryName: string
-  tagi: string[]
-  obrazekWyrozniajacy?: string
-  metaTitle?: string
-  metaDescription?: string
-  opublikowany: boolean
-}
-
-interface BlogPostsData {
-  blogPosts: BlogPostData[]
-}
+const POSTS_TO_CREATE = 30
 
 export async function seedBlogPosts(prisma: PrismaClient) {
-  console.log('Seeding blog posts from JSON file...')
+  console.log(`Seeding ${POSTS_TO_CREATE} blog posts...`)
 
-  const jsonPath = path.join(process.cwd(), 'prisma', 'seeds', 'data', 'blog-posts.json')
-
-  if (!fs.existsSync(jsonPath)) {
-    console.error(`File not found: ${jsonPath}`)
+  const lawFirms = await prisma.lawFirm.findMany()
+  if (lawFirms.length === 0) {
+    console.log('No law firms found, skipping blog post seeding.')
     return
   }
 
-  const jsonData = fs.readFileSync(jsonPath, 'utf-8')
-  const blogPostsData: BlogPostsData = JSON.parse(jsonData)
-
-  for (const postData of blogPostsData.blogPosts) {
-    try {
-      // Znajdź kancelarię
-      const lawFirm = await prisma.lawFirm.findFirst({
-        where: {
-          user: {
-            email: postData.lawFirmEmail,
-          },
-        },
-      })
-
-      if (!lawFirm) {
-        console.error(`Law firm with email "${postData.lawFirmEmail}" not found. Skipping...`)
-        continue
-      }
-
-      // Znajdź kategorię bloga
-      let category = await prisma.blogCategory.findFirst({
-        where: {
-          nazwa: postData.categoryName,
-        },
-      })
-
-      if (!category) {
-        // Stwórz kategorię jeśli nie istnieje
-        const slug = postData.categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-        category = await prisma.blogCategory.create({
-          data: {
-            nazwa: postData.categoryName,
-            slug: slug,
-          },
-        })
-      }
-
-      // Stwórz post bloga
-      const blogPost = await prisma.blogPost.create({
+  let categories = await prisma.blogCategory.findMany()
+  if (categories.length === 0) {
+    // Create some default categories if none exist
+    const categoryNames = ['Prawo cywilne', 'Prawo karne', 'Prawo rodzinne', 'Prawo pracy', 'Prawo handlowe']
+    for (const name of categoryNames) {
+      const newCategory = await prisma.blogCategory.create({
         data: {
-          lawFirmId: lawFirm.id,
-          tytul: postData.tytul,
-          slug: postData.slug,
-          tresc: postData.tresc,
-          categoryId: category.id,
+          nazwa: name,
+          slug: faker.helpers.slugify(name).toLowerCase(),
+        },
+      })
+      categories.push(newCategory)
+    }
+  }
+
+  for (let i = 0; i < POSTS_TO_CREATE; i++) {
+    try {
+      const randomLawFirm = faker.helpers.arrayElement(lawFirms)
+      const randomCategory = faker.helpers.arrayElement(categories)
+      const postData = createRandomBlogPost()
+
+      await prisma.blogPost.create({
+        data: {
+          ...postData,
+          lawFirmId: randomLawFirm.id,
+          categoryId: randomCategory.id,
           tagi: JSON.stringify(postData.tagi),
-          obrazekWyrozniajacy: postData.obrazekWyrozniajacy,
-          metaTitle: postData.metaTitle,
-          metaDescription: postData.metaDescription,
-          opublikowany: postData.opublikowany,
           dataPublikacji: postData.opublikowany ? new Date() : null,
         },
       })
 
-      console.log(`✓ Blog Post: "${postData.tytul}" for ${lawFirm.nazwa}`)
+      console.log(`✓ Blog Post: "${postData.tytul}" for ${randomLawFirm.nazwa}`)
     } catch (error) {
       console.error(`Error seeding blog post:`, error)
     }

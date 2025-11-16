@@ -1,114 +1,55 @@
-import { PrismaClient } from '@prisma/client'
-import * as fs from 'fs'
-import * as path from 'path'
+import { PrismaClient, UserRole } from '@prisma/client'
+import { createRandomReview, createRandomUser } from './generators'
+import { faker } from '@faker-js/faker'
 
-interface ReviewData {
-  lawFirmEmail: string
-  clientEmail: string
-  clientName: string
-  ocenaOgolna: number
-  profesjonalizm?: number
-  komunikacja?: number
-  terminowosc?: number
-  stosunekJakosci?: number
-  tytulOpinii: string
-  trescOpinii: string
-  polecam: boolean
-  anonimowa: boolean
-  zweryfikowana: boolean
-  aktywna: boolean
-}
-
-interface ReviewsData {
-  reviews: ReviewData[]
-}
+const REVIEWS_TO_CREATE = 50
 
 export async function seedReviews(prisma: PrismaClient) {
-  console.log('Seeding reviews from JSON file...')
+  console.log(`Seeding ${REVIEWS_TO_CREATE} test reviews...`)
 
-  const jsonPath = path.join(process.cwd(), 'prisma', 'seeds', 'data', 'reviews.json')
-
-  if (!fs.existsSync(jsonPath)) {
-    console.error(`File not found: ${jsonPath}`)
+  const lawFirms = await prisma.lawFirm.findMany()
+  if (lawFirms.length === 0) {
+    console.log('No law firms found, skipping review seeding.')
     return
   }
 
-  const jsonData = fs.readFileSync(jsonPath, 'utf-8')
-  const reviewsData: ReviewsData = JSON.parse(jsonData)
+  const clients = await prisma.client.findMany({ include: { user: true } })
 
-  for (const reviewData of reviewsData.reviews) {
+  for (let i = 0; i < REVIEWS_TO_CREATE; i++) {
     try {
-      // Znajdź kancelarię
-      const lawFirm = await prisma.lawFirm.findFirst({
-        where: {
-          user: {
-            email: reviewData.lawFirmEmail,
-          },
-        },
-      })
+      const randomLawFirm = faker.helpers.arrayElement(lawFirms)
+      let randomClient
 
-      if (!lawFirm) {
-        console.error(`Law firm with email "${reviewData.lawFirmEmail}" not found. Skipping...`)
-        continue
-      }
-
-      // Znajdź lub stwórz klienta
-      let clientUser = await prisma.user.findUnique({
-        where: {
-          email: reviewData.clientEmail,
-        },
-      })
-
-      if (!clientUser) {
-        // Stwórz użytkownika klienta
-        clientUser = await prisma.user.create({
+      if (clients.length > 0) {
+        randomClient = faker.helpers.arrayElement(clients)
+      } else {
+        // Create a new client if none exist
+        const randomUserData = createRandomUser(UserRole.CLIENT)
+        const user = await prisma.user.create({
+          data: { ...randomUserData, password: 'Password123' }, // temp password
+        })
+        const client = await prisma.client.create({
           data: {
-            email: reviewData.clientEmail,
-            name: reviewData.clientName,
-            role: 'CLIENT',
-            emailVerified: new Date(),
+            userId: user.id,
+            imie: user.name ? user.name.split(' ')[0] : '',
+            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
           },
         })
+        clients.push({ ...client, user })
+        randomClient = { ...client, user }
       }
 
-      // Znajdź lub stwórz klienta
-      let client = await prisma.client.findUnique({
-        where: {
-          userId: clientUser.id,
-        },
-      })
+      const reviewData = createRandomReview()
 
-      if (!client) {
-        // Stwórz klienta
-        client = await prisma.client.create({
-          data: {
-            userId: clientUser.id,
-            imie: reviewData.clientName.split(' ')[0],
-            nazwisko: reviewData.clientName.split(' ').slice(1).join(' '),
-          },
-        })
-      }
-
-      // Stwórz opinię
       await prisma.review.create({
         data: {
-          lawFirmId: lawFirm.id,
-          clientId: client.id,
-          ocenaOgolna: reviewData.ocenaOgolna,
-          profesjonalizm: reviewData.profesjonalizm,
-          komunikacja: reviewData.komunikacja,
-          terminowosc: reviewData.terminowosc,
-          stosunekJakosci: reviewData.stosunekJakosci,
-          tytulOpinii: reviewData.tytulOpinii,
-          trescOpinii: reviewData.trescOpinii,
-          polecam: reviewData.polecam,
-          anonimowa: reviewData.anonimowa,
-          zweryfikowana: reviewData.zweryfikowana,
-          aktywna: reviewData.aktywna,
+          ...reviewData,
+          lawFirmId: randomLawFirm.id,
+          clientId: randomClient.id,
         },
       })
 
-      console.log(`✓ Review: "${reviewData.tytulOpinii}" for ${lawFirm.nazwa}`)
+      console.log(`✓ Review: "${reviewData.tytulOpinii}" for ${randomLawFirm.nazwa}`)
     } catch (error) {
       console.error(`Error seeding review:`, error)
     }

@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         // Hash password
         const hashedPassword = userData.password
           ? await bcrypt.hash(userData.password, 10)
-          : await bcrypt.hash("DefaultPassword123!", 10)
+          : await bcrypt.hash("Password123!", 10)
 
         // Use transaction to create everything atomically
         await prisma.$transaction(async (tx) => {

@@ -1,99 +1,58 @@
 import { PrismaClient, OrderType, PaymentMethod, PaymentStatus, SubscriptionPackage } from '@prisma/client'
-import * as fs from 'fs'
-import * as path from 'path'
+import { createRandomTransaction } from './generators'
+import { faker } from '@faker-js/faker'
 
-interface TransactionData {
-  lawFirmEmail: string
-  orderType: string
-  pakietPunktow?: string
-  liczbaPunktow?: number
-  subscriptionPlan?: string
-  subscriptionPeriod?: number
-  kwota: number
-  metodaPlatnosci: string
-  statusPlatnosci: string
-  daneFaktury: {
-    nazwa: string
-    nip: string
-    adres: string
-  }
-}
-
-interface TransactionsData {
-  transactions: TransactionData[]
-}
+const TRANSACTIONS_TO_CREATE = 100
 
 export async function seedTransactions(prisma: PrismaClient) {
-  console.log('Seeding transactions from JSON file...')
+  console.log(`Seeding ${TRANSACTIONS_TO_CREATE} transactions...`)
 
-  const jsonPath = path.join(process.cwd(), 'prisma', 'seeds', 'data', 'transactions.json')
+  const lawFirms = await prisma.lawFirm.findMany()
+  const subscriptionPlans = await prisma.subscriptionPlan.findMany()
 
-  if (!fs.existsSync(jsonPath)) {
-    console.error(`File not found: ${jsonPath}`)
+  if (lawFirms.length === 0) {
+    console.log('No law firms found, skipping transaction seeding.')
     return
   }
 
-  const jsonData = fs.readFileSync(jsonPath, 'utf-8')
-  const transactionsData: TransactionsData = JSON.parse(jsonData)
-
-  for (const transactionData of transactionsData.transactions) {
+  for (let i = 0; i < TRANSACTIONS_TO_CREATE; i++) {
     try {
-      // Znajdź kancelarię
-      const lawFirm = await prisma.lawFirm.findFirst({
-        where: {
-          user: {
-            email: transactionData.lawFirmEmail,
-          },
-        },
-      })
+      const randomLawFirm = faker.helpers.arrayElement(lawFirms)
+      const transactionData = createRandomTransaction()
 
-      if (!lawFirm) {
-        console.error(`Law firm with email "${transactionData.lawFirmEmail}" not found. Skipping...`)
-        continue
-      }
-
-      // Przygotuj dane zamówienia
       const orderData: any = {
-        lawFirmId: lawFirm.id,
+        lawFirmId: randomLawFirm.id,
         orderType: transactionData.orderType as OrderType,
-        kwota: transactionData.kwota,
-        metodaPlatnosci: transactionData.metodaPlatnosci as PaymentMethod,
-        statusPlatnosci: transactionData.statusPlatnosci as PaymentStatus,
-        daneFaktury: JSON.stringify(transactionData.daneFaktury),
+        kwota: parseFloat(transactionData.amount),
+        metodaPlatnosci: transactionData.paymentMethod as PaymentMethod,
+        statusPlatnosci: transactionData.paymentStatus as PaymentStatus,
+        daneFaktury: JSON.stringify({
+          nazwa: randomLawFirm.nazwaFirmy,
+          nip: randomLawFirm.nip,
+          adres: `${randomLawFirm.adres}, ${randomLawFirm.kodPocztowy} ${randomLawFirm.miasto}`,
+        }),
       }
 
-      // Dodaj dane specyficzne dla typu zamówienia
-      if (transactionData.orderType === 'POINTS') {
-        orderData.pakietPunktow = transactionData.pakietPunktow
-        orderData.liczbaPunktow = transactionData.liczbaPunktow
-      } else if (transactionData.orderType === 'SUBSCRIPTION') {
-        // Znajdź plan subskrypcji
-        const subscriptionPlan = await prisma.subscriptionPlan.findFirst({
-          where: {
-            typ: transactionData.subscriptionPlan as SubscriptionPackage,
-          },
-        })
-
-        if (subscriptionPlan) {
-          orderData.subscriptionPlanId = subscriptionPlan.id
-          orderData.subscriptionPeriod = transactionData.subscriptionPeriod
-
-          // Ustaw daty pakietu
-          const now = new Date()
-          const endDate = new Date(now)
-          endDate.setMonth(endDate.getMonth() + (transactionData.subscriptionPeriod || 1))
-
-          orderData.packageStartDate = now
-          orderData.packageEndDate = endDate
-        }
+      if (orderData.orderType === 'SUBSCRIPTION' && subscriptionPlans.length > 0) {
+        const randomPlan = faker.helpers.arrayElement(subscriptionPlans)
+        orderData.subscriptionPlanId = randomPlan.id
+        const period = faker.helpers.arrayElement([1, 6, 12])
+        orderData.subscriptionPeriod = period
+        const now = new Date()
+        const endDate = new Date(now)
+        endDate.setMonth(endDate.getMonth() + period)
+        orderData.packageStartDate = now
+        orderData.packageEndDate = endDate
+      } else if (orderData.orderType === 'PROMOTION') {
+        // Potrzebna logika dla promocji, na razie puste
       }
 
-      // Stwórz zamówienie
-      const order = await prisma.order.create({
+
+      await prisma.order.create({
         data: orderData,
       })
 
-      console.log(`✓ Transaction: ${transactionData.orderType} for ${lawFirm.nazwa} - ${transactionData.kwota} PLN`)
+      console.log(`✓ Transaction: ${orderData.orderType} for ${randomLawFirm.nazwa} - ${orderData.kwota} PLN`)
     } catch (error) {
       console.error(`Error seeding transaction:`, error)
     }
