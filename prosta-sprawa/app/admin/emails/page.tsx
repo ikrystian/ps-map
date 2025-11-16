@@ -209,12 +209,30 @@ export default function EmailManagementPage() {
 
     setSendingTest(true)
     try {
-      // In a real implementation, this would call the API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      toast.success(`Email testowy został wysłany na ${testEmail}`)
+      const response = await fetch("/api/admin/send-test-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: testEmail,
+          templateId: selectedTemplate.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send test email")
+      }
+
+      toast.success(data.message || `Email testowy został wysłany na ${testEmail}`)
       setTestEmail("")
     } catch (error) {
-      toast.error("Nie udało się wysłać emaila testowego")
+      console.error("Error sending test email:", error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Nie udało się wysłać emaila testowego"
+      )
     } finally {
       setSendingTest(false)
     }
