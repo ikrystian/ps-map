@@ -26,6 +26,7 @@ import {
   LayoutTemplate,
   FileCode,
   UserCog,
+  Upload,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -34,6 +35,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Kancelarie", href: "/admin/law-firms", icon: Building2 },
+  { name: "Import kancelarii", href: "/admin/import-kancelarii", icon: Upload },
   { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
