@@ -343,10 +343,10 @@ export async function PUT(
     if (body.punktySaldo !== undefined) lawFirmUpdateData.punktySaldo = body.punktySaldo
     if (body.pakietSubskrypcji !== undefined) lawFirmUpdateData.pakietSubskrypcji = body.pakietSubskrypcji
     if (body.dataPakietuOd !== undefined) {
-      lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd === "" ? null : body.dataPakietuOd
+      lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd === "" ? null : new Date(body.dataPakietuOd)
     }
     if (body.dataPakietuDo !== undefined) {
-      lawFirmUpdateData.dataPakietuDo = body.dataPakietuDo === "" ? null : body.dataPakietuDo
+      lawFirmUpdateData.dataPakietuDo = body.dataPakietuDo === "" ? null : new Date(body.dataPakietuDo)
     }
 
     // Statistics
