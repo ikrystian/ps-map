@@ -181,6 +181,8 @@ model LawFirm {
   miasto                String
   voivodeshipId         String
   voivodeship           Voivodeship @relation(fields: [voivodeshipId], references: [id])
+  latitude              Float?     // Współrzędne geograficzne dla mapy
+  longitude             Float?     // Współrzędne geograficzne dla mapy
 
   // Profil publiczny
   opis                  String?   @default("")
