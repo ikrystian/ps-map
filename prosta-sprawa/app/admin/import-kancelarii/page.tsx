@@ -133,12 +133,21 @@ export default function ImportKancelarii() {
         "nazwa": "Kancelaria Prawna",
         "nazwaFirmy": "Kancelaria Prawna Sp. P.",
         "nip": "1234567890",
+        "logo": "/uploads/law-firms/logo.png",
+        "zdjecieGlowne": "/uploads/law-firms/main.jpg",
+        "galeriaZdjec": ["/uploads/law-firms/img1.jpg"],
         ...
       },
       "voivodeships": ["Mazowieckie", "Łódzkie"],
       "categories": ["Prawo Gospodarcze", "Prawo Cywilne"],
       "services": [...],
-      "certificates": [...]
+      "certificates": [
+        {
+          "nazwaCertyfikatu": "Certyfikat",
+          "skanCertyfikatu": "/uploads/certificates/cert.pdf",
+          ...
+        }
+      ]
     }
   ]
 }`}
@@ -152,6 +161,18 @@ export default function ImportKancelarii() {
               <li>lawFirm.nazwa - nazwa kancelarii</li>
               <li>lawFirm.nip - NIP kancelarii (unikalny)</li>
               <li>lawFirm.voivodeship - województwo siedziby</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Pola obrazków i mediów:</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>lawFirm.logo - URL do logo kancelarii (np. /uploads/law-firms/logo.png)</li>
+              <li>lawFirm.zdjecieGlowne - URL do głównego zdjęcia (np. /uploads/law-firms/main.jpg)</li>
+              <li>lawFirm.galeriaZdjec - tablica URL-i do galerii zdjęć</li>
+              <li>lawFirm.filmYouTube - URL filmu z YouTube (opcjonalnie)</li>
+              <li>lawFirm.okladkaFilmu - URL miniatury filmu (opcjonalnie)</li>
+              <li>certificate.skanCertyfikatu - URL do skanu certyfikatu (np. /uploads/certificates/cert.pdf)</li>
             </ul>
           </div>
 

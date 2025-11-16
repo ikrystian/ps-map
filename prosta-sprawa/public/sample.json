@@ -26,6 +26,17 @@
         "latitude": 52.2297,
         "longitude": 21.0122,
         "opis": "Kancelaria Prawna Nowak & Wspólnicy to renomowana firma prawnicza z ponad 15-letnim doświadczeniem na polskim rynku. Specjalizujemy się w kompleksowej obsłudze prawnej przedsiębiorstw oraz osób prywatnych.\n\nNasz zespół składa się z doświadczonych prawników, którzy łączą wysokie kwalifikacje zawodowe z praktycznym podejściem do rozwiązywania problemów prawnych naszych klientów. Oferujemy profesjonalne doradztwo w zakresie prawa gospodarczego, cywilnego, rodzinnego oraz karnego.\n\nNaszą misją jest zapewnienie najwyższej jakości usług prawnych, które są dostosowane do indywidualnych potrzeb każdego klienta. Dbamy o długotrwałe relacje oparte na zaufaniu i wzajemnym szacunku.\n\nDziałamy na terenie całej Polski, ze szczególnym uwzględnieniem województwa mazowieckiego. Nasze biuro znajduje się w samym centrum Warszawy, co zapewnia łatwy dostęp dla naszych klientów.",
+        "logo": "/uploads/law-firms/kancelaria-nowak-logo.png",
+        "zdjecieGlowne": "/uploads/law-firms/kancelaria-nowak-main.jpg",
+        "galeriaZdjec": [
+          "/uploads/law-firms/kancelaria-nowak-biuro-1.jpg",
+          "/uploads/law-firms/kancelaria-nowak-biuro-2.jpg",
+          "/uploads/law-firms/kancelaria-nowak-zespol.jpg",
+          "/uploads/law-firms/kancelaria-nowak-sala-konferencyjna.jpg"
+        ],
+        "filmYouTube": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "okladkaFilmu": "/uploads/law-firms/kancelaria-nowak-video-thumbnail.jpg",
+        "kolejnoscMultimedia": "zdjecia",
         "statusGodzinyOtwarcia": true,
         "godzinyOtwarcia": {
           "poniedzialek": "09:00-18:00",
@@ -142,6 +153,7 @@
           "wydawca": "Ministerstwo Sprawiedliwości",
           "dataUzyskania": "2015-06-15",
           "numerCertyfikatu": "MS/MED/2015/1234",
+          "skanCertyfikatu": "/uploads/certificates/mediator-sadowy-nowak.pdf",
           "aktywny": true
         },
         {
@@ -150,6 +162,7 @@
           "dataUzyskania": "2018-03-20",
           "dataWaznosci": "2028-03-20",
           "numerCertyfikatu": "ICO/2018/567",
+          "skanCertyfikatu": "/uploads/certificates/compliance-officer-nowak.pdf",
           "aktywny": true
         },
         {
@@ -158,6 +171,7 @@
           "dataUzyskania": "2020-01-10",
           "dataWaznosci": "2026-01-10",
           "numerCertyfikatu": "TUV/2020/9001/789",
+          "skanCertyfikatu": "/uploads/certificates/iso-9001-nowak.pdf",
           "aktywny": true
         }
       ]
@@ -185,6 +199,12 @@
         "latitude": 50.0647,
         "longitude": 19.9450,
         "opis": "Specjalizuję się w prawie karnym oraz rodzinnym. Z wykształcenia jestem adwokatem z ponad 20-letnim doświadczeniem. Prowadzę sprawy w całej Polsce, ze szczególnym uwzględnieniem województwa małopolskiego.\n\nMoja praktyka obejmuje zarówno obronę w sprawach karnych (od wykroczeń po poważne przestępstwa), jak i kompleksową pomoc w sprawach rodzinnych (rozwody, alimenty, opieka nad dziećmi).\n\nDziałam z pasją i zaangażowaniem, traktując każdą sprawę indywidualnie i z najwyższą starannością.",
+        "logo": "/uploads/law-firms/adwokat-kowalski-logo.png",
+        "zdjecieGlowne": "/uploads/law-firms/adwokat-kowalski-biuro.jpg",
+        "galeriaZdjec": [
+          "/uploads/law-firms/adwokat-kowalski-gabinet.jpg",
+          "/uploads/law-firms/adwokat-kowalski-portret.jpg"
+        ],
         "statusGodzinyOtwarcia": true,
         "godzinyOtwarcia": {
           "poniedzialek": "10:00-17:00",
@@ -265,6 +285,7 @@
           "wydawca": "Okręgowa Rada Adwokacka w Krakowie",
           "dataUzyskania": "2003-09-01",
           "numerCertyfikatu": "KR/ADW/2003/2345",
+          "skanCertyfikatu": "/uploads/certificates/adwokat-kowalski-uprawnienia.pdf",
           "aktywny": true
         }
       ]
