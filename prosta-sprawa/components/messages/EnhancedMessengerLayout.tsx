@@ -145,8 +145,7 @@ export function EnhancedMessengerLayout() {
             </>
           ) : (
             <>
-              <WifiOff className="h-3 w-3 text-orange-500" />
-              <span>Odświeżanie co 5 sekund</span>
+
             </>
           )}
         </div>

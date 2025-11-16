@@ -78,18 +78,18 @@ export function AccountManagerWidget() {
           aria-label="Kontakt z opiekunem"
         >
           <div className="relative">
-            <Avatar className="h-14 w-14 ring-2 ring-white shadow-lg transition-transform group-hover:scale-110">
+            <Avatar className="h-14 w-14 ring-2 ring-background bg-card shadow-lg transition-transform group-hover:scale-110">
               <AvatarImage src={accountManager.avatar || undefined} alt={`${accountManager.imie} ${accountManager.nazwisko}`} />
-              <AvatarFallback className="bg-primary text-white font-semibold">
+              <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white" />
+            <div className="absolute -top-1 -right-1 h-4 w-4 bg-success rounded-full border-2 border-background" />
           </div>
 
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            <div className="bg-popover text-popover-foreground text-xs rounded py-1 px-2 whitespace-nowrap">
               Twój opiekun
             </div>
           </div>
@@ -106,7 +106,7 @@ export function AccountManagerWidget() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 z-40"
+              className="fixed inset-0 bg-background/80 z-40"
             />
 
             {/* Contact Card */}
@@ -123,7 +123,7 @@ export function AccountManagerWidget() {
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={accountManager.avatar || undefined} alt={`${accountManager.imie} ${accountManager.nazwisko}`} />
-                        <AvatarFallback className="bg-primary text-white">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
@@ -131,7 +131,7 @@ export function AccountManagerWidget() {
                         <CardTitle className="text-lg">
                           {accountManager.imie} {accountManager.nazwisko}
                         </CardTitle>
-                        <p className="text-sm text-gray-500">Twój opiekun</p>
+                        <p className="text-sm text-muted-foreground">Twój opiekun</p>
                       </div>
                     </div>
                     <Button
@@ -148,35 +148,35 @@ export function AccountManagerWidget() {
                   <div className="space-y-2">
                     <a
                       href={`mailto:${accountManager.email}`}
-                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent transition-colors"
                     >
-                      <div className="flex items-center justify-center h-10 w-10 bg-blue-100 text-blue-600 rounded-lg">
+                      <div className="flex items-center justify-center h-10 w-10 bg-primary-soft text-primary-soft-foreground rounded-lg">
                         <Mail className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">Email</p>
-                        <p className="text-sm text-gray-500 truncate">{accountManager.email}</p>
+                        <p className="text-sm font-medium text-popover-foreground">Email</p>
+                        <p className="text-sm text-muted-foreground truncate">{accountManager.email}</p>
                       </div>
                     </a>
 
                     {accountManager.telefon && (
                       <a
                         href={`tel:${accountManager.telefon}`}
-                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent transition-colors"
                       >
-                        <div className="flex items-center justify-center h-10 w-10 bg-green-100 text-green-600 rounded-lg">
+                        <div className="flex items-center justify-center h-10 w-10 bg-success-soft text-success-soft-foreground rounded-lg">
                           <Phone className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900">Telefon</p>
-                          <p className="text-sm text-gray-500">{accountManager.telefon}</p>
+                          <p className="text-sm font-medium text-popover-foreground">Telefon</p>
+                          <p className="text-sm text-muted-foreground">{accountManager.telefon}</p>
                         </div>
                       </a>
                     )}
                   </div>
 
                   <div className="pt-3 border-t">
-                    <p className="text-xs text-gray-500 text-center">
+                    <p className="text-xs text-muted-foreground text-center">
                       Jesteśmy tutaj, aby Ci pomóc! Skontaktuj się z nami w razie pytań.
                     </p>
                   </div>

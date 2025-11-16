@@ -54,6 +54,7 @@ import {
   Send,
   Eye,
   Calendar,
+ ZoomIn,
 } from "lucide-react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
@@ -765,7 +766,7 @@ export default function LawFirmProfilePage() {
                     </CardHeader>
                     <CardContent>
                       <div
-                        className="prose prose-sm max-w-none dark:prose-invert"
+                        className="about-description prose prose-sm max-w-none dark:prose-invert"
                         dangerouslySetInnerHTML={{ __html: lawFirm.opis }}
                       />
                     </CardContent>
@@ -873,13 +874,21 @@ export default function LawFirmProfilePage() {
                         {lawFirm.galeriaZdjec.map((img, index) => (
                           <div
                             key={index}
-                            className="relative h-48 rounded-lg overflow-hidden cursor-pointer"
+                            className="relative h-48 rounded-lg overflow-hidden cursor-pointer group"
                             onClick={() => {
                               setLightboxIndex(index)
                               setLightboxOpen(true)
                             }}
                           >
-                            <Image src={img} alt={`Galeria ${index + 1}`} fill className="object-cover" />
+                            <Image
+                              src={img}
+                              alt={`Galeria ${index + 1}`}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-300 ease-in-out"
+                            />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <ZoomIn className="h-8 w-8 text-white" />
+                            </div>
                           </div>
                         ))}
                       </div>
