@@ -102,24 +102,30 @@ export async function GET(request: NextRequest) {
     // Get user registrations (last 7 days)
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    sevenDaysAgo.setHours(0, 0, 0, 0) // Start of day
 
     const dailyRegistrationsRaw = await prisma.$queryRaw<Array<{ date: string; count: bigint }>>`
       SELECT
-        strftime('%Y-%m-%d', createdAt) as date,
+        DATE(createdAt) as date,
         COUNT(*) as count
       FROM "User"
-      WHERE createdAt >= ${sevenDaysAgo.toISOString()}
-      GROUP BY strftime('%Y-%m-%d', createdAt)
+      WHERE DATE(createdAt) >= DATE(${sevenDaysAgo.toISOString()})
+      GROUP BY DATE(createdAt)
       ORDER BY date ASC
     `
 
     // Convert BigInt to Number and ensure all 7 days are present
     const dailyRegistrations = []
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
     for (let i = 6; i >= 0; i--) {
-      const date = new Date(currentDate)
-      date.setDate(currentDate.getDate() - i)
-      const dateKey = date.toISOString().slice(0, 10) // YYYY-MM-DD format
+      const date = new Date(today)
+      date.setDate(today.getDate() - i)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      const dateKey = `${year}-${month}-${day}` // YYYY-MM-DD format
 
       const existingData = dailyRegistrationsRaw.find(item => item.date === dateKey)
 
