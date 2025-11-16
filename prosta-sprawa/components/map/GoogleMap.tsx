@@ -34,6 +34,25 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
   const [error, setError] = useState<string | null>(null)
   const markersRef = useRef<google.maps.Marker[]>([])
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  // Sprawdź dark mode przy montowaniu
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains("dark"))
+    }
+
+    checkDarkMode()
+
+    // Obserwuj zmiany dark mode
+    const observer = new MutationObserver(checkDarkMode)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     // Załaduj Google Maps API
@@ -71,6 +90,90 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
         // Centrum Polski
         const polandCenter = { lat: 52.0693, lng: 19.4803 }
 
+        // Styl dark mode dla Google Maps
+        const darkModeStyles: google.maps.MapTypeStyle[] = [
+          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+          {
+            featureType: "administrative.locality",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "poi",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "poi.park",
+            elementType: "geometry",
+            stylers: [{ color: "#263c3f" }],
+          },
+          {
+            featureType: "poi.park",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#6b9080" }],
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#38414e" }],
+          },
+          {
+            featureType: "road",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#212a37" }],
+          },
+          {
+            featureType: "road",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#9ca5b3" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "geometry",
+            stylers: [{ color: "#746855" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#1f2835" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#f3751ff" }],
+          },
+          {
+            featureType: "transit",
+            elementType: "geometry",
+            stylers: [{ color: "#2f3948" }],
+          },
+          {
+            featureType: "transit.station",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: "#17263c" }],
+          },
+          {
+            featureType: "water",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#515c6d" }],
+          },
+          {
+            featureType: "water",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#17263c" }],
+          },
+        ]
+
+        const lightModeStyles: google.maps.MapTypeStyle[] = []
+
         const mapInstance = new google.maps.Map(mapRef.current, {
           center: polandCenter,
           zoom: 6,
@@ -78,6 +181,7 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
           streetViewControl: false,
           fullscreenControl: true,
           zoomControl: true,
+          styles: isDarkMode ? darkModeStyles : lightModeStyles,
         })
 
         setMap(mapInstance)
@@ -90,7 +194,7 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
     }
 
     loadGoogleMapsScript()
-  }, [apiKey])
+  }, [apiKey, isDarkMode])
 
   useEffect(() => {
     if (!map) return
@@ -122,9 +226,13 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
 
       // Dodaj event listener dla kliknięcia
       marker.addListener("click", () => {
+        const bgColor = isDarkMode ? "#282825" : "#ffffff"
+        const textColor = isDarkMode ? "#c3c0b6" : "#3d3929"
+        const linkColor = isDarkMode ? "#00897b" : "#2563eb"
+
         const contentString = `
-          <div style="max-width: 300px; padding: 10px;">
-            <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: bold;">
+          <div style="max-width: 300px; padding: 10px; background-color: ${bgColor}; color: ${textColor}; border-radius: 8px;">
+            <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: bold; color: ${textColor};">
               ${firm.nazwa}
             </h3>
             ${
@@ -132,17 +240,17 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
                 ? `<img src="${firm.logo}" alt="${firm.nazwa}" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" />`
                 : ""
             }
-            <p style="margin: 5px 0; font-size: 14px;">
+            <p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
               <strong>Adres:</strong><br/>
               ${firm.adres}<br/>
               ${firm.kodPocztowy} ${firm.miasto}
             </p>
-            <p style="margin: 5px 0; font-size: 14px;">
+            <p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
               <strong>Województwo:</strong> ${firm.voivodeship}
             </p>
             ${
               firm.categories.length > 0
-                ? `<p style="margin: 5px 0; font-size: 14px;">
+                ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
                     <strong>Specjalizacje:</strong><br/>
                     ${firm.categories.slice(0, 3).join(", ")}
                   </p>`
@@ -150,7 +258,7 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
             }
             ${
               firm.avgRating > 0
-                ? `<p style="margin: 5px 0; font-size: 14px;">
+                ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
                     <strong>Ocena:</strong> ${firm.avgRating}/5 ⭐ (${firm.reviewsCount} ${
                     firm.reviewsCount === 1 ? "opinia" : "opinii"
                   })
@@ -158,7 +266,7 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
                 : ""
             }
             <p style="margin: 10px 0 5px 0;">
-              <a href="/kancelaria/${firm.slug}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+              <a href="/kancelaria/${firm.slug}" target="_blank" style="color: ${linkColor}; text-decoration: none; font-weight: 500;">
                 Zobacz profil →
               </a>
             </p>
