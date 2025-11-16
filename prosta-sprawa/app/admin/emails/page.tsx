@@ -106,50 +106,16 @@ export default function EmailManagementPage() {
   const fetchTemplates = async () => {
     try {
       setLoading(true)
-      // In a real implementation, this would fetch from the API
-      // For now, we'll use mock data
-      const mockTemplates: EmailTemplate[] = [
-        {
-          id: "1",
-          nazwa: "Nowa sprawa - powiadomienie dla kancelarii",
-          temat: "Nowa sprawa w Twojej kategorii: {nazwaSprawi}",
-          tresc: "Witaj {kancelaria},\n\nNowa sprawa została dodana...",
-          trescHtml: "<p>Witaj <strong>{kancelaria}</strong>,</p><p>Nowa sprawa...</p>",
-          typ: "NOWA_SPRAWA",
-          aktywny: true,
-          triggery: ["case_created"],
-          zmienne: ["{nazwaSprawi}", "{kategoria}", "{klient}", "{budżet}"],
-          opisZmiennych: {
-            "{nazwaSprawi}": "Nazwa sprawy",
-            "{kategoria}": "Kategoria sprawy",
-            "{klient}": "Imię i nazwisko klienta",
-            "{budżet}": "Budżet sprawy",
-          },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          nazwa: "Akceptacja oferty - powiadomienie dla kancelarii",
-          temat: "Twoja oferta została zaakceptowana!",
-          tresc: "Gratulacje {kancelaria}!\n\nKlient {klient} zaakceptował...",
-          trescHtml: "<p>Gratulacje <strong>{kancelaria}</strong>!</p><p>Klient...</p>",
-          typ: "AKCEPTACJA_OFERTY",
-          aktywny: true,
-          triggery: ["offer_accepted"],
-          zmienne: ["{kancelaria}", "{klient}", "{nazwaSprawi}", "{kwota}"],
-          opisZmiennych: {
-            "{kancelaria}": "Nazwa kancelarii",
-            "{klient}": "Imię i nazwisko klienta",
-            "{nazwaSprawi}": "Nazwa sprawy",
-            "{kwota}": "Kwota oferty",
-          },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ]
-      setTemplates(mockTemplates)
+      const response = await fetch("/api/email-templates")
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch templates")
+      }
+
+      const data = await response.json()
+      setTemplates(data)
     } catch (error) {
+      console.error("Error fetching templates:", error)
       toast.error("Nie udało się pobrać szablonów email")
     } finally {
       setLoading(false)
@@ -192,8 +158,36 @@ export default function EmailManagementPage() {
     setSubmitting(true)
 
     try {
-      // In a real implementation, this would call the API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const url = selectedTemplate
+        ? `/api/email-templates/${selectedTemplate.id}`
+        : "/api/email-templates"
+
+      const method = selectedTemplate ? "PUT" : "POST"
+
+      // Get variables for the selected type
+      const zmienne = availableVariables[formData.typ as keyof typeof availableVariables] || []
+
+      // Create descriptions for variables (you can customize this)
+      const opisZmiennych: Record<string, string> = {}
+      zmienne.forEach((variable) => {
+        opisZmiennych[variable] = variable.replace(/[{}]/g, "")
+      })
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          triggery: [],
+          zmienne,
+          opisZmiennych,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to save template")
+      }
 
       toast.success(
         selectedTemplate
@@ -203,6 +197,7 @@ export default function EmailManagementPage() {
       setEditDialogOpen(false)
       fetchTemplates()
     } catch (error) {
+      console.error("Error saving template:", error)
       toast.error("Wystąpił błąd podczas zapisywania szablonu")
     } finally {
       setSubmitting(false)
@@ -227,8 +222,14 @@ export default function EmailManagementPage() {
 
   const handleToggleActive = async (template: EmailTemplate) => {
     try {
-      // In a real implementation, this would call the API
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      const response = await fetch(`/api/email-templates/${template.id}`, {
+        method: "PATCH",
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to toggle template status")
+      }
+
       toast.success(
         template.aktywny
           ? "Szablon został dezaktywowany"
@@ -236,6 +237,7 @@ export default function EmailManagementPage() {
       )
       fetchTemplates()
     } catch (error) {
+      console.error("Error toggling template status:", error)
       toast.error("Nie udało się zmienić statusu szablonu")
     }
   }
@@ -246,11 +248,18 @@ export default function EmailManagementPage() {
     }
 
     try {
-      // In a real implementation, this would call the API
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      const response = await fetch(`/api/email-templates/${template.id}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to delete template")
+      }
+
       toast.success("Szablon został usunięty")
       fetchTemplates()
     } catch (error) {
+      console.error("Error deleting template:", error)
       toast.error("Nie udało się usunąć szablonu")
     }
   }
