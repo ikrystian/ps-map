@@ -1,0 +1,1536 @@
+# DOKUMENTACJA FUNKCJONALNOŚCI FINANSOWYCH - PANEL ADMINISTRATORA
+# Prosta Sprawa - System zarządzania transakcjami i promocjami
+
+Data utworzenia: 2025-11-16
+Wersja: 1.0
+
+================================================================================
+SPIS TREŚCI
+================================================================================
+
+1. TRANSAKCJE (/admin/transakcje)
+   1.1. Przegląd funkcjonalności
+   1.2. Interfejs użytkownika
+   1.3. Typy transakcji
+   1.4. Filtry i wyszukiwanie
+   1.5. Statystyki i podsumowania
+   1.6. Operacje na transakcjach
+   1.7. Automatyczne działania systemowe
+   1.8. API Endpoints
+   1.9. Model danych
+
+2. KONFIGURACJA PROMOCJI (/admin/promocje)
+   2.1. Przegląd funkcjonalności
+   2.2. Interfejs użytkownika
+   2.3. Typy promocji
+   2.4. Parametry konfiguracji
+   2.5. Operacje administracyjne
+   2.6. API Endpoints
+   2.7. Model danych
+
+3. INTEGRACJE SYSTEMOWE
+   3.1. System punktów
+   3.2. Generowanie faktur
+   3.3. System płatności
+
+================================================================================
+1. TRANSAKCJE (/admin/transakcje)
+================================================================================
+
+1.1. PRZEGLĄD FUNKCJONALNOŚCI
+--------------------------------------------------------------------------------
+
+Moduł transakcji to centrum zarządzania wszystkimi płatnościami w systemie
+Prosta Sprawa. Administrator ma pełen wgląd i kontrolę nad zamówieniami
+składanymi przez kancelarie prawne, zarówno dotyczącymi zakupu punktów
+promocyjnych, jak i subskrypcji pakietów abonamentowych.
+
+GŁÓWNE CELE MODUŁU:
+- Pełna widoczność wszystkich transakcji w systemie
+- Możliwość manualnej aktualizacji statusów płatności
+- Monitoring przychodów i działań finansowych kancelarii
+- Identyfikacja i rozwiązywanie problemów płatności
+- Generowanie statystyk finansowych
+
+
+1.2. INTERFEJS UŻYTKOWNIKA
+--------------------------------------------------------------------------------
+
+Strona: /admin/transakcje
+Dostęp: Tylko użytkownicy z rolą ADMIN
+Plik źródłowy: prosta-sprawa/app/admin/transakcje/page.tsx
+
+SEKCJE INTERFEJSU:
+
+A) NAGŁÓWEK STRONY
+   - Tytuł: "Transakcje"
+   - Opis: "Zarządzaj wszystkimi transakcjami kancelarii"
+
+B) KARTY STATYSTYCZNE (4 karty w rzędzie)
+
+   Karta 1: WSZYSTKIE TRANSAKCJE
+   - Ikona: CreditCard (szara)
+   - Wartość: Całkowita liczba transakcji w systemie
+   - Źródło: pagination.total
+
+   Karta 2: OCZEKUJĄCE PŁATNOŚCI
+   - Ikona: CreditCard (żółta)
+   - Wartość: Liczba transakcji ze statusem "OCZEKUJE"
+   - Źródło: Filtrowanie orders.filter(o => o.statusPlatnosci === "OCZEKUJE")
+
+   Karta 3: ZAPŁACONE
+   - Ikona: CreditCard (zielona)
+   - Wartość: Liczba transakcji ze statusem "ZAPLACONE"
+   - Źródło: Filtrowanie orders.filter(o => o.statusPlatnosci === "ZAPLACONE")
+
+   Karta 4: SUMA ZAPŁACONYCH
+   - Ikona: Euro (szara)
+   - Wartość: Suma kwot wszystkich zapłaconych transakcji w PLN
+   - Format: formatCurrency() - polskie formatowanie waluty
+   - Źródło: Suma orders ze statusem ZAPLACONE
+
+C) PANEL FILTRÓW (4 pola w rzędzie)
+
+   Pole 1: WYSZUKIWANIE TEKSTOWE
+   - Typ: Input z ikoną Search
+   - Placeholder: "Szukaj po numerze, kancelarii..."
+   - Funkcja: Wyszukiwanie po:
+     * Numerze zamówienia (orderNumber)
+     * ID transakcji (transactionId)
+     * Zewnętrznym ID (externalOrderId)
+     * Nazwie kancelarii (nazwa lub nazwaFirmy)
+   - Live search: Aktualizacja przy każdej zmianie tekstu
+
+   Pole 2: STATUS PŁATNOŚCI
+   - Typ: Select dropdown
+   - Opcje:
+     * Wszystkie statusy (default)
+     * Oczekuje (OCZEKUJE)
+     * Zapłacone (ZAPLACONE)
+     * Anulowane (ANULOWANE)
+     * Zwrot (ZWROT)
+
+   Pole 3: METODA PŁATNOŚCI
+   - Typ: Select dropdown
+   - Opcje:
+     * Wszystkie metody (default)
+     * PayU
+     * Przelewy24
+     * Przelew bankowy
+     * PayPal
+     * BACS
+
+   Pole 4: TYP ZAMÓWIENIA
+   - Typ: Select dropdown
+   - Opcje:
+     * Wszystkie typy (default)
+     * Punkty (POINTS)
+     * Subskrypcja (SUBSCRIPTION)
+
+D) TABELA TRANSAKCJI
+
+   KOLUMNY:
+   1. Numer zamówienia
+      - Wyświetla: orderNumber lub pierwsze 8 znaków ID
+      - Formatowanie: font-medium
+
+   2. Kancelaria
+      - Wiersz 1: Nazwa kancelarii (nazwa lub nazwaFirmy)
+      - Wiersz 2: Email kontaktowy (mniejsza czcionka, szary)
+
+   3. Typ
+      - Badge z typem: "Punkty" lub "Subskrypcja"
+      - Styl: variant="outline"
+
+   4. Szczegóły
+      - Dla POINTS:
+        * Wiersz 1: Nazwa pakietu (np. "100_pkt")
+        * Wiersz 2: Liczba punktów (np. "100 pkt")
+      - Dla SUBSCRIPTION:
+        * Wiersz 1: Nazwa planu subskrypcji
+        * Wiersz 2: Okres w miesiącach (np. "12 mies.")
+
+   5. Kwota
+      - Format: Polskie formatowanie PLN (np. "49,00 zł")
+      - Użycie: formatCurrency(order.kwota)
+
+   6. Metoda
+      - Wyświetla: Nazwę metody płatności
+      - Mapowanie: paymentMethodLabels
+
+   7. Status
+      - Badge z kolorem zależnym od statusu:
+        * OCZEKUJE: secondary (szary/żółty)
+        * ZAPLACONE: default (zielony)
+        * ANULOWANE: destructive (czerwony)
+        * ZWROT: outline (obramowanie)
+
+   8. Data utworzenia
+      - Format: DD.MM.YYYY HH:MM
+      - Strefa czasowa: pl-PL
+
+   9. Data zapłaty
+      - Format: DD.MM.YYYY HH:MM lub "-" jeśli null
+      - Wyświetlana tylko dla zapłaconych transakcji
+
+   10. Akcje (kolumna po prawej)
+       - Przycisk EDYTUJ (ikona Edit)
+       - Przycisk USUŃ (ikona Trash2)
+
+E) PAGINACJA
+
+   Wyświetlana tylko gdy totalPages > 1
+
+   Informacje:
+   - "Strona X z Y (łącznie Z transakcji)"
+
+   Przyciski:
+   - POPRZEDNIA (disabled na stronie 1)
+   - NASTĘPNA (disabled na ostatniej stronie)
+
+   Limit: 20 transakcji na stronę
+
+
+1.3. TYPY TRANSAKCJI
+--------------------------------------------------------------------------------
+
+System obsługuje dwa główne typy zamówień:
+
+A) PUNKTY (OrderType.POINTS)
+
+   Zastosowanie:
+   - Zakup pakietów punktów promocyjnych przez kancelarię
+   - Punkty służą do aktywacji promocji profilu
+
+   Pola specyficzne:
+   - pakietPunktow: String - nazwa pakietu (np. "100_pkt", "250_pkt", "500_pkt")
+   - liczbaPunktow: Int - liczba punktów w pakiecie
+
+   Przykładowe pakiety:
+   - 100 punktów
+   - 250 punktów
+   - 500 punktów
+   - 1000 punktów
+
+   Akcje po płatności:
+   - Dodanie punktów do salda kancelarii (punktySaldo)
+   - Wygenerowanie faktury VAT
+
+B) SUBSKRYPCJA (OrderType.SUBSCRIPTION)
+
+   Zastosowanie:
+   - Zakup lub odnowienie pakietu abonamentowego
+   - Dostęp do funkcji premium platformy
+
+   Pola specyficzne:
+   - subscriptionPlanId: String - ID wybranego planu
+   - subscriptionPlan: Relacja - plan (Podstawowy, Standard, Premium, Biznes)
+   - subscriptionPeriod: Int - okres w miesiącach (1, 6, 12)
+   - packageStartDate: DateTime - data rozpoczęcia abonamentu
+   - packageEndDate: DateTime - data zakończenia abonamentu
+
+   Akcje po płatności:
+   - Aktualizacja subscriptionPlanId w profilu kancelarii
+   - Ustawienie dat rozpoczęcia/zakończenia pakietu
+   - Wygenerowanie faktury VAT
+
+
+1.4. FILTRY I WYSZUKIWANIE
+--------------------------------------------------------------------------------
+
+System filtrowania działa w czasie rzeczywistym i obsługuje:
+
+A) WYSZUKIWANIE TEKSTOWE
+
+   API Endpoint: GET /api/admin/transakcje?search={query}
+
+   Przeszukiwane pola:
+   - orderNumber (numer zamówienia)
+   - transactionId (ID transakcji z bramki płatności)
+   - externalOrderId (zewnętrzne ID z PayU/Przelewy24)
+   - lawFirm.nazwa (nazwa osoby/prawnika)
+   - lawFirm.nazwaFirmy (nazwa firmy)
+
+   Tryb: Case-insensitive (bez rozróżniania wielkości liter)
+   Operator: contains (zawiera frazę)
+
+B) FILTROWANIE PO STATUSIE PŁATNOŚCI
+
+   API Endpoint: GET /api/admin/transakcje?statusPlatnosci={status}
+
+   Dostępne statusy:
+   - OCZEKUJE: Płatność oczekująca
+   - ZAPLACONE: Płatność zrealizowana
+   - ANULOWANE: Transakcja anulowana
+   - ZWROT: Zwrot środków
+
+C) FILTROWANIE PO METODZIE PŁATNOŚCI
+
+   API Endpoint: GET /api/admin/transakcje?metodaPlatnosci={method}
+
+   Dostępne metody:
+   - PAYU: Bramka PayU
+   - PRZELEWY24: Bramka Przelewy24
+   - PRZELEW: Przelew bankowy tradycyjny
+   - PAYPAL: PayPal
+   - BACS: BACS (UK)
+
+D) FILTROWANIE PO TYPIE ZAMÓWIENIA
+
+   API Endpoint: GET /api/admin/transakcje?orderType={type}
+
+   Dostępne typy:
+   - POINTS: Zamówienia punktów
+   - SUBSCRIPTION: Zamówienia subskrypcji
+
+E) KOMBINOWANIE FILTRÓW
+
+   Wszystkie filtry mogą być używane jednocześnie:
+
+   Przykład:
+   GET /api/admin/transakcje?search=Kowalski&statusPlatnosci=ZAPLACONE&metodaPlatnosci=PRZELEWY24&orderType=POINTS&page=1&limit=20
+
+
+1.5. STATYSTYKI I PODSUMOWANIA
+--------------------------------------------------------------------------------
+
+Dashboard wyświetla kluczowe metryki finansowe:
+
+A) CAŁKOWITA LICZBA TRANSAKCJI
+   - Źródło: pagination.total
+   - Uwzględnia wszystkie transakcje niezależnie od statusu
+
+B) OCZEKUJĄCE PŁATNOŚCI
+   - Zlicza transakcje ze statusem OCZEKUJE
+   - Ważne dla monitorowania niedokończonych płatności
+   - Pomaga identyfikować porzucone koszyki
+
+C) ZAPŁACONE TRANSAKCJE
+   - Zlicza transakcje ze statusem ZAPLACONE
+   - Wskaźnik skuteczności konwersji płatności
+
+D) SUMA PRZYCHODÓW
+   - Suma wartości wszystkich zapłaconych transakcji
+   - Format: Polski format waluty z symbolem "zł"
+   - Przykład: "12 450,50 zł"
+   - Kalkulacja:
+     orders
+       .filter(o => o.statusPlatnosci === "ZAPLACONE")
+       .reduce((sum, o) => sum + o.kwota, 0)
+
+
+1.6. OPERACJE NA TRANSAKCJACH
+--------------------------------------------------------------------------------
+
+Administrator może wykonywać następujące operacje:
+
+A) EDYCJA TRANSAKCJI
+
+   Przycisk: Ikona Edit w kolumnie Akcje
+   Dialog: "Edytuj transakcję"
+
+   Edytowalne pola:
+
+   1. STATUS PŁATNOŚCI (wymagane)
+      - Select dropdown
+      - Opcje: OCZEKUJE, ZAPLACONE, ANULOWANE, ZWROT
+      - Wpływ: Zmiana statusu może wywołać akcje systemowe
+
+   2. METODA PŁATNOŚCI (wymagane)
+      - Select dropdown
+      - Opcje: PAYU, PRZELEWY24, PRZELEW, PAYPAL, BACS
+
+   3. KWOTA (wymagane)
+      - Input numeryczny
+      - Krok: 0.01
+      - Jednostka: PLN
+      - Walidacja: Musi być dodatnia liczba
+
+   4. ID TRANSAKCJI (opcjonalne)
+      - Input tekstowy
+      - Przechowuje ID z bramki płatności
+      - Używane do reconciliation płatności
+
+   5. ZEWNĘTRZNE ID ZAMÓWIENIA (opcjonalne)
+      - Input tekstowy
+      - ID nadane przez PayU/Przelewy24
+      - Pomocne przy debugowaniu integracji
+
+   Akcje po zapisie:
+   - Aktualizacja rekord Order w bazie danych
+   - Jeśli zmieniono status na ZAPLACONE:
+     * Ustawienie zaplaconoData na aktualną datę/czas
+     * Dodanie punktów do salda (dla zamówień POINTS)
+     * Generowanie faktury (jeśli nie istnieje)
+   - Odświeżenie listy transakcji
+   - Toast: "Transakcja została zaktualizowana"
+
+   API Endpoint: PUT /api/admin/transakcje/[id]
+
+B) USUWANIE TRANSAKCJI
+
+   Przycisk: Ikona Trash2 w kolumnie Akcje
+   Dialog potwierdzenia: AlertDialog
+
+   Tytuł: "Czy na pewno chcesz usunąć tę transakcję?"
+   Opis: "Ta operacja jest nieodwracalna. Transakcja zostanie trwale
+          usunięta z systemu."
+
+   Przyciski:
+   - ANULUJ: Zamyka dialog bez akcji
+   - USUŃ: Wykonuje usunięcie
+
+   Skutki usunięcia:
+   - Trwałe usunięcie rekordu Order z bazy
+   - Kaskadowe usunięcie powiązanej faktury (jeśli istnieje)
+   - NIE cofa dodanych punktów (należy ręcznie skorygować)
+   - Toast: "Transakcja została usunięta"
+
+   API Endpoint: DELETE /api/admin/transakcje/[id]
+
+   UWAGA: Operacja nieodwracalna! Należy używać ostrożnie.
+
+
+1.7. AUTOMATYCZNE DZIAŁANIA SYSTEMOWE
+--------------------------------------------------------------------------------
+
+Przy zmianie statusu transakcji na ZAPLACONE system wykonuje:
+
+A) AKTUALIZACJA DATY PŁATNOŚCI
+   - Pole: zaplaconoData
+   - Wartość: Aktualna data i czas
+   - Używane do raportowania i statystyk
+
+B) DODANIE PUNKTÓW (tylko dla OrderType.POINTS)
+
+   Warunek: order.orderType === "POINTS" && order.liczbaPunktow > 0
+
+   Akcja:
+   await prisma.lawFirm.update({
+     where: { id: order.lawFirmId },
+     data: {
+       punktySaldo: {
+         increment: order.liczbaPunktow
+       }
+     }
+   })
+
+   Rezultat: Saldo punktów kancelarii zwiększa się o zakupioną liczbę
+
+C) GENEROWANIE FAKTURY VAT
+
+   Warunek: Brak powiązanej faktury
+
+   Proces:
+   1. Wywołanie: generateInvoiceForOrder(order.id)
+   2. Generowanie numeru faktury (format: FV/YYYY/MM/XXXXX)
+   3. Kalkulacja kwot:
+      - Kwota brutto = order.kwota
+      - Stawka VAT = 23%
+      - Kwota netto = brutto / 1.23
+      - Kwota VAT = brutto - netto
+   4. Zapisanie danych nabywcy z profilu kancelarii:
+      - Nazwa firmy
+      - NIP
+      - Adres, kod pocztowy, miasto
+   5. Utworzenie rekordu Invoice w bazie
+   6. Status faktury: ISSUED (wystawiona)
+
+   Szczegóły w pliku: lib/invoice-generator.ts
+
+
+1.8. API ENDPOINTS
+--------------------------------------------------------------------------------
+
+A) LISTA TRANSAKCJI
+
+   Endpoint: GET /api/admin/transakcje
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/transakcje/route.ts
+
+   Query Parameters:
+   - page: numer strony (default: 1)
+   - limit: liczba rekordów na stronę (default: 20)
+   - search: fraza wyszukiwania
+   - statusPlatnosci: filtr statusu
+   - metodaPlatnosci: filtr metody
+   - orderType: filtr typu zamówienia
+
+   Response (200 OK):
+   {
+     "orders": [
+       {
+         "id": "uuid",
+         "orderNumber": "ORD-12345",
+         "orderType": "POINTS" | "SUBSCRIPTION",
+         "pakietPunktow": "100_pkt",
+         "liczbaPunktow": 100,
+         "subscriptionPlanId": "uuid" | null,
+         "subscriptionPlan": {...} | null,
+         "subscriptionPeriod": 12 | null,
+         "kwota": 49.00,
+         "metodaPlatnosci": "PRZELEWY24",
+         "statusPlatnosci": "ZAPLACONE",
+         "transactionId": "ext-123456",
+         "externalOrderId": "ext-order-789",
+         "createdAt": "2025-01-15T10:30:00Z",
+         "updatedAt": "2025-01-15T10:35:00Z",
+         "zaplaconoData": "2025-01-15T10:35:00Z",
+         "lawFirm": {
+           "id": "uuid",
+           "nazwa": "Jan Kowalski",
+           "nazwaFirmy": "Kancelaria Kowalski",
+           "emailKontakt": "kontakt@kowalski.pl"
+         },
+         "invoice": {
+           "id": "uuid",
+           "invoiceNumber": "FV/2025/01/00123",
+           "status": "ISSUED"
+         } | null
+       },
+       ...
+     ],
+     "pagination": {
+       "page": 1,
+       "limit": 20,
+       "total": 157,
+       "totalPages": 8
+     }
+   }
+
+B) SZCZEGÓŁY TRANSAKCJI
+
+   Endpoint: GET /api/admin/transakcje/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/transakcje/[id]/route.ts
+
+   Response (200 OK):
+   {
+     // Jak w liście, ale pojedynczy obiekt
+     // Dodatkowo zawiera pełne dane lawFirm.nip
+   }
+
+   Response (404 Not Found):
+   {
+     "error": "Nie znaleziono transakcji"
+   }
+
+C) AKTUALIZACJA TRANSAKCJI
+
+   Endpoint: PUT /api/admin/transakcje/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/transakcje/[id]/route.ts
+
+   Request Body:
+   {
+     "statusPlatnosci": "ZAPLACONE",
+     "metodaPlatnosci": "PRZELEWY24",
+     "kwota": 49.00,
+     "transactionId": "trans-123",
+     "externalOrderId": "ext-456"
+   }
+
+   Response (200 OK):
+   {
+     // Zaktualizowany obiekt zamówienia
+   }
+
+   Efekty uboczne:
+   - Jeśli statusPlatnosci = ZAPLACONE:
+     * Ustawia zaplaconoData
+     * Dodaje punkty (dla POINTS)
+     * Generuje fakturę (jeśli brak)
+
+D) USUNIĘCIE TRANSAKCJI
+
+   Endpoint: DELETE /api/admin/transakcje/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/transakcje/[id]/route.ts
+
+   Response (200 OK):
+   {
+     "message": "Transakcja została usunięta"
+   }
+
+   Kaskadowe usunięcie:
+   - Invoice powiązana z Order (onDelete: Cascade)
+
+
+1.9. MODEL DANYCH
+--------------------------------------------------------------------------------
+
+MODEL: Order
+Lokalizacja: prisma/schema.prisma (linie 946-990)
+
+model Order {
+  id                String   @id @default(uuid())
+  orderNumber       String?  @unique
+  lawFirmId         String
+  lawFirm           LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  // Typ zamówienia
+  orderType         OrderType @default(POINTS)
+
+  // Dla zamówień punktów
+  pakietPunktow     String?
+  liczbaPunktow     Int?
+
+  // Dla zamówień subskrypcji
+  subscriptionPlanId String?
+  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id])
+  subscriptionPeriod Int?
+  packageStartDate   DateTime?
+  packageEndDate     DateTime?
+
+  // Wspólne pola
+  kwota             Float
+
+  metodaPlatnosci   PaymentMethod
+  statusPlatnosci   PaymentStatus @default(OCZEKUJE)
+
+  // Dane rozliczeniowe
+  daneFaktury       String?
+
+  // Integracja z bramkami płatności
+  externalOrderId   String?
+  transactionId     String?
+  statusUrl         String?
+  redirectUrl       String?
+
+  // Daty
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  zaplaconoData     DateTime?
+
+  // Relacje
+  invoice           Invoice?
+
+  @@index([lawFirmId])
+  @@index([statusPlatnosci])
+  @@index([metodaPlatnosci])
+  @@index([orderType])
+  @@index([createdAt])
+}
+
+ENUMY:
+
+enum OrderType {
+  POINTS        // Zakup punktów
+  SUBSCRIPTION  // Zakup subskrypcji
+}
+
+enum PaymentMethod {
+  PAYU
+  PRZELEWY24
+  PRZELEW
+  PAYPAL
+  BACS
+}
+
+enum PaymentStatus {
+  OCZEKUJE
+  ZAPLACONE
+  ANULOWANE
+  ZWROT
+}
+
+
+================================================================================
+2. KONFIGURACJA PROMOCJI (/admin/promocje)
+================================================================================
+
+2.1. PRZEGLĄD FUNKCJONALNOŚCI
+--------------------------------------------------------------------------------
+
+Moduł konfiguracji promocji pozwala administratorowi na definiowanie
+i zarządzanie typami promocji dostępnych dla kancelarii prawnych.
+
+Każdy typ promocji określa:
+- Nazwę i opis promocji
+- Koszt w punktach (dziennie lub tygodniowo)
+- Cechy/benefity promocji
+- Wygląd (ikona, kolor)
+- Status aktywności
+- Kolejność wyświetlania
+
+GŁÓWNE CELE MODUŁU:
+- Centralna konfiguracja dostępnych promocji
+- Elastyczne zarządzanie cenami promocji
+- Możliwość dodawania nowych typów promocji
+- Kontrola nad aktywnością poszczególnych promocji
+- Dostosowywanie opisów i cech promocji
+
+
+2.2. INTERFEJS UŻYTKOWNIKA
+--------------------------------------------------------------------------------
+
+Strona: /admin/promocje
+Dostęp: Tylko użytkownicy z rolą ADMIN
+Plik źródłowy: prosta-sprawa/app/admin/promocje/page.tsx
+
+SEKCJE INTERFEJSU:
+
+A) NAGŁÓWEK STRONY
+
+   Lewa strona:
+   - Tytuł: "Zarządzanie promocjami"
+   - Opis: "Konfiguruj typy promocji dostępne dla kancelarii"
+
+   Prawa strona:
+   - Przycisk: "Dodaj typ promocji"
+   - Ikona: Plus
+   - Akcja: Otwiera dialog tworzenia nowej konfiguracji
+
+B) SIATKA KART PROMOCJI
+
+   Layout: Grid 2 kolumny (md:grid-cols-2)
+
+   Każda karta zawiera:
+
+   NAGŁÓWEK KARTY:
+   - Ikona: TrendingUp (primary color)
+   - Tytuł: Label promocji (np. "Podbicie ogłoszenia")
+   - Opis: Description promocji
+   - Badge statusu: "Aktywna" (zielony) lub "Nieaktywna" (szary)
+
+   ZAWARTOŚĆ KARTY:
+
+   Sekcja 1: TYP
+   - Label: "Typ:"
+   - Wartość: Badge z typem promocji (np. "PODBICIE_OGLOSZENIA")
+
+   Sekcja 2: KOSZT
+   - Label: "Koszt:"
+   - Wartość: Badges pokazujące koszt
+     * Jeśli pointsPerDay: "{X} pkt/dzień"
+     * Jeśli pointsPerWeek: "{X} pkt/tydzień"
+     * Mogą być oba jednocześnie
+
+   Sekcja 3: CECHY
+   - Label: "Cechy:"
+   - Lista cech (ul z list-disc)
+   - Każda cecha w osobnej linii
+
+   Sekcja 4: KOLEJNOŚĆ
+   - Label: "Kolejność:"
+   - Badge: Numer kolejności wyświetlania
+
+   PRZYCISKI AKCJI (na dole karty, po prawej):
+   - Przycisk EDYTUJ
+     * Ikona: Edit
+     * Akcja: Otwiera dialog edycji
+   - Przycisk USUŃ
+     * Ikona: Trash2
+     * Kolor: destructive (czerwony)
+     * Akcja: Usuwa konfigurację po potwierdzeniu
+
+C) STAN PUSTY (gdy brak konfiguracji)
+
+   Wyświetlana karta z:
+   - Ikona: TrendingUp (duża, szara, wyśrodkowana)
+   - Tytuł: "Brak konfiguracji promocji"
+   - Opis: "Dodaj pierwszą konfigurację promocji dla kancelarii"
+   - Przycisk: "Dodaj typ promocji"
+
+D) DIALOG DODAWANIA/EDYCJI
+
+   Tytuł:
+   - Tworzenie: "Dodaj konfigurację promocji"
+   - Edycja: "Edytuj konfigurację promocji"
+
+   Opis:
+   - "Skonfiguruj parametry typu promocji dostępnego dla kancelarii"
+
+   Formularz (przewijany, max wysokość 90vh):
+
+   1. TYP PROMOCJI * (wymagane)
+      - Typ: Select dropdown
+      - Disabled przy edycji (nie można zmieniać typu)
+      - Opcje:
+        * Podbicie ogłoszenia (PODBICIE_OGLOSZENIA)
+        * Wyróżnienie (WYROZNIENIE)
+        * TOP Lista (TOP_LISTA)
+        * Strona główna (STRONA_GLOWNA)
+
+   2. NAZWA WYŚWIETLANA * (wymagane)
+      - Typ: Input tekstowy
+      - Placeholder: "np. Podbicie ogłoszenia"
+      - Walidacja: Nie może być puste
+
+   3. OPIS * (wymagane)
+      - Typ: Textarea
+      - Placeholder: "Krótki opis promocji"
+      - Wiersze: 3
+      - Walidacja: Nie może być pusty
+
+   4. PUNKTY/DZIEŃ (opcjonalne, ale jedno pole wymagane)
+      - Typ: Input number
+      - Min: 0
+      - Placeholder: "20"
+      - Opis: Koszt promocji za jeden dzień
+
+   5. PUNKTY/TYDZIEŃ (opcjonalne, ale jedno pole wymagane)
+      - Typ: Input number
+      - Min: 0
+      - Placeholder: "100"
+      - Opis: Koszt promocji za tydzień
+
+      UWAGA: Musi być wypełnione przynajmniej jedno z pól 4 lub 5
+
+   6. CECHY PROMOCJI * (wymagane, minimum 1)
+      - Typ: Lista dynamicznych pól Input
+      - Każde pole:
+        * Input tekstowy
+        * Przycisk X (usuń cechę) - tylko jeśli > 1 pole
+      - Przycisk "Dodaj cechę" (Plus icon) na dole
+      - Placeholder: "np. Wyższa pozycja w wynikach wyszukiwania"
+      - Walidacja: Co najmniej jedna wypełniona cecha
+
+   7. IKONA (opcjonalne)
+      - Typ: Input tekstowy
+      - Placeholder: "np. TrendingUp"
+      - Opis: Nazwa ikony z biblioteki lub URL
+
+   8. KOLOR (opcjonalne)
+      - Typ: Input color picker
+      - Default: #3b82f6 (niebieski)
+      - Format: Hex color
+
+   9. KOLEJNOŚĆ WYŚWIETLANIA (opcjonalne)
+      - Typ: Input number
+      - Min: 0
+      - Default: 0
+      - Opis: Niższe wartości wyświetlane pierwsze
+
+   10. AKTYWNA
+       - Typ: Switch (toggle)
+       - Default: true (włączone)
+       - Opis: Czy promocja jest dostępna dla kancelarii
+
+   PRZYCISKI:
+   - ANULUJ: Zamyka dialog bez zapisywania
+   - UTWÓRZ / ZAPISZ ZMIANY: Zapisuje konfigurację
+
+
+2.3. TYPY PROMOCJI
+--------------------------------------------------------------------------------
+
+System definiuje 4 typy promocji (enum PromotionType):
+
+A) PODBICIE_OGLOSZENIA
+
+   Opis: Zwiększa widoczność profilu kancelarii w wynikach wyszukiwania
+
+   Typowe parametry:
+   - Koszt: 20 pkt/dzień
+   - Cechy:
+     * Wyższa pozycja w wynikach wyszukiwania
+     * Podbicie co 24h
+     * Większa widoczność profilu
+
+   Zastosowanie:
+   - Kancelaria chce być wyżej w listach
+   - Krótkoterminowe kampanie promocyjne
+   - Testowanie efektywności promocji
+
+B) WYROZNIENIE
+
+   Opis: Wizualne wyróżnienie profilu kancelarii
+
+   Typowe parametry:
+   - Koszt: 50 pkt/tydzień
+   - Cechy:
+     * Kolorowe tło karty profilu
+     * Badge "Wyróżnione"
+     * Zwiększona widoczność
+     * Wyróżnienie przez 7 dni
+
+   Zastosowanie:
+   - Wyróżnienie się na tle konkurencji
+   - Przyciągnięcie uwagi klientów
+   - Średnioterminowa promocja
+
+C) TOP_LISTA
+
+   Opis: Umieszczenie w sekcji TOP kancelarii
+
+   Typowe parametry:
+   - Koszt: 100 pkt/tydzień
+   - Cechy:
+     * Wyświetlanie w sekcji TOP na stronie kategorii
+     * Priorytet w wynikach wyszukiwania
+     * Zwiększony ruch na profilu
+     * Promocja przez 7 dni
+
+   Zastosowanie:
+   - Premium positioning
+   - Maksymalna widoczność w kategorii
+   - Długoterminowa strategia marketingowa
+
+D) STRONA_GLOWNA
+
+   Opis: Promocja na stronie głównej platformy
+
+   Typowe parametry:
+   - Koszt: 200 pkt/tydzień
+   - Cechy:
+     * Wyświetlanie na stronie głównej
+     * Maksymalna widoczność w całym serwisie
+     * Dotarcie do wszystkich odwiedzających
+     * Premium placement przez 7 dni
+
+   Zastosowanie:
+   - Najwyższa forma promocji
+   - Największy zasięg
+   - Budowanie rozpoznawalności marki
+
+
+2.4. PARAMETRY KONFIGURACJI
+--------------------------------------------------------------------------------
+
+Każda konfiguracja promocji zawiera następujące parametry:
+
+A) PODSTAWOWE INFORMACJE
+
+   1. TYPE (String, wymagane, unikalne)
+      - Enum: PromotionType
+      - Wartości: PODBICIE_OGLOSZENIA, WYROZNIENIE, TOP_LISTA, STRONA_GLOWNA
+      - Unikalny klucz identyfikujący typ promocji
+      - Nie może być zmieniany po utworzeniu
+
+   2. LABEL (String, wymagane)
+      - Nazwa wyświetlana użytkownikowi
+      - Przykład: "Podbicie ogłoszenia"
+      - Używane w interfejsie kancelarii
+
+   3. DESCRIPTION (String, wymagane)
+      - Opis promocji
+      - Przykład: "Zwiększ widoczność swojego profilu w wynikach wyszukiwania"
+      - Wyświetlany w panelu kancelarii przy wyborze promocji
+
+B) CENY
+
+   4. POINTS_PER_DAY (Int, opcjonalne)
+      - Koszt promocji za jeden dzień
+      - Null jeśli promocja nie jest rozliczana dziennie
+      - Przykład: 20
+
+   5. POINTS_PER_WEEK (Int, opcjonalne)
+      - Koszt promocji za tydzień (7 dni)
+      - Null jeśli promocja nie jest rozliczana tygodniowo
+      - Przykład: 100
+
+   UWAGA: Przynajmniej jedno z pól pointsPerDay lub pointsPerWeek
+          musi być wypełnione!
+
+C) CECHY/BENEFITY
+
+   6. FEATURES (String - JSON array, wymagane)
+      - Lista cech/benefitów promocji
+      - Format: JSON.stringify(["Cecha 1", "Cecha 2", ...])
+      - Przykład: ["Wyższa pozycja w wynikach", "Podbicie co 24h"]
+      - Wyświetlane jako lista punktorów w interfejsie
+      - Minimum 1 cecha wymagana
+
+D) WYGLĄD
+
+   7. ICON (String, opcjonalne)
+      - Nazwa ikony z biblioteki lub URL do ikony
+      - Przykład: "TrendingUp", "Star", "Zap"
+      - Null jeśli nie ustawiono
+      - Używane przy wyświetlaniu promocji
+
+   8. COLOR (String - hex, opcjonalne)
+      - Kolor tła ikony lub karty promocji
+      - Format: Hex color (np. "#3b82f6")
+      - Default: "#3b82f6" (niebieski)
+      - Null jeśli nie ustawiono
+
+E) STATUS I KOLEJNOŚĆ
+
+   9. AKTYWNA (Boolean, wymagane)
+      - Określa czy promocja jest dostępna dla kancelarii
+      - true: Promocja widoczna i możliwa do aktywacji
+      - false: Promocja ukryta, niedostępna
+      - Default: true
+
+   10. KOLEJNOSC (Int, wymagane)
+       - Kolejność wyświetlania w liście promocji
+       - Niższe wartości = wyżej na liście
+       - Default: 0
+       - Używane do sortowania: orderBy: { kolejnosc: 'asc' }
+
+F) METADANE
+
+   11. CREATED_AT (DateTime)
+       - Data utworzenia konfiguracji
+       - Automatycznie ustawiane
+
+   12. UPDATED_AT (DateTime)
+       - Data ostatniej aktualizacji
+       - Automatycznie aktualizowane przy każdej zmianie
+
+
+2.5. OPERACJE ADMINISTRACYJNE
+--------------------------------------------------------------------------------
+
+Administrator może wykonywać następujące operacje:
+
+A) DODAWANIE NOWEJ KONFIGURACJI
+
+   Przycisk: "Dodaj typ promocji"
+   Dialog: "Dodaj konfigurację promocji"
+
+   Proces:
+   1. Kliknięcie przycisku otwiera dialog
+   2. Administrator wypełnia formularz
+   3. Walidacja po stronie klienta:
+      - Wszystkie pola wymagane wypełnione
+      - Przynajmniej jedno pole koszt wypełnione
+      - Co najmniej jedna cecha dodana
+   4. Wysłanie POST /api/admin/promotion-configs
+   5. Walidacja po stronie serwera:
+      - Sprawdzenie czy typ już nie istnieje (unique constraint)
+      - Walidacja formatu danych
+   6. Utworzenie rekordu w bazie
+   7. Toast: "Konfiguracja promocji została utworzona"
+   8. Odświeżenie listy konfiguracji
+
+   Możliwe błędy:
+   - "Type, label, and description are required"
+   - "Either pointsPerDay or pointsPerWeek must be provided"
+   - "Features must be an array"
+   - "Promotion config with this type already exists"
+
+B) EDYCJA KONFIGURACJI
+
+   Przycisk: Ikona Edit na karcie promocji
+   Dialog: "Edytuj konfigurację promocji"
+
+   Proces:
+   1. Kliknięcie Edit otwiera dialog z wypełnionymi danymi
+   2. Pole TYPE jest zablokowane (disabled)
+   3. Administrator modyfikuje inne pola
+   4. Walidacja jak przy dodawaniu
+   5. Wysłanie PUT /api/admin/promotion-configs/[id]
+   6. Aktualizacja rekordu w bazie
+   7. Toast: "Konfiguracja promocji została zaktualizowana"
+   8. Odświeżenie listy
+
+   Uwaga: Zmiana ceny lub statusu aktywności wpływa na:
+   - Nowe aktywacje promocji przez kancelarie
+   - Aktywne promocje NIE są automatycznie aktualizowane
+   - Należy rozważyć komunikację z kancelariami o zmianach
+
+C) USUWANIE KONFIGURACJI
+
+   Przycisk: Ikona Trash2 na karcie promocji
+   Potwierdzenie: Browser confirm dialog
+
+   Tekst potwierdzenia:
+   "Czy na pewno chcesz usunąć tę konfigurację promocji?"
+
+   Proces:
+   1. Kliknięcie Usuń pokazuje confirm dialog
+   2. Użytkownik potwierdza lub anuluje
+   3. Wysłanie DELETE /api/admin/promotion-configs/[id]
+   4. Usunięcie rekordu z bazy
+   5. Toast: "Konfiguracja promocji została usunięta"
+   6. Odświeżenie listy
+
+   UWAGA KRYTYCZNA:
+   - Usunięcie konfiguracji NIE usuwa aktywnych promocji kancelarii
+   - Aktywne promocje mogą dalej działać, ale nie będą miały
+     pełnych metadanych
+   - Zalecane: Najpierw dezaktywować (aktywna = false),
+     poczekać aż wszystkie aktywne promocje wygasną,
+     dopiero wtedy usunąć konfigurację
+
+D) AKTYWACJA/DEZAKTYWACJA
+
+   Mechanizm: Edycja + zmiana pola "Aktywna"
+
+   Aktywna = true:
+   - Promocja widoczna w panelu kancelarii
+   - Możliwa do zakupu i aktywacji
+   - Wyświetlana w ofercie promocji
+
+   Aktywna = false:
+   - Promocja ukryta w panelu kancelarii
+   - Niemożliwa do zakupu
+   - Aktywne promocje tego typu dalej działają
+   - Przydatne przy wycofywaniu typu promocji
+
+E) ZMIANA KOLEJNOŚCI
+
+   Mechanizm: Edycja + zmiana pola "Kolejność"
+
+   Zastosowanie:
+   - Określa kolejność wyświetlania w liście promocji
+   - Niższe wartości = wyżej na liście
+   - Przykład:
+     * Kolejność 0: PODBICIE_OGLOSZENIA (najpierw)
+     * Kolejność 1: WYROZNIENIE
+     * Kolejność 2: TOP_LISTA
+     * Kolejność 3: STRONA_GLOWNA (ostatnie)
+
+
+2.6. API ENDPOINTS
+--------------------------------------------------------------------------------
+
+A) LISTA KONFIGURACJI
+
+   Endpoint: GET /api/admin/promotion-configs
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/promotion-configs/route.ts
+
+   Query Parameters:
+   - aktywna: "true" | "false" | "" (filtr po statusie aktywności)
+
+   Response (200 OK):
+   {
+     "configs": [
+       {
+         "id": "uuid",
+         "type": "PODBICIE_OGLOSZENIA",
+         "label": "Podbicie ogłoszenia",
+         "description": "Zwiększ widoczność swojego profilu",
+         "pointsPerDay": 20,
+         "pointsPerWeek": null,
+         "features": "[\"Wyższa pozycja\",\"Podbicie co 24h\"]",
+         "icon": "TrendingUp",
+         "color": "#3b82f6",
+         "aktywna": true,
+         "kolejnosc": 0,
+         "createdAt": "2025-01-15T10:00:00Z",
+         "updatedAt": "2025-01-15T10:00:00Z"
+       },
+       ...
+     ],
+     "total": 4
+   }
+
+   Sortowanie: ORDER BY kolejnosc ASC
+
+   Uwaga w kliencie:
+   - Features są parsowane z JSON:
+     config.features = JSON.parse(config.features)
+
+B) SZCZEGÓŁY KONFIGURACJI
+
+   Endpoint: GET /api/admin/promotion-configs/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/promotion-configs/[id]/route.ts
+
+   Response (200 OK):
+   {
+     // Pojedynczy obiekt konfiguracji
+   }
+
+   Response (404 Not Found):
+   {
+     "error": "Promotion config not found"
+   }
+
+C) UTWORZENIE KONFIGURACJI
+
+   Endpoint: POST /api/admin/promotion-configs
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/promotion-configs/route.ts
+
+   Request Body:
+   {
+     "type": "PODBICIE_OGLOSZENIA",
+     "label": "Podbicie ogłoszenia",
+     "description": "Zwiększ widoczność",
+     "pointsPerDay": 20,
+     "pointsPerWeek": null,
+     "features": ["Wyższa pozycja", "Podbicie co 24h"],
+     "icon": "TrendingUp",
+     "color": "#3b82f6",
+     "aktywna": true,
+     "kolejnosc": 0
+   }
+
+   Walidacja:
+   1. type, label, description są wymagane
+   2. Przynajmniej pointsPerDay lub pointsPerWeek musi być podane
+   3. features musi być tablicą
+   4. type musi być unikalny (nie może już istnieć)
+
+   Response (201 Created):
+   {
+     // Utworzony obiekt konfiguracji
+   }
+
+   Response (400 Bad Request):
+   {
+     "error": "Type, label, and description are required"
+   }
+   {
+     "error": "Either pointsPerDay or pointsPerWeek must be provided"
+   }
+   {
+     "error": "Features must be an array"
+   }
+   {
+     "error": "Promotion config with this type already exists"
+   }
+
+D) AKTUALIZACJA KONFIGURACJI
+
+   Endpoint: PUT /api/admin/promotion-configs/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/promotion-configs/[id]/route.ts
+
+   Request Body:
+   {
+     "label": "Nowa nazwa",
+     "description": "Nowy opis",
+     "pointsPerDay": 25,
+     "pointsPerWeek": null,
+     "features": ["Cecha 1", "Cecha 2"],
+     "icon": "Star",
+     "color": "#ff0000",
+     "aktywna": false,
+     "kolejnosc": 1
+   }
+
+   Uwaga: Typ (type) NIE może być aktualizowany
+
+   Walidacja:
+   - features musi być tablicą (jeśli podane)
+   - Konfiguracja o podanym ID musi istnieć
+
+   Response (200 OK):
+   {
+     // Zaktualizowany obiekt konfiguracji
+   }
+
+   Response (404 Not Found):
+   {
+     "error": "Promotion config not found"
+   }
+
+   Response (400 Bad Request):
+   {
+     "error": "Features must be an array"
+   }
+
+E) USUNIĘCIE KONFIGURACJI
+
+   Endpoint: DELETE /api/admin/promotion-configs/[id]
+   Autoryzacja: Tylko ADMIN
+   Plik: app/api/admin/promotion-configs/[id]/route.ts
+
+   Response (200 OK):
+   {
+     "message": "Promotion config deleted successfully"
+   }
+
+   Response (404 Not Found):
+   {
+     "error": "Promotion config not found"
+   }
+
+
+2.7. MODEL DANYCH
+--------------------------------------------------------------------------------
+
+MODEL: PromotionConfig
+Lokalizacja: prisma/schema.prisma (linie 1057-1086)
+
+model PromotionConfig {
+  id                String   @id @default(uuid())
+
+  // Typ promocji
+  type              PromotionType @unique
+  label             String
+  description       String
+
+  // Koszt
+  pointsPerDay      Int?
+  pointsPerWeek     Int?
+
+  // Cechy/Features (JSON array stringów)
+  features          String   // JSON: ["Feature 1", "Feature 2", ...]
+
+  // Ikona i wygląd
+  icon              String?
+  color             String?
+
+  // Status
+  aktywna           Boolean  @default(true)
+  kolejnosc         Int      @default(0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([type])
+  @@index([aktywna])
+  @@index([kolejnosc])
+}
+
+ENUM: PromotionType
+Lokalizacja: prisma/schema.prisma (linie 1046-1051)
+
+enum PromotionType {
+  PODBICIE_OGLOSZENIA
+  WYROZNIENIE
+  TOP_LISTA
+  STRONA_GLOWNA
+}
+
+INDEKSY:
+- type: Szybkie wyszukiwanie po typie (również unique constraint)
+- aktywna: Filtrowanie aktywnych/nieaktywnych
+- kolejnosc: Sortowanie przy wyświetlaniu
+
+RELACJE:
+- Model PromotionConfig NIE ma bezpośrednich relacji z innymi modelami
+- Typ promocji jest używany w modelu Promotion (aktywne promocje kancelarii)
+- Ale nie ma foreign key constraint - to luźne powiązanie
+
+
+================================================================================
+3. INTEGRACJE SYSTEMOWE
+================================================================================
+
+3.1. SYSTEM PUNKTÓW
+--------------------------------------------------------------------------------
+
+Punkty to wirtualna waluta w systemie Prosta Sprawa, używana przez kancelarie
+do aktywacji promocji profilu.
+
+PRZEPŁYW PUNKTÓW:
+
+A) ZAKUP PUNKTÓW
+
+   1. Kancelaria wybiera pakiet punktów w panelu (/panel-kancelarii/punkty)
+   2. Tworzone jest zamówienie typu POINTS
+   3. Przekierowanie do bramki płatności (PayU/Przelewy24)
+   4. Po udanej płatności:
+      - Status zamówienia zmienia się na ZAPLACONE
+      - Punkty dodawane do lawFirm.punktySaldo
+      - Generowana faktura VAT
+
+   Implementacja dodawania punktów:
+   await prisma.lawFirm.update({
+     where: { id: lawFirmId },
+     data: {
+       punktySaldo: {
+         increment: liczbaPunktow
+       }
+     }
+   })
+
+B) WYDAWANIE PUNKTÓW
+
+   1. Kancelaria aktywuje promocję w panelu (/panel-kancelarii/promowanie)
+   2. System sprawdza saldo punktów
+   3. Jeśli saldo wystarczające:
+      - Tworzona jest aktywna promocja (model Promotion)
+      - Punkty odejmowane z punktySaldo
+      - Rozpoczyna się okres promocji
+
+   Implementacja (w transakcji):
+   await prisma.$transaction([
+     // Odejmij punkty
+     prisma.lawFirm.update({
+       where: { id: lawFirmId },
+       data: {
+         punktySaldo: {
+           decrement: koszt
+         }
+       }
+     }),
+     // Utwórz promocję
+     prisma.promotion.create({
+       data: {
+         lawFirmId,
+         type,
+         startDate,
+         endDate,
+         pointsCost: koszt
+       }
+     })
+   ])
+
+C) ZWROT PUNKTÓW
+
+   Możliwe w przypadku:
+   - Anulowania zamówienia (status ANULOWANE)
+   - Zwrotu płatności (status ZWROT)
+   - Przedwczesnego zakończenia promocji
+
+   Administrator może ręcznie dodać punkty w panelu lub przez API
+
+
+3.2. GENEROWANIE FAKTUR
+--------------------------------------------------------------------------------
+
+Faktury VAT są automatycznie generowane dla wszystkich zapłaconych zamówień.
+
+PROCES GENEROWANIA:
+
+A) WYZWALACZ
+
+   Faktura generowana gdy:
+   1. Zamówienie zmienia status na ZAPLACONE
+   2. I NIE ma jeszcze powiązanej faktury
+
+   Wywołanie: generateInvoiceForOrder(orderId)
+
+B) NUMERACJA FAKTUR
+
+   Format: FV/YYYY/MM/XXXXX
+
+   Gdzie:
+   - FV: Prefiks "Faktura VAT"
+   - YYYY: Rok (4 cyfry)
+   - MM: Miesiąc (2 cyfry z zerem wiodącym)
+   - XXXXX: Numer sekwencyjny w miesiącu (5 cyfr z zerami wiodącymi)
+
+   Przykłady:
+   - FV/2025/01/00001
+   - FV/2025/01/00123
+   - FV/2025/12/09999
+
+   Licznik resetuje się każdego miesiąca.
+
+C) KALKULACJA KWOT
+
+   Ceny w systemie są brutto (z VAT 23%):
+
+   grossAmount = order.kwota                    // Kwota brutto
+   vatRate = 23.0                               // Stawka VAT 23%
+   netAmount = grossAmount / 1.23               // Kwota netto
+   vatAmount = grossAmount - netAmount          // Kwota VAT
+
+   Przykład dla 49,00 zł brutto:
+   - Kwota brutto: 49,00 zł
+   - Kwota netto: 39,84 zł
+   - Kwota VAT: 9,16 zł
+   - Stawka VAT: 23%
+
+D) DANE NABYWCY
+
+   Pobierane z profilu LawFirm w momencie wystawienia:
+   - buyerName: nazwaFirmy lub nazwa
+   - buyerNIP: nip (opcjonalnie)
+   - buyerAddress: adres
+   - buyerPostalCode: kodPocztowy
+   - buyerCity: miasto
+   - buyerCountry: "Polska" (domyślnie)
+
+   Uwaga: Dane są kopiowane do faktury, więc późniejsze zmiany
+   w profilu kancelarii NIE wpływają na wystawione faktury.
+
+E) DATY
+
+   - issueDate: Data wystawienia = data zmiany statusu na ZAPLACONE
+   - saleDate: Data sprzedaży = data wystawienia
+   - paymentDate: Data płatności = order.zaplaconoData
+   - dueDate: Termin płatności = data płatności (już zapłacone)
+
+F) STATUS FAKTURY
+
+   - Domyślny: ISSUED (wystawiona)
+   - Możliwe statusy:
+     * DRAFT: Szkic
+     * ISSUED: Wystawiona
+     * SENT: Wysłana do klienta
+     * PAID: Opłacona
+     * CANCELLED: Anulowana
+
+G) PLIK IMPLEMENTACJI
+
+   Lokalizacja: lib/invoice-generator.ts
+
+   Funkcje:
+   - generateInvoiceForOrder(orderId): Generuje fakturę dla zamówienia
+   - markOrderAsPaidAndGenerateInvoice(orderId, transactionId):
+     Oznacza jako zapłacone i generuje fakturę
+
+
+3.3. SYSTEM PŁATNOŚCI
+--------------------------------------------------------------------------------
+
+Platforma integruje się z zewnętrznymi bramkami płatności.
+
+OBSŁUGIWANE BRAMKI:
+
+A) PRZELEWY24
+   - Główna bramka płatności w Polsce
+   - Obsługa kart, szybkich przelewów, BLIK
+   - Webhook dla potwierdzenia płatności
+
+B) PAYU
+   - Alternatywna bramka płatności
+   - Obsługa kart i przelewów
+   - Callback URL dla statusu
+
+C) PRZELEW BANKOWY
+   - Tradycyjny przelew
+   - Wymaga manualnego potwierdzenia przez admina
+   - Dane do przelewu wyświetlane po złożeniu zamówienia
+
+D) PAYPAL
+   - Płatności międzynarodowe
+   - Obsługa kart i kont PayPal
+
+E) BACS (UK)
+   - System przelewów w UK
+   - Dla klientów brytyjskich
+
+PRZEPŁYW PŁATNOŚCI:
+
+1. Utworzenie zamówienia (Order)
+   - Status: OCZEKUJE
+   - Wygenerowanie externalOrderId
+
+2. Przekierowanie do bramki płatności
+   - URL przekierowania zapisany w redirectUrl
+   - Webhook URL dla powiadomień zapisany w statusUrl
+
+3. Realizacja płatności przez użytkownika
+   - W interfejsie bramki płatności
+
+4. Callback/Webhook od bramki
+   - Bramka wysyła potwierdzenie płatności
+   - Endpoint: /api/payments/callback lub podobny
+   - Aktualizacja statusu zamówienia
+
+5. Potwierdzenie płatności
+   - Status zmienia się na ZAPLACONE
+   - Wykonywane są akcje post-płatności:
+     * Dodanie punktów (dla POINTS)
+     * Aktywacja subskrypcji (dla SUBSCRIPTION)
+     * Generowanie faktury
+
+6. Przekierowanie użytkownika
+   - Success page: /panel-kancelarii/checkout/success
+   - Wyświetlenie potwierdzenia i numeru zamówienia
+
+MANUALNA AKTUALIZACJA:
+
+Administrator może manualnie zmienić status płatności w /admin/transakcje:
+- Przydatne dla przelewów tradycyjnych
+- Rozwiązywanie problemów z callbackiem
+- Korekty i zwroty
+
+UWAGA: Manualna zmiana statusu na ZAPLACONE wywołuje te same akcje
+co automatyczne potwierdzenie (punkty, faktura, etc.)
+
+
+================================================================================
+KONIEC DOKUMENTACJI
+================================================================================
+
+Dokument ten opisuje szczegółowo funkcjonalności finansowe w panelu
+administratora platformy Prosta Sprawa.
+
+Dla pytań technicznych lub aktualizacji, skontaktuj się z zespołem
+deweloperskim.
+
+Ostatnia aktualizacja: 2025-11-16
