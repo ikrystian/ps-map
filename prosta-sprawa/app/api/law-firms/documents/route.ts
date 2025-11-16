@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import prisma from "@/lib/prisma"
+import { auth } from "@/auth"
+import { prisma } from "@/lib/prisma"
 import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
 import { existsSync } from "fs"
@@ -30,6 +30,37 @@ export async function GET() {
 
     const documents = await prisma.document.findMany({
       where: { lawFirmId: lawFirm.id },
+      include: {
+        clientUser: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            client: {
+              select: {
+                imie: true,
+                nazwisko: true,
+              },
+            },
+          },
+        },
+        conversation: {
+          select: {
+            id: true,
+            clientUser: {
+              select: {
+                name: true,
+                client: {
+                  select: {
+                    imie: true,
+                    nazwisko: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" }
     })
 

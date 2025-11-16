@@ -221,6 +221,46 @@ export async function POST(
       },
     })
 
+    // Jeśli klient wysyła załączniki, utwórz dokumenty dla kancelarii
+    if (attachments && attachments.length > 0 && session.user.role === "CLIENT") {
+      try {
+        // Pobierz ID kancelarii z konwersacji
+        const lawFirmUser = await prisma.user.findUnique({
+          where: { id: conversation.lawFirmUserId },
+          include: { lawFirm: true },
+        })
+
+        if (lawFirmUser?.lawFirm) {
+          // Utwórz dokument dla każdego załącznika
+          for (const attachment of attachments) {
+            const filename = attachment.filename || "Nieznany plik"
+            const fileUrl = attachment.url || ""
+            const fileSize = attachment.size || 0
+
+            // Wyciągnij rozszerzenie z URL lub nazwy pliku
+            const extension = filename.split(".").pop()?.toLowerCase() || "pdf"
+
+            await prisma.document.create({
+              data: {
+                lawFirmId: lawFirmUser.lawFirm.id,
+                clientUserId: userId,
+                conversationId: conversationId,
+                nazwa: filename,
+                typDokumentu: "klient-wiadomosc",
+                rozmiar: fileSize,
+                sciezka: fileUrl,
+                rozszerzenie: extension,
+                zrodlo: "KLIENT",
+              },
+            })
+          }
+        }
+      } catch (error) {
+        console.error("Error creating documents from attachments:", error)
+        // Nie przerywaj wysyłania wiadomości jeśli tworzenie dokumentów się nie powiodło
+      }
+    }
+
     // Return decrypted message
     return Response.json(
       {

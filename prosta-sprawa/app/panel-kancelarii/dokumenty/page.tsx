@@ -54,8 +54,28 @@ interface Document {
   rozmiar: number
   sciezka: string
   rozszerzenie: string
+  zrodlo?: string
   createdAt: string
   updatedAt: string
+  clientUser?: {
+    id: string
+    name: string
+    email: string
+    client?: {
+      imie: string
+      nazwisko: string
+    }
+  }
+  conversation?: {
+    id: string
+    clientUser: {
+      name: string
+      client?: {
+        imie: string
+        nazwisko: string
+      }
+    }
+  }
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -325,6 +345,7 @@ export default function DocumentsPage() {
                 <TableHead>Nazwa dokumentu</TableHead>
                 <TableHead>Data dodania</TableHead>
                 <TableHead>Typ dokumentu</TableHead>
+                <TableHead>Źródło</TableHead>
                 <TableHead>Rozmiar</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
               </TableRow>
@@ -332,7 +353,7 @@ export default function DocumentsPage() {
             <TableBody>
               {documents.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <FileText className="h-12 w-12 text-muted-foreground" />
                       <p className="text-muted-foreground">
@@ -342,42 +363,63 @@ export default function DocumentsPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                documents.map((document) => (
-                  <TableRow key={document.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        {document.nazwa}
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatDate(document.createdAt)}</TableCell>
-                    <TableCell>
-                      <span className="text-sm capitalize">{document.typDokumentu.replace('-', ' ')}</span>
-                    </TableCell>
-                    <TableCell>{formatFileSize(document.rozmiar)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center gap-2 justify-end">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadDocument(document)}
-                          title="Pobierz dokument"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openDeleteDialog(document)}
-                          className="text-destructive hover:text-destructive"
-                          title="Usuń dokument"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                documents.map((document) => {
+                  // Określ nazwę klienta z informacji o konwersacji lub użytkowniku
+                  const clientName = document.zrodlo === "KLIENT"
+                    ? (document.clientUser?.client
+                        ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
+                        : document.clientUser?.name || "Nieznany klient")
+                    : null
+
+                  return (
+                    <TableRow key={document.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          {document.nazwa}
+                        </div>
+                      </TableCell>
+                      <TableCell>{formatDate(document.createdAt)}</TableCell>
+                      <TableCell>
+                        <span className="text-sm capitalize">{document.typDokumentu.replace('-', ' ')}</span>
+                      </TableCell>
+                      <TableCell>
+                        {document.zrodlo === "KLIENT" ? (
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-blue-600">Od klienta</span>
+                            {clientName && (
+                              <span className="text-xs text-muted-foreground">{clientName}</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">Kancelaria</span>
+                        )}
+                      </TableCell>
+                      <TableCell>{formatFileSize(document.rozmiar)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDownloadDocument(document)}
+                            title="Pobierz dokument"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openDeleteDialog(document)}
+                            className="text-destructive hover:text-destructive"
+                            title="Usuń dokument"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
               )}
             </TableBody>
           </Table>
