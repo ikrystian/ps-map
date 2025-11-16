@@ -298,3 +298,14 @@ a .bg-card {
   background: linear-gradient(#282825, #282825) padding-box,
               linear-gradient(90deg, #fbbf24, #c026d3, #3b82f6, #fbbf24) border-box;
 }
+
+
+.magic-card {
+  .text-card-foreground {
+    box-shadow: none !important;
+  }
+
+  .text-card-foreground {
+    background: none;
+  }
+}

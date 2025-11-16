@@ -595,12 +595,13 @@ export default function LawFirmProfilePage() {
             className="object-cover z-[-1] opacity-75"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 z-[-1]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 z-[5]" />
         )}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/50 to-background/90 z-[5]" />
       <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
 
         {/* Header Section */}
-        <div className="relative">
+        <div className="relative z-[199]">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Logo */}
             {lawFirm.logo && (
@@ -676,7 +677,7 @@ export default function LawFirmProfilePage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 relative z-[199]" >
                   <Button
                     variant="outline"
                     size="icon"
