@@ -8,6 +8,11 @@ import { seedTestData } from './seeds/test-data' // Importuj nowy seeder danych 
 import { seedHelpCenter } from './seeds/help-center' // Importuj nowy seeder centrum pomocy
 import { seedBlogCategories } from './seeds/blog-categories' // Importuj nowy seeder kategorii bloga
 import { seedEmailTemplates } from './seeds/email-templates' // Importuj seeder szablonów emaili
+import { seedReviews } from './seeds/reviews' // Importuj seeder opinii
+import { seedAccountManagers } from './seeds/account-managers' // Importuj seeder opiekunów
+import { seedTransactions } from './seeds/transactions' // Importuj seeder transakcji
+import { seedBlogPosts } from './seeds/blog-posts' // Importuj seeder postów bloga
+import { seedCases } from './seeds/cases' // Importuj seeder spraw z ofertami
 
 const prisma = new PrismaClient()
 
@@ -18,6 +23,7 @@ async function main() {
   await prisma.blogPost.deleteMany()
   await prisma.blogCategory.deleteMany()
   await prisma.review.deleteMany()
+  await prisma.offer.deleteMany()
   await prisma.case.deleteMany()
   await prisma.client.deleteMany()
   await prisma.lawFirmCategory.deleteMany()
@@ -53,6 +59,7 @@ async function main() {
   await prisma.favoriteLawFirm.deleteMany()
   await prisma.negotiation.deleteMany()
   await prisma.emailTemplate.deleteMany()
+  await prisma.accountManager.deleteMany()
 
   // Seedowanie danych
   await seedVoivodeships(prisma)
@@ -63,6 +70,11 @@ async function main() {
   await seedHelpCenter(prisma) // Wywołaj seeder centrum pomocy
   await seedBlogCategories(prisma) // Wywołaj seeder kategorii bloga
   await seedEmailTemplates(prisma) // Wywołaj seeder szablonów emaili
+  await seedAccountManagers(prisma) // Wywołaj seeder opiekunów
+  await seedReviews(prisma) // Wywołaj seeder opinii
+  await seedTransactions(prisma) // Wywołaj seeder transakcji
+  await seedBlogPosts(prisma) // Wywołaj seeder postów bloga
+  await seedCases(prisma) // Wywołaj seeder spraw z ofertami
 
   // Seed admina
   const hashedPassword = await bcrypt.hash('ADmin123', 10)

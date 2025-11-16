@@ -1,0 +1,178 @@
+{
+  "cases": [
+    {
+      "clientEmail": "klient1@example.com",
+      "clientName": "Anna Kowalska",
+      "typSprawy": "OSOBA_PRYWATNA",
+      "categoryName": "Prawo Rodzinne",
+      "nazwaSprawy": "Sprawa o alimenty",
+      "opisSprawy": "Potrzebuję pomocy w sprawie alimentów dla dziecka. Ojciec dziecka nie płaci alimentów od ponad roku. Szukam profesjonalnego wsparcia prawnika, który pomoże mi w egzekucji alimentów i ochronie praw mojego dziecka.",
+      "oczekiwanyTerminRealizacji": "2025-12-31",
+      "trybPilny": false,
+      "budzetOd": 1000,
+      "budzetDo": 3000,
+      "doNegocjacji": true,
+      "imieNazwisko": "Anna Kowalska",
+      "emailKontakt": "anna.kowalska@example.com",
+      "telefonKontakt": "+48 123 456 789",
+      "preferowanyKontakt": "EMAIL",
+      "voivodeship": "Mazowieckie",
+      "offers": [
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 2000,
+          "vat": 23,
+          "kwotaBrutto": 2460,
+          "terminRealizacjiDni": 30,
+          "opisOferty": "Kompleksowa obsługa sprawy alimentacyjnej. Przygotowanie wniosku do sądu, reprezentacja w postępowaniu, negocjacje z drugą stroną. Doświadczenie w sprawach alimentacyjnych ponad 10 lat.",
+          "zakresUslug": "Reprezentacja sądowa, przygotowanie dokumentów, negocjacje",
+          "warunkiPlatnosci": "PRZELEW_14",
+          "wyroznienie": false,
+          "status": "ZLOZONA"
+        }
+      ]
+    },
+    {
+      "clientEmail": "klient2@example.com",
+      "clientName": "Piotr Lewandowski",
+      "typSprawy": "FIRMA",
+      "categoryName": "Prawo Gospodarcze",
+      "nazwaSprawy": "Spór handlowy z dostawcą",
+      "opisSprawy": "Moja firma ma spór z dostawcą materiałów. Dostawca nie dostarczył towary zgodnie z umową i nie chce zwrócić pieniędzy. Wartość sprawy to około 50 000 PLN. Potrzebuję profesjonalnego prawnika do reprezentacji w sądzie.",
+      "oczekiwanyTerminRealizacji": "2025-11-30",
+      "trybPilny": true,
+      "budzetOd": 5000,
+      "budzetDo": 15000,
+      "doNegocjacji": false,
+      "imieNazwisko": "Piotr Lewandowski",
+      "emailKontakt": "piotr.lewandowski@firma.pl",
+      "telefonKontakt": "+48 987 654 321",
+      "preferowanyKontakt": "OBA",
+      "voivodeship": "Mazowieckie",
+      "offers": [
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 8000,
+          "vat": 23,
+          "kwotaBrutto": 9840,
+          "terminRealizacjiDni": 45,
+          "opisOferty": "Kompleksowa reprezentacja w sporze handlowym. Analiza umowy, przygotowanie pozwu, reprezentacja w sądzie, negocjacje z drugą stroną. Specjalizacja w sprawach handlowych.",
+          "zakresUslug": "Analiza umowy, przygotowanie pozwu, reprezentacja sądowa",
+          "warunkiPlatnosci": "PRZELEW_30",
+          "wyroznienie": true,
+          "punktyWyroznienia": 50,
+          "status": "ZAAKCEPTOWANA"
+        },
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 6000,
+          "vat": 23,
+          "kwotaBrutto": 7380,
+          "terminRealizacjiDni": 60,
+          "opisOferty": "Alternatywna oferta z dłuższym terminem realizacji. Możliwość negocjacji ceny w zależności od zakresu prac.",
+          "zakresUslug": "Reprezentacja sądowa, negocjacje",
+          "warunkiPlatnosci": "RATY",
+          "wyroznienie": false,
+          "status": "ZLOZONA"
+        }
+      ]
+    },
+    {
+      "clientEmail": "klient3@example.com",
+      "clientName": "Maria Nowak",
+      "typSprawy": "OSOBA_PRYWATNA",
+      "categoryName": "Prawo Cywilne",
+      "nazwaSprawy": "Windykacja należności",
+      "opisSprawy": "Pożyczyłam pieniądze znajomemu w kwocie 10 000 PLN. Umowa była ustna, ale mam SMS-y potwierdzające pożyczkę. Znajomy nie chce zwrócić pieniędzy. Szukam pomocy w windykacji tej należności.",
+      "oczekiwanyTerminRealizacji": "2025-12-15",
+      "trybPilny": false,
+      "budzetOd": 500,
+      "budzetDo": 2000,
+      "doNegocjacji": true,
+      "imieNazwisko": "Maria Nowak",
+      "emailKontakt": "maria.nowak@example.com",
+      "telefonKontakt": "+48 555 666 777",
+      "preferowanyKontakt": "EMAIL",
+      "voivodeship": "Łódzkie",
+      "offers": [
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 1200,
+          "vat": 23,
+          "kwotaBrutto": 1476,
+          "terminRealizacjiDni": 20,
+          "opisOferty": "Windykacja należności. Przygotowanie wezwania do zapłaty, negocjacje z dłużnikiem, przygotowanie pozwu jeśli będzie konieczne.",
+          "zakresUslug": "Wezwanie do zapłaty, negocjacje, przygotowanie pozwu",
+          "warunkiPlatnosci": "Z_GORY",
+          "wyroznienie": false,
+          "status": "ZLOZONA"
+        }
+      ]
+    },
+    {
+      "clientEmail": "klient4@example.com",
+      "clientName": "Tomasz Wiśniewski",
+      "typSprawy": "FIRMA",
+      "categoryName": "Prawo Pracy",
+      "nazwaSprawy": "Spór z pracownikiem",
+      "opisSprawy": "Moja firma ma spór z byłym pracownikiem. Pracownik twierdzi, że został zwolniony bez uzasadnienia i domaga się odszkodowania. Szukam prawnika, który będzie mnie reprezentować w sądzie pracy.",
+      "oczekiwanyTerminRealizacji": "2026-01-31",
+      "trybPilny": false,
+      "budzetOd": 3000,
+      "budzetDo": 8000,
+      "doNegocjacji": true,
+      "imieNazwisko": "Tomasz Wiśniewski",
+      "emailKontakt": "tomasz.wisniewski@firma.pl",
+      "telefonKontakt": "+48 111 222 333",
+      "preferowanyKontakt": "TELEFON",
+      "voivodeship": "Mazowieckie",
+      "offers": [
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 5000,
+          "vat": 23,
+          "kwotaBrutto": 6150,
+          "terminRealizacjiDni": 60,
+          "opisOferty": "Reprezentacja w sporze z pracownikiem. Analiza umowy o pracę, przygotowanie obrony, reprezentacja w sądzie pracy. Doświadczenie w sprawach pracowniczych.",
+          "zakresUslug": "Analiza umowy, przygotowanie obrony, reprezentacja sądowa",
+          "warunkiPlatnosci": "PRZELEW_14",
+          "wyroznienie": false,
+          "status": "ZLOZONA"
+        }
+      ]
+    },
+    {
+      "clientEmail": "klient5@example.com",
+      "clientName": "Ewa Dąbrowska",
+      "typSprawy": "OSOBA_PRYWATNA",
+      "categoryName": "Prawo Podatkowe",
+      "nazwaSprawy": "Kontrola podatkowa",
+      "opisSprawy": "Otrzymałem zawiadomienie o kontroli podatkowej. Nie wiem, co mnie czeka i jak się przygotować. Szukam doświadczonego prawnika, który pomoże mi w tej sprawie i będzie mnie reprezentować przed organami podatkowymi.",
+      "oczekiwanyTerminRealizacji": "2025-11-20",
+      "trybPilny": true,
+      "budzetOd": 2000,
+      "budzetDo": 5000,
+      "doNegocjacji": false,
+      "imieNazwisko": "Ewa Dąbrowska",
+      "emailKontakt": "ewa.dabrowski@example.com",
+      "telefonKontakt": "+48 444 555 666",
+      "preferowanyKontakt": "OBA",
+      "voivodeship": "Mazowieckie",
+      "offers": [
+        {
+          "lawFirmEmail": "kontakt@kancelaria-nowak.pl",
+          "kwotaNetto": 3500,
+          "vat": 23,
+          "kwotaBrutto": 4305,
+          "terminRealizacjiDni": 15,
+          "opisOferty": "Reprezentacja w kontroli podatkowej. Przygotowanie dokumentacji, reprezentacja przed organami podatkowymi, negocjacje z fiskusem. Specjalizacja w prawie podatkowym.",
+          "zakresUslug": "Przygotowanie dokumentacji, reprezentacja, negocjacje",
+          "warunkiPlatnosci": "PRZELEW_7",
+          "wyroznienie": true,
+          "punktyWyroznienia": 50,
+          "status": "ZLOZONA"
+        }
+      ]
+    }
+  ]
+}

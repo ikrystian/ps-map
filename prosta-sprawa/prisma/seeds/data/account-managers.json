@@ -1,0 +1,44 @@
+{
+  "accountManagers": [
+    {
+      "imie": "Krzysztof",
+      "nazwisko": "Kowalski",
+      "email": "krzysztof.kowalski@prosta-sprawa.pl",
+      "telefon": "+48 22 123 45 67",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Krzysztof",
+      "aktywny": true
+    },
+    {
+      "imie": "Magdalena",
+      "nazwisko": "Lewandowska",
+      "email": "magdalena.lewandowska@prosta-sprawa.pl",
+      "telefon": "+48 22 234 56 78",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Magdalena",
+      "aktywny": true
+    },
+    {
+      "imie": "Andrzej",
+      "nazwisko": "Nowak",
+      "email": "andrzej.nowak@prosta-sprawa.pl",
+      "telefon": "+48 22 345 67 89",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Andrzej",
+      "aktywny": true
+    },
+    {
+      "imie": "Joanna",
+      "nazwisko": "Wiśniewska",
+      "email": "joanna.wisniewska@prosta-sprawa.pl",
+      "telefon": "+48 22 456 78 90",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Joanna",
+      "aktywny": true
+    },
+    {
+      "imie": "Paweł",
+      "nazwisko": "Dąbrowski",
+      "email": "pawel.dabrowski@prosta-sprawa.pl",
+      "telefon": "+48 22 567 89 01",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Pawel",
+      "aktywny": true
+    }
+  ]
+}

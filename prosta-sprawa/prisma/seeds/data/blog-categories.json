@@ -1,0 +1,22 @@
+[
+  {
+    "nazwa": "Porady Prawne",
+    "opis": "Artykuły i porady dotyczące różnych dziedzin prawa.",
+    "aktywna": true
+  },
+  {
+    "nazwa": "Prawo w Biznesie",
+    "opis": "Wskazówki prawne dla przedsiębiorców i firm.",
+    "aktywna": true
+  },
+  {
+    "nazwa": "Aktualności Prawne",
+    "opis": "Najnowsze zmiany w przepisach i orzecznictwie.",
+    "aktywna": true
+  },
+  {
+    "nazwa": "Prawo Rodzinne i Spadkowe",
+    "opis": "Artykuły dotyczące prawa rodzinnego, rozwodów, alimentów i spadków.",
+    "aktywna": true
+  }
+]
