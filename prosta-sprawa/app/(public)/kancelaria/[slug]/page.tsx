@@ -1296,7 +1296,7 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Blog Tab */}
-              <TabsContent value="blog" className="space-y-4">
+              <TabsContent value="blog" className="space-y-4 grid grid-cols-2 gap-4">
                 {lawFirm.blogPosts.length > 0 ? (
                   <>
                     {lawFirm.blogPosts.map((post) => (

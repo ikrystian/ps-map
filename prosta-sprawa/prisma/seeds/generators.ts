@@ -51,7 +51,7 @@ const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
     logo: faker.image.avatar(),
     zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),
     galeriaZdjec: JSON.stringify(Array.from({ length: faker.number.int({ min: 2, max: 6 }) }, () => faker.image.url())),
-    filmYouTube: faker.datatype.boolean() ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : '',
+    filmYouTube: faker.datatype.boolean() ? 'https://www.youtube.com/watch?v=quC2GkURViU' : '',
     okladkaFilmu: faker.image.url(),
     statusGodzinyOtwarcia: faker.datatype.boolean(),
     godzinyOtwarcia: JSON.stringify({
