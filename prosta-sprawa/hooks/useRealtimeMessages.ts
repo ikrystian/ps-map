@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
-
-interface RealtimeUpdate {
-  type: "connected" | "update" | "new_message" | "message_read"
-  data?: {
-    unreadCount?: number
-    hasNewMessages?: boolean
-    conversationId?: string
-    messageId?: string
-    timestamp?: string
-  }
-}
+import { io, Socket } from "socket.io-client"
 
 interface UseRealtimeMessagesOptions {
   onUpdate?: () => void
@@ -27,11 +17,7 @@ export function useRealtimeMessages({
   const [unreadCount, setUnreadCount] = useState(0)
   const [lastUpdate, setLastUpdate] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
-  const eventSourceRef = useRef<EventSource | null>(null)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const reconnectAttempts = useRef(0)
-  const maxReconnectAttempts = 5
-  const previousUnreadCountRef = useRef<number>(0)
+  const socketRef = useRef<Socket | null>(null)
 
   const connect = useCallback(() => {
     if (!session?.user?.id || !enabled || status !== "authenticated") {
@@ -39,89 +25,73 @@ export function useRealtimeMessages({
     }
 
     // Close existing connection
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close()
+    if (socketRef.current) {
+      socketRef.current.disconnect()
     }
 
     try {
-      const eventSource = new EventSource("/api/conversations/events")
-      eventSourceRef.current = eventSource
+      console.log("[Socket.IO] Connecting to server...")
 
-      eventSource.onopen = () => {
-        console.log("[RealtimeMessages] Connected to SSE")
+      const socket = io({
+        path: "/api/socket",
+        transports: ["websocket", "polling"],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      })
+
+      socketRef.current = socket
+
+      socket.on("connect", () => {
+        console.log("[Socket.IO] Connected:", socket.id)
         setIsConnected(true)
-        reconnectAttempts.current = 0
-      }
 
-      eventSource.onmessage = (event) => {
-        try {
-          const update: RealtimeUpdate = JSON.parse(event.data)
+        // Join user's personal room
+        socket.emit("join", session.user.id)
+      })
 
-          if (update.type === "connected") {
-            console.log("[RealtimeMessages] Connection confirmed")
-            return
-          }
-
-          if (update.type === "update" && update.data) {
-            const newUnreadCount = update.data.unreadCount || 0
-            const hasCountChanged = newUnreadCount !== previousUnreadCountRef.current
-
-            setUnreadCount(newUnreadCount)
-            setLastUpdate(update.data.timestamp || new Date().toISOString())
-
-            // Only trigger onUpdate if unread count actually changed
-            if (hasCountChanged && update.data.hasNewMessages) {
-              previousUnreadCountRef.current = newUnreadCount
-              onUpdate?.()
-            }
-          }
-
-          if (update.type === "new_message" && update.data) {
-            onNewMessage?.(update.data)
-            onUpdate?.()
-          }
-        } catch (error) {
-          console.error("[RealtimeMessages] Error parsing SSE message:", error)
-        }
-      }
-
-      eventSource.onerror = (error) => {
-        console.error("[RealtimeMessages] SSE error:", error)
+      socket.on("disconnect", () => {
+        console.log("[Socket.IO] Disconnected")
         setIsConnected(false)
-        eventSource.close()
+      })
 
-        // Attempt to reconnect with exponential backoff
-        if (reconnectAttempts.current < maxReconnectAttempts) {
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000)
-          console.log(
-            `[RealtimeMessages] Reconnecting in ${delay}ms (attempt ${
-              reconnectAttempts.current + 1
-            }/${maxReconnectAttempts})`
-          )
+      socket.on("connect_error", (error) => {
+        console.error("[Socket.IO] Connection error:", error)
+        setIsConnected(false)
+      })
 
-          reconnectTimeoutRef.current = setTimeout(() => {
-            reconnectAttempts.current++
-            connect()
-          }, delay)
-        } else {
-          console.error(
-            "[RealtimeMessages] Max reconnection attempts reached. Falling back to polling."
-          )
-        }
-      }
+      // Listen for unread count updates
+      socket.on("unread_count", (data: { unreadCount: number }) => {
+        console.log("[Socket.IO] Unread count update:", data.unreadCount)
+        setUnreadCount(data.unreadCount)
+        setLastUpdate(new Date().toISOString())
+      })
+
+      // Listen for conversation updates
+      socket.on("conversation_update", (data: any) => {
+        console.log("[Socket.IO] Conversation update:", data)
+        setLastUpdate(new Date().toISOString())
+        onUpdate?.()
+      })
+
+      // Listen for new messages
+      socket.on("new_message", (data: any) => {
+        console.log("[Socket.IO] New message:", data)
+        setLastUpdate(new Date().toISOString())
+        onNewMessage?.(data)
+        onUpdate?.()
+      })
+
     } catch (error) {
-      console.error("[RealtimeMessages] Error creating EventSource:", error)
+      console.error("[Socket.IO] Error creating socket:", error)
       setIsConnected(false)
     }
   }, [session, enabled, status, onUpdate, onNewMessage])
 
   const disconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current)
-    }
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close()
-      eventSourceRef.current = null
+    if (socketRef.current) {
+      socketRef.current.disconnect()
+      socketRef.current = null
     }
     setIsConnected(false)
   }, [])
@@ -136,39 +106,12 @@ export function useRealtimeMessages({
     }
   }, [enabled, status, connect, disconnect])
 
-  // Fallback polling if SSE fails
-  useEffect(() => {
-    if (
-      !isConnected &&
-      enabled &&
-      status === "authenticated" &&
-      reconnectAttempts.current >= maxReconnectAttempts
-    ) {
-      console.log("[RealtimeMessages] Using fallback polling")
-
-      const pollInterval = setInterval(async () => {
-        try {
-          const response = await fetch("/api/conversations/unread-count")
-          if (response.ok) {
-            const data = await response.json()
-            setUnreadCount(data.unreadCount || 0)
-            setLastUpdate(new Date().toISOString())
-            onUpdate?.()
-          }
-        } catch (error) {
-          console.error("[RealtimeMessages] Polling error:", error)
-        }
-      }, 5000) // Poll every 5 seconds as fallback
-
-      return () => clearInterval(pollInterval)
-    }
-  }, [isConnected, enabled, status, onUpdate])
-
   return {
     unreadCount,
     lastUpdate,
     isConnected,
     reconnect: connect,
     disconnect,
+    socket: socketRef.current,
   }
 }

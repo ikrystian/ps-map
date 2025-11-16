@@ -62,7 +62,7 @@ export function EnhancedMessengerLayout() {
   }, [])
 
   // Real-time updates hook
-  const { unreadCount, isConnected, lastUpdate } = useRealtimeMessages({
+  const { unreadCount, isConnected } = useRealtimeMessages({
     onUpdate: useCallback(() => {
       // Refresh conversations when real-time update detected
       fetchAllConversations(true)

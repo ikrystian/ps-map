@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { decryptMessage } from "@/lib/encryption"
+import { emitNewMessage } from "@/lib/socket"
 
 interface RouteParams {
   params: Promise<{
@@ -243,7 +244,6 @@ export async function POST(
             await prisma.document.create({
               data: {
                 lawFirmId: lawFirmUser.lawFirm.id,
-                clientUserId: userId,
                 conversationId: conversationId,
                 nazwa: filename,
                 typDokumentu: "klient-wiadomosc",
@@ -261,15 +261,16 @@ export async function POST(
       }
     }
 
+    // Emit Socket.IO event for new message
+    const messageToEmit = {
+      ...message,
+      content: content.trim(),
+      attachments: attachments || null,
+    }
+    await emitNewMessage(conversationId, messageToEmit)
+
     // Return decrypted message
-    return Response.json(
-      {
-        ...message,
-        content: content.trim(),
-        attachments: attachments || null,
-      },
-      { status: 201 }
-    )
+    return Response.json(messageToEmit, { status: 201 })
   } catch (error) {
     console.error("Error sending message:", error)
     return Response.json(

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useSession } from "next-auth/react"
+import { useSocket } from "@/hooks/useSocket"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -132,12 +133,68 @@ export function EnhancedChatArea({
   // Audio for notifications
   const notificationSound = useRef<HTMLAudioElement | null>(null)
 
+  // Socket.IO connection
+  const { socket, isConnected: socketConnected } = useSocket(conversationId)
+
   useEffect(() => {
     // Initialize notification sound
     if (typeof window !== "undefined") {
       notificationSound.current = new Audio("/sounds/notification.mp3")
     }
   }, [])
+
+  // Socket.IO event listeners
+  useEffect(() => {
+    if (!socket || !conversationId) return
+
+    // Listen for new messages
+    const handleNewMessage = (message: Message) => {
+      console.log("[Chat] New message received:", message)
+
+      // Only add if it's not already in the list
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === message.id)) {
+          return prev
+        }
+        return [...prev, message]
+      })
+
+      // Play notification sound if message is from other user
+      if (message.senderId !== session?.user?.id && notificationSound.current) {
+        notificationSound.current.play().catch(() => {})
+      }
+    }
+
+    // Listen for messages read
+    const handleMessagesRead = (data: { messageIds: string[] }) => {
+      console.log("[Chat] Messages read:", data.messageIds)
+      setMessages((prev) =>
+        prev.map((msg) =>
+          data.messageIds.includes(msg.id)
+            ? { ...msg, isRead: true, status: "READ" as const }
+            : msg
+        )
+      )
+    }
+
+    // Listen for typing indicator
+    const handleUserTyping = (data: { userId: string; isTyping: boolean }) => {
+      console.log("[Chat] User typing:", data)
+      if (data.userId !== session?.user?.id) {
+        setOtherUserTyping(data.isTyping)
+      }
+    }
+
+    socket.on("new_message", handleNewMessage)
+    socket.on("messages_read", handleMessagesRead)
+    socket.on("user_typing", handleUserTyping)
+
+    return () => {
+      socket.off("new_message", handleNewMessage)
+      socket.off("messages_read", handleMessagesRead)
+      socket.off("user_typing", handleUserTyping)
+    }
+  }, [socket, conversationId, session])
 
   // Pobierz szczegóły konwersacji
   useEffect(() => {
@@ -199,111 +256,6 @@ export function EnhancedChatArea({
     }
   }, [conversationId])
 
-  // Real-time message polling for active conversation
-  useEffect(() => {
-    if (!conversationId) return
-
-    // Poll for new messages every 2 seconds when conversation is active
-    const interval = setInterval(async () => {
-      try {
-        const response = await fetch(
-          `/api/conversations/${conversationId}/messages?limit=5&offset=0`
-        )
-        if (response.ok) {
-          const data = await response.json()
-          if (data.messages.length > 0) {
-            // Check if there are new messages
-            const latestMessageId = messages[messages.length - 1]?.id
-            const hasNewMessages = data.messages.some(
-              (msg: Message) => msg.id !== latestMessageId && msg.senderId !== session?.user?.id
-            )
-
-            if (hasNewMessages) {
-              // Play notification sound for new messages from other user
-              if (notificationSound.current && data.messages[0].senderId !== session?.user?.id) {
-                notificationSound.current.play().catch(() => {})
-              }
-              // Refresh messages
-              fetchMessages()
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error polling messages:", error)
-      }
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [conversationId, messages, session])
-
-  // Update online status
-  useEffect(() => {
-    const updateOnlineStatus = async () => {
-      try {
-        await fetch("/api/users/online", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isOnline: true }),
-        })
-      } catch (error) {
-        console.error("Error updating online status:", error)
-      }
-    }
-
-    updateOnlineStatus()
-    const interval = setInterval(updateOnlineStatus, 60000) // Every minute
-
-    return () => clearInterval(interval)
-  }, [])
-
-  // Check other user's online status
-  useEffect(() => {
-    const checkOnlineStatus = async () => {
-      if (!conversation) return
-
-      const otherUserId =
-        session?.user?.id === conversation.clientUser.id
-          ? conversation.lawFirmUser.id
-          : conversation.clientUser.id
-
-      try {
-        const response = await fetch(`/api/users/online?userId=${otherUserId}`)
-        if (response.ok) {
-          const data = await response.json()
-          setIsOnline(data.isOnline)
-          setLastSeen(data.lastSeen)
-        }
-      } catch (error) {
-        console.error("Error checking online status:", error)
-      }
-    }
-
-    checkOnlineStatus()
-    const interval = setInterval(checkOnlineStatus, 30000) // Every 30 seconds
-
-    return () => clearInterval(interval)
-  }, [conversation, session])
-
-  // Check typing indicator
-  useEffect(() => {
-    const checkTyping = async () => {
-      try {
-        const response = await fetch(
-          `/api/conversations/typing?conversationId=${conversationId}`
-        )
-        if (response.ok) {
-          const data = await response.json()
-          setOtherUserTyping(data.length > 0)
-        }
-      } catch (error) {
-        console.error("Error checking typing indicator:", error)
-      }
-    }
-
-    const interval = setInterval(checkTyping, 2000) // Every 2 seconds
-    return () => clearInterval(interval)
-  }, [conversationId])
-
   // Mark as read
   useEffect(() => {
     const markAsRead = async () => {
@@ -339,44 +291,35 @@ export function EnhancedChatArea({
     }
   }, [hasMore, isLoadingMore])
 
-  // Update typing indicator
-  const updateTypingIndicator = useCallback(
-    async (typing: boolean) => {
-      try {
-        await fetch("/api/conversations/typing", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversationId,
-            isTyping: typing,
-          }),
-        })
-      } catch (error) {
-        console.error("Error updating typing indicator:", error)
-      }
-    },
-    [conversationId]
-  )
-
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageText(e.target.value)
 
-    // Update typing indicator
-    if (!isTyping) {
-      setIsTyping(true)
-      updateTypingIndicator(true)
-    }
+    // Update typing indicator via Socket.IO
+    if (socket && session?.user?.id) {
+      if (!isTyping) {
+        setIsTyping(true)
+        socket.emit("typing", {
+          conversationId,
+          userId: session.user.id,
+          isTyping: true,
+        })
+      }
 
-    // Clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
+      // Clear previous timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
 
-    // Set new timeout
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false)
-      updateTypingIndicator(false)
-    }, 3000)
+      // Set new timeout
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false)
+        socket.emit("typing", {
+          conversationId,
+          userId: session.user.id,
+          isTyping: false,
+        })
+      }, 3000)
+    }
   }
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -385,7 +328,15 @@ export function EnhancedChatArea({
     if ((!messageText.trim() && attachments.length === 0) || isSending) return
 
     setIsSending(true)
-    updateTypingIndicator(false)
+
+    // Stop typing indicator
+    if (socket && session?.user?.id) {
+      socket.emit("typing", {
+        conversationId,
+        userId: session.user.id,
+        isTyping: false,
+      })
+    }
 
     try {
       const response = await fetch(
