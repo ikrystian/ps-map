@@ -17,12 +17,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Search, Filter, ArrowLeft } from "lucide-react"
 import dynamic from "next/dynamic"
 
-// Dynamic import of map component to avoid SSR issues
-const LawFirmMap = dynamic(
-  () => import("@/components/map/LawFirmMap"),
-  { ssr: false, loading: () => <div className="h-[calc(100vh-200px)] bg-gray-100 rounded-lg flex items-center justify-center">Ładowanie mapy...</div> }
-)
-
 interface Category {
   id: string
   nazwa: string
@@ -231,7 +225,6 @@ export default function MapPage() {
 
         {/* Map */}
         <div className="mb-8">
-          <LawFirmMap key="law-firm-map" height="calc(100vh - 400px)" />
         </div>
       </div>
     </div>
