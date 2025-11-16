@@ -117,7 +117,7 @@ export default function BlogPostPage() {
   const estimatedReadingTime = post ? Math.ceil(post.tresc.replace(/<[^>]*>/g, '').split(/\s+/).length / 200) : 0
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-[#0f0f0e]">
       {/* Hero Section with Featured Image */}
       {post.obrazekWyrozniajacy && (
         <div className="relative h-[400px] md:h-[500px] bg-gradient-to-b from-black/50 to-black/70">

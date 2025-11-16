@@ -25,6 +25,7 @@ import {
 import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 interface Case {
   id: string
@@ -400,14 +401,16 @@ const SprawyPage = () => {
               <Card
                 key={sprawa.id}
                 className={cn(
-                  "overflow-hidden",
-                  isAccepted && "border-primary border-2 "
+                  "overflow-hidden relative border-0",
                 )}
               >
+                {isAccepted && <BorderBeam lightColor="var(--primary)"   lightWidth={500} duration={4} />}
+
                 <CardHeader className={cn(
-                  "flex flex-row items-start justify-between px-6 py-3",
+                  "flex flex-row items-start justify-between px-6 py-3 relative z-15",
                 )}>
-                  <div className="flex flex-wrap items-center gap-2">
+
+                  <div className="flex flex-wrap items-center gap-2 relative z-15">
                     {isAccepted && (
                       <Badge className="bg-green-600 hover:bg-green-700 gap-1">
                         <CheckCircle className="h-3 w-3" />
@@ -455,7 +458,7 @@ const SprawyPage = () => {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 relative z-10">
                 <div className="flex flex-col sm:flex-row justify-between gap-4">
                   <div className="flex-grow">
                     <h3 className="text-xl font-bold mb-3">{sprawa.nazwaSprawy}</h3>
