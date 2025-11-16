@@ -14,8 +14,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Search, Filter, ArrowLeft } from "lucide-react"
+import { Search, Filter, ArrowLeft, Loader2 } from "lucide-react"
 import dynamic from "next/dynamic"
+
+const GoogleMap = dynamic(() => import("@/components/map/GoogleMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[600px] flex items-center justify-center bg-muted rounded-lg">
+      <Loader2 className="h-8 w-8 animate-spin" />
+    </div>
+  ),
+})
 
 interface Category {
   id: string
@@ -30,9 +39,31 @@ interface Voivodeship {
   slug: string
 }
 
+interface LawFirm {
+  id: string
+  nazwa: string
+  slug: string
+  adres: string
+  kodPocztowy: string
+  miasto: string
+  latitude: number | null
+  longitude: number | null
+  logo: string | null
+  opis: string | null
+  numerTelefonu: string
+  emailKontakt: string
+  voivodeship: string
+  categories: string[]
+  avgRating: number
+  reviewsCount: number
+}
+
 export default function MapPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
+  const [filteredLawFirms, setFilteredLawFirms] = useState<LawFirm[]>([])
+  const [isLoadingFirms, setIsLoadingFirms] = useState(true)
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -43,13 +74,14 @@ export default function MapPage() {
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
 
-  // Fetch categories and voivodeships on mount
+  // Fetch categories, voivodeships and law firms on mount
   useEffect(() => {
-    const fetchFilters = async () => {
+    const fetchData = async () => {
       try {
-        const [categoriesRes, voivodeshipsRes] = await Promise.all([
+        const [categoriesRes, voivodeshipsRes, lawFirmsRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/voivodeships"),
+          fetch("/api/law-firms/map"),
         ])
 
         if (categoriesRes.ok) {
@@ -61,13 +93,76 @@ export default function MapPage() {
           const voivodeshipsData = await voivodeshipsRes.json()
           setVoivodeships(voivodeshipsData)
         }
+
+        if (lawFirmsRes.ok) {
+          const lawFirmsData = await lawFirmsRes.json()
+          setLawFirms(lawFirmsData)
+          setFilteredLawFirms(lawFirmsData)
+        }
       } catch (error) {
-        console.error("Error fetching filters:", error)
+        console.error("Error fetching data:", error)
+      } finally {
+        setIsLoadingFirms(false)
       }
     }
 
-    fetchFilters()
+    fetchData()
   }, [])
+
+  // Apply filters
+  useEffect(() => {
+    let filtered = [...lawFirms]
+
+    // Search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (firm) =>
+          firm.nazwa.toLowerCase().includes(query) ||
+          firm.miasto.toLowerCase().includes(query) ||
+          firm.adres.toLowerCase().includes(query)
+      )
+    }
+
+    // Category filter
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((firm) =>
+        firm.categories.some((cat) =>
+          cat.toLowerCase().includes(selectedCategory.toLowerCase())
+        )
+      )
+    }
+
+    // Voivodeship filter
+    if (selectedVoivodeship !== "all") {
+      filtered = filtered.filter((firm) =>
+        firm.voivodeship.toLowerCase().includes(selectedVoivodeship.toLowerCase())
+      )
+    }
+
+    // City filter
+    if (selectedCity) {
+      const city = selectedCity.toLowerCase()
+      filtered = filtered.filter((firm) => firm.miasto.toLowerCase().includes(city))
+    }
+
+    // Rating filter
+    if (minRating !== "all") {
+      const minRatingNum = parseFloat(minRating)
+      filtered = filtered.filter((firm) => firm.avgRating >= minRatingNum)
+    }
+
+    setFilteredLawFirms(filtered)
+  }, [
+    lawFirms,
+    searchQuery,
+    selectedCategory,
+    selectedVoivodeship,
+    selectedCity,
+    minRating,
+    onlineOnly,
+    verifiedOnly,
+  ])
 
   const handleResetFilters = () => {
     setSearchQuery("")
@@ -225,6 +320,30 @@ export default function MapPage() {
 
         {/* Map */}
         <div className="mb-8">
+          {isLoadingFirms ? (
+            <div className="w-full h-[600px] flex items-center justify-center bg-muted rounded-lg">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Ładowanie kancelarii...
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Znaleziono <strong>{filteredLawFirms.length}</strong> kancelarii
+                  {filteredLawFirms.length !== lawFirms.length &&
+                    ` (z ${lawFirms.length} dostępnych)`}
+                </p>
+              </div>
+              <GoogleMap
+                lawFirms={filteredLawFirms}
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
