@@ -55,6 +55,8 @@ import {
   Eye,
   Calendar,
 } from "lucide-react"
+import Lightbox from "yet-another-react-lightbox"
+import "yet-another-react-lightbox/styles.css"
 
 interface LawFirm {
   id: string
@@ -208,6 +210,8 @@ export default function LawFirmProfilePage() {
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
   const [isStartingChat, setIsStartingChat] = useState(false)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
+ const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -866,7 +870,14 @@ export default function LawFirmProfilePage() {
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {lawFirm.galeriaZdjec.map((img, index) => (
-                          <div key={index} className="relative h-48 rounded-lg overflow-hidden">
+                          <div
+                            key={index}
+                            className="relative h-48 rounded-lg overflow-hidden cursor-pointer"
+                            onClick={() => {
+                              setLightboxIndex(index)
+                              setLightboxOpen(true)
+                            }}
+                          >
                             <Image src={img} alt={`Galeria ${index + 1}`} fill className="object-cover" />
                           </div>
                         ))}
@@ -1707,6 +1718,14 @@ export default function LawFirmProfilePage() {
           </div>
         </div>
       </div>
+   {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          slides={lawFirm.galeriaZdjec.map((src) => ({ src }))}
+          index={lightboxIndex}
+        />
+      )}
     </div>
   )
 }

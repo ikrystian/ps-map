@@ -68,6 +68,7 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "yet-another-react-lightbox": "^3.25.0",
     "zod": "^4.1.12"
   },
   "prisma": {
