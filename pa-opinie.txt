@@ -1,0 +1,1531 @@
+# DOKUMENTACJA SYSTEMU OPINII - PANEL ADMINISTRACYJNY
+# Prosta Sprawa - Marketplace Prawniczy
+
+Ostatnia aktualizacja: 2025-11-16
+Autorzy: System AI Documentation
+
+================================================================================
+SPIS TREŚCI
+================================================================================
+
+1. Przegląd systemu opinii
+2. Lista opinii (/admin/reviews)
+3. Szczegóły opinii (/admin/reviews/[id])
+4. Endpointy API
+5. Model danych (Review)
+6. Przepływ pracy z opiniami
+7. Funkcje bezpieczeństwa i walidacji
+
+================================================================================
+1. PRZEGLĄD SYSTEMU OPINII
+================================================================================
+
+System opinii w Prosta Sprawa umożliwia klientom wystawianie szczegółowych
+recenzji kancelarii prawnych po zakończonej współpracy. Administrator może
+zarządzać wszystkimi opiniami w systemie poprzez dedykowany panel
+administracyjny.
+
+KLUCZOWE MOŻLIWOŚCI:
+- Przeglądanie wszystkich opinii z zaawansowanymi filtrami
+- Moderacja opinii (weryfikacja, aktywacja/dezaktywacja)
+- Edycja pełnej treści opinii
+- Zarządzanie odpowiedziami kancelarii
+- Usuwanie nieprawidłowych opinii
+- System ocen wielokryterialnych (ogólna + 4 dodatkowe)
+
+DOSTĘP:
+- Wymagana rola: ADMIN
+- Autoryzacja przez NextAuth.js (sesja JWT)
+- Brak dostępu dla klientów i kancelarii prawnych
+
+================================================================================
+2. LISTA OPINII (/admin/reviews)
+================================================================================
+
+Ścieżka: /admin/reviews
+Plik: /prosta-sprawa/app/admin/reviews/page.tsx
+Typ: Client Component ("use client")
+API: GET /api/admin/reviews
+
+--------------------------------------------------------------------------------
+2.1 GŁÓWNE FUNKCJONALNOŚCI
+--------------------------------------------------------------------------------
+
+A) WYŚWIETLANIE LISTY OPINII
+
+Tabela wyświetla następujące informacje o każdej opinii:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ TYTUŁ           │ Pełny tytuł opinii                                │
+│                 │ Fragment treści (pierwsze 50 znaków + "...")      │
+├─────────────────────────────────────────────────────────────────────┤
+│ AUTOR           │ Imię i nazwisko klienta                           │
+│                 │ Email klienta                                     │
+│                 │ LUB "Anonimowy" (jeśli opinia anonimowa)          │
+├─────────────────────────────────────────────────────────────────────┤
+│ KANCELARIA      │ Nazwa kancelarii (nazwa)                          │
+│                 │ Nazwa firmy (nazwaFirmy)                          │
+├─────────────────────────────────────────────────────────────────────┤
+│ OCENA           │ Wizualizacja gwiazdek (5-gwiazdkowa skala)       │
+│                 │ Liczba gwiazdek: 1-5                              │
+│                 │ Wypełnione gwiazdki: żółty kolor (#yellow-400)    │
+│                 │ Puste gwiazdki: szary kolor (#gray-300)           │
+├─────────────────────────────────────────────────────────────────────┤
+│ STATUS          │ Badge: Zweryfikowana / Niezweryfikowana           │
+│                 │   - Zweryfikowana: domyślny styl (niebieski)      │
+│                 │   - Niezweryfikowana: secondary (szary)           │
+│                 │ Badge: Aktywna / Nieaktywna                       │
+│                 │   - Aktywna: domyślny styl (niebieski)            │
+│                 │   - Nieaktywna: destructive (czerwony)            │
+│                 │ Badge: Anonimowa (jeśli dotyczy)                  │
+│                 │   - Outline style (przezroczyste tło)             │
+├─────────────────────────────────────────────────────────────────────┤
+│ DATA            │ Data utworzenia opinii                            │
+│                 │ Format: DD.MM.YYYY (polski format)                │
+├─────────────────────────────────────────────────────────────────────┤
+│ AKCJE           │ 4 przyciski akcji (patrz niżej)                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+B) SYSTEM FILTROWANIA
+
+Sekcja filtrów znajduje się w dedykowanej karcie nad tabelą opinii:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FILTR           │ OPIS                          │ WARTOŚCI          │
+├─────────────────────────────────────────────────────────────────────┤
+│ Szukaj w treści │ Wyszukiwanie pełnotekstowe    │ Dowolny tekst     │
+│                 │ Przeszukuje:                  │                   │
+│                 │ - Tytuł opinii (tytulOpinii)  │                   │
+│                 │ - Treść opinii (trescOpinii)  │                   │
+│                 │ Tryb: case-insensitive        │                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ Ocena           │ Filtrowanie po ocenie ogólnej │ - Wszystkie oceny │
+│                 │                               │ - 5 gwiazdek      │
+│                 │                               │ - 4 gwiazdki      │
+│                 │                               │ - 3 gwiazdki      │
+│                 │                               │ - 2 gwiazdki      │
+│                 │                               │ - 1 gwiazdka      │
+├─────────────────────────────────────────────────────────────────────┤
+│ Weryfikacja     │ Filtrowanie po statusie       │ - Wszystkie       │
+│                 │ weryfikacji                   │ - Zweryfikowane   │
+│                 │                               │ - Niezweryfikowane│
+├─────────────────────────────────────────────────────────────────────┤
+│ Status          │ Filtrowanie po aktywności     │ - Wszystkie       │
+│                 │                               │ - Aktywne         │
+│                 │                               │ - Nieaktywne      │
+└─────────────────────────────────────────────────────────────────────┘
+
+MECHANIZM FILTROWANIA:
+- Filtry działają w czasie rzeczywistym (useEffect z dependency array)
+- Każda zmiana filtru resetuje paginację do strony 1
+- Filtry są łączone logicznie (AND)
+- Wyszukiwanie tekstowe używa operatora OR (tytuł LUB treść)
+
+
+C) AKCJE NA LIŚCIE
+
+Każda opinia ma 4 przyciski akcji:
+
+1. ZOBACZ SZCZEGÓŁY (ikona: Eye)
+   - Przekierowanie do /admin/reviews/[id]
+   - Zawsze dostępny
+   - Tooltip: "Zobacz szczegóły"
+
+2. PRZEŁĄCZ WERYFIKACJĘ (ikona: CheckCircle)
+   - Przełącza pole "zweryfikowana" (true ↔ false)
+   - API: PATCH /api/admin/reviews/[id]/status
+   - Kolory:
+     * Zielony (#green-600): opinia zweryfikowana
+     * Szary (#gray-400): opinia niezweryfikowana
+   - Tooltip:
+     * "Zweryfikuj" (gdy niezweryfikowana)
+     * "Oznacz jako niezweryfikowaną" (gdy zweryfikowana)
+   - Toast po sukcesie:
+     * "Opinia została zweryfikowana"
+     * "Opinia została oznaczona jako niezweryfikowana"
+
+3. PRZEŁĄCZ AKTYWNOŚĆ (ikona: CheckCircle / XCircle)
+   - Przełącza pole "aktywna" (true ↔ false)
+   - API: PATCH /api/admin/reviews/[id]/status
+   - Ikony:
+     * XCircle (pomarańczowy #orange-600): gdy aktywna
+     * CheckCircle (szary #gray-400): gdy nieaktywna
+   - Tooltip:
+     * "Dezaktywuj" (gdy aktywna)
+     * "Aktywuj" (gdy nieaktywna)
+   - Toast po sukcesie:
+     * "Opinia została aktywowana"
+     * "Opinia została dezaktywowana"
+
+4. USUŃ (ikona: Trash2)
+   - Otwiera dialog potwierdzenia
+   - Kolor: destructive (czerwony)
+   - Tooltip: "Usuń"
+
+
+D) PAGINACJA
+
+System paginacji znajduje się pod tabelą:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Domyślne ustawienia:                                                │
+│ - Limit: 20 opinii na stronę                                        │
+│ - Początkowa strona: 1                                              │
+│                                                                     │
+│ Elementy interfejsu:                                                │
+│ - Przycisk "Poprzednia" (disabled na stronie 1)                     │
+│ - Napis: "Strona X z Y"                                             │
+│ - Przycisk "Następna" (disabled na ostatniej stronie)               │
+│                                                                     │
+│ Mechanizm:                                                          │
+│ - Paginacja po stronie serwera (Prisma skip/take)                  │
+│ - Filtrowanie uwzględnia tylko pasujące rekordy                     │
+│ - Automatyczne przeliczanie liczby stron po zmianie filtrów        │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+E) DIALOG USUWANIA
+
+Po kliknięciu przycisku "Usuń" pojawia się AlertDialog:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Czy na pewno chcesz usunąć?"                               │
+│                                                                     │
+│ Treść:                                                              │
+│ "Czy na pewno chcesz usunąć opinię '[TYTUŁ OPINII]'?                │
+│  Ta operacja jest nieodwracalna i opinia zostanie całkowicie        │
+│  usunięta z systemu."                                               │
+│                                                                     │
+│ Przyciski:                                                          │
+│ - Anuluj (domyślny styl)                                            │
+│ - Usuń (destructive - czerwony)                                     │
+│                                                                     │
+│ Po potwierdzeniu:                                                   │
+│ - API: DELETE /api/admin/reviews/[id]                               │
+│ - Hard delete (trwałe usunięcie z bazy)                             │
+│ - Toast: "Opinia została usunięta"                                  │
+│ - Odświeżenie listy na bieżącej stronie                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+F) STANY INTERFEJSU
+
+1. LOADING (początkowe ładowanie):
+   - Wyświetla: "Ładowanie..." (wycentrowane, h-64)
+   - Warunek: loading === true && reviews.length === 0
+
+2. PUSTA LISTA:
+   - Wyświetla w tabeli: "Brak opinii w systemie."
+   - Warunek: reviews.length === 0 (po załadowaniu)
+
+3. NAGŁÓWEK STRONY:
+   - Tytuł: "Opinie" (text-3xl font-bold)
+   - Podtytuł: "Zarządzaj wszystkimi opiniami w systemie"
+
+4. LICZNIK OPINII:
+   - W tytule karty tabeli: "Lista opinii (XXX)"
+   - XXX = pagination.total (całkowita liczba po filtrach)
+
+
+--------------------------------------------------------------------------------
+2.2 STRUKTURA DANYCH OPINII (Interface Review)
+--------------------------------------------------------------------------------
+
+interface Review {
+  id: string                      // UUID opinii
+  ocenaOgolna: number             // 1-5 (wymagane)
+  profesjonalizm: number | null   // 1-5 (opcjonalne)
+  komunikacja: number | null      // 1-5 (opcjonalne)
+  terminowosc: number | null      // 1-5 (opcjonalne)
+  stosunekJakosci: number | null  // 1-5 (opcjonalne)
+  tytulOpinii: string             // Tytuł opinii
+  trescOpinii: string             // Treść (min. 50 znaków)
+  polecam: boolean                // Czy klient poleca kancelarię
+  anonimowa: boolean              // Czy opinia anonimowa
+  zweryfikowana: boolean          // Status weryfikacji
+  aktywna: boolean                // Status aktywności
+  odpowiedz: string | null        // Odpowiedź kancelarii
+  dataOdpowiedzi: string | null   // Data dodania odpowiedzi
+  createdAt: string               // Data utworzenia
+  updatedAt: string               // Data aktualizacji
+  lawFirm: {
+    id: string                    // ID kancelarii
+    nazwa: string                 // Nazwa kancelarii
+    nazwaFirmy: string            // Nazwa firmy
+  }
+  client: {
+    id: string                    // ID klienta
+    imie: string                  // Imię klienta
+    nazwisko: string              // Nazwisko klienta
+    email: string                 // Email klienta
+  }
+}
+
+interface PaginationData {
+  total: number                   // Całkowita liczba opinii
+  page: number                    // Bieżąca strona
+  limit: number                   // Limit na stronę
+  pages: number                   // Całkowita liczba stron
+}
+
+
+--------------------------------------------------------------------------------
+2.3 PARAMETRY API (GET /api/admin/reviews)
+--------------------------------------------------------------------------------
+
+Query Parameters:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ PARAMETR    │ TYP     │ DOMYŚLNIE │ OPIS                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ page        │ number  │ 1         │ Numer strony paginacji          │
+│ limit       │ number  │ 20        │ Liczba opinii na stronę         │
+│ search      │ string  │ -         │ Wyszukiwanie w tytule/treści    │
+│ rating      │ string  │ "all"     │ Filtr oceny (1-5)               │
+│ verified    │ string  │ "all"     │ "true" / "false" / "all"        │
+│ active      │ string  │ "all"     │ "true" / "false" / "all"        │
+└─────────────────────────────────────────────────────────────────────┘
+
+Przykładowe zapytanie:
+GET /api/admin/reviews?page=2&limit=20&rating=5&verified=true&active=true&search=profesjonalna
+
+
+================================================================================
+3. SZCZEGÓŁY OPINII (/admin/reviews/[id])
+================================================================================
+
+Ścieżka: /admin/reviews/[id]
+Plik: /prosta-sprawa/app/admin/reviews/[id]/page.tsx
+Typ: Client Component ("use client")
+API: GET /api/admin/reviews/[id]
+
+--------------------------------------------------------------------------------
+3.1 GŁÓWNE FUNKCJONALNOŚCI
+--------------------------------------------------------------------------------
+
+A) NAGŁÓWEK STRONY
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Lewa strona:                                                        │
+│ - Przycisk "Powrót do listy" (z ikoną ArrowLeft)                    │
+│   Link: /admin/reviews                                              │
+│ - Tytuł: "Szczegóły opinii" (text-3xl font-bold)                    │
+│ - Podtytuł: "ID: [UUID opinii]"                                     │
+│                                                                     │
+│ Prawa strona (tryb przeglądania):                                   │
+│ - Przycisk "Edytuj" (domyślny styl)                                 │
+│ - Przycisk "Usuń" (destructive, z ikoną Trash2)                     │
+│                                                                     │
+│ Prawa strona (tryb edycji):                                         │
+│ - Przycisk "Anuluj" (outline)                                       │
+│ - Przycisk "Zapisz" (domyślny, z ikoną Save)                        │
+│   Tekst podczas zapisywania: "Zapisywanie..."                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+B) BADŻI STATUSU
+
+Wyświetlane pod nagłówkiem, przed treścią:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ BADGE              │ WARUNEK               │ STYL                  │
+├─────────────────────────────────────────────────────────────────────┤
+│ Zweryfikowana      │ zweryfikowana=true    │ default (niebieski)   │
+│ Niezweryfikowana   │ zweryfikowana=false   │ secondary (szary)     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Aktywna            │ aktywna=true          │ default (niebieski)   │
+│ Nieaktywna         │ aktywna=false         │ destructive (czerwony)│
+├─────────────────────────────────────────────────────────────────────┤
+│ Anonimowa          │ anonimowa=true        │ outline (przezroczyste)│
+├─────────────────────────────────────────────────────────────────────┤
+│ Polecana           │ polecam=true          │ outline + bg-green-50 │
+│ (z ikoną CheckCircle)                      │                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+C) LAYOUT STRONY
+
+Strona wykorzystuje grid layout:
+- Desktop (lg+): 3 kolumny (2 kolumny treść + 1 kolumna sidebar)
+- Mobile: 1 kolumna (pionowy układ)
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    TREŚĆ GŁÓWNA (2/3)               │ SIDEBAR (1/3) │
+│ ┌────────────────────────────────────────────────┐ │               │
+│ │ SEKCJA 1: TREŚĆ OPINII                         │ │ Kancelaria    │
+│ │ - Tytuł opinii                                 │ │               │
+│ │ - Treść opinii (pełna)                         │ │ Klient        │
+│ └────────────────────────────────────────────────┘ │               │
+│ ┌────────────────────────────────────────────────┐ │ Ustawienia    │
+│ │ SEKCJA 2: OCENY                                │ │               │
+│ │ - Ocena ogólna (wymagana)                      │ │ Metadane      │
+│ │ - Profesjonalizm (opcjonalna)                  │ │               │
+│ │ - Komunikacja (opcjonalna)                     │ │               │
+│ │ - Terminowość (opcjonalna)                     │ │               │
+│ │ - Stosunek jakości do ceny (opcjonalna)        │ │               │
+│ └────────────────────────────────────────────────┘ │               │
+│ ┌────────────────────────────────────────────────┐ │               │
+│ │ SEKCJA 3: ODPOWIEDŹ KANCELARII                 │ │               │
+│ │ - Data odpowiedzi (jeśli istnieje)             │ │               │
+│ │ - Treść odpowiedzi                             │ │               │
+│ └────────────────────────────────────────────────┘ │               │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+D) SEKCJA 1: TREŚĆ OPINII
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł karty: "Treść opinii"                                         │
+│                                                                     │
+│ TRYB PRZEGLĄDANIA:                                                  │
+│ - Tytuł opinii: <h3> (text-xl font-semibold)                        │
+│ - Treść opinii: <p> (text-muted-foreground, whitespace-pre-wrap)   │
+│                                                                     │
+│ TRYB EDYCJI:                                                        │
+│ - Pole: Tytuł (Input)                                               │
+│   ID: "tytul"                                                       │
+│   Placeholder: "Tytuł opinii"                                       │
+│                                                                     │
+│ - Pole: Treść (Textarea)                                            │
+│   ID: "tresc"                                                       │
+│   Label: "Treść (min. 50 znaków)"                                   │
+│   Placeholder: "Treść opinii"                                       │
+│   Wiersze: 6                                                        │
+│   Resize: none                                                      │
+│   Licznik znaków: "{długość} / 50 znaków"                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+E) SEKCJA 2: OCENY
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł karty: "Oceny"                                                │
+│                                                                     │
+│ OCENA OGÓLNA (wymagana):                                            │
+│ ┌───────────────────────────────────────────────────────────────┐ │
+│ │ Label: "Ocena ogólna *" (w trybie edycji)                     │ │
+│ │                                                               │ │
+│ │ TRYB PRZEGLĄDANIA:                                            │ │
+│ │ - Wizualizacja gwiazdek (5 gwiazdek)                          │ │
+│ │ - Wypełnienie: żółty (#yellow-400) dla aktywnych              │ │
+│ │ - Wypełnienie: szary (#gray-300) dla nieaktywnych             │ │
+│ │ - Tekst: "(X/5)" - liczba obok gwiazdek                       │ │
+│ │                                                               │ │
+│ │ TRYB EDYCJI:                                                  │ │
+│ │ - Input type="number"                                         │ │
+│ │ - Min: 1, Max: 5                                              │ │
+│ └───────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ OCENY DODATKOWE (opcjonalne):                                       │
+│ Wszystkie mają identyczny format:                                  │
+│                                                                     │
+│ 1. PROFESJONALIZM                                                   │
+│    Label: "Profesjonalizm"                                          │
+│    Tryb edycji: Input (1-5 lub puste)                               │
+│    Placeholder: "Opcjonalne (1-5)"                                  │
+│                                                                     │
+│ 2. KOMUNIKACJA                                                      │
+│    Label: "Komunikacja"                                             │
+│    Tryb edycji: Input (1-5 lub puste)                               │
+│    Placeholder: "Opcjonalne (1-5)"                                  │
+│                                                                     │
+│ 3. TERMINOWOŚĆ                                                      │
+│    Label: "Terminowość"                                             │
+│    Tryb edycji: Input (1-5 lub puste)                               │
+│    Placeholder: "Opcjonalne (1-5)"                                  │
+│                                                                     │
+│ 4. STOSUNEK JAKOŚCI DO CENY                                         │
+│    Label: "Stosunek jakości do ceny"                                │
+│    Tryb edycji: Input (1-5 lub puste)                               │
+│    Placeholder: "Opcjonalne (1-5)"                                  │
+│                                                                     │
+│ UWAGA: Opcjonalne oceny są wyświetlane w trybie przeglądania       │
+│        TYLKO jeśli mają wartość (nie są null)                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+F) SEKCJA 3: ODPOWIEDŹ KANCELARII
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł karty: "Odpowiedź kancelarii"                                │
+│                                                                     │
+│ Opis (CardDescription):                                             │
+│ - Jeśli jest odpowiedź: "Odpowiedź dodana: DD.MM.YYYY HH:MM"       │
+│ - Jeśli brak: "Brak odpowiedzi"                                     │
+│                                                                     │
+│ TRYB PRZEGLĄDANIA:                                                  │
+│ - Jeśli jest odpowiedź: pełna treść (whitespace-pre-wrap)          │
+│ - Jeśli brak: "Brak odpowiedzi" (kursywa, text-muted-foreground)   │
+│                                                                     │
+│ TRYB EDYCJI:                                                        │
+│ - Textarea                                                          │
+│   ID: "odpowiedz"                                                   │
+│   Label: "Odpowiedź"                                                │
+│   Placeholder: "Odpowiedź kancelarii (opcjonalna)"                  │
+│   Wiersze: 4                                                        │
+│   Resize: none                                                      │
+│                                                                     │
+│ MECHANIZM TIMESTAMPU:                                               │
+│ - Jeśli odpowiedz jest wypełniona: dataOdpowiedzi = now()          │
+│ - Jeśli odpowiedz jest pusta: dataOdpowiedzi = null                │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+G) SIDEBAR - KARTA KANCELARII
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Kancelaria"                                                 │
+│                                                                     │
+│ Wyświetlane dane:                                                   │
+│ - Nazwa: review.lawFirm.nazwa (font-medium)                         │
+│ - Firma: review.lawFirm.nazwaFirmy (font-medium)                    │
+│ - Email: review.lawFirm.email (text-sm)                             │
+│ - Telefon: review.lawFirm.telefon (text-sm)                         │
+│ - Miasto: review.lawFirm.miasto (text-sm)                           │
+│                                                                     │
+│ Wszystkie pola mają Label w kolorze text-muted-foreground          │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+H) SIDEBAR - KARTA KLIENTA
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Klient"                                                     │
+│                                                                     │
+│ JEŚLI OPINIA ANONIMOWA (anonimowa=true):                            │
+│ - Tekst: "Opinia anonimowa" (kursywa, text-muted-foreground)       │
+│                                                                     │
+│ JEŚLI OPINIA NIEANONIMOWA:                                          │
+│ - Imię i nazwisko: "{imie} {nazwisko}" (font-medium)               │
+│ - Email: review.client.email (text-sm)                              │
+│                                                                     │
+│ Wszystkie pola mają Label w kolorze text-muted-foreground          │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+I) SIDEBAR - KARTA USTAWIEŃ
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Ustawienia"                                                 │
+│                                                                     │
+│ Format każdego ustawienia:                                          │
+│ ┌─────────────────────────────────────────────────────────────┐   │
+│ │ Label po lewej        │ Kontrolka po prawej                 │   │
+│ └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│ 1. ZWERYFIKOWANA                                                    │
+│    TRYB EDYCJI: Switch (można przełączać)                           │
+│    TRYB PRZEGLĄDANIA:                                               │
+│    - true: CheckCircle (zielony #green-600)                         │
+│    - false: XCircle (szary #gray-400)                               │
+│                                                                     │
+│ 2. AKTYWNA                                                          │
+│    TRYB EDYCJI: Switch (można przełączać)                           │
+│    TRYB PRZEGLĄDANIA:                                               │
+│    - true: CheckCircle (zielony #green-600)                         │
+│    - false: XCircle (czerwony #red-600)                             │
+│                                                                     │
+│ 3. POLECANA (polecam)                                               │
+│    TRYB EDYCJI: Switch (można przełączać)                           │
+│    TRYB PRZEGLĄDANIA:                                               │
+│    - true: CheckCircle (zielony #green-600)                         │
+│    - false: XCircle (szary #gray-400)                               │
+│                                                                     │
+│ 4. ANONIMOWA                                                        │
+│    TRYB EDYCJI: Switch (można przełączać)                           │
+│    TRYB PRZEGLĄDANIA:                                               │
+│    - true: CheckCircle (niebieski #blue-600)                        │
+│    - false: XCircle (szary #gray-400)                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+J) SIDEBAR - KARTA METADANYCH
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Metadane"                                                   │
+│                                                                     │
+│ Wyświetlane dane (tylko do odczytu):                                │
+│ - Utworzono: DD.MM.YYYY HH:MM (text-sm)                             │
+│ - Zaktualizowano: DD.MM.YYYY HH:MM (text-sm)                        │
+│                                                                     │
+│ Format daty: toLocaleString("pl-PL")                                │
+│ Wszystkie pola mają Label w kolorze text-muted-foreground          │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+K) TRYB EDYCJI
+
+AKTYWACJA:
+- Kliknięcie przycisku "Edytuj" w nagłówku
+- Ustawia stan: isEditing = true
+
+CO SIĘ ZMIENIA:
+- Wszystkie pola tekstowe → Input/Textarea (edytowalne)
+- Wszystkie boolean switch → Switch (przełączalne)
+- Oceny → Input type="number"
+- Przyciski w nagłówku: "Edytuj"/"Usuń" → "Anuluj"/"Zapisz"
+
+ANULOWANIE:
+- Przycisk "Anuluj"
+- Resetuje wszystkie pola do wartości początkowych
+- Wywołuje fetchReview() (ponowne pobranie z API)
+- Ustawia: isEditing = false
+
+ZAPISYWANIE:
+- Przycisk "Zapisz"
+- Walidacja:
+  * trescOpinii.length >= 50 (minimum 50 znaków)
+  * Jeśli fail: toast.error("Treść opinii musi zawierać minimum 50 znaków")
+- API: PUT /api/admin/reviews/[id]
+- Body: wszystkie pola opinii (17 pól)
+- Po sukcesie:
+  * toast.success("Opinia została zaktualizowana")
+  * isEditing = false
+  * fetchReview() (odświeżenie danych)
+
+PODCZAS ZAPISYWANIA:
+- Przycisk disabled
+- Tekst: "Zapisywanie..."
+
+
+L) USUWANIE OPINII
+
+AKTYWACJA:
+- Przycisk "Usuń" w nagłówku (destructive)
+
+DIALOG POTWIERDZENIA:
+┌─────────────────────────────────────────────────────────────────────┐
+│ Tytuł: "Czy na pewno chcesz usunąć?"                               │
+│                                                                     │
+│ Treść:                                                              │
+│ "Czy na pewno chcesz usunąć opinię '[TYTUŁ]'?                       │
+│  Ta operacja jest nieodwracalna i opinia zostanie całkowicie        │
+│  usunięta z systemu."                                               │
+│                                                                     │
+│ Przyciski:                                                          │
+│ - Anuluj                                                            │
+│ - Usuń (destructive)                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+PO POTWIERDZENIU:
+- API: DELETE /api/admin/reviews/[id]
+- Po sukcesie:
+  * toast.success("Opinia została usunięta")
+  * router.push("/admin/reviews") (przekierowanie do listy)
+
+
+M) STANY INTERFEJSU
+
+1. LOADING:
+   - Wyświetla: "Ładowanie..." (wycentrowane, h-64)
+   - Warunek: loading === true
+
+2. BŁĄD POBIERANIA:
+   - Toast: error message lub "Nie udało się pobrać opinii"
+   - Automatyczne przekierowanie do /admin/reviews
+
+3. OPINIA NIE ZNALEZIONA:
+   - API zwraca 404
+   - Toast: "Nie znaleziono opinii"
+   - Przekierowanie do /admin/reviews
+
+
+--------------------------------------------------------------------------------
+3.2 STRUKTURA DANYCH OPINII (Interface Review) - ROZSZERZONA
+--------------------------------------------------------------------------------
+
+interface Review {
+  id: string
+  ocenaOgolna: number
+  profesjonalizm: number | null
+  komunikacja: number | null
+  terminowosc: number | null
+  stosunekJakosci: number | null
+  tytulOpinii: string
+  trescOpinii: string
+  polecam: boolean
+  anonimowa: boolean
+  zweryfikowana: boolean
+  aktywna: boolean
+  odpowiedz: string | null
+  dataOdpowiedzi: string | null
+  createdAt: string
+  updatedAt: string
+  lawFirm: {
+    id: string
+    nazwa: string
+    nazwaFirmy: string
+    email: string              // Dodatkowe dla szczegółów
+    telefon: string            // Dodatkowe dla szczegółów
+    miasto: string             // Dodatkowe dla szczegółów
+  }
+  client: {
+    id: string
+    imie: string
+    nazwisko: string
+    email: string
+  }
+}
+
+
+================================================================================
+4. ENDPOINTY API
+================================================================================
+
+Wszystkie endpointy wymagają roli ADMIN.
+
+--------------------------------------------------------------------------------
+4.1 GET /api/admin/reviews - LISTA OPINII
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+PARAMETRY QUERY:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ PARAMETR    │ TYP     │ DOMYŚLNIE │ OPIS                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ page        │ number  │ 1         │ Numer strony                    │
+│ limit       │ number  │ 20        │ Liczba rekordów na stronę       │
+│ lawFirmId   │ string  │ -         │ Filtr po ID kancelarii          │
+│ clientId    │ string  │ -         │ Filtr po ID klienta             │
+│ rating      │ string  │ -         │ Filtr po ocenie (1-5)           │
+│ verified    │ string  │ -         │ "true" / "false"                │
+│ active      │ string  │ -         │ "true" / "false"                │
+│ search      │ string  │ -         │ Szukaj w tytule/treści          │
+└─────────────────────────────────────────────────────────────────────┘
+
+LOGIKA FILTROWANIA:
+
+1. lawFirmId: where.lawFirmId = lawFirmId
+2. clientId: where.clientId = clientId
+3. rating: where.ocenaOgolna = parseInt(rating)
+4. verified: where.zweryfikowana = (verified === "true")
+5. active: where.aktywna = (active === "true")
+6. search: where.OR = [
+     { tytulOpinii: { contains: search, mode: "insensitive" } },
+     { trescOpinii: { contains: search, mode: "insensitive" } }
+   ]
+
+SORTOWANIE:
+- orderBy: { createdAt: "desc" }
+- Najnowsze opinie na górze
+
+PAGINACJA:
+- skip: (page - 1) * limit
+- take: limit
+
+ZWRACANE RELACJE:
+
+lawFirm: {
+  select: {
+    id: true,
+    nazwa: true,
+    nazwaFirmy: true,
+  }
+}
+
+client: {
+  select: {
+    id: true,
+    imie: true,
+    nazwisko: true,
+    user: {
+      select: {
+        email: true,
+      }
+    }
+  }
+}
+
+ODPOWIEDŹ (200 OK):
+
+{
+  "reviews": Review[],
+  "pagination": {
+    "total": number,      // Całkowita liczba opinii (po filtrach)
+    "page": number,       // Bieżąca strona
+    "limit": number,      // Limit na stronę
+    "pages": number       // Całkowita liczba stron (Math.ceil(total/limit))
+  }
+}
+
+BŁĘDY:
+- 401: Brak autoryzacji
+- 500: Internal server error
+
+
+--------------------------------------------------------------------------------
+4.2 POST /api/admin/reviews - TWORZENIE OPINII
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+BODY (JSON):
+
+{
+  "lawFirmId": string,            // Wymagane
+  "clientId": string,             // Wymagane
+  "ocenaOgolna": number,          // Wymagane (1-5)
+  "profesjonalizm": number | null,
+  "komunikacja": number | null,
+  "terminowosc": number | null,
+  "stosunekJakosci": number | null,
+  "tytulOpinii": string,          // Wymagane
+  "trescOpinii": string,          // Wymagane (min. 50 znaków)
+  "polecam": boolean,             // Opcjonalne (domyślnie: true)
+  "anonimowa": boolean,           // Opcjonalne (domyślnie: false)
+  "zweryfikowana": boolean,       // Opcjonalne (domyślnie: false)
+  "aktywna": boolean              // Opcjonalne (domyślnie: true)
+}
+
+WALIDACJA:
+
+1. Wymagane pola:
+   - lawFirmId, clientId, ocenaOgolna, tytulOpinii, trescOpinii
+   - Brak: 400 "Missing required fields"
+
+2. Ocena ogólna:
+   - Zakres: 1-5
+   - Poza zakresem: 400 "Rating must be between 1 and 5"
+
+3. Treść opinii:
+   - Minimum: 50 znaków
+   - Poniżej: 400 "Review content must be at least 50 characters"
+
+4. Weryfikacja istnienia:
+   - Sprawdza czy lawFirm i client istnieją w bazie
+   - Brak: 404 "Law firm or client not found"
+
+DOMYŚLNE WARTOŚCI:
+- polecam: true (jeśli nie podano)
+- anonimowa: false
+- zweryfikowana: false
+- aktywna: true
+- Opcjonalne oceny: null (jeśli nie podano)
+
+ODPOWIEDŹ (201 Created):
+- Zwraca utworzoną opinię z relacjami (lawFirm, client)
+
+BŁĘDY:
+- 400: Walidacja nie powiodła się
+- 401: Brak autoryzacji
+- 404: Kancelaria lub klient nie istnieje
+- 500: Internal server error
+
+
+--------------------------------------------------------------------------------
+4.3 GET /api/admin/reviews/[id] - SZCZEGÓŁY OPINII
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/[id]/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+PARAMETRY URL:
+- id: UUID opinii
+
+ZWRACANE RELACJE:
+
+lawFirm: {
+  select: {
+    id: true,
+    nazwa: true,
+    nazwaFirmy: true,
+    emailKontakt: true,      // Dodatkowe dla szczegółów
+    numerTelefonu: true,     // Dodatkowe dla szczegółów
+    miasto: true             // Dodatkowe dla szczegółów
+  }
+}
+
+client: {
+  select: {
+    id: true,
+    imie: true,
+    nazwisko: true,
+    user: {
+      select: {
+        email: true
+      }
+    }
+  }
+}
+
+ODPOWIEDŹ (200 OK):
+- Pojedyncza opinia (Review) z pełnymi relacjami
+
+BŁĘDY:
+- 401: Brak autoryzacji
+- 404: Opinia nie znaleziona
+- 500: Internal server error
+
+
+--------------------------------------------------------------------------------
+4.4 PUT /api/admin/reviews/[id] - AKTUALIZACJA OPINII
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/[id]/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+PARAMETRY URL:
+- id: UUID opinii
+
+BODY (JSON) - wszystkie pola opcjonalne:
+
+{
+  "ocenaOgolna": number,
+  "profesjonalizm": number | null,
+  "komunikacja": number | null,
+  "terminowosc": number | null,
+  "stosunekJakosci": number | null,
+  "tytulOpinii": string,
+  "trescOpinii": string,
+  "polecam": boolean,
+  "anonimowa": boolean,
+  "zweryfikowana": boolean,
+  "aktywna": boolean,
+  "odpowiedz": string | null
+}
+
+WALIDACJA:
+
+1. Sprawdzenie istnienia:
+   - Weryfikuje czy opinia istnieje
+   - Brak: 404 "Review not found"
+
+2. Ocena ogólna (jeśli podana):
+   - Zakres: 1-5
+   - Poza zakresem: 400 "Rating must be between 1 and 5"
+
+3. Treść opinii (jeśli podana):
+   - Minimum: 50 znaków
+   - Poniżej: 400 "Review content must be at least 50 characters"
+
+LOGIKA AKTUALIZACJI:
+
+- Aktualizuje tylko podane pola (undefined = nie zmienia)
+- Buduje updateData dynamicznie
+
+SPECJALNA LOGIKA DLA "odpowiedz":
+
+if (odpowiedz !== undefined) {
+  updateData.odpowiedz = odpowiedz
+  if (odpowiedz) {
+    updateData.dataOdpowiedzi = new Date()  // Ustawia timestamp
+  } else {
+    updateData.dataOdpowiedzi = null        // Usuwa timestamp
+  }
+}
+
+ODPOWIEDŹ (200 OK):
+- Zwraca zaktualizowaną opinię z relacjami (lawFirm, client)
+
+BŁĘDY:
+- 400: Walidacja nie powiodła się
+- 401: Brak autoryzacji
+- 404: Opinia nie znaleziona
+- 500: Internal server error
+
+
+--------------------------------------------------------------------------------
+4.5 DELETE /api/admin/reviews/[id] - USUWANIE OPINII
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/[id]/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+PARAMETRY URL:
+- id: UUID opinii
+
+LOGIKA:
+
+1. Sprawdzenie istnienia:
+   - Weryfikuje czy opinia istnieje
+   - Brak: 404 "Review not found"
+
+2. Hard delete:
+   - await prisma.review.delete({ where: { id } })
+   - UWAGA: Trwałe usunięcie (nie soft delete)
+
+ODPOWIEDŹ (200 OK):
+
+{
+  "message": "Review deleted successfully"
+}
+
+BŁĘDY:
+- 401: Brak autoryzacji
+- 404: Opinia nie znaleziona
+- 500: Internal server error
+
+
+--------------------------------------------------------------------------------
+4.6 PATCH /api/admin/reviews/[id]/status - SZYBKA ZMIANA STATUSU
+--------------------------------------------------------------------------------
+
+Plik: /prosta-sprawa/app/api/admin/reviews/[id]/status/route.ts
+
+AUTORYZACJA:
+- Wymaga sesji NextAuth
+- Wymaga roli: ADMIN
+- Brak autoryzacji: 401 Unauthorized
+
+PARAMETRY URL:
+- id: UUID opinii
+
+BODY (JSON) - co najmniej jedno pole:
+
+{
+  "zweryfikowana": boolean,    // Opcjonalne
+  "aktywna": boolean           // Opcjonalne
+}
+
+LOGIKA:
+
+1. Sprawdzenie istnienia:
+   - Weryfikuje czy opinia istnieje
+   - Brak: 404 "Review not found"
+
+2. Aktualizacja statusu:
+   - Aktualizuje tylko podane pola
+   - Pozostałe pola bez zmian
+
+UŻYCIE:
+- Wykorzystywane przez przyciski szybkiej zmiany statusu na liście
+- Pozwala na zmianę pojedynczego pola bez pełnej edycji
+
+ODPOWIEDŹ (200 OK):
+- Zwraca zaktualizowaną opinię z relacjami
+
+BŁĘDY:
+- 401: Brak autoryzacji
+- 404: Opinia nie znaleziona
+- 500: Internal server error
+
+
+================================================================================
+5. MODEL DANYCH (Review)
+================================================================================
+
+Plik: /prosta-sprawa/prisma/schema.prisma
+Model: Review (linie 759-789+)
+
+--------------------------------------------------------------------------------
+5.1 PEŁNA DEFINICJA MODELU
+--------------------------------------------------------------------------------
+
+model Review {
+  // Identyfikatory
+  id                  String   @id @default(uuid())
+  lawFirmId           String
+  clientId            String
+
+  // Relacje
+  lawFirm             LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  client              Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Oceny (1-5 gwiazdek)
+  ocenaOgolna         Int      // Wymagana
+  profesjonalizm      Int?     // Opcjonalna
+  komunikacja         Int?     // Opcjonalna
+  terminowosc         Int?     // Opcjonalna
+  stosunekJakosci     Int?     // Opcjonalna (stosunek jakości do ceny)
+
+  // Treść opinii
+  tytulOpinii         String
+  trescOpinii         String   // Minimum 50 znaków (walidowane w API)
+
+  // Opcje
+  polecam             Boolean  @default(true)    // Czy klient poleca kancelarię
+  anonimowa           Boolean  @default(false)   // Czy opinia anonimowa
+
+  // Odpowiedź kancelarii
+  odpowiedz           String?                     // Odpowiedź kancelarii (opcjonalna)
+  dataOdpowiedzi      DateTime?                   // Data dodania odpowiedzi
+
+  // Status
+  zweryfikowana       Boolean  @default(false)   // Czy opinia zweryfikowana przez admina
+  aktywna             Boolean  @default(true)    // Czy opinia aktywna (widoczna)
+
+  // Znaczniki czasowe
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Indeksy (prawdopodobnie)
+  @@index([lawFirmId])
+  @@index([clientId])
+  @@index([zweryfikowana])
+  @@index([aktywna])
+}
+
+
+--------------------------------------------------------------------------------
+5.2 OPIS PÓL
+--------------------------------------------------------------------------------
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ POLE              │ TYP       │ OPIS                                │
+├─────────────────────────────────────────────────────────────────────┤
+│ id                │ String    │ UUID, klucz główny                  │
+│ lawFirmId         │ String    │ ID kancelarii (FK do LawFirm)       │
+│ clientId          │ String    │ ID klienta (FK do Client)           │
+├─────────────────────────────────────────────────────────────────────┤
+│ ocenaOgolna       │ Int       │ Ocena główna: 1-5                   │
+│ profesjonalizm    │ Int?      │ Ocena profesjonalizmu: 1-5 lub null │
+│ komunikacja       │ Int?      │ Ocena komunikacji: 1-5 lub null     │
+│ terminowosc       │ Int?      │ Ocena terminowości: 1-5 lub null    │
+│ stosunekJakosci   │ Int?      │ Stosunek jakości do ceny: 1-5/null  │
+├─────────────────────────────────────────────────────────────────────┤
+│ tytulOpinii       │ String    │ Tytuł opinii                        │
+│ trescOpinii       │ String    │ Treść opinii (min. 50 znaków)       │
+├─────────────────────────────────────────────────────────────────────┤
+│ polecam           │ Boolean   │ Czy klient poleca? (default: true)  │
+│ anonimowa         │ Boolean   │ Czy anonimowa? (default: false)     │
+├─────────────────────────────────────────────────────────────────────┤
+│ odpowiedz         │ String?   │ Odpowiedź kancelarii (opcjonalna)   │
+│ dataOdpowiedzi    │ DateTime? │ Data dodania odpowiedzi             │
+├─────────────────────────────────────────────────────────────────────┤
+│ zweryfikowana     │ Boolean   │ Weryfikacja przez admina (def:false)│
+│ aktywna           │ Boolean   │ Czy widoczna? (default: true)       │
+├─────────────────────────────────────────────────────────────────────┤
+│ createdAt         │ DateTime  │ Data utworzenia                     │
+│ updatedAt         │ DateTime  │ Data ostatniej aktualizacji         │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+5.3 RELACJE
+--------------------------------------------------------------------------------
+
+REVIEW → LAWFIRM (Many-to-One):
+- Pole: lawFirmId → lawFirm.id
+- onDelete: Cascade
+- Znaczenie: Usunięcie kancelarii usuwa wszystkie jej opinie
+
+REVIEW → CLIENT (Many-to-One):
+- Pole: clientId → client.id
+- onDelete: Cascade
+- Znaczenie: Usunięcie klienta usuwa wszystkie jego opinie
+
+ODWROTNE RELACJE:
+
+LawFirm model ma:
+  reviews    Review[]
+
+Client model ma:
+  reviews    Review[]
+
+
+--------------------------------------------------------------------------------
+5.4 DOMYŚLNE WARTOŚCI
+--------------------------------------------------------------------------------
+
+polecam: true
+- Domyślnie klient poleca kancelarię
+- Można zmienić na false jeśli nie poleca
+
+anonimowa: false
+- Domyślnie opinie są jawne (z imieniem i nazwiskiem)
+- Klient może wybrać opcję anonimowej
+
+zweryfikowana: false
+- Nowe opinie są niezweryfikowane
+- Administrator musi ręcznie zweryfikować
+
+aktywna: true
+- Nowe opinie są aktywne (widoczne)
+- Administrator może dezaktywować niewłaściwe opinie
+
+createdAt: now()
+- Automatyczny timestamp tworzenia
+
+updatedAt: automatyczna aktualizacja
+- Prisma automatycznie aktualizuje przy każdej zmianie
+
+
+--------------------------------------------------------------------------------
+5.5 WALIDACJA
+--------------------------------------------------------------------------------
+
+WALIDACJA W BAZIE:
+- Brak dodatkowych constraintów poza typami danych
+
+WALIDACJA W API:
+
+1. ocenaOgolna: 1-5 (wymagane)
+2. profesjonalizm, komunikacja, terminowosc, stosunekJakosci: 1-5 lub null
+3. trescOpinii: minimum 50 znaków
+4. tytulOpinii: wymagany string (nie może być pusty)
+
+WALIDACJA BIZNESOWA:
+- Klient może dodać opinię tylko dla kancelarii, z którą miał współpracę
+- (to prawdopodobnie walidowane gdzie indziej w systemie)
+
+
+================================================================================
+6. PRZEPŁYW PRACY Z OPINIAMI
+================================================================================
+
+--------------------------------------------------------------------------------
+6.1 SCENARIUSZ 1: MODERACJA NOWEJ OPINII
+--------------------------------------------------------------------------------
+
+1. Klient wystawia opinię w swoim panelu
+   ↓
+2. Opinia pojawia się w /admin/reviews
+   Status: zweryfikowana=false, aktywna=true
+   ↓
+3. Administrator otwiera /admin/reviews
+   - Widzi nową opinię w tabeli
+   - Badge "Niezweryfikowana" (szary)
+   - Badge "Aktywna" (niebieski)
+   ↓
+4. Administrator klika "Zobacz szczegóły"
+   ↓
+5. Administrator przegląda:
+   - Treść opinii (czy zgodna z regulaminem)
+   - Oceny (czy uzasadnione)
+   - Dane klienta (czy prawdziwy użytkownik)
+   - Dane kancelarii (której dotyczy)
+   ↓
+6. DECYZJA ADMINISTRATORA:
+
+   OPCJA A - AKCEPTACJA:
+   - Klika przycisk weryfikacji (CheckCircle)
+   - Opinia zmienia status: zweryfikowana=true
+   - Badge zmienia się na "Zweryfikowana" (niebieski)
+   - Opinia pozostaje aktywna i widoczna
+
+   OPCJA B - ODRZUCENIE:
+   - Klika przycisk aktywności (XCircle)
+   - Opinia zmienia status: aktywna=false
+   - Badge zmienia się na "Nieaktywna" (czerwony)
+   - Opinia jest ukryta przed użytkownikami
+
+   OPCJA C - USUNIĘCIE:
+   - Klika "Usuń"
+   - Potwierdza w dialogu
+   - Opinia jest trwale usunięta z bazy
+
+
+--------------------------------------------------------------------------------
+6.2 SCENARIUSZ 2: EDYCJA TREŚCI OPINII
+--------------------------------------------------------------------------------
+
+1. Administrator zauważa błąd w treści opinii
+   (np. wulgaryzmy, błędy ortograficzne, dane wrażliwe)
+   ↓
+2. Otwiera szczegóły opinii (/admin/reviews/[id])
+   ↓
+3. Klika "Edytuj"
+   - Interfejs przechodzi w tryb edycji
+   - Wszystkie pola stają się edytowalne
+   ↓
+4. Administrator poprawia:
+   - Treść opinii (usuwa wulgaryzmy)
+   - Tytuł (jeśli potrzeba)
+   - Oceny (jeśli były błędnie wystawione)
+   - Ustawienia (może zmienić na anonimową)
+   ↓
+5. Klika "Zapisz"
+   - Walidacja: treść min. 50 znaków
+   - Jeśli OK: zapisuje zmiany
+   - Toast: "Opinia została zaktualizowana"
+   ↓
+6. Interfejs wraca do trybu przeglądania
+   Opinia wyświetla się z poprawkami
+
+
+--------------------------------------------------------------------------------
+6.3 SCENARIUSZ 3: ZARZĄDZANIE ODPOWIEDZIĄ KANCELARII
+--------------------------------------------------------------------------------
+
+1. Kancelaria dodaje odpowiedź na opinię w swoim panelu
+   ↓
+2. Pole "odpowiedz" zostaje wypełnione
+   Pole "dataOdpowiedzi" = current timestamp
+   ↓
+3. Administrator widzi w szczegółach:
+   - Sekcja "Odpowiedź kancelarii"
+   - Opis: "Odpowiedź dodana: DD.MM.YYYY HH:MM"
+   - Treść odpowiedzi kancelarii
+   ↓
+4. Jeśli odpowiedź jest niewłaściwa:
+
+   OPCJA A - EDYCJA:
+   - Administrator klika "Edytuj"
+   - Poprawia treść odpowiedzi
+   - Zapisuje (dataOdpowiedzi się aktualizuje)
+
+   OPCJA B - USUNIĘCIE:
+   - Administrator klika "Edytuj"
+   - Czyści pole odpowiedzi (usuwa całą treść)
+   - Zapisuje
+   - odpowiedz = null, dataOdpowiedzi = null
+
+
+--------------------------------------------------------------------------------
+6.4 SCENARIUSZ 4: WYSZUKIWANIE I FILTROWANIE
+--------------------------------------------------------------------------------
+
+1. Administrator otrzymuje zgłoszenie o problematycznej opinii
+   Zgłoszenie: "Opinia zawiera słowo 'oszustwo'"
+   ↓
+2. Otwiera /admin/reviews
+   ↓
+3. Używa filtrów:
+   - Wpisuje "oszustwo" w pole wyszukiwania
+   - Opcjonalnie: filtruje po ocenie (np. 1 gwiazdka)
+   - Opcjonalnie: filtruje po statusie (aktywne)
+   ↓
+4. System wyświetla pasujące opinie
+   ↓
+5. Administrator przegląda znalezione opinie
+   ↓
+6. Otwiera podejrzane opinie i podejmuje akcje:
+   - Edycja treści
+   - Dezaktywacja
+   - Lub usunięcie
+
+
+--------------------------------------------------------------------------------
+6.5 SCENARIUSZ 5: RAPORTOWANIE OPINII KANCELARII
+--------------------------------------------------------------------------------
+
+1. Kancelaria dzwoni: "Proszę pokazać wszystkie moje opinie"
+   ↓
+2. Administrator otwiera /admin/reviews
+   ↓
+3. Kopiuje ID kancelarii z innej sekcji panelu
+   ↓
+4. Dodaje parametr do URL:
+   /admin/reviews?lawFirmId=[ID]
+   ↓
+5. System wyświetla tylko opinie tej kancelarii
+   ↓
+6. Administrator może:
+   - Zobaczyć statystyki (liczba opinii)
+   - Przejrzeć średnią ocen
+   - Sprawdzić które opinie są zweryfikowane
+   - Wyeksportować dane (gdyby była taka funkcja)
+
+
+================================================================================
+7. FUNKCJE BEZPIECZEŃSTWA I WALIDACJI
+================================================================================
+
+--------------------------------------------------------------------------------
+7.1 AUTORYZACJA
+--------------------------------------------------------------------------------
+
+MECHANIZM:
+- NextAuth.js z JWT sessions
+- Plik konfiguracji: /prosta-sprawa/lib/auth.ts
+
+SPRAWDZANIE ROLI:
+
+const session = await auth()
+
+if (!session?.user || session.user.role !== "ADMIN") {
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+}
+
+OCHRONA TRAS:
+- Middleware sprawdza sesję
+- Redirect do /logowanie jeśli brak sesji
+- Redirect do / jeśli niewłaściwa rola
+
+POZIOMY DOSTĘPU:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ ROLA        │ DOSTĘP DO OPINII                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ CLIENT      │ - Swoje opinie (tylko odczyt)                         │
+│             │ - Dodawanie nowych opinii                             │
+│             │ - Brak dostępu do moderacji                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ LAW_FIRM    │ - Opinie swojej kancelarii (tylko odczyt)             │
+│             │ - Dodawanie odpowiedzi                                │
+│             │ - Brak dostępu do moderacji                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ ADMIN       │ - Wszystkie opinie (CRUD)                             │
+│             │ - Pełna moderacja                                     │
+│             │ - Edycja wszystkich pól                               │
+│             │ - Usuwanie opinii                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+7.2 WALIDACJA DANYCH
+--------------------------------------------------------------------------------
+
+WALIDACJA PO STRONIE KLIENTA:
+
+1. Minimalna długość treści:
+   if (trescOpinii.length < 50) {
+     toast.error("Treść opinii musi zawierać minimum 50 znaków")
+     return
+   }
+
+2. Licznik znaków w czasie rzeczywistym
+   Wyświetlany pod Textarea: "{długość} / 50 znaków"
+
+WALIDACJA PO STRONIE SERWERA (API):
+
+1. Wymagane pola (POST):
+   if (!lawFirmId || !clientId || !ocenaOgolna || !tytulOpinii || !trescOpinii) {
+     return 400 "Missing required fields"
+   }
+
+2. Zakres ocen:
+   if (ocenaOgolna < 1 || ocenaOgolna > 5) {
+     return 400 "Rating must be between 1 and 5"
+   }
+
+3. Długość treści:
+   if (trescOpinii.length < 50) {
+     return 400 "Review content must be at least 50 characters"
+   }
+
+4. Istnienie relacji:
+   - Sprawdza czy lawFirm istnieje
+   - Sprawdza czy client istnieje
+   - Jeśli nie: 404 "Law firm or client not found"
+
+5. Istnienie opinii (PUT/DELETE):
+   - Sprawdza czy opinia istnieje przed operacją
+   - Jeśli nie: 404 "Review not found"
+
+
+--------------------------------------------------------------------------------
+7.3 OBSŁUGA BŁĘDÓW
+--------------------------------------------------------------------------------
+
+STRUKTURA TRY-CATCH w API:
+
+try {
+  // Logika biznesowa
+} catch (error) {
+  console.error("Error [opis]:", error)
+  return NextResponse.json(
+    { error: "Internal server error" },
+    { status: 500 }
+  )
+}
+
+OBSŁUGA BŁĘDÓW W INTERFEJSIE:
+
+1. Błędy API:
+   - Wyświetlane przez toast.error()
+   - Komunikaty po polsku
+   - Szczegółowe opisy błędów
+
+2. Błędy ładowania:
+   - Stan loading wyświetla "Ładowanie..."
+   - Timeout automatycznie resetuje stan
+   - Przy 404: przekierowanie do listy
+
+3. Błędy walidacji:
+   - Toast z konkretnym błędem
+   - Czerwone obramowanie pól (gdyby używano Form)
+   - Zachowanie danych w formularzu (nie resetuje)
+
+
+--------------------------------------------------------------------------------
+7.4 BEZPIECZEŃSTWO DANYCH
+--------------------------------------------------------------------------------
+
+OCHRONA DANYCH OSOBOWYCH:
+
+1. Opinie anonimowe:
+   - Jeśli anonimowa=true:
+     * Nie wyświetla imienia/nazwiska klienta
+     * Wyświetla "Anonimowy"
+     * Email klienta ukryty w tabeli
+   - W szczegółach:
+     * Cała karta klienta: "Opinia anonimowa"
+
+2. Soft delete:
+   - UWAGA: Review NIE używa soft delete
+   - Usunięcie jest TRWAŁE (hard delete)
+   - Admin powinien być ostrożny
+
+3. Cascade deletes:
+   - Usunięcie kancelarii → usuwa wszystkie jej opinie
+   - Usunięcie klienta → usuwa wszystkie jego opinie
+   - Automatyczne przez Prisma
+
+
+--------------------------------------------------------------------------------
+7.5 LOGGING I AUDYT
+--------------------------------------------------------------------------------
+
+LOGI KONSOLI:
+
+W każdym endpoincie API:
+  console.error("Error [operacja]:", error)
+
+PRZYKŁADY:
+- "Error fetching reviews:" - błąd pobierania listy
+- "Error creating review:" - błąd tworzenia
+- "Error updating review:" - błąd aktualizacji
+- "Error deleting review:" - błąd usuwania
+- "Error updating review status:" - błąd zmiany statusu
+
+BRAK SZCZEGÓŁOWEGO AUDYTU:
+- System NIE rejestruje historii zmian
+- System NIE zapisuje kto dokonał edycji
+- Zalecenie: dodać audit trail w przyszłości
+
+MOŻLIWE ROZSZERZENIA:
+
+model ReviewAudit {
+  id          String   @id @default(uuid())
+  reviewId    String
+  adminId     String
+  action      String   // CREATE, UPDATE, DELETE, VERIFY, ACTIVATE
+  changes     String   // JSON z zmianami
+  createdAt   DateTime @default(now())
+}
+
+
+================================================================================
+KONIEC DOKUMENTACJI
+================================================================================
+
+Data wygenerowania: 2025-11-16
+System: Prosta Sprawa - Marketplace Prawniczy
+Moduł: Panel Administracyjny - Zarządzanie Opiniami
+
+Dokumentacja kompletna i szczegółowa, obejmująca:
+✓ Listę opinii (/admin/reviews)
+✓ Szczegóły opinii (/admin/reviews/[id])
+✓ Wszystkie endpointy API
+✓ Model danych Review
+✓ Przepływy pracy
+✓ Bezpieczeństwo i walidacja
+
+Dla dodatkowych pytań lub aktualizacji dokumentacji, skontaktuj się z zespołem
+deweloperskim.
