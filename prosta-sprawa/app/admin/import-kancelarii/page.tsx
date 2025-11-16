@@ -28,7 +28,12 @@ export default function ImportKancelarii() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (selectedFile) {
-      if (selectedFile.type !== "application/json") {
+      // Check if file is JSON by extension or MIME type
+      const isJson = selectedFile.name.toLowerCase().endsWith('.json') ||
+                     selectedFile.type === "application/json" ||
+                     selectedFile.type === "text/json"
+
+      if (!isJson) {
         toast.error("Wybierz plik JSON")
         return
       }
@@ -48,11 +53,27 @@ export default function ImportKancelarii() {
     try {
       // Read file content
       const fileContent = await file.text()
-      const jsonData = JSON.parse(fileContent)
+
+      // Parse JSON with better error handling
+      let jsonData
+      try {
+        jsonData = JSON.parse(fileContent)
+      } catch (parseError) {
+        toast.error("Plik nie jest poprawnym plikiem JSON. Sprawdź składnię.")
+        setImporting(false)
+        return
+      }
 
       // Validate JSON structure
       if (!jsonData.lawFirms || !Array.isArray(jsonData.lawFirms)) {
         toast.error("Nieprawidłowy format pliku. Oczekiwana struktura: { lawFirms: [...] }")
+        setImporting(false)
+        return
+      }
+
+      // Check if array is not empty
+      if (jsonData.lawFirms.length === 0) {
+        toast.error("Plik nie zawiera żadnych kancelarii do zaimportowania")
         setImporting(false)
         return
       }
@@ -92,8 +113,13 @@ export default function ImportKancelarii() {
   }
 
   const downloadSample = () => {
-    // Trigger download of sample.json
-    window.open("/sample.json", "_blank")
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement("a")
+    link.href = "/sample.json"
+    link.download = "sample-law-firms.json"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (

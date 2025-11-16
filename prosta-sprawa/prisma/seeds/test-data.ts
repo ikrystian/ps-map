@@ -65,6 +65,7 @@ export async function seedTestData(prisma: PrismaClient) {
       role: UserRole.LAW_FIRM,
       emailVerified: new Date(),
       status: UserStatus.ACTIVE,
+      image: '/avatars/bruce-wayne.jpg',
     },
   })
 
@@ -87,6 +88,15 @@ export async function seedTestData(prisma: PrismaClient) {
       zgodaRegulamin: true,
       zgodaPrzetwarzanie: true,
       zweryfikowana: true,
+      logo: '/uploads/law-firms/bruce-wayne-logo.png',
+      zdjecieGlowne: '/uploads/law-firms/bruce-wayne-office.jpg',
+      galeriaZdjec: JSON.stringify([
+        '/uploads/law-firms/bruce-wayne-gallery-1.jpg',
+        '/uploads/law-firms/bruce-wayne-gallery-2.jpg',
+        '/uploads/law-firms/bruce-wayne-gallery-3.jpg'
+      ]),
+      filmYouTube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      okladkaFilmu: '/uploads/law-firms/bruce-wayne-video-thumb.jpg',
     },
     create: {
       userId: bruceWayneUser.id,
@@ -107,6 +117,15 @@ export async function seedTestData(prisma: PrismaClient) {
       zgodaRegulamin: true,
       zgodaPrzetwarzanie: true,
       zweryfikowana: true,
+      logo: '/uploads/law-firms/bruce-wayne-logo.png',
+      zdjecieGlowne: '/uploads/law-firms/bruce-wayne-office.jpg',
+      galeriaZdjec: JSON.stringify([
+        '/uploads/law-firms/bruce-wayne-gallery-1.jpg',
+        '/uploads/law-firms/bruce-wayne-gallery-2.jpg',
+        '/uploads/law-firms/bruce-wayne-gallery-3.jpg'
+      ]),
+      filmYouTube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      okladkaFilmu: '/uploads/law-firms/bruce-wayne-video-thumb.jpg',
     },
   })
   console.log(`✓ Law Firm: ${bruceWayneLawFirm.nazwa}`)
@@ -396,6 +415,7 @@ export async function seedTestData(prisma: PrismaClient) {
       role: UserRole.LAW_FIRM,
       emailVerified: new Date(),
       status: UserStatus.ACTIVE,
+      image: '/avatars/matt-murdock.jpg',
     },
   })
 
@@ -418,6 +438,12 @@ export async function seedTestData(prisma: PrismaClient) {
       zgodaRegulamin: true,
       zgodaPrzetwarzanie: true,
       zweryfikowana: true,
+      logo: '/uploads/law-firms/daredevil-logo.png',
+      zdjecieGlowne: '/uploads/law-firms/daredevil-office.jpg',
+      galeriaZdjec: JSON.stringify([
+        '/uploads/law-firms/daredevil-gallery-1.jpg',
+        '/uploads/law-firms/daredevil-gallery-2.jpg'
+      ]),
     },
     create: {
       userId: daredevilUser.id,
@@ -438,6 +464,12 @@ export async function seedTestData(prisma: PrismaClient) {
       zgodaRegulamin: true,
       zgodaPrzetwarzanie: true,
       zweryfikowana: true,
+      logo: '/uploads/law-firms/daredevil-logo.png',
+      zdjecieGlowne: '/uploads/law-firms/daredevil-office.jpg',
+      galeriaZdjec: JSON.stringify([
+        '/uploads/law-firms/daredevil-gallery-1.jpg',
+        '/uploads/law-firms/daredevil-gallery-2.jpg'
+      ]),
     },
   })
   console.log(`✓ Law Firm: ${daredevilLawFirm.nazwa}`)

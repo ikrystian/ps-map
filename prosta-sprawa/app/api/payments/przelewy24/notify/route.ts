@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Zaktualizuj status zamówienia i dodaj punkty
-    await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // Zaktualizuj zamówienie
       await tx.order.update({
         where: { id: order.id },

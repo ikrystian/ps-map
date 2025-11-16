@@ -2,15 +2,15 @@
   "lawFirms": [
     {
       "user": {
-        "email": "kontakt@kancelaria-nowak.pl",
+        "email": "2asd@wp.pl",
         "name": "Kancelaria Nowak & Wspólnicy",
-        "password": "HasloKancelaria123!"
+        "password": "Password123"
       },
       "lawFirm": {
         "typ": "SPOLKA_PARTNERSKA",
         "nazwa": "Kancelaria Prawna Nowak & Wspólnicy",
         "nazwaFirmy": "Kancelaria Prawna Nowak & Wspólnicy Sp. P.",
-        "nip": "1234567890",
+        "nip": "8194635351",
         "regon": "123456789",
         "krs": "0000123456",
         "imieKontakt": "Jan",
@@ -18,7 +18,7 @@
         "stanowisko": "Partner Zarządzający",
         "numerTelefonu": "+48 22 123 45 67",
         "numerTelefonu2": "+48 22 123 45 68",
-        "emailKontakt": "kontakt@kancelaria-nowak.pl",
+        "emailKontakt": "2asd@wp.pl",
         "adres": "ul. Marszałkowska 115",
         "kodPocztowy": "00-102",
         "miasto": "Warszawa",
@@ -29,10 +29,10 @@
         "logo": "/uploads/law-firms/kancelaria-nowak-logo.png",
         "zdjecieGlowne": "/uploads/law-firms/kancelaria-nowak-main.jpg",
         "galeriaZdjec": [
-          "/uploads/law-firms/kancelaria-nowak-biuro-1.jpg",
-          "/uploads/law-firms/kancelaria-nowak-biuro-2.jpg",
-          "/uploads/law-firms/kancelaria-nowak-zespol.jpg",
-          "/uploads/law-firms/kancelaria-nowak-sala-konferencyjna.jpg"
+          "https://picsum.photos/1920/1080",
+          "https://picsum.photos/1920/1080",
+          "https://picsum.photos/1920/1080",
+          "https://picsum.photos/1920/1080"
         ],
         "filmYouTube": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         "okladkaFilmu": "/uploads/law-firms/kancelaria-nowak-video-thumbnail.jpg",
@@ -172,120 +172,6 @@
           "dataWaznosci": "2026-01-10",
           "numerCertyfikatu": "TUV/2020/9001/789",
           "skanCertyfikatu": "/uploads/certificates/iso-9001-nowak.pdf",
-          "aktywny": true
-        }
-      ]
-    },
-    {
-      "user": {
-        "email": "biuro@kowalski-legal.pl",
-        "name": "Kancelaria Adwokacka Kowalski",
-        "password": "SecurePass456!"
-      },
-      "lawFirm": {
-        "typ": "OSOBA_FIZYCZNA",
-        "nazwa": "Kancelaria Adwokacka Kowalski",
-        "nazwaFirmy": "Adwokat Piotr Kowalski",
-        "nip": "9876543210",
-        "regon": "987654321",
-        "imieKontakt": "Piotr",
-        "nazwiskoKontakt": "Kowalski",
-        "numerTelefonu": "+48 12 345 67 89",
-        "emailKontakt": "biuro@kowalski-legal.pl",
-        "adres": "ul. Floriańska 10/3",
-        "kodPocztowy": "31-019",
-        "miasto": "Kraków",
-        "voivodeship": "Małopolskie",
-        "latitude": 50.0647,
-        "longitude": 19.9450,
-        "opis": "Specjalizuję się w prawie karnym oraz rodzinnym. Z wykształcenia jestem adwokatem z ponad 20-letnim doświadczeniem. Prowadzę sprawy w całej Polsce, ze szczególnym uwzględnieniem województwa małopolskiego.\n\nMoja praktyka obejmuje zarówno obronę w sprawach karnych (od wykroczeń po poważne przestępstwa), jak i kompleksową pomoc w sprawach rodzinnych (rozwody, alimenty, opieka nad dziećmi).\n\nDziałam z pasją i zaangażowaniem, traktując każdą sprawę indywidualnie i z najwyższą starannością.",
-        "logo": "/uploads/law-firms/adwokat-kowalski-logo.png",
-        "zdjecieGlowne": "/uploads/law-firms/adwokat-kowalski-biuro.jpg",
-        "galeriaZdjec": [
-          "/uploads/law-firms/adwokat-kowalski-gabinet.jpg",
-          "/uploads/law-firms/adwokat-kowalski-portret.jpg"
-        ],
-        "statusGodzinyOtwarcia": true,
-        "godzinyOtwarcia": {
-          "poniedzialek": "10:00-17:00",
-          "wtorek": "10:00-17:00",
-          "sroda": "10:00-17:00",
-          "czwartek": "10:00-17:00",
-          "piatek": "10:00-15:00",
-          "sobota": "Zamknięte",
-          "niedziela": "Zamknięte"
-        },
-        "linkFacebook": "https://www.facebook.com/adwokatkowalski",
-        "stronaWww": "https://www.kowalski-legal.pl",
-        "edukacja": [
-          {
-            "uczelnia": "Uniwersytet Jagielloński",
-            "wydzial": "Wydział Prawa i Administracji",
-            "stopien": "Magister prawa",
-            "rokOd": 1995,
-            "rokDo": 2000
-          }
-        ],
-        "oirpMiasto": "Kraków",
-        "oirpWpis": "KR/2345/2003",
-        "oirpStatus": true,
-        "unikatowyOpisUslugi": "Indywidualne podejście do każdego klienta, dyskrecja i pełne zaangażowanie w sprawę. Wieloletnie doświadczenie w najtrudniejszych sprawach karnych i rodzinnych.",
-        "slowaKluczowe": [
-          "prawo karne",
-          "obrona karna",
-          "rozwody",
-          "alimenty",
-          "opieka nad dzieckiem"
-        ],
-        "callaPolska": false,
-        "onlineOnly": false,
-        "typOferty": "WSZYSTKIE",
-        "pakietSubskrypcji": "STANDARD",
-        "zweryfikowana": true,
-        "aktywna": true,
-        "zgodaRegulamin": true,
-        "zgodaPrzetwarzanie": true
-      },
-      "voivodeships": [
-        "Małopolskie",
-        "Śląskie"
-      ],
-      "categories": [
-        "Prawo Karne",
-        "Prawo Rodzinne"
-      ],
-      "services": [
-        {
-          "nazwaUslugi": "Obrona w sprawach karnych",
-          "opisUslugi": "Kompleksowa obrona w postępowaniach karnych - od przesłuchania jako podejrzany po obronę w sądzie. Reprezentacja przed wszystkimi organami ścigania.",
-          "cenaOd": 2500,
-          "jednostka": "DO_UZGODNIENIA",
-          "aktywna": true
-        },
-        {
-          "nazwaUslugi": "Sprawy rozwodowe",
-          "opisUslugi": "Profesjonalna pomoc w sprawach rozwodowych, z podziałem majątku, ustaleniem alimentów i władzy rodzicielskiej.",
-          "cenaOd": 3000,
-          "cenaDo": 8000,
-          "jednostka": "ZA_USLUGE",
-          "aktywna": true
-        },
-        {
-          "nazwaUslugi": "Konsultacja prawna",
-          "opisUslugi": "Konsultacja z doświadczonym adwokatem w zakresie prawa karnego lub rodzinnego.",
-          "cenaOd": 250,
-          "cenaDo": 400,
-          "jednostka": "ZA_GODZINE",
-          "aktywna": true
-        }
-      ],
-      "certificates": [
-        {
-          "nazwaCertyfikatu": "Uprawnienia adwokackie",
-          "wydawca": "Okręgowa Rada Adwokacka w Krakowie",
-          "dataUzyskania": "2003-09-01",
-          "numerCertyfikatu": "KR/ADW/2003/2345",
-          "skanCertyfikatu": "/uploads/certificates/adwokat-kowalski-uprawnienia.pdf",
           "aktywny": true
         }
       ]
