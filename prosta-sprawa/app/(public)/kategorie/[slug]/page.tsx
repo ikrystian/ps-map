@@ -522,7 +522,7 @@ export default function CategoryPage() {
                    </div>
                 ) : (
                    /* Law Firms List View */
-                   <div className="space-y-4 mb-8">
+                   <div className="space-y-4 mb-8 grid gap-2">
                      {lawFirms.map((firm) => (
                        <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                          <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg">

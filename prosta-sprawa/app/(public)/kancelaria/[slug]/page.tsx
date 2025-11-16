@@ -566,7 +566,7 @@ export default function LawFirmProfilePage() {
     <div className="min-h-screen bg-background">
       {/* Header Image */}
 
-      <div className="relative h-64 md:h-96 w-full flex items-end overflow-hidden" id="kancelaria-header">
+      <div className="relative h-64 md:h-96 lg:h-128 w-full flex items-end overflow-hidden" id="kancelaria-header">
         {youtubeVideoId ? (
           <>
             <iframe

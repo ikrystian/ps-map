@@ -473,7 +473,7 @@ export default function SearchLawyerPage() {
                 </div>
               ) : (
                 /* Law Firms List View */
-                <div className="space-y-4 mb-8">
+                <div className="space-y-4 mb-8 grid gap-2">
                   {lawFirms.map((firm) => {
                     const isBiznesPlan = firm.pakietSubskrypcji === "BIZNES"
 

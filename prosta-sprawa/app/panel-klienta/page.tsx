@@ -221,20 +221,26 @@ export default function ClientDashboardPage() {
               </Link>
             </Button>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent>
             {blogPosts.length > 0 ? (
-              blogPosts.map((post, index) => (
-                <div key={post.id}>
-                  {index > 0 && <Separator />}
-                  <ArticleItem
-                    title={post.tytul}
-                    category={post.category?.nazwa || "Bez kategorii"}
-                    date={new Date(post.dataPublikacji).toLocaleDateString("pl-PL")}
-                    image={post.obrazekWyrozniajacy || "/placeholder-article.jpg"}
-                    slug={post.slug}
-                  />
-                </div>
-              ))
+              <div className="space-y-4">
+                {blogPosts.map((post, index) => (
+                  <div key={post.id}>
+                    {index > 0 && <Separator />}
+                    <ArticleItem
+                      title={post.tytul}
+                      category={post.category?.nazwa || "Bez kategorii"}
+                      date={new Date(
+                        post.dataPublikacji
+                      ).toLocaleDateString("pl-PL")}
+                      image={
+                        post.obrazekWyrozniajacy || "/placeholder-article.jpg"
+                      }
+                      slug={post.slug}
+                    />
+                  </div>
+                ))}
+              </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
                 Brak artykułów do wyświetlenia
@@ -276,26 +282,24 @@ interface ArticleItemProps {
 
 function ArticleItem({ title, category, date, image, slug }: ArticleItemProps) {
   return (
-    <Link href={`/blog/${slug}`} className="flex gap-4 group cursor-pointer">
-      <div className="relative w-20 h-20 rounded-md overflow-hidden bg-muted shrink-0">
-        {image && image !== "/placeholder-article.jpg" ? (
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground" />
-          </div>
-        )}
+    <Link
+      href={`/blog/${slug}`}
+      className="flex items-center gap-4 group cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors"
+    >
+      <div className="relative w-24 h-24 rounded-md overflow-hidden bg-muted shrink-0">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover w-full h-full transition-transform duration-300 ease-in-out group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
+        <h4 className="font-semibold group-hover:text-primary transition-colors line-clamp-2">
           {title}
         </h4>
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <Badge variant="secondary" className="text-xs">
             {category}
           </Badge>

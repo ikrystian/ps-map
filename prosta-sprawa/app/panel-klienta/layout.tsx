@@ -143,7 +143,7 @@ export default function ClientPanelLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container">
+          <div className="container py-6 px-4 mx-auto">
             {children}
           </div>
         </main>

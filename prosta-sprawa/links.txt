@@ -1,0 +1,598 @@
+===========================================
+WSZYSTKIE ŚCIEŻKI ROUTINGU - PROSTA SPRAWA
+===========================================
+Data wygenerowania: 2025-11-16
+
+===========================================
+1. STRONY PUBLICZNE
+===========================================
+
+Główne strony:
+- /                                          # Strona główna
+- /logowanie                                 # Logowanie
+- /wylogowano                                # Po wylogowaniu
+- /rejestracja                               # Wybór typu rejestracji
+- /rejestracja/klient                        # Rejestracja klienta
+- /rejestracja/kancelaria                    # Rejestracja kancelarii
+- /reset-hasla                               # Reset hasła
+- /moje-konto/lost-password                  # Odzyskiwanie hasła
+
+Weryfikacja email:
+- /auth/verify-email                         # Weryfikacja email
+- /auth/resend-verification                  # Ponowne wysłanie linku weryfikacyjnego
+
+Informacyjne:
+- /o-nas                                     # O nas
+- /kontakt                                   # Kontakt
+- /jak-to-dziala                             # Jak to działa
+- /dla-prawnika                              # Strona dla prawników
+- /z-nami-wygrywasz                          # Marketing page
+- /cennik                                    # Cennik
+- /polityka-prywatnosci                      # Polityka prywatności
+- /regulamin                                 # Regulamin
+
+Funkcjonalne:
+- /dodaj-sprawe                              # Dodaj nową sprawę
+- /kategorie                                 # Lista kategorii prawnych
+- /ranking                                   # Ranking kancelarii
+- /mapa                                      # Mapa kancelarii
+
+Kancelarie:
+- /kancelaria/[slug]                         # Profil kancelarii (dynamiczny)
+- /kancelaria/[slug]/blog                    # Blog kancelarii
+- /kancelaria/[slug]/blog/[post]             # Artykuł z bloga kancelarii
+
+CMS (dynamiczne strony):
+- /[slug]                                    # Dowolna strona CMS (np. /o-nas, /kontakt, etc.)
+
+===========================================
+2. PANEL KLIENTA
+===========================================
+
+Główne:
+- /panel-klienta                             # Dashboard (przekierowanie do /panel-klienta/sprawy)
+- /panel-klienta/profil                      # Profil klienta
+- /panel-klienta/moje-konto                  # Ustawienia konta
+
+Sprawy:
+- /panel-klienta/sprawy                      # Lista spraw klienta
+- /panel-klienta/sprawy/dodaj                # Dodaj nową sprawę
+- /panel-klienta/sprawy/[id]                 # Szczegóły sprawy (dynamiczny)
+
+Oferty:
+- /panel-klienta/oferty                      # Lista otrzymanych ofert
+- /panel-klienta/oferty/[id]                 # Szczegóły oferty (dynamiczny)
+
+Komunikacja:
+- /panel-klienta/wiadomosci                  # Lista konwersacji
+- /panel-klienta/wiadomosci/[id]             # Konwersacja (dynamiczny)
+
+Inne:
+- /panel-klienta/eksperci                    # Lista ekspertów
+
+===========================================
+3. PANEL KANCELARII
+===========================================
+
+Główne:
+- /panel-kancelarii                          # Dashboard kancelarii
+- /panel-kancelarii/profil                   # Profil kancelarii
+- /panel-kancelarii/ustawienia               # Ustawienia kancelarii
+- /panel-kancelarii/statystyki               # Statystyki
+- /panel-kancelarii/pomoc                    # Pomoc
+
+Sprawy i oferty:
+- /panel-kancelarii/sprawy                   # Dostępne sprawy (przeglądanie)
+- /panel-kancelarii/oferty                   # Złożone oferty
+
+Zakres usług:
+- /panel-kancelarii/zakres-uslug             # Lista usług
+- /panel-kancelarii/zakres-uslug/dodaj       # Dodaj usługę
+- /panel-kancelarii/zakres-uslug/[id]        # Edycja usługi (dynamiczny)
+
+Blog:
+- /panel-kancelarii/blog                     # Lista artykułów bloga
+- /panel-kancelarii/blog/nowy                # Nowy artykuł
+- /panel-kancelarii/blog/[id]                # Edycja artykułu (dynamiczny)
+
+Certyfikaty:
+- /panel-kancelarii/certyfikaty              # Lista certyfikatów
+- /panel-kancelarii/certyfikaty/dodaj        # Dodaj certyfikat
+- /panel-kancelarii/certyfikaty/[id]         # Edycja certyfikatu (dynamiczny)
+
+Dokumenty:
+- /panel-kancelarii/dokumenty                # Lista dokumentów
+
+Finansowe:
+- /panel-kancelarii/pakiet                   # Pakiet subskrypcyjny
+- /panel-kancelarii/faktury                  # Lista faktur
+- /panel-kancelarii/faktury/[id]/drukuj      # Drukowanie faktury (dynamiczny)
+
+System punktów:
+- /sklep                                     # Sklep z punktami
+- /sklep/punkty                              # Zakup punktów
+- /sklep/koszyk                              # Koszyk
+- /sklep/zamowienie                          # Podsumowanie zamówienia
+- /sklep/zamowienie/podziekowanie            # Podziękowanie po zamówieniu
+- /sklep/zamowienie/[id]                     # Szczegóły zamówienia (dynamiczny)
+
+Płatności:
+- /panel-kancelarii/checkout                 # Kasa/płatność
+- /panel-kancelarii/checkout/success         # Sukces płatności
+- /panel-kancelarii/checkout/failure         # Błąd płatności
+
+Komunikacja:
+- /panel-kancelarii/wiadomosci               # Lista konwersacji
+- /panel-kancelarii/wiadomosci/[id]          # Konwersacja (dynamiczny)
+
+Program partnerski:
+- /panel-kancelarii/klub-partnerski          # Klub partnerski
+
+===========================================
+4. PANEL ADMINISTRATORA
+===========================================
+
+Główne:
+- /admin                                     # Dashboard administratora
+- /admin/profil                              # Profil administratora
+
+Użytkownicy:
+- /admin/users                               # Lista użytkowników
+- /admin/users/new                           # Nowy użytkownik
+- /admin/users/[id]/edit                     # Edycja użytkownika (dynamiczny)
+- /admin/users/[id]/notification-settings    # Ustawienia powiadomień użytkownika (tylko API)
+
+Kancelarie:
+- /admin/law-firms                           # Lista kancelarii
+- /admin/law-firms/new                       # Nowa kancelaria
+- /admin/law-firms/[id]/edit                 # Edycja kancelarii (dynamiczny)
+- /admin/import-kancelarii                   # Import kancelarii
+
+Sprawy:
+- /admin/cases                               # Lista spraw
+- /admin/cases/new                           # Nowa sprawa
+- /admin/cases/[id]                          # Szczegóły sprawy (dynamiczny)
+- /admin/cases/[id]/edit                     # Edycja sprawy (dynamiczny)
+
+Kategorie:
+- /admin/categories                          # Zarządzanie kategoriami
+
+Opinie:
+- /admin/reviews                             # Lista opinii
+- /admin/reviews/[id]                        # Szczegóły opinii (dynamiczny)
+
+Blog:
+- /admin/blog                                # Zarządzanie blogiem
+- /admin/blog/categories                     # Kategorie bloga
+
+Pakiety subskrypcyjne:
+- /admin/pakiety                             # Lista pakietów
+- /admin/pakiety/dodaj                       # Dodaj pakiet
+- /admin/pakiety/[id]                        # Edycja pakietu (dynamiczny)
+
+CMS:
+- /admin/pages                               # Lista stron CMS
+- /admin/pages/new                           # Nowa strona CMS
+- /admin/pages/[id]                          # Edycja strony CMS (dynamiczny)
+- /admin/modules                             # Moduły CMS
+
+Finansowe:
+- /admin/transakcje                          # Transakcje
+- /admin/promocje                            # Konfiguracja promocji
+
+Newsletter i komunikacja:
+- /admin/newsletter                          # Zarządzanie newsletterem
+- /admin/emails                              # Zarządzanie emailami
+
+Pomoc:
+- /admin/centrum-pomocy                      # Centrum pomocy
+
+Klub partnerski:
+- /admin/klub-partnerski                     # Zarządzanie klubem partnerskim
+- /admin/opiekunowie                         # Opiekunowie
+
+Ustawienia systemowe:
+- /admin/settings                            # Ustawienia systemowe
+- /admin/logs                                # Logi systemowe
+
+===========================================
+5. API ENDPOINTS
+===========================================
+
+Uwaga: Wszystkie API endpoints zaczynają się od /api
+
+-------------------------------------------
+5.1. AUTORYZACJA I AUTENTYKACJA
+-------------------------------------------
+POST   /api/auth/login                       # Logowanie
+POST   /api/auth/logout                      # Wylogowanie
+POST   /api/auth/change-password             # Zmiana hasła
+POST   /api/auth/forgot-password             # Zapomniałem hasła
+POST   /api/auth/reset-password              # Reset hasła
+GET    /api/auth/me                          # Pobierz dane zalogowanego użytkownika
+GET    /api/auth/account-info                # Informacje o koncie
+*      /api/auth/[...nextauth]               # NextAuth endpoints (catch-all)
+
+-------------------------------------------
+5.2. KLIENCI
+-------------------------------------------
+GET    /api/clients                          # Lista klientów
+POST   /api/clients                          # Utwórz klienta
+GET    /api/clients/[id]                     # Pobierz klienta
+PUT    /api/clients/[id]                     # Aktualizuj klienta
+DELETE /api/clients/[id]                     # Usuń klienta
+GET    /api/clients/me                       # Pobierz dane zalogowanego klienta
+GET    /api/clients/me/favorites             # Ulubione kancelarie klienta
+POST   /api/clients/me/favorites             # Dodaj do ulubionych
+DELETE /api/clients/me/favorites             # Usuń z ulubionych
+
+-------------------------------------------
+5.3. KANCELARIE
+-------------------------------------------
+GET    /api/law-firms/dashboard              # Dashboard kancelarii
+GET    /api/law-firms/[id]/stats             # Statystyki kancelarii
+POST   /api/law-firms/[id]/favorite          # Dodaj/usuń z ulubionych
+GET    /api/law-firms/documents/[id]         # Pobierz dokument
+GET    /api/law-firms/documents/[id]/download # Pobierz dokument (download)
+DELETE /api/law-firms/documents/[id]         # Usuń dokument
+
+Blog kancelarii:
+GET    /api/law-firms/me/blog                # Lista artykułów bloga kancelarii
+POST   /api/law-firms/me/blog                # Utwórz artykuł
+GET    /api/law-firms/me/blog/[id]           # Pobierz artykuł
+PUT    /api/law-firms/me/blog/[id]           # Aktualizuj artykuł
+DELETE /api/law-firms/me/blog/[id]           # Usuń artykuł
+
+-------------------------------------------
+5.4. SPRAWY
+-------------------------------------------
+GET    /api/cases/[id]                       # Pobierz sprawę
+PUT    /api/cases/[id]                       # Aktualizuj sprawę
+DELETE /api/cases/[id]                       # Usuń sprawę
+POST   /api/cases/[id]/close                 # Zamknij sprawę
+
+-------------------------------------------
+5.5. OFERTY
+-------------------------------------------
+GET    /api/offers/[id]                      # Pobierz ofertę
+PUT    /api/offers/[id]                      # Aktualizuj ofertę
+DELETE /api/offers/[id]                      # Usuń ofertę
+POST   /api/offers/[id]/reject               # Odrzuć ofertę
+POST   /api/offers/[id]/negotiate            # Negocjuj ofertę
+
+-------------------------------------------
+5.6. KATEGORIE
+-------------------------------------------
+GET    /api/categories/[id]/subcategories    # Podkategorie kategorii
+
+-------------------------------------------
+5.7. WIADOMOŚCI (LEGACY)
+-------------------------------------------
+GET    /api/messages                         # Lista wiadomości
+POST   /api/messages                         # Wyślij wiadomość
+GET    /api/messages/[id]                    # Pobierz wiadomość
+PUT    /api/messages/[id]                    # Aktualizuj wiadomość
+DELETE /api/messages/[id]                    # Usuń wiadomość
+POST   /api/messages/[id]/read               # Oznacz jako przeczytane
+
+-------------------------------------------
+5.8. KONWERSACJE (MESSENGER)
+-------------------------------------------
+GET    /api/conversations/[id]               # Pobierz konwersację
+POST   /api/conversations/[id]               # Wyślij wiadomość w konwersacji
+POST   /api/conversations/[id]/read          # Oznacz konwersację jako przeczytaną
+GET    /api/conversations/unread-count       # Liczba nieprzeczytanych
+
+-------------------------------------------
+5.9. OPINIE
+-------------------------------------------
+GET    /api/reviews                          # Lista opinii
+POST   /api/reviews                          # Dodaj opinię
+GET    /api/reviews/[id]                     # Pobierz opinię
+PUT    /api/reviews/[id]                     # Aktualizuj opinię
+DELETE /api/reviews/[id]                     # Usuń opinię
+POST   /api/reviews/[id]/reply               # Odpowiedź na opinię
+
+-------------------------------------------
+5.10. BLOG PUBLICZNY
+-------------------------------------------
+GET    /api/blog/categories                  # Kategorie bloga
+POST   /api/blog/categories                  # Utwórz kategorię
+GET    /api/blog/categories/[id]             # Pobierz kategorię
+PUT    /api/blog/categories/[id]             # Aktualizuj kategorię
+DELETE /api/blog/categories/[id]             # Usuń kategorię
+GET    /api/blog/posts                       # Lista postów
+POST   /api/blog/posts                       # Utwórz post
+GET    /api/blog/posts/[slug]                # Pobierz post po slug
+PUT    /api/blog/posts/[slug]                # Aktualizuj post
+DELETE /api/blog/posts/[slug]                # Usuń post
+POST   /api/blog/[id]/comments               # Dodaj komentarz do posta
+
+-------------------------------------------
+5.11. PŁATNOŚCI
+-------------------------------------------
+POST   /api/payments/przelewy24/init         # Inicjuj płatność Przelewy24
+POST   /api/payments/payu/notify             # Webhook PayU
+GET    /api/payments/[id]/status             # Status płatności
+
+-------------------------------------------
+5.12. ZAMÓWIENIA
+-------------------------------------------
+GET    /api/orders                           # Lista zamówień
+POST   /api/orders                           # Utwórz zamówienie
+GET    /api/orders/[id]                      # Pobierz zamówienie
+PUT    /api/orders/[id]                      # Aktualizuj zamówienie
+DELETE /api/orders/[id]                      # Usuń zamówienie
+
+-------------------------------------------
+5.13. FAKTURY
+-------------------------------------------
+GET    /api/invoices                         # Lista faktur
+POST   /api/invoices                         # Utwórz fakturę
+GET    /api/invoices/[id]                    # Pobierz fakturę
+PUT    /api/invoices/[id]                    # Aktualizuj fakturę
+DELETE /api/invoices/[id]                    # Usuń fakturę
+
+-------------------------------------------
+5.14. WOJEWÓDZTWA I MIASTA
+-------------------------------------------
+GET    /api/voivodeships                     # Lista województw
+GET    /api/voivodeships/[id]/cities         # Miasta w województwie
+GET    /api/cities                           # Lista miast
+
+-------------------------------------------
+5.15. NEWSLETTER
+-------------------------------------------
+POST   /api/newsletter/subscribe             # Subskrybuj newsletter
+POST   /api/newsletter/unsubscribe           # Wypisz się z newslettera
+
+-------------------------------------------
+5.16. WYSZUKIWANIE
+-------------------------------------------
+GET    /api/search                           # Wyszukiwanie
+
+-------------------------------------------
+5.17. USŁUGI
+-------------------------------------------
+GET    /api/services                         # Lista usług
+POST   /api/services                         # Utwórz usługę
+GET    /api/services/[id]                    # Pobierz usługę
+PUT    /api/services/[id]                    # Aktualizuj usługę
+DELETE /api/services/[id]                    # Usuń usługę
+
+-------------------------------------------
+5.18. CERTYFIKATY
+-------------------------------------------
+GET    /api/certificates                     # Lista certyfikatów
+POST   /api/certificates                     # Dodaj certyfikat
+GET    /api/certificates/[id]                # Pobierz certyfikat
+PUT    /api/certificates/[id]                # Aktualizuj certyfikat
+DELETE /api/certificates/[id]                # Usuń certyfikat
+
+-------------------------------------------
+5.19. PAKIETY SUBSKRYPCYJNE
+-------------------------------------------
+GET    /api/subscription-plans               # Lista pakietów
+POST   /api/subscription-plans               # Utwórz pakiet
+GET    /api/subscription-plans/[id]          # Pobierz pakiet
+PUT    /api/subscription-plans/[id]          # Aktualizuj pakiet
+DELETE /api/subscription-plans/[id]          # Usuń pakiet
+
+-------------------------------------------
+5.20. USTAWIENIA
+-------------------------------------------
+GET    /api/settings                         # Pobierz ustawienia
+PUT    /api/settings                         # Aktualizuj ustawienia
+GET    /api/notification-settings            # Ustawienia powiadomień
+PUT    /api/notification-settings            # Aktualizuj ustawienia powiadomień
+
+-------------------------------------------
+5.21. KONFIGURACJA PROMOCJI
+-------------------------------------------
+GET    /api/promotion-configs                # Lista konfiguracji promocji
+POST   /api/promotion-configs                # Utwórz konfigurację
+PUT    /api/promotion-configs                # Aktualizuj konfigurację
+
+-------------------------------------------
+5.22. STRONY CMS
+-------------------------------------------
+GET    /api/pages/[slug]                     # Pobierz stronę CMS po slug
+
+-------------------------------------------
+5.23. POMOC
+-------------------------------------------
+GET    /api/help/categories                  # Kategorie centrum pomocy
+
+-------------------------------------------
+5.24. UPLOAD PLIKÓW
+-------------------------------------------
+POST   /api/upload                           # Upload ogólny
+POST   /api/upload/image                     # Upload obrazu
+POST   /api/upload/certificate               # Upload certyfikatu
+POST   /api/upload/document                  # Upload dokumentu
+
+-------------------------------------------
+5.25. KATEGORIE KANCELARII
+-------------------------------------------
+GET    /api/law-firm/categories              # Kategorie przypisane do kancelarii
+
+-------------------------------------------
+5.26. PROGRAM PARTNERSKI
+-------------------------------------------
+POST   /api/partner-program/allocate-points  # Przydziel punkty partnerskie
+POST   /api/partner-program/verify           # Weryfikuj uczestnictwo w programie
+
+===========================================
+6. API ADMINISTRATORA
+===========================================
+
+Wszystkie endpoints zaczynają się od /api/admin
+
+-------------------------------------------
+6.1. UŻYTKOWNICY
+-------------------------------------------
+GET    /api/admin/users                      # Lista użytkowników
+POST   /api/admin/users                      # Utwórz użytkownika
+GET    /api/admin/users/[id]                 # Pobierz użytkownika
+PUT    /api/admin/users/[id]                 # Aktualizuj użytkownika
+DELETE /api/admin/users/[id]                 # Usuń użytkownika
+GET    /api/admin/users/[id]/notification-settings  # Ustawienia powiadomień
+PUT    /api/admin/users/[id]/notification-settings  # Aktualizuj ustawienia powiadomień
+
+-------------------------------------------
+6.2. KANCELARIE
+-------------------------------------------
+GET    /api/admin/law-firms                  # Lista kancelarii
+POST   /api/admin/law-firms                  # Utwórz kancelarię
+PUT    /api/admin/law-firms                  # Aktualizuj kancelarię
+DELETE /api/admin/law-firms                  # Usuń kancelarię
+
+-------------------------------------------
+6.3. SPRAWY
+-------------------------------------------
+GET    /api/admin/cases                      # Lista spraw
+POST   /api/admin/cases                      # Utwórz sprawę
+GET    /api/admin/cases/[id]                 # Pobierz sprawę
+PUT    /api/admin/cases/[id]                 # Aktualizuj sprawę
+DELETE /api/admin/cases/[id]                 # Usuń sprawę
+
+-------------------------------------------
+6.4. OPINIE
+-------------------------------------------
+GET    /api/admin/reviews                    # Lista opinii
+POST   /api/admin/reviews                    # Utwórz opinię
+GET    /api/admin/reviews/[id]               # Pobierz opinię
+PUT    /api/admin/reviews/[id]               # Aktualizuj opinię
+DELETE /api/admin/reviews/[id]               # Usuń opinię
+POST   /api/admin/reviews/[id]/status        # Zmień status opinii (zatwierdzenie)
+
+-------------------------------------------
+6.5. BLOG
+-------------------------------------------
+GET    /api/admin/blog                       # Lista postów bloga
+POST   /api/admin/blog                       # Utwórz post
+GET    /api/admin/blog/[id]                  # Pobierz post
+PUT    /api/admin/blog/[id]                  # Aktualizuj post
+DELETE /api/admin/blog/[id]                  # Usuń post
+
+-------------------------------------------
+6.6. TRANSAKCJE
+-------------------------------------------
+GET    /api/admin/transakcje                 # Lista transakcji
+POST   /api/admin/transakcje                 # Utwórz transakcję
+GET    /api/admin/transakcje/[id]            # Pobierz transakcję
+PUT    /api/admin/transakcje/[id]            # Aktualizuj transakcję
+DELETE /api/admin/transakcje/[id]            # Usuń transakcję
+
+-------------------------------------------
+6.7. STRONY CMS
+-------------------------------------------
+GET    /api/admin/pages                      # Lista stron CMS
+POST   /api/admin/pages                      # Utwórz stronę
+GET    /api/admin/pages/[id]                 # Pobierz stronę
+PUT    /api/admin/pages/[id]                 # Aktualizuj stronę
+DELETE /api/admin/pages/[id]                 # Usuń stronę
+
+-------------------------------------------
+6.8. MODUŁY CMS
+-------------------------------------------
+GET    /api/admin/modules                    # Lista modułów
+POST   /api/admin/modules                    # Utwórz moduł
+GET    /api/admin/modules/[id]               # Pobierz moduł
+PUT    /api/admin/modules/[id]               # Aktualizuj moduł
+DELETE /api/admin/modules/[id]               # Usuń moduł
+
+-------------------------------------------
+6.9. BLOKI CMS
+-------------------------------------------
+GET    /api/admin/blocks                     # Lista bloków
+POST   /api/admin/blocks                     # Utwórz blok
+GET    /api/admin/blocks/[key]/render        # Renderuj blok
+
+-------------------------------------------
+6.10. KONFIGURACJA PROMOCJI
+-------------------------------------------
+GET    /api/admin/promotion-configs          # Lista konfiguracji
+POST   /api/admin/promotion-configs          # Utwórz konfigurację
+GET    /api/admin/promotion-configs/[id]     # Pobierz konfigurację
+PUT    /api/admin/promotion-configs/[id]     # Aktualizuj konfigurację
+DELETE /api/admin/promotion-configs/[id]     # Usuń konfigurację
+
+-------------------------------------------
+6.11. NEWSLETTER
+-------------------------------------------
+GET    /api/admin/newsletter                 # Zarządzanie newsletterem
+POST   /api/admin/newsletter                 # Wyślij newsletter
+
+-------------------------------------------
+6.12. CENTRUM POMOCY
+-------------------------------------------
+GET    /api/admin/help/categories            # Kategorie pomocy
+POST   /api/admin/help/categories            # Utwórz kategorię
+GET    /api/admin/help/categories/[id]       # Pobierz kategorię
+PUT    /api/admin/help/categories/[id]       # Aktualizuj kategorię
+DELETE /api/admin/help/categories/[id]       # Usuń kategorię
+GET    /api/admin/help/questions             # Lista pytań
+POST   /api/admin/help/questions             # Utwórz pytanie
+GET    /api/admin/help/questions/[id]        # Pobierz pytanie
+PUT    /api/admin/help/questions/[id]        # Aktualizuj pytanie
+DELETE /api/admin/help/questions/[id]        # Usuń pytanie
+
+-------------------------------------------
+6.13. USTAWIENIA SYSTEMOWE
+-------------------------------------------
+GET    /api/admin/settings                   # Pobierz ustawienia
+PUT    /api/admin/settings                   # Aktualizuj ustawienia
+
+-------------------------------------------
+6.14. PROFIL ADMINA
+-------------------------------------------
+GET    /api/admin/profile                    # Pobierz profil admina
+PUT    /api/admin/profile                    # Aktualizuj profil
+POST   /api/admin/profile/change-password    # Zmień hasło admina
+
+-------------------------------------------
+6.15. LOGI SYSTEMOWE
+-------------------------------------------
+GET    /api/admin/logs                       # Pobierz logi systemowe
+
+===========================================
+7. UWAGI DOTYCZĄCE DYNAMICZNYCH ŚCIEŻEK
+===========================================
+
+Parametry dynamiczne (oznaczone [parametr]):
+
+[slug]     - Slug tekstowy (np. "kancelaria-prawna-warszawa")
+[id]       - ID w formacie UUID
+[post]     - Slug posta blogowego
+[key]      - Klucz tekstowy
+
+Przykładowe konkretne ścieżki:
+- /kancelaria/kancelaria-prawna-warszawa
+- /panel-klienta/sprawy/550e8400-e29b-41d4-a716-446655440000
+- /admin/users/123e4567-e89b-12d3-a456-426614174000/edit
+- /[slug] może być np. /o-nas, /kontakt, /polityka-prywatnosci
+
+===========================================
+8. KATEGORIE PRAWNE (PRZYKŁADOWE ŚCIEŻKI)
+===========================================
+
+System obsługuje dynamiczne kategorie. Przykładowe kategorie:
+- /kategorie/prawo-karne
+- /kategorie/prawo-cywilne
+- /kategorie/prawo-rodzinne
+- /kategorie/prawo-pracy
+- /kategorie/prawo-gospodarcze
+(I wiele innych - zależnie od konfiguracji w bazie danych)
+
+===========================================
+KONIEC LISTY
+===========================================
+
+Łącznie w systemie znajduje się:
+- Ponad 100 unikalnych ścieżek stron
+- Ponad 100 API endpoints
+- Dziesiątki dynamicznych wariantów ścieżek
+
+System jest zbudowany w oparciu o Next.js 16 App Router
+z wykorzystaniem Server Components i API Routes.
