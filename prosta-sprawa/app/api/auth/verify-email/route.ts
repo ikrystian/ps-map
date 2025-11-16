@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { redirect } from "next/navigation"
 
 /**
  * GET /api/auth/verify-email?token=...
@@ -11,10 +12,7 @@ export async function GET(request: NextRequest) {
     const token = searchParams.get("token")
 
     if (!token) {
-      return NextResponse.json(
-        { error: "Brak tokenu weryfikacyjnego" },
-        { status: 400 }
-      )
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=brak-tokenu', request.url))
     }
 
     // Znajdź token weryfikacyjny
@@ -23,10 +21,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!verificationToken) {
-      return NextResponse.json(
-        { error: "Nieprawidłowy token weryfikacyjny" },
-        { status: 400 }
-      )
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=nieprawidlowy-token', request.url))
     }
 
     // Sprawdź czy token nie wygasł
@@ -36,10 +31,7 @@ export async function GET(request: NextRequest) {
         where: { token },
       })
 
-      return NextResponse.json(
-        { error: "Token weryfikacyjny wygasł. Poproś o nowy link weryfikacyjny." },
-        { status: 400 }
-      )
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=wygasly-token', request.url))
     }
 
     // Znajdź użytkownika po email (identifier)
@@ -48,10 +40,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Nie znaleziono użytkownika" },
-        { status: 404 }
-      )
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=nie-znaleziono-uzytkownika', request.url))
     }
 
     // Sprawdź czy email nie został już zweryfikowany
@@ -61,13 +50,7 @@ export async function GET(request: NextRequest) {
         where: { token },
       })
 
-      return NextResponse.json(
-        {
-          message: "Email został już wcześniej zweryfikowany",
-          alreadyVerified: true,
-        },
-        { status: 200 }
-      )
+      return NextResponse.redirect(new URL('/weryfikacja-email?status=juz-zweryfikowany', request.url))
     }
 
     // Zaktualizuj użytkownika - oznacz email jako zweryfikowany
@@ -81,18 +64,9 @@ export async function GET(request: NextRequest) {
       where: { token },
     })
 
-    return NextResponse.json(
-      {
-        message: "Email został pomyślnie zweryfikowany. Możesz się teraz zalogować.",
-        verified: true,
-      },
-      { status: 200 }
-    )
+    return NextResponse.redirect(new URL('/weryfikacja-email?status=sukces', request.url))
   } catch (error) {
     console.error("Email verification error:", error)
-    return NextResponse.json(
-      { error: "Wystąpił błąd podczas weryfikacji emaila" },
-      { status: 500 }
-    )
+    return NextResponse.redirect(new URL('/weryfikacja-email?error=blad-serwera', request.url))
   }
 }

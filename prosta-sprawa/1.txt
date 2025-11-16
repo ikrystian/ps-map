@@ -1,0 +1,1256 @@
+# SZCZEGÓŁOWY OPIS FUNKCJONALNOŚCI SYSTEMU "PROSTA SPRAWA"
+
+## OPIS OGÓLNY SYSTEMU
+
+System "Prosta Sprawa" to zaawansowana platforma internetowa łącząca klientów z kancelariami prawnymi w Polsce. Działa w modelu marketplace'u prawniczego, umożliwiając klientom zgłaszanie spraw prawnych oraz otrzymywanie ofert od wykwalifikowanych kancelarii prawnych.
+
+## ARCHITEKTURA SYSTEMU
+
+### TECHNOLOGIE
+- **Framework**: Next.js 14 (React)
+- **Baza danych**: SQLite z Prisma ORM
+- **Autoryzacja**: NextAuth.js
+- **Stylizacja**: Tailwind CSS + shadcn/ui
+- **Real-time**: WebSocket (Socket.IO)
+- **Płatności**: PayU, Przelewy24
+- **Hosting**: Vercel-ready
+
+### ROLE UŻYTKOWNIKÓW
+1. **CLIENT** (Klient) - osoby szukające pomocy prawnej
+2. **LAW_FIRM** (Kancelaria) - dostawcy usług prawnych
+3. **ADMIN** (Administrator) - zarządzanie systemem
+
+## SZCZEGÓŁOWY OPIS FUNKCJONALNOŚCI WEDŁUG STRON
+
+### 1. STRONA GŁÓWNA (/)
+
+#### Funkcjonalności publiczne:
+- **Hero Section**: Prezentacja głównych korzyści platformy
+- **Wyszukiwarka**: Szybkie wyszukiwanie prawników według:
+  - Kategorii prawnych (dropdown z 20+ kategoriami)
+  - Województwa (16 województw)
+  - Miasta
+  - Słów kluczowych
+- **Statystyki platformy**:
+  - Liczba zweryfikowanych kancelarii
+  - Liczba obsłużonych spraw
+  - Średnia ocena kancelarii
+- **Wyróżnione kancelarie**:
+  - Sekcja z pakietem BIZNES (animowane karty MagicCard)
+  - Pakiet PREMIUM z dodatkowym oznaczeniem
+  - Rotacja co 7 dni na podstawie algorytmu rankingowego
+- **Blog**: 3 najnowsze artykuły z miniaturami
+- **Kategorie prawne**: Grid 12 głównych kategorii z ikonami
+- **Opinie klientów**: Karuzela z najlepszymi opiniami (min 4 gwiazdki)
+- **Newsletter**: Formularz zapisu z GDPR compliance
+- **SEO**: Dynamiczne meta tagi, strukturowane dane JSON-LD
+
+### 2. LOGOWANIE (/logowanie)
+
+#### System autoryzacji:
+- **Metody logowania**:
+  - Email + hasło (własne konto)
+  - Google OAuth (NextAuth)
+  - Facebook OAuth (NextAuth)
+  - LinkedIn OAuth (NextAuth)
+- **Funkcje bezpieczeństwa**:
+  - Haszowanie haseł (bcrypt)
+  - Rate limiting (5 prób / 15 minut)
+  - CSRF protection
+  - Session management
+- **Walidacja**:
+  - Weryfikacja email po rejestracji
+  - Captcha przy wielokrotnych błędnych próbach
+- **Historia logowań**:
+  - Zapisywanie IP, User-Agent, lokalizacji
+  - Powiadomienia o logowaniu z nowych urządzeń
+- **Przekierowania**:
+  - Po logowaniu: ostatnia odwiedzana strona lub dashboard
+  - Różne dashboardy dla CLIENT vs LAW_FIRM
+
+### 3. WYLOGOWANO (/wylogowano)
+
+#### Funkcje po wylogowaniu:
+- **Potwierdzenie wylogowania**: Komunikat o udanym wylogowaniu
+- **Czyszczenie sesji**:
+  - Usunięcie wszystkich cookies sesyjnych
+  - Invalidacja JWT token'ów
+  - Czyszczenie localStorage
+- **Opcje nawigacji**:
+  - Powrót do strony głównej
+  - Ponowne logowanie
+  - Rejestracja nowego konta
+- **Bezpieczeństwo**:
+  - Redirect po 5 sekundach (opcjonalny)
+  - Blokada powrotu przeglądarką do chronionych stron
+
+### 4. REJESTRACJA (/rejestracja)
+
+#### Wybór typu konta:
+- **Klient** (/rejestracja/klient)
+- **Kancelaria** (/rejestracja/kancelaria)
+
+#### Wspólne elementy:
+- **Walidacja email**: Sprawdzanie unikalności w bazie
+- **Polityka haseł**: Min 8 znaków, wielkie/małe litery, cyfry
+- **GDPR Compliance**:
+  - Zgody marketingowe (opcjonalne)
+  - Zgoda na przetwarzanie danych (wymagana)
+  - Zgoda na regulamin (wymagana)
+- **Double opt-in**: Email weryfikacyjny z tokenem czasowym (24h)
+
+### 5. REJESTRACJA KLIENTA (/rejestracja/klient)
+
+#### Wymagane dane osobowe:
+- **Dane podstawowe**:
+  - Imię i nazwisko
+  - Email (unikalny w systemie)
+  - Hasło (z powtórzeniem)
+  - Telefon (opcjonalny)
+
+#### Dane adresowe:
+- **Lokalizacja**:
+  - Województwo (dropdown z 16 opcji)
+  - Miasto (autocomplete z bazą 2500+ miast)
+  - Kod pocztowy (walidacja formatu XX-XXX)
+  - Adres (opcjonalny)
+
+#### Proces rejestracji:
+1. **Walidacja formularza**: Real-time sprawdzanie pól
+2. **Utworzenie konta**: Status INACTIVE do weryfikacji email
+3. **Email weryfikacyjny**: Link z tokenem ważny 24h
+4. **Aktywacja**: Status zmiana na ACTIVE
+5. **Przekierowanie**: Na stronę powitalną lub dashboard
+
+#### Po rejestracji:
+- **Email powitalny**: Przewodnik po platformie
+- **Profil**: Automatyczne utworzenie profilu CLIENT
+- **Ustawienia**: Domyślne preferencje powiadomień
+
+### 6. REJESTRACJA KANCELARII (/rejestracja/kancelaria)
+
+#### SEKCJA 1: Typ działalności
+- **Wybór formy prawnej**:
+  - Osoba fizyczna (jednoosobowa działalność)
+  - Spółka cywilna (2+ wspólników)
+  - Spółka partnerska (dla prawników)
+  - Spółka komandytowa
+  - Spółka jawna
+  - Spółka z o.o.
+  - Inna (pole tekstowe)
+
+#### SEKCJA 2: Dane firmy
+- **Dane identyfikacyjne**:
+  - Nazwa kancelarii (wyświetlana nazwa)
+  - Nazwa firmy (pełna nazwa prawna)
+  - NIP (walidacja sumy kontrolnej + sprawdzanie w GUS)
+  - REGON (opcjonalny)
+  - KRS (dla spółek, opcjonalny)
+
+#### SEKCJA 3: Dane kontaktowe
+- **Osoba kontaktowa**:
+  - Imię i nazwisko kontaktowe
+  - Stanowisko (opcjonalne)
+  - Email kontaktowy
+  - Telefon główny (wymagany)
+  - Telefon dodatkowy (opcjonalny)
+
+#### SEKCJA 4: Adres siedziby
+- **Lokalizacja**:
+  - Województwo (dropdown)
+  - Miasto (autocomplete)
+  - Kod pocztowy (walidacja)
+  - Adres dokładny
+  - Współrzędne GPS (auto-geocoding)
+
+#### SEKCJA 5: Specjalizacje
+- **Kategorie prawne** (minimum 1, maksimum 10):
+  - Prawo cywilne
+  - Prawo karne
+  - Prawo rodzinne
+  - Prawo pracy
+  - Prawo gospodarcze
+  - Prawo nieruchomości
+  - Prawo spadkowe
+  - Prawo administracyjne
+  - Prawo podatkowe
+  - Prawo ubezpieczeń społecznych
+  - Inne (20+ kategorii)
+
+#### SEKCJA 6: Obszar działania
+- **Geograficzny zasięg**:
+  - Cała Polska (checkbox)
+  - Wybrane województwa (multi-select)
+  - Tylko online (checkbox)
+  - Dojazd do klienta (checkbox)
+
+#### SEKCJA 7: Wpisy do rejestrów
+- **OIRP (Okręgowa Izba Radców Prawnych)**:
+  - Miasto OIRP
+  - Numer wpisu
+  - Status aktywny (checkbox)
+- **ORA (Okręgowa Rada Adwokacka)**:
+  - Miasto ORA
+  - Numer wpisu
+  - Status aktywny (checkbox)
+
+#### SEKCJA 8: Typ oferty
+- **Model współpracy**:
+  - Stała współpraca (długoterminowa)
+  - Jednorazowa usługa (projekt)
+  - Konsultacja (porada)
+  - Wszystkie typy
+
+#### SEKCJA 9: Zgody i walidacje
+- **Wymagane zgody**:
+  - Regulamin serwisu
+  - Polityka prywatności
+  - Przetwarzanie danych osobowych
+- **Weryfikacja**:
+  - Email weryfikacyjny
+  - Status: INACTIVE → ACTIVE
+  - Dodatkowa weryfikacja przez administratora
+
+#### Proces weryfikacji kancelarii:
+1. **Automatyczna weryfikacja**: NIP, email, telefon
+2. **Weryfikacja manualna**: Sprawdzanie dokumentów przez zespół
+3. **Status weryfikacji**:
+   - Niezweryfikowana (brak oznaczenia)
+   - Zweryfikowana (badge + wyższy ranking)
+4. **Czas weryfikacji**: 1-3 dni robocze
+
+#### Po rejestracji kancelarii:
+- **Email powitalny**: Przewodnik onboardingowy
+- **Pakiet podstawowy**: Automatyczne przypisanie (30 dni trial)
+- **Profil**: Publiczny profil w trybie podstawowym
+- **Dashboard**: Dostęp do panelu kancelarii
+
+### 7. RESET HASŁA (/reset-hasla)
+
+#### Proces resetowania:
+1. **Formularz z email**: Walidacja czy konto istnieje
+2. **Wysłanie tokenu**: Email z linkiem ważnym 1 godzinę
+3. **Strona zmiany**: Nowe hasło + powtórzenie
+4. **Walidacja**: Sprawdzanie siły hasła
+5. **Aktualizacja**: Hash poprzez bcrypt
+6. **Potwierdzenie**: Email o zmianie hasła
+
+#### Zabezpieczenia:
+- **Rate limiting**: Maksymalnie 3 requesty/godzinę na email
+- **Token security**: Kryptograficznie bezpieczny token
+- **Invalidacja**: Stare tokeny automatycznie nieważne
+- **Logi bezpieczeństwa**: Rejestracja wszystkich zmian
+
+### 8. ODZYSKIWANIE HASŁA (/moje-konto/lost-password)
+
+Identyczna funkcjonalność jak /reset-hasla, ale zintegrowana z:
+- **Panel użytkownika**: Dostępna po zalogowaniu
+- **Historia zmian**: Lista ostatnich zmian haseł
+- **Urządzenia**: Lista zalogowanych urządzeń z opcją wylogowania
+- **Dwuetapowa autoryzacja**: Opcjonalna autoryzacja SMS/Email
+
+## SZCZEGÓŁOWE MODUŁY SYSTEMU
+
+### MODUŁ WYSZUKIWANIA I FILTROWANIA
+
+#### Strona wyszukiwania (/szukaj-prawnika):
+- **Filtry poziome**:
+  - Wyszukiwarka tekstowa (nazwa, miasto, specjalizacje)
+  - Kategoria prawna (dropdown z ikonami)
+  - Województwo (multi-select)
+  - Miasto (autocomplete)
+  - Minimalna ocena (1-5 gwiazdek)
+  - Sortowanie (trafność, ocena, najnowsze, doświadczenie)
+
+- **Opcje dodatkowe**:
+  - Tylko online (checkbox)
+  - Tylko zweryfikowane (checkbox)
+  - Zakres cenowy (slider 0-10000 PLN) - przyszłość
+
+#### Wyniki wyszukiwania:
+- **Tryb Grid**:
+  - 4 kolumny na desktop, 2 na tablet, 1 na mobile
+  - Karty kancelarii z logo, oceną, lokalizacją
+  - Pakiet BIZNES: Animowane MagicCard z gradientem
+  - Hover effects i smooth animations
+
+- **Tryb List**:
+  - Rozszerzone informacje w wierszach
+  - Avatar + pełny opis + kontakt
+  - Lepsze dla szczegółowego porównania
+
+- **Paginacja**: 12 wyników na stronę
+- **SEO URLs**: /szukaj-prawnika?kategoria=prawo-cywilne&wojewodztwo=mazowieckie
+
+### MODUŁ KATEGORII PRAWNYCH
+
+#### Strona kategorii (/kategorie/[slug]):
+- **Header kategorii**:
+  - Breadcrumbs (Główna → Kategorie → Aktualna)
+  - Nazwa i opis kategorii (HTML formatting)
+  - Statystyki (liczba kancelarii i spraw)
+  - Podkategorie (jeśli istnieją)
+
+- **Filtry boczne**:
+  - Wyszukiwarka w kategorii
+  - Lokalizacja (województwo + miasto)
+  - Minimalna ocena
+  - Opcje (online, zweryfikowane)
+
+- **SEO Optimization**:
+  - Meta title i description dla każdej kategorii
+  - Structured data markup
+  - Canonical URLs
+  - OpenGraph tags
+
+#### Struktura kategorii:
+- **Hierarchiczne**: Parent → Child categories
+- **Typy**: SPRAWY_PRYWATNE vs SPRAWY_FIRMOWE
+- **Ikony**: Lucide icons lub custom upload
+- **Kolejność**: Sortowanie według popularności
+
+### MODUŁ PROFILU KANCELARII
+
+#### Strona profilu (/kancelaria/[slug]):
+
+##### HEADER SECTION:
+- **Dynamiczne tło**:
+  - YouTube video (autoplay, muted, loop)
+  - Zdjęcie główne z overlay
+  - Gradient fallback
+- **Logo z ramką**:
+  - Pakiet BIZNES: Animowana złota ramka
+  - Standardowe: Zwykła ramka
+- **Informacje główne**:
+  - Nazwa + nazwa firmy
+  - Badge zweryfikowania
+  - Pakiet subskrypcji (kolorowe oznaczenie)
+  - Ocena gwiazdkami + liczba opinii
+  - Słowa kluczowe (badges)
+
+##### AKCJE UŻYTKOWNIKA:
+- **Dodaj do ulubionych**: Serce (pusty/wypełniony)
+- **Udostępnij**: Dialog z linkiem do kopiowania
+- **Rozpocznij czat**: Dla zalogowanych klientów
+- **Kontakt**: Formularz kontaktowy
+
+##### ZAKŁADKI GŁÓWNE:
+
+**ZAKŁADKA "O NAS"**:
+- **Opis kancelarii**: Rich text z formatowaniem HTML
+- **Zakres usług**: Unikalny opis usług (textarea)
+- **Specjalizacje**: Kolorowe badges z kategoriami
+- **Wykształcenie**:
+  - Uczelnia, wydział, lata studiów
+  - Timeline view z ikonami
+- **Certyfikaty**:
+  - Nazwa certyfikatu + wydawca
+  - Data uzyskania i ważności
+  - Numer certyfikatu
+  - Skan documentu (PDF viewer)
+- **Galeria zdjęć**:
+  - Grid layout (2-3 kolumny)
+  - Lightbox z powiększaniem
+  - Smooth hover animations
+
+**ZAKŁADKA "USŁUGI"**:
+- **Podział na typy**: Sprawy firmowe vs prywatne
+- **Szczegółowy opis**: Dla każdej kategorii prawnej
+- **Cennik**: (przyszłość - obecnie ukryty)
+- **Warunki współpracy**: (przyszłość)
+
+**ZAKŁADKA "OPINIE"**:
+- **Dodaj opinię**: Modal dla zalogowanych klientów
+  - Ocena ogólna (1-5 gwiazdek)
+  - Oceny szczegółowe: profesjonalizm, komunikacja, terminowość, jakość/cena
+  - Tytuł opinii (wymagany)
+  - Treść opinii (min 50 znaków)
+  - Opcje: "Polecam", "Anonimowo"
+
+- **Lista opinii**:
+  - Avatar klienta (lub anonymous)
+  - Imię nazwisko + data
+  - Ocena gwiazdkami
+  - Treść opinii
+  - Odpowiedź kancelarii (jeśli istnieje)
+  - Oceny szczegółowe w grid
+
+**ZAKŁADKA "BLOG"**:
+- **Artykuły kancelarii**: Grid 2 kolumny
+- **Miniatura + tytuł + data**
+- **Excerpt artykułu** (stripped HTML)
+- **Link "Czytaj więcej"**
+- **Przejście do pełnego bloga**: Link na dole
+
+##### SIDEBAR INFORMACJE:
+
+**DANE KONTAKTOWE**:
+- **Adres**: Ukryty dla niezalogowanych ("[dane ukryte]")
+- **Telefon**: Ukryty dla niezalogowanych
+- **Email**: Ukryty dla niezalogowanych
+- **Strona WWW**: Zawsze widoczna (link external)
+
+**GODZINY OTWARCIA**:
+- **Dni tygodnia**: Pon-Pt + Sob-Nie
+- **Format**: "9:00-17:00" lub "Zamknięte"
+- **JSON storage**: Elastyczne godziny
+
+**SOCIAL MEDIA**:
+- **LinkedIn, Facebook, Instagram, Twitter**
+- **Icon buttons**: Otwarcie w nowej karcie
+- **Tylko jeśli wypełnione**
+
+**PAKIET SUBSKRYPCJI**:
+- **Badge wizualny**: Kolorowe oznaczenie
+- **Opis korzyści**: Różny dla każdego pakietu
+- **Gradient border**: Dla pakietu BIZNES
+
+**OBSZAR DZIAŁANIA**:
+- **Cała Polska**: Pojedynczy badge
+- **Województwa**: Lista badges
+- **Online only**: Specjalne oznaczenie
+
+**STATYSTYKI PUBLICZNE**:
+- **Wyświetlenia profilu**: Licznik
+- **Złożone oferty**: Historie działań
+- **Wygrane oferty**: Success ratio
+
+**FORMULARZ KONTAKTOWY**:
+- **Pola wymagane**: Imię, miasto, województwo, email, treść
+- **Typ sprawy**: Prywatna/Firmowa (radio)
+- **Telefon**: Opcjonalny
+- **GDPR**: Checkbox zgody (wymagany)
+- **Tylko dla zalogowanych**: Redirect do /logowanie
+- **Wysyłka**: Email do kancelarii + kopia do klienta
+
+### MODUŁ PANELU KLIENTA
+
+#### Dashboard główny (/panel-klienta):
+
+**SEKCJA PROFILU**:
+- **Avatar + dane**: Imię, nazwisko, email
+- **Przycisk edycji**: Redirect do /panel-klienta/profil
+- **Status weryfikacji**: jeśli applicable
+
+**KORZYŚCI PLATFORMY**:
+- **Lista check-mark'ów**: 4 główne korzyści
+- **Motivational content**: Zachęta do aktywności
+
+**SZYBKI DOSTĘP (grid layout)**:
+- **Wiadomości**: Liczba nieprzeczytanych
+- **Sprawy**: Liczba aktywnych spraw
+- **Ulubieni eksperci**: Lista ulubionych kancelarii
+
+**NAJNOWSZE ARTYKUŁY**:
+- **3 najnowsze wpisy**: Z całego bloga
+- **Miniatura + tytuł**: Link do artykułu
+- **Kategoria + data**: Metadane
+- **Link "Więcej"**: Do pełnego bloga
+
+#### Pozostałe sekcje panelu klienta:
+
+**/panel-klienta/profil**:
+- Edycja danych osobowych
+- Zmiana hasła
+- Ustawienia prywatności
+- Historia logowań
+
+**/panel-klienta/sprawy**:
+- Lista wszystkich spraw
+- Status każdej sprawy
+- Otrzymane oferty
+- Historia komunikacji
+
+**/panel-klienta/wiadomosci**:
+- Messenger-style chat
+- Lista konwersacji z kancelariami
+- Real-time messaging (WebSocket)
+- Wysyłanie plików PDF
+
+**/panel-klienta/eksperci**:
+- Lista ulubionych kancelarii
+- Szybki kontakt
+- Porównanie kancelarii
+
+### MODUŁ PANELU KANCELARII
+
+#### Dashboard główny (/panel-kancelarii):
+- **Statystyki miesięczne**: Wyświetlenia, oferty, konwersja
+- **Najnowsze sprawy**: Z wybranych kategorii
+- **Wiadomości**: Nieprzeczytane rozmowy
+- **Saldo punktów**: + link do doładowania
+- **Status pakietu**: Data ważności + odnowienie
+
+#### Sekcje panelu kancelarii:
+
+**/panel-kancelarii/profil**:
+- **Dane firmy**: Edycja wszystkich informacji z rejestracji
+- **Media**: Upload logo, zdjęć galerii, video YouTube
+- **Opis**: Rich text editor dla opisu kancelarii
+- **Godziny otwarcia**: Interaktywny kalendarz
+- **Social media**: Linki do profili
+- **SEO**: Meta title/description
+
+**/panel-kancelarii/sprawy**:
+- **Lista dostępnych spraw**: Filtry według kategorii
+- **Szczegóły sprawy**: Pełny opis + możliwość złożenia oferty
+- **Moje oferty**: Status, negocjacje, akceptacje
+- **Archiwum**: Zakończone sprawy
+
+**/panel-kancelarii/sprawy/[id]**:
+- **Szczegóły sprawy**: Pełny opis od klienta
+- **Formularz oferty**: Kwota, termin, opis, warunki płatności
+- **Wyróżnienie**: Opcja promowania oferty za punkty
+- **Historia**: Wszystkie oferty dla tej sprawy
+
+**/panel-kancelarii/wiadomosci**:
+- **Messenger z klientami**: Real-time chat
+- **Lista konwersacji**: Sortowanie według aktywności
+- **Pliki**: Wysyłanie dokumentów PDF
+- **Status online**: Indykator dostępności
+
+**/panel-kancelarii/statystyki**:
+- **Wykresy miesięczne**: Wyświetlenia profilu, oferty
+- **Analityka kategorii**: Najlepiej działające specjalizacje
+- **ROI**: Zwrot z inwestycji w promocje
+- **Porównanie**: Z innymi kancelariami w regionie
+
+**/panel-kancelarii/zakres-uslug**:
+- **Lista kategorii**: Obecne specjalizacje
+- **Dodaj kategorię**: Wybór z dostępnych + opis
+- **Kolejność**: Drag & drop sorting
+- **Cennik**: Przyszła funkcjonalność
+
+**/panel-kancelarii/blog**:
+- **Lista artykułów**: Opublikowane + drafts
+- **Edytor WYSIWYG**: Rich text z obrazkami
+- **SEO**: Meta tags, slug URL
+- **Kategorie bloga**: Organizacja treści
+- **Statystyki**: Wyświetlenia, komentarze
+
+**/panel-kancelarii/punkty**:
+- **Saldo punktów**: Aktualny stan
+- **Historia transakcji**: Przychody i wydatki
+- **Pakiety punktów**: 100, 250, 500, 1000, 2500 pkt
+- **Metody płatności**: PayU, Przelewy24, przelew
+- **Faktury**: VAT invoices z numeracją
+
+**/panel-kancelarii/pakiet**:
+- **Aktualny pakiet**: PODSTAWOWY/STANDARD/PREMIUM/BIZNES
+- **Porównanie pakietów**: Tabela funkcjonalności
+- **Upgrade**: Zmiana pakietu z dopłatą
+- **Historia**: Poprzednie pakiety
+- **Automatyczne odnowienie**: On/off switch
+
+### MODUŁ SPRAW PRAWNYCH
+
+#### Model sprawy (Case):
+- **Dane klienta**: Imię, email, telefon, preferowany kontakt
+- **Typ sprawy**: Osoba prywatna / Firma / Organizacja
+- **Kategoria**: Wybór z hierarchii kategorii prawnych
+- **Szczegóły**: Nazwa sprawy + opis (min 100 znaków)
+- **Załączniki**: Do 5 plików PDF (max 5MB każdy)
+- **Termin**: Oczekiwany termin realizacji + tryb pilny
+- **Budżet**: Od-do lub "do negocjacji"
+- **Lokalizacja**: Województwo (wymagane)
+
+#### Workflow sprawy:
+1. **NOWA**: Świeżo utworzona sprawa
+2. **OFERTY_OTRZYMANE**: Min 1 oferta od kancelarii
+3. **W_TRAKCIE**: Klient wybrał ofertę i trwa realizacja
+4. **ZAKONCZONA**: Sprawa zakończona sukcesem
+5. **ANULOWANA**: Sprawa anulowana przez klienta
+
+#### System ofert:
+- **Wycena**: Kwota netto + VAT + brutto
+- **Termin**: Liczba dni roboczych
+- **Opis oferty**: Min 200 znaków
+- **Zakres usług**: Szczegródowy scope
+- **Warunki płatności**: Przelew 7/14/30 dni, z góry, raty
+- **Wyróżnienie**: Za punkty - wyświetlanie na górze listy
+
+#### System negocjacji:
+- **Propozycja klienta**: Inna kwota + uzasadnienie
+- **Nowy termin**: Jeśli potrzebny
+- **Odpowiedź kancelarii**: Akceptacja lub kontrpropozycja
+
+### MODUŁ KOMUNIKACJI (REAL-TIME)
+
+#### System konwersacji:
+- **Uczestnicy**: 1 klient + 1 kancelaria
+- **Szyfrowanie**: AES-256-CBC dla treści wiadomości
+- **Real-time**: WebSocket dla instant messaging
+- **Status wiadomości**: SENT → DELIVERED → READ
+- **Wskaźnik pisania**: "X pisze..."
+- **Historia**: Wszystkie wiadomości z timestampami
+
+#### Funkcje messengera:
+- **Pliki PDF**: Upload dla dokumentów prawnych
+- **Emotikony**: Podstawowy zestaw
+- **Archiwizacja**: Przez każdą ze stron niezależnie
+- **Usuwanie**: Soft delete (ukrycie dla użytkownika)
+- **Powiadomienia**: Email + push (jeśli włączone)
+
+#### Integracja ze sprawami:
+- **Kontekst**: Możliwość linkowania do konkretnej sprawy
+- **Automatyczne wiadomości**: System powiadomienia o statusach
+- **Pliki sprawy**: Bezpośredni dostęp z chatu
+
+### MODUŁ OPINII I OCEN
+
+#### System recenzji:
+- **Ocena główna**: 1-5 gwiazdek (wymagana)
+- **Oceny szczegółowe**:
+  - Profesjonalizm (1-5)
+  - Komunikacja (1-5)
+  - Terminowość (1-5)
+  - Stosunek jakości do ceny (1-5)
+- **Treść**: Tytuł + opis (min 50 znaków)
+- **Opcje**: "Polecam" checkbox + "Anonimowo"
+
+#### Moderacja opinii:
+- **Auto-publikacja**: Opinie trafiają od razu live
+- **Możliwość odpowiedzi**: Kancelaria może odpowiedzieć 1 raz
+- **Flagowanie**: Użytkownicy mogą zgłaszać nieodpowiednie
+- **Admin review**: Sprawdzanie zgłoszonych opinii
+
+#### Wpływ na ranking:
+- **Średnia ocena**: Waga 40% w algorytmie rankingowym
+- **Liczba opinii**: Waga 20% (więcej = lepiej)
+- **Świeżość**: Nowsze opinie mają wyższą wagę
+- **Odpowiedzi**: Kancelarie odpowiadające rankują wyżej
+
+### MODUŁ PŁATNOŚCI I SUBSKRYPCJI
+
+#### Pakiety subskrypcji:
+
+**PODSTAWOWY (440 zł/rok)**:
+- Dostęp do spraw: 50/miesiąc
+- Kategorie spraw: 3
+- Województwa: 1
+- Miasta: 5
+- Bez specjalnego oznaczenia
+- Wyświetlanie reklam: TAK
+
+**STANDARD (880 zł/rok)**:
+- Dostęp do spraw: 150/miesiąc
+- Kategorie spraw: 8
+- Województwa: 3
+- Miasta: 15
+- Oznaczenie: "Standard"
+- Wsparcie marketingowe: Podstawowe
+
+**PREMIUM (1320 zł/rok)**:
+- Dostęp do spraw: 500/miesiąc
+- Kategorie spraw: 15
+- Województwa: 8
+- Miasta: 50
+- Oznaczenie: "Premium" (złote)
+- Blog: Możliwość prowadzenia
+- Statystyki: Zaawansowane
+- Bez reklam
+
+**BIZNES (1980 zł/rok)**:
+- Dostęp do spraw: NIEOGRANICZONE
+- Kategorie spraw: WSZYSTKIE
+- Województwa: WSZYSTKIE
+- Miasta: WSZYSTKIE
+- Skill Law Focus: AI-powered matching
+- MagicCard: Animowane karty w wynikach
+- Cover/baner: Własne tło profilu
+- Osobisty opiekun: Dedicated account manager
+- Priorytet w wyszukiwaniach
+- Promowanie profilu
+- 500 punktów gratis/miesiąc
+
+#### System punktów:
+- **Zastosowanie**: Promocje ofert, wyróżnienia profilu
+- **Pakiety**:
+  - 100 pkt = 50 zł
+  - 250 pkt = 120 zł
+  - 500 pkt = 225 zł
+  - 1000 pkt = 400 zł
+  - 2500 pkt = 900 zł
+- **Rabaty**: Im więcej punktów, tym lepszy przelicznik
+
+#### Typy promocji:
+- **PODBICIE_OGLOSZENIA**: 20 pkt/dzień - oferta na górze listy
+- **WYROZNIENIE**: 50 pkt/tydzień - kolorowa ramka oferty
+- **TOP_LISTA**: 100 pkt/tydzień - top 3 w kategorii
+- **STRONA_GLOWNA**: 200 pkt/tydzień - wyświetlanie na homepage
+
+#### Płatności:
+- **PayU**: Karty, BLIK, rychłe przelewy
+- **Przelewy24**: Alternatywny gateway
+- **Przelew tradycyjny**: Z tytułem zawierającym numer zamówienia
+- **Faktury VAT**: Automatyczne generowanie PDF
+
+### MODUŁ BLOGA I CONTENT MARKETINGU
+
+#### System blogowy:
+- **Multi-tenant**: Każda kancelaria może prowadzić własny blog
+- **Globalny blog**: Artykuły administracyjne
+- **Kategorie**: Organizacja tematyczna treści
+- **SEO**: Auto-generowanie slug'ów, meta tags
+
+#### Edytor WYSIWYG:
+- **Rich text**: Formatowanie, linki, listy
+- **Obrazki**: Upload + optymalizacja rozmiaru
+- **Embed**: YouTube videos, social media posts
+- **HTML**: Możliwość edycji źródła
+
+#### Funkcje redakcyjne:
+- **Draft/Published**: Stany artykułów
+- **Scheduling**: Publikacja w przyszłości
+- **SEO Score**: Analiza optymalizacji (przyszłość)
+- **Reading time**: Automatyczne wyliczanie
+
+#### Komentarze:
+- **System komentowania**: Dla zalogowanych użytkowników
+- **Moderacja**: Auto-approval vs manual review
+- **Nested replies**: Odpowiedzi na komentarze
+- **Notifications**: Email o nowych komentarzach
+
+### MODUŁ ADMINISTRACJI
+
+#### Panel administratora:
+
+**ZARZĄDZANIE UŻYTKOWNIKAMI**:
+- **Lista wszystkich**: Klienci + kancelarie + admini
+- **Filtry**: Status, typ, data rejestracji, aktywność
+- **Akcje**: Aktywacja, deaktywacja, zmiana roli
+- **Szczegóły**: Pełny profil + historia działań
+- **Logi**: Historia logowań i akcji
+
+**ZARZĄDZANIE KANCELARIAMI**:
+- **Weryfikacja**: Kolejka kancelarii do zweryfikowania
+- **Dokumenty**: Review uploadowanych certyfikatów
+- **Status**: Zmiana statusu weryfikacji
+- **Pakiety**: Zarządzanie subskrypcjami
+- **Account Manager**: Przypisywanie opiekunów
+
+**ZARZĄDZANIE SPRAWAMI**:
+- **Lista wszystkich spraw**: Status, kategoria, data
+- **Moderacja**: Usuwanie nieodpowiednich treści
+- **Statystyki**: Najpopularniejsze kategorie, regiony
+- **Raporty**: Excel export danych
+
+**ZARZĄDZANIE TREŚCIĄ**:
+- **Kategorie prawne**: Dodawanie, edycja, deaktywacja
+- **Artykuły**: Zarządzanie globalnym blogiem
+- **Strony informacyjne**: CMS dla stron statycznych
+- **Email templates**: Szablony komunikacji
+
+**PROMOCJE I MARKETING**:
+- **Konfiguracja typów promocji**: Ceny, funkcje
+- **Wyróżnione kancelarie**: Manual override algorytmu
+- **Newsletter**: Masowe wysyłki
+- **Kampanie**: Planowane akcje marketingowe
+
+**PŁATNOŚCI I FINANSE**:
+- **Przelewy24 + PayU**: Konfiguracja gateway'ów
+- **Zamówienia**: Lista wszystkich płatności
+- **Faktury**: Generowanie i wysyłka
+- **Reklamacje**: Obsługa zwrotów i sporów
+
+**STATYSTYKI GLOBALNE**:
+- **Dashboard**: KPI całej platformy
+- **Wykresy**: Wzrost użytkowników, revenue, aktywność
+- **Funnel**: Konwersja rejestracja → aktywny użytkownik
+- **Retention**: Jak długo użytkownicy zostają
+
+### MODUŁ POWIADOMIEŃ
+
+#### Email notifications:
+- **Szablony**: Customizable HTML templates
+- **Zmienne**: Dynamic content insertion
+- **Personalizacja**: Imię, dane kancelarii, etc.
+- **Tracking**: Open rates, click rates
+- **SMTP**: SendGrid lub podobny provider
+
+#### Typy emaili:
+- **NOWA_SPRAWA**: Do kancelarii o nowej sprawie w kategorii
+- **NOWA_OFERTA**: Do klienta o nowej ofercie
+- **AKCEPTACJA_OFERTY**: Do kancelarii o wyborze ich oferty
+- **NOWA_WIADOMOSC**: O nowych wiadomościach w chacie
+- **NOWA_OPINIA**: Do kancelarii o nowej recenzji
+- **REJESTRACJA_X**: Powitanie dla każdego typu użytkownika
+- **RESET_HASLA**: Link do zmiany hasła
+- **PLATNOSC_POTWIERDZONA**: Potwierdzenie płatności
+- **SUBSKRYPCJA_WYGASA**: Przypomnienie o końcu pakietu
+- **NISKI_STAN_PUNKTOW**: Alert przy <50 punktach
+
+#### Push notifications:
+- **Browser push**: Dla aktywnych sesji
+- **Mobile push**: Przez PWA (przyszłość)
+- **Real-time**: Przez WebSocket connections
+
+#### Ustawienia preferencji:
+- **Granularne kontrole**: Per typ powiadomienia on/off
+- **Frequency**: Instant vs daily digest vs weekly summary
+- **Channels**: Email vs push vs SMS (przyszłość)
+
+### MODUŁ BEZPIECZEŃSTWA
+
+#### Ochrona danych:
+- **GDPR Compliance**:
+  - Prawo do zapomnienia
+  - Export danych osobowych
+  - Zgody na przetwarzanie
+  - Data retention policies
+- **Encryption**:
+  - Hasła: bcrypt with salt
+  - Sensitive data: AES-256
+  - Database: encrypted at rest
+  - Traffic: HTTPS only
+
+#### Rate limiting:
+- **API endpoints**: 100 requests/minute per IP
+- **Login attempts**: 5 failures = 15min lockout
+- **Password reset**: 3 requests/hour per email
+- **File uploads**: 10MB/minute per user
+
+#### Monitoring i logi:
+- **System logs**: All critical actions logged
+- **Failed attempts**: Login, API, payments tracking
+- **Performance**: Response times, error rates
+- **Security events**: Unusual patterns detection
+
+#### Backup i recovery:
+- **Database**: Automated daily backups
+- **Files**: S3 upload backup
+- **Code**: Git repositories backup
+- **Recovery**: RTO <4 hours, RPO <1 hour
+
+### MODUŁ SEO I MARKETING
+
+#### SEO Optimization:
+- **URL Structure**: SEO-friendly slugs
+- **Meta tags**: Dynamic generation per page
+- **Structured data**: JSON-LD schema markup
+- **Sitemap**: Auto-generated XML sitemap
+- **Robots.txt**: Proper crawling directives
+- **Page speed**: Image optimization, lazy loading
+- **Mobile**: Responsive design + mobile-first
+
+#### Content Marketing:
+- **Blog**: Multi-tenant system for law firms
+- **Knowledge base**: Legal guides and articles
+- **FAQ**: Commonly asked questions
+- **Case studies**: Success stories (anonymized)
+
+#### Analytics:
+- **Google Analytics**: Enhanced ecommerce tracking
+- **Search Console**: Performance monitoring
+- **Custom metrics**: Business KPIs tracking
+- **A/B Testing**: Conversion optimization
+
+#### Social Media:
+- **Open Graph**: Rich previews on social platforms
+- **Twitter Cards**: Enhanced Twitter sharing
+- **Social Login**: OAuth integrations
+- **Social Sharing**: Easy share buttons
+
+### MODUŁ INTEGRACJI
+
+#### Zewnętrzne API:
+- **GUS API**: Walidacja NIP-ów firm
+- **Google Maps**: Geocoding adresów
+- **YouTube**: Embedding videos on profiles
+- **Payment gateways**: PayU, Przelewy24
+- **Email**: SendGrid/Mailgun dla transakcyjnych
+- **SMS**: (przyszłość) dla 2FA i alertów
+
+#### Webhooks:
+- **Payment confirmations**: Od PayU/P24
+- **Email events**: Delivery, opens, clicks
+- **External integrations**: Third-party services
+
+#### Export/Import:
+- **Data export**: GDPR compliance
+- **Bulk operations**: Admin CSV imports
+- **API endpoints**: For external integrations
+- **Backup formats**: JSON/SQL for migrations
+
+## PRZEPŁYWY BIZNESOWE (USER JOURNEYS)
+
+### 1. JOURNEY KLIENTA - ZNAJDŹ PRAWNIKA
+
+**Krok 1: Wejście na stronę**
+- Lądowanie na głównej stronie
+- Przejście do /szukaj-prawnika
+- Lub bezpośrednio na /kategorie/[slug]
+
+**Krok 2: Wyszukiwanie**
+- Filtrowanie po kategorii/lokalizacji
+- Przejrzenie wyników (grid/list view)
+- Porównanie kancelarii po profilach
+
+**Krok 3: Wybór kancelarii**
+- Wejście na profil /kancelaria/[slug]
+- Przeczytanie "O nas", opinii, usług
+- Sprawdzenie kontaktu i lokalizacji
+
+**Krok 4: Pierwszy kontakt**
+- Formularz kontaktowy (wymaga logowania)
+- Lub rejestracja nowego konta
+- Wysłanie wiadomości do kancelarii
+
+**Krok 5: Komunikacja**
+- Odpowiedź kancelarii emailem/czatem
+- Ewentualna konsultacja telefoniczna
+- Ustalenie współpracy
+
+### 2. JOURNEY KLIENTA - DODAJ SPRAWĘ
+
+**Krok 1: Logowanie/rejestracja**
+- Konto wymagane do dodania sprawy
+- Wypełnienie profilu klienta
+
+**Krok 2: Formularz sprawy**
+- Wybór kategorii z dropdown'a
+- Szczegółowy opis problemu
+- Upload załączników (opcjonalnie)
+- Określenie budżetu i terminów
+
+**Krok 3: Publikacja**
+- Sprawa trafia do bazy
+- Automatyczne matchowanie z kancelariami
+- Email notifications do pasujących firm
+
+**Krok 4: Otrzymywanie ofert**
+- Kancelarie składają oferty
+- Porównanie cen, terminów, opisów
+- Możliwość negocjacji warunków
+
+**Krok 5: Wybór oferty**
+- Akceptacja najlepszej oferty
+- Automatyczny start konwersacji
+- Sprawa przechodzi w status "W trakcie"
+
+**Krok 6: Realizacja**
+- Komunikacja przez czat/email
+- Przekazywanie dokumentów
+- Monitoring postędów sprawy
+
+**Krok 7: Zakończenie**
+- Klient oznacza sprawę jako zakończoną
+- Możliwość wystawienia opinii
+- Archiwizacja dokumentacji
+
+### 3. JOURNEY KANCELARII - REJESTRACJA
+
+**Krok 1: Formularz rejestracyjny**
+- Wybór typu firmy
+- Dane identyfikacyjne (NIP, REGON)
+- Informacje kontaktowe
+- Adres siedziby
+
+**Krok 2: Specjalizacje**
+- Wybór kategorii prawnych (1-10)
+- Obszar działania geograficznego
+- Typ oferowanych usług
+
+**Krok 3: Weryfikacja**
+- Email weryfikacyjny
+- Sprawdzenie danych przez admin
+- Status: Niezweryfikowana → Zweryfikowana
+
+**Krok 4: Setup profilu**
+- Upload loga i zdjęć
+- Opis kancelarii (rich text)
+- Godziny otwarcia
+- Social media links
+
+**Krok 5: Onboarding**
+- Tour po panelu administracyjnym
+- Wybór pakietu subskrypcji
+- Pierwsze doładowanie punktów
+
+### 4. JOURNEY KANCELARII - OBSŁUGA SPRAW
+
+**Krok 1: Przeglądanie spraw**
+- Lista dostępnych spraw w /panel-kancelarii/sprawy
+- Filtry według kategorii, lokalizacji, budżetu
+- Szczegóły każdej sprawy
+
+**Krok 2: Analiza sprawy**
+- Przeczytanie opisu klienta
+- Sprawdzenie załączników
+- Ocena czy sprawa pasuje do profilu
+
+**Krok 3: Składanie oferty**
+- Formularz z wyceną i terminem
+- Szczegółowy opis zakresu prac
+- Warunki płatności i współpracy
+- Opcjonalne wyróżnienie za punkty
+
+**Krok 4: Oczekiwanie na decyzję**
+- Monitoring statusu oferty
+- Możliwość edycji przed akceptacją
+- Otrzymanie powiadomienia o decyzji
+
+**Krok 5: Realizacja (jeśli wybrana)**
+- Start konwersacji z klientem
+- Uzgodnienie szczegółów współpracy
+- Bieżąca komunikacja o postępach
+
+**Krok 6: Rozliczenie**
+- Oznaczenie sprawy jako zakończona
+- Możliwość odpowiedzi na opinię klienta
+- Analiza statystyk współpracy
+
+### 5. JOURNEY ADMINISTRACJI - WERYFIKACJA KANCELARII
+
+**Krok 1: Nowa rejestracja**
+- Alert o nowej kancelarii do weryfikacji
+- Lista oczekujących w kolejce
+
+**Krok 2: Przegląd dokumentów**
+- Sprawdzenie danych firmy w GUS
+- Weryfikacja NIP-u i REGON-u
+- Kontrola wpisów do OIRP/ORA
+
+**Krok 3: Weryfikacja kontaktowa**
+- Telefon weryfikacyjny (opcjonalny)
+- Sprawdzenie zakresu usług
+- Ocena kompletności profilu
+
+**Krok 4: Decyzja**
+- Akceptacja: Status → Zweryfikowana
+- Odrzucenie: Email z powodami
+- Prośba o uzupełnienia: Status → Oczekuje
+
+**Krok 5: Monitoring**
+- Okresowy przegląd zweryfikowanych firm
+- Kontrola aktywności i jakości usług
+- Możliwość cofnięcia weryfikacji
+
+## ALGORYTMY I RANKING
+
+### Algorytm rankingowy kancelarii:
+
+**Główne czynniki (100% = maksymalny score)**:
+1. **Średnia ocena**: 25% (4.5+ = max punkty)
+2. **Liczba opinii**: 15% (50+ opinii = max)
+3. **Kompletność profilu**: 15% (wszystkie pola + media)
+4. **Aktywność**: 15% (regularne logowania, odpowiedzi)
+5. **Pakiet subskrypcji**: 10% (BIZNES = max)
+6. **Status weryfikacji**: 10% (zweryfikowana = bonus)
+7. **Czas odpowiedzi**: 5% (szybkie odpowiedzi = bonus)
+8. **Współczynnik konwersji**: 5% (accepted offers ratio)
+
+**Modyfikatory regionalne**:
+- Lokalne firmy: +20% dla searches w swoim województwie
+- Online only: +10% dla searches "online"
+- Cała Polska: +5% dla wszystkich searches
+
+**Penalty system**:
+- Długi brak aktywności: -20%
+- Niskie oceny (<3.0): -30%
+- Brak odpowiedzi na wiadomości: -25%
+- Niekompletny profil: -15%
+
+### Matching algorithm spraw z kancelariami:
+
+**Automatyczne dopasowanie**:
+1. **Kategoria prawna**: Exact match wymagany
+2. **Lokalizacja**: Województwo + "cała Polska" + "online"
+3. **Typ sprawy**: Privat/Biznes match z pakietem kancelarii
+4. **Budżet**: Jeśli podany, match z historycznymi cenami
+5. **Termin**: Pilne sprawy → kancelarie z szybką odpowiedzią
+
+**AI Enhancement (pakiet BIZNES)**:
+- **Natural Language Processing**: Analiza opisów spraw
+- **Historical matching**: Uczenie się z poprzednich sukcesów
+- **Behavioral patterns**: Preferencje kancelarii i klientów
+- **Auto-categorization**: Lepsze dopasowania kategorii
+
+### System punktów promocyjnych:
+
+**Koszty promocji**:
+- **Podbicie ogłoszenia**: 20 pkt/dzień
+- **Wyróżnienie oferty**: 50 pkt/tydzień
+- **Top lista kategorii**: 100 pkt/tydzień
+- **Strona główna**: 200 pkt/tydzień
+
+**Efektywność promocji**:
+- **Podbicie**: +200% wyświetleń oferty
+- **Wyróżnienie**: +150% CTR (click-through rate)
+- **Top lista**: +300% profile views
+- **Strona główna**: +500% top-funnel traffic
+
+**ROI tracking**:
+- Cost per lead (CPL)
+- Cost per acquisition (CPA)
+- Lifetime value (LTV) klienta
+- Return on ad spend (ROAS)
+
+## BEZPIECZEŃSTWO I ZGODNOŚĆ
+
+### GDPR Compliance:
+
+**Prawa użytkowników**:
+- **Prawo dostępu**: Export wszystkich danych
+- **Prawo sprostowania**: Edycja danych osobowych
+- **Prawo usunięcia**: "Prawo do zapomnienia"
+- **Prawo ograniczenia**: Tymczasowe wstrzymanie przetwarzania
+- **Prawo przenoszenia**: Export w standardowym formacie
+- **Prawo sprzeciwu**: Opt-out z marketingu
+
+**Podstawy prawne**:
+- **Zgoda**: Marketing, newsletter, cookies
+- **Kontrakt**: Realizacja usług platformy
+- **Prawnie uzasadniony interes**: Bezpieczeństwo, fraud prevention
+
+**Technical measures**:
+- **Data pseudonymization**: Internal IDs vs personal data
+- **Encryption at rest**: AES-256 database encryption
+- **Encryption in transit**: TLS 1.3 connections only
+- **Access controls**: Role-based permissions
+- **Audit logs**: All data access tracked
+- **Regular backups**: With encryption + tested recovery
+
+### Security measures:
+
+**Authentication & Authorization**:
+- **Password policy**: Min 8 chars, complexity requirements
+- **Session management**: Secure JWT tokens, automatic expiry
+- **Multi-factor auth**: SMS/Email 2FA (optional)
+- **OAuth integrations**: Google, Facebook, LinkedIn
+- **Role-based access**: CLIENT/LAW_FIRM/ADMIN permissions
+
+**Data protection**:
+- **SQL injection**: Parameterized queries (Prisma ORM)
+- **XSS protection**: Input sanitization, CSP headers
+- **CSRF protection**: Anti-CSRF tokens
+- **Rate limiting**: Per-IP and per-user limits
+- **File upload**: Virus scanning, type validation
+- **API security**: Authentication, input validation, output encoding
+
+**Monitoring & Incident Response**:
+- **Error logging**: Comprehensive error tracking
+- **Security monitoring**: Failed login attempts, unusual patterns
+- **Automated alerts**: Critical errors, security events
+- **Incident response plan**: Document & tested procedures
+- **Regular security audits**: Quarterly vulnerability assessments
+- **Penetration testing**: Annual external security review
+
+## METRYKI I ANALYTICS
+
+### Business KPIs:
+
+**User Growth**:
+- **New registrations**: Daily/weekly/monthly
+- **Active users**: DAU, WAU, MAU
+- **User retention**: 7-day, 30-day, 90-day
+- **Churn rate**: Monthly churn percentage
+- **User lifetime value**: Average LTV per segment
+
+**Platform Activity**:
+- **Cases published**: New legal cases per day
+- **Offers submitted**: Law firm proposals
+- **Matches made**: Successful client-lawyer connections
+- **Messages sent**: Platform communication volume
+- **Reviews written**: User feedback quantity
+
+**Revenue Metrics**:
+- **Monthly Recurring Revenue (MRR)**: Subscription revenue
+- **Annual Recurring Revenue (ARR)**: Yearly projections
+- **Average Revenue Per User (ARPU)**: Per law firm
+- **Customer Acquisition Cost (CAC)**: Marketing efficiency
+- **Lifetime Value/CAC ratio**: Unit economics health
+
+### Technical Performance:
+
+**Site Performance**:
+- **Page load times**: <2s for 95th percentile
+- **Core Web Vitals**: LCP, FID, CLS optimization
+- **API response times**: <200ms average
+- **Uptime**: 99.9% SLA target
+- **Error rates**: <0.1% of requests
+
+**User Experience**:
+- **Bounce rate**: Landing page effectiveness
+- **Session duration**: User engagement depth
+- **Pages per session**: Content consumption
+- **Conversion rates**: Registration, subscription, matching
+
+### Data Analytics Stack:
+
+**Tracking & Collection**:
+- **Google Analytics 4**: User behavior, conversion tracking
+- **Custom events**: Business-specific metrics
+- **Real user monitoring**: Performance from user perspective
+- **Error tracking**: Sentry for error monitoring
+
+**Reporting & Insights**:
+- **Admin dashboards**: Real-time business metrics
+- **Law firm analytics**: Individual performance tracking
+- **A/B testing**: Feature and design optimization
+- **Cohort analysis**: User behavior patterns over time
+
+## ROADMAP I ROZWÓJ
+
+### Planowane funkcjonalności (Q1 2024):
+
+**Enhanced Matching**:
+- **AI-powered recommendations**: Machine learning dla lepszego dopasowania
+- **Smart categorization**: Automatyczne kategoryzowanie spraw
+- **Predictive pricing**: Sugerowane ceny na podstawie historii
+- **Success probability**: Prawdopodobieństwo sukcesu matchingu
+
+**Mobile Experience**:
+- **Progressive Web App**: Offline functionality, push notifications
+- **Mobile-first redesign**: Optymalizacja dla urządzeń mobilnych
+- **App store presence**: Native iOS/Android apps
+- **Location-based services**: GPS dla lokalnego wyszukiwania
+
+### Medium-term goals (Q2-Q4 2024):
+
+**Advanced Features**:
+- **Video consultations**: Integracja z Zoom/Teams
+- **Document collaboration**: Shared editing, version control
+- **E-signatures**: Legal document signing
+- **Calendar integration**: Appointment scheduling
+
+**Business Intelligence**:
+- **Advanced analytics**: Predictive modeling, trend analysis
+- **Market insights**: Industry reports, competitor analysis
+- **Performance benchmarking**: Law firm comparison tools
+- **ROI optimization**: Automated bid management
+
+### Long-term vision (2025+):
+
+**Platform Expansion**:
+- **European markets**: Expansion beyond Poland
+- **Adjacent services**: Legal document templates, compliance tools
+- **B2B solutions**: Enterprise legal service management
+- **Marketplace evolution**: Multi-sided platform with additional services
+
+**Technology Innovation**:
+- **AI legal assistant**: Automated legal advice (within regulatory bounds)
+- **Blockchain**: Document authenticity, smart contracts
+- **Voice interface**: Alexa/Google integration for case submission
+- **IoT integration**: Connected law office solutions
+
+## PODSUMOWANIE
+
+System "Prosta Sprawa" to kompleksowa platforma prawnicza z zaawansowanymi funkcjonalnościami dla wszystkich stron ekosystemu prawnego w Polsce. Łączy nowoczesne technologie (Next.js, Real-time messaging, AI matching) z głębokim zrozumieniem specyfiki branży prawniczej.
+
+**Kluczowe różnicujące cechy**:
+- **Hierarchiczny system pakietów**: Od podstawowego do BIZNES z AI
+- **Real-time komunikacja**: Szyfrowany messenger prawnik-klient
+- **Zaawansowany ranking**: Multi-factor algorithmic scoring
+- **Flexible monetization**: Subskrypcje + punkty promocyjne
+- **GDPR-first approach**: Built-in privacy protection
+- **Mobile-responsive**: Optimized for all devices
+
+**Skalowalność systemu**:
+- **Horizontal scaling**: Microservices architecture ready
+- **Database optimization**: Proper indexing, query optimization
+- **CDN integration**: Static assets delivery
+- **Caching strategy**: Redis for session data, database query caching
+- **Load balancing**: Multi-server deployment capability
+
+System jest przygotowany do obsługi tysiąca kancelarii prawnych i dziesiątek tysięcy klientów, z możliwością dalszej ekspansji na rynki europejskie.

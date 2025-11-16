@@ -805,50 +805,57 @@ export default function HomePage() {
               <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
                 <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji}>
                   <Card className={`hover:shadow-lg transition-shadow ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
-                    <CardHeader>
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-16 w-16">
-                          {firm.logo && (
-                            <AvatarImage src={firm.logo} alt={firm.nazwa} />
-                          )}
-                          <AvatarFallback className="text-lg">
+                    {/* Obrazek na całą szerokość karty */}
+                    <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                      {firm.logo ? (
+                        <img
+                          src={firm.logo}
+                          alt={firm.nazwa}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-muted flex items-center justify-center">
+                          <span className="text-4xl font-bold text-muted-foreground">
                             {firm.nazwa.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
-                            {firm.zweryfikowana && (
-                              <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                            )}
-                            {firm.pakietSubskrypcji === "BIZNES" && (
-                              <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                                <Sparkles className="w-3 h-3 mr-1" />
-                                Biznes
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center text-sm text-muted-foreground mb-2">
-                            <MapPin className="h-4 w-4 mr-1" />
-                            {firm.miasto}{firm.voivodeship?.nazwa && `, ${firm.voivodeship.nazwa}`}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
-                            <span className="text-sm text-muted-foreground">
-                              ({firm.reviewCount} opinii)
-                            </span>
-                          </div>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <CardHeader className="pb-3">
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <CardTitle className="text-lg">{firm.nazwa}</CardTitle>
+                          {firm.zweryfikowana && (
+                            <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                          )}
+                          {firm.pakietSubskrypcji === "BIZNES" && (
+                            <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                              <Sparkles className="w-3 h-3 mr-1" />
+                              Biznes
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-center text-sm text-muted-foreground mb-2">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {firm.miasto}{firm.voivodeship?.nazwa && `, ${firm.voivodeship.nazwa}`}
+                        </div>
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
+                          <span className="text-sm text-muted-foreground">
+                            ({firm.reviewCount} opinii)
+                          </span>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-0">
                       {firm.opis && (
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3 text-center">
                           {firm.opis}
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-4 justify-center">
                         {firm.categories.slice(0, 3).map((cat) => (
                           <Badge key={cat.slug} variant="secondary">
                             {cat.nazwa}

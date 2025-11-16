@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
+import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
+import crypto from "crypto"
 
 // Helper function to generate slug from name and NIP
 function generateSlug(nazwa: string, nip: string): string {
@@ -341,11 +343,47 @@ export async function POST(request: NextRequest) {
       return { user, lawFirm }
     })
 
+    // Generate verification token (valid for 24 hours)
+    const token = crypto.randomBytes(32).toString('hex')
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier: body.email,
+        token,
+        expires,
+      },
+    })
+
+    // Generate verification URL
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
+
+    // Send verification email
+    const emailContent = generateEmailVerificationEmail(
+      verificationUrl,
+      body.nazwa, // Law firm name
+      true // isLawFirm
+    )
+
+    const emailSent = await sendEmail({
+      to: body.email,
+      subject: emailContent.subject,
+      html: emailContent.html,
+      text: emailContent.text,
+    })
+
+    if (!emailSent) {
+      console.error('Failed to send verification email to:', body.email)
+      // Don't fail registration if email fails, just log it
+    }
+
     return NextResponse.json(
       {
-        message: "Kancelaria została pomyślnie zarejestrowana",
+        message: "Kancelaria została pomyślnie zarejestrowana. Sprawdź swoją skrzynkę email, aby potwierdzić adres email.",
         userId: result.user.id,
         lawFirmId: result.lawFirm.id,
+        emailVerificationSent: emailSent,
       },
       { status: 201 }
     )

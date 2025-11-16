@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Send verification email
-    const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
+    const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${verificationToken}`
     const isLawFirm = user.role === UserRole.LAW_FIRM
     const emailContent = generateEmailVerificationEmail(
       verificationUrl,

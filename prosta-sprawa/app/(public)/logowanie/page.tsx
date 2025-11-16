@@ -52,7 +52,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (registered === "true") {
-      toast.success("Rejestracja przebiegła pomyślnie! Możesz teraz się zalogować.")
+      toast.success(
+        "Rejestracja przebiegła pomyślnie! Sprawdź swoją skrzynkę email i kliknij link weryfikacyjny, aby aktywować konto.",
+        { duration: 8000 }
+      )
       // Remove the registered parameter from URL to prevent duplicate toasts
       const url = new URL(window.location.href)
       url.searchParams.delete("registered")
@@ -172,7 +175,7 @@ export default function LoginPage() {
                 <p>{error}</p>
                 {error.includes("nie został zweryfikowany") && (
                   <Link
-                    href="/auth/resend-verification"
+                    href="/wyslij-ponownie-weryfikacje"
                     className="mt-2 inline-block text-sm underline hover:text-destructive/80"
                   >
                     Wyślij ponownie email weryfikacyjny

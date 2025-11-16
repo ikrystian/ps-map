@@ -70,11 +70,13 @@ export function ExpiredPackageModal({
             Twój pakiet {packageName} wygasł
           </AlertDialogTitle>
 
-          <AlertDialogDescription className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 text-sm">
-              <Calendar className="h-4 w-4" />
-              <span>Data wygaśnięcia: {formatDate(expiryDate)}</span>
-            </div>
+          <div className="text-center space-y-4">
+            <AlertDialogDescription asChild>
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <Calendar className="h-4 w-4" />
+                <span>Data wygaśnięcia: {formatDate(expiryDate)}</span>
+              </div>
+            </AlertDialogDescription>
 
             <div className="rounded-lg bg-muted p-4 text-left">
               <div className="flex items-start gap-2 mb-2">
@@ -90,10 +92,12 @@ export function ExpiredPackageModal({
               </ul>
             </div>
 
-            <p className="text-sm">
-              Odnów swój pakiet, aby przywrócić pełny dostęp do wszystkich funkcji platformy.
-            </p>
-          </AlertDialogDescription>
+            <AlertDialogDescription asChild>
+              <p className="text-sm">
+                Odnów swój pakiet, aby przywrócić pełny dostęp do wszystkich funkcji platformy.
+              </p>
+            </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
 
         <AlertDialogFooter className="flex-col sm:flex-col gap-2">

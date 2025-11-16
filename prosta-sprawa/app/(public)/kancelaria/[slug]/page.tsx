@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -203,6 +203,7 @@ const serviceUnitLabels: Record<string, string> = {
 export default function LawFirmProfilePage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session } = useSession()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -213,6 +214,7 @@ export default function LawFirmProfilePage() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
  const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [activeTab, setActiveTab] = useState("about")
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -245,6 +247,24 @@ export default function LawFirmProfilePage() {
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
     return html.replace(/<[^>]*>/g, "")
+  }
+
+  // Initialize active tab from URL
+  useEffect(() => {
+    const tabParam = searchParams.get("tab")
+    if (tabParam && ["about", "services", "reviews", "blog"].includes(tabParam)) {
+      setActiveTab(tabParam)
+    }
+  }, [searchParams])
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+
+    // Update URL with new tab parameter
+    const currentPath = window.location.pathname
+    const newUrl = `${currentPath}?tab=${value}`
+    router.push(newUrl, { scroll: false })
   }
 
   useEffect(() => {
@@ -593,7 +613,7 @@ export default function LawFirmProfilePage() {
             alt={lawFirm.nazwa}
             fill
             id="cover-photo"
-            className="object-cover z-[-1] opacity-75"
+            className="object-cover z-[2] opacity-75"
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 z-[5]" />
@@ -748,7 +768,7 @@ export default function LawFirmProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <Tabs defaultValue="about" className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="about">O nas</TabsTrigger>
                 <TabsTrigger value="services">Usługi</TabsTrigger>
