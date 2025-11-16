@@ -1743,6 +1743,7 @@ model EmailTemplate {
 
   @@index([typ])
   @@index([aktywny])
+  @@unique([typ])
 }
 
 enum EmailType {

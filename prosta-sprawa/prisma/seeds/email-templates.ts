@@ -604,7 +604,7 @@ Zespół Prosta Sprawa`,
   <p>Twoje saldo punktów w systemie Prosta Sprawa jest niskie.</p>
 
   <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b; text-align: center;">
-    <p style="margin: 0; font-size: 18px;"><strong>Aktualny stan:</strong></p>
+    <p style="margin: 0;"><strong>Aktualny stan:</strong></p>
     <p style="margin: 10px 0 0 0; font-size: 32px; color: #f59e0b; font-weight: bold;">{aktualnyStanPunktow} punktów</p>
   </div>
 
@@ -633,7 +633,7 @@ Zespół Prosta Sprawa`,
     await prisma.emailTemplate.upsert({
       where: {
         // Use a unique combination for upsert
-        typ: template.typ,
+        typ: template.typ as string,
       },
       update: {
         nazwa: template.nazwa,
