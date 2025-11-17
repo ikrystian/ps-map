@@ -9,7 +9,7 @@
 export type ModuleType = "TEMPLATE" | "EDITABLE_HTML"
 
 /**
- * Base module interface
+ * Base module interface (database model)
  */
 export interface Module {
   id: string
@@ -22,7 +22,19 @@ export interface Module {
 }
 
 /**
- * Page module (junction table)
+ * Module interface for page builder (with aliases)
+ * Uses English names for better code readability
+ */
+export interface ModuleForBuilder {
+  id: string
+  name: string
+  code: string
+  description?: string | null
+  type?: ModuleType
+}
+
+/**
+ * Page module (junction table) - database model
  */
 export interface PageModule {
   id: string
@@ -31,6 +43,17 @@ export interface PageModule {
   kolejnosc: number
   dane?: string | null
   module?: Module
+}
+
+/**
+ * Page module for builder (with parsed data)
+ */
+export interface PageModuleForBuilder {
+  id?: string
+  moduleId: string
+  module?: ModuleForBuilder
+  order: number
+  data: Record<string, any>
 }
 
 /**
@@ -53,4 +76,30 @@ export interface Page {
  */
 export interface PageWithModules extends Page {
   modules: (PageModule & { module: Module })[]
+}
+
+/**
+ * Converts database Module to ModuleForBuilder
+ */
+export function toModuleForBuilder(module: Module): ModuleForBuilder {
+  return {
+    id: module.id,
+    name: module.nazwa,
+    code: module.szablon || module.html || '',
+    description: null,
+    type: module.typ,
+  }
+}
+
+/**
+ * Converts database PageModule to PageModuleForBuilder
+ */
+export function toPageModuleForBuilder(pageModule: PageModule): PageModuleForBuilder {
+  return {
+    id: pageModule.id,
+    moduleId: pageModule.moduleId,
+    module: pageModule.module ? toModuleForBuilder(pageModule.module) : undefined,
+    order: pageModule.kolejnosc,
+    data: pageModule.dane ? JSON.parse(pageModule.dane) : {},
+  }
 }

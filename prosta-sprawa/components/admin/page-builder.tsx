@@ -16,27 +16,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { parseModuleCode, renderModule } from "@/lib/module-parser"
 import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
-
-interface Module {
-  id: string
-  name: string
-  code: string
-  description?: string | null
-  type?: 'TEMPLATE' | 'EDITABLE_HTML'
-}
-
-interface PageModule {
-  id?: string
-  moduleId: string
-  module?: Module
-  order: number
-  data: Record<string, any>
-}
+import type { ModuleForBuilder, PageModuleForBuilder } from "@/types/cms"
 
 interface PageBuilderProps {
-  modules: Module[]
-  pageModules: PageModule[]
-  onChange: (modules: PageModule[]) => void
+  modules: ModuleForBuilder[]
+  pageModules: PageModuleForBuilder[]
+  onChange: (modules: PageModuleForBuilder[]) => void
 }
 
 export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps) {
@@ -56,7 +41,7 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
     const module = modules.find(m => m.id === moduleId)
     if (!module) return
 
-    const newModule: PageModule = {
+    const newModule: PageModuleForBuilder = {
       moduleId,
       module,
       order: pageModules.length,
