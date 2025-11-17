@@ -234,8 +234,14 @@ export function hasActivePackage(lawFirm: LawFirmPermissionData): boolean {
  * Sprawdza czy pakiet kancelarii wygasł
  */
 export function isPackageExpired(lawFirm: LawFirmPermissionData): boolean {
+  // Jeśli użytkownik nigdy nie miał pakietu, to nie jest "wygasły"
+  if (!lawFirm.pakietSubskrypcji) {
+    return false;
+  }
+
+  // Jeśli ma pakiet ale brak daty końcowej, traktuj jako wygasły
   if (!lawFirm.dataPakietuDo) {
-    return true; // Brak daty końcowej = traktujemy jako wygasły
+    return true;
   }
 
   const now = new Date();

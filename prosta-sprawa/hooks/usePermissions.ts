@@ -172,7 +172,7 @@ export function usePermissions(): UsePermissionsReturn {
   );
 
   // Informacje o pakiecie
-  const packageName = lawFirmData ? getPackageDisplayName(lawFirmData.pakietSubskrypcji) : null;
+  const packageName = lawFirmData?.pakietSubskrypcji ? getPackageDisplayName(lawFirmData.pakietSubskrypcji) : null;
   const packageExpired = lawFirmData ? isPackageExpired(lawFirmData) : false;
   const packageActive = lawFirmData ? !isPackageExpired(lawFirmData) : false;
   const expiryDate = lawFirmData?.dataPakietuDo || null;
