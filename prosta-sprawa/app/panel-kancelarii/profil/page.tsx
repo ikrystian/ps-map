@@ -453,7 +453,6 @@ export default function LawFirmProfilePage() {
                     value={formData.opis}
                     onChange={(value) => handleInputChange("opis", value)}
                     placeholder="Opisz swoją kancelarię..."
-                    minHeight="300px"
                   />
                 </div>
               </div>
