@@ -8,43 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Send, Paperclip, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
-
-interface Message {
-  id: string
-  content: string
-  senderId: string
-  createdAt: string
-  isRead: boolean
-  sender: {
-    id: string
-    name: string
-    image?: string
-    role: string
-  }
-}
-
-interface Conversation {
-  id: string
-  clientUser: {
-    id: string
-    name: string
-    image?: string
-    client: {
-      imie: string
-      nazwisko: string
-    }
-  }
-  lawFirmUser: {
-    id: string
-    name: string
-    image?: string
-    lawFirm: {
-      id: string
-      nazwa: string
-      logo?: string
-    }
-  }
-}
+import type { ChatMessage, ConversationDetails } from "@/types/conversations"
 
 interface ChatAreaProps {
   conversationId: string
@@ -54,8 +18,8 @@ interface ChatAreaProps {
 
 export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProps) {
   const { data: session } = useSession()
-  const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [conversation, setConversation] = useState<ConversationDetails | null>(null)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -190,7 +154,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
 
   // Grupuj wiadomości według dat
   const groupMessagesByDate = () => {
-    const groups: { [key: string]: Message[] } = {}
+    const groups: { [key: string]: ChatMessage[] } = {}
 
     messages.forEach((message) => {
       const dateKey = new Date(message.createdAt).toDateString()

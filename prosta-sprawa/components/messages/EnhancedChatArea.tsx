@@ -41,57 +41,12 @@ import {
 } from "@/components/ui/dialog"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
-
-interface Message {
-  id: string
-  content: string
-  senderId: string
-  createdAt: string
-  isRead: boolean
-  readAt?: string
-  status: "SENDING" | "SENT" | "DELIVERED" | "READ" | "ERROR"
-  deliveredAt?: string
-  attachments?: Array<{
-    url: string
-    filename: string
-    size: number
-  }>
-  sender: {
-    id: string
-    name: string
-    image?: string
-    role: string
-  }
-}
-
-interface Conversation {
-  id: string
-  clientUser: {
-    id: string
-    name: string
-    image?: string
-    email: string
-    createdAt: string
-    client: {
-      imie: string
-      nazwisko: string
-      opis?: string
-    }
-  }
-  lawFirmUser: {
-    id: string
-    name: string
-    image?: string
-    email: string
-    createdAt: string
-    lawFirm: {
-      id: string
-      nazwa: string
-      logo?: string
-      opis?: string
-    }
-  }
-}
+import type {
+  EnhancedChatMessage,
+  ConversationDetails,
+  MessageAttachment,
+  MessageStatus,
+} from "@/types/conversations"
 
 interface ChatAreaProps {
   conversationId: string
@@ -105,8 +60,8 @@ export function EnhancedChatArea({
   onBack,
 }: ChatAreaProps) {
   const { data: session } = useSession()
-  const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [conversation, setConversation] = useState<ConversationDetails | null>(null)
+  const [messages, setMessages] = useState<EnhancedChatMessage[]>([])
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -114,9 +69,7 @@ export function EnhancedChatArea({
   const [offset, setOffset] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [attachments, setAttachments] = useState<
-    Array<{ url: string; filename: string; size: number }>
-  >([])
+  const [attachments, setAttachments] = useState<MessageAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [otherUserTyping, setOtherUserTyping] = useState(false)
@@ -148,7 +101,7 @@ export function EnhancedChatArea({
     if (!socket || !conversationId) return
 
     // Listen for new messages
-    const handleNewMessage = (message: Message) => {
+    const handleNewMessage = (message: EnhancedChatMessage) => {
       console.log("[Chat] New message received:", message)
 
       // Only add if it's not already in the list
@@ -561,7 +514,7 @@ export function EnhancedChatArea({
   }
 
   const groupMessagesByDate = () => {
-    const groups: { [key: string]: Message[] } = {}
+    const groups: { [key: string]: EnhancedChatMessage[] } = {}
 
     messages.forEach((message) => {
       const dateKey = new Date(message.createdAt).toDateString()
@@ -574,7 +527,7 @@ export function EnhancedChatArea({
     return groups
   }
 
-  const getStatusIcon = (message: Message) => {
+  const getStatusIcon = (message: EnhancedChatMessage) => {
     if (message.senderId !== session?.user?.id) return null
 
     switch (message.status) {
