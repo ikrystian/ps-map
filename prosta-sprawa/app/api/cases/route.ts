@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(request: NextRequest) {
@@ -65,7 +65,8 @@ export async function GET(request: NextRequest) {
             },
           }
 
-      const cases = await prisma.case.findMany({
+      // Pobierz wszystkie sprawy zgodnie z warunkiem
+      const allCases = await prisma.case.findMany({
         where: whereCondition,
         include: {
           category: true,
@@ -77,15 +78,13 @@ export async function GET(request: NextRequest) {
             },
           },
           offers: {
-            where: {
-              lawFirmId: lawFirm.id, // Pobierz tylko oferty tej kancelarii
-            },
             select: {
               id: true,
               status: true,
               kwotaNetto: true,
               terminRealizacjiDni: true,
               createdAt: true,
+              lawFirmId: true,
             },
           },
           _count: {
@@ -96,6 +95,33 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
       })
+
+      // Filtruj sprawy, aby ukryć te z zaakceptowanymi ofertami od innych kancelarii
+      const filteredCases = allCases.filter(caseItem => {
+        // Sprawdź czy istnieje zaakceptowana oferta
+        const acceptedOffer = caseItem.offers.find(offer => offer.status === "ZAAKCEPTOWANA")
+
+        // Jeśli nie ma zaakceptowanej oferty, pokaż sprawę
+        if (!acceptedOffer) {
+          return true
+        }
+
+        // Jeśli zaakceptowana oferta jest od tej kancelarii, pokaż sprawę
+        if (acceptedOffer.lawFirmId === lawFirm.id) {
+          return true
+        }
+
+        // W przeciwnym razie ukryj sprawę (zaakceptowana oferta od innej kancelarii)
+        return false
+      })
+
+      // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
+      const cases = filteredCases.map(caseItem => ({
+        ...caseItem,
+        offers: caseItem.offers
+          .filter(offer => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
+          .map(({ lawFirmId, ...offer }) => offer) // Usuń lawFirmId
+      }))
 
       return NextResponse.json(cases)
     }
