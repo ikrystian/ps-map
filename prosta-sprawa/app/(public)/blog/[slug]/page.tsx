@@ -297,9 +297,10 @@ export default function BlogPostPage() {
                 {post.lawFirm.opis && (
                   <>
                     <Separator />
-                    <p className="text-sm text-muted-foreground">
-                      {post.lawFirm.opis}
-                    </p>
+                    <div
+                      className="text-sm text-muted-foreground"
+                      dangerouslySetInnerHTML={{ __html: post.lawFirm.opis }}
+                    />
                   </>
                 )}
 

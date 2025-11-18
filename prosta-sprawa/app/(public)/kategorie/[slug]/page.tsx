@@ -502,7 +502,10 @@ export default function CategoryPage() {
 
                                  {/* Description */}
                                  {firm.opis && (
-                                   <p className="text-sm text-muted-foreground line-clamp-2">{firm.opis}</p>
+                                   <div
+                                     className="text-sm text-muted-foreground line-clamp-2"
+                                     dangerouslySetInnerHTML={{ __html: firm.opis }}
+                                   />
                                  )}
 
                                  {/* Badges */}
@@ -581,9 +584,10 @@ export default function CategoryPage() {
 
                                    {/* Description */}
                                    {firm.opis && (
-                                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                                       {firm.opis}
-                                     </p>
+                                     <div
+                                       className="text-sm text-muted-foreground line-clamp-2 mb-3"
+                                       dangerouslySetInnerHTML={{ __html: firm.opis }}
+                                     />
                                    )}
 
                                    {/* Location and Badges */}
