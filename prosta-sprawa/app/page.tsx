@@ -1234,12 +1234,58 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {[
-                "Warszawa", "Kraków", "Wrocław", "Poznań",
-                "Gdańsk", "Szczecin", "Łódź", "Katowice",
-                "Lublin", "Białystok", "Gdynia", "Rzeszów"
+                "Augustów", "Baranowo", "Bartoszyce", "Bełchatów", "Biała Podlaska",
+                "Białogard", "Białystok", "Bielawa", "Bielsko-Biała", "Biłgoraj",
+                "Braniewo", "Brodnica", "Brzeg", "Brzesko", "Brzeziny",
+                "Busko-Zdrój", "Bydgoszcz", "Bytom", "Bytów", "Chełm",
+                "Chełmno", "Chojnice", "Chorzów", "Cieszyn", "Ciechanów",
+                "Czarnków", "Częstochowa", "Czyżew", "Dąbrowa Górnicza", "Dębica",
+                "Dzierżoniów", "Elbląg", "Ełk", "Gdańsk", "Gdynia",
+                "Giżycko", "Gliwice", "Głogów", "Gniezno", "Goleniów",
+                "Gorlice", "Gorzów Wielkopolski",
+                "Gostynin", "Grajewo", "Grodzisk Mazowiecki", "Grudziądz", "Gryfice",
+                "Gryfino", "Hajnówka", "Iława", "Inowrocław", "Jarocin",
+                "Jarosław", "Jastrzębie-Zdrój", "Jasło", "Jawor", "Jaworzno",
+                "Jedlińsk", "Jelenia Góra", "Kalisz", "Kamień Pomorski", "Katowice",
+                "Kędzierzyn-Koźle", "Kępno", "Kielce", "Kluczbork", "Kłodzko",
+                "Knurów", "Kołobrzeg", "Koło", "Konin", "Końskie",
+                "Koszalin", "Kozienice", "Kraków", "Kraśnik", "Krosno",
+                "Kutno", "Legnica", "Leszno", "Lidzbark Warmiński", "Limanowa",
+                "Lubań", "Lubin", "Lublin", "Lubliniec", "Luboń",
+                "Łańcut", "Łask", "Łęczyca", "Łomża", "Łowicz",
+                "Łódź", "Łuków", "Malbork", "Marki", "Mielec",
+                "Mikołów", "Miłosław", "Mińsk Mazowiecki", "Mława", "Mogilno",
+                "Mragowo", "Mysłowice", "Myszków", "Nakło nad Notecią", "Nowa Dęba",
+                "Nowa Ruda", "Nowa Sól", "Nowe Miasto Lubawskie", "Nowy Dwór Mazowiecki", "Nowy Sącz",
+                "Nowy Targ", "Nysa", "Oborniki", "Olecko", "Oleśnica",
+                "Olkusz", "Olsztyn", "Opole", "Opole Lubelskie", "Orneta",
+                "Ostrołęka", "Ostrowiec Świętokrzyski", "Ostrów Mazowiecka", "Ostrów Wielkopolski", "Oświęcim",
+                "Pabianice", "Pajęczno", "Piaseczno", "Piła", "Pińczów",
+                "Piotrków Trybunalski", "Pisz", "Płock", "Płońsk", "Poniatowa",
+                "Poznań", "Proszowice", "Pruszcz Gdański", "Pruszków", "Przemyśl",
+                "Przeworsk", "Przasnysz", "Puck", "Puławy", "Pułtusk",
+                "Raciąż", "Racibórz", "Radom", "Radomsko", "Radzymin",
+                "Rawa Mazowiecka", "Reda", "Ropczyce", "Ruda Śląska", "Rumia",
+                "Rybnik", "Ryki", "Rzeszów", "Sanok", "Sandomierz",
+                "Sejny", "Siedlce", "Siemianowice Śląskie", "Sieradz", "Siemiatycze",
+                "Skierniewice", "Słubice", "Słupca", "Słupsk", "Sokołów Podlaski",
+                "Sopot", "Sosnowiec", "Stalowa Wola", "Starachowice", "Stargard",
+                "Starogard Gdański", "Staszów", "Stawiski", "Śrem", "Środa Wielkopolska",
+                "Świdnica", "Świdnik", "Świebodzice", "Świebodzin", "Świecie",
+                "Świętochłowice", "Świnoujście", "Szczecin", "Szczecinek", "Szczytno",
+                "Szprotawa", "Sztum", "Tarnobrzeg", "Tarnów", "Tarnowskie Góry",
+                "Tczew", "Tomaszów Lubelski", "Tomaszów Mazowiecki", "Toruń", "Trzebinia",
+                "Turek", "Tychowo", "Tychy", "Ustka", "Wadowice",
+                "Wałbrzych", "Wałcz", "Warszawa", "Wąbrzeźno", "Wąchock",
+                "Węgorzewo", "Węgrów", "Wieliczka", "Wieluń", "Wieruszów",
+                "Włocławek", "Włodawa", "Włoszczowa", "Wodzisław Śląski", "Wołomin",
+                "Wołów", "Września", "Wrocław", "Wschowa", "Wysokie Mazowieckie",
+                "Zabrze", "Zakopane", "Zambrów", "Zamość", "Zduńska Wola",
+                "Zgorzelec", "Zielona Góra", "Ziębice", "Złotoryja", "Złotów",
+                "Żary", "Żnin", "Żory", "Żuromin", "Żyrardów"
               ].map((city) => (
                 <Button
                   key={city}
