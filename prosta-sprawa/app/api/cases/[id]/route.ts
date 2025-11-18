@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(
@@ -106,8 +106,20 @@ export async function GET(
       }
 
       const hasOffer = caseData.offers.some((offer) => offer.lawFirmId === lawFirm.id)
-      const isAvailable = ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"].includes(caseData.status)
+      const isAvailable = ["NOWA", "OFERTY_OTRZYMANE"].includes(caseData.status)
 
+      // Sprawdź czy istnieje zaakceptowana oferta od innej kancelarii
+      const acceptedOffer = caseData.offers.find((offer) => offer.status === "ZAAKCEPTOWANA")
+      const hasAcceptedOfferFromOther = acceptedOffer && acceptedOffer.lawFirmId !== lawFirm.id
+
+      // Jeśli istnieje zaakceptowana oferta od innej kancelarii, odmów dostępu
+      if (hasAcceptedOfferFromOther) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+
+      // Dozwolony dostęp jeśli:
+      // - kancelaria złożyła ofertę do tej sprawy, lub
+      // - sprawa ma status NOWA lub OFERTY_OTRZYMANE (i nie ma zaakceptowanej oferty od innej kancelarii)
       if (!hasOffer && !isAvailable) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
