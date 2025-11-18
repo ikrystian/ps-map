@@ -153,6 +153,11 @@ export default function PublicFooter() {
                   Polityka Prywatności
                 </Link>
               </li>
+              <li>
+                <Link href="/dokumentacja" className="hover:text-primary transition-colors">
+                  Dokumentacja
+                </Link>
+              </li>
             </ul>
             <div className="mt-6 space-y-2 text-sm">
               <div className="flex items-center gap-2 text-slate-400">
