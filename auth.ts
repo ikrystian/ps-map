@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs"
 import type { UserRole } from "@prisma/client"
 import type { NextAuthConfig, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
-import { NextRequest, NextResponse } from "next/server"
 
 export const authOptions: NextAuthConfig = {
   trustHost: true,
@@ -16,6 +15,11 @@ export const authOptions: NextAuthConfig = {
     signIn: "/logowanie",
     error: "/logowanie",
   },
+  // Konfiguracja zaufanych hostów dla środowiska deweloperskiego
+  // Dodajemy lokalne hosty i produkcyjny host
+  redirectProxyUrl: process.env.NODE_ENV === 'development'
+    ? 'https://ps.studio-ai.com.pl'
+    : undefined,
   providers: [
     CredentialsProvider({
       name: "credentials",
