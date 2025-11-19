@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { planId, period, autoRenewal = false } = body // period: 1, 6, 12 (months)
+    const { planId, period, autoRenewal = false, metodaPlatnosci = "PRZELEW" } = body // period: 1, 6, 12 (months)
 
     if (!planId || !period) {
       return Response.json(
@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
       // Pobierz poprzedni pakiet aby znać jego cenę (jeśli istnieje)
       const previousPlan = lawFirm.pakietSubskrypcji
         ? await prisma.subscriptionPlan.findUnique({
-            where: { typ: lawFirm.pakietSubskrypcji },
-          })
+          where: { typ: lawFirm.pakietSubskrypcji },
+        })
         : null
 
       if (previousPlan && remainingDays > 0) {
@@ -126,22 +126,14 @@ export async function POST(request: NextRequest) {
     // Generuj numer zamówienia
     const orderNumber = `SUB-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
 
-    // Aktualizuj kancelarię i utwórz zamówienie w transakcji
-    const [updatedLawFirm, order] = await prisma.$transaction([
-      prisma.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          pakietSubskrypcji: plan.typ,
-          dataPakietuOd,
-          dataPakietuDo,
-          autoRenewal, // Zapisz ustawienie auto-renewal
-          // Dodaj punkty gratis do salda
-          punktySaldo: {
-            increment: plan.punktyGratis,
-          },
-        },
-      }),
-      prisma.order.create({
+    const isOnlinePayment = metodaPlatnosci === "PAYU" || metodaPlatnosci === "PRZELEWY24"
+
+    let updatedLawFirm = lawFirm
+    let order
+
+    if (isOnlinePayment) {
+      // Dla płatności online tworzymy tylko zamówienie oczekujące
+      order = await prisma.order.create({
         data: {
           orderNumber,
           lawFirmId: lawFirm.id,
@@ -150,13 +142,46 @@ export async function POST(request: NextRequest) {
           subscriptionPeriod: period,
           packageStartDate: dataPakietuOd,
           packageEndDate: dataPakietuDo,
-          kwota: finalPrice, // Użyj ceny po uwzględnieniu kredytu
-          metodaPlatnosci: "PRZELEW", // W prawdziwej aplikacji byłby wybór
-          statusPlatnosci: "ZAPLACONE", // Symulujemy opłacone zamówienie
-          zaplaconoData: new Date(),
+          kwota: finalPrice,
+          metodaPlatnosci: metodaPlatnosci,
+          statusPlatnosci: "OCZEKUJE",
+          zaplaconoData: null,
         },
-      }),
-    ])
+      })
+    } else {
+      // Dla innych metod (symulacja/przelew) aktualizujemy od razu
+      const result = await prisma.$transaction([
+        prisma.lawFirm.update({
+          where: { id: lawFirm.id },
+          data: {
+            pakietSubskrypcji: plan.typ,
+            dataPakietuOd,
+            dataPakietuDo,
+            autoRenewal,
+            punktySaldo: {
+              increment: plan.punktyGratis,
+            },
+          },
+        }),
+        prisma.order.create({
+          data: {
+            orderNumber,
+            lawFirmId: lawFirm.id,
+            orderType: "SUBSCRIPTION",
+            subscriptionPlanId: plan.id,
+            subscriptionPeriod: period,
+            packageStartDate: dataPakietuOd,
+            packageEndDate: dataPakietuDo,
+            kwota: finalPrice,
+            metodaPlatnosci: metodaPlatnosci,
+            statusPlatnosci: "ZAPLACONE",
+            zaplaconoData: new Date(),
+          },
+        }),
+      ])
+      updatedLawFirm = result[0]
+      order = result[1]
+    }
 
     // Generuj numer faktury
     const invoiceNumber = `FV/${new Date().getFullYear()}/${String(Date.now()).slice(-6)}`
@@ -186,15 +211,15 @@ export async function POST(request: NextRequest) {
         vatRate,
         vatAmount,
         grossAmount,
-        status: "PAID", // Symulujemy opłaconą fakturę
+        status: isOnlinePayment ? "ISSUED" : "PAID",
         dueDate,
-        paymentDate: new Date(),
+        paymentDate: isOnlinePayment ? null : new Date(),
       },
     })
 
     return Response.json({
       success: true,
-      message: "Pakiet został aktywowany",
+      message: isOnlinePayment ? "Zamówienie utworzone, oczekiwanie na płatność" : "Pakiet został aktywowany",
       lawFirm: updatedLawFirm,
       plan: {
         nazwa: plan.nazwa,

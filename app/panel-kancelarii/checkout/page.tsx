@@ -135,7 +135,52 @@ export default function CheckoutPage() {
 
         const data = await response.json()
 
-        // Dla pakietów, przekieruj do strony sukcesu
+        if (paymentMethod === "PAYU" || paymentMethod === "PRZELEWY24") {
+          const orderId = data.order.id
+
+          if (paymentMethod === "PAYU") {
+            const paymentResponse = await fetch("/api/payments/payu/order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId })
+            })
+
+            if (!paymentResponse.ok) {
+              const errorData = await paymentResponse.json()
+              throw new Error(errorData.error || "Nie udało się zainicjować płatności PayU")
+            }
+
+            const paymentData = await paymentResponse.json()
+            if (paymentData.redirectUrl) {
+              window.location.href = paymentData.redirectUrl
+              return
+            } else {
+              throw new Error("Brak adresu przekierowania do PayU")
+            }
+          } else if (paymentMethod === "PRZELEWY24") {
+            // Existing P24 logic adapted for subscription flow
+            const paymentResponse = await fetch("/api/payments/przelewy24/init", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId })
+            })
+
+            if (!paymentResponse.ok) {
+              const errorData = await paymentResponse.json()
+              throw new Error(errorData.error || "Nie udało się zainicjować płatności Przelewy24")
+            }
+
+            const paymentData = await paymentResponse.json()
+            if (paymentData.redirectUrl) {
+              window.location.href = paymentData.redirectUrl
+              return
+            } else {
+              throw new Error("Brak adresu przekierowania do Przelewy24")
+            }
+          }
+        }
+
+        // Dla pakietów (jeśli nie online lub symulacja), przekieruj do strony sukcesu
         sessionStorage.removeItem("pendingOrder")
         router.push(`/panel-kancelarii/checkout/success?type=package&planName=${encodeURIComponent(orderData.planName || '')}`)
       } else {
@@ -158,8 +203,26 @@ export default function CheckoutPage() {
 
         const order = await response.json()
 
-        // Jeśli płatność przez Przelewy24, inicjuj transakcję
-        if (paymentMethod === "PRZELEWY24") {
+        if (paymentMethod === "PAYU") {
+          const paymentResponse = await fetch("/api/payments/payu/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: order.id })
+          })
+
+          if (!paymentResponse.ok) {
+            const errorData = await paymentResponse.json()
+            throw new Error(errorData.error || "Nie udało się zainicjować płatności PayU")
+          }
+
+          const paymentData = await paymentResponse.json()
+          if (paymentData.redirectUrl) {
+            window.location.href = paymentData.redirectUrl
+            return
+          } else {
+            throw new Error("Brak adresu przekierowania do PayU")
+          }
+        } else if (paymentMethod === "PRZELEWY24") {
           const paymentResponse = await fetch("/api/payments/przelewy24/init", {
             method: "POST",
             headers: {
@@ -180,6 +243,7 @@ export default function CheckoutPage() {
           // Przekieruj do Przelewy24
           if (paymentData.redirectUrl) {
             window.location.href = paymentData.redirectUrl
+            return
           } else {
             throw new Error("Brak adresu przekierowania do płatności")
           }

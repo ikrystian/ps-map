@@ -81,7 +81,32 @@ export default function CheckoutSuccessPage() {
       if (!response.ok) {
         throw new Error("Nie udało się pobrać danych zamówienia")
       }
-      const data = await response.json()
+      let data = await response.json()
+
+      // Jeśli zamówienie jest opłacone przez PayU ale ma status OCZEKUJE, spróbuj zweryfikować
+      if (data.statusPlatnosci === "OCZEKUJE" && data.metodaPlatnosci === "PAYU") {
+        try {
+          const verifyResponse = await fetch("/api/payments/payu/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId })
+          })
+
+          if (verifyResponse.ok) {
+            const verifyData = await verifyResponse.json()
+            if (verifyData.status === "COMPLETED") {
+              // Odśwież dane zamówienia po weryfikacji
+              const refreshedResponse = await fetch(`/api/orders/${orderId}`)
+              if (refreshedResponse.ok) {
+                data = await refreshedResponse.json()
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Verification failed:", e)
+        }
+      }
+
       setOrder(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
