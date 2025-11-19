@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
 
     // Utwórz folder uploads jeśli nie istnieje
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "images")
+    const uploadsDir = path.join(process.cwd(), ".uploads", "images")
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer)
 
     // Zwróć URL do pliku
-    const fileUrl = `/uploads/images/${filename}`
+    const fileUrl = `/api/uploads/images/${filename}`
 
     return NextResponse.json({
       success: true,

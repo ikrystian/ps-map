@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const filename = `${timestamp}-${randomString}-${sanitizedName}`
 
     // Ensure upload directory exists
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "chat")
+    const uploadDir = path.join(process.cwd(), ".uploads", "chat")
     try {
       await mkdir(uploadDir, { recursive: true })
     } catch (error) {
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer)
 
     // Return file URL
-    const fileUrl = `/uploads/chat/${filename}`
+    const fileUrl = `/api/uploads/chat/${filename}`
 
     return NextResponse.json({
       url: fileUrl,
