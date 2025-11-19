@@ -30,18 +30,18 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-        <html lang="pl" suppressHydrationWarning>
+        <html lang="pl" suppressHydrationWarning className="dark">
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
     		<ConsentManager>
-    			
+
             <Providers session={session}>
               {children}
               <Toaster />
               <Sonner />
             </Providers>
-          
+
     		</ConsentManager>
     	</body>
         </html>
