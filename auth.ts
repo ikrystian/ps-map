@@ -18,7 +18,7 @@ export const authOptions: NextAuthConfig = {
   // Konfiguracja zaufanych hostów dla środowiska deweloperskiego
   // Dodajemy lokalne hosty i produkcyjny host
   redirectProxyUrl: process.env.NODE_ENV === 'development'
-    ? 'https://ps.studio-ai.com.pl'
+    ? 'http://localhost:3000'
     : undefined,
   providers: [
     CredentialsProvider({
