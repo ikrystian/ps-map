@@ -261,16 +261,12 @@ export default function LawFirmSettingsPage() {
 
       setUserData((prev) => ({ ...prev, image: uploadUrl }))
 
-      // Zaktualizuj sesję NextAuth
-      await update()
-
-      // Poczekaj na propagację zmian w sesji
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Zaktualizuj sesję NextAuth z triggerem "update"
+      await update({
+        image: uploadUrl
+      })
 
       toast.success("Avatar został zaktualizowany")
-
-      // Odśwież stronę aby zobaczyć zmiany w menu
-      window.location.reload()
     } catch (error) {
       console.error("Error uploading avatar:", error)
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
@@ -304,16 +300,12 @@ export default function LawFirmSettingsPage() {
 
       setUserData((prev) => ({ ...prev, image: null }))
 
-      // Zaktualizuj sesję NextAuth
-      await update()
-
-      // Poczekaj na propagację zmian w sesji
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Zaktualizuj sesję NextAuth z triggerem "update"
+      await update({
+        image: null
+      })
 
       toast.success("Avatar został usunięty")
-
-      // Odśwież stronę aby zobaczyć zmiany w menu
-      window.location.reload()
     } catch (error) {
       console.error("Error removing avatar:", error)
       toast.error("Nie udało się usunąć avatara")
@@ -340,16 +332,13 @@ export default function LawFirmSettingsPage() {
         throw new Error("Failed to update user data")
       }
 
-      // Zaktualizuj sesję NextAuth
-      await update()
-
-      // Poczekaj na propagację zmian w sesji
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Zaktualizuj sesję NextAuth z triggerem "update"
+      await update({
+        name: userData.name,
+        image: userData.image
+      })
 
       toast.success("Dane osobowe zostały zaktualizowane")
-
-      // Odśwież stronę aby zobaczyć zmiany w menu
-      window.location.reload()
     } catch (error) {
       console.error("Error saving user data:", error)
       toast.error("Nie udało się zapisać danych osobowych")

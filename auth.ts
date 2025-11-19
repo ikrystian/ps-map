@@ -70,13 +70,26 @@ export const authOptions: NextAuthConfig = {
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user, trigger }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update" }) {
+  callbacks: {:
+    async jwt({ token, user, trigger, session }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update"; session?: any }) {
       // Podczas pierwszego logowania
       if (user) {
         token.role = user.role as UserRole
         token.id = user.id as string
         token.picture = user.image
+      }
+
+      // Jeśli trigger to "update" i mamy dane sesji, użyj ich bezpośrednio
+      if (trigger === "update" && session) {
+        // Jeśli dane są przekazywane bezpośrednio do update()
+        if (session.name !== undefined) {
+          token.name = session.name
+        }
+        if (session.image !== undefined) {
+          token.picture = session.image
+        }
+        token.lastRefresh = Date.now()
+        return token
       }
 
       // Odśwież dane użytkownika z bazy jeśli sesja jest aktualizowana

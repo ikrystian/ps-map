@@ -183,8 +183,10 @@ export default function ClientProfilePage() {
       // Odśwież dane klienta lokalnie
       await fetchData()
 
-      // Zaktualizuj sesję NextAuth aby odświeżyć avatar w menu
-      await update()
+      // Zaktualizuj sesję NextAuth z triggerem "update"
+      await update({
+        image: uploadUrl
+      })
 
       toast.success("Avatar został zaktualizowany")
     } catch (error) {
@@ -220,8 +222,10 @@ export default function ClientProfilePage() {
       // Odśwież dane klienta lokalnie
       await fetchData()
 
-      // Zaktualizuj sesję NextAuth aby odświeżyć avatar w menu
-      await update()
+      // Zaktualizuj sesję NextAuth z triggerem "update"
+      await update({
+        image: null
+      })
 
       toast.success("Avatar został usunięty")
     } catch (error) {
