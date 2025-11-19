@@ -17,9 +17,7 @@ export const authOptions: NextAuthConfig = {
   },
   // Konfiguracja zaufanych hostów dla środowiska deweloperskiego
   // Dodajemy lokalne hosty i produkcyjny host
-  redirectProxyUrl: process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : undefined,
+  redirectProxyUrl: process.env.NEXTAUTH_URL,
   providers: [
     CredentialsProvider({
       name: "credentials",
