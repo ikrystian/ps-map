@@ -147,9 +147,9 @@ export default function ClientProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("files", file)
+      formDataToSend.append("file", file)
 
-      const response = await fetch("/api/uploadthing", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formDataToSend,
       })
@@ -159,7 +159,7 @@ export default function ClientProfilePage() {
       }
 
       const data = await response.json()
-      const uploadUrl = data.data?.[0]?.url
+      const uploadUrl = data.url
 
       if (!uploadUrl) {
         throw new Error("No upload URL returned")

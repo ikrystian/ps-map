@@ -224,22 +224,24 @@ export default function LawFirmProfilePage() {
     setIsUploading(true)
 
     try {
-      const formDataToSend = new FormData()
-      Array.from(files).forEach((file) => {
-        formDataToSend.append("files", file)
-      })
+      const uploadedUrls = []
 
-      const response = await fetch("/api/uploadthing", {
-        method: "POST",
-        body: formDataToSend,
-      })
+      for (const file of Array.from(files)) {
+        const formDataToSend = new FormData()
+        formDataToSend.append("file", file)
 
-      if (!response.ok) {
-        throw new Error("Failed to upload images")
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataToSend,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload ${file.name}`)
+        }
+
+        const data = await response.json()
+        uploadedUrls.push(data.url)
       }
-
-      const data = await response.json()
-      const uploadedUrls = data.data?.map((item: any) => item.url) || []
 
       handleInputChange("galeriaZdjec", [...formData.galeriaZdjec, ...uploadedUrls])
 
@@ -293,9 +295,9 @@ export default function LawFirmProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("files", file)
+      formDataToSend.append("file", file)
 
-      const response = await fetch("/api/uploadthing", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formDataToSend,
       })
@@ -305,7 +307,7 @@ export default function LawFirmProfilePage() {
       }
 
       const data = await response.json()
-      const uploadUrl = data.data?.[0]?.url
+      const uploadUrl = data.url
       if (uploadUrl) {
         handleInputChange("logo", uploadUrl)
         toast.success("Logo zostało przesłane")
@@ -357,9 +359,9 @@ export default function LawFirmProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("files", file)
+      formDataToSend.append("file", file)
 
-      const response = await fetch("/api/uploadthing", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formDataToSend,
       })
@@ -369,7 +371,7 @@ export default function LawFirmProfilePage() {
       }
 
       const data = await response.json()
-      const uploadUrl = data.data?.[0]?.url
+      const uploadUrl = data.url
       if (uploadUrl) {
         handleInputChange("zdjecieGlowne", uploadUrl)
         toast.success("Zdjęcie główne zostało przesłane")

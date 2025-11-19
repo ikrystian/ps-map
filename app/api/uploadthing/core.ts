@@ -6,7 +6,7 @@ const f = createUploadthing();
 export const ourFileRouter = {
   // Profil kancelarii - logo i zdjęcia
   lawFirmProfileImage: f({
-    image: { maxFileSize: "5MB", maxFileCount: 1 },
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const session = await auth();
@@ -19,17 +19,17 @@ export const ourFileRouter = {
 
   // Dokumenty
   document: f({
-    pdf: { maxFileSize: "10MB" },
-    "application/msword": { maxFileSize: "10MB" },
+    pdf: { maxFileSize: "8MB" },
+    "application/msword": { maxFileSize: "8MB" },
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
-      maxFileSize: "10MB",
+      maxFileSize: "8MB",
     },
-    "application/vnd.ms-excel": { maxFileSize: "10MB" },
+    "application/vnd.ms-excel": { maxFileSize: "8MB" },
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-      maxFileSize: "10MB",
+      maxFileSize: "8MB",
     },
-    image: { maxFileSize: "10MB" },
-    text: { maxFileSize: "10MB" },
+    image: { maxFileSize: "8MB" },
+    text: { maxFileSize: "8MB" },
   })
     .middleware(async () => {
       const session = await auth();
@@ -42,11 +42,11 @@ export const ourFileRouter = {
 
   // Wiadomości - obrazy i pliki
   chatFile: f({
-    image: { maxFileSize: "5MB" },
-    pdf: { maxFileSize: "10MB" },
-    "application/msword": { maxFileSize: "10MB" },
+    image: { maxFileSize: "8MB" },
+    pdf: { maxFileSize: "8MB" },
+    "application/msword": { maxFileSize: "8MB" },
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
-      maxFileSize: "10MB",
+      maxFileSize: "8MB",
     },
   })
     .middleware(async () => {
@@ -60,8 +60,8 @@ export const ourFileRouter = {
 
   // Ustawienia - avatary i pliki
   settingsFile: f({
-    image: { maxFileSize: "5MB" },
-    pdf: { maxFileSize: "10MB" },
+    image: { maxFileSize: "8MB" },
+    pdf: { maxFileSize: "8MB" },
   })
     .middleware(async () => {
       const session = await auth();
@@ -74,11 +74,11 @@ export const ourFileRouter = {
 
   // Profil klienta - avatar i dokumenty
   clientProfileFile: f({
-    image: { maxFileSize: "5MB" },
-    pdf: { maxFileSize: "10MB" },
-    "application/msword": { maxFileSize: "10MB" },
+    image: { maxFileSize: "8MB" },
+    pdf: { maxFileSize: "8MB" },
+    "application/msword": { maxFileSize: "8MB" },
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
-      maxFileSize: "10MB",
+      maxFileSize: "8MB",
     },
   })
     .middleware(async () => {

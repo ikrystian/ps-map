@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
 import { existsSync } from "fs"
+import { auth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authorization
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const formData = await request.formData()
     const file = formData.get("file") as File
 
@@ -12,14 +19,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })
     }
 
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, WebP and GIF are allowed" },
-        { status: 400 }
-      )
-    }
+    // File type validation removed - accepting all file types
+    // You can add specific validation if needed for your use case
 
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024 // 5MB
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     const filename = `${timestamp}-${randomString}.${extension}`
 
     // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), ".uploads")
+    const uploadsDir = join(process.cwd(), "uploads")
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer)
 
     // Return URL
-    const url = `/api/uploads/${filename}`
+    const url = `/api/files/${filename}`
 
     return NextResponse.json({
       success: true,

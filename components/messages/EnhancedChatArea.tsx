@@ -355,9 +355,9 @@ export function EnhancedChatArea({
 
     try {
       const formData = new FormData()
-      formData.append("files", file)
+      formData.append("file", file)
 
-      const response = await fetch("/api/uploadthing", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       })
@@ -367,11 +367,10 @@ export function EnhancedChatArea({
       }
 
       const data = await response.json()
-      const uploadedFile = data.data?.[0]
-      if (uploadedFile) {
+      if (data.url) {
         setAttachments([...attachments, {
-          url: uploadedFile.url,
-          filename: uploadedFile.name || file.name,
+          url: data.url,
+          filename: data.filename || file.name,
           size: file.size,
         }])
         toast.success("Plik dodany pomyślnie")

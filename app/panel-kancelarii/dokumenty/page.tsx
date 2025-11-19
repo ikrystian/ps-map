@@ -141,21 +141,21 @@ export default function DocumentsPage() {
       setUploadProgress(true)
       const file = values.file[0]
 
-      // Przygotowanie FormData dla uploadthing
+      // Przygotowanie FormData dla nowego endpointu
       const formData = new FormData()
-      formData.append("files", file)
+      formData.append("file", file)
 
-      const response = await fetch("/api/uploadthing", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       })
 
       if (response.ok) {
         const uploadData = await response.json()
-        const fileUrl = uploadData.data?.[0]?.url
+        const fileUrl = uploadData.url
 
         if (fileUrl) {
-          // Zapisz dokument z URL-em z uploadthing
+          // Zapisz dokument z URL-em
           const saveResponse = await fetch("/api/law-firms/documents", {
             method: "POST",
             headers: {
