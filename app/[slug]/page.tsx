@@ -43,7 +43,7 @@ export async function generateStaticParams() {
     },
   })
 
-  return pages.map((page) => ({
+  return pages.map((page: { slug: string }) => ({
     slug: page.slug,
   }))
 }
