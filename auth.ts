@@ -70,7 +70,7 @@ export const authOptions: NextAuthConfig = {
       },
     }),
   ],
-  callbacks: {:
+  callbacks: {
     async jwt({ token, user, trigger, session }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update"; session?: any }) {
       // Podczas pierwszego logowania
       if (user) {
