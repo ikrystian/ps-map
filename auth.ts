@@ -9,7 +9,6 @@ import { NextRequest, NextResponse } from "next/server"
 
 export const authOptions: NextAuthConfig = {
   trustHost: true,
-  trustedHosts: ["ps.studio-ai.com.pl", "https://ps.studio-ai.com.pl"],
   session: {
     strategy: "jwt",
   },
