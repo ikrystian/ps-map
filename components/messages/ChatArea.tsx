@@ -256,14 +256,14 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
                     >
                       {!isMyMessage && (
                         <Avatar className="h-8 w-8 flex-shrink-0">
-                          {message.sender.image && (
+                          {message.sender?.image && (
                             <AvatarImage
-                              src={message.sender.image}
-                              alt={message.sender.name}
+                              src={message.sender?.image}
+                              alt={message.sender?.name || ""}
                             />
                           )}
                           <AvatarFallback className="bg-muted text-xs">
-                            {message.sender.name.substring(0, 2).toUpperCase()}
+                            {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                           </AvatarFallback>
                         </Avatar>
                       )}
@@ -295,8 +295,8 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
                         <Avatar className="h-8 w-8 flex-shrink-0">
                           {session?.user?.image && (
                             <AvatarImage
-                              src={session.user.image}
-                              alt={session.user.name || ""}
+                              src={session?.user?.image}
+                              alt={session?.user?.name || ""}
                             />
                           )}
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs">

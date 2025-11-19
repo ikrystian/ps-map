@@ -253,7 +253,7 @@ export function EnhancedChatArea({
         setIsTyping(true)
         socket.emit("typing", {
           conversationId,
-          userId: session.user.id,
+          userId: session?.user?.id,
           isTyping: true,
         })
       }
@@ -268,7 +268,7 @@ export function EnhancedChatArea({
         setIsTyping(false)
         socket.emit("typing", {
           conversationId,
-          userId: session.user.id,
+          userId: session?.user?.id,
           isTyping: false,
         })
       }, 3000)
@@ -286,7 +286,7 @@ export function EnhancedChatArea({
     if (socket && session?.user?.id) {
       socket.emit("typing", {
         conversationId,
-        userId: session.user.id,
+        userId: session?.user?.id,
         isTyping: false,
       })
     }
@@ -701,14 +701,14 @@ export function EnhancedChatArea({
                       >
                         {!isMyMessage && (
                           <Avatar className="h-8 w-8 flex-shrink-0">
-                            {message.sender.image && (
+                            {message.sender?.image && (
                               <AvatarImage
-                                src={message.sender.image}
-                                alt={message.sender.name}
+                                src={message.sender?.image}
+                                alt={message.sender?.name || ""}
                               />
                             )}
                             <AvatarFallback className="bg-muted text-xs">
-                              {message.sender.name.substring(0, 2).toUpperCase()}
+                              {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                             </AvatarFallback>
                           </Avatar>
                         )}
@@ -770,8 +770,8 @@ export function EnhancedChatArea({
                           <Avatar className="h-8 w-8 flex-shrink-0">
                             {session?.user?.image && (
                               <AvatarImage
-                                src={session.user.image}
-                                alt={session.user.name || ""}
+                                src={session?.user?.image}
+                                alt={session?.user?.name || ""}
                               />
                             )}
                             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
@@ -957,7 +957,7 @@ export function EnhancedChatArea({
               <div>
                 <p className="font-semibold">Data rejestracji:</p>
                 <p className="text-muted-foreground">
-                  {new Date(otherUser.createdAt).toLocaleDateString("pl-PL")}
+                  {otherUser.createdAt ? new Date(otherUser.createdAt).toLocaleDateString("pl-PL") : "Brak danych"}
                 </p>
               </div>
               {!isClient && conversation.clientUser.client.opis && (
