@@ -219,14 +219,6 @@ export default function PublicHeader({
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              {/* Dokumentacja */}
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/dokumentacja" className="px-4 py-2 hover:text-primary">
-                    Dokumentacja
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
 
