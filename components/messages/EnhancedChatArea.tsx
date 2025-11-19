@@ -355,21 +355,27 @@ export function EnhancedChatArea({
 
     try {
       const formData = new FormData()
-      formData.append("file", file)
+      formData.append("files", file)
 
-      const response = await fetch("/api/upload/chat", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formData,
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error)
+        throw new Error("Błąd przesyłania pliku")
       }
 
       const data = await response.json()
-      setAttachments([...attachments, data])
-      toast.success("Plik dodany pomyślnie")
+      const uploadedFile = data.data?.[0]
+      if (uploadedFile) {
+        setAttachments([...attachments, {
+          url: uploadedFile.url,
+          filename: uploadedFile.name || file.name,
+          size: file.size,
+        }])
+        toast.success("Plik dodany pomyślnie")
+      }
     } catch (error: any) {
       console.error("Error uploading file:", error)
       toast.error(error.message || "Nie udało się przesłać pliku")

@@ -224,25 +224,22 @@ export default function LawFirmProfilePage() {
     setIsUploading(true)
 
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const formDataToSend = new FormData()
-        formDataToSend.append("file", file)
-
-        const response = await fetch("/api/upload/image", {
-          method: "POST",
-          body: formDataToSend,
-        })
-
-        if (!response.ok) {
-          const error = await response.json()
-          throw new Error(error.error || "Failed to upload image")
-        }
-
-        const data = await response.json()
-        return data.url
+      const formDataToSend = new FormData()
+      Array.from(files).forEach((file) => {
+        formDataToSend.append("files", file)
       })
 
-      const uploadedUrls = await Promise.all(uploadPromises)
+      const response = await fetch("/api/uploadthing", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to upload images")
+      }
+
+      const data = await response.json()
+      const uploadedUrls = data.data?.map((item: any) => item.url) || []
 
       handleInputChange("galeriaZdjec", [...formData.galeriaZdjec, ...uploadedUrls])
 
@@ -296,21 +293,23 @@ export default function LawFirmProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("file", file)
+      formDataToSend.append("files", file)
 
-      const response = await fetch("/api/upload/image", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formDataToSend,
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to upload image")
+        throw new Error("Failed to upload image")
       }
 
       const data = await response.json()
-      handleInputChange("logo", data.url)
-      toast.success("Logo zostało przesłane")
+      const uploadUrl = data.data?.[0]?.url
+      if (uploadUrl) {
+        handleInputChange("logo", uploadUrl)
+        toast.success("Logo zostało przesłane")
+      }
     } catch (error) {
       console.error("Error uploading image:", error)
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
@@ -358,21 +357,23 @@ export default function LawFirmProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("file", file)
+      formDataToSend.append("files", file)
 
-      const response = await fetch("/api/upload/image", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formDataToSend,
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to upload image")
+        throw new Error("Failed to upload image")
       }
 
       const data = await response.json()
-      handleInputChange("zdjecieGlowne", data.url)
-      toast.success("Zdjęcie główne zostało przesłane")
+      const uploadUrl = data.data?.[0]?.url
+      if (uploadUrl) {
+        handleInputChange("zdjecieGlowne", uploadUrl)
+        toast.success("Zdjęcie główne zostało przesłane")
+      }
     } catch (error) {
       console.error("Error uploading image:", error)
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")

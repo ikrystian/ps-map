@@ -37,7 +37,7 @@ const profileFormSchema = z.object({
   miasto: z.string().optional(),
   voivodeshipId: z.string().optional(),
   zgodaNewsletter: z.any().transform(v => Boolean(v)),
-  zgodaMarketing: z.any().transform(v => Boolean(v)),
+  zgodaMarketing: z.any().transform(v => Boolean(v))
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
@@ -147,19 +147,23 @@ export default function ClientProfilePage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("file", file)
+      formDataToSend.append("files", file)
 
-      const response = await fetch("/api/upload/image", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formDataToSend,
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to upload avatar")
+        throw new Error("Failed to upload avatar")
       }
 
       const data = await response.json()
+      const uploadUrl = data.data?.[0]?.url
+
+      if (!uploadUrl) {
+        throw new Error("No upload URL returned")
+      }
 
       // Zaktualizuj dane użytkownika z nowym avatarem
       const updateResponse = await fetch("/api/auth/me", {
@@ -168,7 +172,7 @@ export default function ClientProfilePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          image: data.url,
+          image: uploadUrl,
         }),
       })
 

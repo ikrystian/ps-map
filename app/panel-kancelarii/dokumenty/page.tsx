@@ -141,25 +141,46 @@ export default function DocumentsPage() {
       setUploadProgress(true)
       const file = values.file[0]
 
-      // Przygotowanie FormData
+      // Przygotowanie FormData dla uploadthing
       const formData = new FormData()
-      formData.append("file", file)
-      formData.append("nazwa", values.nazwa)
-      formData.append("typDokumentu", values.typDokumentu)
+      formData.append("files", file)
 
-      const response = await fetch("/api/law-firms/documents", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formData,
       })
 
       if (response.ok) {
-        toast.success("Dokument został dodany")
-        setIsCreateDialogOpen(false)
-        form.reset()
-        fetchDocuments()
+        const uploadData = await response.json()
+        const fileUrl = uploadData.data?.[0]?.url
+
+        if (fileUrl) {
+          // Zapisz dokument z URL-em z uploadthing
+          const saveResponse = await fetch("/api/law-firms/documents", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              nazwa: values.nazwa,
+              typDokumentu: values.typDokumentu,
+              sciezka: fileUrl,
+              rozszerzenie: file.name.split(".").pop(),
+              rozmiar: file.size,
+            }),
+          })
+
+          if (saveResponse.ok) {
+            toast.success("Dokument został dodany")
+            setIsCreateDialogOpen(false)
+            form.reset()
+            fetchDocuments()
+          } else {
+            throw new Error("Błąd zapisywania dokumentu")
+          }
+        }
       } else {
-        const error = await response.json()
-        throw new Error(error.error || "Błąd dodawania dokumentu")
+        throw new Error("Błąd przesyłania dokumentu")
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się dodać dokumentu")

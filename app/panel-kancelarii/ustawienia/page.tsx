@@ -225,19 +225,23 @@ export default function LawFirmSettingsPage() {
       })
 
       const formDataToSend = new FormData()
-      formDataToSend.append("file", file)
+      formDataToSend.append("files", file)
 
-      const response = await fetch("/api/upload/image", {
+      const response = await fetch("/api/uploadthing", {
         method: "POST",
         body: formDataToSend,
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to upload avatar")
+        throw new Error("Failed to upload avatar")
       }
 
       const data = await response.json()
+      const uploadUrl = data.data?.[0]?.url
+
+      if (!uploadUrl) {
+        throw new Error("No upload URL returned")
+      }
 
       // Zaktualizuj dane użytkownika z nowym avatarem
       const updateResponse = await fetch("/api/auth/me", {
@@ -247,7 +251,7 @@ export default function LawFirmSettingsPage() {
         },
         body: JSON.stringify({
           name: userData.name,
-          image: data.url,
+          image: uploadUrl,
         }),
       })
 
@@ -255,7 +259,7 @@ export default function LawFirmSettingsPage() {
         throw new Error("Failed to update avatar")
       }
 
-      setUserData((prev) => ({ ...prev, image: data.url }))
+      setUserData((prev) => ({ ...prev, image: uploadUrl }))
 
       // Zaktualizuj sesję NextAuth
       await update()
