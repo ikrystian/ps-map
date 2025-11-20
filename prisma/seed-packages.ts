@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, SubscriptionPackage } from '@prisma/client'
 
-export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono nazwę parametru na prismaClient
+export async function seedPackages(prismaClient: PrismaClient) {
   console.log('Seeding subscription packages...')
 
   const packages = [
     {
-      typ: prismaClient.SubscriptionPackage.PODSTAWOWY,
+      typ: SubscriptionPackage.PODSTAWOWY,
       nazwa: 'Podstawowy',
       cena1Miesiac: 40,
       cena6Miesiecy: 199,
@@ -31,7 +31,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: prismaClient.SubscriptionPackage.STANDARD,
+      typ: SubscriptionPackage.STANDARD,
       nazwa: 'Standard',
       cena1Miesiac: 80,
       cena6Miesiecy: 299,
@@ -57,7 +57,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: prismaClient.SubscriptionPackage.PREMIUM,
+      typ: SubscriptionPackage.PREMIUM,
       nazwa: 'Premium',
       cena1Miesiac: 120,
       cena6Miesiecy: 299,
@@ -83,7 +83,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: prismaClient.SubscriptionPackage.BIZNES,
+      typ: SubscriptionPackage.BIZNES,
       nazwa: 'Biznes',
       cena1Miesiac: 180,
       cena6Miesiecy: 299,
@@ -111,7 +111,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
   ]
 
   for (const pkg of packages) {
-    await prismaClient.subscriptionPlan.upsert({ // Użyj prismaClient
+    await prismaClient.subscriptionPlan.upsert({
       where: { typ: pkg.typ },
       update: pkg,
       create: pkg,
@@ -120,6 +120,3 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
 
   console.log('Subscription packages seeded successfully!')
 }
-
-// Usunięto bezpośrednie wywołanie seedPackages() i disconnect()
-// Będą one wywoływane z głównego seed.ts

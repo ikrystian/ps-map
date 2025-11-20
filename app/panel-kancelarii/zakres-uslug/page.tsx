@@ -6,13 +6,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, GripVertical, Loader2, Save } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info } from "lucide-react"
 import { toast } from "sonner"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface Category {
   id: string
@@ -23,6 +29,8 @@ interface Category {
   ikona?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   aktywna: boolean
+  parentId: string | null
+  children?: Category[]
 }
 
 interface LawFirmCategory {
@@ -51,7 +59,9 @@ export default function LawFirmServicesPage() {
       const categoriesResponse = await fetch("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
-      setAllCategories(categoriesData.filter((cat: Category) => cat.aktywna))
+      // Filter to keep only root categories (parents) - children are nested in the API response
+      const rootCategories = categoriesData.filter((cat: Category) => !cat.parentId && cat.aktywna)
+      setAllCategories(rootCategories)
 
       // Fetch law firm's selected categories
       const selectedResponse = await fetch("/api/law-firm/categories")
@@ -149,19 +159,19 @@ export default function LawFirmServicesPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          categories: selectedCategories.map(sc => ({
+          categories: selectedCategories.map((sc, index) => ({
             categoryId: sc.categoryId,
-            kolejnosc: sc.kolejnosc,
+            kolejnosc: index,
           })),
         }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to save categories")
-      }
+      if (!response.ok) throw new Error("Failed to save categories")
 
-      toast.success("Zakres usług został zaktualizowany")
-      fetchData() // Refresh data
+      toast.success("Zapisano zmiany")
+
+      // Refresh data to ensure consistency
+      fetchData()
     } catch (error) {
       console.error("Error saving categories:", error)
       toast.error("Nie udało się zapisać zmian")
@@ -170,59 +180,57 @@ export default function LawFirmServicesPage() {
     }
   }
 
-  const renderCategoryGroup = (typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE", title: string) => {
-    const categories = allCategories.filter(cat => cat.typ === typ)
+  const firmoweCategories = allCategories.filter(c => c.typ === "SPRAWY_FIRMOWE")
+  const prywatneCategories = allCategories.filter(c => c.typ === "SPRAWY_PRYWATNE")
 
-    if (categories.length === 0) {
-      return null
-    }
+  const renderCategoryTree = (category: Category, level = 0) => {
+    const hasChildren = category.children && category.children.length > 0
+    const isExpanded = expandedCategories.has(category.id)
+    const selected = isSelected(category.id)
 
     return (
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <div className="space-y-2">
-          {categories.map((category) => (
-            <Card key={category.id} className={isSelected(category.id) ? "border-primary" : ""}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    checked={isSelected(category.id)}
-                    onCheckedChange={() => toggleCategory(category)}
-                    className="mt-1"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">{category.nazwa}</h4>
-                        {category.opis && (
-                          <p className="text-sm text-muted-foreground mt-1">{category.opis}</p>
-                        )}
-                      </div>
-                      {(category.opisDodatkowy) && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleExpanded(category.id)}
-                        >
-                          {expandedCategories.has(category.id) ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                    {expandedCategories.has(category.id) && category.opisDodatkowy && (
-                      <div className="mt-3 p-3 bg-muted rounded-md">
-                        <p className="text-sm">{category.opisDodatkowy}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      <div key={category.id} className="mb-1">
+        <div className={`flex items-center p-2 rounded-md hover:bg-accent/50 transition-colors ${level > 0 ? 'ml-6 border-l pl-4' : ''}`}>
+          {hasChildren ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 mr-2 p-0"
+              onClick={() => toggleExpanded(category.id)}
+            >
+              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          ) : (
+            <div className="w-8" /> // Spacer for alignment
+          )}
+
+          <div className="flex items-center flex-1 gap-3">
+            <Checkbox
+              id={`cat-${category.id}`}
+              checked={selected}
+              onCheckedChange={() => toggleCategory(category)}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor={`cat-${category.id}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                {category.nazwa}
+              </label>
+              {category.opis && (
+                <p className="text-[0.8rem] text-muted-foreground line-clamp-1">
+                  {category.opis}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
+
+        {hasChildren && isExpanded && (
+          <div className="mt-1">
+            {category.children?.map(child => renderCategoryTree(child as Category, level + 1))}
+          </div>
+        )}
       </div>
     )
   }
@@ -230,115 +238,156 @@ export default function LawFirmServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Zakres usług</h1>
-        <p className="text-muted-foreground">
-          Wybierz kategorie usług, które oferuje Twoja kancelaria
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Zakres usług</h2>
+          <p className="text-muted-foreground">
+            Wybierz kategorie spraw, w których się specjalizujesz.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-muted-foreground">
+            Wybrano: <span className={selectedCategories.length >= maxCategories ? "text-destructive font-bold" : "font-bold"}>
+              {selectedCategories.length}
+            </span> / {maxCategories}
+          </div>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Save className="mr-2 h-4 w-4" />
+            Zapisz zmiany
+          </Button>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left column - Available categories */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Dostępne kategorie</CardTitle>
-              <CardDescription>
-                Zaznacz kategorie, które chcesz dodać do swojej oferty
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {renderCategoryGroup("SPRAWY_FIRMOWE", "Sprawy firmowe")}
-              {allCategories.filter(cat => cat.typ === "SPRAWY_FIRMOWE").length > 0 &&
-                allCategories.filter(cat => cat.typ === "SPRAWY_PRYWATNE").length > 0 && (
-                <Separator />
-              )}
-              {renderCategoryGroup("SPRAWY_PRYWATNE", "Sprawy prywatne")}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right column - Selected categories */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                Wybrane kategorie ({selectedCategories.length}/{maxCategories})
-              </CardTitle>
-              <CardDescription>
-                Zmień kolejność kategorii przeciągając lub używając strzałek.
-                {selectedCategories.length >= maxCategories && (
-                  <span className="text-destructive font-medium"> Osiągnięto limit kategorii.</span>
-                )}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {selectedCategories.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Nie wybrano jeszcze żadnych kategorii. Zaznacz kategorie z listy po lewej stronie.
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Available Categories */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Dostępne kategorie</CardTitle>
+            <CardDescription>
+              Zaznacz kategorie, które chcesz dodać do swojego profilu.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="h-[600px] overflow-y-auto pr-4">
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold mb-4 flex items-center text-primary">
+                  <span className="bg-primary/10 p-1 rounded mr-2">🏢</span>
+                  Sprawy Firmowe
+                </h3>
+                <div className="space-y-1">
+                  {firmoweCategories.map(cat => renderCategoryTree(cat))}
+                  {firmoweCategories.length === 0 && (
+                    <p className="text-sm text-muted-foreground italic">Brak dostępnych kategorii.</p>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {selectedCategories.map((sc, index) => (
-                    <Card key={sc.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-3">
-                          <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{sc.category.nazwa}</span>
-                              <Badge variant={sc.category.typ === "SPRAWY_FIRMOWE" ? "default" : "secondary"}>
-                                {sc.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
-                              </Badge>
-                            </div>
-                            {sc.category.opis && (
-                              <p className="text-sm text-muted-foreground mt-1">{sc.category.opis}</p>
-                            )}
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => moveUp(index)}
-                              disabled={index === 0}
-                              className="h-8 w-8 p-0"
-                            >
-                              <ChevronUp className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => moveDown(index)}
-                              disabled={index === selectedCategories.length - 1}
-                              className="h-8 w-8 p-0"
-                            >
-                              <ChevronDown className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
 
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={saving} size="lg">
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              <Save className="mr-2 h-4 w-4" />
-              Zapisz zmiany
-            </Button>
-          </div>
-        </div>
+              <Separator />
+
+              <div>
+                <h3 className="font-semibold mb-4 flex items-center text-primary">
+                  <span className="bg-primary/10 p-1 rounded mr-2">👤</span>
+                  Sprawy Prywatne
+                </h3>
+                <div className="space-y-1">
+                  {prywatneCategories.map(cat => renderCategoryTree(cat))}
+                  {prywatneCategories.length === 0 && (
+                    <p className="text-sm text-muted-foreground italic">Brak dostępnych kategorii.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Selected Categories (Reorder) */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Twoje specjalizacje</CardTitle>
+            <CardDescription>
+              Ustal kolejność wyświetlania kategorii na Twoim profilu.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="h-[600px] overflow-y-auto">
+            {selectedCategories.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground border-2 border-dashed rounded-lg p-8">
+                <Info className="h-8 w-8 mb-2 opacity-50" />
+                <p>Nie wybrano żadnych kategorii</p>
+                <p className="text-sm">Zaznacz kategorie z listy po lewej stronie</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {selectedCategories.map((item, index) => (
+                  <div
+                    key={item.categoryId}
+                    className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1">
+                        <GripVertical className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{item.category.nazwa}</p>
+                        <Badge variant="outline" className="text-[10px] mt-1">
+                          {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => moveUp(index)}
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => moveDown(index)}
+                        disabled={index === selectedCategories.length - 1}
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => toggleCategory(item.category)}
+                      >
+                        <span className="sr-only">Usuń</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-4 w-4"
+                        >
+                          <path d="M18 6 6 18" />
+                          <path d="m6 6 12 12" />
+                        </svg>
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

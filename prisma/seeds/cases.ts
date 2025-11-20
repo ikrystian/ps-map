@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, UserRole, OfferStatus } from '@prisma/client'
 import { createRandomCase, createRandomOffer, createRandomUser } from './generators'
 import { faker } from '@faker-js/faker'
 
@@ -79,7 +79,7 @@ export async function seedCases(prisma: PrismaClient) {
         randomClient = faker.helpers.arrayElement(allClients)
       } else {
         // Create a new client if needed
-        const randomUserData = createRandomUser(prisma, prisma.UserRole.CLIENT)
+        const randomUserData = createRandomUser(prisma, UserRole.CLIENT)
         const user = await prisma.user.create({
           data: { ...randomUserData, password: 'Password123' }, // temp password
           select: {
@@ -131,7 +131,7 @@ export async function seedCases(prisma: PrismaClient) {
             ...offerData,
             caseId: caseRecord.id,
             lawFirmId: lawFirm.id,
-            zaakceptowanaData: offerData.status === prisma.OfferStatus.ZAAKCEPTOWANA ? new Date() : null,
+            zaakceptowanaData: offerData.status === OfferStatus.ZAAKCEPTOWANA ? new Date() : null,
           },
         })
         console.log(`  ✓ Offer: ${offerData.kwotaBrutto} PLN from ${lawFirm.nazwa}`)

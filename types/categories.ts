@@ -10,6 +10,7 @@ export interface CategoryBase {
   id: string
   nazwa: string
   slug: string
+  typ?: 'SPRAWY_FIRMOWE' | 'SPRAWY_PRYWATNE'
 }
 
 /**

@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, EmailType } from '@prisma/client'
 
 export async function seedEmailTemplates(prisma: PrismaClient) {
   console.log('Seeding email templates...')
 
   const templates = [
     {
-      typ: prisma.EmailType.NOWA_SPRAWA,
+      typ: EmailType.NOWA_SPRAWA,
       nazwa: 'Nowa sprawa - powiadomienie dla kancelarii',
       temat: 'Nowa sprawa w Twojej kategorii: {nazwaSprawi}',
       tresc: `Witaj {kancelaria},
@@ -54,7 +54,7 @@ Zespół Prosta Sprawa`,
       triggery: ['case_created'],
     },
     {
-      typ: prisma.EmailType.NOWA_OFERTA,
+      typ: EmailType.NOWA_OFERTA,
       nazwa: 'Nowa oferta - powiadomienie dla klienta',
       temat: 'Otrzymałeś nową ofertę na sprawę: {nazwaSprawi}',
       tresc: `Witaj {klient},
@@ -101,7 +101,7 @@ Zespół Prosta Sprawa`,
       triggery: ['offer_created'],
     },
     {
-      typ: prisma.EmailType.AKCEPTACJA_OFERTY,
+      typ: EmailType.AKCEPTACJA_OFERTY,
       nazwa: 'Akceptacja oferty - powiadomienie dla kancelarii',
       temat: 'Gratulacje! Twoja oferta została zaakceptowana',
       tresc: `Gratulacje {kancelaria}!
@@ -153,7 +153,7 @@ Zespół Prosta Sprawa`,
       triggery: ['offer_accepted'],
     },
     {
-      typ: prisma.EmailType.ODRZUCENIE_OFERTY,
+      typ: EmailType.ODRZUCENIE_OFERTY,
       nazwa: 'Odrzucenie oferty - powiadomienie dla kancelarii',
       temat: 'Oferta odrzucona: {nazwaSprawi}',
       tresc: `Witaj {kancelaria},
@@ -186,7 +186,7 @@ Zespół Prosta Sprawa`,
       triggery: ['offer_rejected'],
     },
     {
-      typ: prisma.EmailType.NOWA_WIADOMOSC,
+      typ: EmailType.NOWA_WIADOMOSC,
       nazwa: 'Nowa wiadomość w systemie',
       temat: 'Masz nową wiadomość od {nadawca}',
       tresc: `Witaj {odbiorca},
@@ -224,7 +224,7 @@ Zespół Prosta Sprawa`,
       triggery: ['message_received'],
     },
     {
-      typ: prisma.EmailType.NOWA_OPINIA,
+      typ: EmailType.NOWA_OPINIA,
       nazwa: 'Nowa opinia - powiadomienie dla kancelarii',
       temat: 'Otrzymałeś nową opinię od klienta',
       tresc: `Witaj {kancelaria},
@@ -263,7 +263,7 @@ Zespół Prosta Sprawa`,
       triggery: ['review_created'],
     },
     {
-      typ: prisma.EmailType.REJESTRACJA_KLIENT,
+      typ: EmailType.REJESTRACJA_KLIENT,
       nazwa: 'Witamy nowego klienta',
       temat: 'Witamy w Prosta Sprawa!',
       tresc: `Witaj {imie}!
@@ -317,7 +317,7 @@ Zespół Prosta Sprawa`,
       triggery: ['user_registered_client'],
     },
     {
-      typ: prisma.EmailType.REJESTRACJA_KANCELARIA,
+      typ: EmailType.REJESTRACJA_KANCELARIA,
       nazwa: 'Witamy nową kancelarię',
       temat: 'Witamy w Prosta Sprawa - Panel Kancelarii',
       tresc: `Witamy {nazwa}!
@@ -384,7 +384,7 @@ Zespół Prosta Sprawa`,
       triggery: ['user_registered_law_firm'],
     },
     {
-      typ: prisma.EmailType.RESET_HASLA,
+      typ: EmailType.RESET_HASLA,
       nazwa: 'Reset hasła',
       temat: 'Reset hasła - Prosta Sprawa',
       tresc: `Witaj,
@@ -427,7 +427,7 @@ Zespół Prosta Sprawa`,
       triggery: ['password_reset_requested'],
     },
     {
-      typ: prisma.EmailType.POTWIERDZENIE_EMAIL,
+      typ: EmailType.POTWIERDZENIE_EMAIL,
       nazwa: 'Potwierdzenie adresu email',
       temat: 'Potwierdź swój adres email - Prosta Sprawa',
       tresc: `Witaj {imie},
@@ -471,7 +471,7 @@ Zespół Prosta Sprawa`,
       triggery: ['email_verification_requested'],
     },
     {
-      typ: prisma.EmailType.PLATNOSC_POTWIERDZONA,
+      typ: EmailType.PLATNOSC_POTWIERDZONA,
       nazwa: 'Potwierdzenie płatności',
       temat: 'Potwierdzenie płatności - Prosta Sprawa',
       tresc: `Witaj {kancelaria},
@@ -530,7 +530,7 @@ Zespół Prosta Sprawa`,
       triggery: ['payment_confirmed'],
     },
     {
-      typ: prisma.EmailType.SUBSKRYPCJA_WYGASA,
+      typ: EmailType.SUBSKRYPCJA_WYGASA,
       nazwa: 'Przypomnienie o wygasającej subskrypcji',
       temat: 'Twoja subskrypcja wygasa za {dniDoWygasniecia} dni',
       tresc: `Witaj {kancelaria},
@@ -578,7 +578,7 @@ Zespół Prosta Sprawa`,
       triggery: ['subscription_expiring'],
     },
     {
-      typ: prisma.EmailType.NISKI_STAN_PUNKTOW,
+      typ: EmailType.NISKI_STAN_PUNKTOW,
       nazwa: 'Przypomnienie o niskim stanie punktów',
       temat: 'Niski stan punktów - uzupełnij saldo',
       tresc: `Witaj {kancelaria},

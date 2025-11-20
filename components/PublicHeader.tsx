@@ -63,8 +63,8 @@ export default function PublicHeader({
   }, [])
 
   // Split categories into two groups (firmowe/prywatne)
-  const firmoweCat = categories.slice(0, Math.ceil(categories.length / 2))
-  const prywatneCat = categories.slice(Math.ceil(categories.length / 2))
+  const firmoweCat = categories.filter(c => c.typ === 'SPRAWY_FIRMOWE')
+  const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()

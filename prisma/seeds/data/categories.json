@@ -1,72 +1,358 @@
 [
   {
-    "nazwa": "Prawo Cywilne",
-    "typ": "SPRAWY_PRYWATNE",
-    "opis": "Sprawy związane z prawem cywilnym, takie jak umowy, odszkodowania, spadki.",
-    "metaTitle": "Prawo Cywilne - Kancelarie",
-    "metaDescription": "Znajdź kancelarie specjalizujące się w prawie cywilnym."
-  },
-  {
-    "nazwa": "Prawo Rodzinne",
-    "typ": "SPRAWY_PRYWATNE",
-    "opis": "Sprawy dotyczące rozwodów, alimentów, opieki nad dziećmi.",
-    "metaTitle": "Prawo Rodzinne - Adwokaci",
-    "metaDescription": "Adwokaci specjalizujący się w prawie rodzinnym."
-  },
-  {
-    "nazwa": "Prawo Pracy",
-    "typ": "SPRAWY_PRYWATNE",
-    "opis": "Sprawy związane z zatrudnieniem, zwolnieniami, mobbingiem.",
-    "metaTitle": "Prawo Pracy - Prawnicy",
-    "metaDescription": "Prawnicy oferujący pomoc w sprawach z zakresu prawa pracy."
-  },
-  {
-    "nazwa": "Prawo Karne",
-    "typ": "SPRAWY_PRYWATNE",
-    "opis": "Obrona w sprawach karnych, przestępstwa, wykroczenia.",
-    "metaTitle": "Prawo Karne - Obrońcy",
-    "metaDescription": "Doświadczeni obrońcy w sprawach karnych."
-  },
-  {
-    "nazwa": "Prawo Gospodarcze",
+    "nazwa": "Dane osobowe",
     "typ": "SPRAWY_FIRMOWE",
-    "opis": "Obsługa prawna firm, zakładanie spółek, windykacja.",
-    "metaTitle": "Prawo Gospodarcze - Doradztwo",
-    "metaDescription": "Doradztwo prawne dla firm w zakresie prawa gospodarczego."
+    "kolejnosc": 10,
+    "children": [
+      "RODO",
+      "Ochrona danych osobowych"
+    ]
   },
   {
-    "nazwa": "Prawo Nieruchomości",
+    "nazwa": "Działalność gospodarcza",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 1,
+    "children": [
+      "Zakładanie firmy",
+      "Obsługa działalności"
+    ]
+  },
+  {
+    "nazwa": "Ochrona środowiska",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 20,
+    "children": [
+      "Gospodarowanie odpadami",
+      "Regulacje środowiskowe"
+    ]
+  },
+  {
+    "nazwa": "Podatki",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 5,
+    "children": [
+      "Obowiązki podatkowe dla firm",
+      "Ulgi i zwolnienia podatkowe"
+    ]
+  },
+  {
+    "nazwa": "Prawo pracy",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 4,
+    "children": [
+      "Zatrudnienie i umowy",
+      "Spory pracownicze",
+      "ZUS i składki",
+      "prawa pracownika"
+    ]
+  },
+  {
+    "nazwa": "Prawa autorskie",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 11,
+    "children": [
+      "Ochrona i licencjonowanie",
+      "Naruszenia praw autorskich",
+      "Umowy dotyczące praw autorskich"
+    ]
+  },
+  {
+    "nazwa": "Przestępstwa skarbowe",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 6,
+    "children": [
+      "Wykroczenia skarbowe",
+      "Kontrole i spory z fiskusem"
+    ]
+  },
+  {
+    "nazwa": "Przetargi",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 8,
+    "children": [
+      "Postępowania przetargowe",
+      "Skargi i odwołania",
+      "Umowy w ramach procedur przetargowych"
+    ]
+  },
+  {
+    "nazwa": "Spółki",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 2,
+    "children": [
+      "Zakładanie spółek",
+      "Obsługa i zarządzanie"
+    ]
+  },
+  {
+    "nazwa": "Umowy",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 3,
+    "children": [
+      "Umowa o pracę",
+      "Umowy cywilnoprawne (zlecenie, dzieło)"
+    ]
+  },
+  {
+    "nazwa": "Sprawy sądowe",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 7,
+    "children": [
+      "Windykacja i egzekucja",
+      "Pozwy sądowe"
+    ]
+  },
+  {
+    "nazwa": "Inne kwestie firmowe",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 21,
+    "children": [
+      "Regulacje branżowe",
+      "Kwestie międzynarodowe"
+    ]
+  },
+  {
+    "nazwa": "Technologie i innowacje",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 16,
+    "children": [
+      "Ochrona własności intelektualnej",
+      "Cyfrowa transformacja",
+      "Bezpieczeństwo IT"
+    ]
+  },
+  {
+    "nazwa": "Dotacje i finansowanie zewnętrrzne",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 9,
+    "children": [
+      "Dotacje unijne",
+      "Wsparcie rządowe",
+      "Proces aplikacyjny i rozliczenie"
+    ]
+  },
+  {
+    "nazwa": "Finanse i inwestycje",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 13,
+    "children": [
+      "Zarządzanie kapitałem",
+      "Pozyskiwanie finansowania",
+      "Analiza ryzyka inwestycyjnego"
+    ]
+  },
+  {
+    "nazwa": "Nieruchomości komercyjne",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 14,
+    "children": [
+      "Wynajem i zakup",
+      "Zarządzanie nieruchomościami",
+      "Inwestycje w nieruchomości",
+      "Obrót nieruchomościami (zbycie, dzierżawa, najem)"
+    ]
+  },
+  {
+    "nazwa": "Marketing i reklama",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 15,
+    "children": [
+      "Promocja w internecie",
+      "Zarządzanie marką"
+    ]
+  },
+  {
+    "nazwa": "Zdrowie i bezpieczeństwo w pracy",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 12,
+    "children": [
+      "Ochrona pracowników",
+      "Przepisy BHP"
+    ]
+  },
+  {
+    "nazwa": "Zarządzanie zasobami ludzkimi",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 17,
+    "children": [
+      "Szkolenia i rozwój",
+      "Ocena pracownika i rekrutacja"
+    ]
+  },
+  {
+    "nazwa": "Zarządzanie kryzysowe",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 18,
+    "children": [
+      "Planowanie awaryjne",
+      "Komunikacja w czasie kryzysu"
+    ]
+  },
+  {
+    "nazwa": "Odnawialne Źródła Energii (OZE)",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 19,
+    "children": [
+      "Umowy instalacyjne",
+      "Wsparcie prawne w uzyskiwaniu dotacji",
+      "Prawne aspekty użytkowania"
+    ]
+  },
+  {
+    "nazwa": "Prawo upadłościowe",
+    "typ": "SPRAWY_FIRMOWE",
+    "kolejnosc": 22,
+    "children": [
+      "Upadłośći",
+      "Likwidacja (sprzedaż majątku)"
+    ]
+  },
+  {
+    "nazwa": "Zobowiązania finansowe",
     "typ": "SPRAWY_PRYWATNE",
-    "opis": "Kupno, sprzedaż, najem nieruchomości, spory o nieruchomości.",
-    "metaTitle": "Prawo Nieruchomości - Specjaliści",
-    "metaDescription": "Specjaliści od prawa nieruchomości."
+    "kolejnosc": 2,
+    "children": [
+      "Długi, windykacja, egzekucje",
+      "Pożyczki i kredyty"
+    ]
   },
   {
-    "nazwa": "Prawo Administracyjne",
-    "typ": "SPRAWY_FIRMOWE",
-    "opis": "Sprawy z urzędami, pozwolenia, koncesje.",
-    "metaTitle": "Prawo Administracyjne - Pomoc",
-    "metaDescription": "Pomoc prawna w sprawach administracyjnych."
-  },
-  {
-    "nazwa": "Prawo Podatkowe",
-    "typ": "SPRAWY_FIRMOWE",
-    "opis": "Doradztwo podatkowe, optymalizacja, spory z urzędem skarbowym.",
-    "metaTitle": "Prawo Podatkowe - Doradcy",
-    "metaDescription": "Doradcy podatkowi dla firm i osób prywatnych."
-  },
-  {
-    "nazwa": "Prawo Medyczne",
+    "nazwa": "Rodzina",
     "typ": "SPRAWY_PRYWATNE",
-    "opis": "Błędy medyczne, odszkodowania, prawa pacjenta.",
-    "metaTitle": "Prawo Medyczne - Prawnicy",
-    "metaDescription": "Prawnicy specjalizujący się w prawie medycznym."
+    "kolejnosc": 4,
+    "children": [
+      "Adopcje i opieka nad dziećmi",
+      "Alimenty i rozwody",
+      "Podział majątku, kontakty z dziećmi"
+    ]
   },
   {
-    "nazwa": "Prawo Upadłościowe",
-    "typ": "SPRAWY_FIRMOWE",
-    "opis": "Upadłość konsumencka, restrukturyzacja firm.",
-    "metaTitle": "Prawo Upadłościowe - Doradztwo",
-    "metaDescription": "Doradztwo w sprawach upadłościowych i restrukturyzacyjnych."
+    "nazwa": "Majątek osobisty",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 3,
+    "children": [
+      "Zarządzanie majątkiem",
+      "Dziedziczenie, spadki, testamenty"
+    ]
+  },
+  {
+    "nazwa": "Mediacje",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 5,
+    "children": [
+      "Mediacje rodzinne",
+      "Mediacje gospodarcze"
+    ]
+  },
+  {
+    "nazwa": "Nieruchomości",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 6,
+    "children": [
+      "Kupno/sprzedaż",
+      "Wynajem"
+    ]
+  },
+  {
+    "nazwa": "Podatki osobiste",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 10,
+    "children": [
+      "Rozliczenia PIT",
+      "Ulgi podatkowe"
+    ]
+  },
+  {
+    "nazwa": "Zatrudnienie",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 9,
+    "children": [
+      "Prawa pracownika",
+      "Spory pracownicze"
+    ]
+  },
+  {
+    "nazwa": "Ubezpieczenia",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 7,
+    "children": [
+      "Ubezpieczenia majątkowe",
+      "Ubezpieczenia na życie"
+    ]
+  },
+  {
+    "nazwa": "Prawo karne",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 1,
+    "children": [
+      "Wykroczenia",
+      "Przestępstwa"
+    ]
+  },
+  {
+    "nazwa": "Zdrowie i wypadki",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 8,
+    "children": [
+      "Odszkodowania",
+      "Rehabilitacja"
+    ]
+  },
+  {
+    "nazwa": "Prawo konsumenckie",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 12,
+    "children": [
+      "Reklamacje i zwroty",
+      "Problemy z zakupami online",
+      "Umowy z dostawcami usług"
+    ]
+  },
+  {
+    "nazwa": "Prawo medyczne",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 14,
+    "children": [
+      "Błędy medyczne",
+      "Prawa pacjenta"
+    ]
+  },
+  {
+    "nazwa": "Prawo cyfrowe i internetowe",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 13,
+    "children": [
+      "Ochrona danych osobowych w sieci",
+      "Problemy z umowami cyfrowymi (np. subskrypcje)"
+    ]
+  },
+  {
+    "nazwa": "Prawa lokatora i najemcy",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 16,
+    "children": [
+      "Problemy z wynajmem mieszkania",
+      "Konflikty z wynajmującym",
+      "Umowy"
+    ]
+  },
+  {
+    "nazwa": "Prawo administracyjne",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 15,
+    "children": [
+      "Sprawy związane z decyzjami administracyjnymi",
+      "Odwołania od decyzji urzędów"
+    ]
+  },
+  {
+    "nazwa": "Prawo OZE",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 11,
+    "children": [
+      "Regulacje i licencjonowanie",
+      "Umowy i transakcje",
+      "Kwestie środowiskowe, zezwolenia"
+    ]
   }
 ]
