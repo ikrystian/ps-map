@@ -54,7 +54,7 @@ import {
   Send,
   Eye,
   Calendar,
- ZoomIn,
+  ZoomIn,
 } from "lucide-react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
@@ -212,7 +212,7 @@ export default function LawFirmProfilePage() {
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
   const [isStartingChat, setIsStartingChat] = useState(false)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
- const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [activeTab, setActiveTab] = useState("about")
 
@@ -534,8 +534,8 @@ export default function LawFirmProfilePage() {
           <Star
             key={star}
             className={`h-5 w-5 ${star <= rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-muted text-muted"
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-muted text-muted"
               }`}
           />
         ))}
@@ -616,148 +616,155 @@ export default function LawFirmProfilePage() {
             className="object-cover z-[2] opacity-75"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 z-[5]" />
+          <div className={cn(
+            "absolute inset-0 z-[5]",
+            lawFirm.pakietSubskrypcji === "BIZNES" && "bg-gradient-to-br from-yellow-500/20 via-orange-500/10 to-background",
+            lawFirm.pakietSubskrypcji === "PREMIUM" && "bg-gradient-to-br from-purple-500/20 via-indigo-500/10 to-background",
+            lawFirm.pakietSubskrypcji === "STANDARD" && "bg-gradient-to-br from-blue-500/20 via-cyan-500/10 to-background",
+            (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10"
+          )} />
         )}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/50 to-background/90 z-[5]" />
-      <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
+        <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/50 to-background/90 z-[5]" />
+        <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
 
-        {/* Header Section */}
-        <div className="relative z-[199]">
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            {/* Logo */}
-            {lawFirm.logo && (
-              <div className={cn(
-                "relative h-32 w-32 rounded-lg overflow-hidden bg-card flex-shrink-0",
-                lawFirm.pakietSubskrypcji === "BIZNES"
-                  ? "p-[3px] animate-gradient-border"
-                  : "border-2 border-border"
-              )}>
-                {lawFirm.pakietSubskrypcji === "BIZNES" && (
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
-                )}
-                <div className="relative h-full w-full rounded-lg bg-card overflow-hidden">
-                  <Image
-                    src={lawFirm.logo}
-                    alt={lawFirm.nazwa}
-                    id="logo-photo"
-                    fill
-                    className="object-contain p-2"
-                  />
+          {/* Header Section */}
+          <div className="relative z-[199]">
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              {/* Logo */}
+              {lawFirm.logo && (
+                <div className={cn(
+                  "relative h-32 w-32 rounded-lg overflow-hidden bg-card flex-shrink-0",
+                  lawFirm.pakietSubskrypcji === "BIZNES" && "p-[3px] animate-gradient-border",
+                  lawFirm.pakietSubskrypcji === "PREMIUM" && "border-2 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]",
+                  lawFirm.pakietSubskrypcji === "STANDARD" && "border-2 border-blue-500",
+                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-2 border-border"
+                )}>
+                  {lawFirm.pakietSubskrypcji === "BIZNES" && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
+                  )}
+                  <div className="relative h-full w-full rounded-lg bg-card overflow-hidden">
+                    <Image
+                      src={lawFirm.logo}
+                      alt={lawFirm.nazwa}
+                      id="logo-photo"
+                      fill
+                      className="object-contain p-2"
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Header Info */}
-            <div className="flex-1">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <h1 className="text-xl md:text-2xl font-bold">{lawFirm.nazwa}</h1>
-                    {lawFirm.zweryfikowana && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Zweryfikowana
-                      </Badge>
+              {/* Header Info */}
+              <div className="flex-1">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                      <h1 className="text-xl md:text-2xl font-bold">{lawFirm.nazwa}</h1>
+                      {lawFirm.zweryfikowana && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Zweryfikowana
+                        </Badge>
+                      )}
+                      {lawFirm.pakietSubskrypcji && (
+                        <PackageBadge
+                          packageType={lawFirm.pakietSubskrypcji as any}
+                          size="md"
+                        />
+                      )}
+                    </div>
+
+                    <p className="text-lg text-muted-foreground">{lawFirm.nazwaFirmy}</p>
+
+
+                    {/* Rating */}
+                    {lawFirm.reviewCount > 0 && (
+                      <div className="flex items-center gap-3">
+                        {renderStars(Math.round(lawFirm.avgRating))}
+                        <span className="font-semibold">{lawFirm.avgRating.toFixed(1)}</span>
+                        <span className="text-muted-foreground">
+                          ({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : "opinii"})
+                        </span>
+                      </div>
                     )}
-                    {lawFirm.pakietSubskrypcji && (
-                      <PackageBadge
-                        packageType={lawFirm.pakietSubskrypcji as any}
-                        size="md"
-                      />
+
+
+
+                    {/* Słowa kluczowe */}
+                    {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
+                      <div className="mt-2">
+                        <div className="flex flex-wrap gap-2">
+                          {lawFirm.slowaKluczowe.map((keyword, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  <p className="text-lg text-muted-foreground">{lawFirm.nazwaFirmy}</p>
-
-
-                  {/* Rating */}
-                  {lawFirm.reviewCount > 0 && (
-                    <div className="flex items-center gap-3">
-                      {renderStars(Math.round(lawFirm.avgRating))}
-                      <span className="font-semibold">{lawFirm.avgRating.toFixed(1)}</span>
-                      <span className="text-muted-foreground">
-                        ({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : "opinii"})
-                      </span>
-                    </div>
-                  )}
-
-
-
-                  {/* Słowa kluczowe */}
-                  {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-                    <div className="mt-2">
-                      <div className="flex flex-wrap gap-2">
-                        {lawFirm.slowaKluczowe.map((keyword, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 relative z-[199]" >
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="add-to-favorites"
-                    title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
-                    onClick={handleToggleFavorite}
-                    disabled={isFavoriteLoading}
-                  >
-                    <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
-                  </Button>
-                  <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Share2 className="h-5 w-5" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Udostępnij profil kancelarii</DialogTitle>
-                        <DialogDescription>
-                          Skopiuj link do profilu kancelarii
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="flex gap-2">
-                          <Input
-                            value={typeof window !== 'undefined' ? window.location.href : ''}
-                            readOnly
-                            className="flex-1"
-                          />
-                          <Button onClick={handleCopyUrl}>
-                            Kopiuj
-                          </Button>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
-                          Zamknij
+                  {/* Actions */}
+                  <div className="flex gap-2 relative z-[199]" >
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="add-to-favorites"
+                      title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                      onClick={handleToggleFavorite}
+                      disabled={isFavoriteLoading}
+                    >
+                      <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
+                    </Button>
+                    <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <Share2 className="h-5 w-5" />
                         </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Udostępnij profil kancelarii</DialogTitle>
+                          <DialogDescription>
+                            Skopiuj link do profilu kancelarii
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="flex gap-2">
+                            <Input
+                              value={typeof window !== 'undefined' ? window.location.href : ''}
+                              readOnly
+                              className="flex-1"
+                            />
+                            <Button onClick={handleCopyUrl}>
+                              Kopiuj
+                            </Button>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
+                            Zamknij
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
 
-                  {session?.user?.role === "CLIENT" ? (
-                    <Button onClick={handleStartChat} disabled={isStartingChat}>
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      {isStartingChat ? "Przechodzę..." : "Rozpocznij czat"}
-                    </Button>
-                  ) : (
-                    <Button>
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      Kontakt
-                    </Button>
-                  )}
+                    {session?.user?.role === "CLIENT" ? (
+                      <Button onClick={handleStartChat} disabled={isStartingChat}>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        {isStartingChat ? "Przechodzę..." : "Rozpocznij czat"}
+                      </Button>
+                    ) : (
+                      <Button>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Kontakt
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
 
@@ -1748,7 +1755,7 @@ export default function LawFirmProfilePage() {
           </div>
         </div>
       </div>
-   {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
+      {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}

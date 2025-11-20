@@ -10,7 +10,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePermissions } from "@/hooks/usePermissions"
-import { ExpiredPackageModal } from "@/components/permissions"
+import { ExpiredPackageModal, PackageBadge } from "@/components/permissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import {
   LayoutDashboard,
@@ -94,7 +94,7 @@ export default function LawFirmPanelLayout({
           const data = await response.json()
           setPunktySaldo(data.punktySaldo || 0)
           setLawFirmSlug(data.slug || "")
-          setSubscriptionType(data.subscriptionPlan?.typ || null)
+          setSubscriptionType(data.pakietSubskrypcji || null)
         }
       } catch (error) {
         console.error("Error fetching law firm data:", error)
@@ -123,9 +123,36 @@ export default function LawFirmPanelLayout({
     await signOut({ callbackUrl: "/" })
   }
 
+  // Get border color class based on subscription type
+  const getBorderColorClass = (type: string | null) => {
+    switch (type) {
+      case "STANDARD":
+        return "border-l-4 border-l-blue-500"
+      case "PREMIUM":
+        return "border-l-4 border-l-purple-500"
+      case "BIZNES":
+        return "border-l-4 border-l-yellow-500"
+      default:
+        return "border-l-4 border-l-transparent"
+    }
+  }
+
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+      {/* Package Badge in Sidebar */}
+      {!isCollapsed && subscriptionType && (
+        <div className="mb-4 px-2">
+          <div className="text-xs text-muted-foreground mb-1 uppercase font-semibold tracking-wider">
+            Twój pakiet
+          </div>
+          <PackageBadge
+            packageType={subscriptionType as any}
+            className="w-full justify-center py-1.5"
+          />
+        </div>
+      )}
+
       {navigation.map((item) => {
         const isActive = pathname === item.href ||
           (item.href !== "/panel-kancelarii" && pathname.startsWith(item.href))
@@ -200,7 +227,8 @@ export default function LawFirmPanelLayout({
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
         "hidden md:block border-r border-border bg-card transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-64"
+        isCollapsed ? "w-16" : "w-64",
+        getBorderColorClass(subscriptionType)
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
@@ -241,7 +269,7 @@ export default function LawFirmPanelLayout({
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 p-0">
-                  <div className="flex h-full flex-col">
+                  <div className={cn("flex h-full flex-col", getBorderColorClass(subscriptionType))}>
                     <div className="flex h-16 items-center border-b border-border px-4">
                       <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
                     </div>
