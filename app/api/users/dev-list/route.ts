@@ -20,7 +20,7 @@ export async function GET() {
     })
 
     // Return users with their test passwords based on role
-    const usersWithPasswords = users.map(user => ({
+    const usersWithPasswords = users.map((user: any) => ({
       id: user.id,
       email: user.email,
       role: user.role,

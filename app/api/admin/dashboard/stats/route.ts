@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    const totalRevenue = completedOrders.reduce((sum, order) => sum + order.kwota, 0)
+    const totalRevenue = completedOrders.reduce((sum:number, order: { kwota: number }) => sum + order.kwota, 0)
 
     // Get monthly revenue for chart (last 6 months)
     const sixMonthsAgo = new Date()
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       const monthKey = date.toISOString().slice(0, 7) // YYYY-MM format
       const monthName = date.toLocaleDateString('pl-PL', { month: 'short', year: 'numeric' })
 
-      const existingData = monthlyRevenueRaw.find(item => item.month === monthKey)
+      const existingData = monthlyRevenueRaw.find((item: { month: string; revenue: bigint }) => item.month === monthKey)
 
       monthlyRevenue.push({
         month: monthName,
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
       const day = String(date.getDate()).padStart(2, '0')
       const dateKey = `${year}-${month}-${day}` // YYYY-MM-DD format
 
-      const existingData = dailyRegistrationsRaw.find(item => item.date === dateKey)
+      const existingData = dailyRegistrationsRaw.find((item: { date: string; count: bigint }) => item.date === dateKey)
 
       dailyRegistrations.push({
         date: dateKey,
@@ -218,7 +218,7 @@ export async function GET(request: NextRequest) {
       },
       charts: {
         monthlyRevenue,
-        casesByStatus: casesByStatus.map(item => ({
+        casesByStatus: casesByStatus.map((item: { status: string; _count: { id: number } }) => ({
           status: item.status,
           count: item._count.id,
         })),

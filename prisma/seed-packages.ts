@@ -1,11 +1,11 @@
-import { PrismaClient, SubscriptionPackage } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono nazwę parametru na prismaClient
   console.log('Seeding subscription packages...')
 
   const packages = [
     {
-      typ: SubscriptionPackage.PODSTAWOWY,
+      typ: prismaClient.SubscriptionPackage.PODSTAWOWY,
       nazwa: 'Podstawowy',
       cena1Miesiac: 40,
       cena6Miesiecy: 199,
@@ -31,7 +31,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: SubscriptionPackage.STANDARD,
+      typ: prismaClient.SubscriptionPackage.STANDARD,
       nazwa: 'Standard',
       cena1Miesiac: 80,
       cena6Miesiecy: 299,
@@ -57,7 +57,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: SubscriptionPackage.PREMIUM,
+      typ: prismaClient.SubscriptionPackage.PREMIUM,
       nazwa: 'Premium',
       cena1Miesiac: 120,
       cena6Miesiecy: 299,
@@ -83,7 +83,7 @@ export async function seedPackages(prismaClient: PrismaClient) { // Zmieniono na
       skillLawFocus: false,
     },
     {
-      typ: SubscriptionPackage.BIZNES,
+      typ: prismaClient.SubscriptionPackage.BIZNES,
       nazwa: 'Biznes',
       cena1Miesiac: 180,
       cena6Miesiecy: 299,

@@ -55,16 +55,16 @@ export async function GET(request: NextRequest) {
     })
 
     // Znajdź pozycję aktualnej kancelarii w rankingu ogólnym
-    const overallPosition = allLawFirms.findIndex((firm) => firm.id === lawFirm.id) + 1
+    const overallPosition = allLawFirms.findIndex((firm: any) => firm.id === lawFirm.id) + 1
     const totalLawFirms = allLawFirms.length
 
     // Oblicz statystyki ofert
     const totalOffers = lawFirm.offers.length
-    const acceptedOffers = lawFirm.offers.filter((o) => o.status === "ZAAKCEPTOWANA").length
+    const acceptedOffers = lawFirm.offers.filter((o: any) => o.status === "ZAAKCEPTOWANA").length
     const conversionRate = totalOffers > 0 ? (acceptedOffers / totalOffers) * 100 : 0
 
     // Oblicz średnie statystyki konkurencji
-    const avgViews = allLawFirms.reduce((sum, firm) => sum + firm.wyswietleniaProfilu, 0) / allLawFirms.length
+    const avgViews = allLawFirms.reduce((sum: number, firm: any) => sum + firm.wyswietleniaProfilu, 0) / allLawFirms.length
 
     // Pobierz statystyki ofert dla wszystkich kancelarii
     const allOffersStats = await prisma.offer.groupBy({
@@ -99,15 +99,15 @@ export async function GET(request: NextRequest) {
     })
 
     const avgOffers = allOffersStats.length > 0
-      ? allOffersStats.reduce((sum, stat) => sum + stat._count.id, 0) / allOffersStats.length
+      ? allOffersStats.reduce((sum: number, stat: any) => sum + stat._count.id, 0) / allOffersStats.length
       : 0
 
     // Oblicz średnią konwersję
     let totalConversion = 0
     let firmCountWithOffers = 0
 
-    allOffersStats.forEach((offerStat) => {
-      const acceptedStat = acceptedOffersStats.find((a) => a.lawFirmId === offerStat.lawFirmId)
+    allOffersStats.forEach((offerStat: any) => {
+      const acceptedStat = acceptedOffersStats.find((a: any) => a.lawFirmId === offerStat.lawFirmId)
       const accepted = acceptedStat?._count.id || 0
       const total = offerStat._count.id
       if (total > 0) {
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
         },
       })
 
-      const categoryPosition = categoryLawFirms.findIndex((firm) => firm.id === lawFirm.id) + 1
+      const categoryPosition = categoryLawFirms.findIndex((firm: any) => firm.id === lawFirm.id) + 1
       const categoryTotal = categoryLawFirms.length
       const percentile = categoryTotal > 0 ? (categoryPosition / categoryTotal) * 100 : 0
 

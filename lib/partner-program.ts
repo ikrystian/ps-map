@@ -257,7 +257,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       }
 
       // Przyznaj punkty w transakcji
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         // Dodaj punkty do salda kancelarii
         await tx.lawFirm.update({
           where: { id: partner.lawFirmId },

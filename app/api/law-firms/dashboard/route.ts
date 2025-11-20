@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
     })
 
     const averageRating = reviews.length > 0
-      ? reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / reviews.length
+      ? reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / reviews.length
       : 0
 
     const reviewsCount = reviews.length

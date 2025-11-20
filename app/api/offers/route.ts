@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Utwórz ofertę
-    const offer = await prisma.$transaction(async (tx) => {
+    const offer = await prisma.$transaction(async (tx: any) => {
       // Utwórz ofertę
       const newOffer = await tx.offer.create({
         data: {

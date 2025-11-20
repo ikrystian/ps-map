@@ -32,11 +32,11 @@ export async function GET(request: NextRequest) {
     })
 
     // Calculate ranking score for each law firm
-    const lawFirmsWithScore = lawFirms.map((firm) => {
+    const lawFirmsWithScore = lawFirms.map((firm: any) => {
       // Calculate average rating and review count from reviews
       const reviewCount = firm.reviews.length
       const avgRating = reviewCount > 0
-        ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / reviewCount
+        ? firm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / reviewCount
         : 0
 
       // Calculate score based on multiple factors
@@ -67,10 +67,10 @@ export async function GET(request: NextRequest) {
     })
 
     // Sort by score (highest first)
-    lawFirmsWithScore.sort((a, b) => b.score - a.score)
+    lawFirmsWithScore.sort((a: any, b: any) => b.score - a.score)
 
     // Update ranking positions
-    const updates = lawFirmsWithScore.map((firm, index) => {
+    const updates = lawFirmsWithScore.map((firm: any, index: any) => {
       return prisma.lawFirm.update({
         where: { id: firm.id },
         data: { pozycjaRanking: index + 1 },

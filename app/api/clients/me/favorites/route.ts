@@ -60,11 +60,11 @@ export async function GET(request: NextRequest) {
     })
 
     // Formatuj dane
-    const formattedFavorites = favorites.map((fav) => {
+    const formattedFavorites = favorites.map((fav: any) => {
       const lawFirm = fav.lawFirm
       const avgRating =
         lawFirm.reviews.length > 0
-          ? lawFirm.reviews.reduce((sum, r) => sum + r.ocenaOgolna, 0) /
+          ? lawFirm.reviews.reduce((sum: number, r: any) => sum + r.ocenaOgolna, 0) /
             lawFirm.reviews.length
           : 0
       const reviewCount = lawFirm.reviews.length
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
           zweryfikowana: lawFirm.zweryfikowana,
           avgRating,
           reviewCount,
-          categories: lawFirm.categories.map((c) => ({
+          categories: lawFirm.categories.map((c: any) => ({
             category: {
               nazwa: c.category.nazwa,
               slug: c.category.slug,

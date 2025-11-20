@@ -107,7 +107,7 @@ export async function GET(
 
     // Oblicz średnią ocenę
     const avgRating = lawFirm.reviews.length > 0
-      ? lawFirm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / lawFirm.reviews.length
+      ? lawFirm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / lawFirm.reviews.length
       : 0
 
     // Parse JSON fields

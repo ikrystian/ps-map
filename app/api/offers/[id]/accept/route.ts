@@ -89,7 +89,7 @@ export async function POST(
     }
 
     // Aktualizuj ofertę i powiązane dane
-    const updatedOffer = await prisma.$transaction(async (tx) => {
+    const updatedOffer = await prisma.$transaction(async (tx: any) => {
       // Zaakceptuj ofertę
       const updated = await tx.offer.update({
         where: { id },

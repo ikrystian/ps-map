@@ -370,7 +370,7 @@ export async function PUT(
     }
 
     // Perform update in a transaction (might need to update user too)
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Update law firm
       const updatedLawFirm = await tx.lawFirm.update({
         where: { id },

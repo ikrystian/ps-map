@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     ])
 
     // Formatuj odpowiedź, ukrywając dane klienta dla anonimowych opinii
-    const formattedReviews = reviews.map((review) => ({
+    const formattedReviews = reviews.map((review: any) => ({
       ...review,
       client: review.anonimowa
         ? { imie: "Anonimowy", nazwisko: "" }

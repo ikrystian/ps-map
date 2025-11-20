@@ -5,7 +5,6 @@
  */
 
 import { prisma } from "@/lib/prisma"
-import { PromotionType } from "@prisma/client"
 import {
   sendEmail,
   generatePromotionRenewedEmail,
@@ -18,7 +17,7 @@ import {
 
 export interface ActivePromotion {
   id: string
-  typPromocji: PromotionType
+  typPromocji: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA"
   kategoriaPromocji: string | null
   wojewodztwoPromocji: string | null
   startPromocji: Date
@@ -28,7 +27,7 @@ export interface ActivePromotion {
 export interface PromotionBoost {
   hasBoost: boolean
   boostMultiplier: number
-  promotionTypes: PromotionType[]
+  promotionTypes: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[]
 }
 
 // ============================================================================
@@ -72,7 +71,7 @@ export async function getActiveLawFirmPromotions(
  */
 export async function hasActivePromotion(
   lawFirmId: string,
-  promotionType: PromotionType
+  promotionType: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA"
 ): Promise<boolean> {
   const promotions = await getActiveLawFirmPromotions(lawFirmId)
   return promotions.some((p) => p.typPromocji === promotionType)
@@ -182,7 +181,7 @@ export async function calculatePromotionBoost(
   }
 
   // Mapowanie typów promocji na mnożniki
-  const boostMultipliers: Record<PromotionType, number> = {
+  const boostMultipliers: Record<string, number> = {
     PODBICIE_OGLOSZENIA: 1.5,
     WYROZNIENIE: 2,
     TOP_LISTA: 3,
@@ -191,14 +190,14 @@ export async function calculatePromotionBoost(
 
   // Znajdź najwyższy mnożnik
   let maxMultiplier = 1
-  const promotionTypes: PromotionType[] = []
+  const promotionTypes: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[] = []
 
   for (const promo of relevantPromotions) {
     const multiplier = boostMultipliers[promo.typPromocji]
     if (multiplier > maxMultiplier) {
       maxMultiplier = multiplier
     }
-    promotionTypes.push(promo.typPromocji)
+    promotionTypes.push(promo.typPromocji as "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")
   }
 
   return {
@@ -217,7 +216,7 @@ export async function getFeaturedLawFirms(limit: number = 5) {
 
   const promotions = await prisma.promotion.findMany({
     where: {
-      typPromocji: PromotionType.STRONA_GLOWNA,
+      typPromocji: "STRONA_GLOWNA",
       aktywna: true,
       startPromocji: {
         lte: now,
@@ -244,7 +243,7 @@ export async function getFeaturedLawFirms(limit: number = 5) {
     take: limit,
   })
 
-  return promotions.map((p) => p.lawFirm)
+  return promotions.map((p: any) => p.lawFirm)
 }
 
 /**
@@ -256,7 +255,7 @@ export async function getTopLawFirms(limit: number = 10) {
 
   const promotions = await prisma.promotion.findMany({
     where: {
-      typPromocji: PromotionType.TOP_LISTA,
+      typPromocji: "TOP_LISTA",
       aktywna: true,
       startPromocji: {
         lte: now,
@@ -283,14 +282,14 @@ export async function getTopLawFirms(limit: number = 10) {
     take: limit,
   })
 
-  return promotions.map((p) => p.lawFirm)
+  return promotions.map((p: any) => p.lawFirm)
 }
 
 /**
  * Sprawdza czy kancelaria powinna być wyróżniona wizualnie
  */
 export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean> {
-  return await hasActivePromotion(lawFirmId, PromotionType.WYROZNIENIE)
+  return await hasActivePromotion(lawFirmId, "WYROZNIENIE")
 }
 
 /**
@@ -298,15 +297,15 @@ export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean
  */
 export async function getLawFirmHighlightType(
   lawFirmId: string
-): Promise<PromotionType | null> {
+): Promise<"PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | null> {
   const promotions = await getActiveLawFirmPromotions(lawFirmId)
 
   // Priorytet: STRONA_GLOWNA > TOP_LISTA > WYROZNIENIE > PODBICIE_OGLOSZENIA
-  const priority: PromotionType[] = [
-    PromotionType.STRONA_GLOWNA,
-    PromotionType.TOP_LISTA,
-    PromotionType.WYROZNIENIE,
-    PromotionType.PODBICIE_OGLOSZENIA,
+  const priority: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[] = [
+    "STRONA_GLOWNA",
+    "TOP_LISTA",
+    "WYROZNIENIE",
+    "PODBICIE_OGLOSZENIA",
   ]
 
   for (const type of priority) {
@@ -373,7 +372,7 @@ export async function renewExpiredPromotions() {
           TOP_LISTA: 'Top Lista',
           STRONA_GLOWNA: 'Strona Główna Premium',
         }
-        const promotionLabel = promotionLabels[promotion.typPromocji]
+        const promotionLabel = promotionLabels[promotion.typPromocji as keyof typeof promotionLabels]
 
         // Create in-app notification
         await prisma.notification.create({
@@ -424,7 +423,7 @@ export async function renewExpiredPromotions() {
         prisma.promotion.create({
           data: {
             lawFirmId: promotion.lawFirmId,
-            typPromocji: promotion.typPromocji,
+            typPromocji: promotion.typPromocji as string,
             czasTrwaniaDni: promotion.czasTrwaniaDni,
             kategoriaPromocji: promotion.kategoriaPromocji,
             wojewodztwoPromocji: promotion.wojewodztwoPromocji,
@@ -461,7 +460,7 @@ export async function renewExpiredPromotions() {
         TOP_LISTA: 'Top Lista',
         STRONA_GLOWNA: 'Strona Główna Premium',
       }
-      const promotionLabel = promotionLabels[promotion.typPromocji]
+      const promotionLabel = promotionLabels[promotion.typPromocji as keyof typeof promotionLabels]
 
       // Get updated law firm balance
       const updatedLawFirm = await prisma.lawFirm.findUnique({

@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
           : await bcrypt.hash("Password123!", 10)
 
         // Use transaction to create everything atomically
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
           // 1. Create user
           const user = await tx.user.create({
             data: {

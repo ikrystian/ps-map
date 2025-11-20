@@ -57,8 +57,8 @@ export async function GET(request: NextRequest) {
     // Oblicz statystyki
     const stats = {
       total: partnerPrograms.length,
-      active: partnerPrograms.filter(p => p.active).length,
-      verified: partnerPrograms.filter(p => p.bannerPlaced).length,
+      active: partnerPrograms.filter((p: any) => p.active).length,
+      verified: partnerPrograms.filter((p: any) => p.bannerPlaced).length,
       totalPointsAllocated: 0
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     }
 
     return Response.json({
-      partnerPrograms: partnerPrograms.map(p => ({
+      partnerPrograms: partnerPrograms.map((p: any) => ({
         id: p.id,
         lawFirmId: p.lawFirmId,
         lawFirmName: p.lawFirm.nazwa,
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
         active: p.active,
         monthlyPoints: p.monthlyPoints,
         joinedAt: p.joinedAt,
-        recentHistory: p.pointsHistory.map(h => ({
+        recentHistory: p.pointsHistory.map((h: any) => ({
           id: h.id,
           pointsAwarded: h.pointsAwarded,
           month: h.month,

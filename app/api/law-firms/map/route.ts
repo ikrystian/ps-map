@@ -51,11 +51,11 @@ export async function GET() {
     })
 
     // Przetwórz dane i oblicz średnią ocenę
-    const lawFirmsWithRating = lawFirms.map((firm) => {
+    const lawFirmsWithRating = lawFirms.map((firm: any) => {
       const reviews = firm.reviews
       const avgRating =
         reviews.length > 0
-          ? reviews.reduce((sum: number, r) => sum + r.ocenaOgolna, 0) / reviews.length
+          ? reviews.reduce((sum: number, r: any) => sum + r.ocenaOgolna, 0) / reviews.length
           : 0
 
       return {
@@ -73,7 +73,7 @@ export async function GET() {
         emailKontakt: firm.emailKontakt,
         pakietSubskrypcji: firm.pakietSubskrypcji,
         voivodeship: firm.voivodeship.nazwa,
-        categories: firm.categories.map((c) => c.category.nazwa),
+        categories: firm.categories.map((c: any) => c.category.nazwa),
         avgRating: Math.round(avgRating * 10) / 10,
         reviewsCount: reviews.length,
       }

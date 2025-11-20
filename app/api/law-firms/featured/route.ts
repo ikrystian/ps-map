@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       const featuredFirms = await getFeaturedLawFirms(type === "featured" ? limit : 5)
 
       // Format data for frontend
-      result.featured = featuredFirms.map((firm) => ({
+      result.featured = featuredFirms.map((firm: any) => ({
         id: firm.id,
         nazwa: firm.nazwa,
         nazwaFirmy: firm.nazwaFirmy,
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         miasto: firm.miasto,
         zweryfikowana: firm.zweryfikowana,
         voivodeship: firm.voivodeship,
-        categories: firm.categories.map((c) => c.category),
+        categories: firm.categories.map((c: any) => c.category),
         promoted: true,
         highlightType: "STRONA_GLOWNA" as const,
       }))
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       const topFirms = await getTopLawFirms(type === "top" ? limit : 10)
 
       // Format data for frontend
-      result.top = topFirms.map((firm) => ({
+      result.top = topFirms.map((firm: any) => ({
         id: firm.id,
         nazwa: firm.nazwa,
         nazwaFirmy: firm.nazwaFirmy,
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         miasto: firm.miasto,
         zweryfikowana: firm.zweryfikowana,
         voivodeship: firm.voivodeship,
-        categories: firm.categories.map((c) => c.category),
+        categories: firm.categories.map((c: any) => c.category),
         promoted: true,
         highlightType: "TOP_LISTA" as const,
       }))

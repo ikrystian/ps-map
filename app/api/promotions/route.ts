@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
-import { PromotionType } from "@prisma/client"
 import { sendEmail, generatePromotionActivatedEmail } from "@/lib/email"
 
 // Koszty punktów za typy promocji
@@ -147,7 +146,7 @@ export async function POST(request: NextRequest) {
       prisma.promotion.create({
         data: {
           lawFirmId: lawFirm.id,
-          typPromocji: typPromocji as PromotionType,
+          typPromocji: typPromocji as string,
           czasTrwaniaDni,
           kategoriaPromocji,
           wojewodztwoPromocji,

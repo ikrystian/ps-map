@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
 import crypto from "crypto"
-import { UserRole } from "@prisma/client"
 
 /**
  * POST /api/auth/resend-verification
@@ -62,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Send verification email
     const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${verificationToken}`
-    const isLawFirm = user.role === UserRole.LAW_FIRM
+    const isLawFirm = user.role === "LAW_FIRM"
     const emailContent = generateEmailVerificationEmail(
       verificationUrl,
       user.name || user.email,

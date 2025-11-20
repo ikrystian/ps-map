@@ -300,7 +300,7 @@ export async function DELETE(
     }
 
     // Usuń ofertę
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.offer.delete({
         where: { id }
       })

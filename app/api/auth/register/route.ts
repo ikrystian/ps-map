@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
-import { UserRole } from "@prisma/client"
 import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
 import crypto from "crypto"
 
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
       data: {
         email,
         password: hashedPassword,
-        role: role as UserRole || UserRole.CLIENT,
+        role: role as string || "CLIENT",
         name: userData.name || null,
         emailVerified: null, // Email nie zweryfikowany
       },
@@ -59,7 +58,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Jeśli CLIENT, utwórz profil klienta
-    if (user.role === UserRole.CLIENT && userData.client) {
+    if (user.role === "CLIENT" && userData.client) {
       await prisma.client.create({
         data: {
           userId: user.id,
@@ -76,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Jeśli LAW_FIRM, utwórz profil kancelarii
-    if (user.role === UserRole.LAW_FIRM && userData.lawFirm) {
+    if (user.role === "LAW_FIRM" && userData.lawFirm) {
       // Pobierz pierwsze województwo mazowieckie jako domyślne
       const defaultVoivodeship = await prisma.voivodeship.findFirst({
         where: { nazwa: "mazowieckie" }
@@ -127,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     // Wyślij email weryfikacyjny
     const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
-    const isLawFirm = user.role === UserRole.LAW_FIRM
+    const isLawFirm = user.role === "LAW_FIRM"
     const emailContent = generateEmailVerificationEmail(
       verificationUrl,
       userData.name || user.email,

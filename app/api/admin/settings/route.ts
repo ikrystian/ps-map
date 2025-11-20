@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const settings = await prisma.settings.findMany()
 
     // Konwertuj na obiekt klucz-wartość
-    const settingsObject = settings.reduce((acc, setting) => {
+    const settingsObject = settings.reduce((acc: any, setting: any) => {
       acc[setting.key] = {
         value: setting.value,
         description: setting.description,

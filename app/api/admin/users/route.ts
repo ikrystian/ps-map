@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     ])
 
     // Remove password from response
-    const sanitizedUsers = users.map((user) => {
+    const sanitizedUsers = users.map((user: any) => {
       const { password, resetToken, resetTokenExpiry, ...userWithoutSensitiveData } = user
       return userWithoutSensitiveData
     })

@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Formatuj konwersacje dla responsywnego UI
-    const formattedConversations = conversations.map((conv) => {
+    const formattedConversations = conversations.map((conv: any) => {
       const isClient = userRole === "CLIENT"
       const otherUser = isClient ? conv.lawFirmUser : conv.clientUser
       const otherUserName = isClient
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
 
       const lastMessage = conv.messages[0]
       const unreadCount = conv.messages.filter(
-        (msg) => !msg.isRead && msg.senderId !== userId
+        (msg: any) => !msg.isRead && msg.senderId !== userId
       ).length
 
       // Decrypt last message content

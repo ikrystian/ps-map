@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker/locale/pl';
-import { LawFirmType, OfferType, SubscriptionPackage, UserRole, UserStatus, CaseType, PreferredContact, CaseStatus, PaymentTerms, OfferStatus, PaymentMethod, PaymentStatus, OrderType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
-export function createRandomUser(role: UserRole) {
+export function createRandomUser(prisma: PrismaClient, role: PrismaClient['UserRole']) {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const email = faker.internet.email({ firstName, lastName });
@@ -12,11 +12,11 @@ export function createRandomUser(role: UserRole) {
     password: 'Password123', // Plain text for now, will be hashed in the seed script
     role: role,
     emailVerified: new Date(),
-    status: UserStatus.ACTIVE,
+    status: prisma.UserStatus.ACTIVE,
   };
 }
 
-export function createRandomLawFirm() {
+export function createRandomLawFirm(prisma: PrismaClient) {
     const companyName = faker.company.name();
     const contactFirstName = faker.person.firstName();
     const contactLastName = faker.person.lastName();
@@ -32,7 +32,7 @@ const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
     .join('');
 
   return {
-    typ: faker.helpers.arrayElement(Object.values(LawFirmType)),
+    typ: faker.helpers.arrayElement(Object.values(prisma.LawFirmType)),
     nazwa: companyName,
     nazwaFirmy: companyName,
     nip: faker.string.numeric('##########'),
@@ -83,8 +83,8 @@ const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
     unikatowyOpisUslugi: faker.lorem.sentences(2),
     slowaKluczowe: JSON.stringify(faker.lorem.words(3).split(' ')),
     onlineOnly: faker.datatype.boolean(),
-    typOferty: faker.helpers.arrayElement(Object.values(OfferType)),
-    pakietSubskrypcji: faker.helpers.arrayElement(Object.values(SubscriptionPackage)),
+    typOferty: faker.helpers.arrayElement(Object.values(prisma.OfferType)),
+    pakietSubskrypcji: faker.helpers.arrayElement(Object.values(prisma.SubscriptionPackage)),
     zweryfikowana: faker.datatype.boolean(),
     aktywna: true,
     zgodaRegulamin: true,
@@ -109,9 +109,9 @@ export function createRandomReview() {
     };
 }
 
-export function createRandomCase() {
+export function createRandomCase(prisma: PrismaClient) {
     return {
-        typSprawy: faker.helpers.arrayElement(Object.values(CaseType)),
+        typSprawy: faker.helpers.arrayElement(Object.values(prisma.CaseType)),
         nazwaSprawy: faker.lorem.sentence(),
         opisSprawy: faker.lorem.paragraphs(2),
         oczekiwanyTerminRealizacji: faker.date.future(),
@@ -122,23 +122,23 @@ export function createRandomCase() {
         imieNazwisko: faker.person.fullName(),
         emailKontakt: faker.internet.email(),
         telefonKontakt: faker.phone.number(),
-        preferowanyKontakt: faker.helpers.arrayElement(Object.values(PreferredContact)),
-        status: CaseStatus.NOWA,
+        preferowanyKontakt: faker.helpers.arrayElement(Object.values(prisma.PreferredContact)),
+        status: prisma.CaseStatus.NOWA,
         akceptujeKlauzule: true,
     }
 }
 
-export function createRandomTransaction() {
+export function createRandomTransaction(prisma: PrismaClient) {
     return {
         amount: faker.finance.amount({ min: 50, max: 1000, dec: 2 }),
         description: faker.lorem.sentence(),
-        paymentMethod: faker.helpers.arrayElement(Object.values(PaymentMethod)),
-        paymentStatus: faker.helpers.arrayElement(Object.values(PaymentStatus)),
-        orderType: faker.helpers.arrayElement(Object.values(OrderType)),
+        paymentMethod: faker.helpers.arrayElement(Object.values(prisma.PaymentMethod)),
+        paymentStatus: faker.helpers.arrayElement(Object.values(prisma.PaymentStatus)),
+        orderType: faker.helpers.arrayElement(Object.values(prisma.OrderType)),
     }
 }
 
-export function createRandomOffer() {
+export function createRandomOffer(prisma: PrismaClient) {
     const netto = faker.number.int({ min: 500, max: 5000 });
     const vat = 23;
     const brutto = netto * (1 + vat / 100);
@@ -150,9 +150,9 @@ export function createRandomOffer() {
         terminRealizacjiDni: faker.number.int({ min: 1, max: 30 }),
         opisOferty: faker.lorem.paragraphs(2),
         zakresUslug: faker.lorem.sentence(),
-        warunkiPlatnosci: faker.helpers.arrayElement(Object.values(PaymentTerms)),
+        warunkiPlatnosci: faker.helpers.arrayElement(Object.values(prisma.PaymentTerms)),
         wyroznienie: faker.datatype.boolean(),
-        status: faker.helpers.arrayElement(Object.values(OfferStatus)),
+        status: faker.helpers.arrayElement(Object.values(prisma.OfferStatus)),
     }
 }
 

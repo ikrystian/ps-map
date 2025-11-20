@@ -79,7 +79,7 @@ export async function GET(
     })
 
     // Decrypt messages
-    const decryptedMessages = messages.map((msg) => {
+    const decryptedMessages = messages.map((msg: any) => {
       try {
         const decryptedContent = msg.contentIv
           ? decryptMessage(msg.content, msg.contentIv)

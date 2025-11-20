@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Parse JSON fields
-    const templatesWithParsedData = templates.map((template) => ({
+    const templatesWithParsedData = templates.map((template: any) => ({
       ...template,
       triggery: template.triggery ? JSON.parse(template.triggery) : [],
       zmienne: template.zmienne ? JSON.parse(template.zmienne) : [],

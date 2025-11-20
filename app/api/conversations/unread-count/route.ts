@@ -29,7 +29,7 @@ export async function GET() {
       },
     })
 
-    const conversationIds = conversations.map((conv) => conv.id)
+    const conversationIds = conversations.map((conv: any) => conv.id)
 
     // Policz nieprzeczytane wiadomości we wszystkich konwersacjach użytkownika
     const unreadCount = await prisma.chatMessage.count({

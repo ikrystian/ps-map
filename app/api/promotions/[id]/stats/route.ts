@@ -57,7 +57,7 @@ export async function GET(
 
     // Calculate totals
     const totals = stats.reduce(
-      (acc, stat) => ({
+      (acc: any, stat: any) => ({
         profileViews: acc.profileViews + stat.profileViews,
         profileClicks: acc.profileClicks + stat.profileClicks,
         contactClicks: acc.contactClicks + stat.contactClicks,

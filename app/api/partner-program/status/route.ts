@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     // Oblicz statystyki
     const totalPointsEarned = lawFirm.partnerProgram.pointsHistory.reduce(
-      (sum, history) => sum + history.pointsAwarded,
+      (sum: number, history: any) => sum + history.pointsAwarded,
       0
     )
 
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       totalPointsEarned,
       currentPoints: lawFirm.punktySaldo,
       joinedAt: lawFirm.partnerProgram.joinedAt,
-      pointsHistory: lawFirm.partnerProgram.pointsHistory.map(h => ({
+      pointsHistory: lawFirm.partnerProgram.pointsHistory.map((h: any) => ({
         id: h.id,
         pointsAwarded: h.pointsAwarded,
         month: h.month,

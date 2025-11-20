@@ -105,11 +105,11 @@ export async function GET(
         return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
       }
 
-      const hasOffer = caseData.offers.some((offer) => offer.lawFirmId === lawFirm.id)
+      const hasOffer = caseData.offers.some((offer: any) => offer.lawFirmId === lawFirm.id)
       const isAvailable = ["NOWA", "OFERTY_OTRZYMANE"].includes(caseData.status)
 
       // Sprawdź czy istnieje zaakceptowana oferta od innej kancelarii
-      const acceptedOffer = caseData.offers.find((offer) => offer.status === "ZAAKCEPTOWANA")
+      const acceptedOffer = caseData.offers.find((offer: any) => offer.status === "ZAAKCEPTOWANA")
       const hasAcceptedOfferFromOther = acceptedOffer && acceptedOffer.lawFirmId !== lawFirm.id
 
       // Jeśli istnieje zaakceptowana oferta od innej kancelarii, odmów dostępu

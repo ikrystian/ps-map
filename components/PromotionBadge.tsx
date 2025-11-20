@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Award, Home, TrendingUp } from "lucide-react"
-import { PromotionType } from "@prisma/client"
 
 interface PromotionBadgeProps {
-  highlightType: PromotionType | null
+  highlightType: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | null
   className?: string
 }
 

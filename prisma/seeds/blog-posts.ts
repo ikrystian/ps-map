@@ -4,16 +4,38 @@ import { faker } from '@faker-js/faker'
 
 const POSTS_TO_CREATE = 30
 
+interface LawFirmType {
+  id: string;
+  nazwa: string;
+}
+
+interface BlogCategoryType {
+  id: string;
+  nazwa: string;
+  slug: string;
+}
+
 export async function seedBlogPosts(prisma: PrismaClient) {
   console.log(`Seeding ${POSTS_TO_CREATE} blog posts...`)
 
-  const lawFirms = await prisma.lawFirm.findMany()
+  const lawFirms: LawFirmType[] = await prisma.lawFirm.findMany({
+    select: {
+      id: true,
+      nazwa: true,
+    },
+  })
   if (lawFirms.length === 0) {
     console.log('No law firms found, skipping blog post seeding.')
     return
   }
 
-  let categories = await prisma.blogCategory.findMany()
+  let categories: BlogCategoryType[] = await prisma.blogCategory.findMany({
+    select: {
+      id: true,
+      nazwa: true,
+      slug: true,
+    },
+  })
   if (categories.length === 0) {
     // Create some default categories if none exist
     const categoryNames = ['Prawo cywilne', 'Prawo karne', 'Prawo rodzinne', 'Prawo pracy', 'Prawo handlowe']
@@ -22,6 +44,11 @@ export async function seedBlogPosts(prisma: PrismaClient) {
         data: {
           nazwa: name,
           slug: faker.helpers.slugify(name).toLowerCase(),
+        },
+        select: {
+          id: true,
+          nazwa: true,
+          slug: true,
         },
       })
       categories.push(newCategory)

@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Star, CheckCircle2 } from "lucide-react"
 import { PromotionBadge } from "./PromotionBadge"
-import { PromotionType } from "@prisma/client"
 import Link from "next/link"
 import { cn, getSubscriptionBorderColor } from "@/lib/utils"
 
@@ -20,7 +19,7 @@ interface PromotedLawFirmCardProps {
     reviewCount: number
     categories: Array<{ nazwa: string }>
     promoted?: boolean
-    highlightType?: PromotionType | null
+    highlightType?: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | null
     subscriptionType?: string | null
   }
   className?: string

@@ -147,9 +147,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate ratings, boosts, and highlight types for each law firm
     const lawFirmsWithData = await Promise.all(
-      lawFirms.map(async (firm) => {
+      lawFirms.map(async (firm: any) => {
         const avgRating = firm.reviews.length > 0
-          ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / firm.reviews.length
+          ? firm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / firm.reviews.length
           : 0
 
         // Calculate promotion boost
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
           zweryfikowana: firm.zweryfikowana,
           callaPolska: firm.callaPolska,
           onlineOnly: firm.onlineOnly,
-          categories: firm.categories.map((c) => c.category),
+          categories: firm.categories.map((c: any) => c.category),
           avgRating: parseFloat(avgRating.toFixed(1)),
           reviewCount: firm.reviews.length,
           wyswietleniaProfilu: firm.wyswietleniaProfilu,
@@ -199,9 +199,9 @@ export async function GET(request: NextRequest) {
 
     // Sort by final score (with promotion boosts applied)
     const sortedLawFirms = lawFirmsWithData
-      .sort((a, b) => b._score - a._score)
+      .sort((a: any, b: any) => b._score - a._score)
       .slice(0, limit) // Apply limit after sorting
-      .map(({ _score, ...firm }) => firm) // Remove internal score from response
+      .map(({ _score, ...firm }: any) => firm) // Remove internal score from response
 
     return NextResponse.json({
       lawFirms: sortedLawFirms,
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(body.password, 10)
 
     // Utwórz użytkownika i kancelarię w transakcji
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Utwórz użytkownika
       const user = await tx.user.create({
         data: {

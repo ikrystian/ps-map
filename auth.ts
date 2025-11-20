@@ -2,7 +2,6 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
-import type { UserRole } from "@prisma/client"
 import type { NextAuthConfig, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
 
@@ -74,7 +73,7 @@ export const authOptions: NextAuthConfig = {
     async jwt({ token, user, trigger, session }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update"; session?: any }) {
       // Podczas pierwszego logowania
       if (user) {
-        token.role = user.role as UserRole
+        token.role = user.role as string
         token.id = user.id as string
         token.picture = user.image
       }
@@ -115,7 +114,7 @@ export const authOptions: NextAuthConfig = {
             token.name = freshUser.name
             token.email = freshUser.email
             token.picture = freshUser.image
-            token.role = freshUser.role as UserRole
+            token.role = freshUser.role as string
             token.lastRefresh = Date.now()
           }
         } catch (error) {
@@ -128,7 +127,7 @@ export const authOptions: NextAuthConfig = {
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as UserRole
+        session.user.role = token.role as string
         session.user.image = token.picture as string | null | undefined
         session.user.name = token.name as string | null | undefined
       }

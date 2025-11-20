@@ -16,7 +16,7 @@ export async function POST(
     today.setHours(0, 0, 0, 0)
 
     // Update or create stats entry
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Increment total profile views on law firm
       await tx.lawFirm.update({
         where: { id },

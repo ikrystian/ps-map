@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         message: `Wysłano testowy email na ${to} (szablon: ${template.nazwa})`,
         userId: session.user.id,
       },
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error("Failed to create system log:", err)
       // Nie przerywaj procesu jeśli zapis logu się nie udał
     })

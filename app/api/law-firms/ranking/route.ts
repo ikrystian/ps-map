@@ -54,10 +54,10 @@ export async function GET(request: NextRequest) {
     })
 
     // Calculate ratings and add rank
-    const rankedLawFirms = lawFirms.map((firm, index) => {
+    const rankedLawFirms = lawFirms.map((firm: any, index: number) => {
       const reviewCount = firm.reviews.length
       const avgRating = reviewCount > 0
-        ? Math.round((firm.reviews.reduce((sum, r) => sum + r.ocenaOgolna, 0) / reviewCount) * 10) / 10
+        ? Math.round((firm.reviews.reduce((sum: number, r: any) => sum + r.ocenaOgolna, 0) / reviewCount) * 10) / 10
         : 0
 
       return {
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         zweryfikowana: firm.zweryfikowana,
         subscriptionType: firm.pakietSubskrypcji || null,
         voivodeship: firm.voivodeship,
-        categories: firm.categories.map(c => ({ nazwa: c.category.nazwa })),
+        categories: firm.categories.map((c: any) => ({ nazwa: c.category.nazwa })),
         avgRating,
         reviewCount,
         rank: index + 1,

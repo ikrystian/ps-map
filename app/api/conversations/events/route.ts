@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
               },
             })
             unreadCount = conversations.reduce(
-              (sum, conv) => sum + conv.messages.length,
+              (sum: number, conv: any) => sum + conv.messages.length,
               0
             )
           } else if (lawFirm) {
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
               },
             })
             unreadCount = conversations.reduce(
-              (sum, conv) => sum + conv.messages.length,
+              (sum: number, conv: any) => sum + conv.messages.length,
               0
             )
           }

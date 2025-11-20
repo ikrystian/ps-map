@@ -97,9 +97,9 @@ export async function GET(request: NextRequest) {
       })
 
       // Filtruj sprawy, aby ukryć te z zaakceptowanymi ofertami od innych kancelarii
-      const filteredCases = allCases.filter(caseItem => {
+      const filteredCases = allCases.filter((caseItem: any) => {
         // Sprawdź czy istnieje zaakceptowana oferta
-        const acceptedOffer = caseItem.offers.find(offer => offer.status === "ZAAKCEPTOWANA")
+        const acceptedOffer = caseItem.offers.find((offer: any) => offer.status === "ZAAKCEPTOWANA")
 
         // Jeśli nie ma zaakceptowanej oferty, pokaż sprawę
         if (!acceptedOffer) {
@@ -116,11 +116,11 @@ export async function GET(request: NextRequest) {
       })
 
       // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
-      const cases = filteredCases.map(caseItem => ({
+      const cases = filteredCases.map((caseItem: any) => ({
         ...caseItem,
         offers: caseItem.offers
-          .filter(offer => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
-          .map(({ lawFirmId, ...offer }) => offer) // Usuń lawFirmId
+          .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
+          .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
       }))
 
       return NextResponse.json(cases)
@@ -273,7 +273,7 @@ export async function POST(request: NextRequest) {
     // Utwórz powiadomienia dla kancelarii
     if (lawFirms.length > 0) {
       const lawFirmNotifications = await prisma.notification.createMany({
-        data: lawFirms.map((lf) => ({
+        data: lawFirms.map((lf: any) => ({
           userId: lf.userId,
           typ: "NOWA_OFERTA",
           tytul: "Nowa sprawa w Twojej specjalizacji",
@@ -286,7 +286,7 @@ export async function POST(request: NextRequest) {
       // We need to get the created notifications to emit them
       const createdNotifications = await prisma.notification.findMany({
         where: {
-          userId: { in: lawFirms.map((lf) => lf.userId) },
+          userId: { in: lawFirms.map((lf: any) => lf.userId) },
           typ: "NOWA_OFERTA",
           tytul: "Nowa sprawa w Twojej specjalizacji",
         },

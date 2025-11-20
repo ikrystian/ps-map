@@ -5,7 +5,6 @@
  * Pakiety: PODSTAWOWY, STANDARD, PREMIUM, BIZNES
  */
 
-import { SubscriptionPackage } from "@prisma/client";
 
 // ============================================================================
 // TYPY
@@ -16,7 +15,7 @@ import { SubscriptionPackage } from "@prisma/client";
  */
 export interface LawFirmPermissionData {
   id: string;
-  pakietSubskrypcji: SubscriptionPackage | null;
+  pakietSubskrypcji: "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
   dataPakietuOd: Date | null;
   dataPakietuDo: Date | null;
   autoRenewal: boolean;
@@ -59,7 +58,7 @@ export interface LimitCheckResult {
  */
 export interface PermissionsSet {
   // Informacje o pakiecie
-  packageName: SubscriptionPackage | null;
+  packageName: "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
   packageActive: boolean;
   packageExpired: boolean;
   expiryDate: Date | null;
@@ -104,7 +103,7 @@ export interface PermissionsSet {
  * Konfiguracja uprawnień dla każdego pakietu
  * Źródło: prisma/seed-packages.ts i schema.prisma
  */
-const PACKAGE_PERMISSIONS: Record<SubscriptionPackage, Omit<PermissionsSet, 'packageName' | 'packageActive' | 'packageExpired' | 'expiryDate' | 'autoRenewal'>> = {
+const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | 'packageActive' | 'packageExpired' | 'expiryDate' | 'autoRenewal'>> = {
   PODSTAWOWY: {
     features: {
       canAccessBlog: false,
@@ -374,12 +373,12 @@ export function checkLimit(
 /**
  * Zwraca minimalny pakiet wymagany dla danej funkcji
  */
-export function getRequiredPackageForFeature(feature: Feature): SubscriptionPackage[] {
-  const packages: SubscriptionPackage[] = [];
+export function getRequiredPackageForFeature(feature: Feature): string[] {
+  const packages: string[] = [];
 
   for (const [pkg, config] of Object.entries(PACKAGE_PERMISSIONS)) {
     if (config.features[feature]) {
-      packages.push(pkg as SubscriptionPackage);
+      packages.push(pkg as string);
     }
   }
 
@@ -390,10 +389,10 @@ export function getRequiredPackageForFeature(feature: Feature): SubscriptionPack
  * Porównuje dwa pakiety - zwraca true jeśli firstPackage jest wyższy lub równy secondPackage
  */
 export function isPackageHigherOrEqual(
-  firstPackage: SubscriptionPackage,
-  secondPackage: SubscriptionPackage
+  firstPackage: string,
+  secondPackage: string
 ): boolean {
-  const hierarchy: SubscriptionPackage[] = ['PODSTAWOWY', 'STANDARD', 'PREMIUM', 'BIZNES'];
+  const hierarchy: string[] = ['PODSTAWOWY', 'STANDARD', 'PREMIUM', 'BIZNES'];
   const firstIndex = hierarchy.indexOf(firstPackage);
   const secondIndex = hierarchy.indexOf(secondPackage);
 
@@ -403,12 +402,12 @@ export function isPackageHigherOrEqual(
 /**
  * Zwraca nazwę pakietu po polsku
  */
-export function getPackageDisplayName(packageType: SubscriptionPackage | null): string {
+export function getPackageDisplayName(packageType: string | null): string {
   if (!packageType) {
     return 'Brak pakietu';
   }
 
-  const names: Record<SubscriptionPackage, string> = {
+  const names: Record<string, string> = {
     PODSTAWOWY: 'Podstawowy',
     STANDARD: 'Standard',
     PREMIUM: 'Premium',
@@ -511,7 +510,7 @@ export async function canAddNewCategory(
  */
 export async function canManageBlog(
   lawFirm: LawFirmPermissionData
-): Promise<{ allowed: boolean; reason?: string; requiredPackages?: SubscriptionPackage[] }> {
+): Promise<{ allowed: boolean; reason?: string; requiredPackages?: string[] }> {
   if (isPackageExpired(lawFirm)) {
     return {
       allowed: false,
@@ -536,7 +535,7 @@ export async function canManageBlog(
  */
 export async function canViewStatistics(
   lawFirm: LawFirmPermissionData
-): Promise<{ allowed: boolean; reason?: string; requiredPackages?: SubscriptionPackage[] }> {
+): Promise<{ allowed: boolean; reason?: string; requiredPackages?: string[] }> {
   if (isPackageExpired(lawFirm)) {
     return {
       allowed: false,

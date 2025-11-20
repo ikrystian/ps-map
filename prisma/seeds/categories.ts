@@ -1,4 +1,4 @@
-import { PrismaClient, CategoryType } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
@@ -12,8 +12,8 @@ export async function seedCategories(prisma: PrismaClient) {
     const slug = category.nazwa.toLowerCase().replace(/\s/g, '-')
     await prisma.category.upsert({
       where: { slug: slug },
-      update: { ...category, typ: CategoryType[category.typ as keyof typeof CategoryType], slug: slug },
-      create: { ...category, typ: CategoryType[category.typ as keyof typeof CategoryType], slug: slug },
+      update: { ...category, typ: prisma.CategoryType[category.typ as keyof typeof prisma.CategoryType], slug: slug },
+      create: { ...category, typ: prisma.CategoryType[category.typ as keyof typeof prisma.CategoryType], slug: slug },
     })
   }
 
