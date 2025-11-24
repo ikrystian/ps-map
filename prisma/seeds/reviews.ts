@@ -24,7 +24,7 @@ export async function seedReviews(prisma: PrismaClient) {
         randomClient = faker.helpers.arrayElement(clients)
       } else {
         // Create a new client if none exist
-        const randomUserData = createRandomUser(UserRole.CLIENT)
+        const randomUserData = createRandomUser(prisma, UserRole.CLIENT)
         const user = await prisma.user.create({
           data: { ...randomUserData, password: 'Password123' }, // temp password
         })

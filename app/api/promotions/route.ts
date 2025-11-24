@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { PromotionType } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { sendEmail, generatePromotionActivatedEmail } from "@/lib/email"
 
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
       prisma.promotion.create({
         data: {
           lawFirmId: lawFirm.id,
-          typPromocji: typPromocji as string,
+          typPromocji: typPromocji as PromotionType,
           czasTrwaniaDni,
           kategoriaPromocji,
           wojewodztwoPromocji,

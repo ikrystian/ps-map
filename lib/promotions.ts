@@ -423,7 +423,7 @@ export async function renewExpiredPromotions() {
         prisma.promotion.create({
           data: {
             lawFirmId: promotion.lawFirmId,
-            typPromocji: promotion.typPromocji as string,
+            typPromocji: promotion.typPromocji,
             czasTrwaniaDni: promotion.czasTrwaniaDni,
             kategoriaPromocji: promotion.kategoriaPromocji,
             wojewodztwoPromocji: promotion.wojewodztwoPromocji,

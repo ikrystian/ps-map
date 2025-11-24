@@ -16,7 +16,7 @@ export async function seedTestData(prisma: PrismaClient) {
       const role = faker.helpers.arrayElement([UserRole.LAW_FIRM, UserRole.CLIENT]);
 
       // 1. Stwórz użytkownika
-      const randomUser = createRandomUser(role);
+      const randomUser = createRandomUser(prisma, role);
       const hashedPassword = await bcrypt.hash(randomUser.password, 10);
       const user = await prisma.user.upsert({
         where: { email: randomUser.email },
@@ -33,7 +33,7 @@ export async function seedTestData(prisma: PrismaClient) {
         const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships);
 
         // 3. Stwórz slug
-        const randomLawFirmData = createRandomLawFirm();
+        const randomLawFirmData = createRandomLawFirm(prisma);
         const slug = `${randomLawFirmData.nazwa.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${faker.string.alphanumeric(5)}`;
 
         // 4. Stwórz kancelarię
@@ -77,12 +77,12 @@ export async function seedTestData(prisma: PrismaClient) {
       } else {
         // Stwórz klienta
         await prisma.client.create({
-            data: {
-                userId: user.id,
-                imie: user.name ? user.name.split(' ')[0] : '',
-                nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
-                telefon: faker.phone.number()
-            }
+          data: {
+            userId: user.id,
+            imie: user.name ? user.name.split(' ')[0] : '',
+            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
+            telefon: faker.phone.number()
+          }
         });
         console.log(`  ✓ Client profile created for: ${user.email}`)
       }

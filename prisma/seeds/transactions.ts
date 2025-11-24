@@ -18,7 +18,7 @@ export async function seedTransactions(prisma: PrismaClient) {
   for (let i = 0; i < TRANSACTIONS_TO_CREATE; i++) {
     try {
       const randomLawFirm = faker.helpers.arrayElement(lawFirms)
-      const transactionData = createRandomTransaction()
+      const transactionData = createRandomTransaction(prisma)
 
       const orderData: any = {
         lawFirmId: randomLawFirm.id,

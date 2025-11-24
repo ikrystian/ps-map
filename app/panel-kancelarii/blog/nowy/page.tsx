@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
-import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
+import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { ImageUpload } from "@/components/ui/image-upload"
 
 const postSchema = z.object({
@@ -208,7 +208,7 @@ export default function LawFirmNewBlogPostPage() {
                   <FormItem>
                     <FormLabel>Treść artykułu *</FormLabel>
                     <FormControl>
-                      <WysiwygEditor
+                      <RichTextEditor
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="Napisz treść swojego artykułu..."

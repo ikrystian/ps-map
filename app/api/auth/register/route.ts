@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
 import crypto from "crypto"
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
       data: {
         email,
         password: hashedPassword,
-        role: role as string || "CLIENT",
+        role: (role as UserRole) || "CLIENT",
         name: userData.name || null,
         emailVerified: null, // Email nie zweryfikowany
       },

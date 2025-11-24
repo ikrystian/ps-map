@@ -73,7 +73,7 @@ export const authOptions: NextAuthConfig = {
     async jwt({ token, user, trigger, session }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update"; session?: any }) {
       // Podczas pierwszego logowania
       if (user) {
-        token.role = user.role as string
+        token.role = user.role
         token.id = user.id as string
         token.picture = user.image
       }
@@ -114,7 +114,7 @@ export const authOptions: NextAuthConfig = {
             token.name = freshUser.name
             token.email = freshUser.email
             token.picture = freshUser.image
-            token.role = freshUser.role as string
+            token.role = freshUser.role
             token.lastRefresh = Date.now()
           }
         } catch (error) {
@@ -127,7 +127,7 @@ export const authOptions: NextAuthConfig = {
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.role = token.role as any
         session.user.image = token.picture as string | null | undefined
         session.user.name = token.name as string | null | undefined
       }
