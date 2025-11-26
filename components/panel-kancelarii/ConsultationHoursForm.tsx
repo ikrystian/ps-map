@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle } from "lucide-react"
 
 const daysOfWeek = [
   { id: 1, name: "Poniedziałek" },
@@ -32,10 +32,13 @@ export function ConsultationHoursForm() {
 
   useEffect(() => {
     const fetchAvailability = async () => {
-      if (!session?.user?.id) return
+      if (!session?.user?.lawFirm?.id) {
+        setIsLoading(false)
+        return
+      }
       setIsLoading(true)
       try {
-        const response = await fetch(`/api/law-firms/${session.user.id}/consultation-availability`)
+        const response = await fetch(`/api/law-firms/${session.user.lawFirm.id}/consultation-availability`)
         if (response.ok) {
           const data = await response.json()
           setAvailability(data)
@@ -91,11 +94,14 @@ export function ConsultationHoursForm() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
+    if (!session?.user?.lawFirm?.id) {
+      toast.error("Nie znaleziono danych kancelarii. Spróbuj zalogować się ponownie.")
+      return
+    }
     setIsSaving(true)
     try {
-      const response = await fetch(`/api/law-firms/${session?.user?.id}/consultation-availability`, {
+      const response = await fetch(`/api/law-firms/${session.user.lawFirm.id}/consultation-availability`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({availability: availability.map(a => ({...a, price15min, price30min}))}),
@@ -117,8 +123,29 @@ export function ConsultationHoursForm() {
     )
   }
 
+  if (!session?.user?.lawFirm?.id) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Godziny konsultacji</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center min-h-[200px] text-center space-y-4">
+            <AlertCircle className="h-12 w-12 text-muted-foreground" />
+            <div>
+              <p className="text-lg font-semibold">Brak danych kancelarii</p>
+              <p className="text-sm text-muted-foreground">
+                Zaloguj się ponownie, aby zaktualizować swoje dane sesji.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <Card>
         <CardHeader>
           <CardTitle>Godziny konsultacji</CardTitle>
@@ -211,13 +238,13 @@ export function ConsultationHoursForm() {
             })}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" disabled={isSaving}>
+            <Button type="button" onClick={handleSubmit} disabled={isSaving}>
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Zapisz godziny konsultacji
             </Button>
           </div>
         </CardContent>
       </Card>
-    </form>
+    </div>
   )
 }

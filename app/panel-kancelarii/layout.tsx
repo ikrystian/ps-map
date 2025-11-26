@@ -43,6 +43,8 @@ const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
   { name: "Sprawy", href: "/panel-kancelarii/sprawy", icon: Briefcase },
   { name: "Oferty", href: "/panel-kancelarii/oferty", icon: FileText },
+    { name: "Konsultacje", href: "/panel-kancelarii/konsultacje", icon: BookOpen },
+
   { name: "Profil", href: "/panel-kancelarii/profil", icon: User },
   { name: "Zakres usług", href: "/panel-kancelarii/zakres-uslug", icon: Wrench },
   { name: "Blog", href: "/panel-kancelarii/blog", icon: BookOpen },

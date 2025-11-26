@@ -97,6 +97,22 @@ export const authOptions: NextAuthConfig = {
         token.role = user.role
         token.id = user.id as string
         token.picture = user.image
+
+        // Fetch lawFirm or client data
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: {
+            lawFirm: { select: { id: true } },
+            client: { select: { id: true } }
+          }
+        })
+
+        if (dbUser?.lawFirm) {
+          token.lawFirmId = dbUser.lawFirm.id
+        }
+        if (dbUser?.client) {
+          token.clientId = dbUser.client.id
+        }
       }
 
       // Jeśli trigger to "update" i mamy dane sesji, użyj ich bezpośrednio
@@ -128,6 +144,8 @@ export const authOptions: NextAuthConfig = {
               name: true,
               role: true,
               image: true,
+              lawFirm: { select: { id: true } },
+              client: { select: { id: true } }
             },
           })
 
@@ -136,6 +154,8 @@ export const authOptions: NextAuthConfig = {
             token.email = freshUser.email
             token.picture = freshUser.image
             token.role = freshUser.role
+            token.lawFirmId = freshUser.lawFirm?.id
+            token.clientId = freshUser.client?.id
             token.lastRefresh = Date.now()
           }
         } catch (error) {
@@ -151,6 +171,13 @@ export const authOptions: NextAuthConfig = {
         session.user.role = token.role as any
         session.user.image = token.picture as string | null | undefined
         session.user.name = token.name as string | null | undefined
+
+        if (token.lawFirmId) {
+          session.user.lawFirm = { id: token.lawFirmId }
+        }
+        if (token.clientId) {
+          session.user.client = { id: token.clientId }
+        }
       }
       return session
     },

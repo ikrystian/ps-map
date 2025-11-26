@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/auth"
+import { auth } from "@/auth"
 
 const prisma = new PrismaClient()
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  const { id } = await params
 
-  if (!session || session.user.lawFirm?.id !== params.id) {
+  if (!session || session.user.lawFirm?.id !== id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const bookings = await prisma.consultationBooking.findMany({
-      where: { lawFirmId: params.id },
+      where: { lawFirmId: id },
       include: {
         client: {
           include: {

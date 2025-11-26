@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/auth"
+import { auth } from "@/auth"
 
 const prisma = new PrismaClient()
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  const { id } = await params
 
-  if (!session || session.user.lawFirm?.id !== params.id) {
+  if (!session || session.user.lawFirm?.id !== id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const availability = await prisma.consultationAvailability.findMany({
-      where: { lawFirmId: params.id },
+      where: { lawFirmId: id },
       orderBy: { dayOfWeek: "asc" },
     })
     return NextResponse.json(availability)
@@ -24,10 +24,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  const { id } = await params
 
-  if (!session || session.user.lawFirm?.id !== params.id) {
+  if (!session || session.user.lawFirm?.id !== id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -37,14 +38,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     await prisma.$transaction(async (tx) => {
       // Delete existing availability
       await tx.consultationAvailability.deleteMany({
-        where: { lawFirmId: params.id },
+        where: { lawFirmId: id },
       })
 
       // Create new availability
       if (availability && availability.length > 0) {
         await tx.consultationAvailability.createMany({
           data: availability.map((item: any) => ({
-            lawFirmId: params.id,
+            lawFirmId: id,
             dayOfWeek: item.dayOfWeek,
             startTime: item.startTime,
             endTime: item.endTime,

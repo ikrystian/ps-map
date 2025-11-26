@@ -25,6 +25,7 @@ import { NotificationBell } from "@/components/NotificationBell"
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
   { name: "Zarządzanie profilem", href: "/panel-klienta/profil", icon: UserCircle },
+  { name: "Konsultacje", href: "/panel-klienta/konsultacje", icon: CalendarCheck },
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
   { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
   { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },

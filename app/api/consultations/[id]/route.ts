@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/auth"
+import { auth } from "@/auth"
 
 // Dummy function for Google Meet link generation
 const generateGoogleMeetLink = async (booking: any) => {
@@ -14,9 +13,9 @@ const generateGoogleMeetLink = async (booking: any) => {
 
 const prisma = new PrismaClient()
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  const { id: bookingId } = params
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  const { id: bookingId } = await params
   const { status, paymentStatus } = await req.json()
 
   if (!session?.user?.lawFirm) {
