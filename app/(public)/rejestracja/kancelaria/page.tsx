@@ -464,9 +464,9 @@ export default function LawFirmRegistrationPage() {
             </div>
             {!formData.callaPolska && (
               <div className="space-y-2">
-                <Label>Województwa działania *</Label>
+                <Label>Województwo działania *</Label>
                 <div className="text-sm text-muted-foreground mb-2">
-                  Wybierz dodatkowe województwa, w których działasz
+                  Wybierz województwo, w którym działasz
                 </div>
                 <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
                   {voivodeships.map((v) => (
@@ -476,9 +476,11 @@ export default function LawFirmRegistrationPage() {
                         checked={formData.voivodeshipsIds.includes(v.id)}
                         onCheckedChange={(checked) => {
                           if (checked) {
-                            setFormData({ ...formData, voivodeshipsIds: [...formData.voivodeshipsIds, v.id] })
+                            // Single selection: replace array with just this ID
+                            setFormData({ ...formData, voivodeshipsIds: [v.id] })
                           } else {
-                            setFormData({ ...formData, voivodeshipsIds: formData.voivodeshipsIds.filter((id) => id !== v.id) })
+                            // Allow deselecting
+                            setFormData({ ...formData, voivodeshipsIds: [] })
                           }
                         }}
                       />
@@ -509,9 +511,11 @@ export default function LawFirmRegistrationPage() {
                       checked={formData.categoriesIds.includes(cat.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setFormData({ ...formData, categoriesIds: [...formData.categoriesIds, cat.id] })
+                          // Single selection: replace array with just this ID
+                          setFormData({ ...formData, categoriesIds: [cat.id] })
                         } else {
-                          setFormData({ ...formData, categoriesIds: formData.categoriesIds.filter((id) => id !== cat.id) })
+                          // Allow deselecting
+                          setFormData({ ...formData, categoriesIds: [] })
                         }
                       }}
                     />
@@ -666,9 +670,8 @@ export default function LawFirmRegistrationPage() {
               {Array.from({ length: totalSteps }, (_, i) => (
                 <div
                   key={i}
-                  className={`h-2 flex-1 mx-1 rounded-full ${
-                    i + 1 <= currentStep ? "bg-primary" : "bg-muted"
-                  }`}
+                  className={`h-2 flex-1 mx-1 rounded-full ${i + 1 <= currentStep ? "bg-primary" : "bg-muted"
+                    }`}
                 />
               ))}
             </div>
