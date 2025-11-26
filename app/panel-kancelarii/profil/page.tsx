@@ -17,6 +17,7 @@ import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-reac
 import Image from "next/image"
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import { ConsultationHoursForm } from "@/components/panel-kancelarii/ConsultationHoursForm"
 
 interface Voivodeship {
   id: string
@@ -418,6 +419,7 @@ export default function LawFirmProfilePage() {
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
           <TabsTrigger value="specialization">Specjalizacje</TabsTrigger>
           <TabsTrigger value="multimedia">Multimedia</TabsTrigger>
+           <TabsTrigger value="consultations">Godziny konsultacji</TabsTrigger>
           <TabsTrigger value="additional">Dodatkowe</TabsTrigger>
         </TabsList>
 
@@ -1104,6 +1106,12 @@ export default function LawFirmProfilePage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Godziny konsultacji */}
+        <TabsContent value="consultations">
+            <ConsultationHoursForm />
+        </TabsContent>
+
 
         {/* Dodatkowe */}
         <TabsContent value="additional" className="space-y-6">

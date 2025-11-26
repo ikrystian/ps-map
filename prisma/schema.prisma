@@ -142,6 +142,7 @@ model Client {
   favoritesFirms  FavoriteLawFirm[]
   negotiations    Negotiation[]
   punktySaldo     Int      @default(0)
+  consultationBookings ConsultationBooking[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -276,6 +277,8 @@ model LawFirm {
   categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
   partnerProgram        PartnerProgram?       // Program partnerski
   pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
+  consultationAvailabilities ConsultationAvailability[]
+  consultationBookings       ConsultationBooking[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -1803,4 +1806,63 @@ enum EmailType {
   SUBSKRYPCJA_WYGASA       // Email o wygasającej subskrypcji
   NISKI_STAN_PUNKTOW       // Email o niskim stanie punktów
   CUSTOM                   // Własny szablon
+}
+
+// ============================================================================
+// KONSULTACJE
+// ============================================================================
+
+model ConsultationAvailability {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  dayOfWeek       Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime       String   // "HH:MM" format
+  endTime         String   // "HH:MM" format
+
+  price15min      Float
+  price30min      Float
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([lawFirmId, dayOfWeek])
+  @@index([lawFirmId])
+}
+
+model ConsultationBooking {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  consultationDate DateTime
+  duration         Int      // in minutes (15 or 30)
+  price            Float
+
+  topic           String
+  clientContact   String
+
+  status          ConsultationStatus @default(PENDING)
+  paymentStatus   PaymentStatus      @default(OCZEKUJE)
+
+  googleMeetUrl   String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([clientId])
+  @@index([status])
+  @@index([consultationDate])
+}
+
+enum ConsultationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
 }

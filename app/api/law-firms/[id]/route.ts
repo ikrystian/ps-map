@@ -88,6 +88,7 @@ export async function GET(
             createdAt: "desc",
           },
         },
+        consultationAvailabilities: true,
       },
     })
 
