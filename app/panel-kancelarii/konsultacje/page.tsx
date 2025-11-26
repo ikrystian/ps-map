@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2, Trash2, Calendar, Clock, FileText, Mail, Video, User } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
 
@@ -56,7 +57,7 @@ export default function ConsultationsPage() {
     }
   }
 
-    const handlePaymentStatusChange = async (bookingId: string, paymentStatus: "ZAPLACONE" | "OCZEKUJE") => {
+  const handlePaymentStatusChange = async (bookingId: string, paymentStatus: "ZAPLACONE" | "OCZEKUJE") => {
     try {
       const response = await fetch(`/api/consultations/${bookingId}`, {
         method: "PATCH",
@@ -122,50 +123,82 @@ export default function ConsultationsPage() {
               <p>Brak próśb o konsultacje.</p>
             ) : (
               bookings.map((booking) => (
-                <div key={booking.id} className="border p-4 rounded-lg flex justify-between items-start consulting-item">
-                  <div className="flex gap-4 flex-1">
-                    <Avatar className="h-12 w-12 flex-shrink-0">
-                      {booking.client?.user?.image && (
-                        <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />
-                      )}
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">Klient: {booking.client.user.name}</p>
-                      <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
-                      <p>Czas trwania: {booking.duration} min</p>
-                      <p>Temat: {booking.topic}</p>
-                      <p>Kontakt: {booking.clientContact}</p>
-                      <p>Status: {booking.status}</p>
-                      <p>Status płatności: {booking.paymentStatus}</p>
-                      {booking.googleMeetUrl && <p>Link do spotkania: <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer">{booking.googleMeetUrl}</a></p>}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 items-end">
-                    {booking.status === "PENDING" && (
-                      <div className="flex gap-2">
-                        <Button size="sm" onClick={() => handleStatusChange(booking.id, "ACCEPTED")}>
-                          Akceptuj
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleStatusChange(booking.id, "REJECTED")}>
-                          Odrzuć
-                        </Button>
+                <div key={booking.id} className="border p-4 rounded-lg consulting-item">
+                  <div className="flex flex-col gap-4 md:flex-row md:gap-4">
+                    <div className="flex gap-4 flex-1">
+                      <Avatar className="h-12 w-12 flex-shrink-0">
+                        {booking.client?.user?.image && (
+                          <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />
+                        )}
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-semibold">{booking.client.user.name}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="secondary" className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
+                          </Badge>
+                          <Badge variant="secondary" className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {booking.duration} min
+                          </Badge>
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <FileText className="h-3 w-3" />
+                            {booking.topic}
+                          </Badge>
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {booking.clientContact}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant={booking.status === 'ACCEPTED' ? 'default' : booking.status === 'REJECTED' ? 'destructive' : 'secondary'}>
+                            Status: {booking.status}
+                          </Badge>
+                          <Badge variant={booking.paymentStatus === 'ZAPLACONE' ? 'default' : 'outline'}>
+                            Płatność: {booking.paymentStatus}
+                          </Badge>
+                        </div>
+                        {booking.googleMeetUrl && (
+                          <div className="flex items-center gap-2">
+                            <Video className="h-4 w-4 text-muted-foreground" />
+                            <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline">
+                              {booking.googleMeetUrl}
+                            </a>
+                          </div>
+                        )}
                       </div>
-                    )}
-                     <div className="flex gap-2">
+                    </div>
+                    <div className="flex flex-col gap-2 md:items-end">
+                      {booking.status === "PENDING" && (
+                        <div className="flex gap-2 flex-wrap">
+                          <Button size="sm" onClick={() => handleStatusChange(booking.id, "ACCEPTED")}>
+                            Akceptuj
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleStatusChange(booking.id, "REJECTED")}>
+                            Odrzuć
+                          </Button>
+                        </div>
+                      )}
+                      <div className="flex gap-2 flex-wrap">
                         <Button size="sm" onClick={() => handlePaymentStatusChange(booking.id, "ZAPLACONE")} disabled={booking.paymentStatus === "ZAPLACONE"}>
                           Oznacz jako zapłacone
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => handlePaymentStatusChange(booking.id, "OCZEKUJE")} disabled={booking.paymentStatus === "OCZEKUJE"}>
                           Oznacz jako nieopłacone
                         </Button>
+                      </div>
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)} className="w-full md:w-auto">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Usuń
+                      </Button>
                     </div>
-                    <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)}>
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Usuń
-                    </Button>
                   </div>
                 </div>
               ))

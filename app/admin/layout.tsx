@@ -66,12 +66,12 @@ export default function AdminLayout({
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <aside className={cn(
-        "border-r border-border bg-card transition-all duration-300 ease-in-out",
+        "border-r border-border transition-all duration-300 ease-in-out",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-b border-border px-4 justify-between">
+          <div className="flex h-16 items-center border-border px-4 justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
                 <Shield className="h-6 w-6 text-primary" />

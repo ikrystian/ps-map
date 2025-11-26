@@ -59,7 +59,7 @@
 .dark {
   --background: #20201d;
   --foreground: #c3c0b6;
-  --card: #282825;
+  --card: #363431;
   --card-foreground: #faf9f5;
   --popover: #30302e;
   --popover-foreground: #e5e5e2;
@@ -262,9 +262,6 @@
 
 a .bg-card {
     transition: all 0.2s ease-in-out;
-
-  &:hover {
-  }
 }
 
 /* Animowany gradientowy border dla pakietu BIZNES */

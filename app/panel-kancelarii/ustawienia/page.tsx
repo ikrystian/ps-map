@@ -410,7 +410,7 @@ export default function LawFirmSettingsPage() {
         <p className="text-muted-foreground">Zarządzaj swoim kontem i preferencjami powiadomień</p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid xl:grid-cols-2 gap-6">
         {/* Lewa kolumna - Dane osobowe i Konto */}
         <div className="space-y-6">
           {/* Dane osobowe */}

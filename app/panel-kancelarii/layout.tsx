@@ -39,6 +39,7 @@ import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationBell } from "@/components/NotificationBell"
 import { triggerBadgeCheck } from "@/app/actions/badges"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
@@ -139,22 +140,34 @@ export default function LawFirmPanelLayout({
     }
   }
 
+  // Get user initials for avatar fallback
+  const getUserInitials = (name: string | null | undefined) => {
+    if (!name) return "U"
+    const parts = name.split(" ")
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+    }
+    return name[0].toUpperCase()
+  }
+
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-      {/* Package Badge in Sidebar */}
-      {!isCollapsed && subscriptionType && (
-        <div className="mb-4 px-2">
-          <div className="text-xs text-muted-foreground mb-1 uppercase font-semibold tracking-wider">
-            Twój pakiet
+      {/* User Avatar and Name */}
+      {(inSheet || !isCollapsed) && session?.user && (
+        <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
+          <Avatar className="h-16 w-16">
+            <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
+            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+              {getUserInitials(session.user.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-center">
+            <p className="text-md">{session.user.name}</p>
+            <p className="text-sm text-primary">Radca prawnny</p>
           </div>
-          <PackageBadge
-            packageType={subscriptionType as any}
-            className="w-full justify-center py-1.5"
-          />
         </div>
       )}
-
       {navigation.map((item) => {
         const isActive = pathname === item.href ||
           (item.href !== "/panel-kancelarii" && pathname.startsWith(item.href))
@@ -169,12 +182,12 @@ export default function LawFirmPanelLayout({
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative",
               isActive
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                : "text-muted-foreground hover:bg-accent hover:text-primary",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            <item.icon className="h-5 w-5 flex-shrink-0" />
+            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-primary" )} />
             {(inSheet || !isCollapsed) && <span>{item.name}</span>}
             {showBadge && (
               <span className={cn(
@@ -228,13 +241,13 @@ export default function LawFirmPanelLayout({
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
-        "hidden md:block border-r border-border bg-card transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-64",
+        "hidden md:block border-border transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-16" : "w-72",
         getBorderColorClass(subscriptionType)
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-b border-border px-4 justify-between">
+          <div className="flex h-16 items-center px-4 justify-between border-b bg-card">
             {!isCollapsed && <h2 className="text-lg font-semibold">Panel Kancelarii</h2>}
             <Button
               variant="ghost"
