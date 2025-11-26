@@ -30,6 +30,29 @@ export async function POST(req: NextRequest) {
         status: "PENDING",
         paymentStatus: "OCZEKUJE",
       },
+      include: {
+        client: {
+          include: {
+            user: true,
+          },
+        },
+        lawFirm: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    })
+
+    // Create notification for law firm
+    await prisma.notification.create({
+      data: {
+        userId: newBooking.lawFirm.userId,
+        typ: "NOWA_KONSULTACJA",
+        tytul: "Nowa prośba o konsultację",
+        tresc: `${newBooking.client.user.name} wysłał prośbę o konsultację (${duration} min)`,
+        linkUrl: "/panel-kancelarii/konsultacje",
+      },
     })
 
     return NextResponse.json(newBooking, { status: 201 })

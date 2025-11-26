@@ -50,11 +50,46 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         });
         console.log(meetLink);
         updateData.googleMeetUrl = meetLink || undefined;
+
+        // Create notification for client
+        await prisma.notification.create({
+          data: {
+            userId: booking.client.userId,
+            typ: "KONSULTACJA_ZAAKCEPTOWANA",
+            tytul: "Konsultacja zaakceptowana",
+            tresc: `${booking.lawFirm.nazwa} zaakceptowała Twoją prośbę o konsultację`,
+            linkUrl: "/panel-klienta/konsultacje",
+          },
+        })
+      } else if (status === "REJECTED") {
+        // Create notification for client
+        await prisma.notification.create({
+          data: {
+            userId: booking.client.userId,
+            typ: "KONSULTACJA_ODRZUCONA",
+            tytul: "Konsultacja odrzucona",
+            tresc: `${booking.lawFirm.nazwa} odrzuciła Twoją prośbę o konsultację`,
+            linkUrl: "/panel-klienta/konsultacje",
+          },
+        })
       }
     }
 
     if (paymentStatus) {
       updateData.paymentStatus = paymentStatus
+
+      // Create notification for client when marked as paid
+      if (paymentStatus === "ZAPLACONE") {
+        await prisma.notification.create({
+          data: {
+            userId: booking.client.userId,
+            typ: "KONSULTACJA_ZAPLACONA",
+            tytul: "Płatność potwierdzona",
+            tresc: `${booking.lawFirm.nazwa} potwierdziła płatność za konsultację`,
+            linkUrl: "/panel-klienta/konsultacje",
+          },
+        })
+      }
     }
 
     const updatedBooking = await prisma.consultationBooking.update({
@@ -80,6 +115,18 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   try {
     const booking = await prisma.consultationBooking.findUnique({
       where: { id: bookingId },
+      include: {
+        client: {
+          include: {
+            user: true,
+          },
+        },
+        lawFirm: {
+          include: {
+            user: true,
+          },
+        },
+      },
     })
 
     if (!booking) {
@@ -92,6 +139,31 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
     if (!isLawFirm && !isClient) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })
+    }
+
+    // Create notification for the other party
+    if (isClient) {
+      // Client deleted - notify law firm
+      await prisma.notification.create({
+        data: {
+          userId: booking.lawFirm.userId,
+          typ: "KONSULTACJA_ANULOWANA",
+          tytul: "Konsultacja anulowana",
+          tresc: `${booking.client.user.name} anulował konsultację`,
+          linkUrl: "/panel-kancelarii/konsultacje",
+        },
+      })
+    } else if (isLawFirm) {
+      // Law firm deleted - notify client
+      await prisma.notification.create({
+        data: {
+          userId: booking.client.userId,
+          typ: "KONSULTACJA_ANULOWANA",
+          tytul: "Konsultacja anulowana",
+          tresc: `${booking.lawFirm.nazwa} anulowała konsultację`,
+          linkUrl: "/panel-klienta/konsultacje",
+        },
+      })
     }
 
     await prisma.consultationBooking.delete({

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Loader2, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
@@ -84,19 +85,29 @@ export default function ClientConsultationsPage() {
             ) : (
               bookings.map((booking) => (
                 <div key={booking.id} className="border p-4 rounded-lg flex justify-between items-start">
-                  <div>
-                    <p className="font-semibold">Kancelaria: {booking.lawFirm.nazwa}</p>
-                    <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
-                    <p>Czas trwania: {booking.duration} min</p>
-                    <p>Temat: {booking.topic}</p>
-                    <p>Kwota płatności: {booking.price.toFixed(2)} zł</p>
-                    <p>Status: {booking.status}</p>
-                    <p>Status płatności: {booking.paymentStatus}</p>
-                    {booking.googleMeetUrl && booking.status === "ACCEPTED" ? (
-                       <p>Link do spotkania: <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{booking.googleMeetUrl}</a></p>
-                    ) : (
-                      <p>Link do spotkania pojawi się po zaakceptowaniu rezerwacji przez kancelarię.</p>
-                    )}
+                  <div className="flex gap-4 flex-1">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      {booking.lawFirm?.logo && (
+                        <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
+                      )}
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {booking.lawFirm?.nazwa ? booking.lawFirm.nazwa.substring(0, 2).toUpperCase() : "KA"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">Kancelaria: {booking.lawFirm.nazwa}</p>
+                      <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
+                      <p>Czas trwania: {booking.duration} min</p>
+                      <p>Temat: {booking.topic}</p>
+                      <p>Kwota płatności: {booking.price.toFixed(2)} zł</p>
+                      <p>Status: {booking.status}</p>
+                      <p>Status płatności: {booking.paymentStatus}</p>
+                      {booking.googleMeetUrl && booking.status === "ACCEPTED" ? (
+                         <p>Link do spotkania: <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{booking.googleMeetUrl}</a></p>
+                      ) : (
+                        <p>Link do spotkania pojawi się po zaakceptowaniu rezerwacji przez kancelarię.</p>
+                      )}
+                    </div>
                   </div>
                   <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)}>
                     <Trash2 className="mr-2 h-4 w-4" />

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import { Loader2, Trash2 } from "lucide-react"
 import { format } from "date-fns"
@@ -122,15 +123,25 @@ export default function ConsultationsPage() {
             ) : (
               bookings.map((booking) => (
                 <div key={booking.id} className="border p-4 rounded-lg flex justify-between items-start">
-                  <div>
-                    <p className="font-semibold">Klient: {booking.client.user.name}</p>
-                    <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
-                    <p>Czas trwania: {booking.duration} min</p>
-                    <p>Temat: {booking.topic}</p>
-                    <p>Kontakt: {booking.clientContact}</p>
-                    <p>Status: {booking.status}</p>
-                    <p>Status płatności: {booking.paymentStatus}</p>
-                    {booking.googleMeetUrl && <p>Link do spotkania: <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer">{booking.googleMeetUrl}</a></p>}
+                  <div className="flex gap-4 flex-1">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      {booking.client?.user?.image && (
+                        <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />
+                      )}
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">Klient: {booking.client.user.name}</p>
+                      <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
+                      <p>Czas trwania: {booking.duration} min</p>
+                      <p>Temat: {booking.topic}</p>
+                      <p>Kontakt: {booking.clientContact}</p>
+                      <p>Status: {booking.status}</p>
+                      <p>Status płatności: {booking.paymentStatus}</p>
+                      {booking.googleMeetUrl && <p>Link do spotkania: <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer">{booking.googleMeetUrl}</a></p>}
+                    </div>
                   </div>
                   <div className="flex flex-col gap-2 items-end">
                     {booking.status === "PENDING" && (

@@ -394,17 +394,17 @@ export default function LawFirmServicesPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Available Categories */}
-        <Card>
+        <Card className="col-span-2">
           <CardHeader>
             <CardTitle>Dostępne kategorie</CardTitle>
             <CardDescription>
               Zaznacz kategorie, które chcesz dodać do swojego profilu.
             </CardDescription>
           </CardHeader>
-          <CardContent className="h-[600px] overflow-y-auto pr-4">
-            <div className="space-y-6">
+          <CardContent className="h-[70vh] overflow-y-auto pr-4">
+            <div className="space-y-6 grid grid-cols-2">
               <div>
                 <h3 className="font-semibold mb-4 flex items-center text-primary">
                   <span className="bg-primary/10 p-1 rounded mr-2">🏢</span>
@@ -418,7 +418,6 @@ export default function LawFirmServicesPage() {
                 </div>
               </div>
 
-              <Separator />
 
               <div>
                 <h3 className="font-semibold mb-4 flex items-center text-primary">
@@ -437,7 +436,7 @@ export default function LawFirmServicesPage() {
         </Card>
 
         {/* Selected Categories (Reorder with drag and drop) */}
-        <Card>
+        <Card className="col-span-1">
           <CardHeader>
             <CardTitle>Twoje specjalizacje</CardTitle>
             <CardDescription>
