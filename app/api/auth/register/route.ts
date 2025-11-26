@@ -8,10 +8,10 @@ import crypto from "crypto"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, role, ...userData } = body
+    const { email, password, role, isSocialRegistration, ...userData } = body
 
     // Walidacja
-    if (!email || !password) {
+    if (!email || (!password && !isSocialRegistration)) {
       return NextResponse.json(
         { error: "Email i hasło są wymagane" },
         { status: 400 }
@@ -24,39 +24,92 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Użytkownik o tym adresie email już istnieje" },
-        { status: 400 }
-      )
+      // Jeśli to rejestracja społecznościowa i użytkownik istnieje, pozwól na kontynuację (łączenie konta)
+      if (isSocialRegistration) {
+        // Sprawdź czy użytkownik ma już rolę CLIENT
+        if (existingUser.role === "CLIENT") {
+          // Sprawdź czy ma profil klienta
+          const clientProfile = await prisma.client.findUnique({
+            where: { userId: existingUser.id }
+          })
+
+          if (clientProfile) {
+            return NextResponse.json(
+              { error: "Masz już konto klienta. Zaloguj się." },
+              { status: 400 }
+            )
+          }
+        }
+      } else {
+        return NextResponse.json(
+          { error: "Użytkownik o tym adresie email już istnieje" },
+          { status: 400 }
+        )
+      }
     }
 
-    // Hashowanie hasła
-    const hashedPassword = await bcrypt.hash(password, 10)
+    let user;
 
-    // Generowanie tokenu weryfikacyjnego
-    const verificationToken = crypto.randomBytes(32).toString('hex')
-    const verificationExpiry = new Date()
-    verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token ważny 24 godziny
+    if (existingUser && isSocialRegistration) {
+      // Aktualizuj istniejącego użytkownika
+      user = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          role: "CLIENT", // Ustaw rolę na CLIENT (lub obsłuż multorole w przyszłości)
+        }
+      })
+    } else {
+      // Hashowanie hasła
+      const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Utworzenie użytkownika
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        role: (role as UserRole) || "CLIENT",
-        name: userData.name || null,
-        emailVerified: null, // Email nie zweryfikowany
-      },
-    })
+      // Utworzenie użytkownika
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          role: (role as UserRole) || "CLIENT",
+          name: userData.name || null,
+          emailVerified: null, // Email nie zweryfikowany
+        },
+      })
+    }
 
-    // Zapisz token weryfikacyjny
-    await prisma.verificationToken.create({
-      data: {
-        identifier: user.email,
-        token: verificationToken,
-        expires: verificationExpiry,
-      },
-    })
+    // Generowanie tokenu weryfikacyjnego (tylko dla nowych użytkowników email/password)
+    if (!existingUser) {
+      const verificationToken = crypto.randomBytes(32).toString('hex')
+      const verificationExpiry = new Date()
+      verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token ważny 24 godziny
+
+      // Zapisz token weryfikacyjny
+      await prisma.verificationToken.create({
+        data: {
+          identifier: user.email,
+          token: verificationToken,
+          expires: verificationExpiry,
+        },
+      })
+
+      // Wyślij email weryfikacyjny
+      const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
+      const isLawFirm = user.role === "LAW_FIRM"
+      const emailContent = generateEmailVerificationEmail(
+        verificationUrl,
+        userData.name || user.email,
+        isLawFirm
+      )
+
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: emailContent.subject,
+          html: emailContent.html,
+          text: emailContent.text,
+        })
+        console.log(`Verification email sent to: ${user.email}`)
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError)
+      }
+    }
 
     // Jeśli CLIENT, utwórz profil klienta
     if (user.role === "CLIENT" && userData.client) {
@@ -125,28 +178,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Wyślij email weryfikacyjny
-    const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
-    const isLawFirm = user.role === "LAW_FIRM"
-    const emailContent = generateEmailVerificationEmail(
-      verificationUrl,
-      userData.name || user.email,
-      isLawFirm
-    )
-
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: emailContent.subject,
-        html: emailContent.html,
-        text: emailContent.text,
-      })
-      console.log(`Verification email sent to: ${user.email}`)
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError)
-      // Nie przerywamy rejestracji jeśli email się nie wysłał
-      // Użytkownik może ponownie wysłać email weryfikacyjny
-    }
+    // Email verification logic moved inside user creation block
 
     return NextResponse.json(
       {

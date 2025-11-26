@@ -223,6 +223,7 @@ export async function POST(request: NextRequest) {
     // Walidacja wymaganych pól
     const requiredFields = [
       'email',
+      'email',
       'password',
       'typ',
       'nazwa',
@@ -241,6 +242,14 @@ export async function POST(request: NextRequest) {
       'zgodaPrzetwarzanie',
     ]
 
+    // Jeśli rejestracja społecznościowa, hasło nie jest wymagane
+    if (body.isSocialRegistration) {
+      const passwordIndex = requiredFields.indexOf('password')
+      if (passwordIndex > -1) {
+        requiredFields.splice(passwordIndex, 1)
+      }
+    }
+
     const missingFields = requiredFields.filter((field) => !body[field])
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -255,10 +264,27 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Użytkownik o takim adresie email już istnieje" },
-        { status: 409 }
-      )
+      if (body.isSocialRegistration) {
+        // Sprawdź czy użytkownik ma już rolę LAW_FIRM
+        if (existingUser.role === "LAW_FIRM") {
+          // Sprawdź czy ma profil kancelarii
+          const lawFirmProfile = await prisma.lawFirm.findUnique({
+            where: { userId: existingUser.id }
+          })
+
+          if (lawFirmProfile) {
+            return NextResponse.json(
+              { error: "Masz już konto kancelarii. Zaloguj się." },
+              { status: 409 }
+            )
+          }
+        }
+      } else {
+        return NextResponse.json(
+          { error: "Użytkownik o takim adresie email już istnieje" },
+          { status: 409 }
+        )
+      }
     }
 
     // Sprawdź, czy NIP już istnieje
@@ -278,15 +304,27 @@ export async function POST(request: NextRequest) {
 
     // Utwórz użytkownika i kancelarię w transakcji
     const result = await prisma.$transaction(async (tx: any) => {
-      // Utwórz użytkownika
-      const user = await tx.user.create({
-        data: {
-          email: body.email,
-          password: hashedPassword,
-          name: body.nazwa,
-          role: "LAW_FIRM",
-        },
-      })
+      let user;
+
+      if (existingUser && body.isSocialRegistration) {
+        // Aktualizuj istniejącego użytkownika
+        user = await tx.user.update({
+          where: { id: existingUser.id },
+          data: {
+            role: "LAW_FIRM",
+          },
+        })
+      } else {
+        // Utwórz użytkownika
+        user = await tx.user.create({
+          data: {
+            email: body.email,
+            password: hashedPassword,
+            name: body.nazwa,
+            role: "LAW_FIRM",
+          },
+        })
+      }
 
       // Utwórz profil kancelarii
       const lawFirm = await tx.lawFirm.create({
@@ -343,39 +381,43 @@ export async function POST(request: NextRequest) {
       return { user, lawFirm }
     })
 
-    // Generate verification token (valid for 24 hours)
-    const token = crypto.randomBytes(32).toString('hex')
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+    // Generate verification token (valid for 24 hours) - ONLY for new users
+    let emailSent = false;
 
-    await prisma.verificationToken.create({
-      data: {
-        identifier: body.email,
-        token,
-        expires,
-      },
-    })
+    if (!existingUser) {
+      const token = crypto.randomBytes(32).toString('hex')
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
-    // Generate verification URL
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://ps.studio-ai.com.pl'
-    const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
+      await prisma.verificationToken.create({
+        data: {
+          identifier: body.email,
+          token,
+          expires,
+        },
+      })
 
-    // Send verification email
-    const emailContent = generateEmailVerificationEmail(
-      verificationUrl,
-      body.nazwa, // Law firm name
-      true // isLawFirm
-    )
+      // Generate verification URL
+      const baseUrl = process.env.NEXTAUTH_URL || 'https://ps.studio-ai.com.pl'
+      const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
-    const emailSent = await sendEmail({
-      to: body.email,
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
-    })
+      // Send verification email
+      const emailContent = generateEmailVerificationEmail(
+        verificationUrl,
+        body.nazwa, // Law firm name
+        true // isLawFirm
+      )
 
-    if (!emailSent) {
-      console.error('Failed to send verification email to:', body.email)
-      // Don't fail registration if email fails, just log it
+      emailSent = await sendEmail({
+        to: body.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+      })
+
+      if (!emailSent) {
+        console.error('Failed to send verification email to:', body.email)
+        // Don't fail registration if email fails, just log it
+      }
     }
 
     return NextResponse.json(

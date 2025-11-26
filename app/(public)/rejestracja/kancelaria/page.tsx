@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,7 @@ interface Category {
 
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
+  const { data: session, status } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -71,7 +73,17 @@ export default function LawFirmRegistrationPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const totalSteps = 8
+  const totalSteps = session ? 7 : 8
+
+  useEffect(() => {
+    if (session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        email: session.user.email || "",
+        emailKontakt: session.user.email || "",
+      }))
+    }
+  }, [session])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,11 +147,11 @@ export default function LawFirmRegistrationPage() {
         }
         break
       case 8:
-        if (!formData.email || !formData.password) {
+        if (!session && (!formData.email || !formData.password)) {
           setError("Wypełnij email i hasło")
           return false
         }
-        if (formData.password !== formData.confirmPassword) {
+        if (!session && formData.password !== formData.confirmPassword) {
           setError("Hasła nie są identyczne")
           return false
         }
@@ -220,6 +232,7 @@ export default function LawFirmRegistrationPage() {
           callaPolska: formData.callaPolska,
           voivodeshipsIds: formData.voivodeshipsIds,
           categoriesIds: formData.categoriesIds,
+          isSocialRegistration: !!session?.user,
         }),
       })
 
@@ -552,6 +565,7 @@ export default function LawFirmRegistrationPage() {
         )
 
       case 8:
+        if (session) return null // Skip step 8 if logged in
         return (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -626,6 +640,54 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
+  // Add a special case for the last step when logged in (which is step 7 effectively but we need to show consents)
+  // Actually, better to move consents to step 7 if logged in OR keep step 8 but hide password fields?
+  // Let's modify step 7 to include consents if logged in, OR keep step 8 but only show consents.
+  // The simplest way is to keep step 8 but only show consents if session exists.
+
+  if (currentStep === 8 && session) {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label>Potwierdzenie danych</Label>
+          <p className="text-sm text-muted-foreground">
+            Jesteś zalogowany jako <strong>{session.user?.email}</strong>.
+            Dokończ rejestrację akceptując regulamin.
+          </p>
+        </div>
+
+        <div className="flex items-start space-x-2">
+          <Checkbox
+            id="zgodaRegulamin"
+            required
+            checked={formData.zgodaRegulamin}
+            onCheckedChange={(checked) =>
+              setFormData({ ...formData, zgodaRegulamin: checked === true })
+            }
+            disabled={isLoading}
+          />
+          <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> *
+          </label>
+        </div>
+        <div className="flex items-start space-x-2">
+          <Checkbox
+            id="zgodaPrzetwarzanie"
+            required
+            checked={formData.zgodaPrzetwarzanie}
+            onCheckedChange={(checked) =>
+              setFormData({ ...formData, zgodaPrzetwarzanie: checked === true })
+            }
+            disabled={isLoading}
+          />
+          <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline">przetwarzanie danych osobowych</Link> *
+          </label>
+        </div>
+      </div>
+    )
+  }
+
   const getStepTitle = () => {
     switch (currentStep) {
       case 1: return "Typ działalności"
@@ -635,7 +697,7 @@ export default function LawFirmRegistrationPage() {
       case 5: return "Obszar działania"
       case 6: return "Specjalizacje"
       case 7: return "Typ oferty"
-      case 8: return "Dane logowania"
+      case 8: return session ? "Finalizacja" : "Dane logowania"
       default: return ""
     }
   }

@@ -153,8 +153,59 @@ export const authOptions: NextAuthConfig = {
       }
       return session
     },
-    async signIn({ user }: { user: User }) {
-      // Możesz dodać tutaj dodatkową logikę weryfikacji
+    async signIn({ user, account }: { user: User; account: any }) {
+      // Handle OAuth sign-ins (Google, Facebook, Apple)
+      if (account?.provider !== "credentials") {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            include: {
+              client: true,
+              lawFirm: true,
+            },
+          })
+
+          // Block OAuth registration - only allow login for existing users
+          // Users registered via form will have a password set
+          if (!dbUser || !dbUser.password) {
+            // This is a registration attempt via OAuth - not allowed
+            // Clean up user created by adapter if exists
+            if (dbUser?.id) {
+              await prisma.user.delete({
+                where: { id: dbUser.id }
+              }).catch(() => {})
+            }
+            return false
+          }
+
+          // If user has CLIENT role but no Client profile, create one
+          if (dbUser.role === "CLIENT" && !dbUser.client) {
+            const nameParts = user.name?.split(" ") || []
+            const imie = nameParts[0] || "Użytkownik"
+            const nazwisko = nameParts.slice(1).join(" ") || "OAuth"
+
+            await prisma.client.create({
+              data: {
+                userId: dbUser.id,
+                imie,
+                nazwisko,
+                zgodaRegulamin: true, // Assumed consent via OAuth
+                zgodaNewsletter: false,
+                zgodaMarketing: false,
+              },
+            })
+          }
+
+          // If user has LAW_FIRM role but no LawFirm profile, they need to complete registration
+          // This case should redirect them to complete the profile
+          if (dbUser.role === "LAW_FIRM" && !dbUser.lawFirm) {
+            // Allow sign-in but they'll need to complete their profile
+            return true
+          }
+        } catch (error) {
+          console.error("Error in signIn callback:", error)
+        }
+      }
       return true
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {

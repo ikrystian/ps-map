@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,6 +13,7 @@ import { AuthLayout } from "@/components/auth"
 
 export default function ClientRegistrationPage() {
   const router = useRouter()
+  const { data: session, status } = useSession()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,12 +28,24 @@ export default function ClientRegistrationPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    if (session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        email: session.user.email || "",
+        imie: session.user.name?.split(" ")[0] || "",
+        nazwisko: session.user.name?.split(" ").slice(1).join(" ") || "",
+      }))
+    }
+  }, [session])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
     // Walidacja
-    if (formData.password !== formData.confirmPassword) {
+    // Walidacja
+    if (!session?.user && formData.password !== formData.confirmPassword) {
       setError("Hasła nie są identyczne")
       return
     }
@@ -51,7 +65,8 @@ export default function ClientRegistrationPage() {
         },
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password,
+          password: session?.user ? undefined : formData.password,
+          isSocialRegistration: !!session?.user,
           role: "CLIENT",
           name: `${formData.imie} ${formData.nazwisko}`,
           client: {
@@ -169,38 +184,42 @@ export default function ClientRegistrationPage() {
                 type="text"
                 value={formData.miasto}
                 onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
-                disabled={isLoading}
+                disabled={isLoading || !!session?.user}
                 className="h-11"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Hasło *</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
-            </div>
+            {!session && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Hasło *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    required
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    disabled={isLoading}
+                    className="h-11"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    disabled={isLoading}
+                    className="h-11"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="flex items-start space-x-2">
               <Checkbox
@@ -232,7 +251,7 @@ export default function ClientRegistrationPage() {
             </div>
 
             <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? "Rejestrowanie..." : "Zarejestruj się"}
+              {isLoading ? "Rejestrowanie..." : session ? "Dokończ rejestrację" : "Zarejestruj się"}
             </Button>
           </form>
         </CardContent>

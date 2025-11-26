@@ -63,6 +63,18 @@ export default function LoginPage() {
     }
   }, [registered])
 
+  // Check for OAuth errors (user not registered)
+  useEffect(() => {
+    const oauthError = searchParams.get("error")
+    if (oauthError === "OAuthSignin" || oauthError === "OAuthCallback" || oauthError === "AccessDenied") {
+      setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
+      // Clean up URL
+      const url = new URL(window.location.href)
+      url.searchParams.delete("error")
+      window.history.replaceState({}, "", url.toString())
+    }
+  }, [searchParams])
+
   // Handle user selection from dropdown
   const handleUserSelect = async (userId: string) => {
     setSelectedUserId(userId)
@@ -179,6 +191,14 @@ export default function LoginPage() {
                     className="mt-2 inline-block text-sm underline hover:text-destructive/80"
                   >
                     Wyślij ponownie email weryfikacyjny
+                  </Link>
+                )}
+                {error.includes("Nie masz jeszcze konta") && (
+                  <Link
+                    href="/rejestracja"
+                    className="mt-2 inline-block text-sm underline hover:text-destructive/80"
+                  >
+                    Przejdź do formularza rejestracji
                   </Link>
                 )}
               </div>

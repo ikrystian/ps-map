@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Mail,
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle,CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -63,6 +63,9 @@ export default function ClientDashboardPage() {
       if (response.ok) {
         const data = await response.json()
         setClientData(data)
+      } else if (response.status === 404) {
+        // User doesn't have a Client profile yet - redirect to complete registration
+        router.push("/rejestracja/klient")
       }
     } catch (error) {
       console.error("Error fetching client data:", error)
@@ -208,47 +211,47 @@ export default function ClientDashboardPage() {
 
         {/* Box 5: Najnowsze artykuły */}
         <div className="md:col-span-2 row-span-2">
-        <Card className="hover:shadow-lg transition-shadow ">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              Najnowsze Artykuły
-            </CardTitle>
-            <Button variant="link" className="text-primary" asChild>
-              <Link href="/(public)/blog">
-                Więcej
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {blogPosts.length > 0 ? (
-              <div className="space-y-4">
-                {blogPosts.map((post, index) => (
-                  <div key={post.id}>
-                    {index > 0 && <Separator />}
-                    <ArticleItem
-                      title={post.tytul}
-                      category={post.category?.nazwa || "Bez kategorii"}
-                      date={new Date(
-                        post.dataPublikacji
-                      ).toLocaleDateString("pl-PL")}
-                      image={
-                        post.obrazekWyrozniajacy || "/placeholder-article.jpg"
-                      }
-                      slug={post.slug}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                Brak artykułów do wyświetlenia
-              </p>
-            )}
-          </CardContent>
-        </Card>
-</div>
+          <Card className="hover:shadow-lg transition-shadow ">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Najnowsze Artykuły
+              </CardTitle>
+              <Button variant="link" className="text-primary" asChild>
+                <Link href="/(public)/blog">
+                  Więcej
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {blogPosts.length > 0 ? (
+                <div className="space-y-4">
+                  {blogPosts.map((post, index) => (
+                    <div key={post.id}>
+                      {index > 0 && <Separator />}
+                      <ArticleItem
+                        title={post.tytul}
+                        category={post.category?.nazwa || "Bez kategorii"}
+                        date={new Date(
+                          post.dataPublikacji
+                        ).toLocaleDateString("pl-PL")}
+                        image={
+                          post.obrazekWyrozniajacy || "/placeholder-article.jpg"
+                        }
+                        slug={post.slug}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Brak artykułów do wyświetlenia
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
         {/* Box 6: Wybrani eksperci */}
         <Card
           className="hover:shadow-lg transition-shadow cursor-pointer group col-span-2"
