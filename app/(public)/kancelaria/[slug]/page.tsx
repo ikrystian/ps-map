@@ -688,6 +688,60 @@ export default function LawFirmProfilePage() {
                       </div>
                     )}
 
+                    {/* Open/Closed Status */}
+                    {(() => {
+                      if (!lawFirm.statusGodzinyOtwarcia || !lawFirm.godzinyOtwarcia) return null
+
+                      const now = new Date()
+                      const currentDay = now.getDay()
+                      const currentTime = now.getHours() * 60 + now.getMinutes()
+
+                      const dayMap: Record<number, string> = {
+                        0: "niedziela",
+                        1: "poniedzialek",
+                        2: "wtorek",
+                        3: "sroda",
+                        4: "czwartek",
+                        5: "piatek",
+                        6: "sobota",
+                      }
+
+                      const todayKey = dayMap[currentDay]
+                      const todayHours = lawFirm.godzinyOtwarcia[todayKey]
+
+                      if (!todayHours || todayHours.toLowerCase() === "zamknięte" || todayHours.trim() === "") {
+                        return (
+                          <Badge variant="outline" className="bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                            <Clock className="w-3 h-3 mr-1" />
+                            Zamknięte
+                          </Badge>
+                        )
+                      }
+
+                      const [from, to] = todayHours.split("-").map(t => t.trim())
+                      if (!from || !to) return null
+
+                      const [fromHour, fromMin] = from.split(":").map(Number)
+                      const [toHour, toMin] = to.split(":").map(Number)
+
+                      const fromTime = fromHour * 60 + fromMin
+                      const toTime = toHour * 60 + toMin
+
+                      const isOpen = currentTime >= fromTime && currentTime <= toTime
+
+                      return isOpen ? (
+                        <Badge variant="outline" className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Otwarte
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Zamknięte
+                        </Badge>
+                      )
+                    })()}
+
 
 
                     {/* Słowa kluczowe */}
@@ -1475,12 +1529,46 @@ export default function LawFirmProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {Object.entries(lawFirm.godzinyOtwarcia).map(([day, hours]) => (
-                      <div key={day} className="flex justify-between text-sm">
-                        <span className="capitalize">{day}</span>
-                        <span className="text-muted-foreground">{hours}</span>
-                      </div>
-                    ))}
+                    {Object.entries(lawFirm.godzinyOtwarcia).map(([day, hours]) => {
+                      const dayMap: Record<string, string> = {
+                        poniedzialek: "Poniedziałek",
+                        wtorek: "Wtorek",
+                        sroda: "Środa",
+                        czwartek: "Czwartek",
+                        piatek: "Piątek",
+                        sobota: "Sobota",
+                        niedziela: "Niedziela",
+                      }
+                      const dayIndex: Record<string, number> = {
+                        niedziela: 0,
+                        poniedzialek: 1,
+                        wtorek: 2,
+                        sroda: 3,
+                        czwartek: 4,
+                        piatek: 5,
+                        sobota: 6,
+                      }
+                      const today = new Date().getDay()
+                      const isToday = dayIndex[day] === today
+                      const isClosed = !hours || hours.trim() === "" || hours.toLowerCase() === "zamknięte"
+
+                      return (
+                        <div
+                          key={day}
+                          className={cn(
+                            "flex justify-between text-sm py-1 px-2 rounded",
+                            isToday && "bg-primary/10 font-medium"
+                          )}
+                        >
+                          <span className="capitalize">{dayMap[day] || day}</span>
+                          <span className={cn(
+                            isClosed ? "text-muted-foreground italic" : "font-medium"
+                          )}>
+                            {isClosed ? "Zamknięte" : hours}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </CardContent>
               </Card>

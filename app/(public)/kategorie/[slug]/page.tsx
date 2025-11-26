@@ -18,7 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 
@@ -60,12 +60,51 @@ interface LawFirm {
   avgRating: number
   reviewCount: number
   pakietSubskrypcji?: string
+  statusGodzinyOtwarcia?: boolean
+  godzinyOtwarcia?: Record<string, string>
 }
 
 interface Voivodeship {
   id: string
   nazwa: string
   slug: string
+}
+
+// Helper function to check if law firm is open
+const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {
+  if (!statusGodzinyOtwarcia || !godzinyOtwarcia) return null
+
+  const now = new Date()
+  const currentDay = now.getDay()
+  const currentTime = now.getHours() * 60 + now.getMinutes()
+
+  const dayMap: Record<number, string> = {
+    0: "niedziela",
+    1: "poniedzialek",
+    2: "wtorek",
+    3: "sroda",
+    4: "czwartek",
+    5: "piatek",
+    6: "sobota",
+  }
+
+  const todayKey = dayMap[currentDay]
+  const todayHours = godzinyOtwarcia[todayKey]
+
+  if (!todayHours || todayHours.toLowerCase() === "zamknięte" || todayHours.trim() === "") {
+    return false
+  }
+
+  const [from, to] = todayHours.split("-").map(t => t.trim())
+  if (!from || !to) return null
+
+  const [fromHour, fromMin] = from.split(":").map(Number)
+  const [toHour, toMin] = to.split(":").map(Number)
+
+  const fromTime = fromHour * 60 + fromMin
+  const toTime = toHour * 60 + toMin
+
+  return currentTime >= fromTime && currentTime <= toTime
 }
 
 export default function CategoryPage() {
@@ -509,12 +548,31 @@ export default function CategoryPage() {
                                  )}
 
                                  {/* Badges */}
-                                 <div className="flex gap-2">
+                                 <div className="flex gap-2 flex-wrap">
                                    {firm.onlineOnly && (
                                      <Badge variant="outline" className="text-xs">
                                        Online
                                      </Badge>
                                    )}
+                                   {(() => {
+                                     const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
+                                     if (isOpen === true) {
+                                       return (
+                                         <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
+                                           <Clock className="w-3 h-3 mr-1" />
+                                           Otwarte
+                                         </Badge>
+                                       )
+                                     } else if (isOpen === false) {
+                                       return (
+                                         <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                                           <Clock className="w-3 h-3 mr-1" />
+                                           Zamknięte
+                                         </Badge>
+                                       )
+                                     }
+                                     return null
+                                   })()}
                                  </div>
                                </div>
                              </CardContent>
@@ -601,6 +659,25 @@ export default function CategoryPage() {
                                          Online
                                        </Badge>
                                      )}
+                                     {(() => {
+                                       const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
+                                       if (isOpen === true) {
+                                         return (
+                                           <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
+                                             <Clock className="w-3 h-3 mr-1" />
+                                             Otwarte
+                                           </Badge>
+                                         )
+                                       } else if (isOpen === false) {
+                                         return (
+                                           <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                                             <Clock className="w-3 h-3 mr-1" />
+                                             Zamknięte
+                                           </Badge>
+                                         )
+                                       }
+                                       return null
+                                     })()}
                                    </div>
                                  </div>
                                </div>
