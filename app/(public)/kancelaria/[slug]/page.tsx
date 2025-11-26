@@ -59,6 +59,7 @@ import {
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { ConsultationBooking } from "@/components/kancelaria/ConsultationBooking"
+import { BadgesSection } from "@/components/law-firm/BadgesSection"
 
 interface LawFirm {
   id: string
@@ -181,6 +182,20 @@ interface LawFirm {
         image?: string | null
       }
     }
+  }>
+  badges: Array<{
+    id: string
+    badge: {
+      id: string
+      name: string
+      description: string
+      imageUrl: string
+      conditionType: string
+      threshold: number
+      createdAt: string
+      updatedAt: string
+    }
+    awardedAt: string
   }>
 }
 
@@ -855,6 +870,9 @@ export default function LawFirmProfilePage() {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Badges */}
+                <BadgesSection badges={lawFirm.badges} />
 
                 {/* Unique Service Description */}
                 {lawFirm.unikatowyOpisUslugi && (

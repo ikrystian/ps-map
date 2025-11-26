@@ -69,6 +69,15 @@ interface Case {
       nazwaFirmy: string
       logo?: string
       miasto: string
+      emailKontakt: string
+      numerTelefonu: string
+      numerTelefonu2?: string
+      adres: string
+      kodPocztowy: string
+      stronaWww?: string
+      imieKontakt: string
+      nazwiskoKontakt: string
+      stanowisko?: string
     }
   }>
   messages: Array<{
@@ -488,6 +497,132 @@ export default function ClientCaseDetailsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dane kancelarii (gdy oferta zaakceptowana) */}
+      {(() => {
+        const acceptedOffer = caseData.offers?.find(offer => offer.status === "ZAAKCEPTOWANA")
+        if (!acceptedOffer) return null
+
+        return (
+          <Card className="border-primary">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                Dane kancelarii
+              </CardTitle>
+              <CardDescription>
+                Twoja oferta została zaakceptowana. Możesz skontaktować się z kancelarią używając poniższych danych.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Podstawowe informacje */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">{acceptedOffer.lawFirm.nazwa}</h3>
+                {acceptedOffer.lawFirm.nazwaFirmy && (
+                  <p className="text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Dane kontaktowe */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Osoba kontaktowa</p>
+                    <p className="text-sm text-muted-foreground">
+                      {acceptedOffer.lawFirm.imieKontakt} {acceptedOffer.lawFirm.nazwiskoKontakt}
+                    </p>
+                    {acceptedOffer.lawFirm.stanowisko && (
+                      <p className="text-xs text-muted-foreground">{acceptedOffer.lawFirm.stanowisko}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Email</p>
+                    <a
+                      href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {acceptedOffer.lawFirm.emailKontakt}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Telefon</p>
+                    <a
+                      href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {acceptedOffer.lawFirm.numerTelefonu}
+                    </a>
+                    {acceptedOffer.lawFirm.numerTelefonu2 && (
+                      <a
+                        href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
+                        className="text-sm text-primary hover:underline block"
+                      >
+                        {acceptedOffer.lawFirm.numerTelefonu2}
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Adres</p>
+                    <p className="text-sm text-muted-foreground">
+                      {acceptedOffer.lawFirm.adres}<br />
+                      {acceptedOffer.lawFirm.kodPocztowy} {acceptedOffer.lawFirm.miasto}
+                    </p>
+                  </div>
+                </div>
+
+                {acceptedOffer.lawFirm.stronaWww && (
+                  <div className="flex items-start gap-3 md:col-span-2">
+                    <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Strona WWW</p>
+                      <a
+                        href={acceptedOffer.lawFirm.stronaWww}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        {acceptedOffer.lawFirm.stronaWww}
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Szczegóły oferty */}
+              <div>
+                <h4 className="font-semibold mb-3">Szczegóły zaakceptowanej oferty</h4>
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium">Kwota brutto</p>
+                    <p className="text-lg font-bold">{formatCurrency(acceptedOffer.kwotaBrutto)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Termin realizacji</p>
+                    <p className="text-lg font-bold">{acceptedOffer.terminRealizacjiDni} dni</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      })()}
 
       {/* Oferty */}
       {caseData.offers && caseData.offers.length > 0 && (

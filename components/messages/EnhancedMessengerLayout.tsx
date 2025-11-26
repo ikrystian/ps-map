@@ -134,7 +134,7 @@ export function EnhancedMessengerLayout() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-12rem)] min-h-[500px]">
+    <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-14rem)] min-h-[500px]">
       {/* Connection status indicator */}
       <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">

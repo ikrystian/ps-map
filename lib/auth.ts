@@ -139,3 +139,8 @@ export const authOptions: NextAuthConfig = {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)
+
+export const getCurrentUser = async () => {
+  const session = await auth()
+  return session?.user
+}

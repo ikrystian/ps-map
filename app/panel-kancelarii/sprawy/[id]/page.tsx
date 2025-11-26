@@ -59,6 +59,11 @@ interface Case {
     imie: string
     nazwisko: string
   }
+  offers?: Array<{
+    id: string
+    status: string
+    lawFirmId: string
+  }>
   _count: {
     offers: number
   }
@@ -366,35 +371,91 @@ export default function LawFirmCaseDetailsPage() {
             </Card>
           )}
 
-          {/* Dane kontaktowe */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dane kontaktowe</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Osoba kontaktowa</p>
-                  <p className="font-medium">{caseData.imieNazwisko}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{caseData.emailKontakt}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Telefon</p>
-                  <p className="font-medium">{caseData.telefonKontakt}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Dane kontaktowe - zaakceptowana oferta */}
+          {(() => {
+            const hasAcceptedOffer = caseData.offers?.some((offer: any) => offer.status === "ZAAKCEPTOWANA")
+
+            if (hasAcceptedOffer) {
+              return (
+                <Card className="border-primary">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-primary" />
+                      Dane klienta do kontaktu
+                    </CardTitle>
+                    <CardDescription>
+                      Twoja oferta została zaakceptowana. Poniżej znajdziesz dane kontaktowe klienta.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Osoba kontaktowa</p>
+                        <p className="text-sm text-muted-foreground">{caseData.imieNazwisko}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Email</p>
+                        <a
+                          href={`mailto:${caseData.emailKontakt}`}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          {caseData.emailKontakt}
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Telefon</p>
+                        <a
+                          href={`tel:${caseData.telefonKontakt}`}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          {caseData.telefonKontakt}
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            }
+
+            // Standardowa sekcja dla spraw bez zaakceptowanej oferty
+            return (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dane kontaktowe</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Osoba kontaktowa</p>
+                      <p className="font-medium">{caseData.imieNazwisko}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="font-medium">{caseData.emailKontakt}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Telefon</p>
+                      <p className="font-medium">{caseData.telefonKontakt}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })()}
 
           {/* Formularz składania oferty */}
           {!hasExistingOffer && caseData.status !== "W_TRAKCIE" && caseData.status !== "ZAKONCZONA" && (

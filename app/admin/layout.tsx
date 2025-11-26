@@ -50,7 +50,8 @@ const navigation = [
   { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
   { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
-  { name: "Pakiety", href: "/admin/pakiety", icon: Shield }
+  { name: "Pakiety", href: "/admin/pakiety", icon: Shield },
+  { name: "Ordery", href: "/admin/badges", icon: Star }
 ]
 
 export default function AdminLayout({
@@ -122,9 +123,9 @@ export default function AdminLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-          <Link href="/" className="flex items-center">
-            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-          </Link>
+            <Link href="/" className="flex items-center">
+              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            </Link>
           </div>
 
           {/* User menu */}

@@ -38,12 +38,13 @@ import {
 import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationBell } from "@/components/NotificationBell"
+import { triggerBadgeCheck } from "@/app/actions/badges"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
   { name: "Sprawy", href: "/panel-kancelarii/sprawy", icon: Briefcase },
   { name: "Oferty", href: "/panel-kancelarii/oferty", icon: FileText },
-    { name: "Konsultacje", href: "/panel-kancelarii/konsultacje", icon: BookOpen },
+  { name: "Konsultacje", href: "/panel-kancelarii/konsultacje", icon: BookOpen },
 
   { name: "Profil", href: "/panel-kancelarii/profil", icon: User },
   { name: "Zakres usług", href: "/panel-kancelarii/zakres-uslug", icon: Wrench },
@@ -103,6 +104,7 @@ export default function LawFirmPanelLayout({
 
     if (session?.user?.role === "LAW_FIRM") {
       fetchLawFirmData()
+      triggerBadgeCheck()
     }
   }, [session])
 

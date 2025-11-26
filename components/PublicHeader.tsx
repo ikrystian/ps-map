@@ -96,9 +96,15 @@ export default function PublicHeader({
                 </button>
               </NavigationMenuItem>
 
-              {/* Sprawy Firmowe - Mega Menu */}
+              <NavigationMenuItem className="hidden md:flex">
+                <Link href="/szukaj-prawnika" className="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors">
+                  Eksperci
+                </Link>
+              </NavigationMenuItem>
+
+              {/* Sprawy Prywatne - Mega Menu */}
               <NavigationMenuItem>
-                <DropdownMenu open={firmoweCategoriesOpen} onOpenChange={setFirmoweCategoriesOpen}>
+                <DropdownMenu open={prywatneCategoriesOpen} onOpenChange={setPrywatneCategoriesOpen}>
                   <DropdownMenuTrigger className="flex items-center gap-1 px-4 py-2 hover:text-primary">
                     Sprawy firmowe
                     <ChevronDown className="h-4 w-4" />

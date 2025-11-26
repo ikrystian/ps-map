@@ -279,6 +279,7 @@ model LawFirm {
   pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
   consultationAvailabilities ConsultationAvailability[]
   consultationBookings       ConsultationBooking[]
+  badges                     LawFirmBadge[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -1865,4 +1866,50 @@ enum ConsultationStatus {
   REJECTED
   COMPLETED
   CANCELLED
+}
+
+// ============================================================================
+// ORDERY / ODZNAKI (BADGES)
+// ============================================================================
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String   // URL to the badge image
+  
+  // Condition
+  conditionType BadgeConditionType
+  threshold     Int      // Value to reach (e.g., 10 cases, 1 year)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  lawFirms    LawFirmBadge[]
+
+  @@index([conditionType])
+}
+
+model LawFirmBadge {
+  id        String   @id @default(uuid())
+  lawFirmId String
+  lawFirm   LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  awardedAt DateTime @default(now())
+
+  @@unique([lawFirmId, badgeId])
+  @@index([lawFirmId])
+  @@index([badgeId])
+}
+
+enum BadgeConditionType {
+  YEARS_IN_SERVICE
+  WON_CASES
+  REVIEWS_COUNT
+  BLOG_POSTS_COUNT
+  OFFERS_SUBMITTED
+  PROFILE_VIEWS
 }

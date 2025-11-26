@@ -126,9 +126,9 @@ export default function ClientPanelLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-          <Link href="/" className="flex items-center">
-            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-          </Link>
+            <Link href="/" className="flex items-center">
+              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            </Link>
           </div>
 
           {/* Notifications and User menu */}
@@ -147,6 +147,15 @@ export default function ClientPanelLayout({
         <main className="flex-1 overflow-y-auto">
           <div className="container py-6 px-4 mx-auto">
             {children}
+            <div className="text-center mt-6">
+              <div>
+                Nasi partnerzy: [IdentyFikacja firm] [4Connection] [BPCoders]
+              </div>
+
+              <div className="mt-2">
+                2026 © ProstaSprawa.pl [IG] [FB] [IN]
+              </div>
+            </div>
           </div>
         </main>
       </div>

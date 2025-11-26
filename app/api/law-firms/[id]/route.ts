@@ -89,6 +89,14 @@ export async function GET(
           },
         },
         consultationAvailabilities: true,
+        badges: {
+          include: {
+            badge: true,
+          },
+          orderBy: {
+            awardedAt: "desc",
+          },
+        },
       },
     })
 

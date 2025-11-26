@@ -1,0 +1,65 @@
+import { NextResponse } from "next/server"
+import { db } from "@/lib/db"
+import { getCurrentUser } from "@/lib/auth"
+
+export async function PUT(
+    req: Request,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const user = await getCurrentUser()
+
+        if (!user || user.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 401 })
+        }
+
+        const body = await req.json()
+        const { name, description, imageUrl, conditionType, threshold } = body
+
+        if (!name || !description || !imageUrl || !conditionType || threshold === undefined) {
+            return new NextResponse("Missing required fields", { status: 400 })
+        }
+
+        const badge = await db.badge.update({
+            where: {
+                id: params.id,
+            },
+            data: {
+                name,
+                description,
+                imageUrl,
+                conditionType,
+                threshold: parseInt(threshold),
+            },
+        })
+
+        return NextResponse.json(badge)
+    } catch (error) {
+        console.error("[BADGE_UPDATE]", error)
+        return new NextResponse("Internal Error", { status: 500 })
+    }
+}
+
+export async function DELETE(
+    req: Request,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const user = await getCurrentUser()
+
+        if (!user || user.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 401 })
+        }
+
+        const badge = await db.badge.delete({
+            where: {
+                id: params.id,
+            },
+        })
+
+        return NextResponse.json(badge)
+    } catch (error) {
+        console.error("[BADGE_DELETE]", error)
+        return new NextResponse("Internal Error", { status: 500 })
+    }
+}
