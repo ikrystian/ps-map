@@ -15,6 +15,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  CalendarCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -26,6 +27,7 @@ const navigation = [
   { name: "Zarządzanie profilem", href: "/panel-klienta/profil", icon: UserCircle },
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
   { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
+  { name: "Umów konsultację", href: "/panel-klienta/konsultacje", icon: CalendarCheck },
   { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },
 ]
 
