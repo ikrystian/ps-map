@@ -36,6 +36,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  CalendarCheck,
 } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
@@ -44,6 +45,7 @@ import { NotificationBell } from "@/components/NotificationBell"
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-kancelarii", icon: LayoutDashboard },
   { name: "Sprawy", href: "/panel-kancelarii/sprawy", icon: Briefcase },
+  { name: "Konsultacje", href: "/panel-kancelarii/konsultacje", icon: CalendarCheck },
   { name: "Oferty", href: "/panel-kancelarii/oferty", icon: FileText },
   { name: "Profil", href: "/panel-kancelarii/profil", icon: User },
   { name: "Zakres usług", href: "/panel-kancelarii/zakres-uslug", icon: Wrench },
