@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import { auth } from "@/auth"
-
-// Dummy function for Google Meet link generation
-const generateGoogleMeetLink = async (booking: any) => {
-    // In a real application, you would use the Google Calendar API here
-    // For now, we'll return a placeholder link
-    console.log("Generating Google Meet link for booking:", booking.id);
-    return `https://meet.google.com/fake-${booking.id}`;
-};
+import { createGoogleMeetLink } from "@/lib/google-meet"
 
 
 const prisma = new PrismaClient()
@@ -25,6 +18,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const booking = await prisma.consultationBooking.findUnique({
       where: { id: bookingId },
+      include: {
+        lawFirm: {
+          include: {
+            user: true,
+          },
+        },
+        client: {
+          include: {
+            user: true,
+          },
+        },
+      },
     })
 
     if (!booking || booking.lawFirmId !== session.user.lawFirm.id) {
@@ -36,8 +41,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (status) {
       updateData.status = status
        if (status === "ACCEPTED") {
-        const meetLink = await generateGoogleMeetLink(booking);
-        updateData.googleMeetUrl = meetLink;
+        const meetLink = await createGoogleMeetLink({
+          id: booking.id,
+          proposedDateTime: booking.consultationDate.toISOString(),
+          description: booking.topic,
+          lawFirm: booking.lawFirm,
+          client: booking.client,
+        });
+        console.log(meetLink);
+        updateData.googleMeetUrl = meetLink || undefined;
       }
     }
 

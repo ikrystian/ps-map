@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params
     const lawFirm = await prisma.lawFirm.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         user: true,
         voivodeship: true,

@@ -67,6 +67,7 @@ export default function ClientConsultationsPage() {
                   <p>Data: {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}</p>
                   <p>Czas trwania: {booking.duration} min</p>
                   <p>Temat: {booking.topic}</p>
+                  <p>Kwota płatności: {booking.price.toFixed(2)} zł</p>
                   <p>Status: {booking.status}</p>
                   <p>Status płatności: {booking.paymentStatus}</p>
                   {booking.googleMeetUrl && booking.status === "ACCEPTED" ? (
