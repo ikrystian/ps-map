@@ -19,6 +19,7 @@ interface Voivodeship {
 interface Category {
   id: string
   nazwa: string
+  parentId?: string | null
 }
 
 export default function LawFirmRegistrationPage() {
@@ -517,26 +518,28 @@ export default function LawFirmRegistrationPage() {
                 Wybierz dziedziny prawa, w których się specjalizujesz
               </div>
               <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`cat-${cat.id}`}
-                      checked={formData.categoriesIds.includes(cat.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          // Single selection: replace array with just this ID
-                          setFormData({ ...formData, categoriesIds: [cat.id] })
-                        } else {
-                          // Allow deselecting
-                          setFormData({ ...formData, categoriesIds: [] })
-                        }
-                      }}
-                    />
-                    <label htmlFor={`cat-${cat.id}`} className="text-sm cursor-pointer">
-                      {cat.nazwa}
-                    </label>
-                  </div>
-                ))}
+                {categories
+                  .filter((cat) => !cat.parentId)
+                  .map((cat) => (
+                    <div key={cat.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`cat-${cat.id}`}
+                        checked={formData.categoriesIds.includes(cat.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            // Single selection: replace array with just this ID
+                            setFormData({ ...formData, categoriesIds: [cat.id] })
+                          } else {
+                            // Allow deselecting
+                            setFormData({ ...formData, categoriesIds: [] })
+                          }
+                        }}
+                      />
+                      <label htmlFor={`cat-${cat.id}`} className="text-sm cursor-pointer">
+                        {cat.nazwa}
+                      </label>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
