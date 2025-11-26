@@ -66,7 +66,7 @@ export default function ConsultationsPage() {
     const response = await fetch("/api/law-firms")
     if (response.ok) {
       const data = await response.json()
-      setLawFirms(data)
+      setLawFirms(data.lawFirms || [])
     }
   }
 

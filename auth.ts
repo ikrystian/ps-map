@@ -10,6 +10,7 @@ import Facebook from "next-auth/providers/facebook"
 import Apple from "next-auth/providers/apple"
 
 export const authOptions: NextAuthConfig = {
+  // @ts-expect-error - version mismatch between @auth/prisma-adapter and next-auth
   adapter: PrismaAdapter(prisma),
   trustHost: true,
   session: {
@@ -153,7 +154,7 @@ export const authOptions: NextAuthConfig = {
       }
       return session
     },
-    async signIn({ user, account }: { user: User; account: any }) {
+    async signIn({ user, account }: { user: User; account?: any }) {
       // Handle OAuth sign-ins (Google, Facebook, Apple)
       if (account?.provider !== "credentials") {
         try {
