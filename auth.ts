@@ -1,11 +1,16 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import type { NextAuthConfig, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
+import Google from "next-auth/providers/google"
+import Facebook from "next-auth/providers/facebook"
+import Apple from "next-auth/providers/apple"
 
 export const authOptions: NextAuthConfig = {
+  adapter: PrismaAdapter(prisma),
   trustHost: true,
   session: {
     strategy: "jwt",
@@ -18,6 +23,21 @@ export const authOptions: NextAuthConfig = {
   // Dodajemy lokalne hosty i produkcyjny host
   redirectProxyUrl: process.env.NEXTAUTH_URL,
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    Facebook({
+      clientId: process.env.AUTH_FACEBOOK_ID,
+      clientSecret: process.env.AUTH_FACEBOOK_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    Apple({
+      clientId: process.env.AUTH_APPLE_ID,
+      clientSecret: process.env.AUTH_APPLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
