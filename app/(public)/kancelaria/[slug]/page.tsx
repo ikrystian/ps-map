@@ -58,6 +58,7 @@ import {
 } from "lucide-react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
+import { ConsultationBooking } from "@/components/kancelaria/ConsultationBooking"
 
 interface LawFirm {
   id: string
@@ -830,9 +831,10 @@ export default function LawFirmProfilePage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="about">O nas</TabsTrigger>
                 <TabsTrigger value="services">Usługi</TabsTrigger>
+                <TabsTrigger value="consultations">Konsultacje</TabsTrigger>
                 <TabsTrigger value="reviews">Opinie</TabsTrigger>
                 <TabsTrigger value="blog">Blog</TabsTrigger>
               </TabsList>
@@ -1051,6 +1053,11 @@ export default function LawFirmProfilePage() {
                     </CardContent>
                   </Card>
                 )}
+              </TabsContent>
+
+              {/* Consultations Tab */}
+              <TabsContent value="consultations">
+                <ConsultationBooking lawFirm={lawFirm} />
               </TabsContent>
 
               {/* Reviews Tab */}
