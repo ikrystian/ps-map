@@ -127,7 +127,7 @@ export default function CategoryPage() {
   const [minRating, setMinRating] = useState("all")
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
-  const [sortBy, setSortBy] = useState("relevance")
+  const [sortBy, setSortBy] = useState("ranking")
 
   // Pagination
   const [page, setPage] = useState(1)
@@ -485,210 +485,210 @@ export default function CategoryPage() {
               <>
                 {/* Law Firms Grid View */}
                 {viewMode === "grid" ? (
-                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                     {lawFirms.map((firm) => (
-                       <Link key={firm.id} href={`/kancelaria/${firm?.slug}`}>
-                         <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
-                           <Card className="bg-card hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
-                             <CardHeader>
-                               {firm.logo ? (
-                                 <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
-                                   <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
-                                 </div>
-                               ) : (
-                                 <Avatar className="mx-auto w-20 h-20 mb-3">
-                                   <AvatarFallback className="text-xl">
-                                     {firm.nazwa.substring(0, 2).toUpperCase()}
-                                   </AvatarFallback>
-                                 </Avatar>
-                               )}
-                               <div className="flex items-center justify-center gap-2">
-                                 <CardTitle className="text-lg text-center">{firm.nazwa}</CardTitle>
-                                 {firm.zweryfikowana && (
-                                   <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                                 )}
-                               </div>
-                               {firm.categories.length > 0 && (
-                                 <p className="text-sm text-muted-foreground text-center">
-                                   {firm.categories[0].nazwa}
-                                 </p>
-                               )}
-                               {firm.pakietSubskrypcji === "BIZNES" && (
-                                 <div className="flex items-center justify-center gap-1 mt-2">
-                                   <Sparkles className="h-3 w-3 text-amber-500" />
-                                   <span className="text-xs font-semibold text-amber-600">Biznes</span>
-                                 </div>
-                               )}
-                             </CardHeader>
-                             <CardContent>
-                               <div className="space-y-3">
-                                 {/* Location */}
-                                 <div className="flex items-center text-sm text-muted-foreground">
-                                   <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                                   <span className="truncate">
-                                     {firm.miasto}, {firm.voivodeship.nazwa}
-                                   </span>
-                                 </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                    {lawFirms.map((firm) => (
+                      <Link key={firm.id} href={`/kancelaria/${firm?.slug}`}>
+                        <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
+                          <Card className="bg-card hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
+                            <CardHeader>
+                              {firm.logo ? (
+                                <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
+                                  <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
+                                </div>
+                              ) : (
+                                <Avatar className="mx-auto w-20 h-20 mb-3">
+                                  <AvatarFallback className="text-xl">
+                                    {firm.nazwa.substring(0, 2).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                              )}
+                              <div className="flex items-center justify-center gap-2">
+                                <CardTitle className="text-lg text-center">{firm.nazwa}</CardTitle>
+                                {firm.zweryfikowana && (
+                                  <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
+                                )}
+                              </div>
+                              {firm.categories.length > 0 && (
+                                <p className="text-sm text-muted-foreground text-center">
+                                  {firm.categories[0].nazwa}
+                                </p>
+                              )}
+                              {firm.pakietSubskrypcji === "BIZNES" && (
+                                <div className="flex items-center justify-center gap-1 mt-2">
+                                  <Sparkles className="h-3 w-3 text-amber-500" />
+                                  <span className="text-xs font-semibold text-amber-600">Biznes</span>
+                                </div>
+                              )}
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-3">
+                                {/* Location */}
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                  <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
+                                  <span className="truncate">
+                                    {firm.miasto}, {firm.voivodeship.nazwa}
+                                  </span>
+                                </div>
 
-                                 {/* Rating */}
-                                 {firm.reviewCount > 0 && (
-                                   <div className="flex items-center">
-                                     <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
-                                     <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
-                                     <span className="text-sm text-muted-foreground ml-2">
-                                       ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
-                                     </span>
-                                   </div>
-                                 )}
+                                {/* Rating */}
+                                {firm.reviewCount > 0 && (
+                                  <div className="flex items-center">
+                                    <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                                    <span className="font-bold ml-1">{firm.avgRating.toFixed(1)}</span>
+                                    <span className="text-sm text-muted-foreground ml-2">
+                                      ({firm.reviewCount} {firm.reviewCount === 1 ? "opinia" : "opinii"})
+                                    </span>
+                                  </div>
+                                )}
 
-                                 {/* Description */}
-                                 {firm.opis && (
-                                   <div
-                                     className="text-sm text-muted-foreground line-clamp-2"
-                                     dangerouslySetInnerHTML={{ __html: firm.opis }}
-                                   />
-                                 )}
+                                {/* Description */}
+                                {firm.opis && (
+                                  <div
+                                    className="text-sm text-muted-foreground line-clamp-2"
+                                    dangerouslySetInnerHTML={{ __html: firm.opis }}
+                                  />
+                                )}
 
-                                 {/* Badges */}
-                                 <div className="flex gap-2 flex-wrap">
-                                   {firm.onlineOnly && (
-                                     <Badge variant="outline" className="text-xs">
-                                       Online
-                                     </Badge>
-                                   )}
-                                   {(() => {
-                                     const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
-                                     if (isOpen === true) {
-                                       return (
-                                         <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
-                                           <Clock className="w-3 h-3 mr-1" />
-                                           Otwarte
-                                         </Badge>
-                                       )
-                                     } else if (isOpen === false) {
-                                       return (
-                                         <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
-                                           <Clock className="w-3 h-3 mr-1" />
-                                           Zamknięte
-                                         </Badge>
-                                       )
-                                     }
-                                     return null
-                                   })()}
-                                 </div>
-                               </div>
-                             </CardContent>
-                           </Card>
-                         </LawFirmCardWrapper>
-                       </Link>
-                     ))}
-                   </div>
+                                {/* Badges */}
+                                <div className="flex gap-2 flex-wrap">
+                                  {firm.onlineOnly && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Online
+                                    </Badge>
+                                  )}
+                                  {(() => {
+                                    const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
+                                    if (isOpen === true) {
+                                      return (
+                                        <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
+                                          <Clock className="w-3 h-3 mr-1" />
+                                          Otwarte
+                                        </Badge>
+                                      )
+                                    } else if (isOpen === false) {
+                                      return (
+                                        <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                                          <Clock className="w-3 h-3 mr-1" />
+                                          Zamknięte
+                                        </Badge>
+                                      )
+                                    }
+                                    return null
+                                  })()}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </LawFirmCardWrapper>
+                      </Link>
+                    ))}
+                  </div>
                 ) : (
-                   /* Law Firms List View */
-                   <div className="space-y-4 mb-8 grid gap-2">
-                     {lawFirms.map((firm) => (
-                       <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
-                         <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg">
-                           <Card className="hover:shadow-lg transition-shadow cursor-pointer border-0">
-                             <CardContent className="p-6">
-                               <div className="flex gap-6">
-                                 {/* Logo */}
-                                 <div className="flex-shrink-0">
-                                   {firm.logo ? (
-                                     <div className="relative w-24 h-24 rounded-full overflow-hidden border-2">
-                                       <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
-                                     </div>
-                                   ) : (
-                                     <Avatar className="w-24 h-24">
-                                       <AvatarFallback className="text-2xl">
-                                         {firm.nazwa.substring(0, 2).toUpperCase()}
-                                       </AvatarFallback>
-                                     </Avatar>
-                                   )}
-                                 </div>
+                  /* Law Firms List View */
+                  <div className="space-y-4 mb-8 grid gap-2">
+                    {lawFirms.map((firm) => (
+                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                        <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg">
+                          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-0">
+                            <CardContent className="p-6">
+                              <div className="flex gap-6">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                  {firm.logo ? (
+                                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2">
+                                      <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
+                                    </div>
+                                  ) : (
+                                    <Avatar className="w-24 h-24">
+                                      <AvatarFallback className="text-2xl">
+                                        {firm.nazwa.substring(0, 2).toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                  )}
+                                </div>
 
-                                 {/* Content */}
-                                 <div className="flex-1 min-w-0">
-                                   <div className="flex items-start justify-between gap-4 mb-2">
-                                     <div>
-                                       <div className="flex items-center gap-2 mb-1">
-                                         <h3 className="text-xl font-semibold">{firm.nazwa}</h3>
-                                         {firm.zweryfikowana && (
-                                           <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                                         )}
-                                       </div>
-                                       {firm.categories.length > 0 && (
-                                         <p className="text-sm text-muted-foreground">
-                                           {firm.categories[0].nazwa}
-                                         </p>
-                                       )}
-                                       {firm.pakietSubskrypcji === "BIZNES" && (
-                                         <div className="flex items-center gap-1 mt-1">
-                                           <Sparkles className="h-3 w-3 text-amber-500" />
-                                           <span className="text-xs font-semibold text-amber-600">Biznes</span>
-                                         </div>
-                                       )}
-                                     </div>
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-4 mb-2">
+                                    <div>
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <h3 className="text-xl font-semibold">{firm.nazwa}</h3>
+                                        {firm.zweryfikowana && (
+                                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                                        )}
+                                      </div>
+                                      {firm.categories.length > 0 && (
+                                        <p className="text-sm text-muted-foreground">
+                                          {firm.categories[0].nazwa}
+                                        </p>
+                                      )}
+                                      {firm.pakietSubskrypcji === "BIZNES" && (
+                                        <div className="flex items-center gap-1 mt-1">
+                                          <Sparkles className="h-3 w-3 text-amber-500" />
+                                          <span className="text-xs font-semibold text-amber-600">Biznes</span>
+                                        </div>
+                                      )}
+                                    </div>
 
-                                     {/* Rating */}
-                                     {firm.reviewCount > 0 && (
-                                       <div className="flex items-center gap-1 flex-shrink-0">
-                                         <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
-                                         <span className="font-bold">{firm.avgRating.toFixed(1)}</span>
-                                         <span className="text-sm text-muted-foreground">
-                                           ({firm.reviewCount})
-                                         </span>
-                                       </div>
-                                     )}
-                                   </div>
+                                    {/* Rating */}
+                                    {firm.reviewCount > 0 && (
+                                      <div className="flex items-center gap-1 flex-shrink-0">
+                                        <Star className="text-yellow-400 w-5 h-5 fill-yellow-400" />
+                                        <span className="font-bold">{firm.avgRating.toFixed(1)}</span>
+                                        <span className="text-sm text-muted-foreground">
+                                          ({firm.reviewCount})
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
 
-                                   {/* Description */}
-                                   {firm.opis && (
-                                     <div
-                                       className="text-sm text-muted-foreground line-clamp-2 mb-3"
-                                       dangerouslySetInnerHTML={{ __html: firm.opis }}
-                                     />
-                                   )}
+                                  {/* Description */}
+                                  {firm.opis && (
+                                    <div
+                                      className="text-sm text-muted-foreground line-clamp-2 mb-3"
+                                      dangerouslySetInnerHTML={{ __html: firm.opis }}
+                                    />
+                                  )}
 
-                                   {/* Location and Badges */}
-                                   <div className="flex items-center gap-4 flex-wrap">
-                                     <div className="flex items-center text-sm text-muted-foreground">
-                                       <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                                       <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
-                                     </div>
-                                     {firm.onlineOnly && (
-                                       <Badge variant="outline" className="text-xs">
-                                         Online
-                                       </Badge>
-                                     )}
-                                     {(() => {
-                                       const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
-                                       if (isOpen === true) {
-                                         return (
-                                           <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
-                                             <Clock className="w-3 h-3 mr-1" />
-                                             Otwarte
-                                           </Badge>
-                                         )
-                                       } else if (isOpen === false) {
-                                         return (
-                                           <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
-                                             <Clock className="w-3 h-3 mr-1" />
-                                             Zamknięte
-                                           </Badge>
-                                         )
-                                       }
-                                       return null
-                                     })()}
-                                   </div>
-                                 </div>
-                               </div>
-                             </CardContent>
-                           </Card>
-                         </LawFirmCardWrapper>
-                       </Link>
-                     ))}
-                   </div>
+                                  {/* Location and Badges */}
+                                  <div className="flex items-center gap-4 flex-wrap">
+                                    <div className="flex items-center text-sm text-muted-foreground">
+                                      <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                                      <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
+                                    </div>
+                                    {firm.onlineOnly && (
+                                      <Badge variant="outline" className="text-xs">
+                                        Online
+                                      </Badge>
+                                    )}
+                                    {(() => {
+                                      const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
+                                      if (isOpen === true) {
+                                        return (
+                                          <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
+                                            <Clock className="w-3 h-3 mr-1" />
+                                            Otwarte
+                                          </Badge>
+                                        )
+                                      } else if (isOpen === false) {
+                                        return (
+                                          <Badge variant="outline" className="text-xs bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
+                                            <Clock className="w-3 h-3 mr-1" />
+                                            Zamknięte
+                                          </Badge>
+                                        )
+                                      }
+                                      return null
+                                    })()}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </LawFirmCardWrapper>
+                      </Link>
+                    ))}
+                  </div>
                 )}
 
                 {/* Pagination */}
