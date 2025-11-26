@@ -141,7 +141,6 @@ model Client {
   reviews         Review[]
   favoritesFirms  FavoriteLawFirm[]
   negotiations    Negotiation[]
-  consultations   Consultation[]
   punktySaldo     Int      @default(0)
 
   @@index([userId])
@@ -277,7 +276,6 @@ model LawFirm {
   categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
   partnerProgram        PartnerProgram?       // Program partnerski
   pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
-  consultations         Consultation[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -1805,42 +1803,4 @@ enum EmailType {
   SUBSKRYPCJA_WYGASA       // Email o wygasającej subskrypcji
   NISKI_STAN_PUNKTOW       // Email o niskim stanie punktów
   CUSTOM                   // Własny szablon
-}
-
-// ============================================================================
-// KONSULTACJE
-// ============================================================================
-
-model Consultation {
-  id               String   @id @default(uuid())
-  clientId         String
-  client           Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  lawFirmId        String
-  lawFirm          LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
-
-  description      String
-  dateRanges       String // JSON: [{ from: Date, to: Date }]
-  status           ConsultationStatus @default(REQUESTED)
-
-  proposedDateTime DateTime?
-  price            Float?
-  paymentStatus    PaymentStatus @default(OCZEKUJE)
-
-  googleMeetLink   String?
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  @@index([clientId])
-  @@index([lawFirmId])
-  @@index([status])
-}
-
-enum ConsultationStatus {
-  REQUESTED
-  ACCEPTED
-  PAID
-  CONFIRMED
-  CANCELLED
-  COMPLETED
 }
