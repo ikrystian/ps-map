@@ -184,6 +184,7 @@ export default function CategoryPage() {
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
+        if (sortBy) params.append("sortBy", sortBy)
         params.append("limit", limit.toString())
         params.append("offset", ((page - 1) * limit).toString())
 
@@ -453,6 +454,7 @@ export default function CategoryPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="ranking">Ranking</SelectItem>
                       <SelectItem value="relevance">Trafność</SelectItem>
                       <SelectItem value="rating">Najwyżej oceniane</SelectItem>
                       <SelectItem value="newest">Najnowsze</SelectItem>

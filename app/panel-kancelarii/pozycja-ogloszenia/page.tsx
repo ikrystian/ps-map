@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Progress } from "@/components/ui/progress"
+import { Slider } from "@/components/ui/slider"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -17,121 +15,114 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  Trophy,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Eye,
-  Star,
-  FileText,
-  CheckCircle2,
-  Target,
-  Lightbulb,
-  AlertCircle,
-  Loader2,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useToast } from "@/components/ui/use-toast"
+import { Loader2, ArrowRight, Sparkles, Trophy, Info } from "lucide-react"
 
 interface LawFirm {
   id: string
   nazwa: string
   pozycjaRanking: number | null
-  wyswietleniaProfilu: number
-  zlozoneOferty: number
-  wygraneOferty: number
-  konwersja: number
   punktySaldo: number
+  mainCategoryName?: string
 }
 
-interface RankingCategory {
-  categoryId: string
-  categoryName: string
-  position: number
-  totalLawFirms: number
-  percentile: number
+interface Competitor {
+  id: string
+  nazwa: string
+  pozycjaRanking: number | null
 }
 
-interface RankingData {
-  lawFirm: LawFirm
-  overallRanking: {
-    position: number
-    totalLawFirms: number
-    trend: "up" | "down" | "same"
-    changePositions: number
-  }
-  categoryRankings: RankingCategory[]
-  competitorStats: {
-    avgViews: number
-    avgOffers: number
-    avgConversion: number
-  }
-  improvementTips: string[]
-}
-
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat("pl-PL").format(num)
-}
-
-const getTrendIcon = (trend: "up" | "down" | "same") => {
-  switch (trend) {
-    case "up":
-      return <TrendingUp className="h-4 w-4 text-green-500" />
-    case "down":
-      return <TrendingDown className="h-4 w-4 text-red-500" />
-    case "same":
-      return <Minus className="h-4 w-4 text-muted-foreground" />
-  }
-}
-
-const getTrendBadge = (trend: "up" | "down" | "same", change: number) => {
-  if (trend === "same") {
-    return <Badge variant="secondary">Bez zmian</Badge>
-  }
-  if (trend === "up") {
-    return (
-      <Badge variant="default" className="gap-1 bg-green-500">
-        <TrendingUp className="h-3 w-3" />
-        +{change} pozycji
-      </Badge>
-    )
-  }
-  return (
-    <Badge variant="destructive" className="gap-1">
-      <TrendingDown className="h-3 w-3" />
-      -{change} pozycji
-    </Badge>
-  )
-}
-
-export default function LawFirmRankingPage() {
+export default function RankingBoostPage() {
   const { data: session } = useSession()
-  const [data, setData] = useState<RankingData | null>(null)
+  const { toast } = useToast()
+  const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+  const [competitors, setCompetitors] = useState<Competitor[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [points, setPoints] = useState(0)
+  const [currentRank, setCurrentRank] = useState(0)
+  const [newRank, setNewRank] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    fetchRankingData()
-  }, [session])
+    const fetchData = async () => {
+      if (!session?.user?.id) return
+      try {
+        const response = await fetch("/api/law-firms/ranking-boost")
+        if (!response.ok) throw new Error("Nie udało się pobrać danych")
+        const data = await response.json()
+        setLawFirm(data.lawFirm)
+        setCompetitors(data.competitors)
+      } catch (error) {
+        toast({
+          title: "Błąd",
+          description: "Nie udało się pobrać danych rankingu.",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [session, toast])
 
-  const fetchRankingData = async () => {
-    if (!session?.user?.id) return
+  useEffect(() => {
+    if (!lawFirm) return
 
-    setLoading(true)
-    setError(null)
+    const allFirms = [...competitors, { ...lawFirm, pozycjaRanking: lawFirm.pozycjaRanking ?? 0 }]
+      .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+
+    const rank = allFirms.findIndex(f => f.id === lawFirm.id) + 1
+    setCurrentRank(rank)
+
+    const newRankingScore = (lawFirm.pozycjaRanking ?? 0) + points
+    const newAllFirms = [...competitors, { ...lawFirm, pozycjaRanking: newRankingScore }]
+      .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+
+    const newCalculatedRank = newAllFirms.findIndex(f => f.id === lawFirm.id) + 1
+    setNewRank(newCalculatedRank)
+  }, [lawFirm, competitors, points])
+
+  const handleBoost = async () => {
+    if (!lawFirm) return
+    setIsSubmitting(true)
 
     try {
-      const response = await fetch("/api/law-firms/my-ranking")
+      const response = await fetch("/api/law-firms/ranking-boost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ points }),
+      })
+
       if (!response.ok) {
-        throw new Error("Nie udało się pobrać danych rankingu")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się podnieść rankingu")
       }
 
-      const rankingData: RankingData = await response.json()
-      setData(rankingData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Wystąpił błąd")
+      const updatedLawFirm = await response.json()
+      setLawFirm(updatedLawFirm)
+      setPoints(0)
+      toast({
+        title: "Sukces",
+        description: "Twój ranking został pomyślnie zaktualizowany.",
+      })
+    } catch (error) {
+      toast({
+        title: "Błąd",
+        description: (error as Error).message,
+        variant: "destructive",
+      })
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -143,262 +134,140 @@ export default function LawFirmRankingPage() {
     )
   }
 
-  if (error || !data || !data.overallRanking) {
+  if (!lawFirm) {
     return (
-      <Card className="border-destructive">
+      <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" />
-            <p>{error || "Nie udało się załadować danych rankingu."}</p>
-          </div>
+          <p>Nie udało się załadować danych kancelarii.</p>
         </CardContent>
       </Card>
     )
   }
 
-  const { lawFirm, overallRanking, categoryRankings, competitorStats, improvementTips } = data
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pozycja ogłoszeń</h1>
-        <p className="text-muted-foreground mt-2">
-          Sprawdź swoją pozycję w rankingu i porównaj się z konkurencją
-        </p>
-      </div>
-
-      {/* Overall Ranking Card */}
-      <Card className="border-primary">
+      <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-2xl">
-                <Trophy className="h-6 w-6 text-primary" />
-                Twoja pozycja w rankingu ogólnym
-              </CardTitle>
-              <CardDescription className="mt-2">
-                Pozycja wśród wszystkich kancelarii na platformie
-              </CardDescription>
-            </div>
-            {getTrendIcon(overallRanking.trend)}
-          </div>
+          <CardTitle>Zwiększ swoją pozycję w rankingu</CardTitle>
+          <CardDescription>
+            Zwiększ swoją widoczność w głównej kategorii: <strong>{lawFirm.mainCategoryName}</strong>
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <div className="text-5xl font-bold text-primary">
-                #{overallRanking.position}
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                z {formatNumber(overallRanking.totalLawFirms)} kancelarii
-              </p>
-            </div>
-            <div className="text-right">
-              {getTrendBadge(overallRanking.trend, overallRanking.changePositions)}
-              <p className="text-xs text-muted-foreground mt-2">
-                Zmiana w ostatnim miesiącu
-              </p>
-            </div>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="bg-secondary/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-muted-foreground" />
+                  <span>Obecna pozycja</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-5xl font-bold">#{currentRank}</p>
+                <p className="text-muted-foreground">
+                  z {lawFirm.pozycjaRanking ?? 0} punktami rankingu
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <span>Potencjalna pozycja</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-5xl font-bold">#{newRank}</p>
+                <p className="text-muted-foreground">
+                  z {(lawFirm.pozycjaRanking ?? 0) + points} punktami rankingu
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Pozycja percentylowa</span>
-                <span className="text-sm font-bold">
-                  Top {((overallRanking.position / overallRanking.totalLawFirms) * 100).toFixed(1)}%
-                </span>
+              <div className="flex justify-between mb-2">
+                <label className="font-medium">Punkty do wydania</label>
+                <span className="font-bold">{points}</span>
               </div>
-              <Progress
-                value={((overallRanking.totalLawFirms - overallRanking.position) / overallRanking.totalLawFirms) * 100}
-                className="h-2"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats Comparison */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Twoje wyniki vs. średnia konkurencji
-          </CardTitle>
-          <CardDescription>
-            Porównanie Twoich wyników ze średnimi wartościami w branży
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Wyświetlenia */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Wyświetlenia profilu</span>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[points]}
+                  onValueChange={(value) => setPoints(value[0])}
+                  max={lawFirm.punktySaldo}
+                  step={10}
+                />
+                <Input
+                  type="number"
+                  className="w-24"
+                  value={points}
+                  onChange={(e) => setPoints(Number(e.target.value))}
+                  max={lawFirm.punktySaldo}
+                />
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold">{formatNumber(lawFirm.wyswietleniaProfilu)}</span>
-                <span className="text-sm text-muted-foreground">
-                  / {formatNumber(competitorStats.avgViews)} śr.
-                </span>
-              </div>
-              <Progress
-                value={(lawFirm.wyswietleniaProfilu / competitorStats.avgViews) * 100}
-                className="h-2"
-              />
-              <p className="text-xs text-muted-foreground">
-                {lawFirm.wyswietleniaProfilu > competitorStats.avgViews
-                  ? `${((lawFirm.wyswietleniaProfilu / competitorStats.avgViews - 1) * 100).toFixed(0)}% powyżej średniej`
-                  : `${((1 - lawFirm.wyswietleniaProfilu / competitorStats.avgViews) * 100).toFixed(0)}% poniżej średniej`
-                }
+              <p className="text-sm text-muted-foreground mt-2">
+                Masz dostępnych <strong>{lawFirm.punktySaldo}</strong> punktów.
               </p>
             </div>
 
-            {/* Oferty */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Złożone oferty</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold">{formatNumber(lawFirm.zlozoneOferty)}</span>
-                <span className="text-sm text-muted-foreground">
-                  / {formatNumber(competitorStats.avgOffers)} śr.
-                </span>
-              </div>
-              <Progress
-                value={(lawFirm.zlozoneOferty / competitorStats.avgOffers) * 100}
-                className="h-2"
-              />
-              <p className="text-xs text-muted-foreground">
-                {lawFirm.zlozoneOferty > competitorStats.avgOffers
-                  ? `${((lawFirm.zlozoneOferty / competitorStats.avgOffers - 1) * 100).toFixed(0)}% powyżej średniej`
-                  : `${((1 - lawFirm.zlozoneOferty / competitorStats.avgOffers) * 100).toFixed(0)}% poniżej średniej`
-                }
-              </p>
-            </div>
-
-            {/* Konwersja */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Konwersja</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold">{lawFirm.konwersja.toFixed(1)}%</span>
-                <span className="text-sm text-muted-foreground">
-                  / {competitorStats.avgConversion.toFixed(1)}% śr.
-                </span>
-              </div>
-              <Progress
-                value={(lawFirm.konwersja / competitorStats.avgConversion) * 100}
-                className="h-2"
-              />
-              <p className="text-xs text-muted-foreground">
-                {lawFirm.konwersja > competitorStats.avgConversion
-                  ? `${((lawFirm.konwersja / competitorStats.avgConversion - 1) * 100).toFixed(0)}% powyżej średniej`
-                  : `${((1 - lawFirm.konwersja / competitorStats.avgConversion) * 100).toFixed(0)}% poniżej średniej`
-                }
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Category Rankings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-primary" />
-            Ranking w kategoriach
-          </CardTitle>
-          <CardDescription>
-            Twoja pozycja w specjalizacjach prawnych
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {categoryRankings.length === 0 ? (
-            <div className="text-center py-6">
-              <p className="text-muted-foreground">
-                Nie masz jeszcze przypisanych specjalizacji
-              </p>
-              <Link href="/panel-kancelarii/profil">
-                <Button variant="outline" className="mt-4">
-                  Dodaj specjalizacje
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="lg" className="w-full" disabled={points <= 0 || isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <ArrowRight className="mr-2 h-4 w-4" />
+                  )}
+                  Zwiększ pozycję za {points} punktów
                 </Button>
-              </Link>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Kategoria</TableHead>
-                  <TableHead className="text-center">Pozycja</TableHead>
-                  <TableHead className="text-center">Liczba kancelarii</TableHead>
-                  <TableHead className="text-right">Percentyl</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categoryRankings.map((ranking) => (
-                  <TableRow key={ranking.categoryId}>
-                    <TableCell className="font-medium">
-                      {ranking.categoryName}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="outline">#{ranking.position}</Badge>
-                    </TableCell>
-                    <TableCell className="text-center text-muted-foreground">
-                      {ranking.totalLawFirms}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <span className="font-medium">
-                        Top {ranking.percentile.toFixed(0)}%
-                      </span>
-                    </TableCell>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Czy jesteś pewien?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    To spowoduje odjęcie <strong>{points} punktów</strong> z Twojego salda i zaktualizuje
+                    Twój wynik w rankingu do <strong>{(lawFirm.pozycjaRanking ?? 0) + points}</strong>. Ta akcja jest nieodwracalna.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleBoost}>Potwierdź</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Ranking konkurencji</CardTitle>
+          <CardDescription>
+            Zobacz, jak wypadasz na tle innych w Twojej głównej kategorii.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Pozycja</TableHead>
+                <TableHead>Kancelaria</TableHead>
+                <TableHead className="text-right">Punkty rankingu</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...competitors, { ...lawFirm, pozycjaRanking: (lawFirm.pozycjaRanking ?? 0) + points }]
+                .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+                .map((firm, index) => (
+                  <TableRow key={firm.id} className={firm.id === lawFirm.id ? "bg-primary/10" : ""}>
+                    <TableCell className="font-bold">#{index + 1}</TableCell>
+                    <TableCell>{firm.nazwa} {firm.id === lawFirm.id && "(Ty)"}</TableCell>
+                    <TableCell className="text-right">{firm.pozycjaRanking ?? 0}</TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Improvement Tips */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-primary" />
-            Jak poprawić swoją pozycję?
-          </CardTitle>
-          <CardDescription>
-            Wskazówki do zwiększenia widoczności i pozycji w rankingu
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-3">
-            {improvementTips.map((tip, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm">{tip}</span>
-              </li>
-            ))}
-          </ul>
-          <Separator className="my-6" />
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Chcesz zwiększyć swoją widoczność?
-            </p>
-            <div className="flex gap-2">
-              <Link href="/panel-kancelarii/promowanie">
-                <Button>
-                  Promuj profil
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

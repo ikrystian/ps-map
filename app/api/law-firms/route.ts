@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category")
     const voivodeship = searchParams.get("voivodeship")
     const search = searchParams.get("search")
+    const sortBy = searchParams.get("sortBy")
     const limit = parseInt(searchParams.get("limit") || "20")
     const offset = parseInt(searchParams.get("offset") || "0")
 
@@ -115,10 +116,16 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: [
-          { zweryfikowana: "desc" },
-          { wyswietleniaProfilu: "desc" },
-        ],
+        orderBy:
+          sortBy === "ranking"
+            ? [
+                { pozycjaRanking: { sort: "desc", nulls: "last" } },
+                { wyswietleniaProfilu: "desc" },
+              ]
+            : [
+                { zweryfikowana: "desc" },
+                { wyswietleniaProfilu: "desc" },
+              ],
         take: limit * 2, // Pobierz więcej, aby móc posortować z boostami
         skip: offset,
       }),
@@ -198,8 +205,11 @@ export async function GET(request: NextRequest) {
     )
 
     // Sort by final score (with promotion boosts applied)
-    const sortedLawFirms = lawFirmsWithData
-      .sort((a: any, b: any) => b._score - a._score)
+    const sortedLawFirms = (
+      sortBy === "ranking"
+        ? lawFirmsWithData
+        : lawFirmsWithData.sort((a: any, b: any) => b._score - a._score)
+    )
       .slice(0, limit) // Apply limit after sorting
       .map(({ _score, ...firm }: any) => firm) // Remove internal score from response
 
