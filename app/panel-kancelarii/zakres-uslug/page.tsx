@@ -6,19 +6,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info, Star } from "lucide-react"
 import { toast } from "sonner"
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 interface Category {
   id: string
@@ -40,13 +46,108 @@ interface LawFirmCategory {
   category: Category
 }
 
+interface SortableItemProps {
+  item: LawFirmCategory
+  index: number
+  isMainCategory: boolean
+  onRemove: () => void
+}
+
+function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.categoryId })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors group ${
+        isMainCategory ? "border-2 border-primary shadow-md" : ""
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          {...listeners}
+          {...attributes}
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1"
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+        <div className="flex items-center gap-2">
+          {isMainCategory && (
+            <Star className="h-4 w-4 text-primary fill-primary" />
+          )}
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-medium">{item.category.nazwa}</p>
+              {isMainCategory && (
+                <Badge variant="default" className="text-[10px]">
+                  Główna
+                </Badge>
+              )}
+            </div>
+            <Badge variant="outline" className="text-[10px] mt-1">
+              {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      {!isMainCategory && (
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={onRemove}
+          >
+            <span className="sr-only">Usuń</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function LawFirmServicesPage() {
   const [allCategories, setAllCategories] = useState<Category[]>([])
   const [selectedCategories, setSelectedCategories] = useState<LawFirmCategory[]>([])
+  const [mainCategoryId, setMainCategoryId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [maxCategories, setMaxCategories] = useState(10)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   useEffect(() => {
     fetchData()
@@ -67,7 +168,8 @@ export default function LawFirmServicesPage() {
       const selectedResponse = await fetch("/api/law-firm/categories")
       if (selectedResponse.ok) {
         const selectedData = await selectedResponse.json()
-        setSelectedCategories(selectedData)
+        setSelectedCategories(selectedData.categories || [])
+        setMainCategoryId(selectedData.mainCategoryId || null)
       }
 
       // Fetch settings for max categories
@@ -91,6 +193,11 @@ export default function LawFirmServicesPage() {
 
   const toggleCategory = (category: Category) => {
     if (isSelected(category.id)) {
+      // Sprawdź czy to główna kategoria
+      if (category.id === mainCategoryId) {
+        toast.error("Nie możesz odznaczyć głównej kategorii")
+        return
+      }
       // Remove category
       setSelectedCategories(selectedCategories.filter(sc => sc.categoryId !== category.id))
     } else {
@@ -124,30 +231,32 @@ export default function LawFirmServicesPage() {
     setExpandedCategories(newExpanded)
   }
 
-  const moveUp = (index: number) => {
-    if (index === 0) return
-    const newSelected = [...selectedCategories]
-    const temp = newSelected[index - 1]
-    newSelected[index - 1] = newSelected[index]
-    newSelected[index] = temp
-    // Update kolejnosc
-    newSelected.forEach((sc, idx) => {
-      sc.kolejnosc = idx
-    })
-    setSelectedCategories(newSelected)
-  }
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
 
-  const moveDown = (index: number) => {
-    if (index === selectedCategories.length - 1) return
-    const newSelected = [...selectedCategories]
-    const temp = newSelected[index + 1]
-    newSelected[index + 1] = newSelected[index]
-    newSelected[index] = temp
-    // Update kolejnosc
-    newSelected.forEach((sc, idx) => {
-      sc.kolejnosc = idx
+    if (!over || active.id === over.id) {
+      return
+    }
+
+    setSelectedCategories((items) => {
+      const oldIndex = items.findIndex((item) => item.categoryId === active.id)
+      const newIndex = items.findIndex((item) => item.categoryId === over.id)
+
+      // Zapobiegnij przesunięciu głównej kategorii z pierwszej pozycji
+      if (mainCategoryId && items[0]?.categoryId === mainCategoryId) {
+        if (oldIndex === 0 || newIndex === 0) {
+          toast.error("Główna kategoria musi pozostać na pierwszym miejscu")
+          return items
+        }
+      }
+
+      const newItems = arrayMove(items, oldIndex, newIndex)
+      // Update kolejnosc
+      return newItems.map((item, idx) => ({
+        ...item,
+        kolejnosc: idx,
+      }))
     })
-    setSelectedCategories(newSelected)
   }
 
   const handleSave = async () => {
@@ -166,15 +275,18 @@ export default function LawFirmServicesPage() {
         }),
       })
 
-      if (!response.ok) throw new Error("Failed to save categories")
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Failed to save categories")
+      }
 
       toast.success("Zapisano zmiany")
 
       // Refresh data to ensure consistency
       fetchData()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving categories:", error)
-      toast.error("Nie udało się zapisać zmian")
+      toast.error(error.message || "Nie udało się zapisać zmian")
     } finally {
       setSaving(false)
     }
@@ -187,6 +299,7 @@ export default function LawFirmServicesPage() {
     const hasChildren = category.children && category.children.length > 0
     const isExpanded = expandedCategories.has(category.id)
     const selected = isSelected(category.id)
+    const isMain = category.id === mainCategoryId
 
     return (
       <div key={category.id} className="mb-1">
@@ -209,13 +322,21 @@ export default function LawFirmServicesPage() {
               id={`cat-${category.id}`}
               checked={selected}
               onCheckedChange={() => toggleCategory(category)}
+              disabled={isMain}
             />
-            <div className="grid gap-1.5 leading-none">
+            <div className="grid gap-1.5 leading-none flex-1">
               <label
                 htmlFor={`cat-${category.id}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${
+                  isMain ? "text-primary font-bold" : ""
+                }`}
               >
                 {category.nazwa}
+                {isMain && (
+                  <Badge variant="default" className="text-[10px]">
+                    Główna
+                  </Badge>
+                )}
               </label>
               {category.opis && (
                 <p className="text-[0.8rem] text-muted-foreground line-clamp-1">
@@ -234,6 +355,13 @@ export default function LawFirmServicesPage() {
       </div>
     )
   }
+
+  // Sortuj kategorie: główna kategoria na początku
+  const sortedSelectedCategories = [...selectedCategories].sort((a, b) => {
+    if (a.categoryId === mainCategoryId) return -1
+    if (b.categoryId === mainCategoryId) return 1
+    return a.kolejnosc - b.kolejnosc
+  })
 
   if (loading) {
     return (
@@ -308,12 +436,12 @@ export default function LawFirmServicesPage() {
           </CardContent>
         </Card>
 
-        {/* Selected Categories (Reorder) */}
+        {/* Selected Categories (Reorder with drag and drop) */}
         <Card>
           <CardHeader>
             <CardTitle>Twoje specjalizacje</CardTitle>
             <CardDescription>
-              Ustal kolejność wyświetlania kategorii na Twoim profilu.
+              Ustal kolejność wyświetlania kategorii na Twoim profilu. Przeciągnij i upuść aby zmienić kolejność.
             </CardDescription>
           </CardHeader>
           <CardContent className="h-[600px] overflow-y-auto">
@@ -324,67 +452,28 @@ export default function LawFirmServicesPage() {
                 <p className="text-sm">Zaznacz kategorie z listy po lewej stronie</p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {selectedCategories.map((item, index) => (
-                  <div
-                    key={item.categoryId}
-                    className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1">
-                        <GripVertical className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.category.nazwa}</p>
-                        <Badge variant="outline" className="text-[10px] mt-1">
-                          {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => moveUp(index)}
-                        disabled={index === 0}
-                      >
-                        <ChevronUp className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => moveDown(index)}
-                        disabled={index === selectedCategories.length - 1}
-                      >
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => toggleCategory(item.category)}
-                      >
-                        <span className="sr-only">Usuń</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                        >
-                          <path d="M18 6 6 18" />
-                          <path d="m6 6 12 12" />
-                        </svg>
-                      </Button>
-                    </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={sortedSelectedCategories.map(item => item.categoryId)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-2">
+                    {sortedSelectedCategories.map((item, index) => (
+                      <SortableItem
+                        key={item.categoryId}
+                        item={item}
+                        index={index}
+                        isMainCategory={item.categoryId === mainCategoryId}
+                        onRemove={() => toggleCategory(item.category)}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             )}
           </CardContent>
         </Card>

@@ -219,6 +219,8 @@ model LawFirm {
   // Specjalizacje i usługi
   unikatowyOpisUslugi   String?
   slowaKluczowe         String?  // JSON array tagów
+  mainCategoryId        String?  // Główna kategoria wybrana podczas rejestracji
+  mainCategory          Category? @relation("MainCategory", fields: [mainCategoryId], references: [id])
 
   // Obszar działania
   callaPolska           Boolean  @default(false)
@@ -280,6 +282,7 @@ model LawFirm {
   @@index([zweryfikowana])
   @@index([aktywna])
   @@index([accountManagerId])
+  @@index([mainCategoryId])
 }
 
 enum LawFirmType {
@@ -382,6 +385,7 @@ model Category {
   lawFirms    LawFirmCategory[]
   cases       Case[]
   stats       LawFirmCategoryStats[]
+  mainCategoryFor LawFirm[] @relation("MainCategory")
 
   @@index([slug])
   @@index([parentId])

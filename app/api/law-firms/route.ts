@@ -326,6 +326,11 @@ export async function POST(request: NextRequest) {
         })
       }
 
+      // Określ główną kategorię (pierwsza z listy)
+      const mainCategoryId = body.categoriesIds && Array.isArray(body.categoriesIds) && body.categoriesIds.length > 0
+        ? body.categoriesIds[0]
+        : null
+
       // Utwórz profil kancelarii
       const lawFirm = await tx.lawFirm.create({
         data: {
@@ -355,6 +360,7 @@ export async function POST(request: NextRequest) {
           zgodaPrzetwarzanie: body.zgodaPrzetwarzanie,
           callaPolska: body.callaPolska || false,
           onlineOnly: body.onlineOnly || false,
+          mainCategoryId: mainCategoryId,
         },
       })
 
@@ -371,9 +377,10 @@ export async function POST(request: NextRequest) {
       // Dodaj specjalizacje/kategorie
       if (body.categoriesIds && Array.isArray(body.categoriesIds) && body.categoriesIds.length > 0) {
         await tx.lawFirmCategory.createMany({
-          data: body.categoriesIds.map((categoryId: string) => ({
+          data: body.categoriesIds.map((categoryId: string, index: number) => ({
             lawFirmId: lawFirm.id,
             categoryId,
+            kolejnosc: index,
           })),
         })
       }
