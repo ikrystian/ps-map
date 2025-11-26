@@ -300,7 +300,7 @@ const SprawyPage = () => {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 flex-1 mb-6">
         <Input
           placeholder="Szukaj po nazwie sprawy..."
           className="flex-grow"
@@ -336,51 +336,47 @@ const SprawyPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="pb-6 pt-6">
+          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Zaakceptowane</CardTitle>
-            <span className="text-2xl font-bold">
+            <span className="text-5xl mt-2 font-bold">
               {filteredCases.filter((c) => c.offers?.[0]?.status === "ZAAKCEPTOWANA").length}
             </span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy z zaakceptowaną ofertą</p>
+            <p className="text-xs text-muted-foreground text-right">Sprawy z zaakceptowaną ofertą</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="pb-6 pt-6">
+          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Twoje oferty</CardTitle>
-            <span className="text-2xl font-bold">
+            <span className="text-5xl mt-2 font-bold">
               {filteredCases.filter((c) => c.offers && c.offers.length > 0).length}
             </span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy z Twoją ofertą</p>
+            <p className="text-xs text-muted-foreground text-right">Sprawy z Twoją ofertą</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="pb-6 pt-6">
+          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wszystkie</CardTitle>
-            <span className="text-2xl font-bold">{filteredCases.length}</span>
+            <span className="text-5xl mt-2 font-bold">{filteredCases.length}</span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Dostępne sprawy</p>
+            <p className="text-xs text-muted-foreground text-right">Dostępne sprawy</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="pb-6 pt-6">
+          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Obserwowane</CardTitle>
-            <span className="text-2xl font-bold">{observedCasesCount}</span>
+            <span className="text-5xl mt-2 font-bold">{observedCasesCount}</span>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Sprawy, które obserwujesz</p>
+            <p className="text-xs text-muted-foreground text-right">Sprawy, które obserwujesz</p>
           </CardContent>
         </Card>
       </div>
-
-      <Separator className="my-6" />
-
-      <h2 className="text-2xl font-bold mb-4">Wszystkie Sprawy</h2>
 
       {filteredCases.length === 0 ? (
         <div className="text-center py-12">
@@ -404,10 +400,10 @@ const SprawyPage = () => {
                   "overflow-hidden relative border-0",
                 )}
               >
-                {isAccepted && <BorderBeam lightColor="var(--primary)"   lightWidth={500} duration={4} />}
+                {isAccepted && <BorderBeam lightColor="var(--primary)" lightWidth={500} duration={4} />}
 
                 <CardHeader className={cn(
-                  "flex flex-row items-start justify-between px-6 py-3 relative z-15",
+                  "flex flex-row items-start justify-between px-6 py-3 relative z-15 pt-6",
                 )}>
 
                   <div className="flex flex-wrap items-center gap-2 relative z-15">
@@ -431,79 +427,81 @@ const SprawyPage = () => {
                     )}
                     <Badge>{getStatusLabel(sprawa.status)}</Badge>
                   </div>
-                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Eye className="h-4 w-4" />
-                      <span title="osób przegląda tą sprawę ">{ (Math.random() * 10 + 1 ).toFixed(0) } </span>
+                      <span title="osób przegląda tą sprawę ">{(Math.random() * 10 + 1).toFixed(0)} </span>
                     </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => toggleFavorite(sprawa.id)}
-                  >
-                    <Heart
-                      className={cn(
-                        "h-5 w-5",
-                        favorites.has(sprawa.id) && "fill-current text-red-500"
-                      )}
-                    />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-red-500 hover:text-red-600"
-                    onClick={() => openRejectModal(sprawa.id)}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6 relative z-10">
-                <div className="flex flex-col sm:flex-row justify-between gap-4">
-                  <div className="flex-grow">
-                    <h3 className="text-xl font-bold mb-3">{sprawa.nazwaSprawy}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {sprawa.opisSprawy}
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                        <span>{sprawa.voivodeship.nazwa}</span>
-                      </div>
-
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
-                        <span>
-                          {sprawa.oczekiwanyTerminRealizacji
-                            ? formatDate(sprawa.oczekiwanyTerminRealizacji)
-                            : "Brak terminu"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Euro className="h-4 w-4 mr-2 flex-shrink-0" />
-                        <span>
-                          {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <span className="font-medium">Klient:</span>
-                        <span className="ml-2">
-                          {sprawa.client.imie} {sprawa.client.nazwisko}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0 flex items-center sm:ml-6">
-                    <Button onClick={() => router.push(`/panel-kancelarii/sprawy/${sprawa.id}`)}>
-                      Zobacz szczegóły
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => toggleFavorite(sprawa.id)}
+                    >
+                      <Heart
+                        className={cn(
+                          "h-5 w-5",
+                          favorites.has(sprawa.id) && "fill-current text-red-500"
+                        )}
+                      />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-600"
+                      onClick={() => openRejectModal(sprawa.id)}
+                    >
+                      <Trash2 className="h-5 w-5" />
                     </Button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent className="p-6 pt-0 relative z-10">
+                  <h3 className="text-2xl font-bold mb-4">{sprawa.nazwaSprawy}</h3>
+
+                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+
+                    <div className="flex-grow">
+                      <p className="hidden text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {sprawa.opisSprawy}
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-center ">
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>{sprawa.voivodeship.nazwa}</span>
+                        </div>
+
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>
+                            {sprawa.oczekiwanyTerminRealizacji
+                              ? formatDate(sprawa.oczekiwanyTerminRealizacji)
+                              : "Brak terminu"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Euro className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span>
+                            {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <span className="font-medium">Klient:</span>
+                          <span className="ml-2">
+                            {sprawa.client.imie} {sprawa.client.nazwisko}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 flex items-end sm:ml-6">
+                      <Button onClick={() => router.push(`/panel-kancelarii/sprawy/${sprawa.id}`)}>
+                        Zobacz szczegóły
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )
           })}
         </div>

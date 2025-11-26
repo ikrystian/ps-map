@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/auth"
 
 export async function PUT(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const user = await getCurrentUser()
@@ -20,9 +20,11 @@ export async function PUT(
             return new NextResponse("Missing required fields", { status: 400 })
         }
 
+        const { id } = await params
+
         const badge = await db.badge.update({
             where: {
-                id: params.id,
+                id,
             },
             data: {
                 name,
@@ -42,7 +44,7 @@ export async function PUT(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const user = await getCurrentUser()
@@ -51,9 +53,11 @@ export async function DELETE(
             return new NextResponse("Unauthorized", { status: 401 })
         }
 
+        const { id } = await params
+
         const badge = await db.badge.delete({
             where: {
-                id: params.id,
+                id,
             },
         })
 

@@ -248,7 +248,7 @@ export default function LawFirmPanelLayout({
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
           <div className="flex h-16 items-center px-4 justify-between border-b bg-card">
-            {!isCollapsed && <h2 className="text-lg font-semibold">Panel Kancelarii</h2>}
+            {!isCollapsed && <h2 className="text-lg font-semibold ">Panel Kancelarii</h2>}
             <Button
               variant="ghost"
               size="icon"

@@ -78,6 +78,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
         serif: ["var(--font-serif)", "serif"],
+        playfair: ["var(--font-playfair)", "serif"],
       },
       keyframes: {
         "accordion-down": {
