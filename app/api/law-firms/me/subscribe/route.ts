@@ -127,11 +127,65 @@ export async function POST(request: NextRequest) {
     const orderNumber = `SUB-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
 
     const isOnlinePayment = metodaPlatnosci === "PAYU" || metodaPlatnosci === "PRZELEWY24"
+    const isPointPayment = metodaPlatnosci === "POINTS"
+
+    // Konwersja ceny na punkty (1 PLN = 2 pkt)
+    const POINTS_PER_PLN = 2
+    const pointsCost = Math.round(finalPrice * POINTS_PER_PLN)
 
     let updatedLawFirm = lawFirm
     let order
 
-    if (isOnlinePayment) {
+    if (isPointPayment) {
+      if (lawFirm.punktySaldo < pointsCost) {
+        return Response.json(
+          { error: "Niewystarczająca liczba punktów" },
+          { status: 400 }
+        )
+      }
+
+      const result = await prisma.$transaction([
+        prisma.lawFirm.update({
+          where: { id: lawFirm.id },
+          data: {
+            pakietSubskrypcji: plan.typ,
+            dataPakietuOd,
+            dataPakietuDo,
+            autoRenewal,
+            punktySaldo: {
+              decrement: pointsCost,
+              increment: plan.punktyGratis,
+            },
+          },
+        }),
+        prisma.order.create({
+          data: {
+            orderNumber,
+            lawFirmId: lawFirm.id,
+            orderType: "SUBSCRIPTION",
+            subscriptionPlanId: plan.id,
+            subscriptionPeriod: period,
+            packageStartDate: dataPakietuOd,
+            packageEndDate: dataPakietuDo,
+            kwota: finalPrice, // Zapisujemy kwotę w PLN dla historii
+            punktyKoszt: pointsCost, // Zapisujemy koszt w punktach
+            metodaPlatnosci: "POINTS",
+            statusPlatnosci: "ZAPLACONE",
+            zaplaconoData: new Date(),
+          },
+        }),
+        prisma.pointTransaction.create({
+          data: {
+            lawFirmId: lawFirm.id,
+            amount: -pointsCost,
+            type: "SUBSCRIPTION_PURCHASE",
+            description: `Zakup pakietu ${plan.nazwa} na okres ${period} miesięcy`,
+          },
+        }),
+      ])
+      updatedLawFirm = result[0]
+      order = result[1]
+    } else if (isOnlinePayment) {
       // Dla płatności online tworzymy tylko zamówienie oczekujące
       order = await prisma.order.create({
         data: {

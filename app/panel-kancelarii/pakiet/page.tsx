@@ -35,6 +35,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Coins } from "lucide-react"
+import Link from "next/link"
+
+const POINTS_PER_PLN = 2
 
 interface LawFirm {
   id: string
@@ -42,6 +46,7 @@ interface LawFirm {
   pakietSubskrypcji: string
   dataPakietuOd: string | null
   dataPakietuDo: string | null
+  punktySaldo: number
 }
 
 interface SubscriptionPlan {
@@ -142,15 +147,12 @@ export default function LawFirmPackagePage() {
   }
 
   const getPrice = (plan: SubscriptionPlan, period: string) => {
-    switch (period) {
-      case "1":
-        return plan.cena1Miesiac ? `${plan.cena1Miesiac} zł / miesięcznie` : "-"
-      case "6":
-        return plan.cena6Miesiecy ? `${plan.cena6Miesiecy} zł / 6 miesięcy` : "-"
-      case "12":
-      default:
-        return `${plan.cena12Miesiecy} zł / rok`
-    }
+    const price = getPriceValue(plan, period)
+    if (price === 0 && plan.typ !== "FREE") return "-"
+    if (plan.typ === "FREE") return "Darmowy"
+
+    const pointsCost = Math.round(price * POINTS_PER_PLN)
+    return `${pointsCost} pkt`
   }
 
   const getPriceValue = (plan: SubscriptionPlan, period: string): number => {
@@ -182,37 +184,41 @@ export default function LawFirmPackagePage() {
     setShowConfirmDialog(true)
   }
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async () => {
     if (!selectedPlan) return
+    setPurchasing(true)
 
-    const period = parseInt(selectedPeriods[selectedPlan.id] || "12")
-    const price = getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")
+    try {
+      const period = parseInt(selectedPeriods[selectedPlan.id] || "12")
 
-    // Zapisz dane zamówienia w sessionStorage
-    const orderData = {
-      type: "PACKAGE",
-      planId: selectedPlan.id,
-      planName: selectedPlan.nazwa,
-      planType: selectedPlan.typ,
-      period: period,
-      periodLabel: getPeriodLabel(selectedPeriods[selectedPlan.id] || "12"),
-      price: price,
-      punktyGratis: selectedPlan.punktyGratis,
-      features: {
-        dostepDoSpraw: selectedPlan.dostepDoSpraw,
-        kategorieSpraw: selectedPlan.kategorieSpraw,
-        wojewodztwa: selectedPlan.wojewodztwa,
-        miasta: selectedPlan.miasta,
-        priorytetWyszukiwanie: selectedPlan.priorytetWyszukiwanie,
-        statystykiAnalizy: selectedPlan.statystykiAnalizy,
-        mozliwoscBloga: selectedPlan.mozliwoscBloga,
+      const response = await fetch("/api/law-firms/me/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          period: period,
+          metodaPlatnosci: "POINTS",
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się aktywować pakietu")
       }
+
+      toast.success("Pakiet został pomyślnie aktywowany!", {
+        description: `Nowy pakiet: ${selectedPlan.nazwa}`,
+      })
+
+      setShowConfirmDialog(false)
+      fetchData() // Odśwież dane
+    } catch (err) {
+      toast.error("Błąd aktywacji pakietu", {
+        description: err instanceof Error ? err.message : "Spróbuj ponownie później",
+      })
+    } finally {
+      setPurchasing(false)
     }
-
-    sessionStorage.setItem("pendingOrder", JSON.stringify(orderData))
-
-    // Przekieruj do strony checkout
-    window.location.href = "/panel-kancelarii/checkout"
   }
 
   if (loading) {
@@ -268,21 +274,21 @@ export default function LawFirmPackagePage() {
         </p>
       </div>
 
-      {/* Current Package */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Twój aktualny pakiet</CardTitle>
-          <CardDescription>Szczegóły Twojej subskrypcji</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
+      {/* Current Status */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Twój aktualny pakiet</CardTitle>
+            <CardDescription>Szczegóły Twojej subskrypcji</CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Package className="h-8 w-8 text-primary" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-2xl font-bold">
+                  <h3 className="text-xl font-bold">
                     {plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji}
                   </h3>
                   <Badge variant="default">Aktywny</Badge>
@@ -294,9 +300,30 @@ export default function LawFirmPackagePage() {
                 )}
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Dostępne punkty</CardTitle>
+            <CardDescription>Wykorzystaj je do aktywacji pakietów</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+               <div className="h-16 w-16 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Coins className="h-8 w-8 text-amber-500" />
+              </div>
+              <div>
+                <div className="text-3xl font-bold">{lawFirm.punktySaldo} pkt</div>
+                <Link href="/panel-kancelarii/punkty">
+                  <Button variant="link" className="px-0 h-auto">
+                    Kup więcej punktów <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Comparison Table */}
       <Card>
@@ -387,33 +414,44 @@ export default function LawFirmPackagePage() {
                 {/* Action Row */}
                 <tr>
                   <td className="p-4"></td>
-                  {plans.map((plan) => (
-                    <td key={plan.id} className="p-4">
-                      {plan.typ === lawFirm.pakietSubskrypcji ? (
-                        <Button variant="outline" className="w-full" disabled>
-                          Twój obecny pakiet
-                        </Button>
-                      ) : (
-                        <Button
-                          className="w-full"
-                          onClick={() => handlePurchaseClick(plan)}
-                          disabled={purchasing}
-                        >
-                          {purchasing ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Aktywacja...
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingCart className="mr-2 h-4 w-4" />
-                              Wybieram
-                            </>
-                          )}
-                        </Button>
-                      )}
-                    </td>
-                  ))}
+                  {plans.map((plan) => {
+                    const price = getPriceValue(plan, selectedPeriods[plan.id] || "12")
+                    const pointsCost = Math.round(price * POINTS_PER_PLN)
+                    const canAfford = lawFirm.punktySaldo >= pointsCost
+
+                    return (
+                      <td key={plan.id} className="p-4">
+                        {plan.typ === lawFirm.pakietSubskrypcji ? (
+                          <Button variant="outline" className="w-full" disabled>
+                            Twój obecny pakiet
+                          </Button>
+                        ) : plan.typ === "FREE" ? (
+                           <Button variant="outline" className="w-full" disabled>
+                            Darmowy
+                          </Button>
+                        ) : (
+                          <Button
+                            className="w-full"
+                            onClick={() => handlePurchaseClick(plan)}
+                            disabled={purchasing || !canAfford}
+                            title={!canAfford ? "Masz za mało punktów" : ""}
+                          >
+                            {purchasing ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Aktywacja...
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingCart className="mr-2 h-4 w-4" />
+                                Wybieram
+                              </>
+                            )}
+                          </Button>
+                        )}
+                      </td>
+                    )
+                  })}
                 </tr>
               </tbody>
             </table>
@@ -428,61 +466,90 @@ export default function LawFirmPackagePage() {
             <AlertDialogTitle>Potwierdź aktywację pakietu</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-4">
-                {selectedPlan && (
-                  <>
-                    <div>
-                      <div className="font-semibold text-foreground mb-2">
-                        Aktywujesz pakiet: {selectedPlan.nazwa}
-                      </div>
-                      <div className="space-y-1 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Okres:</span>{" "}
-                          <span className="font-medium text-foreground">
-                            {getPeriodLabel(selectedPeriods[selectedPlan.id] || "12")}
-                          </span>
+                {selectedPlan && (() => {
+                  const price = getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")
+                  const pointsCost = Math.round(price * POINTS_PER_PLN)
+                  const canAfford = lawFirm ? lawFirm.punktySaldo >= pointsCost : false
+
+                  return (
+                    <>
+                      <div>
+                        <div className="font-semibold text-foreground mb-2">
+                          Aktywujesz pakiet: {selectedPlan.nazwa}
                         </div>
-                        <div>
-                          <span className="text-muted-foreground">Cena:</span>{" "}
-                          <span className="font-medium text-foreground">
-                            {getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12")} zł
-                          </span>
-                        </div>
-                        {selectedPlan.punktyGratis > 0 && (
-                          <div className="flex items-center gap-1 text-green-600">
-                            <Gift className="h-4 w-4" />
-                            <span>Otrzymasz {selectedPlan.punktyGratis} punktów gratis!</span>
+                        <div className="space-y-1 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Okres:</span>{" "}
+                            <span className="font-medium text-foreground">
+                              {getPeriodLabel(selectedPeriods[selectedPlan.id] || "12")}
+                            </span>
                           </div>
-                        )}
+                          <div>
+                            <span className="text-muted-foreground">Koszt:</span>{" "}
+                            <span className="font-medium text-primary">
+                              {pointsCost} pkt
+                            </span>
+                          </div>
+                          {selectedPlan.punktyGratis > 0 && (
+                            <div className="flex items-center gap-1 text-green-600">
+                              <Gift className="h-4 w-4" />
+                              <span>Otrzymasz {selectedPlan.punktyGratis} punktów gratis!</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="bg-muted p-4 rounded-lg space-y-2">
-                      <div className="font-semibold text-foreground">Co się zmieni?</div>
-                      <ul className="text-sm space-y-1">
-                        <li>✓ Dostęp do {selectedPlan.dostepDoSpraw ?? "∞"} spraw</li>
-                        <li>✓ {selectedPlan.kategorieSpraw ?? "∞"} kategorii spraw</li>
-                        <li>✓ {selectedPlan.wojewodztwa} województw</li>
-                        <li>✓ {selectedPlan.miasta} miast</li>
-                        {selectedPlan.priorytetWyszukiwanie && <li>✓ Priorytet w wyszukiwaniu</li>}
-                        {selectedPlan.statystykiAnalizy && <li>✓ Statystyki i analizy</li>}
-                        {selectedPlan.mozliwoscBloga && <li>✓ Możliwość prowadzenia bloga</li>}
-                      </ul>
-                    </div>
+                      <div className="bg-muted p-4 rounded-lg space-y-2">
+                         <div className="flex justify-between items-center text-sm">
+                           <span>Twoje saldo:</span>
+                           <span>{lawFirm?.punktySaldo} pkt</span>
+                         </div>
+                         <div className="flex justify-between items-center text-sm">
+                           <span>Koszt pakietu:</span>
+                           <span className="text-destructive">-{pointsCost} pkt</span>
+                         </div>
+                         <hr className="my-1 border-border" />
+                         <div className="flex justify-between items-center font-semibold">
+                           <span>Pozostanie:</span>
+                           <span className={canAfford ? "text-green-600" : "text-destructive"}>
+                             {lawFirm ? lawFirm.punktySaldo - pointsCost : 0} pkt
+                           </span>
+                         </div>
+                      </div>
 
-                    <div className="text-xs text-muted-foreground">
-                      Pakiet zostanie aktywowany natychmiast po potwierdzeniu. W prawdziwej aplikacji
-                      tutaj byłby proces płatności.
-                    </div>
-                  </>
-                )}
+                      {!canAfford && (
+                        <div className="text-sm text-destructive p-3 bg-destructive/10 rounded-lg">
+                          Nie masz wystarczającej liczby punktów.
+                          <Link href="/panel-kancelarii/punkty">
+                            <Button variant="link" className="px-1 h-auto text-destructive">
+                              Doładuj konto.
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                    </>
+                  )
+                })()}
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmPurchase}>
-              <ArrowRight className="mr-2 h-4 w-4" />
-              Przejdź do podsumowania
+            <AlertDialogAction
+              onClick={handleConfirmPurchase}
+              disabled={purchasing || (selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12") * POINTS_PER_PLN))}
+            >
+              {purchasing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Przetwarzanie...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Aktywuj pakiet
+                </>
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
