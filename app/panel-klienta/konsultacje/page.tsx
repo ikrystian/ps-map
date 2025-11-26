@@ -84,7 +84,7 @@ export default function ClientConsultationsPage() {
               <p>Nie masz żadnych umówionych konsultacji.</p>
             ) : (
               bookings.map((booking) => (
-                <div key={booking.id} className="border p-4 rounded-lg flex justify-between items-start">
+                <div key={booking.id} className="border p-4 rounded-lg flex justify-between items-start consulting-item">
                   <div className="flex gap-4 flex-1">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       {booking.lawFirm?.logo && (

@@ -98,7 +98,7 @@ interface LawFirm {
 
 // Pakiety punktów
 const POINT_PACKAGES = [
-  { id: "100_pkt", points: 100, price: 49, label: "100 punktów" },
+  { id: "100_pkt", points: 100, price: 49, label: "100 punktów", discount: " " },
   { id: "250_pkt", points: 250, price: 99, label: "250 punktów", discount: "Oszczędzasz 24 zł" },
   { id: "500_pkt", points: 500, price: 179, label: "500 punktów", discount: "Oszczędzasz 66 zł" },
   { id: "1000_pkt", points: 1000, price: 299, label: "1000 punktów", discount: "Oszczędzasz 191 zł" },
@@ -315,11 +315,9 @@ export default function LawFirmPointsPage() {
                   <Coins className="h-5 w-5 text-primary" />
                   {pkg.label}
                 </CardTitle>
-                {pkg.discount && (
-                  <CardDescription className="text-green-600 font-medium">
+                  <CardDescription className="text-green-600 font-medium h-5">
                     {pkg.discount}
                   </CardDescription>
-                )}
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold mb-4">
