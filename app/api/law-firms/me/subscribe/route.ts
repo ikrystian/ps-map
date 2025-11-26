@@ -144,6 +144,37 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      // Prepare point transactions
+      const balanceAfterPurchase = lawFirm.punktySaldo - pointsCost
+      const balanceAfterBonus = balanceAfterPurchase + plan.punktyGratis
+
+      const pointTransactions = [
+        prisma.pointTransaction.create({
+          data: {
+            lawFirmId: lawFirm.id,
+            amount: -pointsCost,
+            balanceAfter: balanceAfterPurchase,
+            type: "SUBSCRIPTION_PURCHASE",
+            description: `Zakup pakietu ${plan.nazwa} na okres ${period} miesięcy`,
+          },
+        }),
+      ]
+
+      // Add bonus transaction if there are bonus points
+      if (plan.punktyGratis > 0) {
+        pointTransactions.push(
+          prisma.pointTransaction.create({
+            data: {
+              lawFirmId: lawFirm.id,
+              amount: plan.punktyGratis,
+              balanceAfter: balanceAfterBonus,
+              type: "SUBSCRIPTION_BONUS",
+              description: `Bonus punktów za pakiet ${plan.nazwa}`,
+            },
+          })
+        )
+      }
+
       const result = await prisma.$transaction([
         prisma.lawFirm.update({
           where: { id: lawFirm.id },
@@ -152,10 +183,7 @@ export async function POST(request: NextRequest) {
             dataPakietuOd,
             dataPakietuDo,
             autoRenewal,
-            punktySaldo: {
-              decrement: pointsCost,
-              increment: plan.punktyGratis,
-            },
+            punktySaldo: balanceAfterBonus,
           },
         }),
         prisma.order.create({
@@ -174,14 +202,7 @@ export async function POST(request: NextRequest) {
             zaplaconoData: new Date(),
           },
         }),
-        prisma.pointTransaction.create({
-          data: {
-            lawFirmId: lawFirm.id,
-            amount: -pointsCost,
-            type: "SUBSCRIPTION_PURCHASE",
-            description: `Zakup pakietu ${plan.nazwa} na okres ${period} miesięcy`,
-          },
-        }),
+        ...pointTransactions,
       ])
       updatedLawFirm = result[0]
       order = result[1]

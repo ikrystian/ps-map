@@ -272,6 +272,7 @@ model LawFirm {
   stats                 LawFirmStats[]        // Statystyki miesięczne
   categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
   partnerProgram        PartnerProgram?       // Program partnerski
+  pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -965,6 +966,7 @@ model Order {
 
   // Wspólne pola
   kwota             Float
+  punktyKoszt       Int?      // Koszt w punktach (dla płatności punktami)
 
   metodaPlatnosci   PaymentMethod
   statusPlatnosci   PaymentStatus @default(OCZEKUJE)
@@ -1000,6 +1002,7 @@ enum PaymentMethod {
   PRZELEW
   PAYPAL
   BACS
+  POINTS
 }
 
 enum PaymentStatus {
@@ -1007,6 +1010,38 @@ enum PaymentStatus {
   ZAPLACONE
   ANULOWANE
   ZWROT
+}
+
+// ============================================================================
+// TRANSAKCJE PUNKTOWE
+// ============================================================================
+
+model PointTransaction {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation("PointTransactions", fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  amount          Int      // Ilość punktów (dodatnia lub ujemna)
+  balanceAfter    Int      // Saldo po transakcji
+  type            PointTransactionType
+  description     String   // Opis transakcji
+
+  createdAt       DateTime @default(now())
+
+  @@index([lawFirmId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+enum PointTransactionType {
+  SUBSCRIPTION_PURCHASE    // Zakup pakietu subskrypcji
+  POINTS_PURCHASE          // Zakup punktów
+  PROMOTION_PURCHASE       // Zakup promocji
+  OFFER_HIGHLIGHT          // Wyróżnienie oferty
+  PARTNER_BONUS            // Bonus partnerski
+  ADMIN_ADJUSTMENT         // Korekta admina
+  REFUND                   // Zwrot punktów
+  SUBSCRIPTION_BONUS       // Bonus za pakiet
 }
 
 // ============================================================================

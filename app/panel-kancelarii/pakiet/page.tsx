@@ -537,7 +537,7 @@ export default function LawFirmPackagePage() {
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
-              disabled={purchasing || (selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12") * POINTS_PER_PLN))}
+              disabled={purchasing || !!(selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriods[selectedPlan.id] || "12") * POINTS_PER_PLN))}
             >
               {purchasing ? (
                 <>
