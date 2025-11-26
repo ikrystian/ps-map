@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
 
@@ -74,6 +74,25 @@ export default function ConsultationsPage() {
     }
   }
 
+  const handleDelete = async (bookingId: string) => {
+    if (!confirm("Czy na pewno chcesz usunąć tę konsultację?")) return
+
+    try {
+      const response = await fetch(`/api/consultations/${bookingId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        toast.success("Konsultacja została usunięta.")
+        fetchBookings() // Refresh the list
+      } else {
+        throw new Error("Failed to delete booking")
+      }
+    } catch (error) {
+      toast.error("Wystąpił błąd podczas usuwania konsultacji.")
+    }
+  }
+
 
   if (isLoading) {
     return (
@@ -132,6 +151,10 @@ export default function ConsultationsPage() {
                           Oznacz jako nieopłacone
                         </Button>
                     </div>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Usuń
+                    </Button>
                   </div>
                 </div>
               ))

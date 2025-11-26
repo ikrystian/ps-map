@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -14,12 +15,14 @@ import { pl } from "date-fns/locale"
 
 export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
   const { data: session } = useSession()
+  const router = useRouter()
   const [duration, setDuration] = useState<15 | 30 | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [topic, setTopic] = useState("")
   const [contact, setContact] = useState("")
   const [bookedSlots, setBookedSlots] = useState<string[]>([])
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
@@ -36,6 +39,19 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
     }
     fetchBookedSlots()
   }, [lawFirm.id])
+
+  // Auto-fill contact data from logged-in client
+  useEffect(() => {
+    if (session?.user?.client) {
+      const client = session.user.client
+      const contactInfo = [
+        `${client.imie || ''} ${client.nazwisko || ''}`.trim(),
+        session.user.email || '',
+        client.telefon || ''
+      ].filter(Boolean).join(', ')
+      setContact(contactInfo)
+    }
+  }, [session])
 
 
   const handleBooking = async () => {
@@ -65,6 +81,9 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
         toast.success("Twoja prośba o konsultację została wysłana.")
         setBookedSlots([...bookedSlots, new Date(newBooking.consultationDate).toISOString()])
         setSelectedSlot(null)
+        setIsDialogOpen(false)
+        // Redirect to client consultations page
+        router.push("/panel-klienta/konsultacje")
       } else {
         throw new Error("Failed to book consultation")
       }
@@ -107,12 +126,19 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 {slots.map((slot) => {
                   const slotDateTime = new Date(`${format(day, "yyyy-MM-dd")}T${slot}:00`)
                   const isBooked = bookedSlots.includes(slotDateTime.toISOString())
+                  const dialogKey = `${day.toISOString()}-${slot}`
                   return (
-                    <Dialog key={slot}>
+                    <Dialog key={slot} open={isDialogOpen && selectedSlot === slot && selectedDate?.toISOString() === day.toISOString()} onOpenChange={(open) => {
+                      setIsDialogOpen(open)
+                      if (!open) {
+                        setSelectedSlot(null)
+                      }
+                    }}>
                       <DialogTrigger asChild>
                          <Button variant="outline" size="sm" disabled={isBooked} onClick={() => {
                              setSelectedDate(day)
                              setSelectedSlot(slot)
+                             setIsDialogOpen(true)
                          }}>
                           {slot}
                         </Button>
@@ -129,8 +155,8 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                             <Textarea id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} />
                           </div>
                           <div className="grid gap-2">
-                            <Label htmlFor="contact">Dane kontaktowe (email/telefon)</Label>
-                            <Input id="contact" value={contact} onChange={(e) => setContact(e.target.value)} />
+                            <Label htmlFor="contact">Dane kontaktowe</Label>
+                            <Input id="contact" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Imię, nazwisko, email, telefon" />
                           </div>
                           <Button onClick={handleBooking}>Wyślij prośbę</Button>
                         </div>

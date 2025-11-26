@@ -68,3 +68,39 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }
+
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  const { id: bookingId } = await params
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  try {
+    const booking = await prisma.consultationBooking.findUnique({
+      where: { id: bookingId },
+    })
+
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+    }
+
+    // Check if user is the law firm or the client
+    const isLawFirm = session.user.lawFirm?.id === booking.lawFirmId
+    const isClient = session.user.client?.id === booking.clientId
+
+    if (!isLawFirm && !isClient) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 })
+    }
+
+    await prisma.consultationBooking.delete({
+      where: { id: bookingId },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error deleting consultation booking:", error)
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+  }
+}
