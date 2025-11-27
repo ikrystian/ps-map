@@ -403,7 +403,7 @@ export default function LawFirmServicesPage() {
               Zaznacz kategorie, które chcesz dodać do swojego profilu.
             </CardDescription>
           </CardHeader>
-          <CardContent className="h-[70vh] overflow-y-auto pr-4">
+          <CardContent className="overflow-y-auto pr-4">
             <div className="space-y-6 grid grid-cols-2">
               <div>
                 <h3 className="font-semibold mb-4 flex items-center text-primary">
