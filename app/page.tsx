@@ -35,12 +35,14 @@ import PublicFooter from "@/components/PublicFooter"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
+import ParticlesBackground from "@/components/ParticlesBackground"
 
 export default function HomePage() {
   const { data: session } = useSession()
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [blogPosts, setBlogPosts] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [email, setEmail] = useState("")
 
@@ -66,6 +68,13 @@ export default function HomePage() {
         if (categoriesResponse.ok) {
           const categoriesData = await categoriesResponse.json()
           setCategories(categoriesData.filter((cat: Category) => cat.aktywna))
+        }
+
+        // Fetch recent blog posts
+        const blogResponse = await fetch("/api/blog/posts?limit=3")
+        if (blogResponse.ok) {
+          const blogData = await blogResponse.json()
+          setBlogPosts(blogData.posts || [])
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -125,8 +134,9 @@ export default function HomePage() {
       />
 
       {/* SECTION 1: Hero Section */}
-      <section className="relative from-primary/10 via-background to-secondary/10 py-20 md:py-32 hero-image">
-        <div className="con1tainer mx-auto px-4">
+      <section className="relative from-primary/10 via-background to-secondary/10 py-20 md:py-32 hero-image overflow-hidden">
+        <ParticlesBackground />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Prosta Sprawa
@@ -1195,29 +1205,50 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="hover:shadow-lg transition-shadow">
-                <div className="aspect-video bg-muted" />
-                <CardHeader>
-                  <Badge className="w-fit mb-2">Poradnik</Badge>
-                  <CardTitle className="line-clamp-2">
-                    Artykuł przykładowy {i}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-3">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href="/blog">
-                      Czytaj więcej
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {blogPosts.length > 0 ? (
+              blogPosts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <Card className="hover:shadow-lg transition-shadow h-full">
+                    {post.obrazekWyrozniajacy ? (
+                      <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                        <img
+                          src={post.obrazekWyrozniajacy}
+                          alt={post.tytul}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <Briefcase className="h-12 w-12 text-muted-foreground" />
+                      </div>
+                    )}
+                    <CardHeader>
+                      {post.category && (
+                        <Badge className="w-fit mb-2">{post.category.nazwa}</Badge>
+                      )}
+                      <CardTitle className="line-clamp-2">
+                        {post.tytul}
+                      </CardTitle>
+                      <CardDescription className="line-clamp-3">
+                        {post.metaDescription || post.tresc.substring(0, 150).replace(/<[^>]*>/g, '') + '...'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button asChild variant="ghost" size="sm">
+                        <span>
+                          Czytaj więcej
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </span>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12">
+                <p className="text-muted-foreground">Brak artykułów do wyświetlenia</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
