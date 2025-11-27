@@ -18,9 +18,10 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock, ChevronDown, ChevronUp } from "lucide-react"
 import { MagicCard } from "@/components/magic-card"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface LawFirm {
   id: string
@@ -97,6 +98,7 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 }
 
 export default function SearchLawyerPage() {
+  const [showFilters, setShowFilters] = useState(false)
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
@@ -200,153 +202,163 @@ export default function SearchLawyerPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-4xl font-bold mb-2">Szukaj prawnika</h1>
-          <p className="text-muted-foreground">
-            Znajdź najlepszego prawnika dla swoich potrzeb spośród {total} zweryfikowanych kancelarii
-          </p>
+        <div className="">
+          <h1 className="text-4xl font-playfair font-medium tracking-tight">Szukaj prawnika</h1>
+
         </div>
 
         {/* Horizontal Filters */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Filtry
-              </CardTitle>
-              <Button variant="ghost" size="sm" onClick={handleResetFilters}>
-                Wyczyść wszystkie
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Search */}
-              <div className="space-y-2">
-                <Label className="text-xs">Wyszukaj</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Nazwa, miasto..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <Card className="mb-6">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Filter className="h-5 w-5" />
+                      Filtry
+                    </CardTitle>
+                    <Button variant="ghost" size="sm" onClick={handleResetFilters}>
+                      Wyczyść wszystkie
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Search */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Wyszukaj</Label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Nazwa, miasto..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
 
-              {/* Category */}
-              <div className="space-y-2">
-                <Label className="text-xs">Kategoria prawna</Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Wszystkie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Wszystkie</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.slug}>
-                        <div className="flex items-center gap-2">
-                          {category.ikona && <span>{category.ikona}</span>}
-                          <span>{category.nazwa}</span>
+                    {/* Category */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Kategoria prawna</Label>
+                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wszystkie" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Wszystkie</SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.slug}>
+                              <div className="flex items-center gap-2">
+                                {category.ikona && <span>{category.ikona}</span>}
+                                <span>{category.nazwa}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Voivodeship */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Województwo</Label>
+                      <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wszystkie" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Wszystkie</SelectItem>
+                          {voivodeships.map((voivodeship) => (
+                            <SelectItem key={voivodeship.id} value={voivodeship.slug}>
+                              {voivodeship.nazwa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* City */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Miasto</Label>
+                      <Input
+                        placeholder="Wpisz miasto..."
+                        value={selectedCity}
+                        onChange={(e) => setSelectedCity(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Min Rating */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Minimalna ocena</Label>
+                      <Select value={minRating} onValueChange={setMinRating}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Dowolna" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Dowolna</SelectItem>
+                          <SelectItem value="5">5 gwiazdek</SelectItem>
+                          <SelectItem value="4">4+ gwiazdek</SelectItem>
+                          <SelectItem value="3">3+ gwiazdek</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Sort By */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Sortuj według</Label>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="relevance">Trafność</SelectItem>
+                          <SelectItem value="rating">Najwyżej oceniane</SelectItem>
+                          <SelectItem value="newest">Najnowsze</SelectItem>
+                          <SelectItem value="experience">Doświadczenie</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Checkboxes */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Opcje</Label>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="onlineOnly"
+                            checked={onlineOnly}
+                            onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
+                          />
+                          <Label htmlFor="onlineOnly" className="cursor-pointer text-sm font-normal">
+                            Tylko online
+                          </Label>
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
-              {/* Voivodeship */}
-              <div className="space-y-2">
-                <Label className="text-xs">Województwo</Label>
-                <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Wszystkie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Wszystkie</SelectItem>
-                    {voivodeships.map((voivodeship) => (
-                      <SelectItem key={voivodeship.id} value={voivodeship.slug}>
-                        {voivodeship.nazwa}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* City */}
-              <div className="space-y-2">
-                <Label className="text-xs">Miasto</Label>
-                <Input
-                  placeholder="Wpisz miasto..."
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                />
-              </div>
-
-              {/* Min Rating */}
-              <div className="space-y-2">
-                <Label className="text-xs">Minimalna ocena</Label>
-                <Select value={minRating} onValueChange={setMinRating}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Dowolna" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Dowolna</SelectItem>
-                    <SelectItem value="5">5 gwiazdek</SelectItem>
-                    <SelectItem value="4">4+ gwiazdek</SelectItem>
-                    <SelectItem value="3">3+ gwiazdek</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Sort By */}
-              <div className="space-y-2">
-                <Label className="text-xs">Sortuj według</Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Trafność</SelectItem>
-                    <SelectItem value="rating">Najwyżej oceniane</SelectItem>
-                    <SelectItem value="newest">Najnowsze</SelectItem>
-                    <SelectItem value="experience">Doświadczenie</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Checkboxes */}
-              <div className="space-y-2">
-                <Label className="text-xs">Opcje</Label>
-                <div className="flex flex-col gap-2 pt-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="onlineOnly"
-                      checked={onlineOnly}
-                      onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
-                    />
-                    <Label htmlFor="onlineOnly" className="cursor-pointer text-sm font-normal">
-                      Tylko online
-                    </Label>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="verifiedOnly"
+                            checked={verifiedOnly}
+                            onCheckedChange={(checked) => setVerifiedOnly(checked as boolean)}
+                          />
+                          <Label htmlFor="verifiedOnly" className="cursor-pointer text-sm font-normal">
+                            Tylko zweryfikowane
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="verifiedOnly"
-                      checked={verifiedOnly}
-                      onCheckedChange={(checked) => setVerifiedOnly(checked as boolean)}
-                    />
-                    <Label htmlFor="verifiedOnly" className="cursor-pointer text-sm font-normal">
-                      Tylko zweryfikowane
-                    </Label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Results */}
         <div>
@@ -358,6 +370,16 @@ export default function SearchLawyerPage() {
 
             {/* View Toggle */}
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2"
+              >
+                <Filter className="h-4 w-4" />
+                {showFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
               <div className="flex items-center gap-1 border rounded-md p-1">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}

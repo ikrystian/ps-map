@@ -426,6 +426,8 @@ export default function CategoryPage() {
 
               <div className="flex items-center gap-4">
                 {/* View Toggle */}
+                <button className="toggle-filter-box">Pokaż / ukryj filtry</button>
+
                 <div className="flex items-center gap-1 border rounded-md p-1">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}

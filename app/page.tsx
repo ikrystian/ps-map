@@ -143,14 +143,14 @@ export default function HomePage() {
           <ParticlesBackground />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 font-playfair">
+              <h1 className="text-6xl md:text-8xl tracking-tight font-medium mb-6 font-playfair">
                 Prosta Sprawa
               </h1>
-              <p className="text-3xl md:text-5xl font-semibold mb-4 font-playfair">
+              <p className="text-3xl md:text-4xl font-semibold mb-16 font-playfair">
                 Tu rozwiązujemy Twoje problemy prawne
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 mb-32 justify-center">
                 <Button asChild size="lg" className="text-lg px-8 py-6">
                   <Link href="/dodaj-sprawe">
                     <Home className="mr-2 h-5 w-5" />
