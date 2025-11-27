@@ -24,6 +24,7 @@ import {
   Mail,
   ArrowRight,
 } from "lucide-react"
+import { LawyerBenefitsSection } from "@/components/for-lawyers/lawyer-benefits-section"
 
 export default function ForLawyersPage() {
   const [email, setEmail] = useState("")
@@ -101,74 +102,7 @@ export default function ForLawyersPage() {
       </section>
 
       {/* SEKCJA 2 - Wypróbuj ProstaSprawa.pl */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto text-center mb-12">
-            <Badge variant="secondary" className="mb-4">
-              Zyskaj klientów
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Wypróbuj ProstaSprawa.pl
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Box 1 */}
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <TrendingUp className="h-10 w-10 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-2xl">Zwiększ zasięg</CardTitle>
-                <CardDescription className="mt-4">
-                  Dotrzij do szerszego grona potencjalnych klientów dzięki naszej platformie
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            {/* Box 2 */}
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Award className="h-10 w-10 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-2xl">Buduj markę</CardTitle>
-                <CardDescription className="mt-4">
-                  Kreuj wizerunek eksperta poprzez opinie, artykuły i profesjonalny profil
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            {/* Box 3 */}
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Briefcase className="h-10 w-10 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-2xl">Zdobywaj więcej spraw</CardTitle>
-                <CardDescription className="mt-4">
-                  Otrzymuj dopasowane zlecenia i rozwijaj swoją działalność
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-
-          <div className="text-center mt-12">
-            <Button size="lg" asChild>
-              <Link href="/rejestracja/kancelaria">
-                Zarejestruj się
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <LawyerBenefitsSection />
 
       {/* SEKCJA 3 - Jak założyć konto? */}
       <section className="py-20 bg-muted/30">

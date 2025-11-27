@@ -37,6 +37,7 @@ import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
 import ParticlesBackground from "@/components/ParticlesBackground"
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import { HowItWorksSection } from "@/components/homepage/how-it-works-section"
 
 export default function HomePage() {
   const { data: session } = useSession()
@@ -174,139 +175,62 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 2: Benefits Icons */}
-      <section className="py-16 bg-card/50">
+      <section className="py-16 bg-background-sec">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
+            <div className="flex flex-col items-center text-center ">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Users className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Dostęp do doświadczonych prawników</h3>
-              <p className="text-muted-foreground">
-                Szeroka sieć zweryfikowanych ekspertów z całego kraju
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Dostęp do doświadczonych prawników</h3>
+
             </div>
 
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Zap className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Szybki proces zgłoszenia sprawy</h3>
-              <p className="text-muted-foreground">
-                Opisz swoją sprawę w kilka minut i otrzymaj oferty
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Szybki proces zgłoszenia sprawy</h3>
+
             </div>
 
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Scale className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Porównywanie ofert</h3>
-              <p className="text-muted-foreground">
-                Otrzymaj wiele ofert i wybierz najlepszą dla siebie
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Porównywanie ofert</h3>
+
             </div>
 
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center ">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Lock className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Bezpieczeństwo i poufność</h3>
-              <p className="text-muted-foreground">
-                Twoje dane są chronione zgodnie z najwyższymi standardami
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Bezpieczeństwo i poufność</h3>
+
             </div>
 
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center ">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Shield className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Elastyczność w wyborze prawnika</h3>
-              <p className="text-muted-foreground">
-                Wybierz prawnika, który najlepiej odpowiada Twoim potrzebom
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Elastyczność w wyborze prawnika</h3>
+
             </div>
 
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center ">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Clock className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Wygoda i oszczędność czasu</h3>
-              <p className="text-muted-foreground">
-                Wszystko online, bez wychodzenia z domu
-              </p>
+              <h3 className="text-sm font-semibold mb-2">Wygoda i oszczędność czasu</h3>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 3: How to Get Help - Steps */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Powiedz nam jakiej pomocy szukasz
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Dodaj swoją sprawę bez zbędnych formalności, czekaj na ofertę i wybierz tę,
-              która najlepiej odpowiada Twoim potrzebom.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="relative">
-              <div className="absolute -top-6 left-8">
-                <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-                  01
-                </div>
-              </div>
-              <CardHeader className="pt-10">
-                <CardTitle>Kompleksowa obsługa ekspertów</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci
-                  doświadczonych prawników i ekspertów z całego kraju.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="relative">
-              <div className="absolute -top-6 left-8">
-                <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-                  02
-                </div>
-              </div>
-              <CardHeader className="pt-10">
-                <CardTitle>Proces dodawania Twojej sprawy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Nasz portal umożliwia dodawanie sprawy całkowicie za darmo.
-                  Wystarczy kilka kliknięć, aby opisać Twoją sytuację.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="relative">
-              <div className="absolute -top-6 left-8">
-                <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-                  03
-                </div>
-              </div>
-              <CardHeader className="pt-10">
-                <CardTitle>Załatwianie spraw bez wychodzenia z domu</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Prosta Sprawa to miejsce gdzie wszystko załatwisz online,
-                  bez konieczności wychodzenia z domu czy tracenia czasu na dojazdy.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      {/* SECTION 3: How It Works */}
+      <HowItWorksSection />
 
       {/* SECTION 4: Categories Grid */}
       <section className="py-16 bg-card/50">
