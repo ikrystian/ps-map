@@ -22,6 +22,7 @@ import {
 import { Search, ChevronDown } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
+import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -234,7 +235,7 @@ export default function PublicHeader({
                   <Button variant="outline">Dodaj sprawę</Button>
                 </Link>
                 <Link href="/logowanie">
-                  <Button>Zaloguj</Button>
+                  <InteractiveHoverButton >Zaloguj</InteractiveHoverButton>
                 </Link>
               </>
             )}
