@@ -176,7 +176,7 @@ export default function LawFirmEditCertificatePage() {
               Powrót do listy certyfikatów
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-medium tracking-tight font-playfair">
             <Award className="h-8 w-8 text-primary" />
             Edytuj certyfikat
           </h1>

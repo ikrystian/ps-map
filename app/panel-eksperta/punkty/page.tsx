@@ -264,7 +264,7 @@ export default function LawFirmPointsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Punkty</h1>
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">Punkty</h1>
         <p className="text-muted-foreground mt-2">
           Zarządzaj punktami i dokonuj zakupów
         </p>

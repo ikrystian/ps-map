@@ -283,7 +283,7 @@ export default function CheckoutPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Podsumowanie zamówienia</h1>
+          <h1 className="text-3xl font-medium tracking-tight font-playfair">Podsumowanie zamówienia</h1>
           <p className="text-muted-foreground mt-2">
             Sprawdź szczegóły i dokończ zakup
           </p>

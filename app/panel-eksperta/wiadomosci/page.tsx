@@ -4,8 +4,8 @@ import { EnhancedMessengerLayout } from "@/components/messages/EnhancedMessenger
 
 export default function LawFirmMessagesPage() {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Wiadomości</h1>
+    <div>
+      <h1 className="text-3xl font-medium tracking-tight font-playfair">Wiadomości</h1>
       <EnhancedMessengerLayout />
     </div>
   )

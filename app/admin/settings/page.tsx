@@ -175,7 +175,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">
           <Settings2 className="h-8 w-8" />
           Ustawienia systemu
         </h1>

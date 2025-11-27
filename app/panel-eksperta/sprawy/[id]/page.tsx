@@ -274,7 +274,7 @@ export default function LawFirmCaseDetailsPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight">{caseData.nazwaSprawy}</h1>
+            <h1 className="text-3xl font-medium tracking-tight font-playfair">{caseData.nazwaSprawy}</h1>
             <Badge>{getCaseStatusLabel(caseData.status)}</Badge>
             {caseData.trybPilny && (
               <Badge variant="destructive">Pilne</Badge>

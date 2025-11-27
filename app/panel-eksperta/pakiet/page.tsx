@@ -268,7 +268,7 @@ export default function LawFirmPackagePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pakiety subskrypcji</h1>
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">Pakiety subskrypcji</h1>
         <p className="text-muted-foreground mt-2">
           Wybierz pakiet dostosowany do potrzeb Twojego profilu
         </p>

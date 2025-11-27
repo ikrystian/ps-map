@@ -173,7 +173,7 @@ export default function LawFirmOffersPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Moje Oferty</h1>
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">Moje Oferty</h1>
         <p className="text-muted-foreground mt-2">
           Przeglądaj i zarządzaj wszystkimi złożonymi ofertami
         </p>

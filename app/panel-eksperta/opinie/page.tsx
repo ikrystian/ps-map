@@ -228,7 +228,7 @@ export default function LawFirmReviewsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Opinie</h1>
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">Opinie</h1>
         <p className="text-muted-foreground mt-2">
           Zarządzaj opiniami o Twoim profilu i odpowiadaj na nie
         </p>

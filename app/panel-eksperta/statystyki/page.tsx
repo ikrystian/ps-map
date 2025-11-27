@@ -129,7 +129,7 @@ export default function LawFirmStatsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Statystyki i analizy</h1>
+          <h1 className="text-3xl font-medium tracking-tight font-playfair">Statystyki i analizy</h1>
           <p className="text-muted-foreground">
             Zaawansowane statystyki i analityka dla Twojego profilu
           </p>
@@ -182,7 +182,7 @@ export default function LawFirmStatsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Statystyki</h1>
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">Statystyki</h1>
         <p className="text-muted-foreground mt-2">
           Pełna analiza wydajności Twojego profilu
         </p>

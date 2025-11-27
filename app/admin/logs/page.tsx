@@ -139,7 +139,7 @@ export default function AdminLogsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
+        <h1 className="text-3xl font-medium tracking-tight font-playfair">
           <FileText className="h-8 w-8" />
           Logi Systemowe
         </h1>
