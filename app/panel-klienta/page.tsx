@@ -155,7 +155,7 @@ export default function ClientDashboardPage() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-sm">Szybki kontakt z profesjonalnymi kancelariami prawnymi</span>
+                <span className="text-sm">Szybki kontakt z profesjonalnymi ekspertami prawnymi</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
@@ -264,7 +264,7 @@ export default function ClientDashboardPage() {
             <div className="text-center">
               <h3 className="font-semibold text-lg">Wybrani Eksperci</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Twoje ulubione kancelarie
+                Twoi ulubieni eksperci
               </p>
             </div>
           </CardContent>

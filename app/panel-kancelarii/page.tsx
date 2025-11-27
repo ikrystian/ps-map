@@ -313,7 +313,7 @@ export default function LawFirmDashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-playfair">Panel Kancelarii</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-playfair">Panel Eksperta</h1>
         <p className="text-muted-foreground mt-2">
           Witaj, {lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.
         </p>
@@ -459,7 +459,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <h3 className="font-semibold">Edycja profilu</h3>
                 <p className="text-xs text-muted-foreground">
-                  Zaktualizuj dane kancelarii
+                  Zaktualizuj dane eksperta
                 </p>
               </div>
             </CardContent>
@@ -764,7 +764,7 @@ export default function LawFirmDashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-primary" />
-              Promuj swoją kancelarię
+              Promuj swoje usługi
             </CardTitle>
             <CardDescription>
               Zwiększ widoczność i zdobądź więcej klientów
@@ -786,7 +786,7 @@ export default function LawFirmDashboardPage() {
                 <div>
                   <p className="font-medium text-sm">Top pozycja</p>
                   <p className="text-xs text-muted-foreground">
-                    Znajdź się w sekcji TOP kancelarii
+                    Znajdź się w sekcji TOP ekspertów
                   </p>
                 </div>
               </div>
@@ -1028,9 +1028,8 @@ export default function LawFirmDashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${
-                      i < Math.round(stats.averageRating) ? "fill-current" : ""
-                    }`}
+                    className={`h-4 w-4 ${i < Math.round(stats.averageRating) ? "fill-current" : ""
+                      }`}
                   />
                 ))}
               </div>

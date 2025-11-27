@@ -150,7 +150,7 @@ export default function LawFirmCertificatesPage() {
         <CardHeader>
           <CardTitle>Lista certyfikatów</CardTitle>
           <CardDescription>
-            Certyfikaty i uprawnienia Twojej kancelarii ({certificates.length})
+            Certyfikaty i uprawnienia Twojego profilu ({certificates.length})
           </CardDescription>
         </CardHeader>
         <CardContent>

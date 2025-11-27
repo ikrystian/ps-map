@@ -235,11 +235,10 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
             <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: bold; color: ${textColor};">
               ${firm.nazwa}
             </h3>
-            ${
-              firm.logo
-                ? `<img src="${firm.logo}" alt="${firm.nazwa}" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" />`
-                : ""
-            }
+            ${firm.logo
+            ? `<img src="${firm.logo}" alt="${firm.nazwa}" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" />`
+            : ""
+          }
             <p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
               <strong>Adres:</strong><br/>
               ${firm.adres}<br/>
@@ -248,25 +247,22 @@ export default function GoogleMap({ lawFirms, apiKey }: GoogleMapProps) {
             <p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
               <strong>Województwo:</strong> ${firm.voivodeship}
             </p>
-            ${
-              firm.categories.length > 0
-                ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
+            ${firm.categories.length > 0
+            ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
                     <strong>Specjalizacje:</strong><br/>
                     ${firm.categories.slice(0, 3).join(", ")}
                   </p>`
-                : ""
-            }
-            ${
-              firm.avgRating > 0
-                ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
-                    <strong>Ocena:</strong> ${firm.avgRating}/5 ⭐ (${firm.reviewsCount} ${
-                    firm.reviewsCount === 1 ? "opinia" : "opinii"
-                  })
+            : ""
+          }
+            ${firm.avgRating > 0
+            ? `<p style="margin: 5px 0; font-size: 14px; color: ${textColor};">
+                    <strong>Ocena:</strong> ${firm.avgRating}/5 ⭐ (${firm.reviewsCount} ${firm.reviewsCount === 1 ? "opinia" : "opinii"
+            })
                   </p>`
-                : ""
-            }
+            : ""
+          }
             <p style="margin: 10px 0 5px 0;">
-              <a href="/kancelaria/${firm.slug}" target="_blank" style="color: ${linkColor}; text-decoration: none; font-weight: 500;">
+              <a href="/ekspert/${firm.slug}" target="_blank" style="color: ${linkColor}; text-decoration: none; font-weight: 500;">
                 Zobacz profil →
               </a>
             </p>

@@ -94,7 +94,7 @@ export default function CheckoutPage() {
     try {
       const response = await fetch("/api/law-firms/me")
       if (!response.ok) {
-        throw new Error("Nie udało się pobrać danych kancelarii")
+        throw new Error("Nie udało się pobrać danych eksperta")
       }
       const data = await response.json()
       setLawFirm(data)

@@ -287,7 +287,7 @@ export default function ClientProfilePage() {
         <CardHeader>
           <CardTitle>Zdjęcie profilowe (Avatar)</CardTitle>
           <CardDescription>
-            Avatar będzie wyświetlany w górnym menu i będzie widoczny dla kancelarii. Zalecany rozmiar: 200x200px.
+            Avatar będzie wyświetlany w górnym menu i będzie widoczny dla ekspertów. Zalecany rozmiar: 200x200px.
           </CardDescription>
         </CardHeader>
         <CardContent>

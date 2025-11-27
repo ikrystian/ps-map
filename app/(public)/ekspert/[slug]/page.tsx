@@ -58,7 +58,7 @@ import {
 } from "lucide-react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
-import { ConsultationBooking } from "@/components/kancelaria/ConsultationBooking"
+import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
 import { BadgesSection } from "@/components/law-firm/BadgesSection"
 
 interface LawFirm {

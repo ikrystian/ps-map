@@ -802,7 +802,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {lawFirms.slice(0, 3).map((firm) => (
-              <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+              <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
                 <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji}>
                   <Card className={`hover:shadow-lg transition-shadow ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
                     {/* Obrazek na całą szerokość karty */}
@@ -901,53 +901,53 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                   {lawFirms.slice(0, 3).map((firm) => (
-                     <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
-                       <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg h-full">
-                         <Card className={`hover:shadow-lg transition-shadow h-full ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
-                           <CardHeader>
-                             <div className="flex items-center gap-3">
-                               <Avatar>
-                                 {firm.logo && (
-                                   <AvatarImage src={firm.logo} alt={firm.nazwa} />
-                                 )}
-                                 <AvatarFallback>
-                                   {firm.nazwa.substring(0, 2).toUpperCase()}
-                                 </AvatarFallback>
-                               </Avatar>
-                               <div className="flex-1">
-                                 <div className="flex items-center gap-2">
-                                   <CardTitle className="text-base">{firm.nazwa}</CardTitle>
-                                   {firm.pakietSubskrypcji === "BIZNES" && (
-                                     <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                                       <Sparkles className="w-3 h-3 mr-1" />
-                                       Biznes
-                                     </Badge>
-                                   )}
-                                 </div>
-                                 <div className="flex items-center text-sm text-muted-foreground">
-                                   <MapPin className="h-3 w-3 mr-1" />
-                                   {firm.miasto}
-                                 </div>
-                               </div>
-                             </div>
-                           </CardHeader>
-                           <CardContent>
-                             <div className="flex items-center gap-1 mb-3">
-                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                               <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
-                             </div>
-                             <Button asChild size="sm" className="w-full">
-                               <span>
-                                 Zobacz profil
-                               </span>
-                             </Button>
-                           </CardContent>
-                         </Card>
-                       </LawFirmCardWrapper>
-                     </Link>
-                   ))}
-                 </div>
+                  {lawFirms.slice(0, 3).map((firm) => (
+                    <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
+                      <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg h-full">
+                        <Card className={`hover:shadow-lg transition-shadow h-full ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
+                          <CardHeader>
+                            <div className="flex items-center gap-3">
+                              <Avatar>
+                                {firm.logo && (
+                                  <AvatarImage src={firm.logo} alt={firm.nazwa} />
+                                )}
+                                <AvatarFallback>
+                                  {firm.nazwa.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <CardTitle className="text-base">{firm.nazwa}</CardTitle>
+                                  {firm.pakietSubskrypcji === "BIZNES" && (
+                                    <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                      <Sparkles className="w-3 h-3 mr-1" />
+                                      Biznes
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                  <MapPin className="h-3 w-3 mr-1" />
+                                  {firm.miasto}
+                                </div>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center gap-1 mb-3">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="font-semibold">{firm.avgRating.toFixed(1)}</span>
+                            </div>
+                            <Button asChild size="sm" className="w-full">
+                              <span>
+                                Zobacz profil
+                              </span>
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </LawFirmCardWrapper>
+                    </Link>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -990,7 +990,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {newLawFirms.map((firm) => (
-              <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+              <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
                 <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg h-full">
                   <Card className={`hover:shadow-lg transition-shadow h-full ${firm.pakietSubskrypcji === "BIZNES" ? "border-0" : ""}`}>
                     <CardHeader>
@@ -1132,7 +1132,7 @@ export default function HomePage() {
                   <div>
                     <h4 className="font-semibold mb-1">Stwórz profil</h4>
                     <p className="text-sm text-muted-foreground">
-                      Zarejestruj swoją kancelarię i stwórz profesjonalny profil.
+                      Zarejestruj swój profil eksperta i stwórz profesjonalną wizytówkę.
                       Pokaż swoje doświadczenie i specjalizacje.
                     </p>
                   </div>
@@ -1330,7 +1330,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-                <PublicFooter />
+      <PublicFooter />
 
     </div>
 

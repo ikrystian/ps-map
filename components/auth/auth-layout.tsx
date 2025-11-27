@@ -16,7 +16,7 @@ interface AuthLayoutProps {
 export function AuthLayout({
   children,
   heroTitle = "Twoja droga do rozwiązania problemów prawnych",
-  heroDescription = "Połącz się z najlepszymi prawnikami i kancelariami w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
+  heroDescription = "Połącz się z najlepszymi ekspertami prawnymi w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
   heroStats = [
     { value: "2000+", label: "Prawników" },
     { value: "5000+", label: "Spraw" },

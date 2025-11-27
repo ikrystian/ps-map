@@ -123,7 +123,7 @@ export default function LawFirmReviewsPage() {
       // Pobierz ID kancelarii
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (!lawFirmResponse.ok) {
-        throw new Error("Nie udało się pobrać danych kancelarii")
+        throw new Error("Nie udało się pobrać danych eksperta")
       }
       const lawFirmData = await lawFirmResponse.json()
       setLawFirm({ id: lawFirmData.id, nazwa: lawFirmData.nazwa, logo: lawFirmData.logo })
@@ -206,11 +206,10 @@ export default function LawFirmReviewsPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-4 w-4 ${
-              star <= rating
+            className={`h-4 w-4 ${star <= rating
                 ? "fill-yellow-400 text-yellow-400"
                 : "fill-gray-200 text-gray-200"
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -231,7 +230,7 @@ export default function LawFirmReviewsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Opinie</h1>
         <p className="text-muted-foreground mt-2">
-          Zarządzaj opiniami o Twojej kancelarii i odpowiadaj na nie
+          Zarządzaj opiniami o Twoim profilu i odpowiadaj na nie
         </p>
       </div>
 
@@ -388,24 +387,24 @@ export default function LawFirmReviewsPage() {
                           <CardTitle className="text-lg">
                             {review.tytulOpinii}
                           </CardTitle>
-                      {review.polecam ? (
-                        <Badge variant="default" className="gap-1">
-                          <ThumbsUp className="h-3 w-3" />
-                          Polecam
-                        </Badge>
-                      ) : (
-                        <Badge variant="destructive" className="gap-1">
-                          <ThumbsDown className="h-3 w-3" />
-                          Nie polecam
-                        </Badge>
-                      )}
-                      {!review.aktywna && (
-                        <Badge variant="secondary">Nieaktywna</Badge>
-                      )}
-                    </div>
-                    <CardDescription>
-                      {review.anonimowa ? "Anonimowy" : `${review.client.imie} ${review.client.nazwisko}`}
-                      {" • "}
+                          {review.polecam ? (
+                            <Badge variant="default" className="gap-1">
+                              <ThumbsUp className="h-3 w-3" />
+                              Polecam
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive" className="gap-1">
+                              <ThumbsDown className="h-3 w-3" />
+                              Nie polecam
+                            </Badge>
+                          )}
+                          {!review.aktywna && (
+                            <Badge variant="secondary">Nieaktywna</Badge>
+                          )}
+                        </div>
+                        <CardDescription>
+                          {review.anonimowa ? "Anonimowy" : `${review.client.imie} ${review.client.nazwisko}`}
+                          {" • "}
                           {formatDate(review.createdAt)}
                         </CardDescription>
                       </div>
@@ -482,7 +481,7 @@ export default function LawFirmReviewsPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <MessageSquare className="h-4 w-4 text-primary" />
-                            <p className="text-sm font-medium">Odpowiedź kancelarii</p>
+                            <p className="text-sm font-medium">Odpowiedź eksperta</p>
                             {review.dataOdpowiedzi && (
                               <span className="text-xs text-muted-foreground">
                                 • {formatDate(review.dataOdpowiedzi)}

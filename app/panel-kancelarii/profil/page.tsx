@@ -409,8 +409,8 @@ export default function LawFirmProfilePage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Profil Kancelarii</h1>
-        <p className="text-muted-foreground">Zarządzaj informacjami o swojej kancelarii</p>
+        <h1 className="text-3xl font-bold">Profil Eksperta</h1>
+        <p className="text-muted-foreground">Zarządzaj informacjami o swoim profilu</p>
       </div>
 
       <Tabs defaultValue="basic" className="space-y-6">
@@ -419,7 +419,7 @@ export default function LawFirmProfilePage() {
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
           <TabsTrigger value="specialization">Specjalizacje</TabsTrigger>
           <TabsTrigger value="multimedia">Multimedia</TabsTrigger>
-           <TabsTrigger value="consultations">Godziny konsultacji</TabsTrigger>
+          <TabsTrigger value="consultations">Godziny konsultacji</TabsTrigger>
           <TabsTrigger value="additional">Dodatkowe</TabsTrigger>
         </TabsList>
 
@@ -428,12 +428,12 @@ export default function LawFirmProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Dane podstawowe</CardTitle>
-              <CardDescription>Podstawowe informacje o kancelarii</CardDescription>
+              <CardDescription>Podstawowe informacje o ekspercie</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="nazwa">Nazwa kancelarii *</Label>
+                  <Label htmlFor="nazwa">Nazwa wyświetlana *</Label>
                   <Input
                     id="nazwa"
                     value={formData.nazwa}
@@ -453,11 +453,11 @@ export default function LawFirmProfilePage() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="opis">Opis kancelarii</Label>
+                  <Label htmlFor="opis">Opis profilu</Label>
                   <RichTextEditor
                     value={formData.opis}
                     onChange={(value) => handleInputChange("opis", value)}
-                    placeholder="Opisz swoją kancelarię..."
+                    placeholder="Opisz swoje doświadczenie i usługi..."
                   />
                 </div>
               </div>
@@ -468,15 +468,15 @@ export default function LawFirmProfilePage() {
             <CardHeader>
               <CardTitle>Logo i zdjęcia</CardTitle>
               <CardDescription>
-                Dodaj logo oraz zdjęcie główne swojej kancelarii
+                Dodaj zdjęcie profilowe oraz zdjęcie główne
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Logo Upload */}
               <div className="space-y-3">
-                <Label>Logo kancelarii</Label>
+                <Label>Zdjęcie profilowe (Avatar)</Label>
                 <p className="text-sm text-muted-foreground">
-                  Logo będzie wyświetlane na Twojej stronie kancelarii i w wynikach wyszukiwania.
+                  Zdjęcie będzie wyświetlane na Twojej stronie eksperta i w wynikach wyszukiwania.
                   Zalecany rozmiar: 400x400px (kwadratowe).
                 </p>
 
@@ -569,7 +569,7 @@ export default function LawFirmProfilePage() {
               <div className="space-y-3">
                 <Label>Zdjęcie główne</Label>
                 <p className="text-sm text-muted-foreground">
-                  Zdjęcie główne będzie wyświetlane jako banner na górze Twojej strony kancelarii.
+                  Zdjęcie główne będzie wyświetlane jako banner na górze Twojej strony eksperta.
                   Zalecany rozmiar: 1920x600px (panoramiczne).
                 </p>
 
@@ -984,7 +984,7 @@ export default function LawFirmProfilePage() {
             <CardHeader>
               <CardTitle>Galeria zdjęć</CardTitle>
               <CardDescription>
-                Dodaj zdjęcia swojej kancelarii (maksymalnie 10 zdjęć, każde do 5MB)
+                Dodaj zdjęcia swojego profilu (maksymalnie 10 zdjęć, każde do 5MB)
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1062,7 +1062,7 @@ export default function LawFirmProfilePage() {
               {formData.galeriaZdjec.length > 0 && (
                 <div className="bg-muted p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    <strong>Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twojej stronie kancelarii.
+                    <strong>Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twoim profilu.
                     Najedź kursorem na zdjęcie i kliknij przycisk X aby je usunąć.
                   </p>
                 </div>
@@ -1074,7 +1074,7 @@ export default function LawFirmProfilePage() {
             <CardHeader>
               <CardTitle>Film YouTube (opcjonalnie)</CardTitle>
               <CardDescription>
-                Dodaj link do filmu na YouTube prezentującego Twoją kancelarię
+                Dodaj link do filmu na YouTube prezentującego Twój profil
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1109,7 +1109,7 @@ export default function LawFirmProfilePage() {
 
         {/* Godziny konsultacji */}
         <TabsContent value="consultations">
-            <ConsultationHoursForm />
+          <ConsultationHoursForm />
         </TabsContent>
 
 
@@ -1188,7 +1188,7 @@ export default function LawFirmProfilePage() {
                 <Label htmlFor="statusGodzinyOtwarcia">Wyświetl godziny otwarcia</Label>
               </div>
 
-{formData.statusGodzinyOtwarcia && formData.godzinyOtwarcia && (
+              {formData.statusGodzinyOtwarcia && formData.godzinyOtwarcia && (
                 <div className="grid gap-3">
                   {Object.keys(formData.godzinyOtwarcia).map((day) => {
                     const currentValue = formData.godzinyOtwarcia[day as keyof typeof formData.godzinyOtwarcia]

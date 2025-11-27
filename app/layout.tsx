@@ -23,8 +23,8 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Prosta Sprawa - Platforma łącząca klientów z kancelariami prawnymi",
-  description: "Znajdź prawnika lub kancelarię prawną w Twojej okolicy. Porównaj oferty i ceny usług prawnych.",
+  title: "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi",
+  description: "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych.",
 };
 
 export default async function RootLayout({
@@ -35,20 +35,20 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-        <html lang="pl" suppressHydrationWarning className="dark">
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
-          >
-    		<ConsentManager>
+    <html lang="pl" suppressHydrationWarning className="dark">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
+      >
+        <ConsentManager>
 
-            <Providers session={session}>
-              {children}
-              <Toaster />
-              <Sonner />
-            </Providers>
+          <Providers session={session}>
+            {children}
+            <Toaster />
+            <Sonner />
+          </Providers>
 
-    		</ConsentManager>
-    	</body>
-        </html>
-      )
+        </ConsentManager>
+      </body>
+    </html>
+  )
 }

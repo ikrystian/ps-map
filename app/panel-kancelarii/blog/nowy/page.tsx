@@ -133,7 +133,7 @@ export default function LawFirmNewBlogPostPage() {
           <div>
             <h1 className="text-3xl font-bold">Nowy artykuł</h1>
             <p className="text-muted-foreground">
-              Utwórz nowy wpis na blogu swojej kancelarii
+              Utwórz nowy wpis na blogu swojego profilu
             </p>
           </div>
         </div>

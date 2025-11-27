@@ -113,12 +113,12 @@ export default function PublicFooter() {
               </li>
               <li>
                 <Link href="/rejestracja/kancelaria" className="hover:text-primary transition-colors">
-                  Zarejestruj Kancelarię
+                  Zarejestruj Eksperta
                 </Link>
               </li>
               <li>
                 <Link href="/panel-kancelarii" className="hover:text-primary transition-colors">
-                  Panel Kancelarii
+                  Panel Eksperta
                 </Link>
               </li>
               <li>

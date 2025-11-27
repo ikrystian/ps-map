@@ -105,11 +105,10 @@ export default function LawFirmStatsPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-4 w-4 ${
-              star <= rating
+            className={`h-4 w-4 ${star <= rating
                 ? "fill-yellow-400 text-yellow-400"
                 : "fill-gray-200 text-gray-200"
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -132,13 +131,13 @@ export default function LawFirmStatsPage() {
         <div>
           <h1 className="text-3xl font-bold">Statystyki i analizy</h1>
           <p className="text-muted-foreground">
-            Zaawansowane statystyki i analityka dla Twojej kancelarii
+            Zaawansowane statystyki i analityka dla Twojego profilu
           </p>
         </div>
 
         <FeatureLockedCard
           title="Zaawansowane statystyki"
-          description="Zyskaj pełen wgląd w wydajność swojej kancelarii dzięki szczegółowym statystykom i analizom."
+          description="Zyskaj pełen wgląd w wydajność swojego profilu dzięki szczegółowym statystykom i analizom."
           requiredPackage={["PREMIUM", "BIZNES"]}
           icon={BarChart3}
           features={[
@@ -185,7 +184,7 @@ export default function LawFirmStatsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Statystyki</h1>
         <p className="text-muted-foreground mt-2">
-          Pełna analiza wydajności Twojej kancelarii
+          Pełna analiza wydajności Twojego profilu
         </p>
       </div>
 
@@ -424,7 +423,7 @@ export default function LawFirmStatsPage() {
             <CardHeader>
               <CardTitle>Statystyki według kategorii</CardTitle>
               <CardDescription>
-                Wydajność Twojej kancelarii w różnych kategoriach prawnych
+                Wydajność Twojego profilu w różnych kategoriach prawnych
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -473,11 +472,10 @@ export default function LawFirmStatsPage() {
                     .slice(0, 3)
                     .map((item, index) => (
                       <div key={item.category} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                        <div className={`text-lg font-bold ${
-                          index === 0 ? "text-yellow-600" :
-                          index === 1 ? "text-gray-500" :
-                          "text-orange-600"
-                        }`}>
+                        <div className={`text-lg font-bold ${index === 0 ? "text-yellow-600" :
+                            index === 1 ? "text-gray-500" :
+                              "text-orange-600"
+                          }`}>
                           #{index + 1}
                         </div>
                         <div className="flex-1">
@@ -486,11 +484,10 @@ export default function LawFirmStatsPage() {
                             {item.offers > 0 ? ((item.won / item.offers) * 100).toFixed(0) : '0'}% skuteczności
                           </div>
                         </div>
-                        <Trophy className={`h-5 w-5 ${
-                          index === 0 ? "text-yellow-600" :
-                          index === 1 ? "text-gray-500" :
-                          "text-orange-600"
-                        }`} />
+                        <Trophy className={`h-5 w-5 ${index === 0 ? "text-yellow-600" :
+                            index === 1 ? "text-gray-500" :
+                              "text-orange-600"
+                          }`} />
                       </div>
                     ))}
                 </div>
@@ -515,7 +512,7 @@ export default function LawFirmStatsPage() {
                 {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
               </div>
               <div className="text-sm text-muted-foreground">
-                Twoja pozycja w rankingu kancelarii
+                Twoja pozycja w rankingu ekspertów
               </div>
             </div>
           </CardContent>

@@ -157,7 +157,7 @@ export default function LawFirmCaseDetailsPage() {
       const data: Case = await response.json()
       setCaseData(data)
 
-      // Sprawdź czy kancelaria już złożyła ofertę
+      // Sprawdź czy ekspert już złożył ofertę
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (lawFirmResponse.ok) {
         const lawFirmData = await lawFirmResponse.json()

@@ -159,9 +159,8 @@ export function EnhancedMessengerLayout() {
       <Card className="h-full flex flex-col md:flex-row overflow-hidden">
         {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
         <div
-          className={`w-full md:w-80 lg:w-96 md:border-r flex-shrink-0 ${
-            selectedConversationId ? "hidden md:block" : "block"
-          }`}
+          className={`w-full md:w-80 lg:w-96 md:border-r flex-shrink-0 ${selectedConversationId ? "hidden md:block" : "block"
+            }`}
         >
           <EnhancedConversationList
             conversations={conversations}
@@ -175,9 +174,8 @@ export function EnhancedMessengerLayout() {
 
         {/* Obszar czatu - prawa strona (hidden on mobile when no chat selected) */}
         <div
-          className={`flex-1 flex flex-col ${
-            !selectedConversationId ? "hidden md:flex" : "flex"
-          }`}
+          className={`flex-1 flex flex-col ${!selectedConversationId ? "hidden md:flex" : "flex"
+            }`}
         >
           {selectedConversationId ? (
             <EnhancedChatArea
@@ -190,7 +188,7 @@ export function EnhancedMessengerLayout() {
               <div className="text-center">
                 <p className="text-lg font-medium">Wybierz konwersację lub</p>
                 <p className="text-sm mt-2">
-                  przejdź do wyszukiwarki aby znaleźć kancelarię z którą możesz
+                  przejdź do wyszukiwarki aby znaleźć eksperta z którym możesz
                   nawiązać kontakt
                 </p>
               </div>

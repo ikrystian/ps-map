@@ -138,7 +138,7 @@ export default function RankingBoostPage() {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p>Nie udało się załadować danych kancelarii.</p>
+          <p>Nie udało się załadować danych eksperta.</p>
         </CardContent>
       </Card>
     )
@@ -252,7 +252,7 @@ export default function RankingBoostPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Pozycja</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead className="text-right">Punkty rankingu</TableHead>
               </TableRow>
             </TableHeader>

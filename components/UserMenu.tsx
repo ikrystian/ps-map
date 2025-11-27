@@ -73,7 +73,7 @@ export default function UserMenu({
         .slice(0, 2)
     }
     if (userRole === "CLIENT") return "KL"
-    if (userRole === "LAW_FIRM") return "KA"
+    if (userRole === "LAW_FIRM") return "EK"
     if (userRole === "ADMIN") return "AD"
     return "U"
   }
@@ -161,7 +161,7 @@ export default function UserMenu({
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
             {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
-                      </DropdownMenuTrigger>
+          </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -233,7 +233,7 @@ export default function UserMenu({
           <Avatar className={cn("h-9 w-9 cursor-pointer", "border-2", borderColor)}>
             <AvatarImage src={userImage || "/avatars/admin.jpg"} alt="Admin" />
             <AvatarFallback>{getInitials()}</AvatarFallback>
-         </Avatar>
+          </Avatar>
           {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
 
         </DropdownMenuTrigger>

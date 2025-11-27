@@ -233,13 +233,13 @@ export default function AdminLawFirmsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Zarządzanie Kancelariami</h1>
-          <p className="text-muted-foreground">Zarządzaj wszystkimi kancelariami prawnymi w systemie</p>
+          <h1 className="text-3xl font-bold">Zarządzanie Ekspertami</h1>
+          <p className="text-muted-foreground">Zarządzaj wszystkimi ekspertami prawnymi w systemie</p>
         </div>
         <Button asChild>
           <Link href="/admin/law-firms/new">
             <Building2 className="mr-2 h-4 w-4" />
-            Dodaj Kancelarię
+            Dodaj Eksperta
           </Link>
         </Button>
       </div>
@@ -333,7 +333,7 @@ export default function AdminLawFirmsPage() {
       {/* Law Firms Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Kancelarie ({pagination.total})</CardTitle>
+          <CardTitle>Eksperci ({pagination.total})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -353,7 +353,7 @@ export default function AdminLawFirmsPage() {
               {lawFirms.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center text-muted-foreground">
-                    Nie znaleziono kancelarii
+                    Nie znaleziono ekspertów
                   </TableCell>
                 </TableRow>
               ) : (
@@ -437,7 +437,7 @@ export default function AdminLawFirmsPage() {
           {pagination.pages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                Strona {pagination.page} z {pagination.pages} ({pagination.total} kancelarii)
+                Strona {pagination.page} z {pagination.pages} ({pagination.total} ekspertów)
               </div>
               <div className="flex gap-2">
                 <Button
@@ -468,7 +468,7 @@ export default function AdminLawFirmsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Czy na pewno?</AlertDialogTitle>
             <AlertDialogDescription>
-              Ta operacja usunie kancelarię{" "}
+              Ta operacja usunie eksperta{" "}
               <strong>{selectedLawFirm?.nazwa}</strong> oraz powiązane z nią konto użytkownika.
               Tej operacji nie można cofnąć.
             </AlertDialogDescription>
@@ -481,7 +481,7 @@ export default function AdminLawFirmsPage() {
               onClick={handleDeleteLawFirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Usuń Kancelarię
+              Usuń Eksperta
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

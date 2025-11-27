@@ -670,7 +670,7 @@ export default function LawFirmSettingsPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Ta akcja jest nieodwracalna. Wszystkie Twoje dane, w tym profil kancelarii,
+                            Ta akcja jest nieodwracalna. Wszystkie Twoje dane, w tym profil eksperta,
                             oferty, wiadomości i historia zostaną trwale usunięte. Nie będziesz mógł
                             odzyskać tych danych.
                           </AlertDialogDescription>

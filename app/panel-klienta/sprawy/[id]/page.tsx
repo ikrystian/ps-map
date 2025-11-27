@@ -167,7 +167,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się zaakceptować oferty")
       }
 
-      toast.success("Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.")
+      toast.success("Oferta została pomyślnie zaakceptowana. Ekspert został powiadomiony.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -197,7 +197,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się odrzucić oferty")
       }
 
-      toast.success("Oferta została odrzucona. Kancelaria została powiadomiona.")
+      toast.success("Oferta została odrzucona. Ekspert został powiadomiony.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -439,8 +439,8 @@ export default function ClientCaseDetailsPage() {
                     {caseData.budzetOd && caseData.budzetDo
                       ? `${formatCurrency(caseData.budzetOd)} - ${formatCurrency(caseData.budzetDo)}`
                       : caseData.budzetOd
-                      ? `Od ${formatCurrency(caseData.budzetOd)}`
-                      : `Do ${formatCurrency(caseData.budzetDo!)}`}
+                        ? `Od ${formatCurrency(caseData.budzetOd)}`
+                        : `Do ${formatCurrency(caseData.budzetDo!)}`}
                     {caseData.doNegocjacji && " (do negocjacji)"}
                   </p>
                 </div>
@@ -508,10 +508,10 @@ export default function ClientCaseDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                Dane kancelarii
+                Dane eksperta
               </CardTitle>
               <CardDescription>
-                Twoja oferta została zaakceptowana. Możesz skontaktować się z kancelarią używając poniższych danych.
+                Twoja oferta została zaakceptowana. Możesz skontaktować się z ekspertem używając poniższych danych.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -626,10 +626,10 @@ export default function ClientCaseDetailsPage() {
 
       {/* Oferty */}
       {caseData.offers && caseData.offers.length > 0 && (
-        <Card className={ caseData.status !== "OFERTY_OTRZYMANE" ? "hidden" : "" }>
+        <Card className={caseData.status !== "OFERTY_OTRZYMANE" ? "hidden" : ""}>
           <CardHeader>
             <CardTitle>Otrzymane oferty ({caseData.offers.length})</CardTitle>
-            <CardDescription>Lista ofert złożonych przez kancelarie prawne</CardDescription>
+            <CardDescription>Lista ofert złożonych przez ekspertów prawnych</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

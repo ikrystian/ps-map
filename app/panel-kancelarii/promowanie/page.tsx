@@ -206,7 +206,7 @@ export default function LawFirmPromotionPage() {
     try {
       // Pobierz dane kancelarii
       const lawFirmResponse = await fetch("/api/law-firms/me")
-      if (!lawFirmResponse.ok) throw new Error("Nie udało się pobrać danych kancelarii")
+      if (!lawFirmResponse.ok) throw new Error("Nie udało się pobrać danych eksperta")
       const lawFirmData = await lawFirmResponse.json()
       setLawFirm(lawFirmData)
 
@@ -418,13 +418,13 @@ export default function LawFirmPromotionPage() {
         <div>
           <h1 className="text-3xl font-bold">Promowanie profilu</h1>
           <p className="text-muted-foreground">
-            Zwiększ widoczność swojej kancelarii i przyciągnij więcej klientów
+            Zwiększ widoczność swojego profilu i przyciągnij więcej klientów
           </p>
         </div>
 
         <FeatureLockedCard
           title="Promowanie profilu"
-          description="Wypromuj swoją kancelarię na liście wyników wyszukiwania i zwiększ liczbę klientów."
+          description="Wypromuj swój profil na liście wyników wyszukiwania i zwiększ liczbę klientów."
           requiredPackage={["PREMIUM", "BIZNES"]}
           icon={TrendingUp}
           features={[

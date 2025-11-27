@@ -135,7 +135,7 @@ export default function LawFirmPointsPage() {
       // Pobierz dane kancelarii
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (!lawFirmResponse.ok) {
-        throw new Error("Nie udało się pobrać danych kancelarii")
+        throw new Error("Nie udało się pobrać danych eksperta")
       }
       const lawFirmData = await lawFirmResponse.json()
       setLawFirm(lawFirmData)
@@ -315,9 +315,9 @@ export default function LawFirmPointsPage() {
                   <Coins className="h-5 w-5 text-primary" />
                   {pkg.label}
                 </CardTitle>
-                  <CardDescription className="text-green-600 font-medium h-5">
-                    {pkg.discount}
-                  </CardDescription>
+                <CardDescription className="text-green-600 font-medium h-5">
+                  {pkg.discount}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold mb-4">

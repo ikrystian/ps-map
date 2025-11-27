@@ -229,21 +229,19 @@ export default function ClientAddCasePage() {
         {[1, 2, 3, 4, 5].map((step) => (
           <div key={step} className="flex items-center">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${
-                step === currentStep
+              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${step === currentStep
                   ? "border-primary bg-primary text-primary-foreground"
                   : step < currentStep
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted-foreground/30 bg-muted text-muted-foreground"
-              }`}
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-muted-foreground/30 bg-muted text-muted-foreground"
+                }`}
             >
               {step}
             </div>
             {step < 5 && (
               <div
-                className={`mx-2 h-0.5 w-12 ${
-                  step < currentStep ? "bg-primary" : "bg-muted-foreground/30"
-                }`}
+                className={`mx-2 h-0.5 w-12 ${step < currentStep ? "bg-primary" : "bg-muted-foreground/30"
+                  }`}
               />
             )}
           </div>
@@ -273,21 +271,19 @@ export default function ClientAddCasePage() {
           ].map((option) => (
             <Card
               key={option.value}
-              className={`cursor-pointer transition-colors ${
-                formData.typSprawy === option.value
+              className={`cursor-pointer transition-colors ${formData.typSprawy === option.value
                   ? "border-primary bg-primary/5"
                   : "hover:border-primary/50"
-              }`}
+                }`}
               onClick={() => updateFormData("typSprawy", option.value)}
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div
-                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${
-                      formData.typSprawy === option.value
+                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${formData.typSprawy === option.value
                         ? "border-primary"
                         : "border-muted-foreground/30"
-                    }`}
+                      }`}
                   >
                     {formData.typSprawy === option.value && (
                       <div className="h-3 w-3 rounded-full bg-primary" />
@@ -516,7 +512,7 @@ export default function ClientAddCasePage() {
 
       <div className="rounded-lg border border-muted bg-muted/50 p-4">
         <p className="text-sm text-muted-foreground">
-          💡 Określenie budżetu pomoże kancelariom przygotować odpowiednie oferty.
+          💡 Określenie budżetu pomoże ekspertom przygotować odpowiednie oferty.
           Możesz pozostawić te pola puste, jeśli nie masz określonych preferencji.
         </p>
       </div>
@@ -585,7 +581,7 @@ export default function ClientAddCasePage() {
           Akceptuję klauzulę informacyjną dotyczącą przetwarzania danych osobowych *
           <br />
           <span className="text-muted-foreground">
-            Podane dane będą widoczne dla kancelarii rozpatrujących Twoją sprawę.
+            Podane dane będą widoczne dla ekspertów rozpatrujących Twoją sprawę.
           </span>
         </Label>
       </div>
@@ -597,7 +593,7 @@ export default function ClientAddCasePage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Dodaj nową sprawę</h1>
         <p className="text-muted-foreground mt-2">
-          Wypełnij formularz, aby dodać nową sprawę i otrzymać oferty od kancelarii prawnych
+          Wypełnij formularz, aby dodać nową sprawę i otrzymać oferty od ekspertów prawnych
         </p>
       </div>
 

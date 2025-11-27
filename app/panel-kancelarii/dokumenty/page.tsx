@@ -254,7 +254,7 @@ export default function DocumentsPage() {
         <div>
           <h1 className="text-3xl font-bold">Dokumenty</h1>
           <p className="text-muted-foreground">
-            Zarządzaj dokumentami swojej kancelarii
+            Zarządzaj dokumentami swojego profilu
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -388,8 +388,8 @@ export default function DocumentsPage() {
                   // Określ nazwę klienta z informacji o konwersacji lub użytkowniku
                   const clientName = document.zrodlo === "KLIENT"
                     ? (document.clientUser?.client
-                        ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
-                        : document.clientUser?.name || "Nieznany klient")
+                      ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
+                      : document.clientUser?.name || "Nieznany klient")
                     : null
 
                   return (
@@ -413,7 +413,7 @@ export default function DocumentsPage() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-sm text-muted-foreground">Kancelaria</span>
+                          <span className="text-sm text-muted-foreground">Ekspert</span>
                         )}
                       </TableCell>
                       <TableCell>{formatFileSize(document.rozmiar)}</TableCell>

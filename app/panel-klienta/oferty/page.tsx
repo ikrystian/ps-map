@@ -177,8 +177,8 @@ export default function ClientOffersPage() {
       }
 
       const message = actionType === "accept"
-        ? "Kancelaria została powiadomiona o akceptacji oferty"
-        : "Kancelaria została powiadomiona o odrzuceniu oferty"
+        ? "Ekspert został powiadomiony o akceptacji oferty"
+        : "Ekspert został powiadomiony o odrzuceniu oferty"
       toast.success(message)
 
       setConfirmDialogOpen(false)
@@ -207,7 +207,7 @@ export default function ClientOffersPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Oferty</h1>
         <p className="text-muted-foreground mt-2">
-          Przeglądaj i zarządzaj ofertami otrzymanymi od kancelarii
+          Przeglądaj i zarządzaj ofertami otrzymanymi od ekspertów
         </p>
       </div>
 
@@ -260,7 +260,7 @@ export default function ClientOffersPage() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Informacje o kancelarii */}
+                {/* Informacje o ekspercie */}
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     {offer.lawFirm.logo && (
@@ -387,9 +387,9 @@ export default function ClientOffersPage() {
                 )}
 
                 {offer.status === "ZAAKCEPTOWANA" && (
-                  <Link href={`/kancelaria/${offer.lawFirm.slug}`}>
+                  <Link href={`/ekspert/${offer.lawFirm.slug}`}>
                     <Button variant="outline">
-                      Zobacz profil kancelarii
+                      Zobacz profil eksperta
                     </Button>
                   </Link>
                 )}
@@ -436,7 +436,7 @@ export default function ClientOffersPage() {
             <div className="space-y-6">
               {/* Informacje o kancelarii */}
               <div>
-                <h3 className="font-semibold mb-2">Kancelaria</h3>
+                <h3 className="font-semibold mb-2">Ekspert</h3>
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-2 mb-1">
                     {selectedOffer.lawFirm.logo && (

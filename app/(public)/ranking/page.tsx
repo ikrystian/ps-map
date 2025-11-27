@@ -187,7 +187,7 @@ export default function RankingPage() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 flex-wrap mb-1">
                                 <Link
-                                  href={`/kancelaria/${firm.slug}`}
+                                  href={`/ekspert/${firm.slug}`}
                                   className="text-lg md:text-xl font-bold hover:text-primary transition-colors"
                                 >
                                   {firm.nazwa}
@@ -247,7 +247,7 @@ export default function RankingPage() {
                           )}
 
                           {/* Action Button */}
-                          <Link href={`/kancelaria/${firm.slug}`}>
+                          <Link href={`/ekspert/${firm.slug}`}>
                             <Button variant={isTopThree ? "default" : "outline"} size="sm">
                               Zobacz profil
                             </Button>

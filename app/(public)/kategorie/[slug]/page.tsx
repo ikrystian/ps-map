@@ -487,7 +487,7 @@ export default function CategoryPage() {
                 {viewMode === "grid" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                     {lawFirms.map((firm) => (
-                      <Link key={firm.id} href={`/kancelaria/${firm?.slug}`}>
+                      <Link key={firm.id} href={`/ekspert/${firm?.slug}`}>
                         <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
                           <Card className="bg-card hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
                             <CardHeader>
@@ -587,7 +587,7 @@ export default function CategoryPage() {
                   /* Law Firms List View */
                   <div className="space-y-4 mb-8 grid gap-2">
                     {lawFirms.map((firm) => (
-                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                      <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
                         <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="rounded-lg">
                           <Card className="hover:shadow-lg transition-shadow cursor-pointer border-0">
                             <CardContent className="p-6">

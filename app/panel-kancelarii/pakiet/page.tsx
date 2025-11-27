@@ -121,7 +121,7 @@ export default function LawFirmPackagePage() {
       ])
 
       if (!firmResponse.ok) {
-        throw new Error("Nie udało się pobrać danych kancelarii")
+        throw new Error("Nie udało się pobrać danych eksperta")
       }
       if (!plansResponse.ok) {
         throw new Error("Nie udało się pobrać pakietów")
@@ -270,7 +270,7 @@ export default function LawFirmPackagePage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Pakiety subskrypcji</h1>
         <p className="text-muted-foreground mt-2">
-          Wybierz pakiet dostosowany do potrzeb Twojej kancelarii
+          Wybierz pakiet dostosowany do potrzeb Twojego profilu
         </p>
       </div>
 
@@ -309,7 +309,7 @@ export default function LawFirmPackagePage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-               <div className="h-16 w-16 rounded-lg bg-amber-100 flex items-center justify-center">
+              <div className="h-16 w-16 rounded-lg bg-amber-100 flex items-center justify-center">
                 <Coins className="h-8 w-8 text-amber-500" />
               </div>
               <div>
@@ -426,7 +426,7 @@ export default function LawFirmPackagePage() {
                             Twój obecny pakiet
                           </Button>
                         ) : plan.typ === "FREE" ? (
-                           <Button variant="outline" className="w-full" disabled>
+                          <Button variant="outline" className="w-full" disabled>
                             Darmowy
                           </Button>
                         ) : (
@@ -500,21 +500,21 @@ export default function LawFirmPackagePage() {
                       </div>
 
                       <div className="bg-muted p-4 rounded-lg space-y-2">
-                         <div className="flex justify-between items-center text-sm">
-                           <span>Twoje saldo:</span>
-                           <span>{lawFirm?.punktySaldo} pkt</span>
-                         </div>
-                         <div className="flex justify-between items-center text-sm">
-                           <span>Koszt pakietu:</span>
-                           <span className="text-destructive">-{pointsCost} pkt</span>
-                         </div>
-                         <hr className="my-1 border-border" />
-                         <div className="flex justify-between items-center font-semibold">
-                           <span>Pozostanie:</span>
-                           <span className={canAfford ? "text-green-600" : "text-destructive"}>
-                             {lawFirm ? lawFirm.punktySaldo - pointsCost : 0} pkt
-                           </span>
-                         </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span>Twoje saldo:</span>
+                          <span>{lawFirm?.punktySaldo} pkt</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span>Koszt pakietu:</span>
+                          <span className="text-destructive">-{pointsCost} pkt</span>
+                        </div>
+                        <hr className="my-1 border-border" />
+                        <div className="flex justify-between items-center font-semibold">
+                          <span>Pozostanie:</span>
+                          <span className={canAfford ? "text-green-600" : "text-destructive"}>
+                            {lawFirm ? lawFirm.punktySaldo - pointsCost : 0} pkt
+                          </span>
+                        </div>
                       </div>
 
                       {!canAfford && (

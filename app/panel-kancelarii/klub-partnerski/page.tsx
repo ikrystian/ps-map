@@ -270,7 +270,7 @@ export default function KlubPartnerskiPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Award className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                  <span><strong>Dodatkowe korzyści</strong> - wsparcie marketingowe i promocja Twojej kancelarii</span>
+                  <span><strong>Dodatkowe korzyści</strong> - wsparcie marketingowe i promocja Twojego profilu</span>
                 </li>
               </ul>
             </div>

@@ -216,7 +216,7 @@ export default function BlogPostPage() {
                     <Building2 className="w-4 h-4 inline mr-1" />
                     Artykuł przygotowany przez{" "}
                     <Link
-                      href={`/kancelaria/${post.lawFirm.slug}`}
+                      href={`/ekspert/${post.lawFirm.slug}`}
                       className="font-medium text-primary hover:underline"
                     >
                       {post.lawFirm.nazwa}
@@ -231,12 +231,12 @@ export default function BlogPostPage() {
               <CardContent className="p-6 md:p-8">
                 <h3 className="text-xl font-bold mb-2">Potrzebujesz pomocy prawnej?</h3>
                 <p className="text-muted-foreground mb-4">
-                  Skontaktuj się z naszą kancelarią, aby uzyskać profesjonalne wsparcie w Twojej sprawie.
+                  Skontaktuj się z naszym ekspertem, aby uzyskać profesjonalne wsparcie w Twojej sprawie.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Button asChild size="lg">
-                    <Link href={`/kancelaria/${post.lawFirm.slug}`}>
-                      Zobacz profil kancelarii
+                    <Link href={`/ekspert/${post.lawFirm.slug}`}>
+                      Zobacz profil eksperta
                     </Link>
                   </Button>
                   <Button asChild variant="outline" size="lg">
@@ -310,9 +310,9 @@ export default function BlogPostPage() {
 
                 {/* View Profile Button */}
                 <Button asChild className="w-full" size="lg">
-                  <Link href={`/kancelaria/${post.lawFirm.slug}`}>
+                  <Link href={`/ekspert/${post.lawFirm.slug}`}>
                     <Building2 className="w-4 h-4 mr-2" />
-                    Zobacz profil kancelarii
+                    Zobacz profil eksperta
                   </Link>
                 </Button>
               </CardContent>
@@ -325,10 +325,10 @@ export default function BlogPostPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Masz pytania? Skontaktuj się z kancelarią już teraz.
+                  Masz pytania? Skontaktuj się z ekspertem już teraz.
                 </p>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href={`/kancelaria/${post.lawFirm.slug}#kontakt`}>
+                  <Link href={`/ekspert/${post.lawFirm.slug}#kontakt`}>
                     Skontaktuj się
                   </Link>
                 </Button>

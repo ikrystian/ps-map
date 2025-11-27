@@ -92,7 +92,7 @@ export default function ClientCasesPage() {
 
   const filteredCases = cases.filter((caseItem) => {
     const matchesSearch = caseItem.nazwaSprawy.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         caseItem.opisSprawy.toLowerCase().includes(searchQuery.toLowerCase())
+      caseItem.opisSprawy.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesStatus = statusFilter === "ALL" || caseItem.status === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -137,7 +137,7 @@ export default function ClientCasesPage() {
         <div>
           <h1 className="text-3xl font-bold">Moje Sprawy</h1>
           <p className="text-muted-foreground mt-2">
-            Zarządzaj swoimi sprawami prawnymi i przeglądaj oferty od kancelarii
+            Zarządzaj swoimi sprawami prawnymi i przeglądaj oferty od ekspertów
           </p>
         </div>
         <Button onClick={() => router.push("/panel-klienta/sprawy/dodaj")}>
@@ -208,7 +208,7 @@ export default function ClientCasesPage() {
             </h3>
             <p className="text-muted-foreground text-center mb-4">
               {cases.length === 0
-                ? "Nie masz jeszcze żadnych spraw. Dodaj pierwszą sprawę, aby otrzymać oferty od kancelarii."
+                ? "Nie masz jeszcze żadnych spraw. Dodaj pierwszą sprawę, aby otrzymać oferty od ekspertów."
                 : "Nie znaleziono spraw pasujących do wybranych filtrów."}
             </p>
             {cases.length === 0 && (

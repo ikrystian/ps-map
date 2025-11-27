@@ -159,14 +159,14 @@ export default function LawFirmBlogPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Blog kancelarii</h1>
+          <h1 className="text-3xl font-bold">Blog eksperta</h1>
           <p className="text-muted-foreground">
             Buduj autorytet i przyciągaj klientów dzięki profesjonalnemu blogowi
           </p>
         </div>
 
         <FeatureLockedCard
-          title="Blog kancelarii"
+          title="Blog eksperta"
           description="Prowadź profesjonalny blog prawniczy, dziel się wiedzą i buduj autorytet w swojej dziedzinie."
           requiredPackage="BIZNES"
           icon={BookOpen}
@@ -189,7 +189,7 @@ export default function LawFirmBlogPage() {
         <div>
           <h1 className="text-3xl font-bold">Mój blog</h1>
           <p className="text-muted-foreground">
-            Zarządzaj wpisami na blogu swojej kancelarii
+            Zarządzaj wpisami na blogu swojego profilu
           </p>
         </div>
         <Button asChild>

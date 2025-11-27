@@ -512,7 +512,7 @@ export default function SearchLawyerPage() {
                     )
 
                     return (
-                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                      <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
                         {isBiznesPlan ? (
                           <MagicCard
                             className="h-full rounded-lg"
@@ -649,7 +649,7 @@ export default function SearchLawyerPage() {
                     )
 
                     return (
-                      <Link key={firm.id} href={`/kancelaria/${firm.slug}`}>
+                      <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
                         {isBiznesPlan ? (
                           <MagicCard
                             className="rounded-lg"

@@ -132,7 +132,7 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
         )}
 
         {/* Action Button */}
-        <Link href={`/kancelaria/${lawFirm.id}`} className="block">
+        <Link href={`/ekspert/${lawFirm.id}`} className="block">
           <Button className="w-full" variant={isPromoted ? "default" : "outline"}>
             Zobacz profil
           </Button>

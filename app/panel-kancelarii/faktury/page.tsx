@@ -111,7 +111,7 @@ export default function InvoicesPage() {
       <div>
         <h1 className="text-3xl font-bold">Faktury VAT</h1>
         <p className="text-muted-foreground mt-2">
-          Historia faktur VAT dla Twojej kancelarii
+          Historia faktur VAT dla Twojego profilu
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export default function InvoicesPage() {
           <CardHeader>
             <CardTitle>Lista faktur</CardTitle>
             <CardDescription>
-              Wszystkie faktury VAT wystawione dla Twojej kancelarii
+              Wszystkie faktury VAT wystawione dla Twojego profilu
             </CardDescription>
           </CardHeader>
           <CardContent>

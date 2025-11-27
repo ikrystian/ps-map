@@ -164,7 +164,7 @@ export default function LawFirmPanelLayout({
           </Avatar>
           <div className="text-center">
             <p className="text-md">{session.user.name}</p>
-            <p className="text-sm text-primary">Radca prawnny</p>
+            <p className="text-sm text-primary">Ekspert prawny</p>
           </div>
         </div>
       )}
@@ -187,7 +187,7 @@ export default function LawFirmPanelLayout({
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-primary" )} />
+            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-primary")} />
             {(inSheet || !isCollapsed) && <span>{item.name}</span>}
             {showBadge && (
               <span className={cn(
@@ -201,12 +201,12 @@ export default function LawFirmPanelLayout({
         )
       })}
 
-      {/* Link do publicznej strony kancelarii */}
+      {/* Link do publicznej strony eksperta */}
       {lawFirmSlug && (
         <>
           <div className="border-t border-border my-2" />
           <Link
-            href={`/kancelaria/${lawFirmSlug}`}
+            href={`/ekspert/${lawFirmSlug}`}
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
@@ -248,7 +248,7 @@ export default function LawFirmPanelLayout({
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
           <div className="flex h-16 items-center px-4 justify-between border-b bg-card">
-            {!isCollapsed && <h2 className="text-lg font-semibold ">Panel Kancelarii</h2>}
+            {!isCollapsed && <h2 className="text-lg font-semibold ">Panel Eksperta</h2>}
             <Button
               variant="ghost"
               size="icon"
@@ -286,7 +286,7 @@ export default function LawFirmPanelLayout({
                 <SheetContent side="left" className="w-64 p-0">
                   <div className={cn("flex h-full flex-col", getBorderColorClass(subscriptionType))}>
                     <div className="flex h-16 items-center border-b border-border px-4">
-                      <h2 className="text-lg font-semibold">Panel Kancelarii</h2>
+                      <h2 className="text-lg font-semibold">Panel Eksperta</h2>
                     </div>
                     <NavigationItems inSheet />
                   </div>

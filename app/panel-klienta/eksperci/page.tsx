@@ -86,7 +86,7 @@ export default function ClientFavoritesPage() {
       const response = await fetch("/api/clients/me/favorites")
 
       if (!response.ok) {
-        throw new Error("Nie udało się pobrać ulubionych kancelarii")
+        throw new Error("Nie udało się pobrać ulubionych ekspertów")
       }
 
       const data = await response.json()
@@ -107,10 +107,10 @@ export default function ClientFavoritesPage() {
       })
 
       if (!response.ok) {
-        throw new Error("Nie udało się usunąć kancelarii z ulubionych")
+        throw new Error("Nie udało się usunąć eksperta z ulubionych")
       }
 
-      toast.success("Kancelaria została usunięta z Twojej listy ulubionych")
+      toast.success("Ekspert został usunięty z Twojej listy ulubionych")
 
       // Usuń z lokalnej listy
       setFavorites(favorites.filter((fav) => fav.lawFirm.id !== lawFirmId))
@@ -127,11 +127,10 @@ export default function ClientFavoritesPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-4 w-4 ${
-              star <= Math.round(rating)
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-muted text-muted"
-            }`}
+            className={`h-4 w-4 ${star <= Math.round(rating)
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-muted text-muted"
+              }`}
           />
         ))}
       </div>
@@ -151,7 +150,7 @@ export default function ClientFavoritesPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Ładowanie ulubionych kancelarii...</p>
+          <p className="mt-4 text-muted-foreground">Ładowanie ulubionych ekspertów...</p>
         </div>
       </div>
     )
@@ -162,7 +161,7 @@ export default function ClientFavoritesPage() {
       <div>
         <h1 className="text-3xl font-bold">Wybrani Eksperci</h1>
         <p className="text-muted-foreground mt-2">
-          Twoje ulubione kancelarie prawne i eksperci
+          Twoi ulubieni eksperci prawni
         </p>
       </div>
 
@@ -172,9 +171,9 @@ export default function ClientFavoritesPage() {
             <div className="text-center space-y-4">
               <Heart className="h-16 w-16 text-muted-foreground mx-auto" />
               <div>
-                <h3 className="text-lg font-semibold">Brak ulubionych kancelarii</h3>
+                <h3 className="text-lg font-semibold">Brak ulubionych ekspertów</h3>
                 <p className="text-muted-foreground mt-2">
-                  Przeglądaj profile kancelarii i dodaj je do ulubionych, aby łatwo je odnaleźć
+                  Przeglądaj profile ekspertów i dodaj ich do ulubionych, aby łatwo ich odnaleźć
                 </p>
               </div>
               <Button onClick={() => router.push("/szukaj-prawnika")}>
@@ -209,7 +208,7 @@ export default function ClientFavoritesPage() {
                         <div className="flex items-center gap-2 mb-2">
                           <CardTitle className="text-xl">
                             <Link
-                              href={`/kancelaria/${lawFirm.slug}`}
+                              href={`/ekspert/${lawFirm.slug}`}
                               className="hover:underline"
                             >
                               {lawFirm.nazwa}
@@ -283,7 +282,7 @@ export default function ClientFavoritesPage() {
                     {/* Actions */}
                     <div className="flex flex-col gap-2">
                       <Button asChild size="sm">
-                        <Link href={`/kancelaria/${lawFirm.slug}`}>
+                        <Link href={`/ekspert/${lawFirm.slug}`}>
                           Zobacz profil
                         </Link>
                       </Button>
@@ -306,7 +305,7 @@ export default function ClientFavoritesPage() {
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               Czy na pewno chcesz usunąć {lawFirm.nazwa} z listy
-                              ulubionych? Możesz ją dodać ponownie w dowolnym
+                              ulubionych? Możesz go dodać ponownie w dowolnym
                               momencie.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
