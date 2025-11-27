@@ -46,13 +46,12 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
     const [loading, setLoading] = useState(false)
 
     const form = useForm<BadgeFormValues>({
-        resolver: zodResolver(badgeSchema),
         defaultValues: {
             name: badge.name,
             description: badge.description,
             imageUrl: badge.imageUrl,
             conditionType: badge.conditionType as any,
-            threshold: badge.threshold,
+            threshold: Number(badge.threshold),
         },
     })
 

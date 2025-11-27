@@ -103,7 +103,7 @@ export const authOptions: NextAuthConfig = {
           where: { id: user.id },
           include: {
             lawFirm: { select: { id: true } },
-            client: { select: { id: true } }
+            client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
           }
         })
 
@@ -112,6 +112,9 @@ export const authOptions: NextAuthConfig = {
         }
         if (dbUser?.client) {
           token.clientId = dbUser.client.id
+          token.clientImie = dbUser.client.imie
+          token.clientNazwisko = dbUser.client.nazwisko
+          token.clientTelefon = dbUser.client.telefon
         }
       }
 
@@ -145,7 +148,7 @@ export const authOptions: NextAuthConfig = {
               role: true,
               image: true,
               lawFirm: { select: { id: true } },
-              client: { select: { id: true } }
+              client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
             },
           })
 
@@ -156,6 +159,9 @@ export const authOptions: NextAuthConfig = {
             token.role = freshUser.role
             token.lawFirmId = freshUser.lawFirm?.id
             token.clientId = freshUser.client?.id
+            token.clientImie = freshUser.client?.imie
+            token.clientNazwisko = freshUser.client?.nazwisko
+            token.clientTelefon = freshUser.client?.telefon
             token.lastRefresh = Date.now()
           }
         } catch (error) {
@@ -176,7 +182,12 @@ export const authOptions: NextAuthConfig = {
           session.user.lawFirm = { id: token.lawFirmId }
         }
         if (token.clientId) {
-          session.user.client = { id: token.clientId }
+          session.user.client = {
+            id: token.clientId,
+            imie: token.clientImie || '',
+            nazwisko: token.clientNazwisko || '',
+            telefon: token.clientTelefon
+          }
         }
       }
       return session

@@ -11,6 +11,9 @@ declare module "next-auth" {
       }
       client?: {
         id: string
+        imie: string
+        nazwisko: string
+        telefon?: string | null
       }
     } & DefaultSession["user"]
   }
@@ -26,5 +29,8 @@ declare module "next-auth/jwt" {
     role: UserRole
     lawFirmId?: string
     clientId?: string
+    clientImie?: string
+    clientNazwisko?: string
+    clientTelefon?: string | null
   }
 }

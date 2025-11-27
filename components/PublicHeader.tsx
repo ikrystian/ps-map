@@ -104,13 +104,13 @@ export default function PublicHeader({
 
               {/* Sprawy Prywatne - Mega Menu */}
               <NavigationMenuItem>
-                <DropdownMenu open={prywatneCategoriesOpen} onOpenChange={setPrywatneCategoriesOpen}>
+                <DropdownMenu open={firmoweCategoriesOpen} onOpenChange={setFirmoweCategoriesOpen}>
                   <DropdownMenuTrigger className="flex items-center gap-1 px-4 py-2 hover:text-primary">
                     Sprawy firmowe
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[700px] p-4">
-                    <div className="grid grid-cols-3 gap-4">
+                  <DropdownMenuContent className="w-full p-4">
+                    <div className="grid grid-cols-3  md:grid-cols-4 lg:grid-cols-5 gap-4">
                       {firmoweCat.map((category) => (
                         <div key={category.id}>
                           <Link
@@ -157,8 +157,8 @@ export default function PublicHeader({
                     Sprawy prywatne
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[500px] p-4">
-                    <div className="grid grid-cols-2 gap-4">
+                  <DropdownMenuContent className="w-full p-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                       {prywatneCat.map((category) => (
                         <div key={category.id}>
                           <Link

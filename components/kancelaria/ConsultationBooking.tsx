@@ -59,6 +59,10 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
       toast.error("Musisz być zalogowany, aby zarezerwować konsultację.")
       return
     }
+    if (!session.user.client) {
+      toast.error("Nie znaleziono danych klienta.")
+      return
+    }
     if (!selectedDate || !selectedSlot || !duration) return
 
     try {
