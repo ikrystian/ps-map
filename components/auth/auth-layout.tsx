@@ -1,8 +1,10 @@
 import Link from "next/link"
 import { ReactNode } from "react"
+import { NumberTicker } from "../ui/number-ticker"
 
 interface HeroStat {
-  value: string
+  value: number
+  unit?: string
   label: string
 }
 
@@ -18,9 +20,9 @@ export function AuthLayout({
   heroTitle = "Twoja droga do rozwiązania problemów prawnych",
   heroDescription = "Połącz się z najlepszymi ekspertami prawnymi w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
   heroStats = [
-    { value: "2000+", label: "Prawników" },
-    { value: "5000+", label: "Spraw" },
-    { value: "98%", label: "Zadowolenia" },
+    { value:  200, unit: "+", label: "Prawników" },
+    { value:  500, unit: "+", label: "Spraw" },
+    { value: 98, unit: "%", label: "Zadowolenia" },
   ],
 }: AuthLayoutProps) {
   return (
@@ -50,7 +52,7 @@ export function AuthLayout({
               <div className="grid grid-cols-3 gap-8 pt-8">
                 {heroStats.map((stat, index) => (
                   <div key={index}>
-                    <div className="text-3xl font-bold">{stat.value}</div>
+                    <div className="text-4xl font-bold"><NumberTicker value={stat.value} decimalPlaces={0} delay={index * 1}  />{stat.unit}</div>
                     <div className="text-sm text-white/80">{stat.label}</div>
                   </div>
                 ))}

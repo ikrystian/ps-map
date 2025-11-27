@@ -136,42 +136,41 @@ export default function HomePage() {
 
       {/* SECTION 1: Hero Section */}
       <section className="relative flex justify-center items-center from-primary/10 via-background to-secondary/10 h-[80vh] hero-image overflow-hidden">
-<div>
-<Image src="/images/hero.jpg" className="object-cover object-top absolute top-0 left-0 right-0 bottom-0 w-full h-full"  alt="" fill priority />
+        <div>
 
 
           <ParticlesBackground />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 font-playfair">
-              Prosta Sprawa
-            </h1>
-            <p className="text-3xl md:text-5xl font-semibold mb-4 font-playfair">
-              Tu rozwiązujemy Twoje problemy prawne
-            </p>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 font-playfair">
+                Prosta Sprawa
+              </h1>
+              <p className="text-3xl md:text-5xl font-semibold mb-4 font-playfair">
+                Tu rozwiązujemy Twoje problemy prawne
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-lg px-8 py-6">
-                <Link href="/dodaj-sprawe">
-                  <Home className="mr-2 h-5 w-5" />
-                  Sprawy prywatne
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
-                <Link href="/dodaj-sprawe">
-                  <Briefcase className="mr-2 h-5 w-5" />
-                  Sprawy firmowe
-                </Link>
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button asChild size="lg" className="text-lg px-8 py-6">
+                  <Link href="/dodaj-sprawe">
+                    <Home className="mr-2 h-5 w-5" />
+                    Sprawy prywatne
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
+                  <Link href="/dodaj-sprawe">
+                    <Briefcase className="mr-2 h-5 w-5" />
+                    Sprawy firmowe
+                  </Link>
+                </Button>
+              </div>
+
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 font-playfair">
+                Zmieniamy grę  w świecie prawa!
+              </p>
+
             </div>
-
-         <p className="text-xl md:text-2xl text-muted-foreground mb-8 font-playfair">
-              Zmieniamy grę  w świecie prawa!
-            </p>
-
           </div>
         </div>
-</div>
       </section>
 
       {/* SECTION 2: Benefits Icons */}
