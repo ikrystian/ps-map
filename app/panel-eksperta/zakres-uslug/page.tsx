@@ -375,7 +375,7 @@ export default function LawFirmServicesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Zakres usług</h2>
+          <h1 className="text-2xl font-bold tracking-tight font-playfair">Zakres usług</h1>
           <p className="text-muted-foreground">
             Wybierz kategorie spraw, w których się specjalizujesz.
           </p>

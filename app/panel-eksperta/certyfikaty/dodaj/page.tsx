@@ -107,19 +107,7 @@ export default function LawFirmAddCertificatePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="mb-2"
-          >
-            <Link href="/panel-eksperta/certyfikaty">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Powrót do listy certyfikatów
-            </Link>
-          </Button>
           <h1 className="text-3xl font-medium tracking-tight font-playfair">
-            <Award className="h-8 w-8 text-primary" />
             Dodaj nowy certyfikat
           </h1>
           <p className="text-muted-foreground mt-2">

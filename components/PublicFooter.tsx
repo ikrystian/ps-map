@@ -121,11 +121,6 @@ export default function PublicFooter() {
                   Panel Eksperta
                 </Link>
               </li>
-              <li>
-                <Link href="/sklep" className="hover:text-primary transition-colors">
-                  Sklep
-                </Link>
-              </li>
             </ul>
           </div>
 
