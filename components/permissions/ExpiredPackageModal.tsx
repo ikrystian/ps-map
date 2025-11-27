@@ -102,7 +102,7 @@ export function ExpiredPackageModal({
 
         <AlertDialogFooter className="flex-col sm:flex-col gap-2">
           <Button asChild className="w-full" size="lg">
-            <Link href="/panel-kancelarii/pakiet">
+            <Link href="/panel-eksperta/pakiet">
               Odnów pakiet teraz
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

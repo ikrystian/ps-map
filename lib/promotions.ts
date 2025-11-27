@@ -381,7 +381,7 @@ export async function renewExpiredPromotions() {
             typ: 'ZMIANA_STATUSU',
             tytul: 'Nie udało się odnowić promocji',
             tresc: `Promocja "${promotionLabel}" nie została odnowiona z powodu niewystarczającej liczby punktów. Potrzebujesz ${promotion.kosztPunktow} punktów, masz ${promotion.lawFirm.punktySaldo} punktów.`,
-            linkUrl: '/panel-kancelarii/punkty',
+            linkUrl: '/panel-eksperta/punkty',
           },
         })
 
@@ -475,7 +475,7 @@ export async function renewExpiredPromotions() {
           typ: 'ZMIANA_STATUSU',
           tytul: 'Promocja została odnowiona',
           tresc: `Twoja promocja "${promotionLabel}" została automatycznie odnowiona. Koszt: ${promotion.kosztPunktow} punktów. Pozostałe punkty: ${updatedLawFirm?.punktySaldo || 0}.`,
-          linkUrl: '/panel-kancelarii/promowanie',
+          linkUrl: '/panel-eksperta/promowanie',
         },
       })
 

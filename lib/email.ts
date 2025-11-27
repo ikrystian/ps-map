@@ -367,7 +367,7 @@ export function generatePromotionActivatedEmail(
             </ul>
 
             <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie" class="button">
+              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="button">
                 Zobacz statystyki promocji
               </a>
             </div>
@@ -400,7 +400,7 @@ Co dalej?
 - Możesz śledzić statystyki promocji w panelu kancelarii
 - Promocja odnowi się automatycznie, jeśli włączyłeś automatyczne odnowienie
 
-Zobacz statystyki: ${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie
+Zobacz statystyki: ${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie
 
 ---
 Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
@@ -531,7 +531,7 @@ export function generatePromotionRenewedEmail(
             <p>Twoja promocja nadal jest aktywna i działa z pełną mocą!</p>
 
             <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie" class="button">
+              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="button">
                 Zarządzaj promocjami
               </a>
             </div>
@@ -560,7 +560,7 @@ Szczegóły odnowienia:
 
 Twoja promocja nadal jest aktywna i działa z pełną mocą!
 
-Zarządzaj promocjami: ${process.env.NEXTAUTH_URL}/panel-kancelarii/promowanie
+Zarządzaj promocjami: ${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie
 
 ---
 Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
@@ -693,7 +693,7 @@ export function generatePromotionRenewalFailedEmail(
             </ul>
 
             <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-kancelarii/punkty" class="button">
+              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/punkty" class="button">
                 Dokup punkty
               </a>
             </div>
@@ -729,7 +729,7 @@ Co możesz zrobić?
 - Dokup punkty w panelu kancelarii
 - Aktywuj promocję ponownie
 
-Dokup punkty: ${process.env.NEXTAUTH_URL}/panel-kancelarii/punkty
+Dokup punkty: ${process.env.NEXTAUTH_URL}/panel-eksperta/punkty
 
 ---
 Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.

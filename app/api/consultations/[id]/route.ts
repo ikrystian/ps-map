@@ -150,7 +150,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
           typ: "KONSULTACJA_ANULOWANA",
           tytul: "Konsultacja anulowana",
           tresc: `${booking.client.user.name} anulował konsultację`,
-          linkUrl: "/panel-kancelarii/konsultacje",
+          linkUrl: "/panel-eksperta/konsultacje",
         },
       })
     } else if (isLawFirm) {

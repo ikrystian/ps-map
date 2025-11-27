@@ -54,7 +54,7 @@ export function UpgradeAlert({
         {showUpgradeButton && (
           <div className="mt-3">
             <Button asChild size="sm">
-              <Link href="/panel-kancelarii/pakiet">
+              <Link href="/panel-eksperta/pakiet">
                 Ulepsz pakiet
                 <ArrowUpRight className="ml-2 h-4 w-4" />
               </Link>

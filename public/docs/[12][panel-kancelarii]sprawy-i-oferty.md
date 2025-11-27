@@ -1,6 +1,6 @@
 # PANEL KANCELARII - SPRAWY I OFERTY
 
-## /panel-kancelarii/sprawy - Dostępne sprawy (przeglądanie)
+## /panel-eksperta/sprawy - Dostępne sprawy (przeglądanie)
 
 ### Przegląd główny
 Moduł spraw stanowi centrum zarządzania dostępnymi zleceniami prawniczymi w platformie. Zapewnia kompleksowy podgląd wszystkich aktywnych spraw z możliwością filtrowania, sortowania i szybkiego dostępu do szczegółów.
@@ -120,7 +120,7 @@ Główne widok kart spraw z zaawansowanym systemem oznaczeń:
 
 ---
 
-## /panel-kancelarii/oferty - Złożone oferty
+## /panel-eksperta/oferty - Złożone oferty
 
 ### Przegląd główny
 Moduł ofert stanowi centrum zarządzania wszystkimi złożonymi ofertami kancelarii z kompleksowymi statystykami, filtrowaniem i szczegółowym podglądem każdego złożonego wniosku o zlecenie.
@@ -323,7 +323,7 @@ interface Offer {
 
 ---
 
-## /panel-kancelarii/sprawy/[id] - Szczegóły sprawy i składanie oferty
+## /panel-eksperta/sprawy/[id] - Szczegóły sprawy i składanie oferty
 
 ### Przegląd główny
 Strona szczegółów sprawy stanowi kompleksowe centrum informacji o zleceniu z zaawansowanym formularzem składania oferty, zarządzaniem dokumentami i pełnym kontekstem klienta.

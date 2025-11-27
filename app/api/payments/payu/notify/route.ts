@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     if (!dbOrder) {
       console.error("Order not found:", extOrderId)
-      // Return 200 to stop PayU from retrying if order doesn't exist? 
+      // Return 200 to stop PayU from retrying if order doesn't exist?
       // Or 404? PayU expects 200 OK to acknowledge receipt.
       return Response.json({ message: "Order not found" }, { status: 200 })
     }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         // Handle Subscription
         if (dbOrder.orderType === 'SUBSCRIPTION' && dbOrder.subscriptionPlan) {
           const now = new Date()
-          // If already has active subscription, extend it? 
+          // If already has active subscription, extend it?
           // Or overwrite? Usually extend if same type, or overwrite if upgrade.
           // For simplicity, let's assume start from now or extend if future.
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
             tresc: dbOrder.orderType === 'POINTS'
               ? `Zakup punktów zakończony sukcesem. Dodano ${dbOrder.liczbaPunktow} pkt.`
               : `Subskrypcja ${dbOrder.subscriptionPlan?.nazwa} została aktywowana.`,
-            linkUrl: dbOrder.orderType === 'POINTS' ? "/panel-kancelarii/punkty" : "/panel-kancelarii/pakiet"
+            linkUrl: dbOrder.orderType === 'POINTS' ? "/panel-eksperta/punkty" : "/panel-eksperta/pakiet"
           }
         })
 

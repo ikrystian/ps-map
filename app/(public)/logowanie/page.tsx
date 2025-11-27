@@ -110,7 +110,7 @@ export default function LoginPage() {
           if (userRole === "CLIENT") {
             router.push("/panel-klienta")
           } else if (userRole === "LAW_FIRM") {
-            router.push("/panel-kancelarii")
+            router.push("/panel-eksperta")
           } else if (userRole === "ADMIN") {
             router.push("/admin")
           } else {
@@ -155,7 +155,7 @@ export default function LoginPage() {
         if (userRole === "CLIENT") {
           router.push("/panel-klienta")
         } else if (userRole === "LAW_FIRM") {
-          router.push("/panel-kancelarii")
+          router.push("/panel-eksperta")
         } else if (userRole === "ADMIN") {
           router.push("/admin")
         } else {

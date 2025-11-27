@@ -118,7 +118,7 @@ export async function POST(
           typ: "ZMIANA_STATUSU",
           tytul: "Oferta odrzucona",
           tresc: `Twoja oferta do sprawy "${offer.case.nazwaSprawy}" została odrzucona przez klienta`,
-          linkUrl: `/panel-kancelarii/oferty`
+          linkUrl: `/panel-eksperta/oferty`
         }
       })
 

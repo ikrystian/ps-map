@@ -1,6 +1,6 @@
 # PANEL KANCELARII - ZAKRES USŁUG
 
-## /panel-kancelarii/zakres-uslug - Lista usług
+## /panel-eksperta/zakres-uslug - Lista usług
 
 ### Przegląd główny
 Moduł zakresu usług stanowi centrum zarządzania wszystkimi usługami oferowanymi przez kancelarię w platformie. Zapewnia kompleksowy podgląd, edycję, dodawanie i usuwanie usług z zaawansowanymi funkcjami organizacji i prezentacji.
@@ -137,7 +137,7 @@ Główne widok kart usług z zaawansowanym systemem prezentacji:
 
 ---
 
-## /panel-kancelarii/zakres-uslug/dodaj - Dodaj usługę
+## /panel-eksperta/zakres-uslug/dodaj - Dodaj usługę
 
 ### Przegląd główny
 Zaawansowany formularz dodawania nowej usługi do oferty kancelarii z kompleksowymi opcjami konfiguracji, walidacją w czasie rzeczywistym i podglądem na żywo.
@@ -233,7 +233,7 @@ Zaawansowany formularz dodawania nowej usługi do oferty kancelarii z kompleksow
 
 ---
 
-## /panel-kancelarii/zakres-uslug/[id] - Edycja usługi
+## /panel-eksperta/zakres-uslug/[id] - Edycja usługi
 
 ### Przegląd główny
 Zaawansowany edytor istniejącej usługi z pełną historią zmian, statystykami wydajności i możliwościami optymalizacji oferty.

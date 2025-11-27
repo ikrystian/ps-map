@@ -109,7 +109,7 @@ BlogComment {
 
 ## SZCZEGÓŁOWY OPIS FUNKCJONALNOŚCI
 
-### 1. /panel-kancelarii/blog - Lista artykułów bloga
+### 1. /panel-eksperta/blog - Lista artykułów bloga
 
 #### Podstawowe funkcje
 - **Wyświetlanie listy artykułów**: Wszystkie artykuły należące do zalogowanej kancelarii, posortowane według daty utworzenia (od najnowszych)
@@ -142,7 +142,7 @@ BlogComment {
 - **Wykresy**: Wizualizacja liczby artykułów publikowanych w czasie
 - **Najpopularniejsze**: Top 5 artykułów z największą liczbą wyświetleń
 
-### 2. /panel-kancelarii/blog/nowy - Nowy artykuł
+### 2. /panel-eksperta/blog/nowy - Nowy artykuł
 
 #### Formularz tworzenia artykułu
 **Sekcja podstawowa:**
@@ -192,7 +192,7 @@ BlogComment {
 - **Sugestie SEO**: Automatyczne sugestie optymalizacji SEO
 - **Import dokumentów**: Możliwość importu treści z plików DOC, PDF
 
-### 3. /panel-kancelarii/blog/[id] - Edycja artykułu
+### 3. /panel-eksperta/blog/[id] - Edycja artykułu
 
 #### Interfejs edycji
 - **Pełne funkcje formularza nowego artykułu**: Wszystkie pola i funkcje z sekcji tworzenia

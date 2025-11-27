@@ -138,7 +138,7 @@ export function LimitIndicator({
 
           {showUpgradeButton && (isAtLimit || isNearLimit) && (
             <Button asChild size="sm" variant={isAtLimit ? "destructive" : "outline"}>
-              <Link href="/panel-kancelarii/pakiet">
+              <Link href="/panel-eksperta/pakiet">
                 Zwiększ limit
                 <ArrowUpRight className="ml-1 h-3 w-3" />
               </Link>

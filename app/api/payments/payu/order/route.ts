@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"
         const notifyUrl = `${appUrl}/api/payments/payu/notify`
-        const continueUrl = `${appUrl}/panel-kancelarii/checkout/success?orderId=${order.id}`
+        const continueUrl = `${appUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
 
         // Amount in grosz
         const totalAmount = Math.round(order.kwota * 100).toString()

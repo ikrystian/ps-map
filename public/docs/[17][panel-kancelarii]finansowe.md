@@ -1,6 +1,6 @@
 # PANEL KANCELARII - FINANSOWE
 
-## /panel-kancelarii/pakiet - Pakiet subskrypcyjny
+## /panel-eksperta/pakiet - Pakiet subskrypcyjny
 
 ### Przegląd główny
 Moduł pakietu subskrypcyjnego stanowi centrum zarządzania planem subskrypcji kancelarii, zapewniając pełną kontrolę nad aktualnym planem, jego funkcjonalnościami, limitami, historią płatności oraz możliwościami upgrade'u. System integruje się z bramkami płatności i automatyzuje procesy odnawiania.
@@ -204,7 +204,7 @@ Zaawansowana karta prezentująca kompleksowe informacje o subskrypcji:
 
 ---
 
-## /panel-kancelarii/faktury - Lista faktur
+## /panel-eksperta/faktury - Lista faktur
 
 ### Przegląd główny
 Moduł faktur stanowi kompleksowe centrum zarządzania dokumentacją finansową kancelarii, zapewniając pełną kontrolę nad wystawianymi fakturami, ich statusem, płatnościami oraz archiwizacją. System integruje się z pakietem subskrypcyjnym i automatyzuje procesy fakturowania.
@@ -454,7 +454,7 @@ interface InvoiceData {
 
 ---
 
-## /panel-kancelarii/faktury/[id]/drukuj - Drukowanie faktury
+## /panel-eksperta/faktury/[id]/drukuj - Drukowanie faktury
 
 ### Przegląd główny
 Moduł drukowania faktur stanowi specjalizowany widok zoptymalizowany pod kątem wydruku, zapewniający czysty, profesjonalny format faktury zgodny z wymogami prawnymi i standardami branżowymi. System generuje wersję print-friendly z pełnymi metadanymi i elementami wizualnymi.

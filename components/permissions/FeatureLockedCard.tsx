@@ -92,7 +92,7 @@ export function FeatureLockedCard({
         </div>
 
         <Button asChild className="w-full">
-          <Link href="/panel-kancelarii/pakiet">
+          <Link href="/panel-eksperta/pakiet">
             Ulepsz do {packageText}
             <ArrowUpRight className="ml-2 h-4 w-4" />
           </Link>

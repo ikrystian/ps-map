@@ -1,6 +1,6 @@
 # PANEL KANCELARII - DOKUMENTY
 
-## /panel-kancelarii/dokumenty - Lista dokumentów
+## /panel-eksperta/dokumenty - Lista dokumentów
 
 ### Przegląd główny
 Moduł dokumentów stanowi kompleksowe centrum zarządzania biblioteką dokumentów kancelarii, zapewniając pełną kontrolę nad plikami, ich organizacją, udostępnianiem i archiwizacją. System obsługuje zarówno dokumenty dodawane przez kancelarię, jak i pliki przesyłane przez klientów w trakcie konwersacji.

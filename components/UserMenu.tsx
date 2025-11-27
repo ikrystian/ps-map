@@ -145,7 +145,7 @@ export default function UserMenu({
     return (
       <div className="flex items-center gap-4">
         {/* Points Counter */}
-        <Link href="/panel-kancelarii/punkty">
+        <Link href="/panel-eksperta/punkty">
           <Badge variant="outline" className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer">
             <Coins className="h-4 w-4 text-primary" />
             <span className="font-semibold">{punktySaldo}</span>
@@ -166,37 +166,37 @@ export default function UserMenu({
             <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii" className="flex items-center gap-2">
+              <Link href="/panel-eksperta" className="flex items-center gap-2">
                 <LayoutDashboard className="h-4 w-4" />
                 Panel użytkownika
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii/sprawy" className="flex items-center gap-2">
+              <Link href="/panel-eksperta/sprawy" className="flex items-center gap-2">
                 <Briefcase className="h-4 w-4" />
                 Moje sprawy
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii/dokumenty" className="flex items-center gap-2">
+              <Link href="/panel-eksperta/dokumenty" className="flex items-center gap-2">
                 <FileStack className="h-4 w-4" />
                 Dokumenty
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii/faktury" className="flex items-center gap-2">
+              <Link href="/panel-eksperta/faktury" className="flex items-center gap-2">
                 <Receipt className="h-4 w-4" />
                 Faktury
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii/pomoc" className="flex items-center gap-2">
+              <Link href="/panel-eksperta/pomoc" className="flex items-center gap-2">
                 <HelpCircle className="h-4 w-4" />
                 Centrum pomocy
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/panel-kancelarii/profil" className="flex items-center gap-2">
+              <Link href="/panel-eksperta/profil" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Konto
               </Link>

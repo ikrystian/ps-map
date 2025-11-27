@@ -278,7 +278,7 @@ export async function POST(request: NextRequest) {
           typ: "NOWA_OFERTA",
           tytul: "Nowa sprawa w Twojej specjalizacji",
           tresc: `Nowa sprawa: ${body.nazwaSprawy}. Sprawdź szczegóły i złóż ofertę.`,
-          linkUrl: "/panel-kancelarii/sprawy",
+          linkUrl: "/panel-eksperta/sprawy",
         })),
       })
 

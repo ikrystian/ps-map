@@ -130,7 +130,7 @@ export async function requireFeature(
       error: "Twój pakiet subskrypcji wygasł. Odnów pakiet, aby kontynuować.",
       code: "PACKAGE_EXPIRED",
       currentPackage: getPackageDisplayName(lawFirm.pakietSubskrypcji),
-      upgradeUrl: "/panel-kancelarii/pakiet",
+      upgradeUrl: "/panel-eksperta/pakiet",
     };
 
     return NextResponse.json(error, { status: 403 });
@@ -147,7 +147,7 @@ export async function requireFeature(
       code: "FEATURE_NOT_AVAILABLE",
       currentPackage: getPackageDisplayName(lawFirm.pakietSubskrypcji),
       requiredPackages: requiredPackages.map(getPackageDisplayName),
-      upgradeUrl: "/panel-kancelarii/pakiet",
+      upgradeUrl: "/panel-eksperta/pakiet",
     };
 
     return NextResponse.json(error, { status: 403 });
@@ -183,7 +183,7 @@ export async function requireLimit(
       error: "Twój pakiet subskrypcji wygasł. Odnów pakiet, aby kontynuować.",
       code: "PACKAGE_EXPIRED",
       currentPackage: getPackageDisplayName(lawFirm.pakietSubskrypcji),
-      upgradeUrl: "/panel-kancelarii/pakiet",
+      upgradeUrl: "/panel-eksperta/pakiet",
     };
 
     return NextResponse.json(error, { status: 403 });
@@ -198,7 +198,7 @@ export async function requireLimit(
       limitType,
       current: limitCheck.current,
       limit: limitCheck.limit || 0,
-      upgradeUrl: "/panel-kancelarii/pakiet",
+      upgradeUrl: "/panel-eksperta/pakiet",
     };
 
     return NextResponse.json(error, { status: 403 });

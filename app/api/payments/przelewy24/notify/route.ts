@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
           typ: "ZMIANA_STATUSU",
           tytul: "Płatność zakończona pomyślnie",
           tresc: `Twoja płatność została przetworzona. Dodano ${order.liczbaPunktow || 0} punktów do konta.`,
-          linkUrl: "/panel-kancelarii/punkty",
+          linkUrl: "/panel-eksperta/punkty",
         },
       })
 

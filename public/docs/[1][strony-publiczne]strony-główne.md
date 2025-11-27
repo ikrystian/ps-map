@@ -159,7 +159,7 @@
 - **Role użytkowników:** CLIENT, LAW_FIRM, ADMIN
 - **Przekierowanie po logowaniu:**
   - CLIENT → `/panel-klienta`
-  - LAW_FIRM → `/panel-kancelarii`
+  - LAW_FIRM → `/panel-eksperta`
   - ADMIN → `/admin`
   - Inne → `callbackUrl`
 

@@ -35,7 +35,7 @@ export default auth((req) => {
       return NextResponse.redirect(new URL("/panel-klienta", nextUrl))
     }
     if (userRole === "LAW_FIRM") {
-      return NextResponse.redirect(new URL("/panel-kancelarii", nextUrl))
+      return NextResponse.redirect(new URL("/panel-eksperta", nextUrl))
     }
     if (userRole === "ADMIN") {
       return NextResponse.redirect(new URL("/admin", nextUrl))
@@ -54,7 +54,7 @@ export default auth((req) => {
   }
 
   // Panel kancelarii - tylko dla LAW_FIRM
-  if (nextUrl.pathname.startsWith("/panel-kancelarii")) {
+  if (nextUrl.pathname.startsWith("/panel-eksperta")) {
     if (!isLoggedIn) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname)
       return NextResponse.redirect(new URL(`/logowanie?callbackUrl=${callbackUrl}`, nextUrl))

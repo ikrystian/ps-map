@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         typ: "NOWA_KONSULTACJA",
         tytul: "Nowa prośba o konsultację",
         tresc: `${newBooking.client.user.name} wysłał prośbę o konsultację (${duration} min)`,
-        linkUrl: "/panel-kancelarii/konsultacje",
+        linkUrl: "/panel-eksperta/konsultacje",
       },
     })
 

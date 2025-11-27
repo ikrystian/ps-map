@@ -1,6 +1,6 @@
 # PANEL KANCELARII - KOMUNIKACJA
 
-## /panel-kancelarii/wiadomosci - Lista konwersacji
+## /panel-eksperta/wiadomosci - Lista konwersacji
 
 ### Przegląd główny
 Moduł wiadomości stanowi centrum komunikacji między kancelarią a klientami, zapewniając kompleksowy system obsługi konwersacji w czasie rzeczywistym z zaawansowanymi funkcjami zarządzania dialogami.
@@ -129,7 +129,7 @@ Główny widok kart konwersacji z zaawansowanym systemem oznaczeń:
 
 ---
 
-## /panel-kancelarii/wiadomosci/[id] - Konwersacja (dynamiczny)
+## /panel-eksperta/wiadomosci/[id] - Konwersacja (dynamiczny)
 
 ### Przegląd główny
 Szczegółowy widok konwersacji stanowi zaawansowane centrum komunikacji z klientem, zapewniające pełną funkcjonalność czatu w czasie rzeczywistym z obsługą multimediów, szyfrowaniem i zaawansowanymi opcjami zarządzania dialogiem.

@@ -117,7 +117,7 @@ export default function PublicFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/panel-kancelarii" className="hover:text-primary transition-colors">
+                <Link href="/panel-eksperta" className="hover:text-primary transition-colors">
                   Panel Eksperta
                 </Link>
               </li>

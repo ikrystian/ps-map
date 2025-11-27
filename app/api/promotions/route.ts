@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
         typ: 'ZMIANA_STATUSU',
         tytul: 'Promocja została aktywowana',
         tresc: `Twoja promocja "${promotionLabel}" została pomyślnie aktywowana i jest już widoczna dla klientów.`,
-        linkUrl: '/panel-kancelarii/promowanie',
+        linkUrl: '/panel-eksperta/promowanie',
       },
     })
 

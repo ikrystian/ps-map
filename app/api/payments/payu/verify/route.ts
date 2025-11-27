@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
                         tresc: order.orderType === 'POINTS'
                             ? `Zakup punktów zakończony sukcesem. Dodano ${order.liczbaPunktow} pkt.`
                             : `Subskrypcja ${order.subscriptionPlan?.nazwa} została aktywowana.`,
-                        linkUrl: order.orderType === 'POINTS' ? "/panel-kancelarii/punkty" : "/panel-kancelarii/pakiet"
+                        linkUrl: order.orderType === 'POINTS' ? "/panel-eksperta/punkty" : "/panel-eksperta/pakiet"
                     }
                 })
             })

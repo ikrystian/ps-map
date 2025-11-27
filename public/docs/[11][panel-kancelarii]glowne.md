@@ -1,6 +1,6 @@
 # PANEL KANCELARII - SZCZEGÓŁOWY OPIS FUNKCJONALNOŚCI
 
-## /panel-kancelarii - Dashboard kancelarii
+## /panel-eksperta - Dashboard kancelarii
 
 ### Przegląd główny
 Główny panel kancelarii stanowi centrum zarządzania działalnością prawniczą w platformie. Zapewnia kompleksowy podgląd wszystkich kluczowych aspektów funkcjonowania kancelarii w jednym miejscu.
@@ -62,7 +62,7 @@ Cztery główne przyciski szybkiego dostępu:
 
 ---
 
-## /panel-kancelarii/profil - Profil kancelarii
+## /panel-eksperta/profil - Profil kancelarii
 
 ### Struktura edycji profilu
 Zaawansowany edytor profilu kancelarii podzielony na 5 zakładek dla lepszej organizacji:
@@ -130,7 +130,7 @@ Zaawansowany edytor profilu kancelarii podzielony na 5 zakładek dla lepszej org
 
 ---
 
-## /panel-kancelarii/ustawienia - Ustawienia kancelarii
+## /panel-eksperta/ustawienia - Ustawienia kancelarii
 
 ### Struktura ustawień
 Kompleksowy panel zarządzania kontem podzielony na dwie główne sekcje:
@@ -191,7 +191,7 @@ Kompleksowy panel zarządzania kontem podzielony na dwie główne sekcje:
 
 ---
 
-## /panel-kancelarii/statystyki - Statystyki
+## /panel-eksperta/statystyki - Statystyki
 
 ### Dostęp i uprawnienia
 - **Ochrona premium**: Dostęp do statystyk wymaga pakietu PREMIUM lub BIZNES
@@ -244,7 +244,7 @@ Cztery kluczowe wskaźniki wydajności:
 
 ---
 
-## /panel-kancelarii/pomoc - Pomoc
+## /panel-eksperta/pomoc - Pomoc
 
 ### Centrum pomocy
 Kompleksowe centrum wsparcia użytkownika z wieloma kanałami pomocy:

@@ -1,6 +1,6 @@
 # PANEL KANCELARII - KLUB PARTNERSKI
 
-## /panel-kancelarii/klub-partnerski - Klub Partnerski
+## /panel-eksperta/klub-partnerski - Klub Partnerski
 
 ### Przegląd główny
 Klub Partnerski to zaawansowany system lojalnościowy stworzony dla kancelarii prawnych, umożliwiający zdobywanie punktów promocyjnych poprzez promowanie platformy ProstaSprawa.pl. Program opiera się na mechanizmie umieszczania banerów partnerskich na stronach internetowych kancelarii w zamian za miesięczne punkty promocyjne.
@@ -42,7 +42,7 @@ Klub Partnerski to zaawansowany system lojalnościowy stworzony dla kancelarii p
 - **Ikona**: AlertCircle w kolorze destructive
 - **Tytuł**: "Brak strony WWW"
 - **Opis**: "Aby dołączyć do programu partnerskiego, musisz mieć podaną stronę WWW w swoim profilu"
-- **Przycisk akcji**: "Uzupełnij profil" z przekierowaniem do /panel-kancelarii/profil
+- **Przycisk akcji**: "Uzupełnij profil" z przekierowaniem do /panel-eksperta/profil
 - **Stan przycisku**: Disabled jeśli brak strony WWW
 
 ### Korzyści programu

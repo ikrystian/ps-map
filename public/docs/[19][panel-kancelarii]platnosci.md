@@ -1,6 +1,6 @@
 # PANEL KANCELARII - PŁATNOŚCI I CHECKOUT
 
-## /panel-kancelarii/checkout - Kasa/płatność
+## /panel-eksperta/checkout - Kasa/płatność
 
 ### Przegląd główny
 Strona checkout stanowi centralny punkt finalizacji transakcji w systemie, umożliwiając kancelariom zakup punktów promocyjnych oraz pakietów subskrypcyjnych. Interfejs został zoptymalizowany pod kątem konwersji z intuicyjnym procesem wyboru metody płatności i potwierdzenia zamówienia.
@@ -177,7 +177,7 @@ interface OrderData {
 
 ---
 
-## /panel-kancelarii/checkout/success - Sukces płatności
+## /panel-eksperta/checkout/success - Sukces płatności
 
 ### Przegląd główny
 Strona sukcesu płatności stanowi finalny etap procesu transakcyjnego, potwierdzający pomyślne zakończenie zamówienia. Zawiera dynamiczne statusy płatności, szczegóły transakcji oraz nawigację do dalszych akcji w panelu.
@@ -271,13 +271,13 @@ const formatDate = (date: Date | string) => {
 1. **Zobacz punkty**:
    - **Ikona**: Coins
    - **Wariant**: outline
-   - **Akcja**: Przekierowanie do /panel-kancelarii/punkty
+   - **Akcja**: Przekierowanie do /panel-eksperta/punkty
    - **Opis**: Sprawdzenie nowego salda punktów
 
 2. **Strona główna**:
    - **Ikona**: Home
    - **Wariant**: primary
-   - **Akcja**: Przekierowanie do /panel-kancelarii
+   - **Akcja**: Przekierowanie do /panel-eksperta
    - **Opis**: Powrót do głównego panelu
 
 #### Layout przycisków
@@ -298,7 +298,7 @@ const formatDate = (date: Date | string) => {
 #### Walidacja orderId
 **Sprawdzanie parametrów:**
 - **Wymagany**: orderId w URL params
-- **Przekierowanie**: Do /panel-kancelarii/punkty przy braku
+- **Przekierowanie**: Do /panel-eksperta/punkty przy braku
 - **Czyszczenie**: sessionStorage.removeItem("pendingOrder")
 
 ### Parametry URL
@@ -312,15 +312,15 @@ const formatDate = (date: Date | string) => {
 #### Przykładowe URL
 ```typescript
 // Dla punktów
-/panel-kancelarii/checkout/success?orderId=12345
+/panel-eksperta/checkout/success?orderId=12345
 
 // Dla pakietów
-/panel-kancelarii/checkout/success?type=package&planName=Profesjonalny
+/panel-eksperta/checkout/success?type=package&planName=Profesjonalny
 ```
 
 ---
 
-## /panel-kancelarii/checkout/failure - Błąd płatności
+## /panel-eksperta/checkout/failure - Błąd płatności
 
 ### Przegląd główny
 Strona błędu płatności stanowi interfejs obsługi nieudanych transakcji, zapewniając użytkownikom jasne informacje o problemie oraz wskazówki dalszego postępowania. Została zaprojektowana z myślą o maksymalizacji retencji użytkowników poprzez proste ścieżki rozwiązania problemu.
@@ -383,13 +383,13 @@ Strona błędu płatności stanowi interfejs obsługi nieudanych transakcji, zap
 1. **Spróbuj ponownie**:
    - **Ikona**: ArrowLeft
    - **Wariant**: outline
-   - **Akcja**: Przekierowanie do /panel-kancelarii/punkty
+   - **Akcja**: Przekierowanie do /panel-eksperta/punkty
    - **Opis**: Powrót do procesu zakupu
 
 2. **Strona główna**:
    - **Ikona**: Home
    - **Wariant**: primary
-   - **Akcja**: Przekierowanie do /panel-kancelarii
+   - **Akcja**: Przekierowanie do /panel-eksperta
    - **Opis**: Powrót do panelu głównego
 
 #### Layout przycisków
@@ -452,7 +452,7 @@ Strona błędu płatności stanowi interfejs obsługi nieudanych transakcji, zap
 **Pełny cykl transakcji:**
 1. **Wybór produktu**: Punkty lub pakiet w panelu
 2. **Przygotowanie zamówienia**: Zapisanie danych w sessionStorage
-3. **Przekierowanie do checkout**: /panel-kancelarii/checkout
+3. **Przekierowanie do checkout**: /panel-eksperta/checkout
 4. **Wybór metody płatności**: Przelewy24, PayU, przelew
 5. **Finalizacja**: Przetwarzanie płatności
 6. **Powrót**: Success lub failure z odpowiednim statusem

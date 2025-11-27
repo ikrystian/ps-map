@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         typ: "NOWA_WIADOMOSC",
         tytul: "Nowa wiadomość kontaktowa",
         tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
-        linkUrl: `/panel-kancelarii/wiadomosci`,
+        linkUrl: `/panel-eksperta/wiadomosci`,
       },
     })
 

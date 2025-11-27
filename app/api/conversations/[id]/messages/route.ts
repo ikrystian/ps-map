@@ -242,7 +242,7 @@ export async function POST(
         tresc: messagePreview,
         linkUrl:
           session.user.role === "CLIENT"
-            ? "/panel-kancelarii/wiadomosci"
+            ? "/panel-eksperta/wiadomosci"
             : "/panel-klienta/wiadomosci",
       },
     })

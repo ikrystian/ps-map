@@ -31,7 +31,7 @@ export default function VerificationPage() {
                 if (session.user?.role === "CLIENT") {
                     router.push("/panel-klienta")
                 } else if (session.user?.role === "LAW_FIRM") {
-                    router.push("/panel-kancelarii")
+                    router.push("/panel-eksperta")
                 } else {
                     router.push("/")
                 }

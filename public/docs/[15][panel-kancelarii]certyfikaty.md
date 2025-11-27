@@ -1,9 +1,9 @@
 # PANEL KANCELARII - CERTYFIKATY I UPRAWNIENIA
 
-## /panel-kancelarii/certyfikaty - Lista certyfikatów
+## /panel-eksperta/certyfikaty - Lista certyfikatów
 
 ### PODSTAWOWE INFORMACJE
-- Ścieżka: `/panel-kancelarii/certyfikaty`
+- Ścieżka: `/panel-eksperta/certyfikaty`
 - Dostęp: Tylko dla zalogowanych kancelarii (rola: LAW_FIRM)
 - Layout: Używa layoutu panelu kancelarii
 
@@ -11,7 +11,7 @@
 - Tytuł: "Certyfikaty i uprawnienia"
 - Ikona: Award (z biblioteki lucide-react)
 - Opis: "Zarządzaj swoimi certyfikatami, uprawnieniami i osiągnięciami zawodowymi"
-- Przycisk: "Dodaj certyfikat" (przekierowuje do /panel-kancelarii/certyfikaty/dodaj)
+- Przycisk: "Dodaj certyfikat" (przekierowuje do /panel-eksperta/certyfikaty/dodaj)
 
 ### GŁÓWNA ZAWARTOŚĆ - KARTA Z LISTĄ CERTYFIKATÓW
 - Tytuł karty: "Lista certyfikatów"
@@ -20,7 +20,7 @@
 #### STAN PUSTY (brak certyfikatów)
 - Ikona: Award (12x12, kolor muted-foreground)
 - Tekst: "Nie masz jeszcze żadnych certyfikatów"
-- Przycisk: "Dodaj pierwszy certyfikat" (wariant outline, przekierowuje do /panel-kancelarii/certyfikaty/dodaj)
+- Przycisk: "Dodaj pierwszy certyfikat" (wariant outline, przekierowuje do /panel-eksperta/certyfikaty/dodaj)
 
 #### TABELA CERTYFIKATÓW (gdy istnieją certyfikaty)
 Kolumny:
@@ -63,15 +63,15 @@ Kolumny:
 
 ---
 
-## /panel-kancelarii/certyfikaty/dodaj - Dodaj certyfikat
+## /panel-eksperta/certyfikaty/dodaj - Dodaj certyfikat
 
 ### PODSTAWOWE INFORMACJE
-- Ścieżka: `/panel-kancelarii/certyfikaty/dodaj`
+- Ścieżka: `/panel-eksperta/certyfikaty/dodaj`
 - Dostęp: Tylko dla zalogowanych kancelarii (rola: LAW_FIRM)
 - Layout: Używa layoutu panelu kancelarii
 
 ### NAGŁÓWEK STRONY
-- Przycisk powrotu: "← Powrót do listy certyfikatów" (wariant ghost, przekierowuje do /panel-kancelarii/certyfikaty)
+- Przycisk powrotu: "← Powrót do listy certyfikatów" (wariant ghost, przekierowuje do /panel-eksperta/certyfikaty)
 - Tytuł: "Dodaj nowy certyfikat"
 - Ikona: Award (z biblioteki lucide-react)
 - Opis: "Wypełnij formularz, aby dodać nowy certyfikat lub uprawnienie"
@@ -141,16 +141,16 @@ Kolumny:
 
 ---
 
-## /panel-kancelarii/certyfikaty/[id] - Edycja certyfikatu
+## /panel-eksperta/certyfikaty/[id] - Edycja certyfikatu
 
 ### PODSTAWOWE INFORMACJE
-- Ścieżka: `/panel-kancelarii/certyfikaty/[id]` (dynamiczny parametr ID)
+- Ścieżka: `/panel-eksperta/certyfikaty/[id]` (dynamiczny parametr ID)
 - Dostęp: Tylko dla zalogowanych kancelarii (rola: LAW_FIRM)
 - Layout: Używa layoutu panelu kancelarii
 - Walidacja: Sprawdzenie, czy certyfikat należy do zalogowanej kancelarii
 
 ### NAGŁÓWEK STRONY
-- Przycisk powrotu: "← Powrót do listy certyfikatów" (wariant ghost, przekierowuje do /panel-kancelarii/certyfikaty)
+- Przycisk powrotu: "← Powrót do listy certyfikatów" (wariant ghost, przekierowuje do /panel-eksperta/certyfikaty)
 - Tytuł: "Edytuj certyfikat"
 - Ikona: Award (z biblioteki lucide-react)
 - Opis: "Zaktualizuj dane certyfikatu lub uprawnienie"

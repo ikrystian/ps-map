@@ -241,7 +241,7 @@ export async function POST(
           typ: "ZMIANA_STATUSU",
           tytul: "Oferta zaakceptowana!",
           tresc: `Twoja oferta do sprawy "${offer.case.nazwaSprawy}" została zaakceptowana przez klienta`,
-          linkUrl: `/panel-kancelarii/oferty`
+          linkUrl: `/panel-eksperta/oferty`
         }
       })
 

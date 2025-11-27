@@ -485,12 +485,12 @@ Strona podziękowania stanowi finalny etap procesu zakupowego, potwierdzający p
 
 2. **Przycisk "Przejdź do panelu"**:
    - Ikona: ArrowRight
-   - Akcja: Przekierowanie do /panel-kancelarii
+   - Akcja: Przekierowanie do /panel-eksperta
    - Opis: "Zarządzaj nowymi punktami"
 
 3. **Przycisk "Zobacz historię"**:
    - Ikona: History
-   - Akcja: Przekierowanie do /panel-kancelarii/punkty
+   - Akcja: Przekierowanie do /panel-eksperta/punkty
    - Opis: "Sprawdź historię transakcji"
 
 #### Sekcja szybkich akcji
