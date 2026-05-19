@@ -34,6 +34,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  Instagram,
+  Facebook,
+  Linkedin,
 } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
@@ -152,7 +155,7 @@ export default function LawFirmPanelLayout({
 
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
-    <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+    <nav className="flex-1 space-y-3 overflow-y-auto p-4">
       {/* User Avatar and Name */}
       {(inSheet || !isCollapsed) && session?.user && (
         <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
@@ -179,7 +182,7 @@ export default function LawFirmPanelLayout({
             key={item.name}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative",
+              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors relative",
               isActive
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-accent hover:text-primary",
@@ -210,7 +213,7 @@ export default function LawFirmPanelLayout({
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
@@ -225,7 +228,7 @@ export default function LawFirmPanelLayout({
       <Button
         onClick={handleLogout}
         className={cn(
-          "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          "w-full h-auto flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
@@ -317,6 +320,93 @@ export default function LawFirmPanelLayout({
         <main className="flex-1 overflow-y-auto">
           <div className="container mx-auto p-4 sm:p-6">
             {children}
+            <div className="mt-12 pb-4">
+              {/* Partners banner */}
+              <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 p-5 w-full mb-6">
+                <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
+
+                <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+                  {/* IdentyfikacjaFirm */}
+                  <a
+                    href="https://identyfikacjafirm.pl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800/20 text-zinc-400 group-hover:text-white transition-colors">
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+                        <path d="M12 7a5 5 0 1 1-5 5" />
+                        <path d="M12 3a9 9 0 1 1-9 9" />
+                      </svg>
+                    </div>
+                    <div className="flex flex-col items-start leading-none">
+                      <span className="text-md font-bold text-white tracking-tight">
+                        Identyfikacja<span className="font-extrabold text-zinc-300">Firm</span>
+                      </span>
+                      <span className="text-[7.5px] text-zinc-500 uppercase tracking-widest font-bold mt-0.5 self-end">
+                        kielce
+                      </span>
+                    </div>
+                  </a>
+
+                  {/* Divider between partners */}
+                  <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />
+
+                  {/* 4Connection */}
+                  <a
+                    href="https://4connection.pl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800/20 text-zinc-400 group-hover:text-white transition-colors">
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M7 8.5v4h5.5" />
+                        <path d="M12.5 5.5v10" />
+                      </svg>
+                    </div>
+                    <span className="text-md font-bold text-white tracking-tight">
+                      4<span className="font-semibold text-zinc-300">Connection</span>
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Separator line */}
+              <div className="border-t border-zinc-800/40 my-6 max-w-3xl mx-auto" />
+
+              {/* Bottom Copyright and Social Links */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">
+                <span>2026 © ProstaSprawa.pl</span>
+                <div className="flex gap-2">
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { MapPin, ChevronDown, ChevronUp } from "lucide-react"
 
-const CITIES = [
+export const CITIES = [
   "Augustów", "Baranowo", "Bartoszyce", "Bełchatów", "Biała Podlaska",
   "Białogard", "Białystok", "Bielawa", "Bielsko-Biała", "Biłgoraj",
   "Braniewo", "Brodnica", "Brzeg", "Brzesko", "Brzeziny",

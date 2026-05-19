@@ -50,6 +50,7 @@ interface Case {
   client: {
     imie: string
     nazwisko: string
+    miasto?: string | null
   }
   _count?: {
     offers: number
@@ -82,6 +83,7 @@ const SprawyPage = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedType, setSelectedType] = useState<string>("all")
+  const [selectedCity, setSelectedCity] = useState<string>("")
 
   // Favorites
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
@@ -94,11 +96,23 @@ const SprawyPage = () => {
     fetchCases()
     fetchCategories()
     loadFavorites()
+
+    // Read URL query parameters
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const q = params.get("q")
+      const typ = params.get("typ")
+      const miasto = params.get("miasto")
+
+      if (q) setSearchQuery(q)
+      if (typ && typ !== "all") setSelectedType(typ)
+      if (miasto) setSelectedCity(miasto)
+    }
   }, [])
 
   useEffect(() => {
     filterCases()
-  }, [cases, searchQuery, selectedCategory, selectedType])
+  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity])
 
   const fetchCases = async () => {
     setLoading(true)
@@ -227,6 +241,13 @@ const SprawyPage = () => {
       filtered = filtered.filter((c) => c.typSprawy === selectedType)
     }
 
+    if (selectedCity) {
+      filtered = filtered.filter(
+        (c) =>
+          c.client?.miasto?.toLowerCase().includes(selectedCity.toLowerCase())
+      )
+    }
+
     setFilteredCases(filtered)
   }
 
@@ -308,6 +329,12 @@ const SprawyPage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Input
+            placeholder="Miasto..."
+            className="w-full sm:w-[150px]"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+          />
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue placeholder="Kategoria" />

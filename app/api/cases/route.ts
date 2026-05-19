@@ -75,6 +75,7 @@ export async function GET(request: NextRequest) {
             select: {
               imie: true,
               nazwisko: true,
+              miasto: true,
             },
           },
           offers: {

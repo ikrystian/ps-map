@@ -19,10 +19,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, ChevronDown } from "lucide-react"
+import { Search, ChevronDown, Check, MapPin, IdCard, List, X } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
+import { CITIES } from "@/components/homepage/cities-list"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -46,6 +50,10 @@ export default function PublicHeader({
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
   const [searchFormOpen, setSearchFormOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCity, setSelectedCity] = useState("")
+  const [selectedType, setSelectedType] = useState("all")
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [typeOpen, setTypeOpen] = useState(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,13 +77,16 @@ export default function PublicHeader({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (searchQuery.trim()) {
-      window.location.href = `/szukaj-prawnika?q=${encodeURIComponent(searchQuery)}`
-    }
+    const params = new URLSearchParams()
+    if (searchQuery.trim()) params.set("q", searchQuery.trim())
+    if (selectedCity) params.set("miasto", selectedCity)
+    if (selectedType && selectedType !== "all") params.set("typ", selectedType)
+
+    window.location.href = `/panel-eksperta/sprawy?${params.toString()}`
   }
 
   return (
-    <header className="border-b bg-background fixed left-0 top-0 right-0 z-900 flex-shrink-0 backdrop-blur-md">
+    <header className="border-b fixed left-0 top-0 right-0 z-20 flex-shrink-0 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -244,24 +255,140 @@ export default function PublicHeader({
 
         {/* Search Form - Slide Down */}
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${searchFormOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${searchFormOpen ? "max-h-[500px] opacity-100 py-4" : "max-h-0 opacity-0 py-0"
             }`}
         >
-          <div className="border-t py-4">
-            <form onSubmit={handleSearchSubmit} className="flex gap-3 max-w-2xl mx-auto">
-              <Input
-                type="text"
-                placeholder="Wyszukaj prawnika lub specjalizację..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-                autoFocus={searchFormOpen}
-              />
-              <Button type="submit" className="flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Wyszukaj
-              </Button>
-            </form>
+          <div className="border-t border-neutral-200/10 mt-1 pt-4">
+            <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-white overflow-hidden">
+
+              <form onSubmit={handleSearchSubmit} className="w-full md:pl-28 flex flex-col md:flex-row gap-3 items-stretch z-1000">
+                {/* Field 1: Kogo szukasz? */}
+                <div className="flex flex-1 items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
+                  <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Kogo szukasz?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
+                    autoFocus={searchFormOpen}
+                  />
+                </div>
+
+                {/* Field 2: Lokalizacja */}
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex flex-1 items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                    >
+                      <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                      <span className="text-sm truncate flex-grow text-neutral-300">
+                        {selectedCity || "Lokalizacja"}
+                      </span>
+                      {selectedCity && (
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedCity("")
+                          }}
+                          className="hover:text-red-400 text-neutral-400 p-0.5"
+                        >
+                          <X className="h-4 w-4" />
+                        </span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-0 bg-[#20201d] border-neutral-800 text-white" align="start">
+                    <Command className="bg-[#20201d] text-white">
+                      <CommandInput placeholder="Wyszukaj miasto..." className="text-white bg-transparent border-neutral-800" />
+                      <CommandList className="max-h-60 overflow-y-auto">
+                        <CommandEmpty className="text-neutral-400 py-3 text-center text-sm">Nie znaleziono miasta.</CommandEmpty>
+                        <CommandGroup>
+                          {CITIES.map((city) => (
+                            <CommandItem
+                              key={city}
+                              value={city}
+                              onSelect={(currentValue) => {
+                                const matchedCity = CITIES.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                                setSelectedCity(matchedCity === selectedCity ? "" : matchedCity)
+                                setLocationOpen(false)
+                              }}
+                              className="text-white hover:bg-neutral-800 cursor-pointer flex items-center gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                            >
+                              <Check
+                                className={cn(
+                                  "h-4 w-4 text-teal-400",
+                                  selectedCity === city ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {city}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Field 3: Typ sprawy */}
+                <Popover open={typeOpen} onOpenChange={setTypeOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex flex-1 items-center justify-between gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <List className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                        <span className="text-sm truncate text-neutral-300">
+                          {selectedType === "OSOBA_PRYWATNA"
+                            ? "sprawa prywatna"
+                            : selectedType === "FIRMA"
+                              ? "sprawa firmowa"
+                              : "Typ sprawy"}
+                        </span>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-neutral-500 flex-shrink-0" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-1 bg-[#20201d] border-neutral-800 text-white" align="start">
+                    <div className="space-y-0.5">
+                      {[
+                        { value: "all", label: "Wszystkie typy" },
+                        { value: "OSOBA_PRYWATNA", label: "sprawa prywatna" },
+                        { value: "FIRMA", label: "sprawa firmowa" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => {
+                            setSelectedType(opt.value)
+                            setTypeOpen(false)
+                          }}
+                          className={cn(
+                            "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
+                            selectedType === opt.value
+                              ? "bg-neutral-800 text-white"
+                              : "text-neutral-300 hover:bg-neutral-800/50 hover:text-white bg-transparent"
+                          )}
+                        >
+                          <span>{opt.label}</span>
+                          {selectedType === opt.value && <Check className="h-4 w-4 text-teal-400" />}
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Submit button */}
+                <Button
+                  type="submit"
+                  className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 h-12 rounded-lg transition-colors border-0 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                >
+                  Wyszukaj
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
