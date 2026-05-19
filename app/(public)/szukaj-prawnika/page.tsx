@@ -200,11 +200,28 @@ export default function SearchLawyerPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Breadcrumbs Banner */}
+      <div 
+        className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900" 
+        style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex items-center gap-2 text-sm text-neutral-400 font-sans tracking-wide">
+            <Link href="/" className="hover:text-white transition-colors">
+              Home
+            </Link>
+            <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
+            <span className="text-white font-medium">Szukaj prawnika</span>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
-        <div className="">
-          <h1 className="text-4xl font-playfair font-medium tracking-tight mb-3">Szukaj prawnika</h1>
-
+        <div className="mb-6">
+          <h1 className="text-4xl font-playfair font-medium tracking-tight">Szukaj prawnika</h1>
         </div>
 
         {/* Horizontal Filters */}

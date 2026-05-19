@@ -137,7 +137,7 @@ export default function PublicHeader({
                               {category.children.slice(0, 5).map((child) => (
                                 <Link
                                   key={child.id}
-                                  href={`/kategorie/${category.slug}`}
+                                  href={`/kategorie/${child.slug}`}
                                   className="block text-sm text-muted-foreground hover:text-primary"
                                   onClick={() => setFirmoweCategoriesOpen(false)}
                                 >
