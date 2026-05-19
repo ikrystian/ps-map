@@ -37,13 +37,13 @@ export function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 mb-32 justify-center"
             >
               <Button asChild size="lg" className="text-lg px-8 py-6">
-                <Link href="/dodaj-sprawe">
+                <Link href="/kategorie/#sprawy-prywatne">
                   <Home className="mr-2 h-5 w-5" />
                   Sprawy prywatne
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
-                <Link href="/dodaj-sprawe">
+                <Link href="/kategorie/#sprawy-firmowe">
                   <Briefcase className="mr-2 h-5 w-5" />
                   Sprawy firmowe
                 </Link>

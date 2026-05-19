@@ -301,6 +301,16 @@ const SprawyPage = () => {
 
   const newCasesCount = filteredCases.filter((c) => c.status === "NOWA").length
   const observedCasesCount = filteredCases.filter((c) => favorites.has(c.id)).length
+  const pendingCasesCount = filteredCases.filter((c) =>
+    c.status === "OFERTY_OTRZYMANE" ||
+    c.status === "W_TRAKCIE" ||
+    c.offers?.some(o => o.status === "ZLOZONA" || o.status === "NEGOCJACJE")
+  ).length
+  const closedCasesCount = filteredCases.filter((c) =>
+    c.status === "ZAKONCZONA" ||
+    c.status === "ANULOWANA" ||
+    c.offers?.some(o => o.status === "ODRZUCONA" || o.status === "WYGASLA")
+  ).length
 
   if (loading) {
     return (
@@ -362,47 +372,44 @@ const SprawyPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card className="pb-6 pt-6">
-          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Zaakceptowane</CardTitle>
-            <span className="text-5xl mt-2 font-bold">
-              {filteredCases.filter((c) => c.offers?.[0]?.status === "ZAAKCEPTOWANA").length}
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground text-right">Sprawy z zaakceptowaną ofertą</p>
-          </CardContent>
-        </Card>
-        <Card className="pb-6 pt-6">
-          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Twoje oferty</CardTitle>
-            <span className="text-5xl mt-2 font-bold">
-              {filteredCases.filter((c) => c.offers && c.offers.length > 0).length}
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground text-right">Sprawy z Twoją ofertą</p>
-          </CardContent>
-        </Card>
-        <Card className="pb-6 pt-6">
-          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Wszystkie</CardTitle>
-            <span className="text-5xl mt-2 font-bold">{filteredCases.length}</span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground text-right">Dostępne sprawy</p>
-          </CardContent>
-        </Card>
-        <Card className="pb-6 pt-6">
-          <CardHeader className="flex flex-col items-end justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Obserwowane</CardTitle>
-            <span className="text-5xl mt-2 font-bold">{observedCasesCount}</span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground text-right">Sprawy, które obserwujesz</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="sprawy-boxes-stats">
+        <div className="rounded-xl bg-[#00897B] text-white p-6 relative flex flex-col justify-between h-[120px] shadow-sm">
+          <div className="text-right text-sm font-medium text-white/80">
+            Nowe
+          </div>
+          <div className="text-right text-5xl font-bold tracking-tight mt-auto leading-none">
+            {newCasesCount}
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-[#161514] border border-border/40 text-white p-6 relative flex flex-col justify-between h-[120px] shadow-sm">
+          <div className="text-right text-sm font-medium text-zinc-400">
+            Obserwowane
+          </div>
+          <div className="text-right text-5xl font-bold tracking-tight mt-auto leading-none text-white">
+            {observedCasesCount}
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-[#161514] border border-border/40 text-white p-6 relative flex flex-col justify-between h-[120px] shadow-sm">
+          <div className="text-right text-sm font-medium text-zinc-400">
+            Oczekujące
+          </div>
+          <div className="text-right text-5xl font-bold tracking-tight mt-auto leading-none text-white">
+            {pendingCasesCount}
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-[#161514] border border-border/40 text-white p-6 relative flex flex-col justify-between h-[120px] overflow-hidden shadow-sm">
+          <div className="absolute left-0 bottom-0 h-full w-1/2 pointer-events-none flex items-end">
+          </div>
+          <div className="text-right text-sm font-medium text-zinc-400 z-10">
+            Zamknięte
+          </div>
+          <div className="text-right text-5xl font-bold tracking-tight mt-auto leading-none text-white z-10">
+            {closedCasesCount}
+          </div>
+        </div>
       </div>
 
       {filteredCases.length === 0 ? (

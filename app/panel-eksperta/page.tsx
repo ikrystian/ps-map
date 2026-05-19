@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -92,6 +93,7 @@ interface BlogPost {
   tresc: string
   createdAt: Date
   opublikowany: boolean
+  obrazekWyrozniajacy?: string | null
   category?: {
     nazwa: string
   }
@@ -118,6 +120,14 @@ const formatDate = (date: Date | string) => {
     month: "long",
     year: "numeric",
   })
+}
+
+const formatDotDate = (date: Date | string) => {
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}.${month}.${year}`
 }
 
 const formatCurrency = (amount: number) => {
@@ -283,6 +293,24 @@ export default function LawFirmDashboardPage() {
       }
     } catch (err) {
       console.error("Error fetching limits data:", err)
+    }
+  }
+
+  const handleDeletePost = async (postId: string) => {
+    if (!confirm("Czy na pewno chcesz usunąć ten artykuł?")) return
+    try {
+      const response = await fetch(`/api/law-firms/me/blog/${postId}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        toast.success("Artykuł został usunięty")
+        fetchRecentBlogPosts()
+      } else {
+        const err = await response.json()
+        toast.error(err.error || "Błąd podczas usuwania artykułu")
+      }
+    } catch (error) {
+      toast.error("Wystąpił błąd podczas usuwania")
     }
   }
 
@@ -692,22 +720,21 @@ export default function LawFirmDashboardPage() {
       </div>
 
       {/* Moje artykuły */}
-      <Card>
-        <CardHeader>
+      <Card id="dashboard-my-articles" className="border border-border bg-card">
+        <CardHeader className="border-b border-[#3e3e38] pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white">
               <FileText className="h-5 w-5 text-primary" />
-              Moje artykuły
-            </CardTitle>
-            <Link href="/panel-eksperta/blog">
-              <Button variant="ghost" size="sm">
-                Zobacz wszystkie
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <CardTitle className="text-xl font-semibold">
+                Moje artykuły
+              </CardTitle>
+            </div>
+            <Link href="/panel-eksperta/blog" className="text-primary hover:underline text-sm font-medium">
+              Więcej
             </Link>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {recentBlogPosts.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-muted-foreground mb-4">
@@ -721,36 +748,49 @@ export default function LawFirmDashboardPage() {
               </Link>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {recentBlogPosts.map((post) => (
-                <Link
+                <div
                   key={post.id}
-                  href={`/panel-eksperta/blog/${post.id}`}
+                  className="bg-[#161514] p-5 rounded-xl border border-zinc-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
-                  <div className="flex items-start justify-between p-3 border rounded-lg hover:bg-accent transition-colors cursor-pointer">
-                    <div className="flex-1">
-                      <p className="font-medium line-clamp-1">
+                  <div className="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0">
+                    <div className="relative w-full sm:w-[180px] h-[100px] rounded-lg overflow-hidden flex-shrink-0 bg-zinc-900 border border-zinc-800/40">
+                      <img
+                        src={post.obrazekWyrozniajacy || "/images/blog-placeholder.jpg"}
+                        alt={post.tytul}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-between py-1 sm:h-[100px]">
+                      <h4 className="font-semibold text-lg text-white line-clamp-2 leading-snug">
                         {post.tytul}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(post.createdAt)}
-                        </p>
-                        {post.category && (
-                          <>
-                            <span className="text-muted-foreground">•</span>
-                            <Badge variant="outline" className="text-xs">
-                              {post.category.nazwa}
-                            </Badge>
-                          </>
-                        )}
+                      </h4>
+                      <div className="flex items-center gap-6 text-xs mt-2">
+                        <span className="text-primary font-medium">
+                          {post.category?.nazwa || "kategoria, podkategoria"}
+                        </span>
+                        <span className="text-zinc-400">
+                          {formatDotDate(post.createdAt)}
+                        </span>
                       </div>
                     </div>
-                    <Badge variant={post.opublikowany ? "default" : "secondary"} className="ml-2">
-                      {post.opublikowany ? "Opublikowany" : "Szkic"}
-                    </Badge>
                   </div>
-                </Link>
+                  <div className="flex flex-row sm:flex-col gap-2 flex-shrink-0 w-full sm:w-[110px]">
+                    <Link href={`/panel-eksperta/blog/${post.id}`} className="flex-1 sm:flex-none">
+                      <Button className="w-full bg-[#00897B] hover:bg-[#00796B] text-white text-xs font-medium py-2 rounded-lg h-9">
+                        Edycja
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={() => handleDeletePost(post.id)}
+                      variant="outline"
+                      className="flex-1 sm:flex-none border border-primary text-white hover:bg-primary/10 hover:text-white text-xs font-medium py-2 rounded-lg h-9 bg-transparent"
+                    >
+                      Usuń
+                    </Button>
+                  </div>
+                </div>
               ))}
             </div>
           )}

@@ -114,7 +114,7 @@ export default function CategoriesPage() {
 
         {/* Private Categories */}
         {privateCategories.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-16" id="sprawy-prywatne">
             <div className="flex items-center gap-3 mb-6">
               <Scale className="h-8 w-8 text-primary" />
               <div>
@@ -159,7 +159,7 @@ export default function CategoriesPage() {
 
         {/* Business Categories */}
         {businessCategories.length > 0 && (
-          <div>
+          <div id="sprawy-firmowe">
             <div className="flex items-center gap-3 mb-6">
               <Briefcase className="h-8 w-8 text-secondary" />
               <div>
