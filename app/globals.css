@@ -458,3 +458,8 @@ a .bg-card {
 .font-playfair {
   font-family: 'Playfair Display', serif;
 }
+
+#section-your-data {
+  background: url('/images/security-lock.png') right center no-repeat;
+  background-size: contain;
+}
