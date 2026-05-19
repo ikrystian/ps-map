@@ -1,12 +1,35 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState, useMemo } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { Scale, Briefcase, Search, Loader2 } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { 
+  Scale, 
+  Briefcase, 
+  Search, 
+  Loader2, 
+  Users, 
+  Building2, 
+  LayoutGrid, 
+  ArrowRight,
+  Gavel,
+  ShieldCheck,
+  HeartPulse,
+  Home,
+  User,
+  Zap,
+  Hammer,
+  CircleDollarSign,
+  Globe,
+  Lock,
+  MessageSquare,
+  ChevronRight
+} from "lucide-react"
 import Link from "next/link"
+import { MagicCard } from "@/components/magic-card"
+import { NumberTicker } from "@/components/ui/number-ticker"
+import ParticlesBackground from "@/components/ParticlesBackground"
 
 interface Category {
   id: string
@@ -15,14 +38,49 @@ interface Category {
   opis?: string | null
   opisDodatkowy?: string | null
   ikona?: string | null
+  ikonaUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   aktywna: boolean
+  _count?: {
+    lawFirms: number
+    cases: number
+  }
+}
+
+const ICON_MAP: Record<string, any> = {
+  Scale,
+  Briefcase,
+  Gavel,
+  ShieldCheck,
+  HeartPulse,
+  Home,
+  User,
+  Zap,
+  Hammer,
+  CircleDollarSign,
+  Globe,
+  Lock,
+  MessageSquare
+}
+
+const IconRenderer = ({ iconName, iconUrl, fallback: Fallback }: { iconName?: string | null, iconUrl?: string | null, fallback: any }) => {
+  if (iconUrl) {
+    return <img src={iconUrl} alt="" className="h-8 w-8 object-contain" />
+  }
+  
+  if (iconName && ICON_MAP[iconName]) {
+    const Icon = ICON_MAP[iconName]
+    return <Icon className="h-8 w-8" />
+  }
+  
+  return <Fallback className="h-8 w-8" />
 }
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState("all")
 
   useEffect(() => {
     fetchCategories()
@@ -42,173 +100,232 @@ export default function CategoriesPage() {
     }
   }
 
-  const filteredCategories = categories.filter((cat) =>
-    cat.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (cat.opis && cat.opis.toLowerCase().includes(searchQuery.toLowerCase()))
-  )
+  const filteredCategories = useMemo(() => {
+    return categories.filter((cat) => {
+      const matchesSearch = cat.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (cat.opis && cat.opis.toLowerCase().includes(searchQuery.toLowerCase()))
+      
+      const matchesTab = activeTab === "all" || 
+        (activeTab === "private" && cat.typ === "SPRAWY_PRYWATNE") ||
+        (activeTab === "business" && cat.typ === "SPRAWY_FIRMOWE")
+        
+      return matchesSearch && matchesTab
+    })
+  }, [categories, searchQuery, activeTab])
 
-  const privateCategories = filteredCategories.filter(cat => cat.typ === "SPRAWY_PRYWATNE")
-  const businessCategories = filteredCategories.filter(cat => cat.typ === "SPRAWY_FIRMOWE")
+  const stats = useMemo(() => {
+    const privateCount = categories.filter(c => c.typ === "SPRAWY_PRYWATNE").length
+    const businessCount = categories.filter(c => c.typ === "SPRAWY_FIRMOWE").length
+    return {
+      all: categories.length,
+      private: privateCount,
+      business: businessCount
+    }
+  }, [categories])
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <p className="text-muted-foreground animate-pulse font-medium">Przygotowujemy kategorie dla Ciebie...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Kategorie spraw
+    <div className="min-h-screen bg-background selection:bg-primary/30">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-slate-950 py-20 text-white lg:py-32">
+        <ParticlesBackground />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
+          <div className="absolute top-1/2 -right-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
+        </div>
+
+        <div className="container relative z-10 mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary-foreground text-sm font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            Katalog spraw i ekspertów
+          </div>
+          
+          <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
+            Znajdź <span className="text-primary italic">właściwą</span> pomoc
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Przejrzyj wszystkie kategorie spraw prawnych i znajdź odpowiedniego eksperta
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
+            Od spraw codziennych po skomplikowane procesy biznesowe. 
+            Wybierz kategorię i połącz się z najlepszymi specjalistami w Polsce.
           </p>
-        </div>
 
-        {/* Search */}
-        <div className="mb-12 max-w-2xl mx-auto">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-            <Input
-              placeholder="Szukaj kategorii..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-12"
-            />
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold">{categories.length}</p>
-                <p className="text-sm text-muted-foreground">Wszystkie kategorie</p>
+          {/* Search Bar in Hero */}
+          <div className="mx-auto max-w-2xl">
+            <div className="group relative">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-emerald-600 opacity-20 blur transition duration-1000 group-hover:opacity-40 group-hover:duration-200"></div>
+              <div className="relative flex items-center rounded-xl bg-slate-900 border border-slate-800 p-1 shadow-2xl">
+                <Search className="ml-4 h-6 w-6 text-slate-400" />
+                <Input
+                  placeholder="Czego szukasz? (np. alimenty, spółki, nieruchomości)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-14 border-none bg-transparent text-lg text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">{privateCategories.length}</p>
-                <p className="text-sm text-muted-foreground">Sprawy prywatne</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-secondary">{businessCategories.length}</p>
-                <p className="text-sm text-muted-foreground">Sprawy firmowe</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Private Categories */}
-        {privateCategories.length > 0 && (
-          <div className="mb-16" id="sprawy-prywatne">
-            <div className="flex items-center gap-3 mb-6">
-              <Scale className="h-8 w-8 text-primary" />
-              <div>
-                <h2 className="text-3xl font-bold">Sprawy prywatne</h2>
-                <p className="text-muted-foreground">
-                  Kategorie dotyczące spraw osób prywatnych
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {privateCategories.map((category) => (
-                <Link key={category.id} href={`/kategorie/${category.slug}`}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                    <CardHeader>
-                      <CardTitle className="flex items-start justify-between gap-2">
-                        <span className="flex-1">{category.nazwa}</span>
-                        <Badge variant="secondary">Prywatne</Badge>
-                      </CardTitle>
-                      {category.opis && (
-                        <CardDescription className="line-clamp-2">
-                          {category.opis}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
-                    {category.opisDodatkowy && (
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3">
-                          {category.opisDodatkowy}
-                        </p>
-                      </CardContent>
-                    )}
-                  </Card>
-                </Link>
-              ))}
             </div>
           </div>
-        )}
-
-        {privateCategories.length > 0 && businessCategories.length > 0 && (
-          <Separator className="my-12" />
-        )}
-
-        {/* Business Categories */}
-        {businessCategories.length > 0 && (
-          <div id="sprawy-firmowe">
-            <div className="flex items-center gap-3 mb-6">
-              <Briefcase className="h-8 w-8 text-secondary" />
-              <div>
-                <h2 className="text-3xl font-bold">Sprawy firmowe</h2>
-                <p className="text-muted-foreground">
-                  Kategorie dotyczące spraw biznesowych i firm
-                </p>
-              </div>
+          
+          {/* Hero Stats */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 max-w-4xl mx-auto">
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                <NumberTicker value={stats.all} />
+              </p>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Kategorii</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {businessCategories.map((category) => (
-                <Link key={category.id} href={`/kategorie/${category.slug}`}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                    <CardHeader>
-                      <CardTitle className="flex items-start justify-between gap-2">
-                        <span className="flex-1">{category.nazwa}</span>
-                        <Badge variant="default">Firmowe</Badge>
-                      </CardTitle>
-                      {category.opis && (
-                        <CardDescription className="line-clamp-2">
-                          {category.opis}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
-                    {category.opisDodatkowy && (
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3">
-                          {category.opisDodatkowy}
-                        </p>
-                      </CardContent>
-                    )}
-                  </Card>
-                </Link>
-              ))}
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+              <p className="text-3xl md:text-4xl font-bold text-primary">
+                <NumberTicker value={stats.private} />
+              </p>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Prywatnych</p>
+            </div>
+            <div className="hidden md:flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+              <p className="text-3xl md:text-4xl font-bold text-emerald-400">
+                <NumberTicker value={stats.business} />
+              </p>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
+            </div>
+            <div className="md:hidden col-span-2 flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+              <p className="text-3xl font-bold text-emerald-400">
+                <NumberTicker value={stats.business} />
+              </p>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
             </div>
           </div>
-        )}
+        </div>
+        
+        {/* Bottom mesh gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+      </section>
+
+      {/* Categories Content */}
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
+        <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+          <div className="mb-12 flex flex-col items-center justify-between gap-8 md:flex-row">
+            <div className="text-center md:text-left">
+              <h2 className="text-3xl font-bold tracking-tight">Obszary Prawa</h2>
+              <p className="text-muted-foreground mt-2 max-w-md">
+                Wybierz interesującą Cię kategorię, aby zobaczyć szczegóły i listę dostępnych ekspertów.
+              </p>
+            </div>
+            <TabsList className="inline-flex h-12 items-center justify-center rounded-xl bg-muted p-1 text-muted-foreground grid w-full grid-cols-3 md:w-[450px]">
+              <TabsTrigger value="all" className="rounded-lg gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all h-10">
+                <LayoutGrid className="h-4 w-4" />
+                <span>Wszystkie</span>
+              </TabsTrigger>
+              <TabsTrigger value="private" className="rounded-lg gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all h-10">
+                <Users className="h-4 w-4" />
+                <span>Prywatne</span>
+              </TabsTrigger>
+              <TabsTrigger value="business" className="rounded-lg gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all h-10">
+                <Building2 className="h-4 w-4" />
+                <span>Firmowe</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="all" className="mt-0 ring-offset-background focus-visible:outline-none">
+            <CategoryGrid categories={filteredCategories} />
+          </TabsContent>
+          <TabsContent value="private" className="mt-0 ring-offset-background focus-visible:outline-none">
+            <CategoryGrid categories={filteredCategories} />
+          </TabsContent>
+          <TabsContent value="business" className="mt-0 ring-offset-background focus-visible:outline-none">
+            <CategoryGrid categories={filteredCategories} />
+          </TabsContent>
+        </Tabs>
 
         {filteredCategories.length === 0 && (
-          <Card className="py-12">
-            <CardContent className="text-center">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg text-muted-foreground">
-                Nie znaleziono kategorii pasujących do wyszukiwania
-              </p>
-            </CardContent>
-          </Card>
+          <div className="py-24 text-center border rounded-3xl bg-muted/30 border-dashed">
+            <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-background shadow-sm mb-6">
+              <Search className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-2xl font-bold">Brak wyników wyszukiwania</h3>
+            <p className="text-muted-foreground mt-3 max-w-sm mx-auto">
+              Nie znaleźliśmy kategorii pasujących do hasła <span className="text-foreground font-semibold">"{searchQuery}"</span>.
+            </p>
+            <button 
+              onClick={() => {setSearchQuery(""); setActiveTab("all")}}
+              className="mt-8 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+            >
+              Pokaż wszystkie kategorie
+            </button>
+          </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function CategoryGrid({ categories }: { categories: Category[] }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {categories.map((category) => (
+        <Link key={category.id} href={`/kategorie/${category.slug}`} className="block h-full group outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
+          <MagicCard 
+            className="flex flex-col h-full overflow-hidden border-border/60 hover:border-primary/40 transition-all duration-300"
+            gradientColor="rgba(var(--primary), 0.08)"
+          >
+            <div className="p-8 flex flex-col h-full">
+              <div className="mb-6 flex items-center justify-between">
+                <div className="rounded-xl bg-primary/5 p-3 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 transform group-hover:rotate-6 shadow-sm">
+                  <IconRenderer 
+                    iconName={category.ikona} 
+                    iconUrl={category.ikonaUrl} 
+                    fallback={category.typ === "SPRAWY_FIRMOWE" ? Briefcase : Scale} 
+                  />
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                   <Badge variant={category.typ === "SPRAWY_FIRMOWE" ? "default" : "secondary"} className="rounded-md px-2 py-0 text-[10px] uppercase tracking-wider font-bold">
+                    {category.typ === "SPRAWY_FIRMOWE" ? "Biznes" : "Prywatne"}
+                  </Badge>
+                </div>
+              </div>
+              
+              <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-1">
+                {category.nazwa}
+              </h3>
+              
+              {category.opis && (
+                <p className="text-muted-foreground text-sm line-clamp-3 mb-8 leading-relaxed">
+                  {category.opis}
+                </p>
+              )}
+              
+              <div className="mt-auto pt-6 border-t border-border/40 flex items-center justify-between">
+                <div className="flex gap-6">
+                   <div className="flex flex-col">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
+                      <span className="text-sm font-semibold">{category._count?.lawFirms || 0}</span>
+                   </div>
+                   <div className="flex flex-col">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
+                      <span className="text-sm font-semibold">{category._count?.cases || 0}</span>
+                   </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                  <span>SZCZEGÓŁY</span>
+                  <ChevronRight className="h-3 w-3" />
+                </div>
+              </div>
+            </div>
+          </MagicCard>
+        </Link>
+      ))}
     </div>
   )
 }
