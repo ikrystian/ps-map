@@ -34,13 +34,13 @@ export function NewsletterSection() {
   return (
     <section className="relative overflow-hidden w-full bg-[#141414] border-t border-b border-neutral-900">
       {/* Left 25% green side panel background */}
-      <div className="absolute inset-y-0 left-0 w-[25%] bg-[#1e5e4e] z-0" />
-      
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent z-0" />
+
       {/* Repeating labyrinth pattern overlay on both panels */}
-      <div className="absolute inset-0 bg-pattern-labyrinth opacity-100 z-10 pointer-events-none" />
+      <div className="absolute inset-0 opacity-100 z-10 pointer-events-none" />
 
       {/* Content wrapper */}
-      <div className="relative container mx-auto px-4 py-16 md:py-20 z-20">
+      <div className="relative container mx-auto px-4 py-16 md:py-20 z-20 " id="newsletter-wrapper">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-playfair text-white text-3xl md:text-4xl font-normal tracking-wide mb-4">
             Zapisz się do newslettera
@@ -48,7 +48,7 @@ export function NewsletterSection() {
           <p className="text-xs md:text-sm text-neutral-400 font-light max-w-2xl mx-auto mb-8 leading-relaxed">
             Otrzymuj porady prawne, nowości i przydatne informacje od prostasprawa.pl – bez spamu, tylko wartościowe treści.
           </p>
-          
+
           <form onSubmit={handleNewsletterSubmit} className="flex max-w-md mx-auto items-stretch shadow-2xl relative z-30">
             <input
               type="email"

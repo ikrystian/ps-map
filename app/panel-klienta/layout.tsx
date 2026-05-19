@@ -74,7 +74,7 @@ export default function ClientPanelLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-3 overflow-y-auto p-4">
+          <nav id="left-nav" className="flex-1 space-y-3 overflow-y-auto p-4">
             {navigation.map((item) => {
               const isActive = pathname === item.href ||
                 (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
@@ -86,19 +86,19 @@ export default function ClientPanelLayout({
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors relative",
+                    "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
+                      : "text-muted-foreground hover:bg-primary hover:text-primary-foreground",
                     isCollapsed && "justify-center"
                   )}
                   title={isCollapsed ? item.name : undefined}
                 >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors duration-300", isActive ? "text-white" : "text-primary group-hover:text-white")} />
                   {!isCollapsed && <span>{item.name}</span>}
                   {showBadge && (
                     <span className={cn(
-                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white",
+                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
                       isCollapsed && "absolute -right-1 -top-1"
                     )}>
                       {unreadCount > 99 ? "99+" : unreadCount}
@@ -110,13 +110,13 @@ export default function ClientPanelLayout({
             <Button
               onClick={handleLogout}
               className={cn(
-                "flex w-full h-auto items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                "flex w-full h-auto items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98] text-muted-foreground hover:bg-primary hover:text-primary-foreground",
                 isCollapsed && "justify-center"
               )}
               variant="ghost"
               title={isCollapsed ? "Wyloguj" : undefined}
             >
-              <LogOut className="h-5 w-5 flex-shrink-0" />
+              <LogOut className="h-5 w-5 flex-shrink-0 text-primary group-hover:text-white transition-colors duration-300" />
               {!isCollapsed && <span>Wyloguj</span>}
             </Button>
           </nav>

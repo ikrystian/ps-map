@@ -21,12 +21,12 @@ export default function PublicFooter() {
   return (
     <footer id="public-footer" className="relative overflow-hidden bg-[#141414] text-neutral-300 border-t border-neutral-900">
       {/* Labyrinth background pattern overlay */}
-      <div className="absolute inset-0 bg-pattern-labyrinth opacity-100 z-10 pointer-events-none" />
+      <div className="absolute inset-0 opacity-100 z-10 pointer-events-none" />
 
       {/* Main footer content wrapper */}
       <div className="relative container mx-auto px-4 pt-16 pb-8 z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
-          
+
           {/* Column 1: Logo & About (~35% / 4 cols) */}
           <div className="space-y-4 lg:col-span-4">
             <Link href="/" className="inline-block">
@@ -59,6 +59,7 @@ export default function PublicFooter() {
                   Sprawy firmowe
                 </Link>
               </li>
+
               <li>
                 <Link href="/dla-prawnika" className="hover:text-[#d7b56d] transition-colors">
                   Dla prawnika
@@ -87,6 +88,12 @@ export default function PublicFooter() {
                 <Link href="/dodaj-sprawe" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
                   <GoldCheck />
                   <span>Dodaj sprawę</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/z-nami-wygrywasz" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                  <GoldCheck />
+                  <span>Z nami wygrywasz</span>
                 </Link>
               </li>
               <li>
@@ -119,7 +126,7 @@ export default function PublicFooter() {
             <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
               Kontakt
             </h3>
-            
+
             <div className="flex items-center gap-2 text-xs md:text-sm font-light text-neutral-400">
               <Mail className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
               <a href="mailto:biuro@prostasprawa.pl" className="hover:text-white transition-colors">

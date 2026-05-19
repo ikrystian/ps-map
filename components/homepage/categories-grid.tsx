@@ -31,7 +31,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
 
           {/* Desktop Grid Layout */}
           <div
-            className="hidden lg:grid grid-cols-6 grid-rows-2 gap-4 max-w-7xl mx-auto mb-8 min-h-[400px]"
+            className="hidden lg:grid grid-cols-6 grid-rows-2 gap-4 max-w-full mx-auto mb-8 min-h-[500px]"
             style={{
               gridTemplateAreas: `
                 "first second fourth sixth eighth nineth"

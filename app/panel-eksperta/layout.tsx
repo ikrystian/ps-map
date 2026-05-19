@@ -155,7 +155,7 @@ export default function LawFirmPanelLayout({
 
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
-    <nav className="flex-1 space-y-3 overflow-y-auto p-4">
+    <nav className="flex-1 space-y-3 overflow-y-auto p-4" id="left-nav">
       {/* User Avatar and Name */}
       {(inSheet || !isCollapsed) && session?.user && (
         <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
@@ -182,19 +182,19 @@ export default function LawFirmPanelLayout({
             key={item.name}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors relative",
+              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
               isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-primary",
+                ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
+                : "text-muted-foreground hover:bg-primary hover:text-primary-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            <item.icon className={cn("h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-primary")} />
+            <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors duration-300", isActive ? "text-white" : "text-primary group-hover:text-white")} />
             {(inSheet || !isCollapsed) && <span>{item.name}</span>}
             {showBadge && (
               <span className={cn(
-                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white",
+                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
                 !inSheet && isCollapsed && "absolute -right-1 -top-1"
               )}>
                 {unreadCount > 99 ? "99+" : unreadCount}
@@ -213,12 +213,12 @@ export default function LawFirmPanelLayout({
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98] text-muted-foreground hover:bg-primary hover:text-primary-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
           >
-            <ExternalLink className="h-5 w-5 flex-shrink-0" />
+            <ExternalLink className="h-5 w-5 flex-shrink-0 text-primary group-hover:text-white transition-colors duration-300" />
             {(inSheet || !isCollapsed) && <span>Mój profil publiczny</span>}
           </Link>
         </>
@@ -228,13 +228,13 @@ export default function LawFirmPanelLayout({
       <Button
         onClick={handleLogout}
         className={cn(
-          "w-full h-auto flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          "w-full h-auto flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98] text-muted-foreground hover:bg-primary hover:text-primary-foreground",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
         title={!inSheet && isCollapsed ? "Wyloguj" : undefined}
       >
-        <LogOut className="h-5 w-5 flex-shrink-0" />
+        <LogOut className="h-5 w-5 flex-shrink-0 text-primary group-hover:text-white transition-colors duration-300" />
         {(inSheet || !isCollapsed) && <span>Wyloguj</span>}
       </Button>
     </nav>
