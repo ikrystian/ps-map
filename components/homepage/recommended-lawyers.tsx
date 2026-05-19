@@ -118,8 +118,8 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
                   key={cat}
                   onClick={() => handleCategoryChange(i)}
                   className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${activeIdx === i
-                      ? "bg-black text-white border border-zinc-700/90 shadow-lg"
-                      : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
+                    ? "bg-black text-white border border-zinc-700/90 shadow-lg"
+                    : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
                     }`}
                 >
                   {cat}
@@ -156,8 +156,8 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
-            paddingLeft: "calc(max(1rem, (100vw - 1152px) / 2 + 1rem))",
-            paddingRight: "calc(max(1rem, (100vw - 1152px) / 2 + 1rem))"
+            paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
+            paddingRight: "calc(max(1rem, (100vw - 1500px) / 2))"
           }}
         >
           <AnimatePresence mode="wait">
@@ -175,7 +175,7 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
                   className="w-[290px] sm:w-[330px] md:w-[368px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
                 >
                   {/* Image Container with Rating Overlay */}
-                  <div className="relative h-60 w-full overflow-hidden aspect-[4/3] bg-zinc-900">
+                  <div className="relative h-90 w-full overflow-hidden aspect-[4/3] bg-zinc-900">
                     <img
                       src={getFirmImage(firm, index)}
                       alt={firm.nazwa}

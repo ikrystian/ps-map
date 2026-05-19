@@ -118,6 +118,11 @@ export default function PublicFooter() {
                   Prywatność
                 </Link>
               </li>
+              <li>
+                <Link href="/kontakt" className="text-[#0da192] hover:text-[#097b6f] transition-colors font-medium">
+                  Kontakt
+                </Link>
+              </li>
             </ul>
           </div>
 

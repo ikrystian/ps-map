@@ -443,7 +443,7 @@ export default function CategoryPage() {
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
-                    onClick={() => setViewMode("list")}
+                    onClick={() => setViewMode("grid")}
                     className="px-3"
                   >
                     <Grid3x3 className="h-4 w-4" />

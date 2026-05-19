@@ -3,15 +3,15 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { 
-  MapPin, 
-  Star, 
-  Phone, 
-  Mail, 
-  Globe, 
-  ArrowUpRight, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  MapPin,
+  Star,
+  Phone,
+  Mail,
+  Globe,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
@@ -148,7 +148,7 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
     const tab = CATEGORY_TABS[catIdx]
     const filtered = lawFirms.filter((firm) => {
       if (!firm.categories) return false
-      return firm.categories.some((cat) => 
+      return firm.categories.some((cat) =>
         tab.keywords.some((kw) => cat.nazwa.toLowerCase().includes(kw))
       )
     })
@@ -186,8 +186,8 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
   }
 
   return (
-    <section className="py-20 bg-[#0d0d0d] text-white overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <section className="py-20 bg-[#121212] text-white overflow-hidden">
+      <div className="container mx-auto px-4 max-w-8xl">
         {/* Title Header with elegant horizontal line separator */}
         <div className="flex items-center gap-6 mb-12">
           <h2 className="text-xl md:text-2xl font-serif font-light text-zinc-100 whitespace-nowrap">
@@ -204,16 +204,14 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
               <button
                 key={tab.id}
                 onClick={() => setActiveIdx(idx)}
-                className={`flex flex-col items-center justify-center p-4 text-center h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md ${
-                  isActive 
-                    ? "bg-[#0da192] text-white border border-transparent scale-[1.03]" 
-                    : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
-                }`}
+                className={`flex flex-col items-center justify-center p-4 text-center h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md ${isActive
+                  ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
+                  : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
+                  }`}
               >
                 <div className="mb-4">
                   {tab.icon(
-                    `w-9 h-9 transition-colors duration-300 ${
-                      isActive ? "text-white" : "text-[#0da192]"
+                    `w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"
                     }`
                   )}
                 </div>
@@ -234,7 +232,7 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-8xl mx-auto"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => (
                 <div
@@ -242,13 +240,13 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
                   className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
                 >
                   {/* Image Container with Rating Overlay */}
-                  <div className="relative h-60 w-full overflow-hidden aspect-[4/3] bg-zinc-900">
+                  <div className="relative h-90 w-full overflow-hidden aspect-[5/3] bg-zinc-900">
                     <img
                       src={getFirmImage(firm, index)}
                       alt={firm.nazwa}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    
+
                     {/* Bottom-fade black gradient to blend image into card background */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-[#1c1c1e]/10 to-transparent to-50%" />
 
@@ -294,28 +292,28 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
                     <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
                       <div className="flex gap-2">
                         {/* Circular Phone Action */}
-                        <a 
-                          href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"} 
+                        <a
+                          href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
                           className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                           title="Zadzwoń do kancelarii"
                         >
                           <Phone className="w-4.5 h-4.5 text-white fill-white" />
                         </a>
-                        
+
                         {/* Circular Email Action */}
-                        <a 
-                          href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"} 
+                        <a
+                          href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
                           className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                           title="Wyślij e-mail"
                         >
                           <Mail className="w-4.5 h-4.5 text-white" />
                         </a>
-                        
+
                         {/* Circular Website Action */}
                         {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
-                          <a 
-                            href={firm.stronaWww || "https://prostasprawa.pl"} 
-                            target="_blank" 
+                          <a
+                            href={firm.stronaWww || "https://prostasprawa.pl"}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                             title="Odwiedź stronę www"
@@ -324,9 +322,9 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
                           </a>
                         )}
                       </div>
-                      
+
                       {/* Square Profile Navigation Link */}
-                      <Link 
+                      <Link
                         href={`/ekspert/${firm.slug}`}
                         className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                         title="Zobacz pełny profil"

@@ -27,9 +27,17 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-3xl md:text-4xl font-semibold mb-16 font-playfair"
             >
-              Tu rozwiązujemy Twoje problemy prawne
+              Opisz i dodaj swoją sprawę. Znajdź prawnika
+              Wybierz najlepszą dla siebie ofertę!
             </motion.p>
-
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl md:text-2xl font-semibold mb-16 font-playfair"
+            >
+              Tu rozwiązujemy Twoje problemy prawne!
+            </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
