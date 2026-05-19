@@ -660,7 +660,7 @@ export default function ForLawyersPage() {
             </div>
 
             {/* Center Devices Mockup Column */}
-            <div className="lg:col-span-6 flex flex-col items-center justify-center py-6">
+            <div className="lg:col-span-6 flex flex-col items-center justify-center py-6" id="how-it-works-section">
 
               <div className="relative flex flex-col items-center justify-center">
 
@@ -867,7 +867,7 @@ export default function ForLawyersPage() {
 
           {/* 4 Feature Columns */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mb-24">
-            
+
             {/* Column 1: Nowi Klienci */}
             <div className="flex flex-col items-center text-center group cursor-pointer">
               <div className="transition-transform duration-300 group-hover:scale-105">
@@ -927,7 +927,7 @@ export default function ForLawyersPage() {
             <h3 className="text-lg md:text-xl font-medium text-white text-center mb-8 tracking-wide">
               Zarejestruj się i zacznij zdobywać nowych klientów już dziś!
             </h3>
-            
+
             <button
               onClick={() => router.push("/rejestracja/kancelaria")}
               className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3.5 px-16 rounded-md transition-all duration-200 text-sm flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer w-full max-w-[260px]"
