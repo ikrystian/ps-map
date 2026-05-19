@@ -69,19 +69,19 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                         <div className="absolute inset-0 bg-gradient-to-t from-[#09352c] via-[#09352c]/95 via-[#09352c]/65 to-transparent transition-opacity duration-300 group-hover:opacity-95" />
 
                         {/* Content Container */}
-                        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-white z-10">
+                        <div className="absolute inset-0 flex flex-col justify-end align-end p-6 md:p-8 text-white z-10">
                           {/* Beautiful Muted Lavender/Pink Date with high contrast */}
                           <span className="text-xs md:text-sm text-pink-200/90 font-medium mb-3 block tracking-wide">
                             {getFormattedDate(post)}
                           </span>
 
                           {/* Bold Title */}
-                          <h3 className="font-semibold text-lg md:text-xl leading-snug line-clamp-3 mb-6 group-hover:text-white transition-colors">
+                          <h3 className="font-semibold text-lg md:text-3xl leading-snug line-clamp-3 mb-6 group-hover:text-white transition-colors">
                             {post.tytul}
                           </h3>
 
                           {/* Bottom CTA read link with line animation */}
-                          <div className="flex items-center gap-3 mt-auto pt-4">
+                          <div className="flex items-center gap-3 pt-4">
                             <div className="w-12 h-[1px] bg-white/60 transition-all duration-300 group-hover:w-16" />
                             <span className="text-sm font-medium text-white flex items-center gap-1.5">
                               Przeczytaj
