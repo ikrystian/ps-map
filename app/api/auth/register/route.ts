@@ -8,9 +8,16 @@ import crypto from "crypto"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, role, isSocialRegistration, ...userData } = body
-
     // Walidacja
+    if (!email || typeof email !== "string") {
+      return NextResponse.json(
+        { error: "Adres email jest wymagany" },
+        { status: 400 }
+      )
+    }
+
+    // Normalizacja email
+    const normalizedEmail = email.toLowerCase().trim()
     if (!email || (!password && !isSocialRegistration)) {
       return NextResponse.json(
         { error: "Email i hasło są wymagane" },
@@ -18,9 +25,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik już istnieje
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     })
 
     if (existingUser) {
@@ -65,7 +71,7 @@ export async function POST(request: NextRequest) {
       // Utworzenie użytkownika
       user = await prisma.user.create({
         data: {
-          email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: (role as UserRole) || "CLIENT",
           name: userData.name || null,

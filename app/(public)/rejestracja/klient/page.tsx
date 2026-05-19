@@ -25,8 +25,35 @@ export default function ClientRegistrationPage() {
     zgodaRegulamin: false,
     zgodaNewsletter: false,
   })
+  const [isInitialized, setIsInitialized] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  // Inicjalizacja danych z localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem("client_registration_data")
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData)
+        setFormData(prev => ({
+          ...prev,
+          ...parsedData,
+          password: "",
+          confirmPassword: "",
+        }))
+      } catch (e) {
+        console.error("Error loading client registration data:", e)
+      }
+    }
+    setIsInitialized(true)
+  }, [])
+
+  // Zapisywanie danych do localStorage
+  useEffect(() => {
+    if (!isInitialized) return
+    const { password, confirmPassword, ...dataToSave } = formData
+    localStorage.setItem("client_registration_data", JSON.stringify(dataToSave))
+  }, [formData, isInitialized])
 
   useEffect(() => {
     if (session?.user) {
@@ -88,6 +115,9 @@ export default function ClientRegistrationPage() {
         setIsLoading(false)
         return
       }
+
+      // Wyczyść dane z localStorage po pomyślnej rejestracji
+      localStorage.removeItem("client_registration_data")
 
       // Przekieruj na stronę logowania
       router.push("/logowanie?registered=true")

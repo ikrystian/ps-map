@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "motion/react"
@@ -60,7 +60,13 @@ const steps = [
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  
+  // Odczytaj krok z URL lub localStorage
   const [currentStep, setCurrentStep] = useState(1)
+  const [isInitialized, setIsInitialized] = useState(false)
+
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [formData, setFormData] = useState({
@@ -110,6 +116,57 @@ export default function LawFirmRegistrationPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const totalSteps = steps.length
+
+  // Synchronizacja kroku z URL
+  useEffect(() => {
+    const stepParam = searchParams.get("step")
+    if (stepParam) {
+      const step = parseInt(stepParam)
+      if (step >= 1 && step <= totalSteps && step !== currentStep) {
+        setCurrentStep(step)
+      }
+    }
+  }, [searchParams, totalSteps])
+
+  // Inicjalizacja danych z localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem("law_firm_registration_data")
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData)
+        setFormData(prev => ({
+          ...prev,
+          ...parsedData,
+          password: "",
+          confirmPassword: "",
+        }))
+      } catch (e) {
+        console.error("Error loading registration data:", e)
+      }
+    }
+
+    const savedStep = localStorage.getItem("law_firm_registration_step")
+    if (savedStep && !searchParams.get("step")) {
+      const step = parseInt(savedStep)
+      if (step >= 1 && step <= totalSteps) {
+        setCurrentStep(step)
+        const params = new URLSearchParams(searchParams)
+        params.set("step", step.toString())
+        router.replace(`${pathname}?${params.toString()}`)
+      }
+    }
+    
+    setIsInitialized(true)
+  }, [])
+
+  // Zapisywanie danych do localStorage
+  useEffect(() => {
+    if (!isInitialized) return
+
+    const { password, confirmPassword, ...dataToSave } = formData
+    localStorage.setItem("law_firm_registration_data", JSON.stringify(dataToSave))
+    localStorage.setItem("law_firm_registration_step", currentStep.toString())
+  }, [formData, currentStep, isInitialized])
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -205,13 +262,19 @@ export default function LawFirmRegistrationPage() {
     return true
   }
 
+  const updateUrlWithStep = (step: number) => {
+    const params = new URLSearchParams(searchParams)
+    params.set("step", step.toString())
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
   const nextStep = () => {
     setError("")
     if (!validateStep()) {
       return
     }
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1)
+      updateUrlWithStep(currentStep + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -219,7 +282,7 @@ export default function LawFirmRegistrationPage() {
   const prevStep = () => {
     setError("")
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      updateUrlWithStep(currentStep - 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -283,6 +346,10 @@ export default function LawFirmRegistrationPage() {
         setIsLoading(false)
         return
       }
+
+      // Wyczyść dane z localStorage po pomyślnej rejestracji
+      localStorage.removeItem("law_firm_registration_data")
+      localStorage.removeItem("law_firm_registration_step")
 
       router.push("/logowanie?registered=true")
     } catch (error) {

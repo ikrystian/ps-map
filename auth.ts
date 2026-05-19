@@ -50,9 +50,11 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Brak wymaganych danych")
         }
 
+        const normalizedEmail = (credentials.email as string).toLowerCase().trim()
+
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email as string,
+            email: normalizedEmail,
           },
         })
 
