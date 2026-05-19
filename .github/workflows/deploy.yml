@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy on push to main
 
 on:
@@ -11,11 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Generate commits payload
-        id: commits
         run: |
           echo "Creating commits.json..."
 
@@ -25,9 +23,7 @@ jobs:
             --arg ref "${{ github.ref_name }}" \
             --arg before "${{ github.event.before }}" \
             --arg after "${{ github.sha }}" \
-            --argjson commits '[
-              ${{ toJson(github.event.commits) }}
-            ]' \
+            --argjson commits '${{ toJson(github.event.commits) }}' \
             '{
               repository: $repository,
               branch: $ref,
@@ -40,9 +36,9 @@ jobs:
                   message: .message,
                   author: .author.name,
                   timestamp: .timestamp,
-                  added: .added,
-                  modified: .modified,
-                  removed: .removed
+                  added: (.added // []),
+                  modified: (.modified // []),
+                  removed: (.removed // [])
                 })
               )
             }' > commits.json
@@ -52,14 +48,17 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
+
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+            set -e
+
             cd /root/projects/ps-map 
 
             git pull origin main
