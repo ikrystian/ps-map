@@ -2,7 +2,10 @@
 // ─── KONFIGURACJA ────────────────────────────────────────────────────────────
 define('SLACK_BOT_TOKEN', 'xoxb-230543694562-11166378695556-QcAKxTs0uQIeTf3zDCTqmU4g');   // Bot User OAuth Token
 define('SLACK_CHANNEL_ID', 'C0B5LTHKH2L');             // ID kanału (nie nazwa!)
-// 
+
+define('OPENROUTER_API_KEY', 'sk-or-v1-...'); // UZUPEŁNIJ KLUCZ!
+define('OPENROUTER_MODEL', 'google/gemini-2.0-flash-lite-preview-02-05:free');
+
 define('MAX_IMAGE_MB', 5);                             // Maks. rozmiar obrazka (MB)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -13,57 +16,14 @@ function esc(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8
 function slackEsc(string $v): string { return str_replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], $v); }
 $old = fn(string $k) => esc($_POST[$k] ?? '');
 
-/** Wysyła wiadomość tekstową na Slack (opcjonalnie z obrazkiem) */
-function sendSlackMessage(string $token, string $channel, string $description, string $url, string $fileId = ''): array
+/** Podstawowa funkcja do wysyłania payloadu do Slacka */
+function sendSlackRaw(string $token, array $payload): array
 {
-    $urlEsc = slackEsc($url);
-    $descEsc = slackEsc($description);
-
-    // Slack limits for text are 3000 chars. Let's truncate description.
-    if (mb_strlen($descEsc) > 2900) {
-        $descEsc = mb_substr($descEsc, 0, 2897) . '...';
-    }
-
-    $blocks = [
-        [
-            'type' => 'header',
-            'text' => ['type' => 'plain_text', 'text' => '📋 Nowa aktualizacja projektu', 'emoji' => true],
-        ],
-        [
-            'type'   => 'section',
-            'fields' => [
-                ['type' => 'mrkdwn', 'text' => "*Adres URL:*\n<{$urlEsc}|{$urlEsc}>"],
-            ],
-        ],
-        [
-            'type' => 'section',
-            'text' => ['type' => 'mrkdwn', 'text' => "*Opis:*\n{$descEsc}"],
-        ],
-    ];
-
-    if ($fileId) {
-        $blocks[] = [
-            'type' => 'image',
-            'slack_file' => ['id' => $fileId],
-            'alt_text' => 'Załączony obrazek do zgłoszenia'
-        ];
-    }
-
-    $blocks[] = ['type' => 'divider'];
-
-    $payload = json_encode([
-        'channel'    => $channel,
-        'text'       => "Nowe zgłoszenie: {$urlEsc}",
-        'blocks'     => $blocks,
-        'username'   => 'FormularzoBot',
-        'icon_emoji' => ':clipboard:',
-    ]);
-
     $ch = curl_init('https://slack.com/api/chat.postMessage');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
         CURLOPT_HTTPHEADER     => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $token,
@@ -86,6 +46,94 @@ function sendSlackMessage(string $token, string $channel, string $description, s
     }
     
     return $result;
+}
+
+/** Generuje podsumowanie commitów przy użyciu AI (OpenRouter) */
+function getAiSummary(array $payload): string {
+    if (empty($payload['commits'])) return 'Brak nowych commitów.';
+
+    $commitsStr = "";
+    foreach ($payload['commits'] as $commit) {
+        $commitsStr .= "- " . ($commit['message'] ?? 'bez opisu') . " (autor: " . ($commit['author'] ?? 'anonim') . ")\n";
+    }
+
+    $prompt = "Jesteś asystentem programisty. Podsumuj krótko ostatni build na podstawie poniższych commitów. Napisz co zostało zmienione i jaki jest cel tych zmian. Odpowiedz zwięźle, w punktach, używając emoji.\n\nRepozytorium: " . ($payload['repository'] ?? 'Nieznane') . "\nGałąź: " . ($payload['branch'] ?? 'main') . "\nAutor: " . ($payload['pusher'] ?? 'unknown') . "\n\nCommity:\n" . $commitsStr;
+
+    $ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
+    $data = [
+        'model' => OPENROUTER_MODEL,
+        'messages' => [
+            ['role' => 'user', 'content' => $prompt]
+        ]
+    ];
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($data),
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . OPENROUTER_API_KEY,
+        ],
+    ]);
+
+    $response = curl_exec($ch);
+    $result = json_decode($response, true);
+    curl_close($ch);
+
+    return $result['choices'][0]['message']['content'] ?? 'Nie udało się wygenerować podsumowania AI.';
+}
+
+/** Wysyła wiadomość tekstową na Slack (opcjonalnie z obrazkiem) */
+function sendSlackMessage(string $token, string $channel, string $description, string $url = '', string $fileId = ''): array
+{
+    $urlEsc = slackEsc($url);
+    $descEsc = slackEsc($description);
+
+    if (mb_strlen($descEsc) > 2900) {
+        $descEsc = mb_substr($descEsc, 0, 2897) . '...';
+    }
+
+    $blocks = [
+        [
+            'type' => 'header',
+            'text' => ['type' => 'plain_text', 'text' => '📋 Nowa aktualizacja projektu', 'emoji' => true],
+        ],
+    ];
+
+    if ($url) {
+        $blocks[] = [
+            'type'   => 'section',
+            'fields' => [
+                ['type' => 'mrkdwn', 'text' => "*Adres URL:*\n<{$urlEsc}|{$urlEsc}>"],
+            ],
+        ];
+    }
+
+    $blocks[] = [
+        'type' => 'section',
+        'text' => ['type' => 'mrkdwn', 'text' => "*Opis:*\n{$descEsc}"],
+    ];
+
+    if ($fileId) {
+        $blocks[] = [
+            'type' => 'image',
+            'slack_file' => ['id' => $fileId],
+            'alt_text' => 'Załączony obrazek do zgłoszenia'
+        ];
+    }
+
+    $blocks[] = ['type' => 'divider'];
+
+    $payload = [
+        'channel'    => $channel,
+        'text'       => $url ? "Nowe zgłoszenie: {$urlEsc}" : "Nowe zgłoszenie",
+        'blocks'     => $blocks,
+        'username'   => 'FormularzoBot',
+        'icon_emoji' => ':clipboard:',
+    ];
+
+    return sendSlackRaw($token, $payload);
 }
 
 /** Wysyła plik (obrazek) na Slack i zwraca jego ID (bez publikowania na kanale) */
@@ -139,7 +187,6 @@ function uploadSlackImage(string $token, array $file): array
     $ch = curl_init('https://slack.com/api/files.completeUploadExternal');
     $payload = json_encode([
         'files' => [['id' => $fileId, 'title' => $file['name']]],
-        // Nie podajemy channel_id, aby nie wysyłać osobnej wiadomości
     ]);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -161,15 +208,59 @@ function uploadSlackImage(string $token, array $file): array
     return ['ok' => true, 'file_id' => $fileId];
 }
 
+// ─── OBSŁUGA ŻĄDAŃ ───────────────────────────────────────────────────────────
+
+// 1. Sprawdzenie czy to webhook JSON (np. z GitHub Actions)
+$jsonInput = file_get_contents('php://input');
+$webhookData = json_decode($jsonInput, true);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($webhookData['commits'])) {
+    $summary = getAiSummary($webhookData);
+    
+    $blocks = [
+        [
+            'type' => 'header',
+            'text' => ['type' => 'plain_text', 'text' => '🚀 Udane wdrożenie: ' . ($webhookData['repository'] ?? 'Projekt'), 'emoji' => true],
+        ],
+        [
+            'type'   => 'section',
+            'fields' => [
+                ['type' => 'mrkdwn', 'text' => "*Gałąź:*\n`" . ($webhookData['branch'] ?? 'main') . "`"],
+                ['type' => 'mrkdwn', 'text' => "*Pusher:*\n" . ($webhookData['pusher'] ?? 'unknown')],
+            ],
+        ],
+        [
+            'type' => 'section',
+            'text' => ['type' => 'mrkdwn', 'text' => "*Podsumowanie zmian (AI):*\n" . $summary],
+        ],
+        ['type' => 'divider'],
+    ];
+
+    $payload = [
+        'channel'    => SLACK_CHANNEL_ID,
+        'text'       => "🚀 Nowy build: " . ($webhookData['repository'] ?? ''),
+        'blocks'     => $blocks,
+        'username'   => 'BuildBot',
+        'icon_emoji' => ':rocket:',
+    ];
+
+    $result = sendSlackRaw(SLACK_BOT_TOKEN, $payload);
+    
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => true, 'slack_response' => $result]);
+    exit;
+}
+
+// 2. Obsługa tradycyjnego formularza (multipart/form-data)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $url         = trim($_POST['url']         ?? '');
     $hasImage    = isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE;
 
     // ── walidacja ──
-    if (!$description || !$url) {
-        $error = 'Pola „Opis" i „Adres URL" są wymagane.';
-    } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
+    if (!$description) {
+        $error = 'Pole „Opis" jest wymagane.';
+    } elseif ($url && !filter_var($url, FILTER_VALIDATE_URL)) {
         $error = 'Podaj prawidłowy adres URL (np. https://przykład.pl).';
     } elseif ($hasImage) {
         $img = $_FILES['image'];
@@ -188,19 +279,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$error) {
         $fileId = '';
         
-        // 1. Jeśli jest obrazek, najpierw go wgraj
+        // Jeśli jest obrazek, najpierw go wgraj
         if ($hasImage) {
             $imgResult = uploadSlackImage(SLACK_BOT_TOKEN, $_FILES['image']);
             if (!$imgResult['ok']) {
                 $error = 'Błąd uploadu obrazka: ' . ($imgResult['error'] ?? 'nieznany');
             } else {
                 $fileId = $imgResult['file_id'];
-                // Poczekaj chwilę na przetworzenie obrazka przez Slack (race condition)
                 sleep(1);
             }
         }
 
-        // 2. Wyślij wiadomość (z fileId lub bez)
+        // Wyślij wiadomość
         if (!$error) {
             $msgResult = sendSlackMessage(SLACK_BOT_TOKEN, SLACK_CHANNEL_ID, $description, $url, $fileId);
             if (!$msgResult['ok']) {
