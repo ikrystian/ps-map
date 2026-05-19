@@ -157,14 +157,31 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Extract client data from body if available
+    const clientData = body.client
+
+    // Create user with optional client record
     const user = await prisma.user.create({
       data: {
-        name,
+        name: name || (clientData ? `${clientData.imie || ""} ${clientData.nazwisko || ""}`.trim() : null),
         email,
         password: hashedPassword,
         role,
         status: status || "ACTIVE",
+        client: clientData ? {
+          create: {
+            imie: clientData.imie,
+            nazwisko: clientData.nazwisko,
+            telefon: clientData.telefon,
+            adres: clientData.adres,
+            kodPocztowy: clientData.kodPocztowy,
+            miasto: clientData.miasto,
+            voivodeshipId: clientData.voivodeshipId || null,
+            zgodaRegulamin: clientData.zgodaRegulamin || false,
+            zgodaNewsletter: clientData.zgodaNewsletter || false,
+            zgodaMarketing: clientData.zgodaMarketing || false,
+          }
+        } : undefined
       },
       select: {
         id: true,
@@ -174,6 +191,12 @@ export async function POST(request: NextRequest) {
         status: true,
         createdAt: true,
         updatedAt: true,
+        client: {
+          select: {
+            imie: true,
+            nazwisko: true,
+          }
+        }
       },
     })
 

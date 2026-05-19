@@ -179,6 +179,44 @@ export async function PUT(
       updateData.password = await bcrypt.hash(password, 10)
     }
 
+    // Handle client data if provided
+    const clientData = body.client
+    if (clientData) {
+      // Update name based on client data if name not explicitly provided
+      if (name === undefined) {
+        updateData.name = `${clientData.imie || ""} ${clientData.nazwisko || ""}`.trim()
+      }
+
+      updateData.client = {
+        upsert: {
+          create: {
+            imie: clientData.imie,
+            nazwisko: clientData.nazwisko,
+            telefon: clientData.telefon,
+            adres: clientData.adres,
+            kodPocztowy: clientData.kodPocztowy,
+            miasto: clientData.miasto,
+            voivodeshipId: clientData.voivodeshipId || null,
+            zgodaRegulamin: clientData.zgodaRegulamin || false,
+            zgodaNewsletter: clientData.zgodaNewsletter || false,
+            zgodaMarketing: clientData.zgodaMarketing || false,
+          },
+          update: {
+            imie: clientData.imie,
+            nazwisko: clientData.nazwisko,
+            telefon: clientData.telefon,
+            adres: clientData.adres,
+            kodPocztowy: clientData.kodPocztowy,
+            miasto: clientData.miasto,
+            voivodeshipId: clientData.voivodeshipId || null,
+            zgodaRegulamin: clientData.zgodaRegulamin,
+            zgodaNewsletter: clientData.zgodaNewsletter,
+            zgodaMarketing: clientData.zgodaMarketing,
+          }
+        }
+      }
+    }
+
     // Update user
     const updatedUser = await prisma.user.update({
       where: { id },

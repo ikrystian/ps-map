@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils"
 const userSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
+  password: z.string().min(8, "Password must be at least 8 characters").or(z.literal("")).optional(),
   role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
   image: z.string().optional(),
@@ -143,18 +143,18 @@ export default function EditUserPage() {
             role: user.role,
             status: user.status,
             image: user.image || "",
-            client: user.client ? {
-              imie: user.client.imie,
-              nazwisko: user.client.nazwisko,
-              telefon: user.client.telefon || "",
-              adres: user.client.adres || "",
-              kodPocztowy: user.client.kodPocztowy || "",
-              miasto: user.client.miasto || "",
-              voivodeshipId: user.client.voivodeshipId || "",
-              zgodaRegulamin: user.client.zgodaRegulamin,
-              zgodaNewsletter: user.client.zgodaNewsletter,
-              zgodaMarketing: user.client.zgodaMarketing,
-            } : undefined,
+            client: {
+              imie: user.client?.imie || "",
+              nazwisko: user.client?.nazwisko || "",
+              telefon: user.client?.telefon || "",
+              adres: user.client?.adres || "",
+              kodPocztowy: user.client?.kodPocztowy || "",
+              miasto: user.client?.miasto || "",
+              voivodeshipId: user.client?.voivodeshipId || "",
+              zgodaRegulamin: user.client?.zgodaRegulamin || false,
+              zgodaNewsletter: user.client?.zgodaNewsletter || false,
+              zgodaMarketing: user.client?.zgodaMarketing || false,
+            },
           })
         } else {
           throw new Error("Błąd podczas pobierania danych użytkownika")
@@ -229,8 +229,8 @@ export default function EditUserPage() {
         updateData.password = values.password
       }
 
-      // Include client data if role is CLIENT
-      if (values.role === "CLIENT" && values.client) {
+      // Include client data
+      if (values.client) {
         updateData.client = values.client
       }
 
@@ -413,7 +413,7 @@ export default function EditUserPage() {
                       <Input type="password" placeholder="Pozostaw puste aby nie zmieniać" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Pozostaw puste jeśli nie chcesz zmieniać hasła
+                      Pozostaw puste jeśli nie chcesz zmieniać hasła (minimum 8 znaków jeśli podano)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -481,181 +481,183 @@ export default function EditUserPage() {
             </CardContent>
           </Card>
 
-          {/* Client Information */}
-          {(form.watch("role") === "CLIENT" || userData?.client) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Dane klienta</CardTitle>
-                <CardDescription>Informacje o kliencie</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="client.imie"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Imię</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Jan" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.nazwisko"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nazwisko</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Kowalski" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
+          {/* Personal Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Dane osobowe</CardTitle>
+              <CardDescription>Podstawowe informacje o użytkowniku</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="client.telefon"
+                  name="client.imie"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Telefon (opcjonalnie)</FormLabel>
+                      <FormLabel>Imię</FormLabel>
                       <FormControl>
-                        <Input placeholder="+48 123 456 789" {...field} />
+                        <Input placeholder="Jan" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="client.adres"
+                  name="client.nazwisko"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Adres (opcjonalnie)</FormLabel>
+                      <FormLabel>Nazwisko</FormLabel>
                       <FormControl>
-                        <Input placeholder="ul. Przykładowa 123" {...field} />
+                        <Input placeholder="Kowalski" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
+              {form.watch("role") === "CLIENT" && (
+                <>
                   <FormField
                     control={form.control}
-                    name="client.kodPocztowy"
+                    name="client.telefon"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
+                        <FormLabel>Telefon (opcjonalnie)</FormLabel>
                         <FormControl>
-                          <Input placeholder="00-000" {...field} />
+                          <Input placeholder="+48 123 456 789" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="client.miasto"
+                    name="client.adres"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Miasto (opcjonalnie)</FormLabel>
+                        <FormLabel>Adres (opcjonalnie)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Warszawa" {...field} />
+                          <Input placeholder="ul. Przykładowa 123" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <FormField
-                  control={form.control}
-                  name="client.voivodeshipId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Województwo (opcjonalnie)</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz województwo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {voivodeships.map((v) => (
-                            <SelectItem key={v.id} value={v.id}>
-                              {v.nazwa}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="client.kodPocztowy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="00-000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="client.miasto"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Miasto (opcjonalnie)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Warszawa" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                <div className="space-y-2">
                   <FormField
                     control={form.control}
-                    name="client.zgodaRegulamin"
+                    name="client.voivodeshipId"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na regulamin</FormLabel>
-                        </div>
+                      <FormItem>
+                        <FormLabel>Województwo (opcjonalnie)</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Wybierz województwo" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {voivodeships.map((v) => (
+                              <SelectItem key={v.id} value={v.id}>
+                                {v.nazwa}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="client.zgodaNewsletter"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na newsletter</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.zgodaMarketing"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na marketing</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
+                  <div className="space-y-2">
+                    <FormField
+                      control={form.control}
+                      name="client.zgodaRegulamin"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Zgoda na regulamin</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="client.zgodaNewsletter"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Zgoda na newsletter</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="client.zgodaMarketing"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Zgoda na marketing</FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Form Actions */}
           <div className="flex justify-end gap-4">
