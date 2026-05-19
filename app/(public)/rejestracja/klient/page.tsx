@@ -102,9 +102,9 @@ export default function ClientRegistrationPage() {
       heroTitle="Dołącz do tysięcy zadowolonych klientów"
       heroDescription="Znajdź najlepszych prawników w Polsce. Szybko, łatwo i bezpiecznie rozwiąż swoje problemy prawne."
       heroStats={[
-        { value: "10 min", label: "Średni czas odpowiedzi" },
-        { value: "5000+", label: "Rozwiązanych spraw" },
-        { value: "4.8/5", label: "Średnia ocena" },
+        { value: 10, unit: " min", label: "Średni czas odpowiedzi" },
+        { value: 5000, unit: "+", label: "Rozwiązanych spraw" },
+        { value: 4.8, unit: "/5", label: "Średnia ocena" },
       ]}
     >
       <Card className="border-none shadow-none bg-transparent">
