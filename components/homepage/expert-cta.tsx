@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 export function ExpertCTA() {
   return (
@@ -36,11 +37,10 @@ export function ExpertCTA() {
 
             {/* Button */}
             <div className="mt-8 md:mt-10">
-              <Link href="/rejestracja/kancelaria" className="inline-block">
-                <button className="relative pl-14 pr-8 py-4 bg-[#00897b] hover:bg-[#00796b] text-white text-lg font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 flex items-center group">
-                  <span>Dołącz</span>
-                </button>
+              <Link href="/rejestracja/kancelaria">
+                <InteractiveHoverButton >Załóż konto</InteractiveHoverButton>
               </Link>
+
             </div>
           </motion.div>
 

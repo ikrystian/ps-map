@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, Check, User, Briefcase, Search } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")
@@ -12,7 +13,7 @@ export function HowItWorksSection() {
     return (
         <section className="bg-black text-white py-20 overflow-hidden relative">
             <div className="container mx-auto px-4 relative z-10">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -48,7 +49,7 @@ export function HowItWorksSection() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
                     {/* Left Content */}
-                    <motion.div 
+                    <motion.div
                         key={activeTab}
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -180,16 +181,14 @@ export function HowItWorksSection() {
                                 )}
                             </ul>
                         </div>
+                        <Link href={activeTab === "user" ? "/dodaj-sprawe" : "/rejestracja-eksperta"}>
+                            <InteractiveHoverButton >Zobacz więcej</InteractiveHoverButton>
+                        </Link>
 
-                        <Button asChild className="bg-[#008080] hover:bg-[#006666] text-white px-8 py-6 text-lg rounded-md w-full sm:w-auto">
-                            <Link href={activeTab === "user" ? "/dodaj-sprawe" : "/rejestracja-eksperta"}>
-                                Zobacz więcej
-                            </Link>
-                        </Button>
                     </motion.div>
 
                     {/* Right Content - Phone Mockup */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-100px" }}

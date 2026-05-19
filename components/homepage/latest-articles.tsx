@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
+import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 interface LatestArticlesProps {
   blogPosts: any[]
@@ -108,12 +109,9 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
 
           {/* Centered teal CTA button at the bottom */}
           <div className="flex justify-center mt-12">
-            <Button
-              asChild
-              className="bg-[#008080] hover:bg-[#006f6f] text-white px-8 py-6 rounded-lg text-sm font-medium shadow-sm transition-all h-auto"
-            >
-              <Link href="/blog">Więcej praktycznych porad</Link>
-            </Button>
+            <Link href={"/blog"}>
+              <InteractiveHoverButton>Więcej praktycznych porad</InteractiveHoverButton>
+            </Link>
           </div>
         </motion.div>
       </div>
