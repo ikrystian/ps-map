@@ -29,7 +29,7 @@ export function createRandomLawFirm(prisma: PrismaClient) {
     const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
         // Zamień podwójne nowej linie ('\n\n') na znaczniki akapitu
         .split('\n\n')
-        .map(p => `< p > ${p} </p>`)
+        .map(p => `<p>${p}</p>`)
         .join('');
 
     return {

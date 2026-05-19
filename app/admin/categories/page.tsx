@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, ChevronRight, ChevronDown, Image as ImageIcon } from "lucide-react"
+import { Plus, Edit, Trash2, ChevronRight, ChevronDown } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ImageUpload } from "@/components/ui/image-upload"
 import {
   Table,
   TableBody,
@@ -21,43 +21,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-
-// Schema walidacji formularza
-const categorySchema = z.object({
-  nazwa: z.string().min(1, "Nazwa jest wymagana"),
-  slug: z.string().min(1, "Slug jest wymagany").regex(/^[a-z0-9-]+$/, "Slug może zawierać tylko małe litery, cyfry i myślniki"),
-  opis: z.string().optional(),
-  opisDodatkowy: z.string().optional(),
-  ikona: z.string().optional(),
-  ikonaUrl: z.string().optional(),
-  typ: z.enum(["SPRAWY_FIRMOWE", "SPRAWY_PRYWATNE"]),
-  parentId: z.string().nullable().optional(),
-  metaTitle: z.string().nullable().optional(),
-  metaDescription: z.string().nullable().optional(),
-  aktywna: z.boolean(),
-  kolejnosc: z.number(),
-})
-
-type CategoryFormValues = z.infer<typeof categorySchema>
 
 interface Category {
   id: string
@@ -90,31 +55,12 @@ interface Category {
 }
 
 export default function AdminCategoriesPage() {
+  const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
-
-  const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
-    defaultValues: {
-      nazwa: "",
-      slug: "",
-      opis: "",
-      opisDodatkowy: "",
-      ikona: "",
-      ikonaUrl: "",
-      typ: "SPRAWY_PRYWATNE",
-      parentId: "none",
-      metaTitle: null,
-      metaDescription: null,
-      aktywna: true,
-      kolejnosc: 0,
-    },
-  })
 
   // Pobieranie kategorii
   const fetchCategories = async () => {
@@ -137,94 +83,6 @@ export default function AdminCategoriesPage() {
     fetchCategories()
   }, [])
 
-  // Generowanie sluga z nazwy
-  const generateSlug = (nazwa: string) => {
-    return nazwa
-      .toLowerCase()
-      .replace(/[^a-z0-9ąćęłńóśźż]/g, "-")
-      .replace(/[ąćęłńóśźż]/g, (match) => {
-        const polishToEnglish: { [key: string]: string } = {
-          'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
-          'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z'
-        }
-        return polishToEnglish[match] || match
-      })
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "")
-  }
-
-  // Obsługa zmiany nazwy - automatyczne generowanie sluga
-  const handleNameChange = (value: string) => {
-    form.setValue("nazwa", value)
-    if (!form.getValues("slug") || form.getValues("slug") === generateSlug(form.getValues("nazwa"))) {
-      form.setValue("slug", generateSlug(value))
-    }
-  }
-
-  // Tworzenie kategorii
-  const handleCreateCategory = async (values: CategoryFormValues) => {
-    try {
-      // Konwertuj "none" na null przed wysłaniem
-      const dataToSend = {
-        ...values,
-        parentId: values.parentId === "none" ? null : values.parentId,
-      }
-
-      const response = await fetch("/api/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      })
-
-      if (response.ok) {
-        toast.success("Kategoria została utworzona")
-        setIsCreateDialogOpen(false)
-        form.reset()
-        fetchCategories()
-      } else {
-        const error = await response.json()
-        throw new Error(error.error || "Błąd tworzenia kategorii")
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć kategorii")
-    }
-  }
-
-  // Edycja kategorii
-  const handleEditCategory = async (values: CategoryFormValues) => {
-    if (!selectedCategory) return
-
-    try {
-      // Konwertuj "none" na null przed wysłaniem
-      const dataToSend = {
-        ...values,
-        parentId: values.parentId === "none" ? null : values.parentId,
-      }
-
-      const response = await fetch(`/api/categories/${selectedCategory.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      })
-
-      if (response.ok) {
-        toast.success("Kategoria została zaktualizowana")
-        setIsEditDialogOpen(false)
-        setSelectedCategory(null)
-        form.reset()
-        fetchCategories()
-      } else {
-        const error = await response.json()
-        throw new Error(error.error || "Błąd aktualizacji kategorii")
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować kategorii")
-    }
-  }
 
   // Usuwanie kategorii
   const handleDeleteCategory = async () => {
@@ -249,25 +107,6 @@ export default function AdminCategoriesPage() {
     }
   }
 
-  // Otwieranie dialogu edycji
-  const openEditDialog = (category: Category) => {
-    setSelectedCategory(category)
-    form.reset({
-      nazwa: category.nazwa,
-      slug: category.slug,
-      opis: category.opis || "",
-      opisDodatkowy: category.opisDodatkowy || "",
-      ikona: category.ikona || "",
-      ikonaUrl: category.ikonaUrl || "",
-      typ: category.typ,
-      parentId: category.parentId || "none",
-      metaTitle: category.metaTitle || "",
-      metaDescription: category.metaDescription || "",
-      aktywna: category.aktywna,
-      kolejnosc: category.kolejnosc,
-    })
-    setIsEditDialogOpen(true)
-  }
 
   // Otwieranie dialogu usuwania
   const openDeleteDialog = (category: Category) => {
@@ -286,12 +125,6 @@ export default function AdminCategoriesPage() {
     setExpandedRows(newExpanded)
   }
 
-  // Pobieranie kategorii nadrzędnych (bez cykli)
-  const getParentCategories = (excludeId?: string) => {
-    return categories.filter(cat =>
-      !excludeId || cat.id !== excludeId
-    )
-  }
 
   // Budowanie hierarchii kategorii
   const buildCategoryHierarchy = (categories: Category[]): Category[] => {
@@ -370,7 +203,7 @@ export default function AdminCategoriesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => openEditDialog(category)}
+                onClick={() => router.push(`/admin/categories/${category.id}/edit`)}
               >
                 <Edit className="h-4 w-4" />
               </Button>
@@ -411,261 +244,10 @@ export default function AdminCategoriesPage() {
             Dodawaj, edytuj i zarządzaj kategoriami prawnymi
           </p>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Dodaj kategorię
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Dodaj nową kategorię</DialogTitle>
-              <DialogDescription>
-                Wypełnij formularz, aby dodać nową kategorię prawną
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleCreateCategory)} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="nazwa"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nazwa</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="np. Prawo cywilne"
-                            {...field}
-                            onChange={(e) => handleNameChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input placeholder="prawo-cywilne" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Unikalny identyfikator URL
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="opis"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Opis</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Krótki opis kategorii..."
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="opisDodatkowy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Opis dodatkowy</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Dodatkowy opis kategorii..."
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="typ"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Typ kategorii</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Wybierz typ" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="SPRAWY_FIRMOWE">Sprawy firmowe</SelectItem>
-                            <SelectItem value="SPRAWY_PRYWATNE">Sprawy prywatne</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="ikona"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Ikona (Lucide)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="np. Briefcase, Scale, Building..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Nazwa ikony z Lucide React (opcjonalnie)
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="ikonaUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ikona niestandardowa</FormLabel>
-                      <FormControl>
-                        <ImageUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          label=""
-                          description="Prześlij niestandardową ikonę (priorytet nad ikoną Lucide)"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="parentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kategoria nadrzędna</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || "none"}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz kategorię nadrzędną (opcjonalnie)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
-                          {getParentCategories().map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.nazwa}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="metaTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Tytuł SEO"
-                            value={field.value || ""}
-                            onChange={(e) => field.onChange(e.target.value || null)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="kolejnosc"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kolejność</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Niższa liczba = wyższa pozycja
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="metaDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Opis SEO..."
-                          className="resize-none"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="aktywna"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Aktywna</FormLabel>
-                        <FormDescription>
-                          Kategoria będzie widoczna na stronie
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter>
-                  <Button type="submit">Utwórz kategorię</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => router.push("/admin/categories/new")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Dodaj kategorię
+        </Button>
       </div>
 
       <Card>
@@ -699,256 +281,6 @@ export default function AdminCategoriesPage() {
         </CardContent>
       </Card>
 
-      {/* Dialog edycji */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Edytuj kategorię</DialogTitle>
-            <DialogDescription>
-              Zaktualizuj dane kategorii
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleEditCategory)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="nazwa"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nazwa</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="np. Prawo cywilne"
-                          {...field}
-                          onChange={(e) => handleNameChange(e.target.value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
-                      <FormControl>
-                        <Input placeholder="prawo-cywilne" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Unikalny identyfikator URL
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="opis"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opis</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Krótki opis kategorii..."
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="opisDodatkowy"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opis dodatkowy</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Dodatkowy opis kategorii..."
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="typ"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Typ kategorii</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz typ" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="SPRAWY_FIRMOWE">Sprawy firmowe</SelectItem>
-                          <SelectItem value="SPRAWY_PRYWATNE">Sprawy prywatne</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="ikona"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ikona (Lucide)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="np. Briefcase, Scale, Building..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Nazwa ikony z Lucide React (opcjonalnie)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="ikonaUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ikona niestandardowa</FormLabel>
-                    <FormControl>
-                      <ImageUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        label=""
-                        description="Prześlij niestandardową ikonę (priorytet nad ikoną Lucide)"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="parentId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Kategoria nadrzędna</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || "none"}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Wybierz kategorię nadrzędną (opcjonalnie)" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">Brak kategorii nadrzędnej</SelectItem>
-                        {getParentCategories(selectedCategory?.id).map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.nazwa}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="metaTitle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Tytuł SEO"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="kolejnosc"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kolejność</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="0"
-                          {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Niższa liczba = wyższa pozycja
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="metaDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Opis SEO..."
-                        className="resize-none"
-                        value={field.value || ""}
-                        onChange={(e) => field.onChange(e.target.value || null)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="aktywna"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Aktywna</FormLabel>
-                      <FormDescription>
-                        Kategoria będzie widoczna na stronie
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button type="submit">Zapisz zmiany</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
 
       {/* Dialog usuwania */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

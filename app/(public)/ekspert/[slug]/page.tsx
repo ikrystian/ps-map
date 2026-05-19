@@ -644,7 +644,8 @@ export default function LawFirmProfilePage() {
         <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
 
           {/* Header Section */}
-          <div className="relative z-[199]">
+          <div className="relative z-[40]">
+
             <div className="flex flex-col md:flex-row gap-6 items-start">
               {/* Logo */}
               {lawFirm.logo && (

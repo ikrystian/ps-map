@@ -17,6 +17,7 @@ export interface CategoryBase {
  * Category with metadata (for admin/management)
  */
 export interface Category extends CategoryBase {
+  ikona: any
   opis?: string | null
   aktywna: boolean
   parentId?: string | null
