@@ -426,13 +426,12 @@ export default function CategoryPage() {
 
               <div className="flex items-center gap-4">
                 {/* View Toggle */}
-                <button className="toggle-filter-box">Pokaż / ukryj filtry</button>
 
                 <div className="flex items-center gap-1 border rounded-md p-1">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
-                    onClick={() => setViewMode("grid")}
+                    onClick={() => setViewMode("list")}
                     className="px-3"
                   >
                     <Grid3x3 className="h-4 w-4" />

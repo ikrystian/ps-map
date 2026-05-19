@@ -75,7 +75,7 @@ export default function PublicHeader({
   }
 
   return (
-    <header className="border-b bg-background fixed left-0 top-0 right-0 z-200 flex-shrink-0 backdrop-blur-md">
+    <header className="border-b bg-background fixed left-0 top-0 right-0 z-900 flex-shrink-0 backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}

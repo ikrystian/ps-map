@@ -120,7 +120,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                                     src={lawFirm.logo}
                                     alt={lawFirm.nazwa}
                                     fill
-                                    className="object-cover opacity-50 group-hover:opacity-60 transition-opacity"
+                                    className="object-cover"
                                 />
                             ) : (
                                 <div className="text-neutral-600">

@@ -106,7 +106,7 @@ export default function SearchLawyerPage() {
   const [total, setTotal] = useState(0)
 
   // View mode
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list")
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -203,7 +203,7 @@ export default function SearchLawyerPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
         <div className="">
-          <h1 className="text-4xl font-playfair font-medium tracking-tight">Szukaj prawnika</h1>
+          <h1 className="text-4xl font-playfair font-medium tracking-tight mb-3">Szukaj prawnika</h1>
 
         </div>
 
