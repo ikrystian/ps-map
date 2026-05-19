@@ -12,6 +12,7 @@ export async function GET() {
         opisDodatkowy: true,
         ikona: true,
         ikonaUrl: true,
+        backgroundImageUrl: true,
         typ: true,
         parentId: true,
         metaTitle: true,
@@ -59,7 +60,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nazwa, slug, opis, opisDodatkowy, ikona, ikonaUrl, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
+    const { nazwa, slug, opis, opisDodatkowy, ikona, ikonaUrl, backgroundImageUrl, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
 
     // Walidacja podstawowych pól
     if (!nazwa || !slug) {
@@ -103,6 +104,7 @@ export async function POST(request: Request) {
         opisDodatkowy,
         ikona,
         ikonaUrl,
+        backgroundImageUrl,
         typ: typ || "SPRAWY_PRYWATNE",
         parentId: parentId || null,
         metaTitle,

@@ -3,7 +3,7 @@
 import { useState, memo } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, icons } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types/categories"
@@ -46,13 +46,21 @@ const CategoryCard = memo(({
     >
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-        style={{ backgroundImage: `url(${imageUrl})` }}
+        style={{ backgroundImage: `url(${category.backgroundImageUrl || imageUrl})` }}
       />
       <div className={cn(
         "absolute inset-0 bg-black/60 transition-all duration-300",
         hovered === index ? "bg-black/20" : "bg-black/60"
       )} />
-      <div className="relative h-full flex items-center justify-center p-6">
+      <div className="relative h-full flex flex-col items-center justify-center p-6 gap-3">
+        {category.ikonaUrl ? (
+          <img src={category.ikonaUrl} alt="" className="h-10 w-10 object-contain" />
+        ) : category.ikona ? (
+          (() => {
+            const Icon = icons[category.ikona as keyof typeof icons]
+            return Icon ? <Icon className="h-10 w-10 text-white" /> : null
+          })()
+        ) : null}
         <h3 className={titleClassName}>{category.nazwa}</h3>
       </div>
     </Link>

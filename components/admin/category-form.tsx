@@ -31,6 +31,7 @@ const categorySchema = z.object({
   opisDodatkowy: z.string().optional().nullable(),
   ikona: z.string().optional().nullable(),
   ikonaUrl: z.string().optional().nullable(),
+  backgroundImageUrl: z.string().optional().nullable(),
   typ: z.enum(["SPRAWY_FIRMOWE", "SPRAWY_PRYWATNE"]),
   parentId: z.string().nullable().optional(),
   metaTitle: z.string().nullable().optional(),
@@ -49,6 +50,7 @@ interface Category {
   opisDodatkowy?: string | null
   ikona?: string | null
   ikonaUrl?: string | null
+  backgroundImageUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   parentId?: string | null
   metaTitle?: string | null
@@ -83,6 +85,7 @@ export function CategoryForm({
       opisDodatkowy: initialData.opisDodatkowy || "",
       ikona: initialData.ikona || "",
       ikonaUrl: initialData.ikonaUrl || "",
+      backgroundImageUrl: initialData.backgroundImageUrl || "",
       typ: initialData.typ,
       parentId: initialData.parentId || "none",
       metaTitle: initialData.metaTitle || "",
@@ -96,6 +99,7 @@ export function CategoryForm({
       opisDodatkowy: "",
       ikona: "",
       ikonaUrl: "",
+      backgroundImageUrl: "",
       typ: "SPRAWY_PRYWATNE",
       parentId: "none",
       metaTitle: null,
@@ -407,6 +411,24 @@ export function CategoryForm({
                             onChange={field.onChange}
                             label=""
                             description="Prześlij niestandardową ikonę"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="backgroundImageUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Zdjęcie w tle</FormLabel>
+                        <FormControl>
+                          <ImageUpload
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            label=""
+                            description="Prześlij zdjęcie, które będzie wyświetlane w tle kategorii na stronie głównej"
                           />
                         </FormControl>
                         <FormMessage />

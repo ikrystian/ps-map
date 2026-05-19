@@ -20,6 +20,8 @@ export interface Category extends CategoryBase {
   ikona: any
   opis?: string | null
   aktywna: boolean
+  ikonaUrl?: string | null
+  backgroundImageUrl?: string | null
   parentId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string

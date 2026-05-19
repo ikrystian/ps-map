@@ -367,6 +367,7 @@ model Category {
   opisDodatkowy String?  // Additional description
   ikona       String?    // Icon name (e.g., from Lucide)
   ikonaUrl    String?    // Custom uploaded icon URL
+  backgroundImageUrl String? // Background image URL
 
   // Typ kategorii
   typ         CategoryType @default(SPRAWY_PRYWATNE)
