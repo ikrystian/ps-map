@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, Check, User, Briefcase, Search } from "lucide-react"
 import Link from "next/link"
+import { motion } from "framer-motion"
 
 export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")
@@ -11,7 +12,13 @@ export function HowItWorksSection() {
     return (
         <section className="bg-black text-white py-20 overflow-hidden relative">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center mb-16">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-16"
+                >
                     <h2 className="text-3xl md:text-4xl font-bold mb-12 font-playfair">Jak to działa?</h2>
 
                     {/* Tabs */}
@@ -23,7 +30,7 @@ export function HowItWorksSection() {
                         >
                             Dla użytkowników
                             {activeTab === "user" && (
-                                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
+                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
                             )}
                         </button>
                         <button
@@ -33,15 +40,21 @@ export function HowItWorksSection() {
                         >
                             Dla ekspertów
                             {activeTab === "expert" && (
-                                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
+                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
                             )}
                         </button>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
                     {/* Left Content */}
-                    <div className="space-y-8">
+                    <motion.div 
+                        key={activeTab}
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="space-y-8"
+                    >
                         <div>
                             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
                                 {activeTab === "user"
@@ -173,10 +186,16 @@ export function HowItWorksSection() {
                                 Zobacz więcej
                             </Link>
                         </Button>
-                    </div>
+                    </motion.div>
 
                     {/* Right Content - Phone Mockup */}
-                    <div className="relative flex justify-center items-center mt-12 lg:mt-0">
+                    <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="relative flex justify-center items-center mt-12 lg:mt-0"
+                    >
                         {/* Background Geometric Shapes (Gold V) */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[150%] h-[150%] pointer-events-none">
                             {/* Simplified V shape using SVG */}
@@ -274,9 +293,10 @@ export function HowItWorksSection() {
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>
     )
 }
+
