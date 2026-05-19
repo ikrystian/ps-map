@@ -11,32 +11,46 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { cities, voivodeshipId } = body
+    const { cities } = body
 
-    if (!cities || !Array.isArray(cities) || !voivodeshipId) {
+    if (!cities || !Array.isArray(cities)) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 })
     }
 
-    const createdCities = await Promise.all(
-      cities.map(async (name: string) => {
-        // Check if city already exists
-        const existing = await prisma.city.findFirst({
-          where: { 
-            nazwa: name,
-            voivodeshipId: voivodeshipId
-          }
-        })
+    // Fetch all voivodeships once to map names to IDs
+    const allVoivodeships = await prisma.voivodeship.findMany()
+    const voivodeshipMap = new Map(allVoivodeships.map(v => [v.nazwa.toLowerCase(), v.id]))
 
-        if (existing) return existing
+    const createdCities = []
 
-        return prisma.city.create({
-          data: {
-            nazwa: name,
-            voivodeshipId: voivodeshipId
-          }
-        })
+    for (const cityData of cities) {
+      const { nazwa, wojewodztwo } = cityData
+      
+      const vId = voivodeshipMap.get(wojewodztwo.toLowerCase())
+      
+      if (!vId) {
+        console.warn(`Voivodeship not found: ${wojewodztwo} for city ${nazwa}`)
+        continue
+      }
+
+      // Check if city already exists in this voivodeship
+      const existing = await prisma.city.findFirst({
+        where: { 
+          nazwa: nazwa,
+          voivodeshipId: vId
+        }
       })
-    )
+
+      if (!existing) {
+        const newCity = await prisma.city.create({
+          data: {
+            nazwa: nazwa,
+            voivodeshipId: vId
+          }
+        })
+        createdCities.push(newCity)
+      }
+    }
 
     return NextResponse.json({ count: createdCities.length })
   } catch (error) {

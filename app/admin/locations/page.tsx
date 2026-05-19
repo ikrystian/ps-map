@@ -59,7 +59,6 @@ export default function AdminLocationsPage() {
   const [cityToDelete, setCityToDelete] = useState<City | null>(null)
   const [cityName, setCityName] = useState("")
   const [cityVoivodeshipId, setCityVoivodeshipId] = useState("")
-  const [seedVoivodeshipId, setSeedVoivodeshipId] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
@@ -165,19 +164,13 @@ export default function AdminLocationsPage() {
   }
 
   const executeSeed = async () => {
-    if (!seedVoivodeshipId) {
-      toast.error("Wybierz województwo")
-      return
-    }
-
     setIsSaving(true)
     try {
       const res = await fetch("/api/admin/cities/seed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          cities: CITIES,
-          voivodeshipId: seedVoivodeshipId
+          cities: CITIES
         })
       })
 
@@ -385,30 +378,12 @@ export default function AdminLocationsPage() {
           <DialogHeader>
             <DialogTitle>Importuj miasta z listy</DialogTitle>
             <DialogDescription>
-              To spowoduje zaimportowanie {CITIES.length} miast z domyślnej listy. Wybierz województwo, do którego zostaną przypisane.
+              To spowoduje zaimportowanie {CITIES.length} miast z domyślnej listy wraz z ich przypisaniem do województw.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Województwo docelowe</label>
-              <Select 
-                value={seedVoivodeshipId} 
-                onValueChange={setSeedVoivodeshipId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Wybierz województwo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {voivodeships.map((v) => (
-                    <SelectItem key={v.id} value={v.id}>
-                      {v.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Miasta, które już istnieją w wybranym województwie, zostaną pominięte.
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground">
+              Miasta zostaną automatycznie przypisane do odpowiednich województw. Już istniejące miasta zostaną pominięte.
             </p>
           </div>
           <DialogFooter>
