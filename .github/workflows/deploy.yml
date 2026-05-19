@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    environment: env # Upewnij się, że w GitHub Settings -> Environments masz stworzone środowisko o nazwie "env"
+    environment: dev # Upewnij się, że w GitHub Settings -> Environments masz stworzone środowisko o nazwie "env"
     runs-on: ubuntu-latest
 
     steps:
