@@ -41,6 +41,14 @@ interface Category {
   ikonaUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   aktywna: boolean
+  parentId?: string | null
+  children?: {
+    id: string
+    nazwa: string
+    slug: string
+    ikona?: string | null
+    ikonaUrl?: string | null
+  }[]
   _count?: {
     lawFirms: number
     cases: number
@@ -63,17 +71,17 @@ const ICON_MAP: Record<string, any> = {
   MessageSquare
 }
 
-const IconRenderer = ({ iconName, iconUrl, fallback: Fallback }: { iconName?: string | null, iconUrl?: string | null, fallback: any }) => {
+const IconRenderer = ({ iconName, iconUrl, fallback: Fallback, className = "h-8 w-8" }: { iconName?: string | null, iconUrl?: string | null, fallback: any, className?: string }) => {
   if (iconUrl) {
-    return <img src={iconUrl} alt="" className="h-8 w-8 object-contain" />
+    return <img src={iconUrl} alt="" className={`${className} object-contain`} />
   }
   
   if (iconName && ICON_MAP[iconName]) {
     const Icon = ICON_MAP[iconName]
-    return <Icon className="h-8 w-8" />
+    return <Icon className={className} />
   }
   
-  return <Fallback className="h-8 w-8" />
+  return <Fallback className={className} />
 }
 
 export default function CategoriesPage() {
@@ -91,7 +99,8 @@ export default function CategoriesPage() {
       const response = await fetch("/api/categories")
       if (response.ok) {
         const data = await response.json()
-        setCategories(data.filter((cat: Category) => cat.aktywna))
+        // Only keep root categories for the grid
+        setCategories(data.filter((cat: Category) => cat.aktywna && !cat.parentId))
       }
     } catch (error) {
       console.error("Error fetching categories:", error)
@@ -103,7 +112,8 @@ export default function CategoriesPage() {
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
       const matchesSearch = cat.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (cat.opis && cat.opis.toLowerCase().includes(searchQuery.toLowerCase()))
+        (cat.opis && cat.opis.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (cat.children && cat.children.some(child => child.nazwa.toLowerCase().includes(searchQuery.toLowerCase())))
       
       const matchesTab = activeTab === "all" || 
         (activeTab === "private" && cat.typ === "SPRAWY_PRYWATNE") ||
@@ -185,7 +195,7 @@ export default function CategoriesPage() {
               <p className="text-3xl md:text-4xl font-bold text-white">
                 <NumberTicker value={stats.all} />
               </p>
-              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Kategorii</p>
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Kategorii głównych</p>
             </div>
             <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <p className="text-3xl md:text-4xl font-bold text-primary">
@@ -275,56 +285,89 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.map((category) => (
-        <Link key={category.id} href={`/kategorie/${category.slug}`} className="block h-full group outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
-          <MagicCard 
-            className="flex flex-col h-full overflow-hidden border-border/60 hover:border-primary/40 transition-all duration-300"
-            gradientColor="rgba(var(--primary), 0.08)"
-          >
-            <div className="p-8 flex flex-col h-full">
-              <div className="mb-6 flex items-center justify-between">
-                <div className="rounded-xl bg-primary/5 p-3 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 transform group-hover:rotate-6 shadow-sm">
-                  <IconRenderer 
-                    iconName={category.ikona} 
-                    iconUrl={category.ikonaUrl} 
-                    fallback={category.typ === "SPRAWY_FIRMOWE" ? Briefcase : Scale} 
-                  />
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                   <Badge variant={category.typ === "SPRAWY_FIRMOWE" ? "default" : "secondary"} className="rounded-md px-2 py-0 text-[10px] uppercase tracking-wider font-bold">
-                    {category.typ === "SPRAWY_FIRMOWE" ? "Biznes" : "Prywatne"}
-                  </Badge>
-                </div>
+        <MagicCard 
+          key={category.id}
+          className="flex flex-col h-full overflow-hidden border-border/60 hover:border-primary/40 transition-all duration-300 group"
+          gradientColor="rgba(var(--primary), 0.08)"
+        >
+          <div className="p-8 flex flex-col h-full">
+            <div className="mb-6 flex items-center justify-between">
+              <Link href={`/kategorie/${category.slug}`} className="rounded-xl bg-primary/5 p-3 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 transform group-hover:rotate-6 shadow-sm">
+                <IconRenderer 
+                  iconName={category.ikona} 
+                  iconUrl={category.ikonaUrl} 
+                  fallback={category.typ === "SPRAWY_FIRMOWE" ? Briefcase : Scale} 
+                />
+              </Link>
+              <div className="flex flex-col items-end gap-1">
+                 <Badge variant={category.typ === "SPRAWY_FIRMOWE" ? "default" : "secondary"} className="rounded-md px-2 py-0 text-[10px] uppercase tracking-wider font-bold">
+                  {category.typ === "SPRAWY_FIRMOWE" ? "Biznes" : "Prywatne"}
+                </Badge>
               </div>
-              
+            </div>
+            
+            <Link href={`/kategorie/${category.slug}`}>
               <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-1">
                 {category.nazwa}
               </h3>
-              
-              {category.opis && (
-                <p className="text-muted-foreground text-sm line-clamp-3 mb-8 leading-relaxed">
-                  {category.opis}
-                </p>
-              )}
-              
-              <div className="mt-auto pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex gap-6">
-                   <div className="flex flex-col">
-                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
-                      <span className="text-sm font-semibold">{category._count?.lawFirms || 0}</span>
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
-                      <span className="text-sm font-semibold">{category._count?.cases || 0}</span>
-                   </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                  <span>SZCZEGÓŁY</span>
-                  <ChevronRight className="h-3 w-3" />
-                </div>
+            </Link>
+            
+            {category.opis && (
+              <p className="text-muted-foreground text-sm line-clamp-2 mb-4 leading-relaxed">
+                {category.opis}
+              </p>
+            )}
+
+            {/* Subcategories (Children) */}
+            {category.children && category.children.length > 0 && (
+              <div className="mb-8 flex flex-wrap gap-x-2 gap-y-2">
+                {category.children.slice(0, 6).map((child) => (
+                  <Link 
+                    key={child.id} 
+                    href={`/kategorie/${category.slug}/${child.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+                  >
+                    <IconRenderer 
+                      iconName={child.ikona} 
+                      iconUrl={child.ikonaUrl} 
+                      fallback={category.typ === "SPRAWY_FIRMOWE" ? Briefcase : Scale}
+                      className="h-3 w-3"
+                    />
+                    {child.nazwa}
+                  </Link>
+                ))}
+                {category.children.length > 6 && (
+                  <Link 
+                    href={`/kategorie/${category.slug}`}
+                    className="inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground hover:text-primary transition-colors font-medium"
+                  >
+                    +{category.children.length - 6} więcej...
+                  </Link>
+                )}
               </div>
+            )}
+            
+            <div className="mt-auto pt-6 border-t border-border/40 flex items-center justify-between">
+              <div className="flex gap-6">
+                 <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
+                    <span className="text-sm font-semibold">{category._count?.lawFirms || 0}</span>
+                 </div>
+                 <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
+                    <span className="text-sm font-semibold">{category._count?.cases || 0}</span>
+                 </div>
+              </div>
+              <Link 
+                href={`/kategorie/${category.slug}`}
+                className="flex items-center gap-1 text-xs font-bold text-primary opacity-60 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"
+              >
+                <span>SZCZEGÓŁY</span>
+                <ChevronRight className="h-3 w-3" />
+              </Link>
             </div>
-          </MagicCard>
-        </Link>
+          </div>
+        </MagicCard>
       ))}
     </div>
   )

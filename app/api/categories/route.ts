@@ -24,6 +24,7 @@ export async function GET() {
           select: {
             id: true,
             nazwa: true,
+            slug: true,
           },
         },
         children: {
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
           select: {
             id: true,
             nazwa: true,
+            slug: true,
           },
         },
         children: {

@@ -10,11 +10,20 @@ $success = false;
 $error   = '';
 
 function esc(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
+function slackEsc(string $v): string { return str_replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], $v); }
 $old = fn(string $k) => esc($_POST[$k] ?? '');
 
-/** Wysyła wiadomość tekstową na Slack */
-function sendSlackMessage(string $token, string $channel, string $description, string $url): array
+/** Wysyła wiadomość tekstową na Slack (opcjonalnie z obrazkiem) */
+function sendSlackMessage(string $token, string $channel, string $description, string $url, string $fileId = ''): array
 {
+    $urlEsc = slackEsc($url);
+    $descEsc = slackEsc($description);
+
+    // Slack limits for text are 3000 chars. Let's truncate description.
+    if (mb_strlen($descEsc) > 2900) {
+        $descEsc = mb_substr($descEsc, 0, 2897) . '...';
+    }
+
     $blocks = [
         [
             'type' => 'header',
@@ -23,19 +32,28 @@ function sendSlackMessage(string $token, string $channel, string $description, s
         [
             'type'   => 'section',
             'fields' => [
-                ['type' => 'mrkdwn', 'text' => "*Adres URL:*\n<{$url}|{$url}>"],
+                ['type' => 'mrkdwn', 'text' => "*Adres URL:*\n<{$urlEsc}|{$urlEsc}>"],
             ],
         ],
         [
             'type' => 'section',
-            'text' => ['type' => 'mrkdwn', 'text' => "*Opis:*\n{$description}"],
+            'text' => ['type' => 'mrkdwn', 'text' => "*Opis:*\n{$descEsc}"],
         ],
-        ['type' => 'divider'],
     ];
+
+    if ($fileId) {
+        $blocks[] = [
+            'type' => 'image',
+            'slack_file' => ['id' => $fileId],
+            'alt_text' => 'Załączony obrazek do zgłoszenia'
+        ];
+    }
+
+    $blocks[] = ['type' => 'divider'];
 
     $payload = json_encode([
         'channel'    => $channel,
-        'text'       => "Adres do wglądu zmiany: {$url}",
+        'text'       => "Nowe zgłoszenie: {$urlEsc}",
         'blocks'     => $blocks,
         'username'   => 'FormularzoBot',
         'icon_emoji' => ':clipboard:',
@@ -57,31 +75,90 @@ function sendSlackMessage(string $token, string $channel, string $description, s
     curl_close($ch);
 
     if ($errno) return ['ok' => false, 'error' => 'Błąd cURL: ' . curl_strerror($errno)];
-    return json_decode($response, true) ?? ['ok' => false, 'error' => 'Nieprawidłowa odpowiedź'];
+    
+    $result = json_decode($response, true);
+    if (!($result['ok'] ?? false)) {
+        $msg = $result['error'] ?? 'nieznany błąd';
+        if (!empty($result['response_metadata']['messages'])) {
+            $msg .= ' (' . implode(', ', $result['response_metadata']['messages']) . ')';
+        }
+        return ['ok' => false, 'error' => $msg];
+    }
+    
+    return $result;
 }
 
-/** Wysyła plik (obrazek) na kanał Slack */
-function uploadSlackImage(string $token, string $channel, array $file, string $caption): array
+/** Wysyła plik (obrazek) na Slack i zwraca jego ID (bez publikowania na kanale) */
+function uploadSlackImage(string $token, array $file): array
 {
-    $ch = curl_init('https://slack.com/api/files.upload');
+    // 1. files.getUploadURLExternal
+    $ch = curl_init('https://slack.com/api/files.getUploadURLExternal');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => [
-            'channels'        => $channel,
-            'initial_comment' => $caption,
-            'filename'        => $file['name'],
-            'file'            => new CURLFile($file['tmp_name'], $file['type'], $file['name']),
+        CURLOPT_POSTFIELDS     => http_build_query([
+            'filename' => $file['name'],
+            'length'   => $file['size'],
+        ]),
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Bearer ' . $token,
         ],
-        CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $token],
     ]);
-
-    $response = curl_exec($ch);
-    $errno    = curl_errno($ch);
+    $res1 = json_decode(curl_exec($ch), true);
+    if (curl_errno($ch) || !($res1['ok'] ?? false)) {
+        $err = $res1['error'] ?? curl_error($ch);
+        curl_close($ch);
+        return ['ok' => false, 'error' => 'getUploadURLExternal: ' . $err];
+    }
     curl_close($ch);
 
-    if ($errno) return ['ok' => false, 'error' => 'Błąd cURL (upload): ' . curl_strerror($errno)];
-    return json_decode($response, true) ?? ['ok' => false, 'error' => 'Nieprawidłowa odpowiedź (upload)'];
+    $uploadUrl = $res1['upload_url'];
+    $fileId    = $res1['file_id'];
+
+    // 2. Upload pliku do otrzymanego URL
+    $fileData = file_get_contents($file['tmp_name']);
+    $ch = curl_init($uploadUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $fileData,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: ' . $file['type'],
+        ],
+    ]);
+    $res2 = curl_exec($ch);
+    if (curl_errno($ch)) {
+        $err = curl_error($ch);
+        curl_close($ch);
+        return ['ok' => false, 'error' => 'Upload to URL: ' . $err];
+    }
+    curl_close($ch);
+
+    // 3. files.completeUploadExternal
+    $ch = curl_init('https://slack.com/api/files.completeUploadExternal');
+    $payload = json_encode([
+        'files' => [['id' => $fileId, 'title' => $file['name']]],
+        // Nie podajemy channel_id, aby nie wysyłać osobnej wiadomości
+    ]);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json; charset=utf-8',
+            'Authorization: Bearer ' . $token,
+        ],
+    ]);
+    $res3 = json_decode(curl_exec($ch), true);
+    if (curl_errno($ch) || !($res3['ok'] ?? false)) {
+        $err = $res3['error'] ?? curl_error($ch);
+        curl_close($ch);
+        return ['ok' => false, 'error' => 'completeUploadExternal: ' . $err];
+    }
+    curl_close($ch);
+
+    return ['ok' => true, 'file_id' => $fileId];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -109,25 +186,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$error) {
-        // 1. Wyślij wiadomość tekstową
-        $msgResult = sendSlackMessage(SLACK_BOT_TOKEN, SLACK_CHANNEL_ID, $description, $url);
-
-        if (!$msgResult['ok']) {
-            $error = 'Błąd wysyłki wiadomości: ' . ($msgResult['error'] ?? 'nieznany');
-        } else {
-            // 2. Opcjonalnie wyślij obrazek
-            if ($hasImage && !$error) {
-                $imgResult = uploadSlackImage(
-                    SLACK_BOT_TOKEN,
-                    SLACK_CHANNEL_ID,
-                    $_FILES['image'],
-                    '🖼️ Załączony obrazek do zgłoszenia: ' . $url
-                );
-                if (!$imgResult['ok']) {
-                    $error = 'Wiadomość wysłana, ale upload obrazka się nie powiódł: ' . ($imgResult['error'] ?? 'nieznany');
-                }
+        $fileId = '';
+        
+        // 1. Jeśli jest obrazek, najpierw go wgraj
+        if ($hasImage) {
+            $imgResult = uploadSlackImage(SLACK_BOT_TOKEN, $_FILES['image']);
+            if (!$imgResult['ok']) {
+                $error = 'Błąd uploadu obrazka: ' . ($imgResult['error'] ?? 'nieznany');
+            } else {
+                $fileId = $imgResult['file_id'];
+                // Poczekaj chwilę na przetworzenie obrazka przez Slack (race condition)
+                sleep(1);
             }
-            if (!$error) $success = true;
+        }
+
+        // 2. Wyślij wiadomość (z fileId lub bez)
+        if (!$error) {
+            $msgResult = sendSlackMessage(SLACK_BOT_TOKEN, SLACK_CHANNEL_ID, $description, $url, $fileId);
+            if (!$msgResult['ok']) {
+                $error = 'Błąd wysyłki wiadomości: ' . ($msgResult['error'] ?? 'nieznany');
+            } else {
+                $success = true;
+            }
         }
     }
 }

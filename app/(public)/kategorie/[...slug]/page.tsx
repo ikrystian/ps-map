@@ -30,6 +30,11 @@ interface Category {
   opis: string | null
   metaTitle: string | null
   metaDescription: string | null
+  parent?: {
+    id: string
+    nazwa: string
+    slug: string
+  } | null
   children: Array<{
     id: string
     nazwa: string
@@ -110,10 +115,11 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 
 export default function CategoryPage() {
   const params = useParams()
-  const slugArray = params.slug as string[]
-  const slug = Array.isArray(slugArray) ? slugArray[slugArray.length - 1] : (slugArray as unknown as string)
+  const slugArray = Array.isArray(params.slug) ? params.slug : [params.slug as string]
+  const slug = slugArray[slugArray.length - 1]
 
   const [category, setCategory] = useState<Category | null>(null)
+  const [allCategories, setAllCategories] = useState<Category[]>([])
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -137,20 +143,21 @@ export default function CategoryPage() {
 
   // Fetch category data
   useEffect(() => {
-    const fetchCategory = async () => {
+    const fetchCategories = async () => {
       try {
         const response = await fetch(`/api/categories`)
         if (response.ok) {
-          const categories = await response.json()
-          const currentCategory = categories.find((cat: Category) => cat.slug === slug)
+          const data = await response.json()
+          setAllCategories(data)
+          const currentCategory = data.find((cat: Category) => cat.slug === slug)
           setCategory(currentCategory || null)
         }
       } catch (error) {
-        console.error("Error fetching category:", error)
+        console.error("Error fetching categories:", error)
       }
     }
 
-    fetchCategory()
+    fetchCategories()
   }, [slug])
 
   // Fetch voivodeships on mount
@@ -268,6 +275,23 @@ export default function CategoryPage() {
             <Link href="/kategorie" className="hover:text-white transition-colors">
               Kategorie
             </Link>
+            
+            {slugArray.length > 1 && slugArray.slice(0, -1).map((s, index) => {
+              const cat = allCategories.find(c => c.slug === s)
+              if (!cat) return null
+              return (
+                <div key={cat.id} className="flex items-center gap-2">
+                  <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
+                  <Link 
+                    href={`/kategorie/${slugArray.slice(0, index + 1).join('/')}`} 
+                    className="hover:text-white transition-colors"
+                  >
+                    {cat.nazwa}
+                  </Link>
+                </div>
+              )
+            })}
+
             <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
             <span className="text-white font-medium">
               {category ? category.nazwa : <Skeleton className="h-4 w-24 inline-block bg-neutral-800" />}

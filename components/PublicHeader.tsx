@@ -73,6 +73,11 @@ export default function PublicHeader({
     fetchCategories()
   }, [])
 
+  // Close search form on pathname change
+  useEffect(() => {
+    setSearchFormOpen(false)
+  }, [pathname])
+
   // Split categories into two groups (firmowe/prywatne)
   const firmoweCat = categories.filter(c => c.typ === 'SPRAWY_FIRMOWE')
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
