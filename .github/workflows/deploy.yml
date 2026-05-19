@@ -1,0 +1,72 @@
+# .github/workflows/deploy.yml
+name: Deploy on push to main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate commits payload
+        id: commits
+        run: |
+          echo "Creating commits.json..."
+
+          jq -n \
+            --arg repository "${{ github.repository }}" \
+            --arg pusher "${{ github.actor }}" \
+            --arg ref "${{ github.ref_name }}" \
+            --arg before "${{ github.event.before }}" \
+            --arg after "${{ github.sha }}" \
+            --argjson commits '[
+              ${{ toJson(github.event.commits) }}
+            ]' \
+            '{
+              repository: $repository,
+              branch: $ref,
+              pusher: $pusher,
+              before: $before,
+              after: $after,
+              commits: (
+                $commits | map({
+                  id: .id,
+                  message: .message,
+                  author: .author.name,
+                  timestamp: .timestamp,
+                  added: .added,
+                  modified: .modified,
+                  removed: .removed
+                })
+              )
+            }' > commits.json
+
+          cat commits.json
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /root/projects/ps-map 
+
+            git pull origin main
+          EOF
+
+      - name: Send webhook with commits
+        run: |
+          curl -X POST "${{ secrets.WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data @commits.json
