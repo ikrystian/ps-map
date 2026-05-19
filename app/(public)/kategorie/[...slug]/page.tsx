@@ -110,7 +110,8 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 
 export default function CategoryPage() {
   const params = useParams()
-  const slug = params.slug as string
+  const slugArray = params.slug as string[]
+  const slug = Array.isArray(slugArray) ? slugArray[slugArray.length - 1] : (slugArray as unknown as string)
 
   const [category, setCategory] = useState<Category | null>(null)
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
@@ -310,7 +311,7 @@ export default function CategoryPage() {
                 <h3 className="text-sm font-semibold mb-3">Podkategorie:</h3>
                 <div className="flex flex-wrap gap-2">
                   {category.children.map((child) => (
-                    <Link key={child.id} href={`/kategorie/${child.slug}`}>
+                    <Link key={child.id} href={`/kategorie/${category.slug}/${child.slug}`}>
                       <Badge variant="outline" className="hover:bg-accent cursor-pointer">
                         {child.nazwa}
                       </Badge>

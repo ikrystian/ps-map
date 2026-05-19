@@ -78,17 +78,17 @@ export default function PublicHeader({
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
 
   const isEksperciActive = pathname === "/szukaj-prawnika" || pathname?.startsWith("/szukaj-prawnika/")
-  
+
   const isFirmoweActive = firmoweCat.some(
     (category) =>
       pathname === `/kategorie/${category.slug}` ||
-      (category.children && category.children.some((child) => pathname === `/kategorie/${child.slug}`))
+      (category.children && category.children.some((child) => pathname === `/kategorie/${category.slug}/${child.slug}`))
   )
-  
+
   const isPrywatneActive = prywatneCat.some(
     (category) =>
       pathname === `/kategorie/${category.slug}` ||
-      (category.children && category.children.some((child) => pathname === `/kategorie/${child.slug}`))
+      (category.children && category.children.some((child) => pathname === `/kategorie/${category.slug}/${child.slug}`))
   )
 
   const isMapaActive = pathname === "/mapa"
@@ -170,10 +170,10 @@ export default function PublicHeader({
                               {category.children.slice(0, 5).map((child) => (
                                 <Link
                                   key={child.id}
-                                  href={`/kategorie/${child.slug}`}
+                                  href={`/kategorie/${category?.slug}/${child.slug}`}
                                   className={cn(
                                     "block text-sm transition-colors hover:text-primary",
-                                    pathname === `/kategorie/${child.slug}`
+                                    pathname === `/kategorie/${category?.slug}/${child.slug}`
                                       ? "text-primary font-medium"
                                       : "text-muted-foreground"
                                   )}
@@ -231,10 +231,10 @@ export default function PublicHeader({
                               {category.children.slice(0, 5).map((child) => (
                                 <Link
                                   key={child.id}
-                                  href={`/kategorie/${child.slug}`}
+                                  href={`/kategorie/${category?.slug}/${child.slug}`}
                                   className={cn(
                                     "block text-sm transition-colors hover:text-primary",
-                                    pathname === `/kategorie/${child.slug}`
+                                    pathname === `/kategorie/${category?.slug}/${child.slug}`
                                       ? "text-primary font-medium"
                                       : "text-muted-foreground"
                                   )}
