@@ -104,6 +104,94 @@ const CasesIcon = () => (
   </svg>
 )
 
+// Section 3 Specific SVGs
+const PillarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-8 h-8 text-[#0da192]">
+    {/* Greek/Roman style law pillar */}
+    <path d="M4 4h16M5 7h14" strokeLinecap="round" />
+    <line x1="8" y1="7" x2="8" y2="17" strokeLinecap="round" />
+    <line x1="12" y1="7" x2="12" y2="17" strokeLinecap="round" />
+    <line x1="16" y1="7" x2="16" y2="17" strokeLinecap="round" />
+    <path d="M5 17h14M3 20h18" strokeLinecap="round" />
+  </svg>
+)
+
+const UserPlusIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-8 h-8 text-[#0da192]">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="8.5" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="20" y1="8" x2="20" y2="14" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="17" y1="11" x2="23" y2="11" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const HomeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-8 h-8 text-[#0da192]">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" strokeLinecap="round" strokeLinejoin="round" />
+    <polyline points="9 22 9 12 15 12 15 22" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const DoubleCheckmarkLogo = () => (
+  <div className="flex items-center mr-3.5 relative w-8 h-8">
+    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+      {/* First checkmark in gold */}
+      <path
+        d="M 4 17 L 10 23 L 16 11"
+        stroke="#eab308"
+        strokeWidth="3.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Second checkmark in teal, overlapping beautifully */}
+      <path
+        d="M 10 17 L 16 23 L 26 11"
+        stroke="#0da192"
+        strokeWidth="3.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  </div>
+)
+
+// Section 5 Specific High-Fidelity SVGs
+const UserPlusOutlineIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-9 h-9 text-[#0da192] mx-auto mb-5">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="8.5" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="20" y1="8" x2="20" y2="14" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="17" y1="11" x2="23" y2="11" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const CalendarCheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-9 h-9 text-[#0da192] mx-auto mb-5">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="16" y1="2" x2="16" y2="6" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="8" y1="2" x2="8" y2="6" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="3" y1="10" x2="21" y2="10" strokeLinecap="round" strokeLinejoin="round" />
+    <polyline points="9 16 11 18 15 13" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const GraphUpIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-9 h-9 text-[#0da192] mx-auto mb-5">
+    <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" strokeLinecap="round" strokeLinejoin="round" />
+    <polyline points="15 8 19 8 19 12" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const SafePaymentIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-9 h-9 text-[#0da192] mx-auto mb-5">
+    <rect x="2" y="5" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="2" y1="10" x2="22" y2="10" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M6 14h2M10 14h1" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18 13v4M16 15h4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
 export default function ForLawyersPage() {
   const router = useRouter()
   const { toast } = useToast()
@@ -156,19 +244,19 @@ export default function ForLawyersPage() {
       title: "Tworzenie profilu...",
       description: "Przenosimy Cię do formularza rejestracji kancelarii.",
     })
-    
+
     // Redirect to registration with prepopulated query parameters
     const params = new URLSearchParams()
     params.set("role", kimJestes)
     params.set("category", kategoria)
     if (lokalizacja) params.set("city", lokalizacja)
-    
+
     router.push(`/rejestracja/kancelaria?${params.toString()}`)
   }
 
   return (
     <div className="bg-[#121212] min-h-screen text-white font-sans">
-      
+
       {/* SECTION 1: Załóż konto eksperta i dodaj ogłoszenie */}
       <section className="relative bg-[#121212] flex flex-col justify-center items-center py-24 px-4 overflow-hidden">
         {/* Cinematic Ambient Glow */}
@@ -191,7 +279,7 @@ export default function ForLawyersPage() {
               <span className="text-sm font-medium text-white tracking-wide">
                 Wysłane zgłoszenia
               </span>
-              <span 
+              <span
                 onClick={() => router.push("/cennik")}
                 className="text-[#0da192] hover:text-[#00897b] text-sm font-medium cursor-pointer transition-colors duration-200"
               >
@@ -206,7 +294,7 @@ export default function ForLawyersPage() {
                 <label className="block text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2.5">
                   Kim jesteś?
                 </label>
-                
+
                 {/* Select Trigger */}
                 <div
                   onClick={() => {
@@ -385,9 +473,9 @@ export default function ForLawyersPage() {
 
           {/* Benefits Vertical Cards Grid */}
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-            
+
             {/* Card 1: Zwiększ Zasięg */}
-            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer aspect-[3.8/5] min-h-[360px] shadow-xl">
+            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl">
               <div className="flex flex-col items-center mt-2">
                 <span className="text-[23px] font-medium text-white tracking-wide">Zwiększ</span>
                 <span className="text-[23px] font-medium text-white tracking-wide mt-0.5">zasięg</span>
@@ -398,7 +486,7 @@ export default function ForLawyersPage() {
             </div>
 
             {/* Card 2: Buduj Markę */}
-            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer aspect-[3.8/5] min-h-[360px] shadow-xl">
+            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl">
               <div className="flex flex-col items-center mt-2">
                 <span className="text-[23px] font-medium text-white tracking-wide">Buduj</span>
                 <span className="text-[23px] font-medium text-white tracking-wide mt-0.5">markę</span>
@@ -409,7 +497,7 @@ export default function ForLawyersPage() {
             </div>
 
             {/* Card 3: Zdobywaj więcej spraw */}
-            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer aspect-[3.8/5] min-h-[360px] shadow-xl">
+            <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-sm p-12 flex flex-col items-center justify-between text-center hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer  shadow-xl">
               <div className="flex flex-col items-center mt-2">
                 <span className="text-[23px] font-medium text-white tracking-wide">Zdobywaj</span>
                 <span className="text-[23px] font-medium text-white tracking-wide mt-0.5">więcej spraw</span>
@@ -428,6 +516,425 @@ export default function ForLawyersPage() {
           >
             Zarejestruj się
           </button>
+        </div>
+      </section>
+
+      {/* SECTION 3: Jak założyć konto? */}
+      <section className="relative bg-[#121212] border-t border-neutral-900 flex flex-col justify-center items-center py-24 px-4 overflow-hidden">
+        {/* Cinematic Ambient Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[350px] bg-gradient-to-b from-neutral-800/5 to-transparent blur-[120px] pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-5xl flex flex-col items-center">
+          {/* Section Header */}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3.5 text-center">
+            PROSTA SPRAWA!
+          </p>
+          <h2 className="text-3xl md:text-[38px] font-semibold text-white tracking-tight text-center leading-tight mb-20 max-w-2xl font-sans">
+            Jak założyć konto?
+          </h2>
+
+          {/* 3 Step-by-Step Columns */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
+
+            {/* Step 01 */}
+            <div className="flex flex-col items-center text-center">
+              <span className="text-[34px] font-light text-neutral-600 mb-4 tracking-wider font-sans">01</span>
+              <div className="w-16 h-16 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
+                <PillarIcon />
+              </div>
+              <h3 className="text-base font-semibold text-white mb-3 tracking-wide leading-snug">
+                Wypełnij formularz<br />rejestracyjny
+              </h3>
+              <p className="text-[11px] text-neutral-400 font-normal leading-relaxed max-w-[240px]">
+                Podaj dane kontaktowe, wybierz specjalizacje i dodaj podstawowe informacje o swojej działalności.
+              </p>
+            </div>
+
+            {/* Step 02 */}
+            <div className="flex flex-col items-center text-center">
+              <span className="text-[34px] font-light text-neutral-600 mb-4 tracking-wider font-sans">02</span>
+              <div className="w-16 h-16 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
+                <UserPlusIcon />
+              </div>
+              <h3 className="text-base font-semibold text-white mb-3 tracking-wide leading-snug">
+                Uzupełnij<br />profil
+              </h3>
+              <p className="text-[11px] text-neutral-400 font-normal leading-relaxed max-w-[240px]">
+                Dodaj opis, zdjęcia, firmy, doświadczenie, lokalizacje, w których świadczysz usługi. Im bardziej kompletny profil tym większa szansa na pozyskanie klientów.
+              </p>
+            </div>
+
+            {/* Step 03 */}
+            <div className="flex flex-col items-center text-center">
+              <span className="text-[34px] font-light text-neutral-600 mb-4 tracking-wider font-sans">03</span>
+              <div className="w-16 h-16 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
+                <HomeIcon />
+              </div>
+              <h3 className="text-base font-semibold text-white mb-3 tracking-wide leading-snug">
+                Zacznij otrzymywać<br />sprawy
+              </h3>
+              <p className="text-[11px] text-neutral-400 font-normal leading-relaxed max-w-[240px]">
+                Po zatwierdzeniu profilu zobaczysz sprawy dopasowane do Twojej specjalizacji. Składaj oferty i zdobywaj nowych klientów.
+              </p>
+            </div>
+
+          </div>
+
+          {/* Double Checkmark Action Button */}
+          <div className="mt-16 flex justify-center items-center w-full">
+            <button
+              onClick={() => router.push("/dodaj-sprawe")}
+              className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3 px-8 rounded-md transition-all duration-200 flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer"
+            >
+              <DoubleCheckmarkLogo />
+              <span className="font-semibold text-sm tracking-wide">Dodaj sprawę</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: Jak to działa? */}
+      <section className="relative bg-[#1a1a17] border-t border-neutral-900 flex flex-col justify-center items-center py-24 px-4 overflow-hidden">
+        {/* Cinematic Ambient Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[350px] bg-gradient-to-b from-neutral-800/5 to-transparent blur-[120px] pointer-events-none z-0" />
+
+        {/* Giant checkmark logo watermark behind devices */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[420px] md:w-[600px] h-[320px] md:h-[450px] opacity-[0.035] pointer-events-none z-0">
+          <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
+            <path
+              d="M 12 52 L 36 76 L 88 24"
+              stroke="url(#watermarkGrad)"
+              strokeWidth="9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <defs>
+              <linearGradient id="watermarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#eab308" />
+                <stop offset="100%" stopColor="#0da192" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl flex flex-col items-center">
+          {/* Section Header */}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3 text-center">
+            PROSTA SPRAWA
+          </p>
+          <h2 className="text-3xl md:text-[38px] font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl font-sans">
+            Jak to działa?
+          </h2>
+          <p className="text-[12px] text-neutral-400 font-normal leading-relaxed text-center mb-16 max-w-xl mx-auto">
+            Dodaj swoją sprawę bez zbędnych formalności, czekaj na oferty i wybierz tę, która najlepiej odpowiada Twoim potrzebom.
+          </p>
+
+          {/* Interactive Layout: Steps Left + Devices + Steps Right */}
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-5 items-center z-10 mb-14">
+
+            {/* Left Steps: 01 & 02 */}
+            <div className="lg:col-span-3 flex flex-col gap-6 items-center lg:items-end justify-center">
+
+              {/* Card 01 */}
+              <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">01.</span>
+                <h4 className="text-[11px] font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
+                  Załóż profil eksperta
+                </h4>
+                <p className="text-[11px] text-neutral-400 font-normal leading-relaxed">
+                  Przedstaw swoje doświadczenie oraz specjalizację.
+                </p>
+              </div>
+
+              {/* Card 02 */}
+              <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">02.</span>
+                <h4 className="text-[11px] font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
+                  Sprawy dopasowane do Twoich usług
+                </h4>
+                <p className="text-[11px] text-neutral-400 font-normal leading-relaxed">
+                  Użytkownicy zgłaszają problemy, a Ty możesz na nie odpowiadać.
+                </p>
+              </div>
+
+            </div>
+
+            {/* Center Devices Mockup Column */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-center py-6">
+
+              <div className="relative flex flex-col items-center justify-center">
+
+                {/* Laptop Screen Mockup */}
+                <div className="relative w-[280px] sm:w-[380px] md:w-[440px] h-[170px] sm:h-[220px] md:h-[260px] bg-[#161616] rounded-t-xl border-t-[6px] md:border-t-8 border-x-[6px] md:border-x-8 border-[#2b2b2b] shadow-2xl overflow-hidden z-10">
+                  {/* Inner content representing homepage */}
+                  <div className="absolute inset-0 bg-[#0f0f0e] flex flex-col justify-between p-2 md:p-3 select-none">
+                    {/* Header inside mockup */}
+                    <div className="flex items-center justify-between border-b border-neutral-900 pb-1.5 text-[5px] md:text-[6px] text-neutral-500">
+                      <div className="flex items-center gap-0.5">
+                        <div className="w-1 h-1 rounded-full bg-[#0da192]" />
+                        <span className="font-semibold text-white text-[6px] md:text-[7px]">prostasprawa</span>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <span>Szukaj</span>
+                        <span>Eksperci</span>
+                        <span>Mapa</span>
+                      </div>
+                    </div>
+                    {/* Hero Section inside mockup */}
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-1 md:p-2">
+                      <span className="text-[4.5px] md:text-[5px] uppercase tracking-wider text-neutral-500 font-semibold mb-0.5">PROSTA SPRAWA</span>
+                      <h4 className="text-[8px] sm:text-[10px] md:text-[11px] font-bold text-white tracking-tight leading-tight max-w-[160px] md:max-w-[200px]">
+                        Rozwiązujemy Twoje problemy prawne
+                      </h4>
+                      <div className="flex gap-1 mt-1.5 md:mt-2">
+                        <div className="px-1 md:px-1.5 py-0.5 bg-[#0da192] text-[4.5px] md:text-[5px] text-white rounded font-medium">Znajdź prawnika</div>
+                        <div className="px-1 md:px-1.5 py-0.5 border border-[#2d2d2d] text-[4.5px] md:text-[5px] text-neutral-400 rounded font-medium">Dodaj sprawę</div>
+                      </div>
+                    </div>
+                    {/* Footer inside mockup */}
+                    <div className="flex items-center justify-between border-t border-neutral-900 pt-1 text-[4px] md:text-[5px] text-neutral-600">
+                      <span>© 2026 Prosta Sprawa</span>
+                      <span>Stworzone dla prawników</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Laptop Base */}
+                <div className="relative w-[320px] sm:w-[420px] md:w-[490px] h-[6px] md:h-[8px] bg-[#d1d5db] rounded-b-xl z-20 shadow-lg" />
+                <div className="relative w-[60px] md:w-[75px] h-[3px] md:h-[4px] bg-[#9ca3af] rounded-b-md mx-auto z-10" />
+
+                {/* Smartphone Mockup - beautifully positioned overlapping the laptop screen */}
+                <div className="absolute bottom-[-15px] left-[10px] sm:left-[30px] md:left-[45px] w-[80px] sm:w-[100px] md:w-[120px] h-[160px] sm:h-[190px] md:h-[230px] bg-[#1a1a1a] rounded-[16px] sm:rounded-[20px] border-[3px] md:border-[4px] border-[#2b2b2b] shadow-2xl overflow-hidden z-30 flex flex-col p-1.5">
+                  {/* Inner content representing Lawyer Profile card */}
+                  <div className="absolute inset-0 bg-[#161615] flex flex-col p-1.5 select-none justify-between">
+                    {/* Profile Header */}
+                    <div className="flex items-center gap-1 pb-0.5 border-b border-neutral-950">
+                      <div className="w-3.5 h-3.5 rounded-full bg-[#2a2a2a] flex items-center justify-center text-[5px] text-[#eab308] font-bold">
+                        JN
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[5px] sm:text-[6px] font-bold text-white leading-none">Jan Nowacki</span>
+                        <span className="text-[4px] sm:text-[5px] text-neutral-500 mt-0.5">Adwokat</span>
+                      </div>
+                    </div>
+                    {/* Profile Image & Detail Placeholder */}
+                    <div className="flex-1 flex flex-col items-center justify-center p-0.5">
+                      {/* Stylized Avatar Frame with standard lawyer avatar icon */}
+                      <div className="w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-[#222] border border-[#2d2d2d] flex items-center justify-center mb-1 overflow-hidden relative">
+                        {/* Detailed SVG Avatar representing the lawyer wearing glasses */}
+                        <svg viewBox="0 0 100 100" fill="none" className="w-7 h-7 text-neutral-400">
+                          {/* Hair */}
+                          <path d="M 25 40 C 25 20, 75 20, 75 40 Z" fill="#3a2a20" />
+                          {/* Face */}
+                          <circle cx="50" cy="45" r="22" fill="#e8c39e" />
+                          {/* Glasses */}
+                          <path d="M 38 42 H 48 M 52 42 H 62" stroke="#222" strokeWidth="2.5" />
+                          <circle cx="43" cy="42" r="5" stroke="#222" strokeWidth="2" />
+                          <circle cx="57" cy="42" r="5" stroke="#222" strokeWidth="2" />
+                          {/* Shirt & Body */}
+                          <path d="M 25 80 C 25 60, 75 60, 75 80 Z" fill="#1e293b" />
+                        </svg>
+                      </div>
+                      <span className="text-[5px] sm:text-[6px] text-neutral-400 font-medium text-center leading-none">Ocena: 5.0 ★</span>
+                    </div>
+                    {/* Profile Contact CTA button */}
+                    <div className="w-full bg-[#0da192] text-[5px] sm:text-[6px] text-white py-0.5 rounded text-center font-bold">
+                      Skontaktuj się
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Right Steps: 03 & 04 */}
+            <div className="lg:col-span-3 flex flex-col gap-6 items-center lg:items-start justify-center">
+
+              {/* Card 03 */}
+              <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">03.</span>
+                <h4 className="text-[11px] font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
+                  Składaj oferty i zdobywaj klientów
+                </h4>
+                <p className="text-[11px] text-neutral-400 font-normal leading-relaxed">
+                  Sam decydujesz, które sprawy chcesz obsługiwać.
+                </p>
+              </div>
+
+              {/* Card 04 */}
+              <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">04.</span>
+                <h4 className="text-[11px] font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
+                  Zarabiaj i zbuduj swoją markę
+                </h4>
+                <p className="text-[11px] text-neutral-400 font-normal leading-relaxed">
+                  Otrzymuj wynagrodzenie, zdobywaj opinie, zwiększaj swoją widoczność.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Center Action Button */}
+          <button
+            onClick={() => router.push("/o-nas")}
+            className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3.5 px-10 rounded-md transition-all duration-200 text-sm flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer w-full max-w-[240px] z-10"
+          >
+            Sprawdź jak to działa
+          </button>
+        </div>
+      </section>
+
+      {/* SECTION 5: Dlaczego warto? */}
+      <section className="relative bg-[#121212] border-t border-neutral-900 flex flex-col justify-center items-center py-24 px-4 overflow-hidden">
+        {/* Cinematic Ambient Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[350px] bg-gradient-to-b from-neutral-800/5 to-transparent blur-[120px] pointer-events-none z-0" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none z-0" />
+
+        {/* High-Fidelity SVG Rising Trend Graph in background */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06] sm:opacity-[0.08] select-none z-0">
+          <svg viewBox="0 0 1000 500" fill="none" className="w-full h-full" preserveAspectRatio="none">
+            <defs>
+              <filter id="glowArrow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="7" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <linearGradient id="lineVertGrad" x1="0" y1="100%" x2="0" y2="0">
+                <stop offset="0%" stopColor="#121212" stopOpacity="0.1" />
+                <stop offset="100%" stopColor="#0da192" stopOpacity="0.9" />
+              </linearGradient>
+              <linearGradient id="curveArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0da192" stopOpacity="0.1" />
+                <stop offset="60%" stopColor="#eab308" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#ffffff" stopOpacity="1.0" />
+              </linearGradient>
+            </defs>
+
+            {/* Rising Trend Bar Charts (grid lines matching user design exactly) */}
+            <g stroke="url(#lineVertGrad)" strokeWidth="1.75" strokeLinecap="round">
+              <line x1="500" y1="480" x2="500" y2="360" />
+              <line x1="560" y1="480" x2="560" y2="310" />
+              <line x1="620" y1="480" x2="620" y2="250" />
+              <line x1="680" y1="480" x2="680" y2="190" />
+              <line x1="740" y1="480" x2="740" y2="130" />
+              <line x1="800" y1="480" x2="800" y2="70" />
+            </g>
+
+            {/* Neon Dots on peak of lines */}
+            <g fill="#0da192" opacity="0.9">
+              <circle cx="500" cy="360" r="3.5" />
+              <circle cx="560" cy="310" r="3.5" />
+              <circle cx="620" cy="250" r="3.5" />
+              <circle cx="680" cy="190" r="3.5" />
+              <circle cx="740" cy="130" r="3.5" />
+              <circle cx="800" cy="70" r="3.5" />
+            </g>
+
+            {/* Glowing neon diagonally rising arrow */}
+            <path
+              d="M 380 430 Q 520 400 620 230 T 820 60"
+              stroke="url(#curveArrowGrad)"
+              strokeWidth="5"
+              strokeLinecap="round"
+              fill="none"
+              filter="url(#glowArrow)"
+            />
+
+            {/* Large arrowhead in white */}
+            <path
+              d="M 795 62 L 832 55 L 820 92 Z"
+              fill="#ffffff"
+              filter="url(#glowArrow)"
+            />
+          </svg>
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl flex flex-col items-center">
+          {/* Section Header */}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3 text-center">
+            PROSTA SPRAWA
+          </p>
+          <h2 className="text-3xl md:text-[38px] font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl font-sans">
+            Dlaczego warto?
+          </h2>
+          <p className="text-[12px] text-neutral-400 font-normal leading-relaxed text-center mb-20 max-w-xl mx-auto">
+            Dodaj swoją sprawę bez zbędnych formalności, czekaj na oferty i wybierz tę, która najlepiej odpowiada Twoim potrzebom.
+          </p>
+
+          {/* 4 Feature Columns */}
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mb-24">
+            
+            {/* Column 1: Nowi Klienci */}
+            <div className="flex flex-col items-center text-center group cursor-pointer">
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <UserPlusOutlineIcon />
+              </div>
+              <h3 className="text-sm font-semibold text-white mb-3 tracking-wide leading-snug max-w-[180px]">
+                Nowi klienci bez inwestycji w reklamę
+              </h3>
+              <p className="text-[11px] text-neutral-500 font-normal leading-relaxed max-w-[200px] group-hover:text-neutral-400 transition-colors duration-300">
+                Użytkownicy sami zgłaszają sprawy.
+              </p>
+            </div>
+
+            {/* Column 2: Elastyczność */}
+            <div className="flex flex-col items-center text-center group cursor-pointer">
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <CalendarCheckIcon />
+              </div>
+              <h3 className="text-sm font-semibold text-white mb-3 tracking-wide leading-snug max-w-[180px]">
+                Elastyczność przy wyborze zleceń
+              </h3>
+              <p className="text-[11px] text-neutral-500 font-normal leading-relaxed max-w-[200px] group-hover:text-neutral-400 transition-colors duration-300">
+                Wybierasz tylko te zlecenia, które Ci odpowiadają.
+              </p>
+            </div>
+
+            {/* Column 3: Wizerunek */}
+            <div className="flex flex-col items-center text-center group cursor-pointer">
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <GraphUpIcon />
+              </div>
+              <h3 className="text-sm font-semibold text-white mb-3 tracking-wide leading-snug max-w-[180px]">
+                Budowanie wizerunku eksperta
+              </h3>
+              <p className="text-[11px] text-neutral-500 font-normal leading-relaxed max-w-[200px] group-hover:text-neutral-400 transition-colors duration-300">
+                Zbieraj opinie i publikuj artykuły aby zwiększyć swoją rozpoznawalność.
+              </p>
+            </div>
+
+            {/* Column 4: Rozliczenia */}
+            <div className="flex flex-col items-center text-center group cursor-pointer">
+              <div className="transition-transform duration-300 group-hover:scale-105">
+                <SafePaymentIcon />
+              </div>
+              <h3 className="text-sm font-semibold text-white mb-3 tracking-wide leading-snug max-w-[180px]">
+                Proste i bezpieczne rozliczenia
+              </h3>
+              <p className="text-[11px] text-neutral-500 font-normal leading-relaxed max-w-[200px] group-hover:text-neutral-400 transition-colors duration-300">
+                Pieniądze trafiają do Ciebie po akceptacji oferty przez klienta.
+              </p>
+            </div>
+
+          </div>
+
+          {/* Bottom Action Footer Area */}
+          <div className="w-full flex flex-col items-center justify-center border-t border-neutral-900/60 pt-16 z-10">
+            <h3 className="text-lg md:text-xl font-medium text-white text-center mb-8 tracking-wide">
+              Zarejestruj się i zacznij zdobywać nowych klientów już dziś!
+            </h3>
+            
+            <button
+              onClick={() => router.push("/rejestracja/kancelaria")}
+              className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3.5 px-16 rounded-md transition-all duration-200 text-sm flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer w-full max-w-[260px]"
+            >
+              Zarejestruj się
+            </button>
+          </div>
         </div>
       </section>
 
