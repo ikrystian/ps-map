@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -15,6 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
 import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationHoursForm"
@@ -184,12 +186,15 @@ export default function LawFirmProfilePage() {
     setIsSaving(true)
 
     try {
+      // Wyklucz categoriesIds, aby nie nadpisać kolejności ustawionej w Zakresie usług
+      const { categoriesIds, ...dataToSave } = formData
+
       const response = await fetch(`/api/law-firms/${formData.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSave),
       })
 
       if (!response.ok) {
@@ -417,7 +422,7 @@ export default function LawFirmProfilePage() {
         <TabsList>
           <TabsTrigger value="basic">Podstawowe</TabsTrigger>
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
-          <TabsTrigger value="specialization">Specjalizacje</TabsTrigger>
+          <TabsTrigger value="specialization">Zakres usług</TabsTrigger>
           <TabsTrigger value="multimedia">Multimedia</TabsTrigger>
           <TabsTrigger value="consultations">Godziny konsultacji</TabsTrigger>
           <TabsTrigger value="additional">Dodatkowe</TabsTrigger>
@@ -813,114 +818,126 @@ export default function LawFirmProfilePage() {
           </Card>
         </TabsContent>
 
-        {/* Specjalizacje */}
+        {/* Zakres usług */}
         <TabsContent value="specialization" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Specjalizacje</CardTitle>
-              <CardDescription>Wybierz kategorie prawne, w których działasz</CardDescription>
+              <CardTitle>Zakres usług</CardTitle>
+              <CardDescription>Twoje wybrane specjalizacje i zakres świadczonych usług</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-2">
-                <Label>Kategorie prawne</Label>
-                <div className="grid md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto p-4 border rounded-lg">
-                  {categories.map((cat) => (
-                    <div key={cat.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`cat-${cat.id}`}
-                        checked={formData.categoriesIds.includes(cat.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            handleInputChange("categoriesIds", [...formData.categoriesIds, cat.id])
-                          } else {
-                            handleInputChange(
-                              "categoriesIds",
-                              formData.categoriesIds.filter((id) => id !== cat.id)
-                            )
-                          }
-                        }}
-                      />
-                      <label htmlFor={`cat-${cat.id}`} className="text-sm cursor-pointer">
-                        {cat.nazwa}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="unikatowyOpisUslugi">Unikalny opis usługi</Label>
-                <Textarea
-                  id="unikatowyOpisUslugi"
-                  value={formData.unikatowyOpisUslugi}
-                  onChange={(e) => handleInputChange("unikatowyOpisUslugi", e.target.value)}
-                  rows={4}
-                  placeholder="Opisz swoje unikalne podejście do świadczenia usług..."
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="slowoKluczowe">Słowa kluczowe</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="slowoKluczowe"
-                    placeholder="Dodaj słowo kluczowe..."
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault()
-                        const value = e.currentTarget.value.trim()
-                        if (value && !formData.slowaKluczowe.includes(value)) {
-                          handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
-                          e.currentTarget.value = ""
-                        }
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      const input = document.getElementById("slowoKluczowe") as HTMLInputElement
-                      const value = input.value.trim()
-                      if (value && !formData.slowaKluczowe.includes(value)) {
-                        handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
-                        input.value = ""
-                      }
-                    }}
-                  >
-                    Dodaj
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base">Wybrane kategorie</Label>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/panel-eksperta/zakres-uslug">
+                      Zarządzaj usługami
+                    </Link>
                   </Button>
                 </div>
-                {formData.slowaKluczowe.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.slowaKluczowe.map((keyword, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
-                      >
-                        <span>{keyword}</span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleInputChange(
-                              "slowaKluczowe",
-                              formData.slowaKluczowe.filter((_, i) => i !== index)
-                            )
-                          }}
-                          className="ml-1 hover:text-destructive"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                
+                {formData.categoriesIds.length > 0 ? (
+                  <div className="flex flex-wrap gap-2 p-4 border rounded-lg bg-muted/30">
+                    {formData.categoriesIds.map((id) => {
+                      const category = categories.find(c => c.id === id);
+                      return category ? (
+                        <Badge key={id} variant="secondary" className="px-3 py-1">
+                          {category.nazwa}
+                        </Badge>
+                      ) : null;
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <p className="text-muted-foreground mb-4">Nie wybrano jeszcze żadnych kategorii usług.</p>
+                    <Button variant="outline" asChild>
+                      <Link href="/panel-eksperta/zakres-uslug">
+                        Dodaj pierwsze usługi
+                      </Link>
+                    </Button>
                   </div>
                 )}
-                <p className="text-xs text-muted-foreground">
-                  Naciśnij Enter lub kliknij "Dodaj" aby dodać słowo kluczowe
-                </p>
               </div>
 
-              <div className="space-y-2">
-                <Label>Obszar działania</Label>
+              <Separator />
+
+              <div className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="unikatowyOpisUslugi">Unikalny opis usługi</Label>
+                  <Textarea
+                    id="unikatowyOpisUslugi"
+                    value={formData.unikatowyOpisUslugi}
+                    onChange={(e) => handleInputChange("unikatowyOpisUslugi", e.target.value)}
+                    rows={4}
+                    placeholder="Opisz swoje unikalne podejście do świadczenia usług..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Ten opis będzie widoczny na Twoim publicznym profilu w sekcji "Zakres usług".
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="slowoKluczowe">Słowa kluczowe</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="slowoKluczowe"
+                      placeholder="Dodaj słowo kluczowe..."
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault()
+                          const value = e.currentTarget.value.trim()
+                          if (value && !formData.slowaKluczowe.includes(value)) {
+                            handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
+                            e.currentTarget.value = ""
+                          }
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      onClick={(e) => {
+                        const input = document.getElementById("slowoKluczowe") as HTMLInputElement
+                        const value = input.value.trim()
+                        if (value && !formData.slowaKluczowe.includes(value)) {
+                          handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
+                          input.value = ""
+                        }
+                      }}
+                    >
+                      Dodaj
+                    </Button>
+                  </div>
+                  {formData.slowaKluczowe.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.slowaKluczowe.map((keyword, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
+                        >
+                          <span>{keyword}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleInputChange(
+                                "slowaKluczowe",
+                                formData.slowaKluczowe.filter((_, i) => i !== index)
+                              )
+                            }}
+                            className="ml-1 hover:text-destructive"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <Label className="text-base">Obszar działania</Label>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -944,39 +961,40 @@ export default function LawFirmProfilePage() {
                     </Label>
                   </div>
                 </div>
-              </div>
 
-              {!formData.callaPolska && (
-                <div className="grid gap-2">
-                  <Label>Województwa działania</Label>
-                  <div className="grid md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto p-4 border rounded-lg">
-                    {voivodeships.map((v) => (
-                      <div key={v.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`voiv-${v.id}`}
-                          checked={formData.voivodeshipsIds.includes(v.id)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              handleInputChange("voivodeshipsIds", [...formData.voivodeshipsIds, v.id])
-                            } else {
-                              handleInputChange(
-                                "voivodeshipsIds",
-                                formData.voivodeshipsIds.filter((id) => id !== v.id)
-                              )
-                            }
-                          }}
-                        />
-                        <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer">
-                          {v.nazwa}
-                        </label>
-                      </div>
-                    ))}
+                {!formData.callaPolska && (
+                  <div className="grid gap-2 pt-2">
+                    <Label>Województwa działania</Label>
+                    <div className="grid md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto p-4 border rounded-lg">
+                      {voivodeships.map((v) => (
+                        <div key={v.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`voiv-${v.id}`}
+                            checked={formData.voivodeshipsIds.includes(v.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                handleInputChange("voivodeshipsIds", [...formData.voivodeshipsIds, v.id])
+                              } else {
+                                handleInputChange(
+                                  "voivodeshipsIds",
+                                  formData.voivodeshipsIds.filter((id) => id !== v.id)
+                                )
+                              }
+                            }}
+                          />
+                          <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer">
+                            {v.nazwa}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
+
 
         {/* Multimedia */}
         <TabsContent value="multimedia" className="space-y-6">

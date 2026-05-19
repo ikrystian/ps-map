@@ -252,6 +252,12 @@ export default function LawFirmRegistrationPage() {
           return false
         }
         break
+      case 6:
+        if (formData.categoriesIds.length === 0) {
+          setError("Wybierz główną specjalizację")
+          return false
+        }
+        break
       case 7:
         if (!formData.typOferty) {
           setError("Wybierz typ oferty")
@@ -362,6 +368,7 @@ export default function LawFirmRegistrationPage() {
       }
 
       // Wyczyść dane z localStorage po pomyślnej rejestracji
+      setIsInitialized(false) // Zapobiega ponownemu zapisaniu w useEffect przed przekierowaniem
       localStorage.removeItem("law_firm_registration_data")
       localStorage.removeItem("law_firm_registration_step")
 
@@ -667,15 +674,22 @@ export default function LawFirmRegistrationPage() {
       case 5:
         return (
           <div className="space-y-6">
-            <div className="flex items-center space-x-3 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer transition-all hover:bg-primary/10"
-              onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
-              <Checkbox
-                id="callaPolska"
-                checked={formData.callaPolska}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, callaPolska: checked === true }))}
-                onClick={(e) => e.stopPropagation()}
-              />
-              <label htmlFor="callaPolska" className="text-sm font-medium cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
+            <div 
+              className={cn(
+                "flex items-center space-x-3 p-4 rounded-xl border-2 transition-all cursor-pointer",
+                formData.callaPolska 
+                  ? "bg-primary/5 border-primary shadow-sm" 
+                  : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+              )}
+              onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}
+            >
+              <div className={cn(
+                "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors",
+                formData.callaPolska ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+              )}>
+                {formData.callaPolska && <Check className="w-4 h-4" />}
+              </div>
+              <label htmlFor="callaPolska" className="text-sm font-semibold cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
                 Działam na terenie całej Polski
               </label>
             </div>
@@ -691,39 +705,43 @@ export default function LawFirmRegistrationPage() {
                   <Label>Województwa działania</Label>
                   <p className="text-sm text-muted-foreground">Wybierz województwa, w których świadczysz usługi stacjonarnie.</p>
                   <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card">
-                    {voivodeships.map((v) => (
-                      <div key={v.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-                        onClick={() => {
-                          setFormData(prev => {
-                            const exists = prev.voivodeshipsIds.includes(v.id)
-                            if (exists) {
-                              return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
-                            } else {
-                              return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
-                            }
-                          })
-                        }}>
-                        <Checkbox
-                          id={`voiv-${v.id}`}
-                          checked={formData.voivodeshipsIds.includes(v.id)}
-                          onCheckedChange={(checked) => {
+                    {voivodeships.map((v) => {
+                      const isSelected = formData.voivodeshipsIds.includes(v.id)
+                      return (
+                        <div 
+                          key={v.id} 
+                          className={cn(
+                            "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
+                            isSelected 
+                              ? "bg-primary/5 border-primary shadow-sm" 
+                              : "hover:bg-muted border-transparent"
+                          )}
+                          onClick={() => {
                             setFormData(prev => {
                               const exists = prev.voivodeshipsIds.includes(v.id)
-                              if (checked && !exists) {
-                                return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
-                              } else if (!checked && exists) {
+                              if (exists) {
                                 return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
+                              } else {
+                                return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
                               }
-                              return prev
                             })
                           }}
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
-                          {v.nazwa}
-                        </label>
-                      </div>
-                    ))}
+                        >
+                          <div className={cn(
+                            "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                          )}>
+                            {isSelected && <Check className="w-3.5 h-3.5" />}
+                          </div>
+                          <span className={cn(
+                            "text-sm transition-colors",
+                            isSelected ? "text-primary font-medium" : "text-muted-foreground"
+                          )}>
+                            {v.nazwa}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </motion.div>
               )}
@@ -735,58 +753,69 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="space-y-4">
-              <Label>Twoje specjalizacje *</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">Główna specjalizacja *</Label>
+                <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
+              </div>
               <p className="text-sm text-muted-foreground">
-                Zaznacz dziedziny prawa, w których posiadasz największe doświadczenie.
+                Zaznacz główną dziedzinę prawa, w której Twoja kancelaria się specjalizuje. 
+                Pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
-              <div className="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto p-4 border rounded-xl bg-card">
+              <div className="grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2">
                 {categories
                   .filter((cat) => !cat.parentId)
-                  .map((cat) => (
-                    <div
-                      key={cat.id}
-                      className={cn(
-                        "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
-                        formData.categoriesIds.includes(cat.id)
-                          ? "bg-primary/10 border-primary/30"
-                          : "hover:bg-muted border-transparent"
-                      )}
-                      onClick={() => {
-                        setFormData(prev => {
-                          const exists = prev.categoriesIds.includes(cat.id)
-                          if (exists) {
-                            return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
-                          } else {
-                            return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
-                          }
-                        })
-                      }}
-                    >
-                      <Checkbox
-                        id={`cat-${cat.id}`}
-                        checked={formData.categoriesIds.includes(cat.id)}
-                        onCheckedChange={(checked) => {
-                          setFormData(prev => {
-                            const exists = prev.categoriesIds.includes(cat.id)
-                            if (checked && !exists) {
-                              return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
-                            } else if (!checked && exists) {
-                              return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
-                            }
-                            return prev
-                          })
+                  .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
+                  .map((cat) => {
+                    const isSelected = formData.categoriesIds.includes(cat.id)
+                    return (
+                      <div
+                        key={cat.id}
+                        className={cn(
+                          "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                          isSelected
+                            ? "bg-primary/5 border-primary shadow-sm"
+                            : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                        )}
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            categoriesIds: [cat.id] // Tylko jedna pozycja
+                          }))
                         }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
-                        {cat.nazwa}
-                      </label>
-                    </div>
-                  ))}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className={cn(
+                            "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
+                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                          )}>
+                            {isSelected && <Check className="w-4 h-4" />}
+                          </div>
+                          <span className={cn(
+                            "text-sm font-medium transition-colors",
+                            isSelected ? "text-primary" : "text-foreground"
+                          )}>
+                            {cat.nazwa}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <div className="flex items-center text-[10px] font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
+                            Wybrano
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
               </div>
             </div>
+            {error && currentStep === 6 && (
+              <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg text-sm">
+                <AlertCircle className="w-4 h-4" />
+                <span>{error}</span>
+              </div>
+            )}
           </div>
         )
+
 
       case 7:
         return (
@@ -874,33 +903,41 @@ export default function LawFirmRegistrationPage() {
             )}
 
             <div className="space-y-4 pt-4 border-t border-border/50">
-              <div className="flex items-start space-x-3 group cursor-pointer"
-                onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}>
-                <Checkbox
-                  id="zgodaRegulamin"
-                  required
-                  checked={formData.zgodaRegulamin}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, zgodaRegulamin: checked === true }))}
-                  disabled={isLoading}
-                  className="mt-0.5"
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div 
+                className={cn(
+                  "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                  formData.zgodaRegulamin 
+                    ? "bg-primary/5 border-primary shadow-sm" 
+                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                )}
+                onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}
+              >
+                <div className={cn(
+                  "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
+                  formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                )}>
+                  {formData.zgodaRegulamin && <Check className="w-3.5 h-3.5" />}
+                </div>
                 <label htmlFor="zgodaRegulamin" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
                 </label>
               </div>
 
-              <div className="flex items-start space-x-3 group cursor-pointer"
-                onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}>
-                <Checkbox
-                  id="zgodaPrzetwarzanie"
-                  required
-                  checked={formData.zgodaPrzetwarzanie}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: checked === true }))}
-                  disabled={isLoading}
-                  className="mt-0.5"
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div 
+                className={cn(
+                  "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                  formData.zgodaPrzetwarzanie 
+                    ? "bg-primary/5 border-primary shadow-sm" 
+                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                )}
+                onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}
+              >
+                <div className={cn(
+                  "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
+                  formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                )}>
+                  {formData.zgodaPrzetwarzanie && <Check className="w-3.5 h-3.5" />}
+                </div>
                 <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
                 </label>

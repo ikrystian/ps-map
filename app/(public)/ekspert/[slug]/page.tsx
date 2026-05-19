@@ -875,35 +875,40 @@ export default function LawFirmProfilePage() {
                 {/* Badges */}
                 <BadgesSection badges={lawFirm.badges} />
 
-                {/* Unique Service Description */}
-                {lawFirm.unikatowyOpisUslugi && (
+                {/* Scope of Services & Specializations */}
+                {(lawFirm.unikatowyOpisUslugi || lawFirm.categories.length > 0 || (lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0)) && (
                   <Card>
                     <CardHeader>
                       <CardTitle>Zakres usług</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="whitespace-pre-wrap">{lawFirm.unikatowyOpisUslugi}</p>
+                    <CardContent className="space-y-4">
+                      {lawFirm.unikatowyOpisUslugi && (
+                        <p className="whitespace-pre-wrap">{lawFirm.unikatowyOpisUslugi}</p>
+                      )}
+                      
+                      {lawFirm.categories.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {lawFirm.categories.map((cat) => (
+                            <Badge key={cat.category.slug} variant="secondary">
+                              {cat.category.nazwa}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2 border-t mt-2">
+                          {lawFirm.slowaKluczowe.map((keyword, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 )}
 
-                {/* Specializations */}
-                {lawFirm.categories.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Specjalizacje</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        {lawFirm.categories.map((cat) => (
-                          <Badge key={cat.category.slug} variant="secondary">
-                            {cat.category.nazwa}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
 
                 {/* Education */}
                 {lawFirm.edukacja && lawFirm.edukacja.length > 0 && (

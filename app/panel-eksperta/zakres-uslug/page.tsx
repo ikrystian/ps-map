@@ -443,7 +443,7 @@ export default function LawFirmServicesPage() {
         {/* Selected Categories (Reorder with drag and drop) */}
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Twoje specjalizacje</CardTitle>
+            <CardTitle>Twój zakres usług</CardTitle>
             <CardDescription>
               Ustal kolejność wyświetlania kategorii na Twoim profilu. Przeciągnij i upuść aby zmienić kolejność.
             </CardDescription>
