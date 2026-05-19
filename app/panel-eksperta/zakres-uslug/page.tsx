@@ -170,14 +170,19 @@ export default function LawFirmServicesPage() {
         const selectedData = await selectedResponse.json()
         setSelectedCategories(selectedData.categories || [])
         setMainCategoryId(selectedData.mainCategoryId || null)
-      }
-
-      // Fetch settings for max categories
-      const settingsResponse = await fetch("/api/settings")
-      if (settingsResponse.ok) {
-        const settingsData = await settingsResponse.json()
-        const maxCat = parseInt(settingsData.maxLawFirmCategories || "10")
-        setMaxCategories(maxCat)
+        
+        // Use max categories from response if available
+        if (selectedData.maxCategories) {
+          setMaxCategories(selectedData.maxCategories)
+        } else {
+          // Fallback to settings if not provided in categories response
+          const settingsResponse = await fetch("/api/settings")
+          if (settingsResponse.ok) {
+            const settingsData = await settingsResponse.json()
+            const maxCat = parseInt(settingsData.maxLawFirmCategories || "10")
+            setMaxCategories(maxCat)
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching data:", error)

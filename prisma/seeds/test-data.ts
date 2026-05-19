@@ -17,7 +17,7 @@ export async function seedTestData(prisma: PrismaClient) {
 
       // 1. Stwórz użytkownika
       const randomUser = createRandomUser(prisma, role);
-      const hashedPassword = await bcrypt.hash(randomUser.password, 10);
+      const hashedPassword = await bcrypt.hash('password123', 10);
       const user = await prisma.user.upsert({
         where: { email: randomUser.email },
         update: {},

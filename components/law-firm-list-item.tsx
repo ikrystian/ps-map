@@ -225,7 +225,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                         {/* Logo Overlay - Bottom Right */}
                         {lawFirm.logo && (
                             <div className="absolute bottom-4 right-4 z-10">
-                                <div className="w-12 h-12 rounded-full border border-amber-400/30 bg-black/90 p-1 flex items-center justify-center shadow-xl overflow-hidden">
+                                <div className="w-24 h-24 rounded-full border border-amber-400/30 bg-black/90 p-1 flex items-center justify-center shadow-xl overflow-hidden">
                                     <Image
                                         src={lawFirm.logo}
                                         alt="Logo"

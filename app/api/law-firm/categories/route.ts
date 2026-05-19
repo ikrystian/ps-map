@@ -1,6 +1,49 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { hasActivePackage } from "@/lib/permissions"
+
+async function getMaxCategories(userId: string) {
+  const lawFirm = await prisma.lawFirm.findUnique({
+    where: { userId },
+    select: {
+      id: true,
+      pakietSubskrypcji: true,
+      dataPakietuOd: true,
+      dataPakietuDo: true,
+      autoRenewal: true,
+    },
+  })
+
+  if (!lawFirm) return 10
+
+  let maxCategories = 10
+
+  // 1. Pobierz domyślny limit z ustawień globalnych
+  const settings = await prisma.settings.findUnique({
+    where: { key: "maxLawFirmCategories" }
+  })
+  if (settings) {
+    maxCategories = parseInt(settings.value) || 10
+  }
+
+  // 2. Jeśli użytkownik ma aktywny pakiet, nadpisz limit wartością z pakietu
+  if (lawFirm.pakietSubskrypcji && hasActivePackage(lawFirm as any)) {
+    const plan = await prisma.subscriptionPlan.findUnique({
+      where: { typ: lawFirm.pakietSubskrypcji }
+    })
+    
+    if (plan) {
+      if (plan.kategorieSpraw === null) {
+        maxCategories = 999 // Brak limitu
+      } else {
+        maxCategories = plan.kategorieSpraw
+      }
+    }
+  }
+
+  return maxCategories
+}
 
 export async function GET() {
   try {
@@ -23,6 +66,9 @@ export async function GET() {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
+    // Get max categories
+    const maxCategories = await getMaxCategories(session.user.id)
+
     // Get law firm's selected categories
     const lawFirmCategories = await prisma.lawFirmCategory.findMany({
       where: { lawFirmId: lawFirm.id },
@@ -35,6 +81,7 @@ export async function GET() {
     return NextResponse.json({
       categories: lawFirmCategories,
       mainCategoryId: lawFirm.mainCategoryId,
+      maxCategories,
     })
   } catch (error) {
     console.error("Error fetching law firm categories:", error)
@@ -68,6 +115,15 @@ export async function PUT(request: Request) {
 
     if (!Array.isArray(categories)) {
       return NextResponse.json({ error: "Invalid categories data" }, { status: 400 })
+    }
+
+    // Sprawdź limit kategorii
+    const maxCategories = await getMaxCategories(session.user.id)
+    if (categories.length > maxCategories) {
+      return NextResponse.json(
+        { error: `Przekroczono maksymalną liczbę kategorii (${maxCategories}).` },
+        { status: 400 }
+      )
     }
 
     // Sprawdź czy główna kategoria jest na liście
@@ -109,9 +165,11 @@ export async function PUT(request: Request) {
     return NextResponse.json({
       categories: updatedCategories,
       mainCategoryId: lawFirm.mainCategoryId,
+      maxCategories,
     })
   } catch (error) {
     console.error("Error updating law firm categories:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
