@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    environment: env
+    environment: env # Upewnij się, że w GitHub Settings -> Environments masz stworzone środowisko o nazwie "env"
     runs-on: ubuntu-latest
 
     steps:
@@ -47,26 +47,31 @@ jobs:
           cat commits.json
 
       - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           mkdir -p ~/.ssh
-
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          # Użycie cudzysłowu zapobiega problemom z nowymi liniami w kluczu prywatnym
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+          ssh "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
-
             cd /root/projects/ps-map 
-
             git pull origin main
           EOF
 
       - name: Send webhook with commits
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          curl -X POST "${{ secrets.WEBHOOK_URL }}" \
+          curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             --data @commits.json
