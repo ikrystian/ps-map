@@ -1,6 +1,10 @@
+"use client"
+
 import Link from "next/link"
 import { ReactNode } from "react"
 import { NumberTicker } from "../ui/number-ticker"
+import { motion } from "motion/react"
+import { ArrowLeft } from "lucide-react"
 
 interface HeroStat {
   value: number
@@ -20,41 +24,106 @@ export function AuthLayout({
   heroTitle = "Twoja droga do rozwiązania problemów prawnych",
   heroDescription = "Połącz się z najlepszymi ekspertami prawnymi w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
   heroStats = [
-    { value:  200, unit: "+", label: "Prawników" },
-    { value:  500, unit: "+", label: "Spraw" },
+    { value: 200, unit: "+", label: "Prawników" },
+    { value: 500, unit: "+", label: "Spraw" },
     { value: 98, unit: "%", label: "Zadowolenia" },
   ],
 }: AuthLayoutProps) {
   return (
-    <div className="min-h-[calc(100dvh-65px)] grid lg:grid-cols-2">
+    <div className="min-h-[calc(100dvh-65px)] grid lg:grid-cols-2 bg-background">
       {/* Left Column - Form */}
-      <div className="flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
+      <div
+        className="flex flex-col items-center justify-center p-8 relative overflow-hidden"
+        id="left-column"
+      >
+        {/* Subtle decorative background elements */}
+        <div
+          className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)',
+            backgroundSize: '32px 32px'
+          }}
+        />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mt-64 z-0" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -ml-64 -mb-64 z-0" />
+
+        {/* Back to Home Link */}
+        <div className="absolute top-8 left-8 z-20">
+          <Link
+            href="/"
+            className="group flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Wróć do strony głównej
+          </Link>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="w-full max-w-xl space-y-8 relative z-10 py-12"
+        >
           {/* Logo/Brand */}
-          <div className="text-center">
-            <Link href="/" className="inline-block">
-              <h1 className="text-3xl font-bold">ProstaSprawa</h1>
+          <div className="text-center space-y-3">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl shadow-primary/20 ring-4 ring-primary/5 transition-transform group-hover:scale-105 group-hover:rotate-3">
+                P
+              </div>
+              <div className="text-left">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  ProstaSprawa
+                </h1>
+                <div className="h-1 w-12 bg-primary rounded-full mt-1" />
+              </div>
             </Link>
           </div>
 
           {/* Form Content */}
-          {children}
-        </div>
+          <div className="space-y-6">
+            {children}
+          </div>
+
+          <div className="pt-8 border-t border-border/50">
+            <p className="text-center text-xs text-muted-foreground">
+              © {new Date().getFullYear()} ProstaSprawa. Profesjonalna platforma prawna.
+              <br />
+              Wszystkie prawa zastrzeżone.
+            </p>
+          </div>
+        </motion.div>
       </div>
 
       {/* Right Column - Image/Hero */}
-      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary hero-image">
+      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary hero-image overflow-hidden">
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
         <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
-          <div className="max-w-md space-y-6 text-center">
-            <h2 className="text-4xl font-bold">{heroTitle}</h2>
-            <p className="text-lg text-white/90">{heroDescription}</p>
+          <div className="max-w-md space-y-8 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight">{heroTitle}</h2>
+              <p className="text-lg text-white/90 leading-relaxed font-medium">{heroDescription}</p>
+            </motion.div>
+
             {heroStats && heroStats.length > 0 && (
-              <div className="grid grid-cols-3 gap-8 pt-8">
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/20">
                 {heroStats.map((stat, index) => (
-                  <div key={index}>
-                    <div className="text-4xl font-bold"><NumberTicker value={stat.value} decimalPlaces={0} delay={index * 1}  />{stat.unit}</div>
-                    <div className="text-sm text-white/80">{stat.label}</div>
-                  </div>
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
+                  >
+                    <div className="text-3xl lg:text-4xl font-bold">
+                      <NumberTicker value={stat.value} decimalPlaces={0} delay={index * 0.2} className="text-white" />
+                      {stat.unit}
+                    </div>
+                    <div className="text-xs uppercase tracking-wider text-white/70 font-semibold mt-1">{stat.label}</div>
+                  </motion.div>
                 ))}
               </div>
             )}

@@ -1,15 +1,41 @@
 "use client"
 
+"use client"
+
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import { motion, AnimatePresence } from "motion/react"
+import { 
+  Briefcase, 
+  Building2, 
+  User, 
+  MapPin, 
+  Globe, 
+  Scale, 
+  Zap, 
+  Lock, 
+  ChevronRight, 
+  ChevronLeft,
+  CheckCircle2,
+  AlertCircle
+} from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
 import { AuthLayout } from "@/components/auth"
+import { cn } from "@/lib/utils"
 
 interface Voivodeship {
   id: string
@@ -22,9 +48,20 @@ interface Category {
   parentId?: string | null
 }
 
+const steps = [
+  { id: 1, title: "Działalność", icon: Briefcase },
+  { id: 2, title: "Firma", icon: Building2 },
+  { id: 3, title: "Kontakt", icon: User },
+  { id: 4, title: "Adres", icon: MapPin },
+  { id: 5, title: "Obszar", icon: Globe },
+  { id: 6, title: "Specjalizacje", icon: Scale },
+  { id: 7, title: "Oferta", icon: Zap },
+  { id: 8, title: "Konto", icon: Lock },
+]
+
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -74,7 +111,7 @@ export default function LawFirmRegistrationPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const totalSteps = session ? 7 : 8
+  const totalSteps = steps.length
 
   useEffect(() => {
     if (session?.user) {
@@ -172,6 +209,7 @@ export default function LawFirmRegistrationPage() {
     }
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -179,6 +217,7 @@ export default function LawFirmRegistrationPage() {
     setError("")
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -187,9 +226,6 @@ export default function LawFirmRegistrationPage() {
     setError("")
 
     if (currentStep < totalSteps) {
-      if (!validateStep()) {
-        return
-      }
       nextStep()
       return
     }
@@ -256,42 +292,54 @@ export default function LawFirmRegistrationPage() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="typ">Typ działalności *</Label>
-              <select
-                id="typ"
-                value={formData.typ}
-                onChange={(e) => setFormData({ ...formData, typ: e.target.value })}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                required
+              <Select 
+                value={formData.typ} 
+                onValueChange={(value) => setFormData({ ...formData, typ: value })}
               >
-                <option value="">Wybierz typ działalności</option>
-                <option value="OSOBA_FIZYCZNA">Osoba fizyczna</option>
-                <option value="SPOLKA_CYWILNA">Spółka cywilna</option>
-                <option value="SPOLKA_PARTNERSKA">Spółka partnerska</option>
-                <option value="SPOLKA_KOMANDYTOWA">Spółka komandytowa</option>
-                <option value="SPOLKA_JAWNA">Spółka jawna</option>
-                <option value="SPOLKA_ZOO">Spółka z o.o.</option>
-                <option value="INNY">Inny</option>
-              </select>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Wybierz typ działalności" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="OSOBA_FIZYCZNA">Osoba fizyczna</SelectItem>
+                  <SelectItem value="SPOLKA_CYWILNA">Spółka cywilna</SelectItem>
+                  <SelectItem value="SPOLKA_PARTNERSKA">Spółka partnerska</SelectItem>
+                  <SelectItem value="SPOLKA_KOMANDYTOWA">Spółka komandytowa</SelectItem>
+                  <SelectItem value="SPOLKA_JAWNA">Spółka jawna</SelectItem>
+                  <SelectItem value="SPOLKA_ZOO">Spółka z o.o.</SelectItem>
+                  <SelectItem value="INNY">Inny</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             {formData.typ === "INNY" && (
-              <div className="space-y-2">
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="space-y-2"
+              >
                 <Label htmlFor="typInny">Podaj typ działalności</Label>
                 <Input
                   id="typInny"
                   value={formData.typInny}
                   onChange={(e) => setFormData({ ...formData, typInny: e.target.value })}
+                  placeholder="Np. fundacja, stowarzyszenie..."
+                  className="h-11"
                 />
-              </div>
+              </motion.div>
             )}
+            <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Wybierz formę prawną Twojej działalności. Pomoże nam to dostosować dalsze kroki rejestracji.
+              </p>
+            </div>
           </div>
         )
 
       case 2:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="nazwa">Nazwa kancelarii *</Label>
               <Input
@@ -300,45 +348,56 @@ export default function LawFirmRegistrationPage() {
                 required
                 value={formData.nazwa}
                 onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })}
+                placeholder="Np. Kancelaria Adwokacka Jan Kowalski"
+                className="h-11"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nazwaFirmy">Nazwa firmy *</Label>
+              <Label htmlFor="nazwaFirmy">Pełna nazwa firmy (do faktur) *</Label>
               <Input
                 id="nazwaFirmy"
                 type="text"
                 required
                 value={formData.nazwaFirmy}
                 onChange={(e) => setFormData({ ...formData, nazwaFirmy: e.target.value })}
+                placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
+                className="h-11"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="nip">NIP *</Label>
-              <Input
-                id="nip"
-                type="text"
-                required
-                placeholder="0000000000"
-                value={formData.nip}
-                onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="regon">REGON</Label>
-              <Input
-                id="regon"
-                type="text"
-                value={formData.regon}
-                onChange={(e) => setFormData({ ...formData, regon: e.target.value })}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nip">NIP *</Label>
+                <Input
+                  id="nip"
+                  type="text"
+                  required
+                  placeholder="1234567890"
+                  value={formData.nip}
+                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="regon">REGON</Label>
+                <Input
+                  id="regon"
+                  type="text"
+                  placeholder="Opcjonalnie"
+                  value={formData.regon}
+                  onChange={(e) => setFormData({ ...formData, regon: e.target.value })}
+                  className="h-11"
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="krs">KRS</Label>
               <Input
                 id="krs"
                 type="text"
+                placeholder="Dla spółek handlowych"
                 value={formData.krs}
                 onChange={(e) => setFormData({ ...formData, krs: e.target.value })}
+                className="h-11"
               />
             </div>
           </div>
@@ -346,53 +405,40 @@ export default function LawFirmRegistrationPage() {
 
       case 3:
         return (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="imieKontakt">Imię kontaktowe *</Label>
-              <Input
-                id="imieKontakt"
-                type="text"
-                required
-                value={formData.imieKontakt}
-                onChange={(e) => setFormData({ ...formData, imieKontakt: e.target.value })}
-              />
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="imieKontakt">Imię *</Label>
+                <Input
+                  id="imieKontakt"
+                  type="text"
+                  required
+                  value={formData.imieKontakt}
+                  onChange={(e) => setFormData({ ...formData, imieKontakt: e.target.value })}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nazwiskoKontakt">Nazwisko *</Label>
+                <Input
+                  id="nazwiskoKontakt"
+                  type="text"
+                  required
+                  value={formData.nazwiskoKontakt}
+                  onChange={(e) => setFormData({ ...formData, nazwiskoKontakt: e.target.value })}
+                  className="h-11"
+                />
+              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nazwiskoKontakt">Nazwisko kontaktowe *</Label>
-              <Input
-                id="nazwiskoKontakt"
-                type="text"
-                required
-                value={formData.nazwiskoKontakt}
-                onChange={(e) => setFormData({ ...formData, nazwiskoKontakt: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stanowisko">Stanowisko</Label>
+              <Label htmlFor="stanowisko">Stanowisko / Tytuł zawodowy</Label>
               <Input
                 id="stanowisko"
                 type="text"
+                placeholder="Np. Adwokat, Radca Prawny"
                 value={formData.stanowisko}
                 onChange={(e) => setFormData({ ...formData, stanowisko: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="numerTelefonu">Telefon główny *</Label>
-              <Input
-                id="numerTelefonu"
-                type="tel"
-                required
-                value={formData.numerTelefonu}
-                onChange={(e) => setFormData({ ...formData, numerTelefonu: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="numerTelefonu2">Telefon dodatkowy</Label>
-              <Input
-                id="numerTelefonu2"
-                type="tel"
-                value={formData.numerTelefonu2}
-                onChange={(e) => setFormData({ ...formData, numerTelefonu2: e.target.value })}
+                className="h-11"
               />
             </div>
             <div className="space-y-2">
@@ -404,138 +450,185 @@ export default function LawFirmRegistrationPage() {
                 required
                 value={formData.emailKontakt}
                 onChange={(e) => setFormData({ ...formData, emailKontakt: e.target.value })}
+                className="h-11"
               />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="numerTelefonu">Telefon główny *</Label>
+                <Input
+                  id="numerTelefonu"
+                  type="tel"
+                  required
+                  value={formData.numerTelefonu}
+                  onChange={(e) => setFormData({ ...formData, numerTelefonu: e.target.value })}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="numerTelefonu2">Telefon dodatkowy</Label>
+                <Input
+                  id="numerTelefonu2"
+                  type="tel"
+                  placeholder="Opcjonalnie"
+                  value={formData.numerTelefonu2}
+                  onChange={(e) => setFormData({ ...formData, numerTelefonu2: e.target.value })}
+                  className="h-11"
+                />
+              </div>
             </div>
           </div>
         )
 
       case 4:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="adres">Adres *</Label>
+              <Label htmlFor="adres">Adres (ulica i numer) *</Label>
               <Input
                 id="adres"
                 type="text"
                 required
                 value={formData.adres}
                 onChange={(e) => setFormData({ ...formData, adres: e.target.value })}
+                placeholder="Np. ul. Warszawska 1/2"
+                className="h-11"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="kodPocztowy">Kod pocztowy *</Label>
-              <Input
-                id="kodPocztowy"
-                type="text"
-                placeholder="00-000"
-                required
-                value={formData.kodPocztowy}
-                onChange={(e) => setFormData({ ...formData, kodPocztowy: e.target.value })}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="kodPocztowy">Kod pocztowy *</Label>
+                <Input
+                  id="kodPocztowy"
+                  type="text"
+                  placeholder="00-000"
+                  required
+                  value={formData.kodPocztowy}
+                  onChange={(e) => setFormData({ ...formData, kodPocztowy: e.target.value })}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="miasto">Miasto *</Label>
+                <Input
+                  id="miasto"
+                  type="text"
+                  required
+                  value={formData.miasto}
+                  onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
+                  className="h-11"
+                />
+              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="miasto">Miasto *</Label>
-              <Input
-                id="miasto"
-                type="text"
-                required
-                value={formData.miasto}
-                onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="voivodeshipId">Województwo *</Label>
-              <select
-                id="voivodeshipId"
-                value={formData.voivodeshipId}
-                onChange={(e) => setFormData({ ...formData, voivodeshipId: e.target.value })}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                required
+              <Label htmlFor="voivodeshipId">Województwo siedziby *</Label>
+              <Select 
+                value={formData.voivodeshipId} 
+                onValueChange={(value) => setFormData({ ...formData, voivodeshipId: value })}
               >
-                <option value="">Wybierz województwo</option>
-                {voivodeships.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.nazwa}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Wybierz województwo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {voivodeships.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.nazwa}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         )
 
       case 5:
         return (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-4">
+          <div className="space-y-6">
+            <div className="flex items-center space-x-3 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer transition-all hover:bg-primary/10"
+                 onClick={() => setFormData({ ...formData, callaPolska: !formData.callaPolska })}>
               <Checkbox
                 id="callaPolska"
                 checked={formData.callaPolska}
                 onCheckedChange={(checked) => setFormData({ ...formData, callaPolska: checked === true })}
               />
-              <label htmlFor="callaPolska" className="text-sm cursor-pointer">
-                Działam w całej Polsce
+              <label htmlFor="callaPolska" className="text-sm font-medium cursor-pointer flex-1">
+                Działam na terenie całej Polski
               </label>
             </div>
-            {!formData.callaPolska && (
-              <div className="space-y-2">
-                <Label>Województwo działania *</Label>
-                <div className="text-sm text-muted-foreground mb-2">
-                  Wybierz województwo, w którym działasz
-                </div>
-                <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
-                  {voivodeships.map((v) => (
-                    <div key={v.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`voiv-${v.id}`}
-                        checked={formData.voivodeshipsIds.includes(v.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            // Single selection: replace array with just this ID
-                            setFormData({ ...formData, voivodeshipsIds: [v.id] })
-                          } else {
-                            // Allow deselecting
-                            setFormData({ ...formData, voivodeshipsIds: [] })
-                          }
-                        }}
-                      />
-                      <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer">
-                        {v.nazwa}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            
+            <AnimatePresence mode="wait">
+              {!formData.callaPolska && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-4"
+                >
+                  <Label>Województwa działania</Label>
+                  <p className="text-sm text-muted-foreground">Wybierz województwa, w których świadczysz usługi stacjonarnie.</p>
+                  <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card">
+                    {voivodeships.map((v) => (
+                      <div key={v.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                           onClick={() => {
+                             const exists = formData.voivodeshipsIds.includes(v.id)
+                             if (exists) {
+                               setFormData({ ...formData, voivodeshipsIds: formData.voivodeshipsIds.filter(id => id !== v.id) })
+                             } else {
+                               setFormData({ ...formData, voivodeshipsIds: [...formData.voivodeshipsIds, v.id] })
+                             }
+                           }}>
+                        <Checkbox
+                          id={`voiv-${v.id}`}
+                          checked={formData.voivodeshipsIds.includes(v.id)}
+                          onCheckedChange={() => {}} // Handled by div click
+                        />
+                        <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer flex-1">
+                          {v.nazwa}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )
 
       case 6:
         return (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Specjalizacje prawne *</Label>
-              <div className="text-sm text-muted-foreground mb-2">
-                Wybierz dziedziny prawa, w których się specjalizujesz
-              </div>
-              <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto p-2 border rounded-md">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Label>Twoje specjalizacje *</Label>
+              <p className="text-sm text-muted-foreground">
+                Zaznacz dziedziny prawa, w których posiadasz największe doświadczenie.
+              </p>
+              <div className="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto p-4 border rounded-xl bg-card">
                 {categories
                   .filter((cat) => !cat.parentId)
                   .map((cat) => (
-                    <div key={cat.id} className="flex items-center space-x-2">
+                    <div 
+                      key={cat.id} 
+                      className={cn(
+                        "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
+                        formData.categoriesIds.includes(cat.id) 
+                          ? "bg-primary/10 border-primary/30" 
+                          : "hover:bg-muted border-transparent"
+                      )}
+                      onClick={() => {
+                        const exists = formData.categoriesIds.includes(cat.id)
+                        if (exists) {
+                          setFormData({ ...formData, categoriesIds: formData.categoriesIds.filter(id => id !== cat.id) })
+                        } else {
+                          setFormData({ ...formData, categoriesIds: [...formData.categoriesIds, cat.id] })
+                        }
+                      }}
+                    >
                       <Checkbox
                         id={`cat-${cat.id}`}
                         checked={formData.categoriesIds.includes(cat.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            // Single selection: replace array with just this ID
-                            setFormData({ ...formData, categoriesIds: [cat.id] })
-                          } else {
-                            // Allow deselecting
-                            setFormData({ ...formData, categoriesIds: [] })
-                          }
-                        }}
+                        onCheckedChange={() => {}} // Handled by div click
                       />
-                      <label htmlFor={`cat-${cat.id}`} className="text-sm cursor-pointer">
+                      <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium cursor-pointer flex-1">
                         {cat.nazwa}
                       </label>
                     </div>
@@ -547,93 +640,119 @@ export default function LawFirmRegistrationPage() {
 
       case 7:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="typOferty">Typ oferty *</Label>
-              <select
-                id="typOferty"
-                value={formData.typOferty}
-                onChange={(e) => setFormData({ ...formData, typOferty: e.target.value })}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                required
+              <Label htmlFor="typOferty">Preferowany typ współpracy *</Label>
+              <Select 
+                value={formData.typOferty} 
+                onValueChange={(value) => setFormData({ ...formData, typOferty: value })}
               >
-                <option value="">Wybierz typ oferty</option>
-                <option value="KONSULTACJA">Konsultacja</option>
-                <option value="JEDNORAZOWA_USLUGA">Jednorazowa usługa</option>
-                <option value="STALA_WSPOLPRACA">Stała współpraca</option>
-                <option value="WSZYSTKIE">Wszystkie rodzaje</option>
-              </select>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Wybierz typ współpracy" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="KONSULTACJA">Jednorazowa konsultacja</SelectItem>
+                  <SelectItem value="JEDNORAZOWA_USLUGA">Konkretna usługa prawna</SelectItem>
+                  <SelectItem value="STALA_WSPOLPRACA">Stała obsługa prawna</SelectItem>
+                  <SelectItem value="WSZYSTKIE">Wszystkie rodzaje współpracy</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Informacja o preferowanym typie współpracy pomoże nam lepiej dopasować zapytania klientów do Twojej praktyki.
+              </p>
             </div>
           </div>
         )
 
       case 8:
-        if (session) return null // Skip step 8 if logged in
         return (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email (login) *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="twoj@email.pl"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Hasło *</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="zgodaRegulamin"
-                required
-                checked={formData.zgodaRegulamin}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, zgodaRegulamin: checked === true })
-                }
-                disabled={isLoading}
-              />
-              <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> *
-              </label>
-            </div>
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="zgodaPrzetwarzanie"
-                required
-                checked={formData.zgodaPrzetwarzanie}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, zgodaPrzetwarzanie: checked === true })
-                }
-                disabled={isLoading}
-              />
-              <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline">przetwarzanie danych osobowych</Link> *
-              </label>
+          <div className="space-y-6">
+            {!session ? (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email logowania (Twój login) *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="login@portal.pl"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    disabled={isLoading}
+                    className="h-11"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Hasło *</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      disabled={isLoading}
+                      className="h-11"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      disabled={isLoading}
+                      className="h-11"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 flex items-center gap-3">
+                <CheckCircle2 className="text-primary w-6 h-6 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Zalogowano przez Google/Facebook</p>
+                  <p className="text-xs text-muted-foreground">{session.user?.email}</p>
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-4 pt-4 border-t border-border/50">
+              <div className="flex items-start space-x-3 group cursor-pointer"
+                   onClick={() => setFormData({ ...formData, zgodaRegulamin: !formData.zgodaRegulamin })}>
+                <Checkbox
+                  id="zgodaRegulamin"
+                  required
+                  checked={formData.zgodaRegulamin}
+                  onCheckedChange={() => {}} // Handled by div click
+                  disabled={isLoading}
+                  className="mt-0.5"
+                />
+                <label htmlFor="zgodaRegulamin" className="text-sm leading-tight cursor-pointer">
+                  Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
+                </label>
+              </div>
+              
+              <div className="flex items-start space-x-3 group cursor-pointer"
+                   onClick={() => setFormData({ ...formData, zgodaPrzetwarzanie: !formData.zgodaPrzetwarzanie })}>
+                <Checkbox
+                  id="zgodaPrzetwarzanie"
+                  required
+                  checked={formData.zgodaPrzetwarzanie}
+                  onCheckedChange={() => {}} // Handled by div click
+                  disabled={isLoading}
+                  className="mt-0.5"
+                />
+                <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-tight cursor-pointer">
+                  Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
+                </label>
+              </div>
             </div>
           </div>
         )
@@ -643,137 +762,147 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
-  // Add a special case for the last step when logged in (which is step 7 effectively but we need to show consents)
-  // Actually, better to move consents to step 7 if logged in OR keep step 8 but hide password fields?
-  // Let's modify step 7 to include consents if logged in, OR keep step 8 but only show consents.
-  // The simplest way is to keep step 8 but only show consents if session exists.
-
-  if (currentStep === 8 && session) {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Potwierdzenie danych</Label>
-          <p className="text-sm text-muted-foreground">
-            Jesteś zalogowany jako <strong>{session.user?.email}</strong>.
-            Dokończ rejestrację akceptując regulamin.
-          </p>
-        </div>
-
-        <div className="flex items-start space-x-2">
-          <Checkbox
-            id="zgodaRegulamin"
-            required
-            checked={formData.zgodaRegulamin}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, zgodaRegulamin: checked === true })
-            }
-            disabled={isLoading}
-          />
-          <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> *
-          </label>
-        </div>
-        <div className="flex items-start space-x-2">
-          <Checkbox
-            id="zgodaPrzetwarzanie"
-            required
-            checked={formData.zgodaPrzetwarzanie}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, zgodaPrzetwarzanie: checked === true })
-            }
-            disabled={isLoading}
-          />
-          <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline">przetwarzanie danych osobowych</Link> *
-          </label>
-        </div>
-      </div>
-    )
-  }
-
-  const getStepTitle = () => {
-    switch (currentStep) {
-      case 1: return "Typ działalności"
-      case 2: return "Dane firmy"
-      case 3: return "Dane kontaktowe"
-      case 4: return "Adres siedziby"
-      case 5: return "Obszar działania"
-      case 6: return "Specjalizacje"
-      case 7: return "Typ oferty"
-      case 8: return session ? "Finalizacja" : "Dane logowania"
-      default: return ""
-    }
-  }
-
   return (
     <AuthLayout
-      heroTitle="Rozwijaj swoją kancelarię"
-      heroDescription="Dołącz do najlepszych prawników w Polsce. Zdobywaj nowych klientów i rozwijaj swoją praktykę prawną."
+      heroTitle="Rozwijaj swoją kancelarię z nami"
+      heroDescription="Dołącz do największej w Polsce platformy łączącej prawników z klientami. Zyskaj dostęp do nowych spraw i buduj swoją markę online."
       heroStats={[
-        { value: "2000+", label: "Prawników" },
-        { value: "10 000+", label: "Zapytań miesięcznie" },
-        { value: "95%", label: "Zadowolenia klientów" },
+        { value: 2500, unit: "+", label: "Kancelarii" },
+        { value: 12000, unit: "+", label: "Zapytań/mies." },
+        { value: 96, unit: "%", label: "Zadowolenia" },
       ]}
     >
       <Card className="border-none shadow-none bg-transparent">
-        <CardHeader className="space-y-1 px-0">
-          <CardTitle className="text-2xl font-bold">Rejestracja kancelarii</CardTitle>
-          <CardDescription>
-            Krok {currentStep} z {totalSteps}: {getStepTitle()}
-          </CardDescription>
-          <CardDescription>
-            Już masz konto?{" "}
-            <Link href="/logowanie" className="text-primary hover:underline">
-              Zaloguj się
-            </Link>
+        <CardHeader className="space-y-2 px-0 pt-0">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-3xl font-extrabold tracking-tight">Rejestracja</CardTitle>
+            <span className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
+              Krok {currentStep} / {totalSteps}
+            </span>
+          </div>
+          <CardDescription className="text-base">
+            {steps[currentStep - 1].title}
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-0">
-          {/* Progress bar */}
-          <div className="mb-6">
-            <div className="flex justify-between mb-2">
-              {Array.from({ length: totalSteps }, (_, i) => (
-                <div
-                  key={i}
-                  className={`h-2 flex-1 mx-1 rounded-full ${i + 1 <= currentStep ? "bg-primary" : "bg-muted"
-                    }`}
-                />
-              ))}
-            </div>
+        
+        <CardContent className="px-0 pt-6">
+          {/* Enhanced Progress Stepper */}
+          <div className="relative flex justify-between mb-16 px-2">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-muted -translate-y-1/2 z-0" />
+            <motion.div 
+              className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 origin-left"
+              initial={false}
+              animate={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            />
+            {steps.map((step) => {
+              const Icon = step.icon
+              const isActive = step.id <= currentStep
+              const isCurrent = step.id === currentStep
+              
+              return (
+                <div key={step.id} className="relative z-10 flex flex-col items-center">
+                  <motion.div
+                    animate={{
+                      scale: isCurrent ? 1.15 : 1,
+                      backgroundColor: isActive ? "var(--primary)" : "var(--muted)",
+                      color: isActive ? "white" : "var(--muted-foreground)",
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className={cn(
+                      "w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg transition-shadow duration-300",
+                      isActive ? "shadow-primary/25" : "shadow-none"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </motion.div>
+                  <span className={cn(
+                    "absolute -bottom-8 text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap transition-all duration-300 hidden md:block",
+                    isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-60",
+                    isCurrent ? "scale-110" : "scale-100"
+                  )}>
+                    {step.title}
+                  </span>
+                </div>
+              )
+            })}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                {error}
-              </div>
-            )}
+          <form onSubmit={handleSubmit} className="space-y-8 min-h-[400px] flex flex-col">
+            <AnimatePresence mode="wait">
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="rounded-xl bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20 flex items-center gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <p className="font-medium">{error}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {renderStep()}
+            <div className="flex-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -20, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  {renderStep()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-            <div className="flex justify-between gap-4 pt-4">
-              {currentStep > 1 && (
+            <div className="flex justify-between gap-4 pt-8 border-t border-border/50">
+              {currentStep > 1 ? (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={prevStep}
                   disabled={isLoading}
-                  className="w-full"
+                  className="flex-1 h-12 rounded-xl text-base font-semibold group"
                 >
+                  <ChevronLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
                   Wstecz
                 </Button>
+              ) : (
+                <div className="flex-1 flex flex-col justify-center">
+                   <Link href="/rejestracja" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center">
+                      <ChevronLeft className="mr-1 h-4 w-4" /> Zmień typ konta
+                   </Link>
+                </div>
               )}
+              
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full"
+                className="flex-1 h-12 rounded-xl text-base font-bold shadow-xl shadow-primary/20 group"
               >
                 {currentStep === totalSteps
                   ? isLoading
                     ? "Rejestrowanie..."
                     : "Zarejestruj się"
-                  : "Dalej"}
+                  : (
+                    <>
+                      Dalej
+                      <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </>
+                  )
+                }
               </Button>
+            </div>
+            
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Masz już konto?{" "}
+                <Link href="/logowanie" className="text-primary font-bold hover:underline">
+                  Zaloguj się
+                </Link>
+              </p>
             </div>
           </form>
         </CardContent>
