@@ -85,7 +85,6 @@ export default function HomePage() {
       <BenefitsSection />
 
       {/* SECTION 3: How It Works */}
-      <HowItWorksSection />
 
       {/* SECTION 4: Categories Grid */}
       <CategoriesGrid categories={categories} />
@@ -106,7 +105,7 @@ export default function HomePage() {
       <NewExperts newLawFirms={newLawFirms} />
 
       {/* SECTION 9: How It Works */}
-      <HowItWorksPlatform />
+      <HowItWorksSection />
 
       {/* SECTION 10: Latest Articles */}
       <LatestArticles blogPosts={blogPosts} />
