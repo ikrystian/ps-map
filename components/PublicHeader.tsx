@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -45,6 +46,7 @@ export default function PublicHeader({
   punktySaldo = 0,
   userId
 }: PublicHeaderProps) {
+  const pathname = usePathname()
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
   const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
   const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
@@ -74,6 +76,23 @@ export default function PublicHeader({
   // Split categories into two groups (firmowe/prywatne)
   const firmoweCat = categories.filter(c => c.typ === 'SPRAWY_FIRMOWE')
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
+
+  const isEksperciActive = pathname === "/szukaj-prawnika" || pathname?.startsWith("/szukaj-prawnika/")
+  
+  const isFirmoweActive = firmoweCat.some(
+    (category) =>
+      pathname === `/kategorie/${category.slug}` ||
+      (category.children && category.children.some((child) => pathname === `/kategorie/${child.slug}`))
+  )
+  
+  const isPrywatneActive = prywatneCat.some(
+    (category) =>
+      pathname === `/kategorie/${category.slug}` ||
+      (category.children && category.children.some((child) => pathname === `/kategorie/${child.slug}`))
+  )
+
+  const isMapaActive = pathname === "/mapa"
+  const isDlaPrawnikaActive = pathname === "/dla-prawnika"
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,15 +128,26 @@ export default function PublicHeader({
               </NavigationMenuItem>
 
               <NavigationMenuItem className="hidden md:flex">
-                <Link href="/szukaj-prawnika" className="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors">
+                <Link
+                  href="/szukaj-prawnika"
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 transition-colors hover:text-primary",
+                    isEksperciActive && "text-primary font-semibold"
+                  )}
+                >
                   Eksperci
                 </Link>
               </NavigationMenuItem>
 
-              {/* Sprawy Prywatne - Mega Menu */}
+              {/* Sprawy Firmowe - Mega Menu */}
               <NavigationMenuItem>
                 <DropdownMenu open={firmoweCategoriesOpen} onOpenChange={setFirmoweCategoriesOpen}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 px-4 py-2 hover:text-primary">
+                  <DropdownMenuTrigger
+                    className={cn(
+                      "flex items-center gap-1 px-4 py-2 hover:text-primary transition-colors",
+                      isFirmoweActive && "text-primary font-semibold"
+                    )}
+                  >
                     Sprawy firmowe
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
@@ -127,7 +157,10 @@ export default function PublicHeader({
                         <div key={category.id}>
                           <Link
                             href={`/kategorie/${category.slug}`}
-                            className="block font-semibold hover:text-primary mb-2"
+                            className={cn(
+                              "block font-semibold hover:text-primary mb-2 transition-colors",
+                              pathname === `/kategorie/${category.slug}` && "text-primary"
+                            )}
                             onClick={() => setFirmoweCategoriesOpen(false)}
                           >
                             {category.nazwa}
@@ -138,7 +171,12 @@ export default function PublicHeader({
                                 <Link
                                   key={child.id}
                                   href={`/kategorie/${child.slug}`}
-                                  className="block text-sm text-muted-foreground hover:text-primary"
+                                  className={cn(
+                                    "block text-sm transition-colors hover:text-primary",
+                                    pathname === `/kategorie/${child.slug}`
+                                      ? "text-primary font-medium"
+                                      : "text-muted-foreground"
+                                  )}
                                   onClick={() => setFirmoweCategoriesOpen(false)}
                                 >
                                   {child.nazwa}
@@ -165,7 +203,12 @@ export default function PublicHeader({
               {/* Sprawy Prywatne - Mega Menu */}
               <NavigationMenuItem>
                 <DropdownMenu open={prywatneCategoriesOpen} onOpenChange={setPrywatneCategoriesOpen}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 px-4 py-2 hover:text-primary">
+                  <DropdownMenuTrigger
+                    className={cn(
+                      "flex items-center gap-1 px-4 py-2 hover:text-primary transition-colors",
+                      isPrywatneActive && "text-primary font-semibold"
+                    )}
+                  >
                     Sprawy prywatne
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
@@ -175,7 +218,10 @@ export default function PublicHeader({
                         <div key={category.id}>
                           <Link
                             href={`/kategorie/${category.slug}`}
-                            className="block font-semibold hover:text-primary mb-2"
+                            className={cn(
+                              "block font-semibold hover:text-primary mb-2 transition-colors",
+                              pathname === `/kategorie/${category.slug}` && "text-primary"
+                            )}
                             onClick={() => setPrywatneCategoriesOpen(false)}
                           >
                             {category.nazwa}
@@ -185,8 +231,13 @@ export default function PublicHeader({
                               {category.children.slice(0, 5).map((child) => (
                                 <Link
                                   key={child.id}
-                                  href={`/kategorie/${category.slug}`}
-                                  className="block text-sm text-muted-foreground hover:text-primary"
+                                  href={`/kategorie/${child.slug}`}
+                                  className={cn(
+                                    "block text-sm transition-colors hover:text-primary",
+                                    pathname === `/kategorie/${child.slug}`
+                                      ? "text-primary font-medium"
+                                      : "text-muted-foreground"
+                                  )}
                                   onClick={() => setPrywatneCategoriesOpen(false)}
                                 >
                                   {child.nazwa}
@@ -212,7 +263,13 @@ export default function PublicHeader({
               {/* Mapa */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/mapa" className="px-4 py-2 hover:text-primary">
+                  <Link
+                    href="/mapa"
+                    className={cn(
+                      "px-4 py-2 hover:text-primary transition-colors",
+                      isMapaActive && "text-primary font-semibold"
+                    )}
+                  >
                     Mapa
                   </Link>
                 </NavigationMenuLink>
@@ -221,7 +278,13 @@ export default function PublicHeader({
               {/* Dla prawnika */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/dla-prawnika" className="px-4 py-2 hover:text-primary">
+                  <Link
+                    href="/dla-prawnika"
+                    className={cn(
+                      "px-4 py-2 hover:text-primary transition-colors",
+                      isDlaPrawnikaActive && "text-primary font-semibold"
+                    )}
+                  >
                     Dla prawnika
                   </Link>
                 </NavigationMenuLink>
