@@ -27,6 +27,7 @@ import {
   FileCode,
   UserCog,
   Upload,
+  MapPin,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
+  { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },
   { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
   { name: "Moduły", href: "/admin/modules", icon: FileCode },
   { name: "Blog", href: "/admin/blog", icon: BookOpen },

@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const category = searchParams.get("category")
     const voivodeship = searchParams.get("voivodeship")
+    const city = searchParams.get("city")
     const search = searchParams.get("search")
     const type = searchParams.get("type")
     const sortBy = searchParams.get("sortBy")
@@ -88,6 +89,10 @@ export async function GET(request: NextRequest) {
           callaPolska: true,
         },
       ]
+    }
+
+    if (city) {
+      where.miasto = { contains: city, mode: "insensitive" }
     }
 
     if (search) {

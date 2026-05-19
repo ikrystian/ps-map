@@ -24,7 +24,6 @@ import { Search, ChevronDown, Check, MapPin, IdCard, List, X } from "lucide-reac
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
-import { CITIES } from "@/components/homepage/cities-list"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
@@ -56,6 +55,7 @@ export default function PublicHeader({
   const [selectedType, setSelectedType] = useState("all")
   const [locationOpen, setLocationOpen] = useState(false)
   const [typeOpen, setTypeOpen] = useState(false)
+  const [cities, setCities] = useState<string[]>([])
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -70,7 +70,22 @@ export default function PublicHeader({
       }
     }
 
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("/api/cities")
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            setCities(data.map((c: any) => c.nazwa))
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      }
+    }
+
     fetchCategories()
+    fetchCities()
   }, [])
 
   // Close search form on pathname change
@@ -373,12 +388,12 @@ export default function PublicHeader({
                       <CommandList className="max-h-60 overflow-y-auto">
                         <CommandEmpty className="text-neutral-400 py-3 text-center text-sm">Nie znaleziono miasta.</CommandEmpty>
                         <CommandGroup>
-                          {CITIES.map((city) => (
+                          {cities.map((city) => (
                             <CommandItem
                               key={city}
                               value={city}
                               onSelect={(currentValue) => {
-                                const matchedCity = CITIES.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                                const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
                                 setSelectedCity(matchedCity === selectedCity ? "" : matchedCity)
                                 setLocationOpen(false)
                               }}

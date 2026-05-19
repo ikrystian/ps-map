@@ -23,6 +23,10 @@ import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIc
 import { MagicCard } from "@/components/magic-card"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { motion, AnimatePresence } from "framer-motion"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { cn } from "@/lib/utils"
+import { Check, X } from "lucide-react"
 
 interface LawFirm {
   id: string
@@ -105,7 +109,9 @@ export default function SearchLawyerPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [cities, setCities] = useState<string[]>([])
   const [total, setTotal] = useState(0)
+  const [locationOpen, setLocationOpen] = useState(false)
 
   // View mode
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
@@ -167,7 +173,22 @@ export default function SearchLawyerPage() {
       }
     }
 
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("/api/cities")
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            setCities(data.map((c: any) => c.nazwa))
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      }
+    }
+
     fetchFilters()
+    fetchCities()
   }, [])
 
   // Fetch law firms based on filters
@@ -327,11 +348,59 @@ export default function SearchLawyerPage() {
                     {/* City */}
                     <div className="space-y-2">
                       <Label className="text-xs">Miasto</Label>
-                      <Input
-                        placeholder="Wpisz miasto..."
-                        value={selectedCity}
-                        onChange={(e) => setSelectedCity(e.target.value)}
-                      />
+                      <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-10"
+                          >
+                            <span className="truncate">
+                              {selectedCity || "Wybierz miasto..."}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              {selectedCity && (
+                                <X 
+                                  className="h-3 w-3 text-muted-foreground hover:text-foreground" 
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setSelectedCity("")
+                                  }}
+                                />
+                              )}
+                              <ChevronDown className="h-4 w-4 opacity-50" />
+                            </div>
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0" align="start">
+                          <Command>
+                            <CommandInput placeholder="Szukaj miasta..." />
+                            <CommandList>
+                              <CommandEmpty>Nie znaleziono.</CommandEmpty>
+                              <CommandGroup>
+                                {cities.map((city) => (
+                                  <CommandItem
+                                    key={city}
+                                    value={city}
+                                    onSelect={(currentValue) => {
+                                      const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                                      setSelectedCity(matchedCity === selectedCity ? "" : matchedCity)
+                                      setLocationOpen(false)
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedCity === city ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    {city}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
                     {/* Type */}

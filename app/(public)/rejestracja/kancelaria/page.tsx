@@ -5,19 +5,20 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "motion/react"
-import { 
-  Briefcase, 
-  Building2, 
-  User, 
-  MapPin, 
-  Globe, 
-  Scale, 
-  Zap, 
-  Lock, 
-  ChevronRight, 
+import {
+  Briefcase,
+  Building2,
+  User,
+  MapPin,
+  Globe,
+  Scale,
+  Zap,
+  Lock,
+  ChevronRight,
   ChevronLeft,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ChevronDown
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -25,15 +26,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
 import { AuthLayout } from "@/components/auth"
 import { cn } from "@/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Check, X } from "lucide-react"
 
 interface Voivodeship {
   id: string
@@ -62,13 +66,15 @@ export default function LawFirmRegistrationPage() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  
+
   // Odczytaj krok z URL lub localStorage
   const [currentStep, setCurrentStep] = useState(1)
   const [isInitialized, setIsInitialized] = useState(false)
 
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [cities, setCities] = useState<any[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
   const [formData, setFormData] = useState({
     // Krok 1: Typ działalności
     typ: "",
@@ -155,7 +161,7 @@ export default function LawFirmRegistrationPage() {
         router.replace(`${pathname}?${params.toString()}`)
       }
     }
-    
+
     setIsInitialized(true)
   }, [])
 
@@ -199,6 +205,14 @@ export default function LawFirmRegistrationPage() {
         if (catRes.ok) {
           const catData = await catRes.json()
           setCategories(catData)
+        }
+
+        const cityRes = await fetch("/api/cities")
+        if (cityRes.ok) {
+          const cityData = await cityRes.json()
+          if (Array.isArray(cityData)) {
+            setCities(cityData)
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -365,8 +379,8 @@ export default function LawFirmRegistrationPage() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="typ">Typ działalności *</Label>
-              <Select 
-                value={formData.typ} 
+              <Select
+                value={formData.typ}
                 onValueChange={(value) => setFormData({ ...formData, typ: value })}
               >
                 <SelectTrigger className="h-11">
@@ -384,7 +398,7 @@ export default function LawFirmRegistrationPage() {
               </Select>
             </div>
             {formData.typ === "INNY" && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 className="space-y-2"
@@ -580,20 +594,59 @@ export default function LawFirmRegistrationPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="miasto">Miasto *</Label>
-                <Input
-                  id="miasto"
-                  type="text"
-                  required
-                  value={formData.miasto}
-                  onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
-                  className="h-11"
-                />
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={locationOpen}
+                      className="w-full justify-between h-11 font-normal"
+                      disabled={isLoading}
+                    >
+                      {formData.miasto || "Wybierz miasto..."}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Szukaj miasta..." />
+                      <CommandList>
+                        <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
+                        <CommandGroup>
+                          {cities.map((city) => (
+                            <CommandItem
+                              key={city.id}
+                              value={city.nazwa}
+                              onSelect={(currentValue) => {
+                                const matchedCity = cities.find(c => c.nazwa.toLowerCase() === currentValue.toLowerCase()) || city
+                                setFormData({ 
+                                  ...formData, 
+                                  miasto: matchedCity.nazwa,
+                                  voivodeshipId: matchedCity.voivodeshipId
+                                })
+                                setLocationOpen(false)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {city.nazwa}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="voivodeshipId">Województwo siedziby *</Label>
-              <Select 
-                value={formData.voivodeshipId} 
+              <Select
+                value={formData.voivodeshipId}
                 onValueChange={(value) => setFormData({ ...formData, voivodeshipId: value })}
               >
                 <SelectTrigger className="h-11">
@@ -615,7 +668,7 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="flex items-center space-x-3 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer transition-all hover:bg-primary/10"
-                 onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
+              onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
               <Checkbox
                 id="callaPolska"
                 checked={formData.callaPolska}
@@ -626,10 +679,10 @@ export default function LawFirmRegistrationPage() {
                 Działam na terenie całej Polski
               </label>
             </div>
-            
+
             <AnimatePresence mode="wait">
               {!formData.callaPolska && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -640,29 +693,29 @@ export default function LawFirmRegistrationPage() {
                   <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card">
                     {voivodeships.map((v) => (
                       <div key={v.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-                           onClick={() => {
-                             setFormData(prev => {
-                               const exists = prev.voivodeshipsIds.includes(v.id)
-                               if (exists) {
-                                 return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
-                               } else {
-                                 return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
-                               }
-                             })
-                           }}>
+                        onClick={() => {
+                          setFormData(prev => {
+                            const exists = prev.voivodeshipsIds.includes(v.id)
+                            if (exists) {
+                              return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
+                            } else {
+                              return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
+                            }
+                          })
+                        }}>
                         <Checkbox
                           id={`voiv-${v.id}`}
                           checked={formData.voivodeshipsIds.includes(v.id)}
                           onCheckedChange={(checked) => {
-                             setFormData(prev => {
-                               const exists = prev.voivodeshipsIds.includes(v.id)
-                               if (checked && !exists) {
-                                 return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
-                               } else if (!checked && exists) {
-                                 return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
-                               }
-                               return prev
-                             })
+                            setFormData(prev => {
+                              const exists = prev.voivodeshipsIds.includes(v.id)
+                              if (checked && !exists) {
+                                return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
+                              } else if (!checked && exists) {
+                                return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
+                              }
+                              return prev
+                            })
                           }}
                           onClick={(e) => e.stopPropagation()}
                         />
@@ -690,12 +743,12 @@ export default function LawFirmRegistrationPage() {
                 {categories
                   .filter((cat) => !cat.parentId)
                   .map((cat) => (
-                    <div 
-                      key={cat.id} 
+                    <div
+                      key={cat.id}
                       className={cn(
                         "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
-                        formData.categoriesIds.includes(cat.id) 
-                          ? "bg-primary/10 border-primary/30" 
+                        formData.categoriesIds.includes(cat.id)
+                          ? "bg-primary/10 border-primary/30"
                           : "hover:bg-muted border-transparent"
                       )}
                       onClick={() => {
@@ -713,15 +766,15 @@ export default function LawFirmRegistrationPage() {
                         id={`cat-${cat.id}`}
                         checked={formData.categoriesIds.includes(cat.id)}
                         onCheckedChange={(checked) => {
-                           setFormData(prev => {
-                             const exists = prev.categoriesIds.includes(cat.id)
-                             if (checked && !exists) {
-                               return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
-                             } else if (!checked && exists) {
-                               return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
-                             }
-                             return prev
-                           })
+                          setFormData(prev => {
+                            const exists = prev.categoriesIds.includes(cat.id)
+                            if (checked && !exists) {
+                              return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
+                            } else if (!checked && exists) {
+                              return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
+                            }
+                            return prev
+                          })
                         }}
                         onClick={(e) => e.stopPropagation()}
                       />
@@ -740,8 +793,8 @@ export default function LawFirmRegistrationPage() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="typOferty">Preferowany typ współpracy *</Label>
-              <Select 
-                value={formData.typOferty} 
+              <Select
+                value={formData.typOferty}
                 onValueChange={(value) => setFormData({ ...formData, typOferty: value })}
               >
                 <SelectTrigger className="h-11">
@@ -819,10 +872,10 @@ export default function LawFirmRegistrationPage() {
                 </div>
               </div>
             )}
-            
+
             <div className="space-y-4 pt-4 border-t border-border/50">
               <div className="flex items-start space-x-3 group cursor-pointer"
-                   onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}>
+                onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}>
                 <Checkbox
                   id="zgodaRegulamin"
                   required
@@ -836,9 +889,9 @@ export default function LawFirmRegistrationPage() {
                   Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
                 </label>
               </div>
-              
+
               <div className="flex items-start space-x-3 group cursor-pointer"
-                   onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}>
+                onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}>
                 <Checkbox
                   id="zgodaPrzetwarzanie"
                   required
@@ -883,12 +936,12 @@ export default function LawFirmRegistrationPage() {
             {steps[currentStep - 1].title}
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="px-0 pt-6">
           {/* Enhanced Progress Stepper */}
           <div className="relative flex justify-between mb-16 px-2">
             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-muted -translate-y-1/2 z-0" />
-            <motion.div 
+            <motion.div
               className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 origin-left"
               initial={false}
               animate={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
@@ -898,7 +951,7 @@ export default function LawFirmRegistrationPage() {
               const Icon = step.icon
               const isActive = step.id <= currentStep
               const isCurrent = step.id === currentStep
-              
+
               return (
                 <div key={step.id} className="relative z-10 flex flex-col items-center">
                   <motion.div
@@ -930,7 +983,7 @@ export default function LawFirmRegistrationPage() {
           <form onSubmit={handleSubmit} className="space-y-8 min-h-[400px] flex flex-col">
             <AnimatePresence mode="wait">
               {error && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -970,12 +1023,12 @@ export default function LawFirmRegistrationPage() {
                 </Button>
               ) : (
                 <div className="flex-1 flex flex-col justify-center">
-                   <Link href="/rejestracja" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center">
-                      <ChevronLeft className="mr-1 h-4 w-4" /> Zmień typ konta
-                   </Link>
+                  <Link href="/rejestracja" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center">
+                    <ChevronLeft className="mr-1 h-4 w-4" /> Zmień typ konta
+                  </Link>
                 </div>
               )}
-              
+
               <Button
                 type="submit"
                 disabled={isLoading}
@@ -994,7 +1047,7 @@ export default function LawFirmRegistrationPage() {
                 }
               </Button>
             </div>
-            
+
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Masz już konto?{" "}

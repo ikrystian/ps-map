@@ -14,7 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Search, Filter, ArrowLeft, Loader2 } from "lucide-react"
+import { Search, Filter, ArrowLeft, Loader2, Check, X, ChevronDown } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 import dynamic from "next/dynamic"
 
 const GoogleMap = dynamic(() => import("@/components/map/GoogleMap"), {
@@ -64,6 +67,8 @@ export default function MapPage() {
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [filteredLawFirms, setFilteredLawFirms] = useState<LawFirm[]>([])
   const [isLoadingFirms, setIsLoadingFirms] = useState(true)
+  const [cities, setCities] = useState<string[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -106,7 +111,22 @@ export default function MapPage() {
       }
     }
 
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("/api/cities")
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            setCities(data.map((c: any) => c.nazwa))
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      }
+    }
+
     fetchData()
+    fetchCities()
   }, [])
 
   // Apply filters
@@ -264,11 +284,59 @@ export default function MapPage() {
               {/* City */}
               <div className="space-y-2">
                 <Label className="text-xs">Miasto</Label>
-                <Input
-                  placeholder="Wpisz miasto..."
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                />
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-10"
+                    >
+                      <span className="truncate">
+                        {selectedCity || "Wybierz miasto..."}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {selectedCity && (
+                          <X 
+                            className="h-3 w-3 text-muted-foreground hover:text-foreground" 
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCity("")
+                            }}
+                          />
+                        )}
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                      </div>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Szukaj miasta..." />
+                      <CommandList>
+                        <CommandEmpty>Nie znaleziono.</CommandEmpty>
+                        <CommandGroup>
+                          {cities.map((city) => (
+                            <CommandItem
+                              key={city}
+                              value={city}
+                              onSelect={(currentValue) => {
+                                const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                                setSelectedCity(matchedCity === selectedCity ? "" : matchedCity)
+                                setLocationOpen(false)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedCity === city ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {city}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Min Rating */}

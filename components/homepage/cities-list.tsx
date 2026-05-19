@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { MapPin, ChevronDown, ChevronUp } from "lucide-react"
+import { MapPin, ChevronDown, ChevronUp, Loader2 } from "lucide-react"
 
 export const CITIES = [
   "Augustów", "Baranowo", "Bartoszyce", "Bełchatów", "Biała Podlaska",
@@ -58,9 +58,41 @@ export const CITIES = [
 ]
 
 export function CitiesList() {
+  const [cities, setCities] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const visibleCities = isExpanded ? CITIES : CITIES.slice(0, 25)
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await fetch("/api/cities")
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setCities(data.map((c: any) => c.nazwa))
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCities()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="py-16 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (cities.length === 0) {
+    return null
+  }
+
+  const visibleCities = isExpanded ? cities : cities.slice(0, 25)
 
   return (
     <section className="py-16 bg-card/50">
@@ -91,24 +123,26 @@ export function CitiesList() {
             ))}
           </div>
 
-          <div className="text-center mt-10">
-            <Button
-              onClick={() => setIsExpanded(!isExpanded)}
-              variant="outline"
-              size="lg"
-              className="gap-2 font-medium"
-            >
-              {isExpanded ? (
-                <>
-                  Pokaż mniej <ChevronUp className="h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  Pokaż więcej <ChevronDown className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
+          {cities.length > 25 && (
+            <div className="text-center mt-10">
+              <Button
+                onClick={() => setIsExpanded(!isExpanded)}
+                variant="outline"
+                size="lg"
+                className="gap-2 font-medium"
+              >
+                {isExpanded ? (
+                  <>
+                    Pokaż mniej <ChevronUp className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Pokaż więcej <ChevronDown className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>

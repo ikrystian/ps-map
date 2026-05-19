@@ -10,6 +10,10 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AuthLayout } from "@/components/auth"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { cn } from "@/lib/utils"
+import { Check, ChevronDown } from "lucide-react"
 
 export default function ClientRegistrationPage() {
   const router = useRouter()
@@ -28,6 +32,8 @@ export default function ClientRegistrationPage() {
   const [isInitialized, setIsInitialized] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [cities, setCities] = useState<string[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -54,6 +60,23 @@ export default function ClientRegistrationPage() {
     const { password, confirmPassword, ...dataToSave } = formData
     localStorage.setItem("client_registration_data", JSON.stringify(dataToSave))
   }, [formData, isInitialized])
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch("/api/cities")
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            setCities(data.map((c: any) => c.nazwa))
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      }
+    }
+    fetchCities()
+  }, [])
 
   useEffect(() => {
     if (session?.user) {
@@ -209,14 +232,49 @@ export default function ClientRegistrationPage() {
 
             <div className="space-y-2">
               <Label htmlFor="miasto">Miasto</Label>
-              <Input
-                id="miasto"
-                type="text"
-                value={formData.miasto}
-                onChange={(e) => setFormData({ ...formData, miasto: e.target.value })}
-                disabled={isLoading || !!session?.user}
-                className="h-11"
-              />
+              <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={locationOpen}
+                    className="w-full justify-between h-11 font-normal"
+                    disabled={isLoading || !!session?.user}
+                  >
+                    {formData.miasto || "Wybierz miasto..."}
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Szukaj miasta..." />
+                    <CommandList>
+                      <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
+                      <CommandGroup>
+                        {cities.map((city) => (
+                          <CommandItem
+                            key={city}
+                            value={city}
+                            onSelect={(currentValue) => {
+                              const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                              setFormData({ ...formData, miasto: matchedCity })
+                              setLocationOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                formData.miasto === city ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {city}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             {!session && (
