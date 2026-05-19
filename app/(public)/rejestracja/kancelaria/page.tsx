@@ -1,7 +1,5 @@
 "use client"
 
-"use client"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -114,14 +112,19 @@ export default function LawFirmRegistrationPage() {
   const totalSteps = steps.length
 
   useEffect(() => {
-    if (session?.user) {
-      setFormData(prev => ({
-        ...prev,
-        email: session.user.email || "",
-        emailKontakt: session.user.email || "",
-      }))
+    if (session?.user?.email) {
+      setFormData(prev => {
+        if (prev.email === session.user.email && prev.emailKontakt === session.user.email) {
+          return prev
+        }
+        return {
+          ...prev,
+          email: session.user.email || prev.email,
+          emailKontakt: session.user.email || prev.emailKontakt,
+        }
+      })
     }
-  }, [session])
+  }, [session?.user?.email])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -545,13 +548,14 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="flex items-center space-x-3 p-4 rounded-xl border border-primary/20 bg-primary/5 cursor-pointer transition-all hover:bg-primary/10"
-                 onClick={() => setFormData({ ...formData, callaPolska: !formData.callaPolska })}>
+                 onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
               <Checkbox
                 id="callaPolska"
                 checked={formData.callaPolska}
-                onCheckedChange={(checked) => setFormData({ ...formData, callaPolska: checked === true })}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, callaPolska: checked === true }))}
+                onClick={(e) => e.stopPropagation()}
               />
-              <label htmlFor="callaPolska" className="text-sm font-medium cursor-pointer flex-1">
+              <label htmlFor="callaPolska" className="text-sm font-medium cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
                 Działam na terenie całej Polski
               </label>
             </div>
@@ -570,19 +574,32 @@ export default function LawFirmRegistrationPage() {
                     {voivodeships.map((v) => (
                       <div key={v.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                            onClick={() => {
-                             const exists = formData.voivodeshipsIds.includes(v.id)
-                             if (exists) {
-                               setFormData({ ...formData, voivodeshipsIds: formData.voivodeshipsIds.filter(id => id !== v.id) })
-                             } else {
-                               setFormData({ ...formData, voivodeshipsIds: [...formData.voivodeshipsIds, v.id] })
-                             }
+                             setFormData(prev => {
+                               const exists = prev.voivodeshipsIds.includes(v.id)
+                               if (exists) {
+                                 return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
+                               } else {
+                                 return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
+                               }
+                             })
                            }}>
                         <Checkbox
                           id={`voiv-${v.id}`}
                           checked={formData.voivodeshipsIds.includes(v.id)}
-                          onCheckedChange={() => {}} // Handled by div click
+                          onCheckedChange={(checked) => {
+                             setFormData(prev => {
+                               const exists = prev.voivodeshipsIds.includes(v.id)
+                               if (checked && !exists) {
+                                 return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
+                               } else if (!checked && exists) {
+                                 return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
+                               }
+                               return prev
+                             })
+                          }}
+                          onClick={(e) => e.stopPropagation()}
                         />
-                        <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer flex-1">
+                        <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
                           {v.nazwa}
                         </label>
                       </div>
@@ -615,20 +632,33 @@ export default function LawFirmRegistrationPage() {
                           : "hover:bg-muted border-transparent"
                       )}
                       onClick={() => {
-                        const exists = formData.categoriesIds.includes(cat.id)
-                        if (exists) {
-                          setFormData({ ...formData, categoriesIds: formData.categoriesIds.filter(id => id !== cat.id) })
-                        } else {
-                          setFormData({ ...formData, categoriesIds: [...formData.categoriesIds, cat.id] })
-                        }
+                        setFormData(prev => {
+                          const exists = prev.categoriesIds.includes(cat.id)
+                          if (exists) {
+                            return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
+                          } else {
+                            return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
+                          }
+                        })
                       }}
                     >
                       <Checkbox
                         id={`cat-${cat.id}`}
                         checked={formData.categoriesIds.includes(cat.id)}
-                        onCheckedChange={() => {}} // Handled by div click
+                        onCheckedChange={(checked) => {
+                           setFormData(prev => {
+                             const exists = prev.categoriesIds.includes(cat.id)
+                             if (checked && !exists) {
+                               return { ...prev, categoriesIds: [...prev.categoriesIds, cat.id] }
+                             } else if (!checked && exists) {
+                               return { ...prev, categoriesIds: prev.categoriesIds.filter(id => id !== cat.id) }
+                             }
+                             return prev
+                           })
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                       />
-                      <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium cursor-pointer flex-1">
+                      <label htmlFor={`cat-${cat.id}`} className="text-sm font-medium cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
                         {cat.nazwa}
                       </label>
                     </div>
@@ -725,31 +755,33 @@ export default function LawFirmRegistrationPage() {
             
             <div className="space-y-4 pt-4 border-t border-border/50">
               <div className="flex items-start space-x-3 group cursor-pointer"
-                   onClick={() => setFormData({ ...formData, zgodaRegulamin: !formData.zgodaRegulamin })}>
+                   onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}>
                 <Checkbox
                   id="zgodaRegulamin"
                   required
                   checked={formData.zgodaRegulamin}
-                  onCheckedChange={() => {}} // Handled by div click
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, zgodaRegulamin: checked === true }))}
                   disabled={isLoading}
                   className="mt-0.5"
+                  onClick={(e) => e.stopPropagation()}
                 />
-                <label htmlFor="zgodaRegulamin" className="text-sm leading-tight cursor-pointer">
+                <label htmlFor="zgodaRegulamin" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
                 </label>
               </div>
               
               <div className="flex items-start space-x-3 group cursor-pointer"
-                   onClick={() => setFormData({ ...formData, zgodaPrzetwarzanie: !formData.zgodaPrzetwarzanie })}>
+                   onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}>
                 <Checkbox
                   id="zgodaPrzetwarzanie"
                   required
                   checked={formData.zgodaPrzetwarzanie}
-                  onCheckedChange={() => {}} // Handled by div click
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: checked === true }))}
                   disabled={isLoading}
                   className="mt-0.5"
+                  onClick={(e) => e.stopPropagation()}
                 />
-                <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-tight cursor-pointer">
+                <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
                 </label>
               </div>

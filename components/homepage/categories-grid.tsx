@@ -12,19 +12,19 @@ interface CategoriesGridProps {
   categories: Category[]
 }
 
-const CategoryCard = memo(({ 
-  category, 
-  index, 
-  hovered, 
-  setHovered, 
+const CategoryCard = memo(({
+  category,
+  index,
+  hovered,
+  setHovered,
   gridArea,
   imageUrl,
   aspectRatio,
   titleClassName = "text-white text-lg font-bold text-center"
-}: { 
-  category: Category, 
-  index: number, 
-  hovered: number | null, 
+}: {
+  category: Category,
+  index: number,
+  hovered: number | null,
   setHovered: (index: number | null) => void,
   gridArea?: string,
   imageUrl: string,
@@ -36,6 +36,7 @@ const CategoryCard = memo(({
       href={`/kategorie/${category.slug}`}
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
+      style={{ gridArea: gridArea ?? undefined }}
       className={cn(
         "relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
         gridArea && `[grid-area:${gridArea}]`,
@@ -101,10 +102,12 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           <div
             className="hidden lg:grid grid-cols-6 grid-rows-2 gap-4 max-w-full mx-auto mb-8 min-h-[500px]"
             style={{
-              gridTemplateAreas: `
-                "first second fourth sixth eighth nineth"
-                "first third fourth seventh eighth tenth"
-              `
+              display: undefined, // let Tailwind handle display
+              gridTemplateColumns: "repeat(6, 1fr)",
+              gridTemplateRows: "repeat(2, 1fr)",
+              gridTemplateAreas:
+                '"first second fourth sixth eighth nineth" ' +
+                '"first third fourth seventh eighth tenth"',
             }}
           >
             {categories.slice(0, 9).map((category, index) => (

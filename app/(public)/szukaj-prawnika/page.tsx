@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -98,6 +99,7 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 }
 
 export default function SearchLawyerPage() {
+  const searchParams = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -113,11 +115,30 @@ export default function SearchLawyerPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedVoivodeship, setSelectedVoivodeship] = useState("all")
   const [selectedCity, setSelectedCity] = useState("")
+  const [selectedType, setSelectedType] = useState("all")
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [minRating, setMinRating] = useState("all")
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
+
+  // Initialize filters from URL
+  useEffect(() => {
+    const s = searchParams.get("search")
+    const c = searchParams.get("city")
+    const cat = searchParams.get("category")
+    const v = searchParams.get("voivodeship")
+    const t = searchParams.get("type")
+    
+    if (s) setSearchQuery(s)
+    if (c) setSelectedCity(c)
+    if (cat) setSelectedCategory(cat)
+    if (v) setSelectedVoivodeship(v)
+    if (t) setSelectedType(t)
+    
+    // If any filter is set from URL, show filters by default
+    if (s || c || cat || v || t) setShowFilters(true)
+  }, [searchParams])
 
   // Pagination
   const [page, setPage] = useState(1)
@@ -160,6 +181,7 @@ export default function SearchLawyerPage() {
         if (selectedCategory && selectedCategory !== "all") params.append("category", selectedCategory)
         if (selectedVoivodeship && selectedVoivodeship !== "all") params.append("voivodeship", selectedVoivodeship)
         if (selectedCity) params.append("city", selectedCity)
+        if (selectedType && selectedType !== "all") params.append("type", selectedType)
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
@@ -181,7 +203,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, minRating, onlineOnly, verifiedOnly, sortBy, page])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page])
 
   const totalPages = Math.ceil(total / limit)
 
@@ -190,6 +212,7 @@ export default function SearchLawyerPage() {
     setSelectedCategory("all")
     setSelectedVoivodeship("all")
     setSelectedCity("")
+    setSelectedType("all")
     setPriceRange([0, 10000])
     setMinRating("all")
     setOnlineOnly(false)
@@ -309,6 +332,21 @@ export default function SearchLawyerPage() {
                         value={selectedCity}
                         onChange={(e) => setSelectedCity(e.target.value)}
                       />
+                    </div>
+
+                    {/* Type */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Typ sprawy</Label>
+                      <Select value={selectedType} onValueChange={setSelectedType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wszystkie" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Wszystkie</SelectItem>
+                          <SelectItem value="OSOBA_PRYWATNA">Sprawa prywatna</SelectItem>
+                          <SelectItem value="FIRMA">Sprawa firmowa</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     {/* Min Rating */}

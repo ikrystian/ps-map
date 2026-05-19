@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,6 +33,9 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       )
     }
+
+    // Sprawdź wygaśnięcie pakietu i zaktualizuj jeśli trzeba
+    const updatedLawFirm = await checkAndUpdatePackageExpiry(lawFirm as any);
 
     // Data początku bieżącego miesiąca
     const startOfMonth = new Date()
@@ -66,7 +70,7 @@ export async function GET(request: NextRequest) {
     // Pobierz ostatnie oferty kancelarii
     const recentOffers = await prisma.offer.findMany({
       where: {
-        lawFirmId: lawFirm.id,
+        lawFirmId: updatedLawFirm.id,
       },
       include: {
         case: {
@@ -85,7 +89,7 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     const activePromotions = await prisma.promotion.findMany({
       where: {
-        lawFirmId: lawFirm.id,
+        lawFirmId: updatedLawFirm.id,
         aktywna: true,
         startPromocji: {
           lte: now,
@@ -111,7 +115,7 @@ export async function GET(request: NextRequest) {
 
     const offersThisMonth = await prisma.offer.count({
       where: {
-        lawFirmId: lawFirm.id,
+        lawFirmId: updatedLawFirm.id,
         createdAt: {
           gte: startOfMonth,
         },
@@ -121,7 +125,7 @@ export async function GET(request: NextRequest) {
     // Oblicz średnią ocenę i liczbę opinii
     const reviews = await prisma.review.findMany({
       where: {
-        lawFirmId: lawFirm.id,
+        lawFirmId: updatedLawFirm.id,
         aktywna: true,
       },
       select: {
@@ -139,7 +143,12 @@ export async function GET(request: NextRequest) {
     const viewsThisMonth = 0 // TODO: Implementacja śledzenia wyświetleń
 
     return Response.json({
-      lawFirm,
+      lawFirm: {
+        ...lawFirm,
+        pakietSubskrypcji: updatedLawFirm.pakietSubskrypcji,
+        dataPakietuOd: updatedLawFirm.dataPakietuOd,
+        dataPakietuDo: updatedLawFirm.dataPakietuDo,
+      },
       recentCases,
       recentOffers,
       activePromotions,

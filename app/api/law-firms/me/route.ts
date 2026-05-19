@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,7 +47,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return Response.json(lawFirm)
+    // Sprawdź wygaśnięcie pakietu i zaktualizuj jeśli trzeba
+    const updatedLawFirm = await checkAndUpdatePackageExpiry(lawFirm as any);
+
+    return Response.json({
+      ...lawFirm,
+      pakietSubskrypcji: updatedLawFirm.pakietSubskrypcji,
+      dataPakietuOd: updatedLawFirm.dataPakietuOd,
+      dataPakietuDo: updatedLawFirm.dataPakietuDo,
+    })
   } catch (error) {
     console.error("Error fetching law firm data:", error)
     return Response.json(

@@ -46,6 +46,32 @@ interface LimitError {
 // ============================================================================
 
 /**
+ * Sprawdza czy pakiet wygasł i aktualizuje bazę danych jeśli trzeba.
+ * Zwraca zaktualizowany obiekt kancelarii lub ten sam jeśli nie było zmian.
+ */
+export async function checkAndUpdatePackageExpiry<T extends LawFirmPermissionData>(lawFirm: T): Promise<T> {
+  if (isPackageExpired(lawFirm)) {
+    console.log(`Package for law firm ${lawFirm.id} has expired. Removing...`);
+    await prisma.lawFirm.update({
+      where: { id: lawFirm.id },
+      data: {
+        pakietSubskrypcji: null,
+        dataPakietuOd: null,
+        dataPakietuDo: null,
+      },
+    });
+    
+    return {
+      ...lawFirm,
+      pakietSubskrypcji: null,
+      dataPakietuOd: null,
+      dataPakietuDo: null,
+    };
+  }
+  return lawFirm;
+}
+
+/**
  * Pobiera zalogowaną kancelarię z pełnymi danymi o uprawnieniach
  * Zwraca null jeśli użytkownik nie jest zalogowany lub nie jest kancelarią
  */
@@ -75,7 +101,8 @@ export async function getAuthenticatedLawFirm(): Promise<LawFirmPermissionData |
     return null;
   }
 
-  return lawFirm;
+  // Sprawdź wygaśnięcie i zaktualizuj jeśli trzeba
+  return await checkAndUpdatePackageExpiry(lawFirm);
 }
 
 /**
@@ -311,28 +338,31 @@ export async function canSubmitOffer(lawFirmId: string): Promise<{
     };
   }
 
-  if (isPackageExpired(lawFirm)) {
+  // Sprawdź wygaśnięcie i zaktualizuj jeśli trzeba
+  const updatedLawFirm = await checkAndUpdatePackageExpiry(lawFirm);
+
+  if (isPackageExpired(updatedLawFirm)) {
     return {
       allowed: false,
       reason: "Pakiet subskrypcji wygasł. Odnów pakiet, aby móc składać oferty.",
-      lawFirm,
+      lawFirm: updatedLawFirm,
     };
   }
 
-  const activeCases = await getActiveCasesCount(lawFirm.id);
-  const limitCheck = checkLimit(lawFirm, "activeCases", activeCases);
+  const activeCases = await getActiveCasesCount(updatedLawFirm.id);
+  const limitCheck = checkLimit(updatedLawFirm, "activeCases", activeCases);
 
   if (!limitCheck.allowed) {
     return {
       allowed: false,
       reason: `Osiągnięto limit aktywnych spraw (${limitCheck.limit}). Ulepsz pakiet, aby móc składać więcej ofert.`,
-      lawFirm,
+      lawFirm: updatedLawFirm,
     };
   }
 
   return {
     allowed: true,
-    lawFirm,
+    lawFirm: updatedLawFirm,
   };
 }
 

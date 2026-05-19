@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category")
     const voivodeship = searchParams.get("voivodeship")
     const search = searchParams.get("search")
+    const type = searchParams.get("type")
     const sortBy = searchParams.get("sortBy")
     const limit = parseInt(searchParams.get("limit") || "20")
     const offset = parseInt(searchParams.get("offset") || "0")
@@ -53,6 +54,15 @@ export async function GET(request: NextRequest) {
         some: {
           category: {
             slug: category,
+          },
+        },
+      }
+    } else if (type) {
+      const categoryType = type === "FIRMA" || type === "SPRAWY_FIRMOWE" ? "SPRAWY_FIRMOWE" : "SPRAWY_PRYWATNE"
+      where.categories = {
+        some: {
+          category: {
+            typ: categoryType,
           },
         },
       }

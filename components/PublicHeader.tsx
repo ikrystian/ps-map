@@ -97,11 +97,11 @@ export default function PublicHeader({
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const params = new URLSearchParams()
-    if (searchQuery.trim()) params.set("q", searchQuery.trim())
-    if (selectedCity) params.set("miasto", selectedCity)
-    if (selectedType && selectedType !== "all") params.set("typ", selectedType)
+    if (searchQuery.trim()) params.set("search", searchQuery.trim())
+    if (selectedCity) params.set("city", selectedCity)
+    if (selectedType && selectedType !== "all") params.set("type", selectedType)
 
-    window.location.href = `/panel-eksperta/sprawy?${params.toString()}`
+    window.location.href = `/szukaj-prawnika?${params.toString()}`
   }
 
   return (

@@ -289,13 +289,22 @@ export default function LawFirmPackagePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-bold">
-                    {plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji}
+                    {lawFirm.pakietSubskrypcji 
+                      ? (plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji)
+                      : "Brak aktywnego pakietu"
+                    }
                   </h3>
-                  <Badge variant="default">Aktywny</Badge>
+                  <Badge variant={lawFirm.pakietSubskrypcji ? "default" : "secondary"}>
+                    {lawFirm.pakietSubskrypcji ? "Aktywny" : "Nieaktywny"}
+                  </Badge>
                 </div>
-                {lawFirm.dataPakietuDo && (
+                {lawFirm.dataPakietuDo ? (
                   <p className="text-sm text-muted-foreground mt-1">
                     Ważny do: {formatDate(lawFirm.dataPakietuDo)}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Wybierz pakiet poniżej, aby korzystać z funkcji premium
                   </p>
                 )}
               </div>
