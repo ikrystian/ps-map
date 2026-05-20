@@ -141,46 +141,25 @@ export default function DocumentsPage() {
       setUploadProgress(true)
       const file = values.file[0]
 
-      // Przygotowanie FormData dla nowego endpointu
+      // Przygotowanie FormData dla endpointu dokumentów
       const formData = new FormData()
       formData.append("file", file)
+      formData.append("nazwa", values.nazwa)
+      formData.append("typDokumentu", values.typDokumentu)
 
-      const response = await fetch("/api/upload", {
+      const response = await fetch("/api/law-firms/documents", {
         method: "POST",
         body: formData,
       })
 
       if (response.ok) {
-        const uploadData = await response.json()
-        const fileUrl = uploadData.url
-
-        if (fileUrl) {
-          // Zapisz dokument z URL-em
-          const saveResponse = await fetch("/api/law-firms/documents", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              nazwa: values.nazwa,
-              typDokumentu: values.typDokumentu,
-              sciezka: fileUrl,
-              rozszerzenie: file.name.split(".").pop(),
-              rozmiar: file.size,
-            }),
-          })
-
-          if (saveResponse.ok) {
-            toast.success("Dokument został dodany")
-            setIsCreateDialogOpen(false)
-            form.reset()
-            fetchDocuments()
-          } else {
-            throw new Error("Błąd zapisywania dokumentu")
-          }
-        }
+        toast.success("Dokument został dodany")
+        setIsCreateDialogOpen(false)
+        form.reset()
+        fetchDocuments()
       } else {
-        throw new Error("Błąd przesyłania dokumentu")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Błąd przesyłania dokumentu")
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się dodać dokumentu")

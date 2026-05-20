@@ -6,7 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info, Star } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info, Star, Globe, MapPin } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
 import { toast } from "sonner"
 import {
   DndContext,
@@ -44,6 +49,27 @@ interface LawFirmCategory {
   categoryId: string
   kolejnosc: number
   category: Category
+}
+
+interface Voivodeship {
+  id: string
+  nazwa: string
+}
+
+interface City {
+  id: string
+  nazwa: string
+  voivodeshipId: string
+  voivodeship?: Voivodeship
+}
+
+interface AreaData {
+  callaPolska: boolean
+  onlineOnly: boolean
+  selectedVoivodeships: string[]
+  selectedCities: string[]
+  maxVoivodeships: number
+  maxCities: number
 }
 
 interface SortableItemProps {
@@ -142,6 +168,19 @@ export default function LawFirmServicesPage() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [maxCategories, setMaxCategories] = useState(10)
 
+  // Area state
+  const [allVoivodeships, setAllVoivodeships] = useState<Voivodeship[]>([])
+  const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
+  const [areaData, setAreaData] = useState<AreaData>({
+    callaPolska: false,
+    onlineOnly: false,
+    selectedVoivodeships: [],
+    selectedCities: [],
+    maxVoivodeships: 1,
+    maxCities: 3
+  })
+  const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -156,32 +195,42 @@ export default function LawFirmServicesPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      // Fetch all available categories
       const categoriesResponse = await fetch("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
-      // Filter to keep only root categories (parents) - children are nested in the API response
       const rootCategories = categoriesData.filter((cat: Category) => !cat.parentId && cat.aktywna)
       setAllCategories(rootCategories)
 
-      // Fetch law firm's selected categories
       const selectedResponse = await fetch("/api/law-firm/categories")
       if (selectedResponse.ok) {
         const selectedData = await selectedResponse.json()
         setSelectedCategories(selectedData.categories || [])
         setMainCategoryId(selectedData.mainCategoryId || null)
-        
-        // Use max categories from response if available
-        if (selectedData.maxCategories) {
-          setMaxCategories(selectedData.maxCategories)
-        } else {
-          // Fallback to settings if not provided in categories response
-          const settingsResponse = await fetch("/api/settings")
-          if (settingsResponse.ok) {
-            const settingsData = await settingsResponse.json()
-            const maxCat = parseInt(settingsData.maxLawFirmCategories || "10")
-            setMaxCategories(maxCat)
-          }
+        setMaxCategories(selectedData.maxCategories || 10)
+      }
+
+      const voivResponse = await fetch("/api/voivodeships")
+      if (voivResponse.ok) {
+        const voivData = await voivResponse.json()
+        setAllVoivodeships(voivData)
+      }
+
+      const areaResponse = await fetch("/api/law-firm/area")
+      if (areaResponse.ok) {
+        const areaResData = await areaResponse.json()
+        setAreaData({
+          callaPolska: areaResData.callaPolska,
+          onlineOnly: areaResData.onlineOnly,
+          selectedVoivodeships: areaResData.voivodeships?.map((v: any) => v.id) || [],
+          selectedCities: areaResData.cities?.map((c: any) => c.id) || [],
+          maxVoivodeships: areaResData.maxVoivodeships,
+          maxCities: areaResData.maxCities
+        })
+
+        if (areaResData.voivodeships) {
+          areaResData.voivodeships.forEach((v: any) => {
+            fetchCities(v.id)
+          })
         }
       }
     } catch (error) {
@@ -192,27 +241,40 @@ export default function LawFirmServicesPage() {
     }
   }
 
+  const fetchCities = async (voivodeshipId: string) => {
+    if (citiesByVoivodeship[voivodeshipId]) return
+    
+    setLoadingCities(prev => ({ ...prev, [voivodeshipId]: true }))
+    try {
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setCitiesByVoivodeship(prev => ({ ...prev, [voivodeshipId]: data }))
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error)
+    } finally {
+      setLoadingCities(prev => ({ ...prev, [voivodeshipId]: false }))
+    }
+  }
+
   const isSelected = (categoryId: string) => {
     return selectedCategories.some(sc => sc.categoryId === categoryId)
   }
 
   const toggleCategory = (category: Category) => {
     if (isSelected(category.id)) {
-      // Sprawdź czy to główna kategoria
       if (category.id === mainCategoryId) {
         toast.error("Nie możesz odznaczyć głównej kategorii")
         return
       }
-      // Remove category
       setSelectedCategories(selectedCategories.filter(sc => sc.categoryId !== category.id))
     } else {
-      // Sprawdź czy nie przekroczono limitu
       if (selectedCategories.length >= maxCategories) {
-        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Odznacz jedną z wybranych kategorii, aby dodać nową.`)
+        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii.`)
         return
       }
 
-      // Add category with next kolejnosc
       const maxKolejnosc = selectedCategories.reduce((max, sc) => Math.max(max, sc.kolejnosc), -1)
       setSelectedCategories([
         ...selectedCategories,
@@ -247,7 +309,6 @@ export default function LawFirmServicesPage() {
       const oldIndex = items.findIndex((item) => item.categoryId === active.id)
       const newIndex = items.findIndex((item) => item.categoryId === over.id)
 
-      // Zapobiegnij przesunięciu głównej kategorii z pierwszej pozycji
       if (mainCategoryId && items[0]?.categoryId === mainCategoryId) {
         if (oldIndex === 0 || newIndex === 0) {
           toast.error("Główna kategoria musi pozostać na pierwszym miejscu")
@@ -256,7 +317,6 @@ export default function LawFirmServicesPage() {
       }
 
       const newItems = arrayMove(items, oldIndex, newIndex)
-      // Update kolejnosc
       return newItems.map((item, idx) => ({
         ...item,
         kolejnosc: idx,
@@ -267,11 +327,9 @@ export default function LawFirmServicesPage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const response = await fetch("/api/law-firm/categories", {
+      const catResponse = await fetch("/api/law-firm/categories", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           categories: selectedCategories.map((sc, index) => ({
             categoryId: sc.categoryId,
@@ -280,21 +338,71 @@ export default function LawFirmServicesPage() {
         }),
       })
 
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to save categories")
-      }
+      if (!catResponse.ok) throw new Error("Failed to save categories")
+
+      const areaResponse = await fetch("/api/law-firm/area", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          callaPolska: areaData.callaPolska,
+          onlineOnly: areaData.onlineOnly,
+          voivodeshipsIds: areaData.selectedVoivodeships,
+          citiesIds: areaData.selectedCities,
+        }),
+      })
+
+      if (!areaResponse.ok) throw new Error("Failed to save area of activity")
 
       toast.success("Zapisano zmiany")
-
-      // Refresh data to ensure consistency
       fetchData()
     } catch (error: any) {
-      console.error("Error saving categories:", error)
+      console.error("Error saving changes:", error)
       toast.error(error.message || "Nie udało się zapisać zmian")
     } finally {
       setSaving(false)
     }
+  }
+
+  const toggleVoivodeship = (id: string) => {
+    setAreaData(prev => {
+      const isSelected = prev.selectedVoivodeships.includes(id)
+      if (isSelected) {
+        const newCities = prev.selectedCities.filter(cityId => {
+          const city = Object.values(citiesByVoivodeship).flat().find(c => c.id === cityId)
+          return city?.voivodeshipId !== id
+        })
+        return {
+          ...prev,
+          selectedVoivodeships: prev.selectedVoivodeships.filter(vId => vId !== id),
+          selectedCities: newCities
+        }
+      } else {
+        if (prev.selectedVoivodeships.length >= prev.maxVoivodeships) {
+          toast.error(`Limit województw (${prev.maxVoivodeships}) osiągnięty.`)
+          return prev
+        }
+        fetchCities(id)
+        return {
+          ...prev,
+          selectedVoivodeships: [...prev.selectedVoivodeships, id]
+        }
+      }
+    })
+  }
+
+  const toggleCity = (id: string) => {
+    setAreaData(prev => {
+      const isSelected = prev.selectedCities.includes(id)
+      if (isSelected) {
+        return { ...prev, selectedCities: prev.selectedCities.filter(cId => cId !== id) }
+      } else {
+        if (prev.selectedCities.length >= prev.maxCities) {
+          toast.error(`Limit miast (${prev.maxCities}) osiągnięty.`)
+          return prev
+        }
+        return { ...prev, selectedCities: [...prev.selectedCities, id] }
+      }
+    })
   }
 
   const firmoweCategories = allCategories.filter(c => c.typ === "SPRAWY_FIRMOWE")
@@ -380,108 +488,272 @@ export default function LawFirmServicesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight font-playfair">Zakres usług</h1>
+          <h1 className="text-2xl font-bold tracking-tight font-playfair">Zakres i obszar usług</h1>
           <p className="text-muted-foreground">
-            Wybierz kategorie spraw, w których się specjalizujesz.
+            Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi.
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-muted-foreground">
-            Wybrano: <span className={selectedCategories.length >= maxCategories ? "text-destructive font-bold" : "font-bold"}>
-              {selectedCategories.length}
-            </span> / {maxCategories}
-          </div>
-          <Button onClick={handleSave} disabled={saving}>
+          <Button onClick={handleSave} disabled={saving} size="lg" className="px-8 shadow-md hover:shadow-lg transition-all">
             {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <Save className="mr-2 h-4 w-4" />
-            Zapisz zmiany
+            Zapisz wszystkie zmiany
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Available Categories */}
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Dostępne kategorie</CardTitle>
-            <CardDescription>
-              Zaznacz kategorie, które chcesz dodać do swojego profilu.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="overflow-y-auto pr-4">
-            <div className="space-y-6 grid grid-cols-2">
-              <div>
-                <h3 className="font-semibold mb-4 flex items-center text-primary">
-                  <span className="bg-primary/10 p-1 rounded mr-2">🏢</span>
-                  Sprawy Firmowe
-                </h3>
-                <div className="space-y-1">
-                  {firmoweCategories.map(cat => renderCategoryTree(cat))}
-                  {firmoweCategories.length === 0 && (
-                    <p className="text-sm text-muted-foreground italic">Brak dostępnych kategorii.</p>
-                  )}
-                </div>
-              </div>
+      <Tabs defaultValue="categories" className="space-y-6">
+        <TabsList className="bg-muted/50 p-1">
+          <TabsTrigger value="categories" className="px-6 flex items-center gap-2">
+            <Star className="h-4 w-4" />
+            Specjalizacje
+          </TabsTrigger>
+          <TabsTrigger value="area" className="px-6 flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            Obszar działania
+          </TabsTrigger>
+        </TabsList>
 
-
-              <div>
-                <h3 className="font-semibold mb-4 flex items-center text-primary">
-                  <span className="bg-primary/10 p-1 rounded mr-2">👤</span>
-                  Sprawy Prywatne
-                </h3>
-                <div className="space-y-1">
-                  {prywatneCategories.map(cat => renderCategoryTree(cat))}
-                  {prywatneCategories.length === 0 && (
-                    <p className="text-sm text-muted-foreground italic">Brak dostępnych kategorii.</p>
-                  )}
-                </div>
-              </div>
+        <TabsContent value="categories" className="space-y-6 animate-in fade-in-50 duration-500">
+          <div className="flex items-center justify-between px-1">
+            <div className="text-sm text-muted-foreground">
+              Wybrano specjalizacji: <span className={selectedCategories.length >= maxCategories ? "text-destructive font-bold" : "font-bold"}>
+                {selectedCategories.length}
+              </span> / {maxCategories}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Selected Categories (Reorder with drag and drop) */}
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Twój zakres usług</CardTitle>
-            <CardDescription>
-              Ustal kolejność wyświetlania kategorii na Twoim profilu. Przeciągnij i upuść aby zmienić kolejność.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-[600px] overflow-y-auto">
-            {selectedCategories.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground border-2 border-dashed rounded-lg p-8">
-                <Info className="h-8 w-8 mb-2 opacity-50" />
-                <p>Nie wybrano żadnych kategorii</p>
-                <p className="text-sm">Zaznacz kategorie z listy po lewej stronie</p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={sortedSelectedCategories.map(item => item.categoryId)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2">
-                    {sortedSelectedCategories.map((item, index) => (
-                      <SortableItem
-                        key={item.categoryId}
-                        item={item}
-                        index={index}
-                        isMainCategory={item.categoryId === mainCategoryId}
-                        onRemove={() => toggleCategory(item.category)}
-                      />
-                    ))}
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className="col-span-2 shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Dostępne kategorie</CardTitle>
+                <CardDescription>
+                  Zaznacz kategorie, które chcesz dodać do swojego profilu.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold flex items-center text-primary border-b pb-2">
+                      <span className="bg-primary/10 p-1.5 rounded-lg mr-2 text-lg">🏢</span>
+                      Sprawy Firmowe
+                    </h3>
+                    <div className="space-y-1 pr-2">
+                      {firmoweCategories.map(cat => renderCategoryTree(cat))}
+                    </div>
                   </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold flex items-center text-primary border-b pb-2">
+                      <span className="bg-primary/10 p-1.5 rounded-lg mr-2 text-lg">👤</span>
+                      Sprawy Prywatne
+                    </h3>
+                    <div className="space-y-1 pr-2">
+                      {prywatneCategories.map(cat => renderCategoryTree(cat))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="col-span-1 shadow-sm h-fit sticky top-6">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Twój wybór</CardTitle>
+                <CardDescription>
+                  Przeciągnij elementy, aby ustalić ich kolejność.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="max-h-[600px] overflow-y-auto">
+                {selectedCategories.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl bg-muted/20">
+                    <Info className="h-10 w-10 mb-3 opacity-30" />
+                    <p className="font-medium text-sm">Brak wybranych kategorii</p>
+                    <p className="text-xs mt-1">Wybierz je z listy po lewej stronie</p>
+                  </div>
+                ) : (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={sortedSelectedCategories.map(item => item.categoryId)} strategy={verticalListSortingStrategy}>
+                      <div className="space-y-2">
+                        {sortedSelectedCategories.map((item, index) => (
+                          <SortableItem key={item.categoryId} item={item} index={index} isMainCategory={item.categoryId === mainCategoryId} onRemove={() => toggleCategory(item.category)} />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="area" className="space-y-6 animate-in fade-in-50 duration-500">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-6">
+              <Card className="shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Globe className="h-5 w-5 text-primary" />
+                    Tryb świadczenia usług
+                  </CardTitle>
+                  <CardDescription>Określ, czy działasz stacjonarnie, czy online.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className={cn(
+                      "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                      areaData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-transparent bg-muted/30 hover:bg-muted/50"
+                    )} onClick={() => setAreaData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
+                      <div className="flex items-center gap-3">
+                        <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                          <Globe className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">Cała Polska</p>
+                          <p className="text-xs text-muted-foreground">Widoczność w każdym mieście</p>
+                        </div>
+                      </div>
+                      <Switch checked={areaData.callaPolska} onCheckedChange={(val) => setAreaData(prev => ({ ...prev, callaPolska: val }))} />
+                    </div>
+
+                    <div className={cn(
+                      "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                      areaData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-transparent bg-muted/30 hover:bg-muted/50"
+                    )} onClick={() => setAreaData(prev => ({ ...prev, onlineOnly: !prev.onlineOnly }))}>
+                      <div className="flex items-center gap-3">
+                        <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                          <div className="h-5 w-5 flex items-center justify-center font-bold text-[10px]">WEB</div>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">Tylko online</p>
+                          <p className="text-xs text-muted-foreground">Konsultacje zdalne</p>
+                        </div>
+                      </div>
+                      <Switch checked={areaData.onlineOnly} onCheckedChange={(val) => setAreaData(prev => ({ ...prev, onlineOnly: val }))} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {!areaData.callaPolska && (
+                <Card className="shadow-sm">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">Lokalizacje stacjonarne</CardTitle>
+                      <div className="flex gap-4 text-xs">
+                        <span>Województwa: <span className={areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "text-destructive font-bold" : "font-bold"}>{areaData.selectedVoivodeships.length}</span> / {areaData.maxVoivodeships}</span>
+                        <span>Miasta: <span className={areaData.selectedCities.length >= areaData.maxCities ? "text-destructive font-bold" : "font-bold"}>{areaData.selectedCities.length}</span> / {areaData.maxCities}</span>
+                      </div>
+                    </div>
+                    <CardDescription>Wybierz województwa i konkretne miasta, w których świadczysz usługi.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Województwa</h4>
+                        <div className="space-y-1 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                          {allVoivodeships.map(v => (
+                            <div key={v.id} className={cn(
+                              "flex items-center gap-3 p-2.5 rounded-lg border transition-all cursor-pointer",
+                              areaData.selectedVoivodeships.includes(v.id) 
+                                ? "bg-primary/5 border-primary/30 text-primary font-medium" 
+                                : "border-transparent hover:bg-muted/50"
+                            )} onClick={() => toggleVoivodeship(v.id)}>
+                              <Checkbox checked={areaData.selectedVoivodeships.includes(v.id)} onCheckedChange={() => toggleVoivodeship(v.id)} />
+                              <span className="text-sm">{v.nazwa}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Miasta w wybranych województwach</h4>
+                        <div className="space-y-1 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
+                          {areaData.selectedVoivodeships.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-10 opacity-50">
+                              <MapPin className="h-8 w-8 mb-2" />
+                              <p className="text-xs">Wybierz województwo</p>
+                            </div>
+                          ) : (
+                            areaData.selectedVoivodeships.map(vId => {
+                              const vName = allVoivodeships.find(v => v.id === vId)?.nazwa
+                              const cities = citiesByVoivodeship[vId] || []
+                              const isLoading = loadingCities[vId]
+
+                              return (
+                                <div key={vId} className="mb-4 last:mb-0">
+                                  <div className="text-[10px] font-bold text-muted-foreground mb-2 flex items-center gap-2">
+                                    <div className="h-1 w-1 rounded-full bg-primary" />
+                                    {vName}
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-1">
+                                    {isLoading ? (
+                                      <div className="py-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        Ładowanie miast...
+                                      </div>
+                                    ) : cities.length === 0 ? (
+                                      <div className="py-2 text-[10px] italic text-muted-foreground">Brak miast w bazie.</div>
+                                    ) : (
+                                      cities.map(city => (
+                                        <div key={city.id} className={cn(
+                                          "flex items-center gap-2 p-1.5 rounded-md transition-all cursor-pointer",
+                                          areaData.selectedCities.includes(city.id)
+                                            ? "bg-primary/10 text-primary font-medium"
+                                            : "hover:bg-muted"
+                                        )} onClick={() => toggleCity(city.id)}>
+                                          <Checkbox checked={areaData.selectedCities.includes(city.id)} onCheckedChange={() => toggleCity(city.id)} />
+                                          <span className="text-xs">{city.nazwa}</span>
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                </div>
+                              )
+                            })
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              <Card className="shadow-sm bg-primary/5 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Info className="h-4 w-4 text-primary" />
+                    Twój pakiet
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Województwa:</span>
+                      <span className="font-bold">{areaData.maxVoivodeships}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Miasta:</span>
+                      <span className="font-bold">{areaData.maxCities}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Kategorie:</span>
+                      <span className="font-bold">{maxCategories}</span>
+                    </div>
+                  </div>
+                  <Separator className="bg-primary/10" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Limity wynikają z Twojego aktualnego pakietu subskrypcyjnego. Wyższe pakiety pozwalają na zaznaczenie większego obszaru działania oraz większej liczby kategorii usług.
+                  </p>
+                  <Button variant="outline" size="sm" className="w-full bg-white border-primary/20 hover:bg-primary/5 hover:text-primary transition-all" asChild>
+                    <Link href="/panel-eksperta/pakiet">Zmień pakiet</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

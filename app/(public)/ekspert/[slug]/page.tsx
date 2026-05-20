@@ -123,6 +123,14 @@ interface LawFirm {
       nazwa: string
     }
   }>
+  cities: Array<{
+    city: {
+      nazwa: string
+      voivodeship: {
+        nazwa: string
+      }
+    }
+  }>
   categories: Array<{
     id: string
     kolejnosc: number
@@ -1679,27 +1687,60 @@ export default function LawFirmProfilePage() {
             )}
 
             {/* Service Area */}
-            {lawFirm.voivodeships.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Obszar działania</CardTitle>
+            {(lawFirm.voivodeships.length > 0 || lawFirm.cities.length > 0 || lawFirm.callaPolska) && (
+              <Card className="overflow-hidden border-none shadow-sm bg-muted/30">
+                <CardHeader className="bg-muted/50 pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    Obszar działania
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-4 space-y-4">
                   {lawFirm.callaPolska ? (
-                    <Badge variant="secondary">Cała Polska</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                        <Globe className="h-3 w-3 mr-1" />
+                        Cała Polska
+                      </Badge>
+                    </div>
                   ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {lawFirm.voivodeships.map((v, index) => (
-                        <Badge key={index} variant="outline">
-                          {v.voivodeship.nazwa}
-                        </Badge>
-                      ))}
+                    <div className="space-y-4">
+                      {/* Voivodeships */}
+                      {lawFirm.voivodeships.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {lawFirm.voivodeships.map((v, index) => (
+                              <Badge key={index} variant="outline" className="bg-background/50">
+                                {v.voivodeship.nazwa}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Cities */}
+                      {lawFirm.cities.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {lawFirm.cities.map((c, index) => (
+                              <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10">
+                                {c.city.nazwa}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   {lawFirm.onlineOnly && (
-                    <Badge variant="secondary" className="mt-2">
-                      Online only
-                    </Badge>
+                    <div className="pt-2 border-t border-border/50">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5">
+                        <Globe className="h-3 w-3 mr-1" />
+                        Obsługa online
+                      </Badge>
+                    </div>
                   )}
                 </CardContent>
               </Card>

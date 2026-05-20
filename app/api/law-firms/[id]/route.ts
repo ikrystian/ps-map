@@ -33,6 +33,11 @@ export async function GET(
             voivodeship: true,
           },
         },
+        cities: {
+          include: {
+            city: true,
+          },
+        },
         categories: {
           include: {
             category: true,
@@ -250,6 +255,9 @@ export async function PUT(
     if (body.callaPolska !== undefined) updateData.callaPolska = body.callaPolska
     if (body.onlineOnly !== undefined) updateData.onlineOnly = body.onlineOnly
 
+    // Subscription plan (can be updated by admin or when buying a package)
+    if (body.pakietSubskrypcji !== undefined) updateData.pakietSubskrypcji = body.pakietSubskrypcji
+
     // Typ oferty
     if (body.typOferty) updateData.typOferty = body.typOferty
 
@@ -265,6 +273,11 @@ export async function PUT(
         voivodeships: {
           include: {
             voivodeship: true,
+          },
+        },
+        cities: {
+          include: {
+            city: true,
           },
         },
         categories: {
@@ -291,6 +304,24 @@ export async function PUT(
           data: body.voivodeshipsIds.map((voivodeshipId: string) => ({
             lawFirmId: id,
             voivodeshipId,
+          })),
+        })
+      }
+    }
+
+    // Obsłuż aktualizację miast działania
+    if (body.citiesIds && Array.isArray(body.citiesIds)) {
+      // Usuń stare
+      await prisma.lawFirmCity.deleteMany({
+        where: { lawFirmId: id },
+      })
+
+      // Dodaj nowe
+      if (body.citiesIds.length > 0) {
+        await prisma.lawFirmCity.createMany({
+          data: body.citiesIds.map((cityId: string) => ({
+            lawFirmId: id,
+            cityId,
           })),
         })
       }

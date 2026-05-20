@@ -937,59 +937,19 @@ export default function LawFirmProfilePage() {
               <Separator />
 
               <div className="space-y-4">
-                <Label className="text-base">Obszar działania</Label>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="callaPolska"
-                      checked={formData.callaPolska}
-                      onCheckedChange={(checked) => handleInputChange("callaPolska", checked)}
-                    />
-                    <Label htmlFor="callaPolska" className="cursor-pointer">
-                      Cała Polska
-                    </Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="onlineOnly"
-                      checked={formData.onlineOnly}
-                      onCheckedChange={(checked) => handleInputChange("onlineOnly", checked)}
-                    />
-                    <Label htmlFor="onlineOnly" className="cursor-pointer">
-                      Tylko online
-                    </Label>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-base">Obszar działania</Label>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/panel-eksperta/zakres-uslug">
+                      Zarządzaj obszarem
+                    </Link>
+                  </Button>
                 </div>
-
-                {!formData.callaPolska && (
-                  <div className="grid gap-2 pt-2">
-                    <Label>Województwa działania</Label>
-                    <div className="grid md:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto p-4 border rounded-lg">
-                      {voivodeships.map((v) => (
-                        <div key={v.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`voiv-${v.id}`}
-                            checked={formData.voivodeshipsIds.includes(v.id)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                handleInputChange("voivodeshipsIds", [...formData.voivodeshipsIds, v.id])
-                              } else {
-                                handleInputChange(
-                                  "voivodeshipsIds",
-                                  formData.voivodeshipsIds.filter((id) => id !== v.id)
-                                )
-                              }
-                            }}
-                          />
-                          <label htmlFor={`voiv-${v.id}`} className="text-sm cursor-pointer">
-                            {v.nazwa}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div className="p-4 border rounded-lg bg-muted/30">
+                  <p className="text-sm text-muted-foreground">
+                    Zarządzanie obszarem działania (województwa i miasta) zostało przeniesione do zakładki <strong>Zakres usług</strong>.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
