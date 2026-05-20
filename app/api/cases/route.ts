@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { sendSystemNotification } from "@/lib/notifications"
 
 export async function GET(request: NextRequest) {
   try {
@@ -243,14 +244,13 @@ export async function POST(request: NextRequest) {
     })
 
     // Utwórz powiadomienie dla klienta o dodaniu sprawy
-    const clientNotification = await prisma.notification.create({
-      data: {
-        userId: session.user.id,
-        typ: "SYSTEM",
-        tytul: "Sprawa dodana pomyślnie",
-        tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Kancelarie prawne mogą teraz składać oferty.`,
-        linkUrl: "/panel-klienta/sprawy",
-      },
+    const { notification: clientNotification } = await sendSystemNotification({
+      userId: session.user.id,
+      typ: "SYSTEM",
+      tytul: "Sprawa dodana pomyślnie",
+      tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Kancelarie prawne mogą teraz składać oferty.`,
+      linkUrl: `/panel-klienta/sprawy/${newCase.id}`,
+      force: true, // Kluczowe / systemowe powiadomienie
     })
 
     // Emit notification to client via Socket.IO
@@ -273,15 +273,15 @@ export async function POST(request: NextRequest) {
 
     // Utwórz powiadomienia dla kancelarii
     if (lawFirms.length > 0) {
-      const lawFirmNotifications = await prisma.notification.createMany({
-        data: lawFirms.map((lf: any) => ({
+      for (const lf of lawFirms) {
+        await sendSystemNotification({
           userId: lf.userId,
           typ: "NOWA_OFERTA",
           tytul: "Nowa sprawa w Twojej specjalizacji",
           tresc: `Nowa sprawa: ${body.nazwaSprawy}. Sprawdź szczegóły i złóż ofertę.`,
           linkUrl: "/panel-eksperta/sprawy",
-        })),
-      })
+        })
+      }
 
       // Emit notifications to law firms via Socket.IO
       // We need to get the created notifications to emit them

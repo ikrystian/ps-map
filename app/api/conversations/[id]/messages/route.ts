@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { sendSystemNotification } from "@/lib/notifications"
 import { auth } from "@/auth"
 import { decryptMessage } from "@/lib/encryption"
 import { emitNewMessage } from "@/lib/socket"
@@ -234,17 +235,15 @@ export async function POST(
         ? content.trim().substring(0, 50) + "..."
         : content.trim()
 
-    const notification = await prisma.notification.create({
-      data: {
-        userId: recipientId,
-        typ: "NOWA_WIADOMOSC",
-        tytul: `Nowa wiadomość od ${senderName}`,
-        tresc: messagePreview,
-        linkUrl:
-          session.user.role === "CLIENT"
-            ? "/panel-eksperta/wiadomosci"
-            : "/panel-klienta/wiadomosci",
-      },
+    const { notification } = await sendSystemNotification({
+      userId: recipientId,
+      typ: "NOWA_WIADOMOSC",
+      tytul: `Nowa wiadomość od ${senderName}`,
+      tresc: messagePreview,
+      linkUrl:
+        session.user.role === "CLIENT"
+          ? "/panel-eksperta/wiadomosci"
+          : "/panel-klienta/wiadomosci",
     })
 
     // Emit real-time notification via Socket.IO
