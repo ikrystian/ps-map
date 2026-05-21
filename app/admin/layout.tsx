@@ -27,6 +27,7 @@ import {
   FileCode,
   UserCog,
   Upload,
+  Bell,
   MapPin,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -50,6 +51,7 @@ const navigation = [
   { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
   { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
+  { name: "Powiadomienia", href: "/admin/notifications", icon: Bell },
   { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
   { name: "Pakiety", href: "/admin/pakiety", icon: Shield },

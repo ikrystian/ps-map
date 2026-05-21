@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
+import { sendSystemNotification } from "@/lib/notifications"
 import { auth } from "@/auth"
 import { createGoogleMeetLink } from "@/lib/google-meet"
 
@@ -52,25 +53,21 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         updateData.googleMeetUrl = meetLink || undefined;
 
         // Create notification for client
-        await prisma.notification.create({
-          data: {
-            userId: booking.client.userId,
-            typ: "KONSULTACJA_ZAAKCEPTOWANA",
-            tytul: "Konsultacja zaakceptowana",
-            tresc: `${booking.lawFirm.nazwa} zaakceptowała Twoją prośbę o konsultację`,
-            linkUrl: "/panel-klienta/konsultacje",
-          },
+        await sendSystemNotification({
+          userId: booking.client.userId,
+          typ: "KONSULTACJA_ZAAKCEPTOWANA",
+          tytul: "Konsultacja zaakceptowana",
+          tresc: `${booking.lawFirm.nazwa} zaakceptowała Twoją prośbę o konsultację`,
+          linkUrl: "/panel-klienta/konsultacje",
         })
       } else if (status === "REJECTED") {
         // Create notification for client
-        await prisma.notification.create({
-          data: {
-            userId: booking.client.userId,
-            typ: "KONSULTACJA_ODRZUCONA",
-            tytul: "Konsultacja odrzucona",
-            tresc: `${booking.lawFirm.nazwa} odrzuciła Twoją prośbę o konsultację`,
-            linkUrl: "/panel-klienta/konsultacje",
-          },
+        await sendSystemNotification({
+          userId: booking.client.userId,
+          typ: "KONSULTACJA_ODRZUCONA",
+          tytul: "Konsultacja odrzucona",
+          tresc: `${booking.lawFirm.nazwa} odrzuciła Twoją prośbę o konsultację`,
+          linkUrl: "/panel-klienta/konsultacje",
         })
       }
     }
@@ -80,14 +77,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
       // Create notification for client when marked as paid
       if (paymentStatus === "ZAPLACONE") {
-        await prisma.notification.create({
-          data: {
-            userId: booking.client.userId,
-            typ: "KONSULTACJA_ZAPLACONA",
-            tytul: "Płatność potwierdzona",
-            tresc: `${booking.lawFirm.nazwa} potwierdziła płatność za konsultację`,
-            linkUrl: "/panel-klienta/konsultacje",
-          },
+        await sendSystemNotification({
+          userId: booking.client.userId,
+          typ: "KONSULTACJA_ZAPLACONA",
+          tytul: "Płatność potwierdzona",
+          tresc: `${booking.lawFirm.nazwa} potwierdziła płatność za konsultację`,
+          linkUrl: "/panel-klienta/konsultacje",
         })
       }
     }
@@ -144,25 +139,21 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     // Create notification for the other party
     if (isClient) {
       // Client deleted - notify law firm
-      await prisma.notification.create({
-        data: {
-          userId: booking.lawFirm.userId,
-          typ: "KONSULTACJA_ANULOWANA",
-          tytul: "Konsultacja anulowana",
-          tresc: `${booking.client.user.name} anulował konsultację`,
-          linkUrl: "/panel-eksperta/konsultacje",
-        },
+      await sendSystemNotification({
+        userId: booking.lawFirm.userId,
+        typ: "KONSULTACJA_ANULOWANA",
+        tytul: "Konsultacja anulowana",
+        tresc: `${booking.client.user.name} anulował konsultację`,
+        linkUrl: "/panel-eksperta/konsultacje",
       })
     } else if (isLawFirm) {
       // Law firm deleted - notify client
-      await prisma.notification.create({
-        data: {
-          userId: booking.client.userId,
-          typ: "KONSULTACJA_ANULOWANA",
-          tytul: "Konsultacja anulowana",
-          tresc: `${booking.lawFirm.nazwa} anulowała konsultację`,
-          linkUrl: "/panel-klienta/konsultacje",
-        },
+      await sendSystemNotification({
+        userId: booking.client.userId,
+        typ: "KONSULTACJA_ANULOWANA",
+        tytul: "Konsultacja anulowana",
+        tresc: `${booking.lawFirm.nazwa} anulowała konsultację`,
+        linkUrl: "/panel-klienta/konsultacje",
       })
     }
 

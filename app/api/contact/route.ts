@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { sendSystemNotification } from "@/lib/notifications"
 import { sendEmail, generateContactFormEmail } from "@/lib/email"
 
 export async function POST(request: NextRequest) {
@@ -62,20 +63,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Utwórz powiadomienie dla kancelarii
-    await prisma.notification.create({
-      data: {
-        userId: lawFirm.userId,
-        typ: "NOWA_WIADOMOSC",
-        tytul: "Nowa wiadomość kontaktowa",
-        tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
-        linkUrl: `/panel-eksperta/wiadomosci`,
-      },
-    })
-
-    // Send email to law firm
+    // Utwórz powiadomienie dla kancelarii (wraz z weryfikacją wysłania maila)
+    let emailData;
     if (lawFirm.emailKontakt) {
-      const emailData = generateContactFormEmail(
+      emailData = generateContactFormEmail(
         lawFirm.nazwa,
         lawFirm.emailKontakt,
         imieNazwisko,
@@ -84,17 +75,18 @@ export async function POST(request: NextRequest) {
         typSprawy || "Kontakt przez formularz",
         tresc
       )
-
-      // Send email asynchronously (don't wait for it)
-      sendEmail({
-        to: lawFirm.emailKontakt,
-        subject: emailData.subject,
-        html: emailData.html,
-        text: emailData.text,
-      }).catch((error) => {
-        console.error('Error sending contact form email:', error)
-      })
     }
+
+    await sendSystemNotification({
+      userId: lawFirm.userId,
+      typ: "NOWA_WIADOMOSC",
+      tytul: "Nowa wiadomość kontaktowa",
+      tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
+      linkUrl: `/panel-eksperta/wiadomosci`,
+      emailSubject: emailData?.subject,
+      emailHtml: emailData?.html,
+      emailText: emailData?.text,
+    })
 
     return Response.json(
       {
