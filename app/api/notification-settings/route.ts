@@ -52,11 +52,12 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json()
 
-    // Upewnij się, że obowiązkowe pola są zawsze true
+    // Upewnij się, że obowiązkowe pola są zawsze true i oznaczone jako skonfigurowane
     const updateData = {
       ...body,
       kontaktKlienci: true, // Zawsze true - obowiązkowe
       kluczowe: true, // Zawsze true - obowiązkowe
+      isConfigured: true,
     }
 
     // Usuń pola systemowe

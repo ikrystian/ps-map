@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePermissions } from "@/hooks/usePermissions"
 import { ExpiredPackageModal, PackageBadge } from "@/components/permissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
 import {
   LayoutDashboard,
   Briefcase,
@@ -77,6 +78,7 @@ export default function LawFirmPanelLayout({
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
   const [showExpiredModal, setShowExpiredModal] = useState(false)
+  const [showNotificationModal, setShowNotificationModal] = useState(false)
   const [isClient, setIsClient] = useState(false)
 
   // Real-time unread messages count
@@ -124,6 +126,27 @@ export default function LawFirmPanelLayout({
       }
     }
   }, [permissionsLoading, packageExpired, packageName, session])
+
+  // Sprawdź czy ustawienia powiadomień są skonfigurowane
+  useEffect(() => {
+    const checkNotificationSettings = async () => {
+      try {
+        const response = await fetch("/api/notification-settings")
+        if (response.ok) {
+          const data = await response.json()
+          if (data && data.isConfigured === false) {
+            setShowNotificationModal(true)
+          }
+        }
+      } catch (error) {
+        console.error("Error checking notification settings:", error)
+      }
+    }
+
+    if (session?.user?.role === "LAW_FIRM" && pathname !== "/panel-eksperta/ustawienia") {
+      checkNotificationSettings()
+    }
+  }, [session, pathname])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
@@ -417,6 +440,13 @@ export default function LawFirmPanelLayout({
         onOpenChange={setShowExpiredModal}
         packageName={packageName || ""}
         expiryDate={expiryDate}
+      />
+
+      {/* Modal konfiguracji powiadomień na pierwszym logowaniu */}
+      <NotificationSettingsPromptModal
+        open={showNotificationModal}
+        onOpenChange={setShowNotificationModal}
+        onSuccess={() => setShowNotificationModal(false)}
       />
 
       {/* Account Manager Widget */}

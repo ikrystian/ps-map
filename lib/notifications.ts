@@ -44,35 +44,43 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
   let shouldSendInApp = true // In-app wysyłamy prawie zawsze, chyba że dojdzie flaga to blokująca w ustawieniach
 
   if (settings && !force) {
-    switch (typ) {
-      case "NOWA_OFERTA":
-        shouldSendEmail = settings.emailNoweOferty
-        break
-      case "NOWA_WIADOMOSC":
-        shouldSendEmail = settings.emailWiadomosci
-        break
-      case "ZMIANA_STATUSU":
-      case "NOWA_KONSULTACJA":
-      case "KONSULTACJA_ZAAKCEPTOWANA":
-      case "KONSULTACJA_ODRZUCONA":
-      case "KONSULTACJA_ZAPLACONA":
-      case "KONSULTACJA_ANULOWANA":
-        shouldSendEmail = settings.emailStatusy
-        break
-      case "NOWA_OPINIA":
-        shouldSendEmail = settings.kluczowe // Załóżmy, że opinie wchodzą w kluczowe
-        break
-      case "MALY_STAN_PUNKTOW":
-      case "KONIEC_SUBSKRYPCJI":
-        shouldSendEmail = settings.ofertPromocje
-        break
-      case "SYSTEM":
-        shouldSendEmail = settings.kluczowe // Systemowe to zawsze kluczowe
-        break
-      default:
-        shouldSendEmail = settings.kluczowe
-        break
+    // Tryb urlopowy ogranicza powiadomienia e-mail (przepuszcza tylko SYSTEM i NOWA_WIADOMOSC)
+    if (settings.urlop && typ !== "SYSTEM" && typ !== "NOWA_WIADOMOSC") {
+      shouldSendEmail = false
+    } else {
+      switch (typ) {
+        case "NOWA_OFERTA":
+          shouldSendEmail = settings.emailNoweOferty
+          break
+        case "NOWA_WIADOMOSC":
+          shouldSendEmail = settings.emailWiadomosci
+          break
+        case "ZMIANA_STATUSU":
+        case "NOWA_KONSULTACJA":
+        case "KONSULTACJA_ZAAKCEPTOWANA":
+        case "KONSULTACJA_ODRZUCONA":
+        case "KONSULTACJA_ZAPLACONA":
+        case "KONSULTACJA_ANULOWANA":
+          shouldSendEmail = settings.emailStatusy
+          break
+        case "NOWA_OPINIA":
+          shouldSendEmail = settings.kluczowe // Załóżmy, że opinie wchodzą w kluczowe
+          break
+        case "MALY_STAN_PUNKTOW":
+        case "KONIEC_SUBSKRYPCJI":
+          shouldSendEmail = settings.ofertPromocje
+          break
+        case "SYSTEM":
+          shouldSendEmail = settings.kluczowe // Systemowe to zawsze kluczowe
+          break
+        default:
+          shouldSendEmail = settings.kluczowe
+          break
+      }
     }
+
+    // Opcjonalne powiadomienia SMS (do rozbudowy w przyszłości):
+    // const shouldSendSMS = (typ === "NOWA_WIADOMOSC" && settings.powiadomieniaSmNowa) || (settings.smsPilne)
   }
 
   // Jeśli brak settings (co nie powinno się zdarzyć z nowymi userami, ale dla pewności),
