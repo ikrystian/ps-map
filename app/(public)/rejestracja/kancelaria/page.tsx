@@ -372,7 +372,8 @@ export default function LawFirmRegistrationPage() {
       localStorage.removeItem("law_firm_registration_data")
       localStorage.removeItem("law_firm_registration_step")
 
-      router.push("/logowanie?registered=true")
+      // Przekieruj na stronę sukcesu rejestracji z e-mailem w parametrze
+      router.push(`/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=LAW_FIRM`)
     } catch (error) {
       setError("Wystąpił błąd podczas rejestracji")
       setIsLoading(false)

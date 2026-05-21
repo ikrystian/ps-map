@@ -142,8 +142,8 @@ export default function ClientRegistrationPage() {
       // Wyczyść dane z localStorage po pomyślnej rejestracji
       localStorage.removeItem("client_registration_data")
 
-      // Przekieruj na stronę logowania
-      router.push("/logowanie?registered=true")
+      // Przekieruj na stronę sukcesu rejestracji z e-mailem w parametrze
+      router.push(`/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=CLIENT`)
     } catch (error) {
       setError("Wystąpił błąd podczas rejestracji")
       setIsLoading(false)
