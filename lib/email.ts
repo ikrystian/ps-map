@@ -1099,3 +1099,134 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
   return { subject: emailSubject, html, text }
 }
 
+/**
+ * Generuje HTML dla emaila weryfikacji subskrypcji newslettera
+ */
+export function generateNewsletterVerificationEmail(
+  verificationUrl: string,
+  email: string
+): { subject: string; html: string; text: string } {
+  const subject = 'Potwierdź swój zapis do newslettera - ProstaSprawa'
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e5e4e;
+          }
+          .content {
+            margin-bottom: 30px;
+          }
+          .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #1e5e4e;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+          }
+          .button-container {
+            text-align: center;
+            margin: 30px 0;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+          }
+          .info-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #1e5e4e;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">ProstaSprawa</div>
+          </div>
+
+          <div class="content">
+            <h2>Potwierdź subskrypcję newslettera</h2>
+
+            <p>Witaj,</p>
+
+            <p>Dziękujemy za chęć zapisu do newslettera serwisu ProstaSprawa (dla adresu: <strong>${email}</strong>).</p>
+
+            <p>Aby potwierdzić subskrypcję i zacząć otrzymywać porady prawne, nowości oraz przydatne informacje, kliknij poniższy przycisk:</p>
+
+            <div class="button-container">
+              <a href="${verificationUrl}" class="button">Potwierdzam subskrypcję</a>
+            </div>
+
+            <p>Lub skopiuj i wklej poniższy link do przeglądarki:</p>
+            <p style="word-break: break-all; color: #1e5e4e;">${verificationUrl}</p>
+
+            <div class="info-box">
+              <strong>ℹ️ Ważne:</strong>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>Jeśli to nie Ty wpisałeś swój adres email na naszej stronie, zignoruj tę wiadomość.</li>
+                <li>Twój adres nie zostanie dodany do bazy dopóki nie klikniesz w powyższy link.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
+            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  const text = `
+Potwierdź subskrypcję newslettera - ProstaSprawa
+
+Dziękujemy za chęć zapisu do newslettera serwisu ProstaSprawa (dla adresu: ${email}).
+
+Aby potwierdzić subskrypcję i zacząć otrzymywać porady prawne, nowości oraz przydatne informacje, przejdź pod poniższy adres:
+${verificationUrl}
+
+Jeśli to nie Ty wpisałeś swój adres email na naszej stronie, zignoruj tę wiadomość. Twój adres nie zostanie dodany do bazy dopóki nie potwierdzisz zapisu.
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+

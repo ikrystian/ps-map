@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Mail, Calendar, CheckCircle, XCircle, Download } from "lucide-react"
+import { Mail, Calendar, CheckCircle, XCircle, Download, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -21,6 +21,8 @@ interface NewsletterSubscriber {
   imie: string | null
   zgoda: boolean
   aktywny: boolean
+  potwierdzony: boolean
+  dataPotwierdzenia: string | null
   dataZapisu: string
   dataRezygnacji: string | null
 }
@@ -42,6 +44,7 @@ export default function AdminNewsletterPage() {
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
+    unconfirmed: 0,
     inactive: 0,
   })
 
@@ -54,9 +57,10 @@ export default function AdminNewsletterPage() {
 
         // Calculate stats
         const total = data.length
-        const active = data.filter((s: NewsletterSubscriber) => s.aktywny).length
-        const inactive = total - active
-        setStats({ total, active, inactive })
+        const active = data.filter((s: NewsletterSubscriber) => s.potwierdzony && s.aktywny).length
+        const unconfirmed = data.filter((s: NewsletterSubscriber) => !s.potwierdzony).length
+        const inactive = data.filter((s: NewsletterSubscriber) => s.potwierdzony && !s.aktywny).length
+        setStats({ total, active, unconfirmed, inactive })
       } else {
         throw new Error("Błąd pobierania subskrybentów")
       }
@@ -74,16 +78,24 @@ export default function AdminNewsletterPage() {
   const exportToCSV = () => {
     try {
       // Prepare CSV header
-      const header = ["Email", "Imię", "Data zapisu", "Status", "Data rezygnacji"]
+      const header = ["Email", "Imię", "Data zapisu", "Potwierdzony", "Data potwierdzenia", "Status", "Data rezygnacji"]
 
       // Prepare CSV rows
-      const rows = subscribers.map((sub) => [
-        sub.email,
-        sub.imie || "",
-        formatDate(sub.dataZapisu),
-        sub.aktywny ? "Aktywny" : "Nieaktywny",
-        sub.dataRezygnacji ? formatDate(sub.dataRezygnacji) : "",
-      ])
+      const rows = subscribers.map((sub) => {
+        let statusStr = "Niepotwierdzony"
+        if (sub.potwierdzony) {
+          statusStr = sub.aktywny ? "Aktywny" : "Wypisany"
+        }
+        return [
+          sub.email,
+          sub.imie || "",
+          formatDate(sub.dataZapisu),
+          sub.potwierdzony ? "Tak" : "Nie",
+          sub.dataPotwierdzenia ? formatDate(sub.dataPotwierdzenia) : "",
+          statusStr,
+          sub.dataRezygnacji ? formatDate(sub.dataRezygnacji) : "",
+        ]
+      })
 
       // Create CSV content
       const csvContent = [
@@ -111,6 +123,28 @@ export default function AdminNewsletterPage() {
     }
   }
 
+  const getStatusBadge = (sub: NewsletterSubscriber) => {
+    if (!sub.potwierdzony) {
+      return (
+        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800">
+          Niepotwierdzony
+        </Badge>
+      )
+    }
+    if (sub.aktywny) {
+      return (
+        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800">
+          Aktywny
+        </Badge>
+      )
+    }
+    return (
+      <Badge variant="secondary">
+        Wypisany
+      </Badge>
+    )
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -129,18 +163,18 @@ export default function AdminNewsletterPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Wszyscy subskrybenci
+              Wszyscy zapisani
             </CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
             <p className="text-xs text-muted-foreground">
-              Łączna liczba zapisów
+              Łączna liczba rekordów
             </p>
           </CardContent>
         </Card>
@@ -148,14 +182,14 @@ export default function AdminNewsletterPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Aktywni
+              Aktywni subskrybenci
             </CardTitle>
             <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.active}</div>
             <p className="text-xs text-muted-foreground">
-              Aktywne subskrypcje
+              Potwierdzone subskrypcje
             </p>
           </CardContent>
         </Card>
@@ -163,14 +197,29 @@ export default function AdminNewsletterPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Nieaktywni
+              Oczekujący (Double Opt-In)
+            </CardTitle>
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-yellow-600">{stats.unconfirmed}</div>
+            <p className="text-xs text-muted-foreground">
+              Wysłane linki, niepotwierdzone
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Wypisani
             </CardTitle>
             <XCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-muted-foreground">{stats.inactive}</div>
             <p className="text-xs text-muted-foreground">
-              Wypisani z newslettera
+              Rezygnacja z subskrypcji
             </p>
           </CardContent>
         </Card>
@@ -199,6 +248,7 @@ export default function AdminNewsletterPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Imię</TableHead>
                 <TableHead>Data zapisu</TableHead>
+                <TableHead>Potwierdzony</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Data rezygnacji</TableHead>
               </TableRow>
@@ -206,7 +256,7 @@ export default function AdminNewsletterPage() {
             <TableBody>
               {subscribers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <Mail className="h-12 w-12 text-muted-foreground" />
                       <p className="text-muted-foreground">
@@ -232,9 +282,16 @@ export default function AdminNewsletterPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={subscriber.aktywny ? "default" : "secondary"}>
-                        {subscriber.aktywny ? "Aktywny" : "Nieaktywny"}
+                      <Badge variant="outline" className={
+                        subscriber.potwierdzony 
+                          ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800" 
+                          : "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800"
+                      }>
+                        {subscriber.potwierdzony ? "Tak" : "Nie"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(subscriber)}
                     </TableCell>
                     <TableCell>
                       {subscriber.dataRezygnacji ? (

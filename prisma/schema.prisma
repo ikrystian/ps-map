@@ -1300,14 +1300,17 @@ model City {
 // ============================================================================
 
 model Newsletter {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  imie          String?
-  zgoda         Boolean  @default(true)
-  aktywny       Boolean  @default(true)
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  imie                  String?
+  zgoda                 Boolean   @default(true)
+  aktywny               Boolean   @default(true)
+  potwierdzony          Boolean   @default(false)
+  tokenPotwierdzajacy   String?   @unique
+  dataPotwierdzenia     DateTime?
 
-  dataZapisu    DateTime @default(now())
-  dataRezygnacji DateTime?
+  dataZapisu      DateTime  @default(now())
+  dataRezygnacji  DateTime?
 
   @@index([email])
   @@index([aktywny])

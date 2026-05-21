@@ -24,7 +24,7 @@ export function NewsletterSection() {
         throw new Error(data.error || "Nie udało się zapisać do newslettera")
       }
 
-      toast.success("Dziękujemy za zapis do newslettera!")
+      toast.success(data.message || "Dziękujemy za zapis do newslettera!")
       setEmail("")
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Wystąpił błąd")
