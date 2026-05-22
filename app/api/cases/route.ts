@@ -172,13 +172,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Znajdź lub utwórz kategorię
-    let category = await prisma.category.findUnique({
-      where: { slug: body.categoryId },
+    // Znajdź kategorię po ID lub po slugu (np. dla dawnych slugów w formularzach)
+    let category = await prisma.category.findFirst({
+      where: {
+        OR: [
+          { id: body.categoryId },
+          { slug: body.categoryId }
+        ]
+      },
     })
 
     if (!category) {
-      // Jeśli kategoria nie istnieje, utwórz ją
+      // Jeśli kategoria nie istnieje, a podana wartość wygląda jak UUID, to znaczy że nie istnieje w bazie
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.categoryId)
+      if (isUuid) {
+        return NextResponse.json({ error: "Selected category not found" }, { status: 404 })
+      }
+
+      // W przeciwnym wypadku utwórz nową kategorię (legacy fallback dla slugów)
       category = await prisma.category.create({
         data: {
           nazwa: body.categoryId
@@ -259,6 +270,19 @@ export async function POST(request: NextRequest) {
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
 
+    // Znajdź wszystkie powiązane kategorie w hierarchii (samą kategorię, jej rodzica i dzieci)
+    const hierarchyCategoryIds = [category.id]
+    if (category.parentId) {
+      hierarchyCategoryIds.push(category.parentId)
+    }
+    const childCategories = await prisma.category.findMany({
+      where: { parentId: category.id },
+      select: { id: true },
+    })
+    childCategories.forEach(child => {
+      hierarchyCategoryIds.push(child.id)
+    })
+
     // Powiadom kancelarie o nowej sprawie (tylko te z pasującą kategorią i pasującym obszarem działania)
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
@@ -266,7 +290,9 @@ export async function POST(request: NextRequest) {
         aktywna: true,
         user: { deletedAt: null },
         categories: {
-          some: { categoryId: category.id },
+          some: {
+            categoryId: { in: hierarchyCategoryIds },
+          },
         },
         OR: [
           { callaPolska: true },

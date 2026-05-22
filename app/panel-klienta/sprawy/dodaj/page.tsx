@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react"
 
@@ -55,6 +55,46 @@ export default function ClientAddCasePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
+
+  const [categories, setCategories] = useState<any[]>([])
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories")
+        if (response.ok) {
+          const data = await response.json()
+          setCategories(data)
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error)
+      } finally {
+        setIsLoadingCategories(false)
+      }
+    }
+    fetchCategories()
+  }, [])
+
+  const getFilteredCategories = () => {
+    const isPrivate = formData.typSprawy === "OSOBA_PRYWATNA"
+    const targetType = isPrivate ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE"
+    
+    // Filter active categories of targetType
+    const activeCats = categories.filter((cat: any) => cat.aktywna && cat.typ === targetType)
+    
+    // Build root categories (those without parentId)
+    const rootCats = activeCats.filter((cat: any) => !cat.parentId)
+    
+    return rootCats.map((root: any) => {
+      // Find children belonging to this root
+      const children = activeCats.filter((cat: any) => cat.parentId === root.id)
+      return {
+        ...root,
+        children
+      }
+    })
+  }
 
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
@@ -275,7 +315,10 @@ export default function ClientAddCasePage() {
                   ? "border-primary bg-primary/5"
                   : "hover:border-primary/50"
                 }`}
-              onClick={() => updateFormData("typSprawy", option.value)}
+              onClick={() => {
+                updateFormData("typSprawy", option.value)
+                updateFormData("categoryId", "") // Reset selected category
+              }}
             >
               <CardHeader>
                 <div className="flex items-center gap-3">
@@ -308,19 +351,28 @@ export default function ClientAddCasePage() {
         <Label htmlFor="categoryId">Kategoria główna *</Label>
         <Select value={formData.categoryId} onValueChange={(value) => updateFormData("categoryId", value)}>
           <SelectTrigger id="categoryId">
-            <SelectValue placeholder="Wybierz kategorię" />
+            <SelectValue placeholder={isLoadingCategories ? "Ładowanie kategorii..." : "Wybierz kategorię / specjalizację"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="prawo-cywilne">Prawo cywilne</SelectItem>
-            <SelectItem value="prawo-karne">Prawo karne</SelectItem>
-            <SelectItem value="prawo-rodzinne">Prawo rodzinne</SelectItem>
-            <SelectItem value="prawo-pracy">Prawo pracy</SelectItem>
-            <SelectItem value="prawo-gospodarcze">Prawo gospodarcze</SelectItem>
-            <SelectItem value="prawo-administracyjne">Prawo administracyjne</SelectItem>
-            <SelectItem value="prawo-podatkowe">Prawo podatkowe</SelectItem>
-            <SelectItem value="prawo-medyczne">Prawo medyczne</SelectItem>
-            <SelectItem value="prawo-nieruchomosci">Prawo nieruchomości</SelectItem>
-            <SelectItem value="prawo-spadkowe">Prawo spadkowe</SelectItem>
+            {isLoadingCategories ? (
+              <SelectItem value="loading" disabled>Ładowanie...</SelectItem>
+            ) : getFilteredCategories().length === 0 ? (
+              <SelectItem value="none" disabled>Brak dostępnych kategorii</SelectItem>
+            ) : (
+              getFilteredCategories().map((parent: any) => (
+                <SelectGroup key={parent.id}>
+                  <SelectLabel className="font-bold text-primary px-2 py-1">{parent.nazwa}</SelectLabel>
+                  <SelectItem value={parent.id} className="pl-6 font-medium">
+                    {parent.nazwa} (Ogólna)
+                  </SelectItem>
+                  {parent.children?.map((child: any) => (
+                    <SelectItem key={child.id} value={child.id} className="pl-10">
+                      — {child.nazwa}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))
+            )}
           </SelectContent>
         </Select>
       </div>
