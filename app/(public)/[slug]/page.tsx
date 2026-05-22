@@ -86,7 +86,7 @@ export default async function DynamicPage({ params }: PageProps) {
   })
 
   return (
-    <div className="min-h-screen bg-background text-neutral-300">
+    <div className="min-h-screen bg-background-sec text-neutral-300">
       {/* Breadcrumbs Banner */}
       <div
         className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"

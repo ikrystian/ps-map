@@ -76,7 +76,7 @@ export default function RankingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-sec">
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-primary/10 to-background py-12 md:py-16">
         <div className="container mx-auto px-4">

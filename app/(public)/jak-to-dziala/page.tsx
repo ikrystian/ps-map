@@ -8,7 +8,7 @@ import {
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-sec">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-16">

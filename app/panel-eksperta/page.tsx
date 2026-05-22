@@ -388,14 +388,14 @@ export default function LawFirmDashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Panel Eksperta</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Panel Eksperta</h1>
         <p className="text-muted-foreground mt-2">
           Witaj, {lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div id="tour-stats" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div id="tour-stats" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
         {/* Wyświetlenia profilu */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -467,7 +467,7 @@ export default function LawFirmDashboardPage() {
 
       {/* Package info and limits */}
       {permissions && (
-        <Card id="tour-pakiet" className="overflow-hidden relative border border-border bg-card">
+        <Card id="tour-pakiet" className="overflow-hidden relative border border-border bg-card mb-4">
           <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
             {/* Watermark Icon */}
             <WatermarkIcon className={cn("absolute right-6 -bottom-6 h-32 w-32 pointer-events-none transform rotate-12 transition-transform duration-500", bannerStyle.iconColor)} />

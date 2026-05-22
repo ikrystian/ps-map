@@ -686,7 +686,7 @@ export default function LawFirmProfilePage() {
   const youtubeVideoId = lawFirm?.filmYouTube ? getYouTubeVideoId(lawFirm.filmYouTube) : null
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-sec">
       {/* Header Image */}
 
       <div className="relative h-64 md:h-96 lg:h-128 w-full flex items-end overflow-hidden" id="kancelaria-header">
@@ -973,7 +973,7 @@ export default function LawFirmProfilePage() {
                       {lawFirm.unikatowyOpisUslugi && (
                         <p className="whitespace-pre-wrap">{lawFirm.unikatowyOpisUslugi}</p>
                       )}
-                      
+
                       {lawFirm.categories.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {lawFirm.categories.map((cat) => (
@@ -1807,12 +1807,12 @@ export default function LawFirmProfilePage() {
             {/* Package Badge */}
             {lawFirm.pakietSubskrypcji && (() => {
               const pkg = lawFirm.pakietSubskrypcji;
-              const cardClass = 
+              const cardClass =
                 pkg === "BIZNES" ? "border-2 border-amber-500 bg-gradient-to-br from-[#1c1917] via-card to-amber-950/20 shadow-[0_0_20px_rgba(245,158,11,0.15)]" :
-                pkg === "PREMIUM" ? "border-2 border-purple-500 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-[0_0_20px_rgba(168,85,247,0.12)]" :
-                pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" :
-                "border border-neutral-850 bg-card";
-                
+                  pkg === "PREMIUM" ? "border-2 border-purple-500 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-[0_0_20px_rgba(168,85,247,0.12)]" :
+                    pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" :
+                      "border border-neutral-850 bg-card";
+
               return (
                 <Card className={cn("transition-all duration-300", cardClass)}>
                   <CardHeader className="pb-2">
@@ -1853,8 +1853,8 @@ export default function LawFirmProfilePage() {
 
             {/* Service Area */}
             {(lawFirm.voivodeships.length > 0 || lawFirm.cities.length > 0 || lawFirm.callaPolska) && (
-              <Card className="overflow-hidden border-none shadow-sm bg-muted/30">
-                <CardHeader className="bg-muted/50 pb-3">
+              <Card className="overflow-hidden border-none shadow-sm bg-card">
+                <CardHeader className="bg-card pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-primary" />
                     Obszar działania

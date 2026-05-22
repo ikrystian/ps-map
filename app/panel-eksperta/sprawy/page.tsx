@@ -325,7 +325,7 @@ const SprawyPage = () => {
   return (
     <div className="container">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold font-playfair">Wszystkie Sprawy</h1>
+        <h1 className="text-xl font-bold font-playfair">Wszystkie Sprawy</h1>
         <p className="text-muted-foreground mt-2">
           Przeglądaj wszystkie dostępne sprawy (sprawy zaakceptowane przez klienta są wyróżnione na górze)
         </p>

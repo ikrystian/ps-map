@@ -532,7 +532,7 @@ export default function LawFirmProfilePage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold font-playfair">Profil Eksperta</h1>
+        <h1 className="text-xl font-medium text-white font-playfair">Profil Eksperta</h1>
         <p className="text-muted-foreground">Zarządzaj informacjami o swoim profilu</p>
       </div>
 

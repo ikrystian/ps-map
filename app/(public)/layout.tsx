@@ -26,7 +26,7 @@ export default async function PublicLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col selection:bg-primary/20 selection:text-primary-foreground">
       <PublicHeader
         isAuthenticated={!!session}
         userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}

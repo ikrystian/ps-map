@@ -157,11 +157,11 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     const isOpen = isLawFirmOpen(lawFirm.godzinyOtwarcia, lawFirm.statusGodzinyOtwarcia)
     const pkg = lawFirm.pakietSubskrypcji
 
-    const cardBorderAndGlow = 
+    const cardBorderAndGlow =
         pkg === "BIZNES" ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-amber-950/10" :
-        pkg === "PREMIUM" ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/10" :
-        pkg === "STANDARD" ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/10" :
-        "border-neutral-800 hover:border-neutral-700 bg-[#131313]"
+            pkg === "PREMIUM" ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/10" :
+                pkg === "STANDARD" ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/10" :
+                    "border-neutral-800 hover:border-neutral-700 bg-[#131313]"
 
     const professionalTitle = lawFirm.oraStatus ? "Adwokat" : lawFirm.oirpStatus ? "Radca prawny" : (lawFirm.categories[0]?.nazwa || "Adwokat");
     const chamberText = lawFirm.oraStatus && lawFirm.oraMiasto ? `ORA ${lawFirm.oraMiasto}` : lawFirm.oirpStatus && lawFirm.oirpMiasto ? `OIRP ${lawFirm.oirpMiasto}` : "ORA Kielce";
@@ -290,7 +290,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                     </div>
 
                     {/* Right Column - Content */}
-                    <div className="flex-1 p-6 flex flex-col justify-between relative bg-[#131313]">
+                    <div className="flex-1 p-6 flex flex-col justify-between relative bg-card">
                         <div className="flex-1 flex flex-col justify-between">
                             <div className="flex justify-between items-start gap-4 mb-3">
                                 <div className="flex-1 min-w-0">
@@ -346,8 +346,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                         {/* Bottom Actions */}
                         <div className="flex items-center justify-between">
                             <div className="flex gap-3">
-                                <ContactButton 
-                                    icon={Phone} 
+                                <ContactButton
+                                    icon={Phone}
                                     type="telefon"
                                     onClick={(e) => {
                                         e.preventDefault()
@@ -355,8 +355,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                                         if (lawFirm.telefon) window.location.href = `tel:${lawFirm.telefon}`
                                     }}
                                 />
-                                <ContactButton 
-                                    icon={Mail} 
+                                <ContactButton
+                                    icon={Mail}
                                     type="email"
                                     onClick={(e) => {
                                         e.preventDefault()
@@ -364,8 +364,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                                         if (lawFirm.email) window.location.href = `mailto:${lawFirm.email}`
                                     }}
                                 />
-                                <ContactButton 
-                                    icon={Globe} 
+                                <ContactButton
+                                    icon={Globe}
                                     type="strona"
                                     onClick={(e) => {
                                         e.preventDefault()

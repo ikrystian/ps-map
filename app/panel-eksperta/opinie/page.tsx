@@ -207,8 +207,8 @@ export default function LawFirmReviewsPage() {
           <Star
             key={star}
             className={`h-4 w-4 ${star <= rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-200 text-gray-200"
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-gray-200 text-gray-200"
               }`}
           />
         ))}
@@ -228,7 +228,7 @@ export default function LawFirmReviewsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Opinie</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Opinie</h1>
         <p className="text-muted-foreground mt-2">
           Zarządzaj opiniami o Twoim profilu i odpowiadaj na nie
         </p>

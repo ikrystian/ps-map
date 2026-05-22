@@ -106,8 +106,8 @@ export default function LawFirmStatsPage() {
           <Star
             key={star}
             className={`h-4 w-4 ${star <= rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-200 text-gray-200"
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-gray-200 text-gray-200"
               }`}
           />
         ))}
@@ -129,7 +129,7 @@ export default function LawFirmStatsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight font-playfair">Statystyki i analizy</h1>
+          <h1 className="text-xl font-medium tracking-tight font-playfair">Statystyki i analizy</h1>
           <p className="text-muted-foreground">
             Zaawansowane statystyki i analityka dla Twojego profilu
           </p>
@@ -182,14 +182,14 @@ export default function LawFirmStatsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Statystyki</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Statystyki</h1>
         <p className="text-muted-foreground mt-2">
           Pełna analiza wydajności Twojego profilu
         </p>
       </div>
 
       {/* Overview Stats */}
-      <div id="tour-stats-overview" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div id="tour-stats-overview" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -473,8 +473,8 @@ export default function LawFirmStatsPage() {
                     .map((item, index) => (
                       <div key={item.category} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                         <div className={`text-lg font-bold ${index === 0 ? "text-yellow-600" :
-                            index === 1 ? "text-gray-500" :
-                              "text-orange-600"
+                          index === 1 ? "text-gray-500" :
+                            "text-orange-600"
                           }`}>
                           #{index + 1}
                         </div>
@@ -485,8 +485,8 @@ export default function LawFirmStatsPage() {
                           </div>
                         </div>
                         <Trophy className={`h-5 w-5 ${index === 0 ? "text-yellow-600" :
-                            index === 1 ? "text-gray-500" :
-                              "text-orange-600"
+                          index === 1 ? "text-gray-500" :
+                            "text-orange-600"
                           }`} />
                       </div>
                     ))}

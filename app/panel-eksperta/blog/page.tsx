@@ -159,7 +159,7 @@ export default function LawFirmBlogPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold font-playfair">Blog eksperta</h1>
+          <h1 className="text-xl font-bold font-playfair">Blog eksperta</h1>
           <p className="text-muted-foreground">
             Buduj autorytet i przyciągaj klientów dzięki profesjonalnemu blogowi
           </p>
@@ -187,7 +187,7 @@ export default function LawFirmBlogPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold font-playfair">Mój blog</h1>
+          <h1 className="text-xl font-bold font-playfair">Mój blog</h1>
           <p className="text-muted-foreground">
             Zarządzaj wpisami na blogu swojego profilu
           </p>

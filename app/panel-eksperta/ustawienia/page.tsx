@@ -407,7 +407,7 @@ export default function LawFirmSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Ustawienia</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Ustawienia</h1>
         <p className="text-muted-foreground">Zarządzaj swoim kontem i preferencjami powiadomień</p>
       </div>
 

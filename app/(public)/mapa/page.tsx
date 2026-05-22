@@ -195,7 +195,7 @@ export default function MapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-sec">
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
         <div className="mb-6 flex items-center justify-between ">

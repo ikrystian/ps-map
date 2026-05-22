@@ -148,7 +148,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background selection:bg-primary/30">
+    <div className="min-h-screen bg-background-sec selection:bg-primary/30">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32">
         <ParticlesBackground />
@@ -288,7 +288,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.map((category) => {
         const isBusiness = category.typ === "SPRAWY_FIRMOWE"
-        
+
         // Custom gradient and glow config per category type
         const gradientFrom = isBusiness ? "#10b981" : "#3b82f6"
         const gradientTo = isBusiness ? "#059669" : "#6366f1"
@@ -297,34 +297,31 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
         return (
           <MagicCard
             key={category.id}
-            className={`flex flex-col h-full overflow-hidden border-border/60 transition-all duration-300 group ${
-              isBusiness 
-                ? "hover:border-emerald-500/40" 
+            className={`flex flex-col h-full overflow-hidden border-border/60 transition-all duration-300 group ${isBusiness
+                ? "hover:border-emerald-500/40"
                 : "hover:border-blue-500/40"
-            }`}
+              }`}
             gradientFrom={gradientFrom}
             gradientTo={gradientTo}
             gradientColor={gradientColor}
           >
             {/* Subtle background glow highlight in top right */}
-            <div 
-              className={`absolute top-0 right-0 h-36 w-36 bg-gradient-to-bl from-transparent via-transparent to-transparent rounded-bl-full pointer-events-none transition-all duration-500 ${
-                isBusiness 
-                  ? "from-emerald-500/5 group-hover:from-emerald-500/10" 
+            <div
+              className={`absolute top-0 right-0 h-36 w-36 bg-gradient-to-bl from-transparent via-transparent to-transparent rounded-bl-full pointer-events-none transition-all duration-500 ${isBusiness
+                  ? "from-emerald-500/5 group-hover:from-emerald-500/10"
                   : "from-blue-500/5 group-hover:from-blue-500/10"
-              }`} 
+                }`}
             />
 
             <div className="p-8 flex flex-col h-full relative z-10">
               <div className="mb-6 flex items-center justify-between">
                 {/* Icon Wrapper with Custom Color Coding */}
-                <Link 
-                  href={`/kategorie/${category.slug}`} 
-                  className={`rounded-xl p-3 transition-all duration-500 transform group-hover:rotate-6 shadow-sm border ${
-                    isBusiness
+                <Link
+                  href={`/kategorie/${category.slug}`}
+                  className={`rounded-xl p-3 transition-all duration-500 transform group-hover:rotate-6 shadow-sm border ${isBusiness
                       ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                       : "bg-blue-500/10 text-blue-400 border-blue-500/20 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-                  }`}
+                    }`}
                 >
                   <IconRenderer
                     iconName={category.ikona}
@@ -332,15 +329,14 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                     fallback={isBusiness ? Briefcase : Scale}
                   />
                 </Link>
-                
+
                 {/* Visual Accent Badge */}
                 <div className="flex flex-col items-end gap-1">
-                  <Badge 
-                    className={`rounded-md px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold gap-1 border transition-colors ${
-                      isBusiness
+                  <Badge
+                    className={`rounded-md px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold gap-1 border transition-colors ${isBusiness
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
                         : "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20"
-                    }`}
+                      }`}
                   >
                     {isBusiness ? (
                       <>
@@ -359,9 +355,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
 
               {/* Title with matching color on hover */}
               <Link href={`/kategorie/${category.slug}`}>
-                <h3 className={`text-xl font-bold mb-3 transition-colors line-clamp-1 ${
-                  isBusiness ? "group-hover:text-emerald-400" : "group-hover:text-blue-400"
-                }`}>
+                <h3 className={`text-xl font-bold mb-3 transition-colors line-clamp-1 ${isBusiness ? "group-hover:text-emerald-400" : "group-hover:text-blue-400"
+                  }`}>
                   {category.nazwa}
                 </h3>
               </Link>
@@ -380,11 +375,10 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                     <Link
                       key={child.id}
                       href={`/kategorie/${category.slug}/${child.slug}`}
-                      className={`inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors ${
-                        isBusiness
+                      className={`inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors ${isBusiness
                           ? "hover:border-emerald-500/50 hover:bg-emerald-500/5 hover:text-emerald-400"
                           : "hover:border-blue-500/50 hover:bg-blue-500/5 hover:text-blue-400"
-                      }`}
+                        }`}
                     >
                       <IconRenderer
                         iconName={child.ikona}
@@ -398,9 +392,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                   {category.children.length > 6 && (
                     <Link
                       href={`/kategorie/${category.slug}`}
-                      className={`inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground transition-colors font-medium ${
-                        isBusiness ? "hover:text-emerald-400" : "hover:text-blue-400"
-                      }`}
+                      className={`inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground transition-colors font-medium ${isBusiness ? "hover:text-emerald-400" : "hover:text-blue-400"
+                        }`}
                     >
                       +{category.children.length - 6} więcej...
                     </Link>
@@ -422,11 +415,10 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 </div>
                 <Link
                   href={`/kategorie/${category.slug}`}
-                  className={`flex items-center gap-1 text-xs font-bold opacity-60 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 ${
-                    isBusiness 
-                      ? "text-emerald-400 group-hover:text-emerald-300" 
+                  className={`flex items-center gap-1 text-xs font-bold opacity-60 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 ${isBusiness
+                      ? "text-emerald-400 group-hover:text-emerald-300"
                       : "text-blue-400 group-hover:text-blue-300"
-                  }`}
+                    }`}
                 >
                   <span>SZCZEGÓŁY</span>
                   <ChevronRight className="h-3 w-3" />

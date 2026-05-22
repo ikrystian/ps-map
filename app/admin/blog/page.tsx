@@ -206,16 +206,16 @@ export default function AdminBlogPage() {
 
       if (response.ok) {
         toast.success(isPublished ? "Wpis został opublikowany" : "Wpis przeniesiono do szkiców")
-        
+
         // Zaktualizuj stan lokalny
         setPosts((prev) =>
           prev.map((p) =>
             p.id === post.id
               ? {
-                  ...p,
-                  opublikowany: isPublished,
-                  dataPublikacji: isPublished ? new Date().toISOString() : null,
-                }
+                ...p,
+                opublikowany: isPublished,
+                dataPublikacji: isPublished ? new Date().toISOString() : null,
+              }
               : p
           )
         )
@@ -329,7 +329,7 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Karty statystyk */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Wszystkie wpisy</CardTitle>

@@ -186,7 +186,7 @@ export default function AdminProfilPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">
+        <h1 className="text-xl font-medium tracking-tight font-playfair">
           <User className="h-8 w-8" />
           Mój Profil
         </h1>

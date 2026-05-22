@@ -343,7 +343,7 @@ export default function LawFirmPanelLayout({
                 }}
                 className="flex items-center justify-center flex-shrink-0"
               >
-                <ExternalLink className="h-5 w-5 text-primary" />
+                <ExternalLink className="h-5 w-5" />
               </motion.div>
 
               {(inSheet || !isCollapsed) && (
@@ -402,7 +402,7 @@ export default function LawFirmPanelLayout({
           }}
           className="flex items-center justify-center flex-shrink-0"
         >
-          <LogOut className="h-5 w-5 text-primary" />
+          <LogOut className="h-5 w-5" />
         </motion.div>
 
         {(inSheet || !isCollapsed) && (
@@ -424,7 +424,7 @@ export default function LawFirmPanelLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background-sec">
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
         "hidden md:block border-border transition-all duration-300 ease-in-out",

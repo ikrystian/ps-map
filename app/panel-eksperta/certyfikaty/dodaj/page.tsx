@@ -107,7 +107,7 @@ export default function LawFirmAddCertificatePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight font-playfair">
+          <h1 className="text-xl font-medium tracking-tight font-playfair">
             Dodaj nowy certyfikat
           </h1>
           <p className="text-muted-foreground mt-2">

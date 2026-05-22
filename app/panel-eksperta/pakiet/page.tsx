@@ -268,7 +268,7 @@ export default function LawFirmPackagePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Pakiety subskrypcji</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Pakiety subskrypcji</h1>
         <p className="text-muted-foreground mt-2">
           Wybierz pakiet dostosowany do potrzeb Twojego profilu
         </p>
@@ -289,7 +289,7 @@ export default function LawFirmPackagePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-bold">
-                    {lawFirm.pakietSubskrypcji 
+                    {lawFirm.pakietSubskrypcji
                       ? (plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji)
                       : "Brak aktywnego pakietu"
                     }

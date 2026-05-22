@@ -205,7 +205,7 @@ export default function ClientOffersPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Oferty</h1>
+        <h1 className="text-xl font-medium tracking-tight font-playfair">Oferty</h1>
         <p className="text-muted-foreground mt-2">
           Przeglądaj i zarządzaj ofertami otrzymanymi od ekspertów
         </p>

@@ -321,7 +321,7 @@ export default function EmailManagementPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight font-playfair">Zarządzanie emailami</h1>
+          <h1 className="text-xl font-medium tracking-tight font-playfair">Zarządzanie emailami</h1>
           <p className="text-muted-foreground mt-2">
             Zarządzaj szablonami emaili, ich wyglądem i logami wysyłki
           </p>

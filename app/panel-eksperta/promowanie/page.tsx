@@ -594,7 +594,7 @@ export default function LawFirmPromotionPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight font-playfair">Promowanie</h1>
+          <h1 className="text-xl font-medium tracking-tight font-playfair">Promowanie</h1>
           <p className="text-muted-foreground mt-2">
             Zwiększ widoczność swojego profilu i zdobądź więcej klientów
           </p>

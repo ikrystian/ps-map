@@ -485,7 +485,7 @@ export default function LawFirmServicesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between border-b pb-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-playfair bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Zakres i obszar usług</h1>
+          <h1 className="text-xl font-bold tracking-tight font-playfair">Zakres i obszar usług</h1>
           <p className="text-muted-foreground mt-1">
             Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi.
           </p>

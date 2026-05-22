@@ -138,13 +138,13 @@ export default function SearchLawyerPage() {
     const cat = searchParams.get("category")
     const v = searchParams.get("voivodeship")
     const t = searchParams.get("type")
-    
+
     if (s) setSearchQuery(s)
     if (c) setSelectedCity(c)
     if (cat) setSelectedCategory(cat)
     if (v) setSelectedVoivodeship(v)
     if (t) setSelectedType(t)
-    
+
     // If any filter is set from URL, show filters by default
     if (s || c || cat || v || t) setShowFilters(true)
   }, [searchParams])
@@ -273,10 +273,10 @@ export default function SearchLawyerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-sec">
       {/* Breadcrumbs Banner */}
-      <div 
-        className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900" 
+      <div
+        className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -389,8 +389,8 @@ export default function SearchLawyerPage() {
                             </span>
                             <div className="flex items-center gap-1">
                               {selectedCity && (
-                                <X 
-                                  className="h-3 w-3 text-muted-foreground hover:text-foreground" 
+                                <X
+                                  className="h-3 w-3 text-muted-foreground hover:text-foreground"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     setSelectedCity("")

@@ -55,7 +55,7 @@ export default function ClientPanelLayout({
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background-sec">
       {/* Sidebar */}
       <aside className={cn(
         "border-r border-border transition-all duration-300 ease-in-out",
