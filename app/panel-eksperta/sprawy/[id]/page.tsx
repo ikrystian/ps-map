@@ -124,6 +124,7 @@ export default function LawFirmCaseDetailsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showOfferForm, setShowOfferForm] = useState(false)
   const [hasExistingOffer, setHasExistingOffer] = useState(false)
+  const [lawFirmPoints, setLawFirmPoints] = useState<number | null>(null)
 
   // Dane formularza oferty
   const [offerForm, setOfferForm] = useState({
@@ -161,6 +162,7 @@ export default function LawFirmCaseDetailsPage() {
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (lawFirmResponse.ok) {
         const lawFirmData = await lawFirmResponse.json()
+        setLawFirmPoints(lawFirmData.punktySaldo)
 
         const offersResponse = await fetch(`/api/offers?caseId=${params.id}&lawFirmId=${lawFirmData.id}`)
         if (offersResponse.ok) {
@@ -601,14 +603,26 @@ export default function LawFirmCaseDetailsPage() {
                         id="wyroznienie"
                         checked={offerForm.wyroznienie}
                         onCheckedChange={(checked) => handleOfferFormChange("wyroznienie", checked)}
+                        disabled={lawFirmPoints !== null && lawFirmPoints < 50}
                       />
                       <div className="flex-1">
-                        <Label htmlFor="wyroznienie" className="cursor-pointer">
+                        <Label
+                          htmlFor="wyroznienie"
+                          className={`cursor-pointer ${lawFirmPoints !== null && lawFirmPoints < 50 ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
                           Wyróżnij ofertę (50 punktów)
                         </Label>
                         <p className="text-sm text-muted-foreground">
                           Wyróżniona oferta będzie bardziej widoczna dla klienta
                         </p>
+                        {lawFirmPoints !== null && lawFirmPoints < 50 && (
+                          <p className="text-sm text-destructive mt-1 font-medium">
+                            Opcja niedostępna z powodu niewystarczającej ilości punktów (posiadasz: {lawFirmPoints} pkt).{" "}
+                            <Link href="/panel-eksperta/punkty" className="underline text-primary hover:text-primary/80">
+                              Doładuj punkty
+                            </Link>
+                          </p>
+                        )}
                       </div>
                     </div>
 
