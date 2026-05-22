@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Search, ChevronDown, Check, MapPin, IdCard, List, X } from "lucide-react"
+import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
@@ -171,29 +171,30 @@ export default function PublicHeader({
                   Sprawy firmowe
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[600px] lg:w-[800px] p-4">
-                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8">
+                    <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {firmoweCat.map((category) => (
-                        <div key={category.id}>
+                        <div key={category.id} className="mb-6">
                           <NavigationMenuLink asChild>
                             <Link
                               href={`/kategorie/${category.slug}`}
                               className={cn(
-                                "block font-semibold hover:text-primary mb-2 transition-colors",
+                                "group/cat-title inline-flex items-center gap-1 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
-                              {category.nazwa}
+                              <span>{category.nazwa}</span>
+                              <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
                             </Link>
                           </NavigationMenuLink>
                           {category.children && category.children.length > 0 && (
-                            <div className="space-y-1">
+                            <div className="border-l border-neutral-200/60 dark:border-neutral-800/60 pl-3.5 space-y-1.5 ml-0.5">
                               {category.children.slice(0, 5).map((child) => (
                                 <NavigationMenuLink key={child.id} asChild>
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-sm transition-colors hover:text-primary",
+                                      "block text-[13px] transition-colors hover:text-primary leading-relaxed",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
                                         ? "text-primary font-medium"
                                         : "text-muted-foreground"
@@ -208,10 +209,11 @@ export default function PublicHeader({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 pt-4 border-t text-right">
+                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Potrzebujesz pomocy prawnej? Dodaj swoją sprawę na portalu.</span>
                       <NavigationMenuLink asChild>
-                        <Link href="/kategorie" className="text-sm font-medium text-primary hover:underline">
-                          Zobacz wszystkie kategorie →
+                        <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                          Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
                         </Link>
                       </NavigationMenuLink>
                     </div>
@@ -230,29 +232,30 @@ export default function PublicHeader({
                   Sprawy prywatne
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[600px] lg:w-[900px] p-4">
-                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8">
+                    <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {prywatneCat.map((category) => (
-                        <div key={category.id}>
+                        <div key={category.id} className="mb-6">
                           <NavigationMenuLink asChild>
                             <Link
                               href={`/kategorie/${category.slug}`}
                               className={cn(
-                                "block font-semibold hover:text-primary mb-2 transition-colors",
+                                "group/cat-title inline-flex items-center gap-1 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
-                              {category.nazwa}
+                              <span>{category.nazwa}</span>
+                              <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
                             </Link>
                           </NavigationMenuLink>
                           {category.children && category.children.length > 0 && (
-                            <div className="space-y-1">
+                            <div className="border-l border-neutral-200/60 dark:border-neutral-800/60 pl-3.5 space-y-1.5 ml-0.5">
                               {category.children.slice(0, 5).map((child) => (
                                 <NavigationMenuLink key={child.id} asChild>
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-sm transition-colors hover:text-primary",
+                                      "block text-[13px] transition-colors hover:text-primary leading-relaxed",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
                                         ? "text-primary font-medium"
                                         : "text-muted-foreground"
@@ -267,10 +270,11 @@ export default function PublicHeader({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 pt-4 border-t">
+                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Chcesz rozwiązać problem osobisty? Dodaj sprawę i otrzymaj oferty.</span>
                       <NavigationMenuLink asChild>
-                        <Link href="/kategorie" className="text-sm font-medium text-primary hover:underline">
-                          Zobacz wszystkie kategorie →
+                        <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                          Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
                         </Link>
                       </NavigationMenuLink>
                     </div>
