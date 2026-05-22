@@ -22,7 +22,7 @@ export async function GET() {
     }
 
     // Pobierz dane klienta
-    const client = await prisma.client.findUnique({
+    let client = await prisma.client.findUnique({
       where: { userId: session.user.id },
       include: {
         user: {
@@ -38,10 +38,39 @@ export async function GET() {
     })
 
     if (!client) {
-      return NextResponse.json(
-        { error: "Nie znaleziono profilu klienta" },
-        { status: 404 }
-      )
+      try {
+        const nameParts = session.user.name?.split(" ") || []
+        const imie = nameParts[0] || "Użytkownik"
+        const nazwisko = nameParts.slice(1).join(" ") || "Klient"
+
+        client = await prisma.client.create({
+          data: {
+            userId: session.user.id,
+            imie,
+            nazwisko,
+            zgodaRegulamin: true,
+            zgodaNewsletter: false,
+            zgodaMarketing: false,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+                image: true,
+              },
+            },
+            voivodeship: true,
+          },
+        })
+      } catch (createError) {
+        console.error("Failed to auto-create client profile:", createError)
+        return NextResponse.json(
+          { error: "Nie znaleziono profilu klienta" },
+          { status: 404 }
+        )
+      }
     }
 
     return NextResponse.json(client)

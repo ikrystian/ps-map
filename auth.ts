@@ -116,13 +116,36 @@ export const authOptions: NextAuthConfig = {
         token.picture = user.image
 
         // Fetch lawFirm or client data
-        const dbUser = await prisma.user.findUnique({
+        let dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           include: {
             lawFirm: { select: { id: true } },
             client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
           }
         })
+
+        if (dbUser?.role === "CLIENT" && !dbUser.client) {
+          const nameParts = user.name?.split(" ") || []
+          const imie = nameParts[0] || "Użytkownik"
+          const nazwisko = nameParts.slice(1).join(" ") || "Klient"
+
+          try {
+            const newClient = await prisma.client.create({
+              data: {
+                userId: dbUser.id,
+                imie,
+                nazwisko,
+                zgodaRegulamin: true,
+                zgodaNewsletter: false,
+                zgodaMarketing: false,
+              },
+              select: { id: true, imie: true, nazwisko: true, telefon: true }
+            })
+            dbUser.client = newClient
+          } catch (e) {
+            console.error("Error auto-creating client profile in jwt callback:", e)
+          }
+        }
 
         if (dbUser?.lawFirm) {
           token.lawFirmId = dbUser.lawFirm.id
@@ -156,7 +179,7 @@ export const authOptions: NextAuthConfig = {
 
       if (shouldRefresh && token.id) {
         try {
-          const freshUser = await prisma.user.findUnique({
+          let freshUser = await prisma.user.findUnique({
             where: { id: token.id as string },
             select: {
               id: true,
@@ -168,6 +191,29 @@ export const authOptions: NextAuthConfig = {
               client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
             },
           })
+
+          if (freshUser?.role === "CLIENT" && !freshUser.client) {
+            const nameParts = freshUser.name?.split(" ") || []
+            const imie = nameParts[0] || "Użytkownik"
+            const nazwisko = nameParts.slice(1).join(" ") || "Klient"
+
+            try {
+              const newClient = await prisma.client.create({
+                data: {
+                  userId: freshUser.id,
+                  imie,
+                  nazwisko,
+                  zgodaRegulamin: true,
+                  zgodaNewsletter: false,
+                  zgodaMarketing: false,
+                },
+                select: { id: true, imie: true, nazwisko: true, telefon: true }
+              })
+              freshUser.client = newClient
+            } catch (e) {
+              console.error("Error auto-creating client profile during token refresh:", e)
+            }
+          }
 
           if (freshUser) {
             token.name = freshUser.name

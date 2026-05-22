@@ -481,7 +481,7 @@ export default function ForLawyersPage() {
                 <span className="text-[23px] font-medium text-white tracking-wide">Zwiększ</span>
                 <span className="text-[23px] font-medium text-white tracking-wide mt-0.5">zasięg</span>
               </div>
-              <div className="mb-4 transition-transform duration-300 group-hover:scale-105">
+              <div className="mb-4 transition-transform duration-300 group-hover:scale-105 mt-1">
                 <Image src={'/icon_1.webp'} alt="Globe Icon" width={96} height={96} />
               </div>
             </div>
