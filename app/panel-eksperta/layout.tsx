@@ -43,6 +43,7 @@ import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationBell } from "@/components/NotificationBell"
 import { triggerBadgeCheck } from "@/app/actions/badges"
+import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const navigation = [
@@ -452,6 +453,9 @@ export default function LawFirmPanelLayout({
 
       {/* Account Manager Widget */}
       <AccountManagerWidget />
+
+      {/* Expert Onboarding Tour */}
+      <ExpertTourManager />
     </div>
   )
 }

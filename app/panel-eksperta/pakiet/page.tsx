@@ -275,7 +275,7 @@ export default function LawFirmPackagePage() {
       </div>
 
       {/* Current Status */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div id="tour-pakiet-current" className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Twój aktualny pakiet</CardTitle>
@@ -335,7 +335,7 @@ export default function LawFirmPackagePage() {
       </div>
 
       {/* Comparison Table */}
-      <Card>
+      <Card id="tour-pakiet-upgrade">
         <CardHeader>
           <CardTitle>Porównanie pakietów</CardTitle>
           <CardDescription>

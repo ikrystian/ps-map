@@ -180,7 +180,7 @@ export default function LawFirmOffersPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div id="tour-oferty-stats" className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wszystkie</CardTitle>
@@ -233,7 +233,7 @@ export default function LawFirmOffersPage() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card id="tour-oferty-filters">
         <CardHeader>
           <CardTitle>Filtruj oferty</CardTitle>
         </CardHeader>
@@ -272,7 +272,7 @@ export default function LawFirmOffersPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div id="tour-oferty-list" className="space-y-4">
           {filteredOffers.map((offer) => {
             const StatusIcon = statusLabels[offer.status]?.icon || FileText
             const statusInfo = statusLabels[offer.status]

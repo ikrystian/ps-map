@@ -192,7 +192,7 @@ export default function LawFirmBlogPage() {
             Zarządzaj wpisami na blogu swojego profilu
           </p>
         </div>
-        <Button asChild>
+        <Button id="tour-blog-new" asChild>
           <Link href="/panel-eksperta/blog/nowy">
             <Plus className="h-4 w-4 mr-2" />
             Dodaj artykuł
@@ -217,7 +217,7 @@ export default function LawFirmBlogPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card id="tour-blog-list">
           <CardHeader>
             <CardTitle>Twoje artykuły ({pagination.total})</CardTitle>
             <CardDescription>

@@ -107,6 +107,10 @@ export const authOptions: NextAuthConfig = {
             token.picture = freshUser.image
             token.role = freshUser.role
             token.lastRefresh = Date.now()
+          } else {
+            // Jeśli użytkownik nie istnieje w bazie, wyczyść token (invalidacja sesji)
+            console.warn(`User ${token.id} not found in DB during token refresh. Invalidating session.`)
+            return {} as JWT
           }
         } catch (error) {
           console.error("Error refreshing user data in JWT:", error)

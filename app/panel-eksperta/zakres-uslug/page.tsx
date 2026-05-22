@@ -504,7 +504,7 @@ export default function LawFirmServicesPage() {
         <div className="lg:col-span-2 space-y-8">
 
           {/* Sekcja 1: Specjalizacje */}
-          <Card className="shadow-sm border-muted/60">
+          <Card id="tour-zakres-specializations" className="shadow-sm border-muted/60">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2.5">
                 <div className="bg-primary/10 p-2 rounded-lg text-primary">
@@ -544,7 +544,7 @@ export default function LawFirmServicesPage() {
           </Card>
 
           {/* Sekcja 2: Obszar działania */}
-          <Card className="shadow-sm border-muted/60">
+          <Card id="tour-zakres-area" className="shadow-sm border-muted/60">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2.5">
                 <div className="bg-primary/10 p-2 rounded-lg text-primary">

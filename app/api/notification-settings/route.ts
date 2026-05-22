@@ -14,18 +14,39 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Pobierz lub utwórz ustawienia
-    let settings = await prisma.notificationSettings.findUnique({
-      where: { userId: session.user.id },
+    // Pobierz użytkownika wraz z ustawieniami powiadomień
+    const userWithSettings = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { notificationSettings: true },
     })
+
+    if (!userWithSettings) {
+      return Response.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
+
+    let settings = userWithSettings.notificationSettings
 
     // Jeśli nie istnieją, utwórz domyślne
     if (!settings) {
-      settings = await prisma.notificationSettings.create({
-        data: {
-          userId: session.user.id,
-        },
-      })
+      try {
+        settings = await prisma.notificationSettings.create({
+          data: {
+            userId: session.user.id,
+          },
+        })
+      } catch (createError: any) {
+        // Obsługa sytuacji, gdy ustawienia zostały utworzone równolegle (P2002)
+        if (createError.code === "P2002") {
+          settings = await prisma.notificationSettings.findUnique({
+            where: { userId: session.user.id },
+          })
+        } else {
+          throw createError
+        }
+      }
     }
 
     return Response.json(settings)
@@ -65,6 +86,18 @@ export async function PUT(request: NextRequest) {
     delete updateData.userId
     delete updateData.createdAt
     delete updateData.updatedAt
+
+    // Sprawdź czy użytkownik istnieje
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    })
+
+    if (!user) {
+      return Response.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
 
     // Aktualizuj lub utwórz ustawienia
     const settings = await prisma.notificationSettings.upsert({

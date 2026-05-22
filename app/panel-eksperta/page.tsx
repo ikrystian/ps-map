@@ -395,7 +395,7 @@ export default function LawFirmDashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div id="tour-stats" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Wyświetlenia profilu */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -467,7 +467,7 @@ export default function LawFirmDashboardPage() {
 
       {/* Package info and limits */}
       {permissions && (
-        <Card className="overflow-hidden relative border border-border bg-card">
+        <Card id="tour-pakiet" className="overflow-hidden relative border border-border bg-card">
           <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
             {/* Watermark Icon */}
             <WatermarkIcon className={cn("absolute right-6 -bottom-6 h-32 w-32 pointer-events-none transform rotate-12 transition-transform duration-500", bannerStyle.iconColor)} />
@@ -547,7 +547,7 @@ export default function LawFirmDashboardPage() {
       )}
 
       {/* Quick Actions - 4 Boxy z ikonkami */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div id="tour-quick-actions" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Link href="/panel-eksperta/profil">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
             <CardContent className="pt-6">
@@ -868,7 +868,7 @@ export default function LawFirmDashboardPage() {
       </Card>
 
       {/* Box Promowania i Box Partnerski */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div id="tour-promotions" className="grid gap-4 md:grid-cols-2">
         {/* Box Promowania */}
         <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-primary/10">
           <CardHeader>

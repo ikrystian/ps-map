@@ -189,7 +189,7 @@ export default function LawFirmStatsPage() {
       </div>
 
       {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div id="tour-stats-overview" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -257,7 +257,7 @@ export default function LawFirmStatsPage() {
       </div>
 
       {/* Tabs for different stats */}
-      <Tabs defaultValue="views" className="space-y-4">
+      <Tabs id="tour-stats-tabs" defaultValue="views" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="views">Wyświetlenia</TabsTrigger>
           <TabsTrigger value="offers">Oferty</TabsTrigger>
@@ -498,7 +498,7 @@ export default function LawFirmStatsPage() {
       </Tabs>
 
       {/* Additional Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div id="tour-stats-ranking" className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

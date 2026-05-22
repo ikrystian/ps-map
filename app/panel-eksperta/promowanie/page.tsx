@@ -604,7 +604,7 @@ export default function LawFirmPromotionPage() {
             <Clock className="h-4 w-4 mr-2" />
             Historia zakupów
           </Button>
-          <Button onClick={handleOpenDialog} size="lg">
+          <Button id="tour-promo-new" onClick={handleOpenDialog} size="lg">
             <Plus className="h-4 w-4 mr-2" />
             Nowa promocja
           </Button>
@@ -623,7 +623,7 @@ export default function LawFirmPromotionPage() {
       )}
 
       {/* Stan punktów */}
-      <Card>
+      <Card id="tour-promo-balance">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Coins className="h-5 w-5 text-primary" />
@@ -646,7 +646,7 @@ export default function LawFirmPromotionPage() {
       </Card>
 
       {/* Typy promocji */}
-      <div>
+      <div id="tour-promo-types">
         <h2 className="text-2xl font-bold mb-4">Dostępne promocje</h2>
         {promotionTypes.length === 0 ? (
           <Card>
@@ -724,7 +724,7 @@ export default function LawFirmPromotionPage() {
       <Separator />
 
       {/* Lista promocji */}
-      <div>
+      <div id="tour-promo-list">
         <h2 className="text-2xl font-bold mb-4">Twoje promocje</h2>
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="grid w-full grid-cols-3">

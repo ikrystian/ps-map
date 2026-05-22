@@ -331,7 +331,7 @@ const SprawyPage = () => {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 flex-1 mb-6">
+      <div id="tour-sprawy-filters" className="flex flex-col sm:flex-row gap-4 flex-1 mb-6">
         <Input
           placeholder="Szukaj po nazwie sprawy..."
           className="flex-grow"
@@ -372,7 +372,7 @@ const SprawyPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="sprawy-boxes-stats">
+      <div id="tour-sprawy-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="rounded-xl bg-[#00897B] text-white p-6 relative flex flex-col justify-between h-[120px] shadow-sm">
           <div className="text-right text-sm font-medium text-white/80">
             Nowe
@@ -421,7 +421,7 @@ const SprawyPage = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div id="tour-sprawy-list" className="space-y-6">
           {filteredCases.map((sprawa) => {
             const myOffer = sprawa.offers?.[0]
             const isAccepted = myOffer?.status === "ZAAKCEPTOWANA"

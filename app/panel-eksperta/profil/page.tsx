@@ -422,7 +422,7 @@ export default function LawFirmProfilePage() {
       </div>
 
       <Tabs defaultValue="basic" className="space-y-6">
-        <TabsList>
+        <TabsList id="tour-profil-tabs">
           <TabsTrigger value="basic">Podstawowe</TabsTrigger>
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
           <TabsTrigger value="specialization">Zakres usług</TabsTrigger>
@@ -433,7 +433,7 @@ export default function LawFirmProfilePage() {
 
         {/* Dane podstawowe */}
         <TabsContent value="basic" className="space-y-6">
-          <Card>
+          <Card id="tour-profil-basic">
             <CardHeader>
               <CardTitle>Dane podstawowe</CardTitle>
               <CardDescription>Podstawowe informacje o ekspercie</CardDescription>
@@ -472,7 +472,7 @@ export default function LawFirmProfilePage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card id="tour-profil-logo">
             <CardHeader>
               <CardTitle>Logo i zdjęcia</CardTitle>
               <CardDescription>

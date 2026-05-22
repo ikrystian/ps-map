@@ -282,7 +282,7 @@ export default function LawFirmPointsPage() {
       )}
 
       {/* Stan punktów */}
-      <Card>
+      <Card id="tour-punkty-balance">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div>
             <CardTitle>Aktualny stan punktów</CardTitle>
@@ -305,7 +305,7 @@ export default function LawFirmPointsPage() {
       </Card>
 
       {/* Pakiety punktów */}
-      <div>
+      <div id="tour-punkty-buy">
         <h2 className="text-2xl font-bold mb-4">Pakiety punktów</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {POINT_PACKAGES.map((pkg) => (
@@ -341,7 +341,7 @@ export default function LawFirmPointsPage() {
       <Separator />
 
       {/* Historia transakcji */}
-      <div>
+      <div id="tour-punkty-history">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <History className="h-6 w-6" />

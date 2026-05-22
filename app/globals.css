@@ -485,3 +485,174 @@ a .bg-card {
   scrollbar-width: thin;
   scrollbar-color: #0da192 #1c1c1e;
 }
+
+/* ─── Intro.js Custom Theme ────────────────────────────────────────────────── */
+
+/* Tooltip container */
+.introjs-tooltip {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+  font-family: var(--font-sans) !important;
+  padding: 20px 24px !important;
+  min-width: 280px !important;
+  max-width: 380px !important;
+}
+
+/* Tooltip title */
+.introjs-tooltip-title {
+  color: var(--primary) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--border) !important;
+  line-height: 1.4 !important;
+}
+
+/* Tooltip content text */
+.introjs-tooltiptext {
+  color: var(--foreground) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+  margin-top: 10px !important;
+  opacity: 0.9;
+}
+
+/* Button group */
+.introjs-tooltipbuttons {
+  border-top: 1px solid var(--border) !important;
+  padding-top: 14px !important;
+  margin-top: 16px !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+/* All buttons base */
+.introjs-button {
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-shadow: none !important;
+  border: 1px solid transparent !important;
+  line-height: 1 !important;
+}
+
+/* Next / Done button */
+.introjs-nextbutton,
+.introjs-donebutton {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+
+.introjs-nextbutton:hover,
+.introjs-donebutton:hover {
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Previous button */
+.introjs-prevbutton {
+  background-color: transparent !important;
+  color: var(--muted-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.introjs-prevbutton:hover {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+/* Skip button */
+.introjs-skipbutton {
+  color: var(--muted-foreground) !important;
+  background: transparent !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  padding: 4px 8px !important;
+  margin-left: auto !important;
+  opacity: 0.7 !important;
+}
+
+.introjs-skipbutton:hover {
+  opacity: 1 !important;
+  color: var(--destructive) !important;
+}
+
+/* Progress bar */
+.introjs-progress {
+  background-color: var(--border) !important;
+  border-radius: 9999px !important;
+  height: 4px !important;
+  margin-bottom: 12px !important;
+}
+
+.introjs-progressbar {
+  background-color: var(--primary) !important;
+  border-radius: 9999px !important;
+}
+
+/* Bullets */
+.introjs-bullets ul li a {
+  background: var(--border) !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 9999px !important;
+}
+
+.introjs-bullets ul li a.active,
+.introjs-bullets ul li a:hover {
+  background: var(--primary) !important;
+  width: 20px !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Arrow/caret */
+.introjs-arrow.top {
+  border-bottom-color: var(--card) !important;
+}
+
+.introjs-arrow.bottom {
+  border-top-color: var(--card) !important;
+}
+
+.introjs-arrow.left {
+  border-right-color: var(--card) !important;
+}
+
+.introjs-arrow.right {
+  border-left-color: var(--card) !important;
+}
+
+/* Overlay */
+.introjs-overlay {
+  background-color: rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Highlighted element box */
+.introjs-helperLayer {
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.55), 0 0 0 3px var(--primary) !important;
+}
+
+/* Step counter */
+.introjs-helperNumberLayer {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  padding: 5px 8px !important;
+  min-width: 22px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
