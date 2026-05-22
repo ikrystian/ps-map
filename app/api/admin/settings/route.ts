@@ -72,11 +72,11 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Aktualizuj każde ustawienie
-    for (const [key, data] of Object.entries(settings)) {
+    // Przygotuj obietnice dla każdego ustawienia
+    const updatePromises = Object.entries(settings).map(([key, data]) => {
       const { value, description } = data as { value: string; description?: string }
 
-      await prisma.settings.upsert({
+      return prisma.settings.upsert({
         where: { key },
         update: {
           value,
@@ -88,7 +88,10 @@ export async function PUT(request: NextRequest) {
           description: description || null,
         },
       })
-    }
+    })
+
+    // Zaktualizuj wszystkie ustawienia w transakcji dla lepszej wydajności
+    await prisma.$transaction(updatePromises)
 
     return NextResponse.json(
       { message: "Ustawienia zostały zaktualizowane" },
