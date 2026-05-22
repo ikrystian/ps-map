@@ -22,6 +22,7 @@ import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles,
 import { Skeleton } from "@/components/ui/skeleton"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
+import { PackageBadge } from "@/components/permissions"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
@@ -599,7 +600,10 @@ export default function CategoryPage() {
                     {lawFirms.map((firm) => (
                       <Link key={firm.id} href={`/ekspert/${firm?.slug}`}>
                         <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
-                          <Card className="bg-card hover:shadow-lg transition-shadow cursor-pointer h-full border-0">
+                          <Card className={cn(
+                            "bg-card hover:shadow-lg transition-shadow cursor-pointer h-full",
+                            (firm.pakietSubskrypcji && firm.pakietSubskrypcji !== "PODSTAWOWY") ? "border-0" : ""
+                          )}>
                             <CardHeader>
                               {firm.logo ? (
                                 <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
@@ -623,10 +627,9 @@ export default function CategoryPage() {
                                   {firm.categories[0].nazwa}
                                 </p>
                               )}
-                              {firm.pakietSubskrypcji === "BIZNES" && (
+                              {firm.pakietSubskrypcji && (
                                 <div className="flex items-center justify-center gap-1 mt-2">
-                                  <Sparkles className="h-3 w-3 text-amber-500" />
-                                  <span className="text-xs font-semibold text-amber-600">Biznes</span>
+                                  <PackageBadge packageType={firm.pakietSubskrypcji as any} size="sm" />
                                 </div>
                               )}
                             </CardHeader>

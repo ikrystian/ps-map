@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { usePermissions } from "@/hooks/usePermissions"
 import { LimitIndicator, PackageBadge } from "@/components/permissions"
+import { cn } from "@/lib/utils"
 import {
   Table,
   TableBody,
@@ -39,6 +40,7 @@ import {
   Zap,
   Users,
   Crown,
+  Sparkles,
 } from "lucide-react"
 
 interface LawFirm {
@@ -218,6 +220,43 @@ const getOfferStatusBadge = (status: string) => {
   }
 }
 
+const getBannerStyles = (packageType: string | null) => {
+  switch (packageType) {
+    case "BIZNES":
+      return {
+        bg: "bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-orange-500/20 border-b border-amber-500/30",
+        glow: "shadow-[inset_0_1px_0_0_rgba(251,191,36,0.15)]",
+        iconColor: "text-amber-500/10",
+        titleColor: "text-amber-300 font-bold",
+        desc: "Pakiet Biznes - Najwyższa widoczność, brak limitów spraw oraz dedykowany opiekun."
+      }
+    case "PREMIUM":
+      return {
+        bg: "bg-gradient-to-r from-purple-500/20 via-fuchsia-500/15 to-pink-500/20 border-b border-purple-500/30",
+        glow: "shadow-[inset_0_1px_0_0_rgba(168,85,247,0.15)]",
+        iconColor: "text-purple-500/10",
+        titleColor: "text-purple-300 font-bold",
+        desc: "Pakiet Premium - Zwiększona widoczność w katalogu, szybkie oferty i promowanie bloga."
+      }
+    case "STANDARD":
+      return {
+        bg: "bg-gradient-to-r from-blue-500/20 via-cyan-500/15 to-blue-600/20 border-b border-blue-500/30",
+        glow: "shadow-[inset_0_1px_0_0_rgba(59,130,246,0.15)]",
+        iconColor: "text-blue-500/10",
+        titleColor: "text-blue-300 font-bold",
+        desc: "Pakiet Standard - Profesjonalny profil, większe limity i dostęp do spraw."
+      }
+    default:
+      return {
+        bg: "bg-gradient-to-r from-zinc-800/60 via-zinc-900/40 to-zinc-800/60 border-b border-zinc-700/50",
+        glow: "",
+        iconColor: "text-zinc-600/10",
+        titleColor: "text-zinc-300",
+        desc: "Pakiet Podstawowy - Podstawowy profil w katalogu i standardowy kontakt z klientami."
+      }
+  }
+}
+
 export default function LawFirmDashboardPage() {
   const { data: session } = useSession()
   const [data, setData] = useState<DashboardData | null>(null)
@@ -228,7 +267,7 @@ export default function LawFirmDashboardPage() {
   const [activeCasesCount, setActiveCasesCount] = useState(0)
 
   // Sprawdź uprawnienia i limity
-  const { permissions, packageName, packageExpired } = usePermissions()
+  const { permissions, packageName, packageExpired, expiryDate, daysUntilExpiry } = usePermissions()
 
   useEffect(() => {
     fetchDashboardData()
@@ -337,6 +376,14 @@ export default function LawFirmDashboardPage() {
 
   const { lawFirm, recentCases, recentOffers, activePromotions, stats } = data
 
+  const bannerStyle = getBannerStyles(lawFirm.pakietSubskrypcji)
+  const WatermarkIcon = {
+    BIZNES: Crown,
+    PREMIUM: Zap,
+    STANDARD: Star,
+    PODSTAWOWY: Sparkles,
+  }[lawFirm.pakietSubskrypcji as string] || Package
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -420,20 +467,43 @@ export default function LawFirmDashboardPage() {
 
       {/* Package info and limits */}
       {permissions && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Twój pakiet i limity</CardTitle>
-                <CardDescription>
-                  Aktualny pakiet: <strong>{packageName || "Brak pakietu"}</strong>
-                  {packageExpired && packageName && <span className="text-destructive ml-2">(Wygasł!)</span>}
-                </CardDescription>
+        <Card className="overflow-hidden relative border border-border bg-card">
+          <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
+            {/* Watermark Icon */}
+            <WatermarkIcon className={cn("absolute right-6 -bottom-6 h-32 w-32 pointer-events-none transform rotate-12 transition-transform duration-500", bannerStyle.iconColor)} />
+            
+            <div className="relative z-10 space-y-2 max-w-2xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className={cn("text-xl md:text-2xl tracking-tight font-semibold", bannerStyle.titleColor)}>
+                  {packageName || "Pakiet Podstawowy"}
+                </h3>
+                {packageExpired && packageName ? (
+                  <Badge variant="destructive" className="animate-pulse">Wygasł!</Badge>
+                ) : (
+                  <Badge variant="outline" className="border-emerald-500 bg-emerald-500/10 text-emerald-400">
+                    Aktywny
+                  </Badge>
+                )}
               </div>
-              <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="lg" />
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {bannerStyle.desc}
+              </p>
+              {expiryDate && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Ważność: <span className="text-foreground font-semibold">{formatDate(expiryDate)}</span>
+                  {daysUntilExpiry !== null && (
+                    <span className={cn("ml-2 font-semibold", daysUntilExpiry <= 5 ? "text-red-400" : daysUntilExpiry <= 14 ? "text-amber-400" : "text-emerald-400")}>
+                      ({daysUntilExpiry === 0 ? "Wygasa dzisiaj" : daysUntilExpiry < 0 ? "Wygasł" : `Pozostało dni: ${daysUntilExpiry}`})
+                    </span>
+                  )}
+                </p>
+              )}
             </div>
-          </CardHeader>
-          <CardContent>
+            <div className="relative z-10 flex-shrink-0 self-start md:self-center">
+              <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="lg" className="shadow-lg border-2" />
+            </div>
+          </div>
+          <CardContent className="pt-6">
             <div className="grid gap-4 md:grid-cols-2">
               {/* Aktywne sprawy */}
               <LimitIndicator

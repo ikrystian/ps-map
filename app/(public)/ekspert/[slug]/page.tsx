@@ -694,7 +694,8 @@ export default function LawFirmProfilePage() {
                       {lawFirm.pakietSubskrypcji && (
                         <PackageBadge
                           packageType={lawFirm.pakietSubskrypcji as any}
-                          size="md"
+                          size="lg"
+                          className="shadow-md"
                         />
                       )}
                     </div>
@@ -1655,36 +1656,51 @@ export default function LawFirmProfilePage() {
             )}
 
             {/* Package Badge */}
-            {lawFirm.pakietSubskrypcji && (
-              <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-primary/5">
-                <CardHeader>
-                  <CardTitle className="text-base">Plan kancelarii</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center py-2">
-                    <PackageBadge
-                      packageType={lawFirm.pakietSubskrypcji as any}
-                      size="lg"
-                    />
-                  </div>
-                  {lawFirm.pakietSubskrypcji === "BIZNES" && (
-                    <p className="text-xs text-center text-muted-foreground mt-3">
-                      Kancelaria z najwyższym pakietem - pełen dostęp do wszystkich funkcji
-                    </p>
-                  )}
-                  {lawFirm.pakietSubskrypcji === "PREMIUM" && (
-                    <p className="text-xs text-center text-muted-foreground mt-3">
-                      Zaawansowana kancelaria z rozszerzonymi funkcjami
-                    </p>
-                  )}
-                  {lawFirm.pakietSubskrypcji === "STANDARD" && (
-                    <p className="text-xs text-center text-muted-foreground mt-3">
-                      Kancelaria z pakietem standardowym
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            )}
+            {lawFirm.pakietSubskrypcji && (() => {
+              const pkg = lawFirm.pakietSubskrypcji;
+              const cardClass = 
+                pkg === "BIZNES" ? "border-2 border-amber-500 bg-gradient-to-br from-[#1c1917] via-card to-amber-950/20 shadow-[0_0_20px_rgba(245,158,11,0.15)]" :
+                pkg === "PREMIUM" ? "border-2 border-purple-500 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-[0_0_20px_rgba(168,85,247,0.12)]" :
+                pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" :
+                "border border-neutral-850 bg-card";
+                
+              return (
+                <Card className={cn("transition-all duration-300", cardClass)}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base text-center">Plan subskrypcji</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-center py-2">
+                      <PackageBadge
+                        packageType={lawFirm.pakietSubskrypcji as any}
+                        size="lg"
+                        className="shadow-lg border-white/10"
+                      />
+                    </div>
+                    {pkg === "BIZNES" && (
+                      <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
+                        Kancelaria z najwyższym pakietem - pełen dostęp do wszystkich funkcji
+                      </p>
+                    )}
+                    {pkg === "PREMIUM" && (
+                      <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
+                        Zaawansowana kancelaria z rozszerzonymi funkcjami
+                      </p>
+                    )}
+                    {pkg === "STANDARD" && (
+                      <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
+                        Kancelaria z pakietem standardowym
+                      </p>
+                    )}
+                    {pkg === "PODSTAWOWY" && (
+                      <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
+                        Kancelaria z pakietem podstawowym
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
             {/* Service Area */}
             {(lawFirm.voivodeships.length > 0 || lawFirm.cities.length > 0 || lawFirm.callaPolska) && (

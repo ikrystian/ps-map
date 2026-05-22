@@ -188,9 +188,10 @@ export default function LawFirmPanelLayout({
               {getUserInitials(session.user.name)}
             </AvatarFallback>
           </Avatar>
-          <div className="text-center">
-            <p className="text-md">{session.user.name}</p>
+          <div className="text-center flex flex-col items-center gap-1">
+            <p className="text-md font-semibold">{session.user.name}</p>
             <p className="text-sm text-primary">Ekspert prawny</p>
+            <PackageBadge packageType={subscriptionType as any} size="sm" className="mt-1" />
           </div>
         </div>
       )}

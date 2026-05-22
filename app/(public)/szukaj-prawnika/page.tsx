@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge"
 import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock, ChevronDown, ChevronUp } from "lucide-react"
 import { MagicCard } from "@/components/magic-card"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
+import { PackageBadge } from "@/components/permissions"
 import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -541,10 +543,10 @@ export default function SearchLawyerPage() {
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                   {lawFirms.map((firm) => {
-                    const isBiznesPlan = firm.pakietSubskrypcji === "BIZNES"
+                    const hasPromoPackage = firm.pakietSubskrypcji && firm.pakietSubskrypcji !== "PODSTAWOWY"
 
                     const cardContent = (
-                      <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${isBiznesPlan ? "border-0" : ""}`}>
+                      <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${hasPromoPackage ? "border-0" : ""}`}>
                         <CardHeader>
                           {firm.logo ? (
                             <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
@@ -570,8 +572,13 @@ export default function SearchLawyerPage() {
                               <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
                             )}
                           </div>
+                          {firm.pakietSubskrypcji && (
+                            <div className="flex items-center justify-center gap-1 mt-1">
+                              <PackageBadge packageType={firm.pakietSubskrypcji as any} size="sm" />
+                            </div>
+                          )}
                           {firm.categories.length > 0 && (
-                            <p className="text-sm text-muted-foreground text-center">
+                            <p className="text-sm text-muted-foreground text-center mt-1">
                               {firm.categories[0].nazwa}
                             </p>
                           )}
@@ -627,12 +634,6 @@ export default function SearchLawyerPage() {
                                   Online
                                 </Badge>
                               )}
-                              {isBiznesPlan && (
-                                <Badge className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                                  <Sparkles className="w-3 h-3 mr-1" />
-                                  Biznes
-                                </Badge>
-                              )}
                               {(() => {
                                 const isOpen = isLawFirmOpen(firm.godzinyOtwarcia, firm.statusGodzinyOtwarcia)
                                 if (isOpen === true) {
@@ -660,18 +661,9 @@ export default function SearchLawyerPage() {
 
                     return (
                       <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
-                        {isBiznesPlan ? (
-                          <MagicCard
-                            className="h-full rounded-lg"
-                            gradientFrom="#9E7AFF"
-                            gradientTo="#FE8BBB"
-                            gradientSize={200}
-                          >
-                            {cardContent}
-                          </MagicCard>
-                        ) : (
-                          cardContent
-                        )}
+                        <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
+                          {cardContent}
+                        </LawFirmCardWrapper>
                       </Link>
                     )
                   })}

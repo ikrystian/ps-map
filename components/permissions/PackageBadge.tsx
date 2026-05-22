@@ -65,25 +65,25 @@ export function PackageBadge({
       label: "Podstawowy",
       icon: Sparkles,
       variant: "outline" as const,
-      className: "border-gray-400 text-gray-700 dark:text-gray-300",
+      className: "border-neutral-600 bg-neutral-900/60 text-neutral-300",
     },
     STANDARD: {
       label: "Standard",
       icon: Star,
-      variant: "secondary" as const,
-      className: "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+      variant: "outline" as const,
+      className: "border-blue-500/70 bg-gradient-to-r from-blue-500/10 via-blue-600/10 to-cyan-500/10 text-blue-300 shadow-[0_0_10px_rgba(59,130,246,0.15)]",
     },
     PREMIUM: {
       label: "Premium",
       icon: Zap,
-      variant: "default" as const,
-      className: "border-purple-500 bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
+      variant: "outline" as const,
+      className: "border-purple-500/80 bg-gradient-to-r from-purple-500/15 via-fuchsia-500/15 to-pink-500/15 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)] animate-pulse",
     },
     BIZNES: {
       label: "Biznes",
       icon: Crown,
-      variant: "default" as const,
-      className: "border-yellow-500 bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-700 dark:from-yellow-950 dark:to-orange-950 dark:text-orange-300",
+      variant: "outline" as const,
+      className: "border-amber-500/90 bg-gradient-to-r from-amber-500/20 via-yellow-500/25 to-orange-500/20 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.25)] animate-pulse font-bold tracking-wide uppercase",
     },
   };
 

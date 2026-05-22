@@ -18,6 +18,7 @@ import {
     Award
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { PackageBadge } from "@/components/permissions"
 
 // Helper function to check if law firm is open (copied from pages)
 const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {
@@ -146,7 +147,13 @@ const OraIcon = () => (
 
 export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     const isOpen = isLawFirmOpen(lawFirm.godzinyOtwarcia, lawFirm.statusGodzinyOtwarcia)
-    const isBiznesPlan = lawFirm.pakietSubskrypcji === "BIZNES"
+    const pkg = lawFirm.pakietSubskrypcji
+
+    const cardBorderAndGlow = 
+        pkg === "BIZNES" ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-amber-950/10" :
+        pkg === "PREMIUM" ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/10" :
+        pkg === "STANDARD" ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/10" :
+        "border-neutral-800 hover:border-neutral-700 bg-[#131313]"
 
     const professionalTitle = lawFirm.oraStatus ? "Adwokat" : lawFirm.oirpStatus ? "Radca prawny" : (lawFirm.categories[0]?.nazwa || "Adwokat");
     const chamberText = lawFirm.oraStatus && lawFirm.oraMiasto ? `ORA ${lawFirm.oraMiasto}` : lawFirm.oirpStatus && lawFirm.oirpMiasto ? `OIRP ${lawFirm.oirpMiasto}` : "ORA Kielce";
@@ -154,8 +161,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     return (
         <Link href={`/ekspert/${lawFirm.slug}`} className="block group">
             <Card className={cn(
-                "overflow-hidden transition-all duration-300 hover:shadow-2xl bg-[#131313] border",
-                isBiznesPlan ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,175,25,0.05)]" : "border-neutral-800"
+                "overflow-hidden transition-all duration-300 hover:shadow-2xl border",
+                cardBorderAndGlow
             )}>
                 <div className="flex flex-col md:flex-row h-full">
                     {/* Left Column - Image */}
@@ -243,8 +250,11 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                         <div className="flex-1 flex flex-col justify-between">
                             <div className="flex justify-between items-start gap-4 mb-3">
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-2xl font-bold text-white tracking-tight mb-2 truncate group-hover:text-[#0db19f] transition-colors duration-300">
-                                        {lawFirm.nazwa}
+                                    <h3 className="text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] transition-colors duration-300">
+                                        <span className="truncate">{lawFirm.nazwa}</span>
+                                        {lawFirm.pakietSubskrypcji && (
+                                            <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="sm" />
+                                        )}
                                     </h3>
                                     <div className="flex items-center text-[#0db19f]">
                                         <MapPin className="w-4 h-4 mr-1.5 flex-shrink-0" />
