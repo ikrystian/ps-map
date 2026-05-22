@@ -49,6 +49,16 @@ export async function POST(
       )
     }
 
+    // Zapisz zgłoszenie w bazie danych
+    await prisma.reviewReport.create({
+      data: {
+        reviewId,
+        userId: session.user.id,
+        reason,
+        description: description || null,
+      },
+    })
+
     // Pobierz wszystkich aktywnych administratorów
     const admins = await prisma.user.findMany({
       where: {

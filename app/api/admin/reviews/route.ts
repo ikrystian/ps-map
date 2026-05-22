@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
 
 // GET /api/admin/reviews - Get all reviews with pagination and filtering (ADMIN only)
 export async function GET(request: NextRequest) {
@@ -23,9 +24,10 @@ export async function GET(request: NextRequest) {
     const verified = searchParams.get("verified")
     const active = searchParams.get("active")
     const search = searchParams.get("search")
+    const reported = searchParams.get("reported")
 
     // Build where clause
-    const where: any = {}
+    const where: Prisma.ReviewWhereInput = {}
 
     if (lawFirmId) {
       where.lawFirmId = lawFirmId
@@ -47,10 +49,20 @@ export async function GET(request: NextRequest) {
       where.aktywna = active === "true"
     }
 
+    if (reported === "true") {
+      where.reports = {
+        some: {}
+      }
+    } else if (reported === "false") {
+      where.reports = {
+        none: {}
+      }
+    }
+
     if (search) {
       where.OR = [
-        { tytulOpinii: { contains: search, mode: "insensitive" } },
-        { trescOpinii: { contains: search, mode: "insensitive" } },
+        { tytulOpinii: { contains: search } },
+        { trescOpinii: { contains: search } },
       ]
     }
 
@@ -76,6 +88,19 @@ export async function GET(request: NextRequest) {
                   email: true,
                 },
               },
+            },
+          },
+          reports: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
             },
           },
         },

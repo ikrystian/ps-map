@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Trash2, Eye, CheckCircle, XCircle, Edit, Star, Search } from "lucide-react"
+import React, { useState, useEffect, useCallback } from "react"
+import { Trash2, Eye, CheckCircle, XCircle, Star, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,6 +34,25 @@ import {
 import { toast } from "sonner"
 import Link from "next/link"
 
+const reasonLabels: Record<string, string> = {
+  SPAM: "Spam lub reklama",
+  WULGARYZMY: "Wulgaryzmy lub obraźliwe treści",
+  FALSZYWA_OPINIA: "Niewiarygodna / fałszywa opinia",
+  NIEODPOWIEDNIA: "Nieodpowiednia treść",
+  INNY: "Inny powód",
+}
+
+interface ReviewReport {
+  id: string
+  reason: string
+  description: string | null
+  createdAt: string
+  user: {
+    name: string | null
+    email: string
+  }
+}
+
 interface Review {
   id: string
   ocenaOgolna: number
@@ -62,6 +81,7 @@ interface Review {
     nazwisko: string
     email: string
   }
+  reports?: ReviewReport[]
 }
 
 interface PaginationData {
@@ -88,8 +108,9 @@ export default function AdminReviewsPage() {
   const [ratingFilter, setRatingFilter] = useState<string>("all")
   const [verifiedFilter, setVerifiedFilter] = useState<string>("all")
   const [activeFilter, setActiveFilter] = useState<string>("all")
+  const [reportedFilter, setReportedFilter] = useState<string>("all")
 
-  const fetchReviews = async (page: number = 1) => {
+  const fetchReviews = useCallback(async (page: number = 1) => {
     try {
       setLoading(true)
 
@@ -103,6 +124,7 @@ export default function AdminReviewsPage() {
       if (ratingFilter !== "all") params.append("rating", ratingFilter)
       if (verifiedFilter !== "all") params.append("verified", verifiedFilter)
       if (activeFilter !== "all") params.append("active", activeFilter)
+      if (reportedFilter !== "all") params.append("reported", reportedFilter)
 
       const response = await fetch(`/api/admin/reviews?${params.toString()}`)
       if (response.ok) {
@@ -112,16 +134,16 @@ export default function AdminReviewsPage() {
       } else {
         throw new Error("Błąd pobierania opinii")
       }
-    } catch (error) {
+    } catch {
       toast.error("Nie udało się pobrać opinii")
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchQuery, ratingFilter, verifiedFilter, activeFilter, reportedFilter])
 
   useEffect(() => {
     fetchReviews()
-  }, [searchQuery, ratingFilter, verifiedFilter, activeFilter])
+  }, [fetchReviews])
 
   const handleDeleteReview = async () => {
     if (!selectedReview) return
@@ -234,7 +256,7 @@ export default function AdminReviewsPage() {
           <CardTitle>Filtry</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -277,7 +299,18 @@ export default function AdminReviewsPage() {
               <SelectContent>
                 <SelectItem value="all">Wszystkie</SelectItem>
                 <SelectItem value="true">Aktywne</SelectItem>
-                <SelectItem value="false">Nieaktywne</SelectItem>
+                <SelectItem value="false">Nieaktwne</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={reportedFilter} onValueChange={setReportedFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Zgłoszenia" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Wszystkie opinie</SelectItem>
+                <SelectItem value="true">Tylko zgłoszone</SelectItem>
+                <SelectItem value="false">Bez zgłoszeń</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -315,10 +348,36 @@ export default function AdminReviewsPage() {
                 reviews.map((review) => (
                   <TableRow key={review.id}>
                     <TableCell className="font-medium max-w-xs">
-                      <div className="truncate">{review.tytulOpinii}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="truncate">{review.tytulOpinii}</div>
+                        {review.reports && review.reports.length > 0 && (
+                          <Badge variant="destructive" className="h-5 px-1.5 text-[10px] shrink-0">
+                            Zgłoszona ({review.reports.length})
+                          </Badge>
+                        )}
+                      </div>
                       <div className="text-xs text-muted-foreground truncate mt-1">
                         {review.trescOpinii.substring(0, 50)}...
                       </div>
+                      {review.reports && review.reports.length > 0 && (
+                        <div className="mt-2 space-y-1.5 max-w-xs">
+                          {review.reports.map((report) => (
+                            <div key={report.id} className="text-[11px] border-l-2 border-destructive pl-2 bg-destructive/5 py-1 pr-1 rounded text-left">
+                              <div className="font-semibold text-destructive">
+                                Powód: {reasonLabels[report.reason] || report.reason}
+                              </div>
+                              {report.description && (
+                                <div className="text-muted-foreground italic mt-0.5 whitespace-pre-wrap break-all">
+                                  &quot;{report.description}&quot;
+                                </div>
+                              )}
+                              <div className="text-[9px] text-muted-foreground/85 mt-1">
+                                Przez: {report.user.email} • {formatDate(report.createdAt)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">

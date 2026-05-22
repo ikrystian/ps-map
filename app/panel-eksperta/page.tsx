@@ -471,7 +471,7 @@ export default function LawFirmDashboardPage() {
           <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
             {/* Watermark Icon */}
             <WatermarkIcon className={cn("absolute right-6 -bottom-6 h-32 w-32 pointer-events-none transform rotate-12 transition-transform duration-500", bannerStyle.iconColor)} />
-            
+
             <div className="relative z-10 space-y-2 max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className={cn("text-xl md:text-2xl tracking-tight font-semibold", bannerStyle.titleColor)}>
@@ -687,7 +687,7 @@ export default function LawFirmDashboardPage() {
                 ))}
               </div>
               <div className="pt-3 border-t space-y-2">
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-betweentext-base">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <TrendingUp className="h-3 w-3" />
                     Średnio dziennie
@@ -799,7 +799,7 @@ export default function LawFirmDashboardPage() {
                 Moje artykuły
               </CardTitle>
             </div>
-            <Link href="/panel-eksperta/blog" className="text-primary hover:underline text-sm font-medium">
+            <Link href="/panel-eksperta/blog" className="text-primary hover:underlinetext-base font-medium">
               Więcej
             </Link>
           </div>
@@ -885,7 +885,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Wyróżnienie profilu</p>
+                  <p className="font-mediumtext-base">Wyróżnienie profilu</p>
                   <p className="text-xs text-muted-foreground">
                     Twój profil będzie wyświetlany na górze listy
                   </p>
@@ -894,7 +894,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Top pozycja</p>
+                  <p className="font-mediumtext-base">Top pozycja</p>
                   <p className="text-xs text-muted-foreground">
                     Znajdź się w sekcji TOP ekspertów
                   </p>
@@ -903,7 +903,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Więcej odsłon</p>
+                  <p className="font-mediumtext-base">Więcej odsłon</p>
                   <p className="text-xs text-muted-foreground">
                     Nawet do 300% więcej wyświetleń profilu
                   </p>
@@ -912,7 +912,7 @@ export default function LawFirmDashboardPage() {
             </div>
 
             <div className="pt-4 border-t space-y-3">
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-betweentext-base">
                 <span>Twoje punkty:</span>
                 <span className="font-bold text-lg">{lawFirm.punktySaldo} pkt</span>
               </div>
@@ -949,7 +949,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Badge "Partner Premium"</p>
+                  <p className="font-mediumtext-base">Badge "Partner Premium"</p>
                   <p className="text-xs text-muted-foreground">
                     Wyróżnij się wśród konkurencji
                   </p>
@@ -958,7 +958,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Dedykowany opiekun</p>
+                  <p className="font-mediumtext-base">Dedykowany opiekun</p>
                   <p className="text-xs text-muted-foreground">
                     Osobiste wsparcie w rozwoju
                   </p>
@@ -967,7 +967,7 @@ export default function LawFirmDashboardPage() {
               <div className="flex items-start gap-3">
                 <Star className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <p className="font-medium text-sm">Priorytetowa widoczność</p>
+                  <p className="font-mediumtext-base">Priorytetowa widoczność</p>
                   <p className="text-xs text-muted-foreground">
                     Zawsze na pierwszych pozycjach
                   </p>
@@ -1013,8 +1013,8 @@ export default function LawFirmDashboardPage() {
 
             <div className="mt-4 space-y-3">
               <div>
-                <p className="font-semibold text-sm mb-2">Dla pakietów płatnych:</p>
-                <ul className="space-y-2 text-sm ml-4">
+                <p className="font-semiboldtext-base mb-2">Dla pakietów płatnych:</p>
+                <ul className="space-y-2text-base ml-4">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                     <span>Co miesiąc otrzymasz 20 punktów o łącznej wartości 20 zł, które zostaną dodane do Twojego schowka.</span>
@@ -1027,8 +1027,8 @@ export default function LawFirmDashboardPage() {
               </div>
 
               <div>
-                <p className="font-semibold text-sm mb-2">Dla pakietu bezpłatnego:</p>
-                <ul className="space-y-2 text-sm ml-4">
+                <p className="font-semiboldtext-base mb-2">Dla pakietu bezpłatnego:</p>
+                <ul className="space-y-2text-base ml-4">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                     <span>Możliwość odsłonięcia numeru kontaktowego.</span>

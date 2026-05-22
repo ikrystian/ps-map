@@ -80,7 +80,7 @@ export function ChatAssistant() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
+    <div className="fixed bottom-20 right-6 z-50 flex flex-col items-end font-sans">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -137,8 +137,8 @@ export function ChatAssistant() {
                           rel="noopener noreferrer"
                           className={cn(
                             "underline transition-colors",
-                            msg.role === "user" 
-                              ? "text-white hover:text-neutral-100" 
+                            msg.role === "user"
+                              ? "text-white hover:text-neutral-100"
                               : "text-amber-500 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-500"
                           )}
                         >

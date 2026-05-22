@@ -271,7 +271,7 @@ export default function LawFirmProfilePage() {
 
   // Report Review States
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
-  const [selectedReviewToReport, setSelectedReviewToReport] = useState<any>(null)
+  const [selectedReviewToReport, setSelectedReviewToReport] = useState<LawFirm["reviews"][number] | null>(null)
   const [reportForm, setReportForm] = useState({
     reason: "SPAM",
     description: "",
@@ -283,13 +283,26 @@ export default function LawFirmProfilePage() {
     return html.replace(/<[^>]*>/g, "")
   }
 
-  // Initialize active tab from URL
+  // Initialize active tab from URL and handle auto-opening of review dialog
   useEffect(() => {
     const tabParam = searchParams.get("tab")
     if (tabParam && ["about", "services", "reviews", "blog"].includes(tabParam)) {
       setActiveTab(tabParam)
     }
-  }, [searchParams])
+
+    if (searchParams.has("review")) {
+      setActiveTab("reviews")
+      if (session === null) {
+        toast.error("Musisz być zalogowany jako klient, aby dodać opinię.")
+      } else if (session) {
+        if (session.user?.role === "CLIENT") {
+          setReviewDialogOpen(true)
+        } else {
+          toast.error("Tylko klienci mogą dodawać opinie.")
+        }
+      }
+    }
+  }, [searchParams, session])
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -456,7 +469,7 @@ export default function LawFirmProfilePage() {
     }
   }
 
-  const handleReportClick = (review: any) => {
+  const handleReportClick = (review: LawFirm["reviews"][number]) => {
     if (!session?.user) {
       toast.error("Musisz być zalogowany, aby zgłosić opinię")
       router.push("/logowanie")
@@ -759,7 +772,7 @@ export default function LawFirmProfilePage() {
                       )}
                       {lawFirm.pakietSubskrypcji && (
                         <PackageBadge
-                          packageType={lawFirm.pakietSubskrypcji as any}
+                          packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
                           size="lg"
                           className="shadow-md"
                         />
@@ -1808,7 +1821,7 @@ export default function LawFirmProfilePage() {
                   <CardContent>
                     <div className="flex items-center justify-center py-2">
                       <PackageBadge
-                        packageType={lawFirm.pakietSubskrypcji as any}
+                        packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
                         size="lg"
                         className="shadow-lg border-white/10"
                       />

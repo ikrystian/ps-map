@@ -51,6 +51,9 @@ model User {
   // Document relations
   uploadedDocuments       Document[]     @relation("ClientDocuments")
 
+  // Zgłoszenia opinii
+  reviewReports       ReviewReport[]
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -819,6 +822,8 @@ model Review {
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  reports             ReviewReport[]
 
   @@index([lawFirmId])
   @@index([clientId])
@@ -2034,6 +2039,24 @@ model Advertisement {
 
   @@index([location])
   @@index([active])
+}
+
+// ============================================================================
+// ZGŁOSZENIA OPINII (REPORTED REVIEWS)
+// ============================================================================
+
+model ReviewReport {
+  id          String   @id @default(uuid())
+  reviewId    String
+  review      Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@index([reviewId])
+  @@index([userId])
 }
 
 

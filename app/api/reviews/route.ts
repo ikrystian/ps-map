@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { sendSystemNotification } from "@/lib/notifications"
+import { emitNewNotification } from "@/lib/socket"
+import { Prisma } from "@prisma/client"
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Buduj warunki zapytania
-    const where: any = {
+    const where: Prisma.ReviewWhereInput = {
       lawFirmId,
       // Pokaż wszystkie opinie dla właściciela kancelarii, tylko aktywne dla innych
       ...(userLawFirmId !== lawFirmId ? { aktywna: true } : {}),
@@ -65,7 +68,7 @@ export async function GET(request: NextRequest) {
     ])
 
     // Formatuj odpowiedź, ukrywając dane klienta dla anonimowych opinii
-    const formattedReviews = reviews.map((review: any) => ({
+    const formattedReviews = reviews.map((review) => ({
       ...review,
       client: review.anonimowa
         ? { imie: "Anonimowy", nazwisko: "" }
@@ -225,6 +228,34 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
+    // Pobierz wszystkich aktywnych administratorów
+    const admins = await prisma.user.findMany({
+      where: {
+        role: "ADMIN",
+        status: "ACTIVE",
+      },
+    })
+
+    const userEmail = session.user.email || "Zalogowany użytkownik"
+    for (const admin of admins) {
+      try {
+        const { notification } = await sendSystemNotification({
+          userId: admin.id,
+          typ: "SYSTEM",
+          tytul: "Nowa opinia o kancelarii",
+          tresc: `Użytkownik ${userEmail} dodał opinię o tytule "${review.tytulOpinii}" dla kancelarii "${lawFirm.nazwa}".`,
+          linkUrl: `/admin/reviews?search=${encodeURIComponent(review.tytulOpinii)}`,
+          force: true,
+        })
+
+        if (notification) {
+          await emitNewNotification(admin.id, notification)
+        }
+      } catch (err) {
+        console.error(`Błąd wysyłania powiadomienia o nowej opinii do admina ${admin.id}:`, err)
+      }
+    }
 
     return Response.json(review, { status: 201 })
   } catch (error) {
