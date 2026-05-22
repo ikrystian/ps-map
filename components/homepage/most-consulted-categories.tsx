@@ -216,7 +216,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
       <div className="container mx-auto px-4 max-w-8xl">
         {/* Title Header with elegant horizontal line separator */}
         <div className="flex items-center gap-6 mb-12">
-          <h2 className="text-xl md:text-2xl font-serif font-light text-zinc-100 whitespace-nowrap">
+          <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
             Najczęściej konsultowane kategorie
           </h2>
           <div className="flex-grow border-t border-zinc-800/80" />
@@ -353,23 +353,23 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                       <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
                         <div className="flex gap-2">
                           {/* Circular Phone Action */}
-                          <ContactButton 
-                            icon={Phone} 
+                          <ContactButton
+                            icon={Phone}
                             href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
                             title="Zadzwoń do kancelarii"
                           />
 
                           {/* Circular Email Action */}
-                          <ContactButton 
-                            icon={Mail} 
+                          <ContactButton
+                            icon={Mail}
                             href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
                             title="Wyślij e-mail"
                           />
 
                           {/* Circular Website Action */}
                           {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
-                            <ContactButton 
-                              icon={Globe} 
+                            <ContactButton
+                              icon={Globe}
                               href={firm.stronaWww || "https://prostasprawa.pl"}
                               title="Odwiedź stronę www"
                             />

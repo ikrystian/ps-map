@@ -116,22 +116,25 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
   }
 
   return (
-    <section className="py-20 bg-[#121212] text-white overflow-hidden">
+    <section className="py-20 text-white overflow-hidden">
       {/* Top Header Row is wrapped in its own container to align perfectly */}
-      <div className="container mx-auto px-4 max-w-6xl mb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-white whitespace-nowrap">
-            Polecani prawnicy i adwokaci
-          </h2>
+      <div className="container mx-auto px-4 max-w-8xl mb-12">
+        <div className="mb-12">
+          <div className="flex items-center gap-6 mb-12">
+            <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
+              Polecani prawnicy i adwokaci
+            </h2>
+            <div className="flex-grow border-t border-zinc-800/80" />
+          </div>
+        </div>
 
-          {/* Subtle horizontal line connecting title with tabs */}
-          <div className="hidden lg:block flex-grow border-t border-zinc-800/80 mx-6" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
 
           {/* Navigation & Selector Container */}
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end overflow-hidden">
+          <div className="flex items-center gap-4 w-full justify-beetween overflow-hidden">
             {/* Category tabs scrollable horizontally on mobile */}
             <div
-              className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth custom-scrollbar"
+              className="flex items-center flex flex-1 gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth custom-scrollbar"
               style={{ scrollbarWidth: 'thin' }}
             >
               {categoriesList.map((cat, i) => (
@@ -285,23 +288,23 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                       <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
                         <div className="flex gap-2">
                           {/* Circular Phone Action */}
-                          <ContactButton 
-                            icon={Phone} 
+                          <ContactButton
+                            icon={Phone}
                             href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
                             title="Zadzwoń do kancelarii"
                           />
 
                           {/* Circular Email Action */}
-                          <ContactButton 
-                            icon={Mail} 
+                          <ContactButton
+                            icon={Mail}
                             href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
                             title="Wyślij e-mail"
                           />
 
                           {/* Circular Website Action (conditionally rendered if website exists) */}
                           {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
-                            <ContactButton 
-                              icon={Globe} 
+                            <ContactButton
+                              icon={Globe}
                               href={firm.stronaWww || "https://prostasprawa.pl"}
                               title="Odwiedź stronę www"
                             />

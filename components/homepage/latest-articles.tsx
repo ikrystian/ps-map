@@ -37,7 +37,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
             <h2 className="text-xl md:text-2xl font-playfair text-neutral-200 tracking-wide whitespace-nowrap font-medium">
               Prawo i finanse: trendy, poradniki, artykuły
             </h2>
-            <div className="h-[1px] bg-neutral-800 flex-grow" />
+            <div className="h-[1px] bg-white flex-grow" />
           </div>
 
           {/* Cards slider/grid container */}

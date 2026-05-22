@@ -89,7 +89,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
   ]
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-[#121212]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -97,13 +97,13 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Kategorie dla firm i przedsiębiorców
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Profesjonalna obsługa prawna dla biznesu
-            </p>
+          <div className="mb-12">
+            <div className="flex items-center gap-6 mb-12">
+              <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
+                Popularne sprawy firmowe
+              </h2>
+              <div className="flex-grow border-t border-zinc-800/80" />
+            </div>
           </div>
 
           {/* Desktop Grid Layout */}
