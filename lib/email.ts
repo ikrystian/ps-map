@@ -9,6 +9,7 @@
  * EMAIL_FROM=noreply@prostaspawa.pl
  */
 
+import { EmailType } from '@prisma/client'
 import { sendSMTPEmail } from './smtp'
 
 interface SendEmailParams {
@@ -16,6 +17,62 @@ interface SendEmailParams {
   subject: string
   html: string
   text?: string
+}
+
+/**
+ * Wysyła email przy użyciu szablonu z bazy danych
+ */
+export async function sendEmailWithTemplate({
+  to,
+  templateType,
+  variables,
+  fallbackProvider,
+}: {
+  to: string
+  templateType: EmailType
+  variables: Record<string, string>
+  fallbackProvider?: () => { subject: string; html: string; text: string }
+}): Promise<boolean> {
+  try {
+    const { prisma } = await import('@/lib/prisma')
+    const template = await prisma.emailTemplate.findUnique({
+      where: { typ: templateType },
+    })
+
+    let subject: string
+    let html: string
+    let text: string
+
+    if (template && template.aktywny) {
+      subject = template.temat
+      html = template.trescHtml || template.tresc
+      text = template.tresc
+
+      // Zastąp zmienne
+      Object.entries(variables).forEach(([key, value]) => {
+        // Ucieknij znaki specjalne w kluczu zmiennej dla RexExp
+        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const regex = new RegExp(escapedKey, 'g')
+        
+        subject = subject.replace(regex, value || '')
+        html = html.replace(regex, value || '')
+        text = text.replace(regex, value || '')
+      })
+    } else if (fallbackProvider) {
+      const fallback = fallbackProvider()
+      subject = fallback.subject
+      html = fallback.html
+      text = fallback.text
+    } else {
+      console.error(`Template ${templateType} not found in database and no fallback provided`)
+      return false
+    }
+
+    return await sendEmail({ to, subject, html, text })
+  } catch (error) {
+    console.error(`Error sending templated email (${templateType}):`, error)
+    return false
+  }
 }
 
 /**

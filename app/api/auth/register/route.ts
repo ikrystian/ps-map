@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { UserRole } from "@prisma/client"
+import { UserRole, EmailType } from "@prisma/client"
 import bcrypt from "bcryptjs"
-import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
+import { sendEmail, sendEmailWithTemplate, generateEmailVerificationEmail } from "@/lib/email"
 import crypto from "crypto"
 
 export async function POST(request: NextRequest) {
@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
 
     // Generowanie tokenu weryfikacyjnego (tylko dla nowych użytkowników email/password)
     if (!existingUser) {
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
       const verificationToken = crypto.randomBytes(32).toString('hex')
       const verificationExpiry = new Date()
       verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token ważny 24 godziny
@@ -98,20 +99,31 @@ export async function POST(request: NextRequest) {
       })
 
       // Wyślij email weryfikacyjny
-      const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
+      const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${verificationToken}`
       const isLawFirm = user.role === "LAW_FIRM"
-      const emailContent = generateEmailVerificationEmail(
-        verificationUrl,
-        userData.name || user.email,
-        isLawFirm
-      )
-
+      
       try {
-        await sendEmail({
+        await sendEmailWithTemplate({
           to: user.email,
-          subject: emailContent.subject,
-          html: emailContent.html,
-          text: emailContent.text,
+          templateType: EmailType.POTWIERDZENIE_EMAIL,
+          variables: {
+            "{imie}": userData.name || user.email,
+            "{email}": user.email,
+            "{linkPotwierdzenia}": verificationUrl,
+            "{kod}": verificationCode,
+          },
+          fallbackProvider: () => {
+            const emailContent = generateEmailVerificationEmail(
+              verificationUrl,
+              userData.name || user.email,
+              isLawFirm
+            )
+            return {
+              subject: emailContent.subject,
+              html: emailContent.html,
+              text: emailContent.text,
+            }
+          }
         })
         console.log(`Verification email sent to: ${user.email}`)
       } catch (emailError) {
@@ -185,8 +197,6 @@ export async function POST(request: NextRequest) {
         },
       })
     }
-
-    // Email verification logic moved inside user creation block
 
     return NextResponse.json(
       {

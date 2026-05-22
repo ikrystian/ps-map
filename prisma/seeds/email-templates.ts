@@ -437,6 +437,8 @@ Dziękujemy za rejestrację w serwisie Prosta Sprawa.
 Aby dokończyć proces rejestracji, potwierdź swój adres email klikając w poniższy link:
 {linkPotwierdzenia}
 
+Twój kod weryfikacyjny: {kod}
+
 Link jest ważny przez 24 godziny.
 
 Jeśli nie zakładałeś konta w Prosta Sprawa, zignoruj tę wiadomość.
@@ -454,6 +456,8 @@ Zespół Prosta Sprawa`,
 
   <a href="{linkPotwierdzenia}" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Potwierdź email</a>
 
+  <p>Twój kod weryfikacyjny: <strong style="font-size: 24px; letter-spacing: 2px;">{kod}</strong></p>
+
   <p style="color: #6b7280; font-size: 14px;">Link jest ważny przez 24 godziny.</p>
 
   <p style="background-color: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0; font-size: 14px;">
@@ -462,11 +466,12 @@ Zespół Prosta Sprawa`,
 
   <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">Pozdrawiamy,<br>Zespół Prosta Sprawa</p>
 </div>`,
-      zmienne: ['{imie}', '{email}', '{linkPotwierdzenia}'],
+      zmienne: ['{imie}', '{email}', '{linkPotwierdzenia}', '{kod}'],
       opisZmiennych: {
         '{imie}': 'Imię użytkownika',
         '{email}': 'Adres email',
         '{linkPotwierdzenia}': 'Link do potwierdzenia adresu email',
+        '{kod}': '6-cyfrowy kod weryfikacyjny',
       },
       triggery: ['email_verification_requested'],
     },

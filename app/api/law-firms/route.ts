@@ -3,7 +3,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
-import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
+import { sendEmail, sendEmailWithTemplate, generateEmailVerificationEmail } from "@/lib/email"
+import { EmailType } from "@prisma/client"
 import crypto from "crypto"
 
 // Helper function to generate slug from name and NIP
@@ -427,6 +428,8 @@ export async function POST(request: NextRequest) {
     let emailSent = false;
 
     if (!existingUser) {
+      // Wygeneruj 6-cyfrowy kod weryfikacyjny oraz token do linku
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
       const token = crypto.randomBytes(32).toString('hex')
       const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
@@ -442,18 +445,28 @@ export async function POST(request: NextRequest) {
       const baseUrl = process.env.NEXTAUTH_URL || 'https://ps.studio-ai.com.pl'
       const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
-      // Send verification email
-      const emailContent = generateEmailVerificationEmail(
-        verificationUrl,
-        body.nazwa, // Law firm name
-        true // isLawFirm
-      )
-
-      emailSent = await sendEmail({
+      // Send verification email using database template
+      emailSent = await sendEmailWithTemplate({
         to: body.email,
-        subject: emailContent.subject,
-        html: emailContent.html,
-        text: emailContent.text,
+        templateType: EmailType.POTWIERDZENIE_EMAIL,
+        variables: {
+          "{imie}": body.imieKontakt || body.nazwa,
+          "{email}": body.email,
+          "{linkPotwierdzenia}": verificationUrl,
+          "{kod}": verificationCode,
+        },
+        fallbackProvider: () => {
+          const emailContent = generateEmailVerificationEmail(
+            verificationUrl,
+            body.nazwa,
+            true
+          )
+          return {
+            subject: emailContent.subject,
+            html: emailContent.html,
+            text: emailContent.text,
+          }
+        }
       })
 
       if (!emailSent) {

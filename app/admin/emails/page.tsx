@@ -86,6 +86,7 @@ export default function EmailManagementPage() {
   const [loading, setLoading] = useState(true)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  const [testDialogOpen, setTestDialogOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null)
   const [formData, setFormData] = useState({
     nazwa: "",
@@ -153,6 +154,11 @@ export default function EmailManagementPage() {
     setPreviewDialogOpen(true)
   }
 
+  const handleOpenTest = (template: EmailTemplate) => {
+    setSelectedTemplate(template)
+    setTestDialogOpen(true)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -205,7 +211,10 @@ export default function EmailManagementPage() {
   }
 
   const handleSendTest = async () => {
-    if (!testEmail || !selectedTemplate) return
+    if (!testEmail || !selectedTemplate) {
+      toast.error("Podaj adres email i wybierz szablon")
+      return
+    }
 
     setSendingTest(true)
     try {
@@ -226,6 +235,7 @@ export default function EmailManagementPage() {
 
       toast.success(data.message || `Email testowy został wysłany na ${testEmail}`)
       setTestEmail("")
+      setTestDialogOpen(false)
     } catch (error) {
       console.error("Error sending test email:", error)
       toast.error(
@@ -374,6 +384,14 @@ export default function EmailManagementPage() {
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   Podgląd
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleOpenTest(template)}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Testuj
                 </Button>
                 <Button
                   variant="outline"
@@ -585,37 +603,61 @@ export default function EmailManagementPage() {
                   </div>
                 </TabsContent>
               </Tabs>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <Label>Wyślij email testowy</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="email"
-                    placeholder="adres@example.com"
-                    value={testEmail}
-                    onChange={(e) => setTestEmail(e.target.value)}
-                  />
-                  <Button
-                    onClick={handleSendTest}
-                    disabled={!testEmail || sendingTest}
-                  >
-                    {sendingTest ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4 mr-2" />
-                    )}
-                    Wyślij
-                  </Button>
-                </div>
-              </div>
             </div>
           )}
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
               Zamknij
+            </Button>
+            <Button onClick={() => {
+              setPreviewDialogOpen(false)
+              setTestDialogOpen(true)
+            }}>
+              <Send className="h-4 w-4 mr-2" />
+              Wyślij test
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Test Email Dialog */}
+      <Dialog open={testDialogOpen} onOpenChange={setTestDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Wyślij email testowy</DialogTitle>
+            <DialogDescription>
+              Szablon: {selectedTemplate?.nazwa}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="test-email">Adres email odbiorcy</Label>
+              <Input
+                id="test-email"
+                type="email"
+                placeholder="np. admin@example.com"
+                value={testEmail}
+                onChange={(e) => setTestEmail(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Email zostanie wysłany z przykładowymi danymi testowymi dla zmiennych.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTestDialogOpen(false)}>
+              Anuluj
+            </Button>
+            <Button
+              onClick={handleSendTest}
+              disabled={!testEmail || sendingTest}
+            >
+              {sendingTest && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              <Send className="h-4 w-4 mr-2" />
+              Wyślij test
             </Button>
           </DialogFooter>
         </DialogContent>

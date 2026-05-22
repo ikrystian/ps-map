@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { sendEmail, generateEmailVerificationEmail } from "@/lib/email"
+import { sendEmail, sendEmailWithTemplate, generateEmailVerificationEmail } from "@/lib/email"
+import { EmailType } from "@prisma/client"
 import crypto from "crypto"
 
 /**
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Generate new verification token
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
     const verificationToken = crypto.randomBytes(32).toString('hex')
     const verificationExpiry = new Date()
     verificationExpiry.setHours(verificationExpiry.getHours() + 24) // Token valid for 24 hours
@@ -64,17 +66,28 @@ export async function POST(request: NextRequest) {
     // Send verification email
     const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${verificationToken}`
     const isLawFirm = user.role === "LAW_FIRM"
-    const emailContent = generateEmailVerificationEmail(
-      verificationUrl,
-      user.name || user.email,
-      isLawFirm
-    )
-
-    await sendEmail({
+    
+    await sendEmailWithTemplate({
       to: user.email,
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
+      templateType: EmailType.POTWIERDZENIE_EMAIL,
+      variables: {
+        "{imie}": user.name || user.email,
+        "{email}": user.email,
+        "{linkPotwierdzenia}": verificationUrl,
+        "{kod}": verificationCode,
+      },
+      fallbackProvider: () => {
+        const emailContent = generateEmailVerificationEmail(
+          verificationUrl,
+          user.name || user.email,
+          isLawFirm
+        )
+        return {
+          subject: emailContent.subject,
+          html: emailContent.html,
+          text: emailContent.text,
+        }
+      }
     })
 
     return NextResponse.json(

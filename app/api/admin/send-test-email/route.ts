@@ -62,6 +62,10 @@ export async function POST(request: NextRequest) {
       "{email}": to,
       "{nazwa}": "Kancelaria Testowa",
       "{nip}": "1234567890",
+      "{kod}": "123456",
+      "{linkPotwierdzenia}": "https://prostasprawa.pl/auth/verify-email?token=test-token",
+      "{linkResetHasla}": "https://prostasprawa.pl/auth/reset-password?token=test-token",
+      "{linkDoPanelu}": "https://prostasprawa.pl/panel-eksperta",
     }
 
     // Zastąp zmienne w temacie i treści
