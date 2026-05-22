@@ -11,13 +11,15 @@ const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toSt
 const ALGORITHM = "aes-256-cbc"
 
 /**
- * Ensures the encryption key is exactly 32 bytes
+ * Ensures the encryption key is exactly 32 bytes.
+ * If the key is a 64-character hex string, it is used directly (backward compatibility).
+ * Otherwise, it hashes the key using SHA-256 to guarantee a valid 32-byte key without throwing.
  */
 function getEncryptionKey(): Buffer {
-  if (ENCRYPTION_KEY.length !== 64) {
-    throw new Error("Encryption key must be 32 bytes (64 hex characters)")
+  if (ENCRYPTION_KEY.length === 64 && /^[0-9a-fA-F]{64}$/.test(ENCRYPTION_KEY)) {
+    return Buffer.from(ENCRYPTION_KEY, "hex")
   }
-  return Buffer.from(ENCRYPTION_KEY, "hex")
+  return crypto.createHash("sha256").update(ENCRYPTION_KEY).digest()
 }
 
 /**

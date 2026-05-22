@@ -3,10 +3,19 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(request: NextRequest) {
   try {
+    const odbiorca = request.nextUrl.searchParams.get("odbiorca")
+    const where: any = {
+      aktywna: true,
+    }
+
+    if (odbiorca) {
+      where.odbiorca = {
+        in: [odbiorca, "ALL"],
+      }
+    }
+
     const categories = await prisma.helpCategory.findMany({
-      where: {
-        aktywna: true,
-      },
+      where,
       include: {
         questions: {
           where: {

@@ -1470,6 +1470,7 @@ model HelpCategory {
   ikona       String?  // Nazwa ikony z Lucide
   kolejnosc   Int      @default(0)
   aktywna     Boolean  @default(true)
+  odbiorca    String   @default("ALL")
 
   // Relacje
   questions   HelpQuestion[]

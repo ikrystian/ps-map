@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { nazwa, slug, opis, ikona, kolejnosc, aktywna } = body
+    const { nazwa, slug, opis, ikona, kolejnosc, aktywna, odbiorca } = body
 
     // Check if slug already exists
     const existingCategory = await prisma.helpCategory.findUnique({
@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
         ikona: ikona || null,
         kolejnosc: kolejnosc || 0,
         aktywna: aktywna ?? true,
+        odbiorca: odbiorca || "ALL",
       },
       include: {
         _count: {

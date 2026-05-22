@@ -42,6 +42,7 @@ export default function LawFirmProfilePage() {
   const [showLogoCropper, setShowLogoCropper] = useState(false)
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
   const [showMainImageCropper, setShowMainImageCropper] = useState(false)
+  const [limitSlowKluczowych, setLimitSlowKluczowych] = useState(5)
 
   const [formData, setFormData] = useState({
     id: "",
@@ -145,6 +146,7 @@ export default function LawFirmProfilePage() {
 
         if (lawFirmRes && lawFirmRes.ok) {
           const lawFirmData = await lawFirmRes.json()
+          setLimitSlowKluczowych(lawFirmData.limitSlowKluczowych || 5)
           const normalizedData = {
             ...lawFirmData,
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
@@ -198,13 +200,14 @@ export default function LawFirmProfilePage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to update profile")
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Nie udało się zapisać profilu")
       }
 
       toast.success("Profil został zaktualizowany")
     } catch (error) {
       console.error("Error saving profile:", error)
-      toast.error("Nie udało się zapisać profilu")
+      toast.error(error instanceof Error ? error.message : "Nie udało się zapisać profilu")
     } finally {
       setIsSaving(false)
     }
@@ -877,14 +880,27 @@ export default function LawFirmProfilePage() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="slowoKluczowe">Słowa kluczowe</Label>
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="slowoKluczowe">Słowa kluczowe</Label>
+                    <span className="text-xs text-muted-foreground">
+                      Dodano {formData.slowaKluczowe.length} z {limitSlowKluczowych} dostępnych
+                    </span>
+                  </div>
                   <div className="flex gap-2">
                     <Input
                       id="slowoKluczowe"
-                      placeholder="Dodaj słowo kluczowe..."
+                      placeholder={
+                        formData.slowaKluczowe.length >= limitSlowKluczowych
+                          ? "Osiągnięto limit słów kluczowych"
+                          : "Dodaj słowo kluczowe..."
+                      }
+                      disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault()
+                          if (formData.slowaKluczowe.length >= limitSlowKluczowych) {
+                            return
+                          }
                           const value = e.currentTarget.value.trim()
                           if (value && !formData.slowaKluczowe.includes(value)) {
                             handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
@@ -895,7 +911,11 @@ export default function LawFirmProfilePage() {
                     />
                     <Button
                       type="button"
+                      disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
                       onClick={(e) => {
+                        if (formData.slowaKluczowe.length >= limitSlowKluczowych) {
+                          return
+                        }
                         const input = document.getElementById("slowoKluczowe") as HTMLInputElement
                         const value = input.value.trim()
                         if (value && !formData.slowaKluczowe.includes(value)) {

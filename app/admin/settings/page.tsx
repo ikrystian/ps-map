@@ -38,6 +38,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  maxLawFirmTags: {
+    value: string
+    description: string | null
+  }
 }
 
 export default function AdminSettingsPage() {
@@ -51,6 +55,7 @@ export default function AdminSettingsPage() {
   const [reviewsPerPage, setReviewsPerPage] = useState("10")
   const [minReviewLength, setMinReviewLength] = useState("50")
   const [featuredCategoriesLimit, setFeaturedCategoriesLimit] = useState("8")
+  const [maxTags, setMaxTags] = useState("5")
 
   useEffect(() => {
     fetchSettings()
@@ -69,6 +74,7 @@ export default function AdminSettingsPage() {
         setReviewsPerPage(data.reviewsPerPage?.value || "10")
         setMinReviewLength(data.minReviewLength?.value || "50")
         setFeaturedCategoriesLimit(data.featuredCategoriesLimit?.value || "8")
+        setMaxTags(data.maxLawFirmTags?.value || "5")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -83,6 +89,12 @@ export default function AdminSettingsPage() {
     const maxCategoriesNum = parseInt(maxCategories)
     if (isNaN(maxCategoriesNum) || maxCategoriesNum < 1 || maxCategoriesNum > 100) {
       toast.error("Maksymalna liczba kategorii musi być liczbą od 1 do 100")
+      return
+    }
+
+    const maxTagsNum = parseInt(maxTags)
+    if (isNaN(maxTagsNum) || maxTagsNum < 1 || maxTagsNum > 100) {
+      toast.error("Maksymalna liczba słów kluczowych musi być liczbą od 1 do 100")
       return
     }
 
@@ -145,6 +157,10 @@ export default function AdminSettingsPage() {
             featuredCategoriesLimit: {
               value: featuredCategoriesLimit,
               description: "Maksymalna liczba wyróżnionych kategorii na stronie głównej",
+            },
+            maxLawFirmTags: {
+              value: maxTags,
+              description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
             },
           },
         }),
@@ -271,6 +287,24 @@ export default function AdminSettingsPage() {
             />
             <p className="text-sm text-muted-foreground">
               Określa ile maksymalnie kategorii może zaznaczyć kancelaria w zakresie usług
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="maxTags">
+              Maksymalna liczba słów kluczowych dla kancelarii
+            </Label>
+            <Input
+              id="maxTags"
+              type="number"
+              min="1"
+              max="100"
+              value={maxTags}
+              onChange={(e) => setMaxTags(e.target.value)}
+              placeholder="5"
+            />
+            <p className="text-sm text-muted-foreground">
+              Określa ile maksymalnie słów kluczowych (tagów) może dodać kancelaria bez aktywnego pakietu
             </p>
           </div>
         </CardContent>

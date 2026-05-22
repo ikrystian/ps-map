@@ -49,6 +49,7 @@ const categorySchema = z.object({
   ikona: z.string().optional(),
   kolejnosc: z.number(),
   aktywna: z.boolean(),
+  odbiorca: z.string(),
 })
 
 // Schema walidacji dla pytań
@@ -72,6 +73,7 @@ interface HelpCategory {
   ikona?: string | null
   kolejnosc: number
   aktywna: boolean
+  odbiorca: string
   createdAt: string
   updatedAt: string
   _count?: {
@@ -124,6 +126,7 @@ export default function AdminHelpCenterPage() {
       ikona: "",
       kolejnosc: 0,
       aktywna: true,
+      odbiorca: "ALL",
     },
   })
 
@@ -279,6 +282,7 @@ export default function AdminHelpCenterPage() {
       ikona: category.ikona || "",
       kolejnosc: category.kolejnosc,
       aktywna: category.aktywna,
+      odbiorca: category.odbiorca || "ALL",
     })
     setIsCategoryEditDialogOpen(true)
   }
@@ -509,6 +513,28 @@ export default function AdminHelpCenterPage() {
                     </div>
                     <FormField
                       control={categoryForm.control}
+                      name="odbiorca"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Odbiorca</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz odbiorcę" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="ALL">Wszyscy</SelectItem>
+                              <SelectItem value="CLIENT">Klienci</SelectItem>
+                              <SelectItem value="LAW_FIRM">Eksperci / Kancelarie</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={categoryForm.control}
                       name="aktywna"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -543,6 +569,7 @@ export default function AdminHelpCenterPage() {
                     <TableHead>Slug</TableHead>
                     <TableHead>Ikona</TableHead>
                     <TableHead>Pytania</TableHead>
+                    <TableHead>Odbiorca</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Akcje</TableHead>
                   </TableRow>
@@ -550,7 +577,7 @@ export default function AdminHelpCenterPage() {
                 <TableBody>
                   {categories.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         Brak kategorii. Dodaj pierwszą kategorię, aby rozpocząć.
                       </TableCell>
                     </TableRow>
@@ -563,6 +590,21 @@ export default function AdminHelpCenterPage() {
                         </TableCell>
                         <TableCell>{category.ikona || "-"}</TableCell>
                         <TableCell>{category._count?.questions || 0}</TableCell>
+                        <TableCell>
+                          {category.odbiorca === "CLIENT" ? (
+                            <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20">
+                              Klient
+                            </Badge>
+                          ) : category.odbiorca === "LAW_FIRM" ? (
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+                              Ekspert
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-zinc-500/10 text-zinc-400 border-zinc-500/20">
+                              Wszyscy
+                            </Badge>
+                          )}
+                        </TableCell>
                         <TableCell>
                           <Badge variant={category.aktywna ? "default" : "secondary"}>
                             {category.aktywna ? "Aktywna" : "Nieaktywna"}
@@ -881,6 +923,28 @@ export default function AdminHelpCenterPage() {
                   )}
                 />
               </div>
+              <FormField
+                control={categoryForm.control}
+                name="odbiorca"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Odbiorca</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wybierz odbiorcę" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="ALL">Wszyscy</SelectItem>
+                        <SelectItem value="CLIENT">Klienci</SelectItem>
+                        <SelectItem value="LAW_FIRM">Eksperci / Kancelarie</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={categoryForm.control}
                 name="aktywna"

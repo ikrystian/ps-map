@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.maxLawFirmCities) {
       settingsObject.maxLawFirmCities = "3"
     }
+    if (!settingsObject.maxLawFirmTags) {
+      settingsObject.maxLawFirmTags = "5"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -33,6 +36,7 @@ export async function GET(request: NextRequest) {
         maxLawFirmCategories: "10",
         maxLawFirmVoivodeships: "1",
         maxLawFirmCities: "3",
+        maxLawFirmTags: "5",
       },
       { status: 200 }
     )

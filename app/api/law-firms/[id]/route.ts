@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { hasActivePackage } from "@/lib/permissions"
 
 export async function GET(
   _request: NextRequest,
@@ -124,6 +125,24 @@ export async function GET(
       ? lawFirm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / lawFirm.reviews.length
       : 0
 
+    // Oblicz limit słów kluczowych (tagów)
+    let maxKeywords = 5
+    const tagSetting = await prisma.settings.findUnique({
+      where: { key: "maxLawFirmTags" }
+    })
+    if (tagSetting) {
+      maxKeywords = parseInt(tagSetting.value) || 5
+    }
+
+    if (lawFirm.pakietSubskrypcji && hasActivePackage(lawFirm as any)) {
+      const plan = await prisma.subscriptionPlan.findUnique({
+        where: { typ: lawFirm.pakietSubskrypcji }
+      })
+      if (plan) {
+        maxKeywords = plan.liczbaTakow
+      }
+    }
+
     // Parse JSON fields
     const parsedLawFirm = {
       ...lawFirm,
@@ -134,6 +153,7 @@ export async function GET(
       edukacja: lawFirm.edukacja && lawFirm.edukacja.trim() ? JSON.parse(lawFirm.edukacja) : [],
       avgRating,
       reviewCount: lawFirm.reviews.length,
+      limitSlowKluczowych: maxKeywords,
     }
 
     return NextResponse.json(parsedLawFirm)
@@ -249,7 +269,34 @@ export async function PUT(
 
     // Specjalizacje
     if (body.unikatowyOpisUslugi !== undefined) updateData.unikatowyOpisUslugi = body.unikatowyOpisUslugi
-    if (body.slowaKluczowe) updateData.slowaKluczowe = JSON.stringify(body.slowaKluczowe)
+    if (body.slowaKluczowe !== undefined) {
+      if (Array.isArray(body.slowaKluczowe)) {
+        let maxKeywords = 5
+        const tagSetting = await prisma.settings.findUnique({
+          where: { key: "maxLawFirmTags" }
+        })
+        if (tagSetting) {
+          maxKeywords = parseInt(tagSetting.value) || 5
+        }
+
+        if (existingLawFirm.pakietSubskrypcji && hasActivePackage(existingLawFirm as any)) {
+          const plan = await prisma.subscriptionPlan.findUnique({
+            where: { typ: existingLawFirm.pakietSubskrypcji }
+          })
+          if (plan) {
+            maxKeywords = plan.liczbaTakow
+          }
+        }
+
+        if (body.slowaKluczowe.length > maxKeywords) {
+          return NextResponse.json(
+            { error: `Przekroczono limit słów kluczowych. Twój limit to ${maxKeywords} słów kluczowych.` },
+            { status: 400 }
+          )
+        }
+      }
+      updateData.slowaKluczowe = JSON.stringify(body.slowaKluczowe)
+    }
 
     // Obszar działania
     if (body.callaPolska !== undefined) updateData.callaPolska = body.callaPolska

@@ -33,6 +33,12 @@ export async function GET(request: NextRequest) {
         description: "Maksymalna liczba kategorii, które może zaznaczyć kancelaria",
       }
     }
+    if (!settingsObject.maxLawFirmTags) {
+      settingsObject.maxLawFirmTags = {
+        value: "5",
+        description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

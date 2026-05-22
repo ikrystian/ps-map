@@ -76,7 +76,7 @@ export default function HelpCenterPage() {
       setLoading(true)
       setError(null)
 
-      const response = await fetch("/api/help/categories?odbiorca=LAW_FIRM")
+      const response = await fetch("/api/help/categories?odbiorca=CLIENT")
       if (!response.ok) {
         throw new Error("Nie udało się pobrać danych centrum pomocy")
       }
@@ -261,7 +261,7 @@ export default function HelpCenterPage() {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
-            <Link href="/panel-eksperta/wiadomosci">
+            <Link href="/panel-klienta/wiadomosci">
               <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
                 <MessageSquare className="h-6 w-6" />
                 <div className="text-center">

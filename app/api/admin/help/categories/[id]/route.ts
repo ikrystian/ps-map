@@ -19,7 +19,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { nazwa, slug, opis, ikona, kolejnosc, aktywna } = body
+    const { nazwa, slug, opis, ikona, kolejnosc, aktywna, odbiorca } = body
 
     // Check if category exists
     const existingCategory = await prisma.helpCategory.findUnique({
@@ -56,6 +56,7 @@ export async function PUT(
         ikona: ikona || null,
         kolejnosc: kolejnosc || 0,
         aktywna: aktywna ?? true,
+        odbiorca: odbiorca || "ALL",
       },
       include: {
         _count: {
