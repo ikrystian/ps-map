@@ -24,6 +24,12 @@ interface EmailOptions {
   html?: string
 }
 
+export interface SMTPResponse {
+  success: boolean
+  error?: string
+  log?: string
+}
+
 /**
  * Simple SMTP client
  */
@@ -31,12 +37,13 @@ export class SMTPClient {
   private config: SMTPConfig
   private socket: tls.TLSSocket | net.Socket | null = null
   private responseBuffer: string = ''
+  private communicationLog: string[] = []
 
   constructor(config: SMTPConfig) {
     this.config = config
   }
 
-  private async command(cmd: string, expectedCode?: number): Promise<string> {
+  private async command(cmd: string, expectedCode?: number, hideData: boolean = false): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.socket) {
         return reject(new Error('Socket not connected'))
@@ -47,7 +54,9 @@ export class SMTPClient {
       }, 10000)
 
       const onData = (data: Buffer) => {
-        this.responseBuffer += data.toString()
+        const response = data.toString()
+        this.responseBuffer += response
+        this.communicationLog.push(`S: ${response.trim()}`)
         const lines = this.responseBuffer.split('\r\n')
 
         // Check if we have a complete response (ends with \r\n)
@@ -69,6 +78,7 @@ export class SMTPClient {
       }
 
       this.socket.on('data', onData)
+      this.communicationLog.push(`C: ${hideData ? '********' : cmd}`)
       this.socket.write(cmd + '\r\n')
     })
   }
@@ -80,11 +90,13 @@ export class SMTPClient {
       }, 10000)
 
       const onConnect = () => {
+        this.communicationLog.push(`I: Connected to ${this.config.host}:${this.config.port}`)
         clearTimeout(timeout)
       }
 
       const onData = (data: Buffer) => {
         const response = data.toString()
+        this.communicationLog.push(`S: ${response.trim()}`)
         if (response.startsWith('220')) {
           this.socket?.removeListener('data', onData)
           resolve()
@@ -106,6 +118,7 @@ export class SMTPClient {
 
       this.socket.on('data', onData)
       this.socket.on('error', (err) => {
+        this.communicationLog.push(`E: Connection error: ${err.message}`)
         clearTimeout(timeout)
         reject(err)
       })
@@ -135,8 +148,8 @@ export class SMTPClient {
 
       // AUTH LOGIN
       await this.command('AUTH LOGIN', 334)
-      await this.command(Buffer.from(this.config.auth.user).toString('base64'), 334)
-      await this.command(Buffer.from(this.config.auth.pass).toString('base64'), 235)
+      await this.command(Buffer.from(this.config.auth.user).toString('base64'), 334, true)
+      await this.command(Buffer.from(this.config.auth.pass).toString('base64'), 235, true)
 
       // MAIL FROM
       await this.command(`MAIL FROM:<${options.from}>`, 250)
@@ -173,7 +186,7 @@ export class SMTPClient {
       }
 
       message += '\r\n.'
-      await this.command(message, 250)
+      await this.command(message, 250, true) // Hide body in logs
 
       // QUIT
       await this.command('QUIT', 221)
@@ -181,6 +194,10 @@ export class SMTPClient {
       this.socket?.end()
       this.socket = null
     }
+  }
+
+  getLog(): string {
+    return this.communicationLog.join('\n')
   }
 }
 
@@ -190,13 +207,17 @@ export class SMTPClient {
 export async function sendSMTPEmail(
   config: SMTPConfig,
   options: EmailOptions
-): Promise<boolean> {
+): Promise<SMTPResponse> {
+  const client = new SMTPClient(config)
   try {
-    const client = new SMTPClient(config)
     await client.send(options)
-    return true
+    return { success: true, log: client.getLog() }
   } catch (error) {
     console.error('SMTP Error:', error)
-    return false
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : String(error),
+      log: client.getLog()
+    }
   }
 }

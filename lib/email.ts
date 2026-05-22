@@ -9,7 +9,7 @@
  * EMAIL_FROM=noreply@prostaspawa.pl
  */
 
-import { EmailType } from '@prisma/client'
+import { EmailType, EmailLogStatus } from '@prisma/client'
 import { sendSMTPEmail } from './smtp'
 
 interface SendEmailParams {
@@ -17,6 +17,8 @@ interface SendEmailParams {
   subject: string
   html: string
   text?: string
+  templateType?: string
+  variables?: Record<string, string>
 }
 
 /**
@@ -68,7 +70,7 @@ export async function sendEmailWithTemplate({
       return false
     }
 
-    return await sendEmail({ to, subject, html, text })
+    return await sendEmail({ to, subject, html, text, templateType, variables })
   } catch (error) {
     console.error(`Error sending templated email (${templateType}):`, error)
     return false
@@ -81,7 +83,11 @@ export async function sendEmailWithTemplate({
  * W środowisku development bez konfiguracji SMTP - loguje do konsoli
  * W produkcji lub z konfiguracją SMTP - wysyła prawdziwy email
  */
-export async function sendEmail({ to, subject, html, text }: SendEmailParams): Promise<boolean> {
+export async function sendEmail({ to, subject, html, text, templateType, variables }: SendEmailParams): Promise<boolean> {
+  let smtpLog = ''
+  let errorMessage: string | undefined = undefined
+  let status: EmailLogStatus = EmailLogStatus.FAILED
+
   try {
     // Sprawdź konfigurację SMTP
     const smtpConfigured = !!(
@@ -100,12 +106,16 @@ export async function sendEmail({ to, subject, html, text }: SendEmailParams): P
       console.log(`Subject: ${subject}`)
       console.log(`Text: ${text || html.replace(/<[^>]*>/g, '')}`)
       console.log('='.repeat(80))
+      
+      smtpLog = 'Development mode: SMTP not configured. Email logged to console.'
+      status = EmailLogStatus.SUCCESS
       return true
     }
 
     // Jeśli SMTP jest skonfigurowany - wyślij prawdziwy email
     if (!smtpConfigured) {
-      console.error('SMTP not configured. Set EMAIL_SERVER_HOST, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_FROM')
+      errorMessage = 'SMTP not configured. Set EMAIL_SERVER_HOST, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_FROM'
+      console.error(errorMessage)
       return false
     }
 
@@ -129,16 +139,41 @@ export async function sendEmail({ to, subject, html, text }: SendEmailParams): P
       }
     )
 
-    if (result) {
+    smtpLog = result.log || ''
+    if (result.success) {
       console.log(`✅ Email sent successfully to: ${to}`)
+      status = EmailLogStatus.SUCCESS
     } else {
-      console.error(`❌ Failed to send email to: ${to}`)
+      errorMessage = result.error
+      console.error(`❌ Failed to send email to: ${to}. Error: ${errorMessage}`)
+      status = EmailLogStatus.FAILED
     }
 
-    return result
+    return result.success
   } catch (error) {
+    errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error sending email:', error)
     return false
+  } finally {
+    // Zapisz log do bazy danych
+    try {
+      const { prisma } = await import('@/lib/prisma')
+      await prisma.emailLog.create({
+        data: {
+          to,
+          subject,
+          content: text || html.replace(/<[^>]*>/g, ''),
+          html,
+          templateType,
+          variables: variables ? JSON.stringify(variables) : null,
+          status,
+          errorMessage,
+          smtpLog,
+        },
+      })
+    } catch (logError) {
+      console.error('Error creating email log:', logError)
+    }
   }
 }
 

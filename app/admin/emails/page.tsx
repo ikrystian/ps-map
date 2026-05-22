@@ -81,6 +81,8 @@ const availableVariables: Record<string, string[]> = {
   CUSTOM: [],
 }
 
+import EmailLogsTab from "@/components/admin/EmailLogsTab"
+
 export default function EmailManagementPage() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
   const [loading, setLoading] = useState(true)
@@ -307,122 +309,137 @@ export default function EmailManagementPage() {
         <div>
           <h1 className="text-3xl font-medium tracking-tight font-playfair">Zarządzanie emailami</h1>
           <p className="text-muted-foreground mt-2">
-            Zarządzaj szablonami emaili, ich wyglądem i warunkami wysyłki
+            Zarządzaj szablonami emaili, ich wyglądem i logami wysyłki
           </p>
         </div>
-        <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nowy szablon
-        </Button>
       </div>
 
-      {/* Templates List */}
-      <div className="grid gap-4">
-        {templates.map((template) => (
-          <Card key={template.id}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <CardTitle className="text-xl">{template.nazwa}</CardTitle>
-                    <Badge variant={template.aktywny ? "default" : "secondary"}>
-                      {template.aktywny ? (
-                        <>
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Aktywny
-                        </>
-                      ) : (
-                        <>
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          Nieaktywny
-                        </>
-                      )}
-                    </Badge>
-                    <Badge variant="outline">
-                      {emailTypes.find((t) => t.value === template.typ)?.label || template.typ}
-                    </Badge>
-                  </div>
-                  <CardDescription>{template.temat}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Variables */}
-              {template.zmienne.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Dostępne zmienne:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {template.zmienne.map((variable) => (
-                      <Badge key={variable} variant="outline" className="font-mono text-xs">
-                        {variable}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
+      <Tabs defaultValue="templates" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="templates">Szablony</TabsTrigger>
+          <TabsTrigger value="logs">Logi maili</TabsTrigger>
+        </TabsList>
 
-              {/* Triggers */}
-              {template.triggery.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Wyzwalacze:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {template.triggery.map((trigger) => (
-                      <Badge key={trigger} variant="secondary" className="text-xs">
-                        {trigger}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
+        <TabsContent value="templates" className="space-y-6">
+          <div className="flex justify-end">
+            <Button onClick={handleCreate}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nowy szablon
+            </Button>
+          </div>
 
-              {/* Actions */}
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePreview(template)}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Podgląd
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleOpenTest(template)}
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  Testuj
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(template)}
-                >
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Edytuj
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleToggleActive(template)}
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  {template.aktywny ? "Dezaktywuj" : "Aktywuj"}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(template)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Usuń
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+          <div className="grid gap-4">
+            {templates.map((template) => (
+              <Card key={template.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <CardTitle className="text-xl">{template.nazwa}</CardTitle>
+                        <Badge variant={template.aktywny ? "default" : "secondary"}>
+                          {template.aktywny ? (
+                            <>
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              Aktywny
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              Nieaktywny
+                            </>
+                          )}
+                        </Badge>
+                        <Badge variant="outline">
+                          {emailTypes.find((t) => t.value === template.typ)?.label || template.typ}
+                        </Badge>
+                      </div>
+                      <CardDescription>{template.temat}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Variables */}
+                  {template.zmienne.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Dostępne zmienne:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {template.zmienne.map((variable) => (
+                          <Badge key={variable} variant="outline" className="font-mono text-xs">
+                            {variable}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Triggers */}
+                  {template.triggery.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Wyzwalacze:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {template.triggery.map((trigger) => (
+                          <Badge key={trigger} variant="secondary" className="text-xs">
+                            {trigger}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePreview(template)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Podgląd
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenTest(template)}
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Testuj
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(template)}
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edytuj
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleToggleActive(template)}
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      {template.aktywny ? "Dezaktywuj" : "Aktywuj"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(template)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Usuń
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="logs">
+          <EmailLogsTab />
+        </TabsContent>
+      </Tabs>
 
       {/* Edit/Create Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>

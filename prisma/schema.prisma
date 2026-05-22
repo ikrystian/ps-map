@@ -1940,6 +1940,33 @@ model LawFirmBadge {
   @@index([badgeId])
 }
 
+// ============================================================================
+// LOGI EMAILI
+// ============================================================================
+
+model EmailLog {
+  id              String      @id @default(uuid())
+  to              String
+  subject         String
+  content         String?     // Treść tekstowa
+  html            String?     // Treść HTML (opcjonalnie)
+  templateType    String?     // Typ szablonu (jeśli dotyczy)
+  variables       String?     // JSON ze zmiennymi używanymi w szablonie
+  status          EmailLogStatus
+  errorMessage    String?     // Komunikat o błędzie (jeśli dotyczy)
+  smtpLog         String?     // Szczegółowy log z komunikacji SMTP
+  sentAt          DateTime    @default(now())
+
+  @@index([to])
+  @@index([status])
+  @@index([sentAt])
+}
+
+enum EmailLogStatus {
+  SUCCESS
+  FAILED
+}
+
 enum BadgeConditionType {
   YEARS_IN_SERVICE
   WON_CASES
