@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { Calendar, Eye, User, ArrowLeft, Building2, MapPin } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 
 interface BlogPost {
   id: string
@@ -82,11 +82,25 @@ export default function BlogPostPage() {
     })
   }
 
+  // Set up Scroll-driven animations
+  const { scrollY, scrollYProgress } = useScroll()
+  
+  // Spring settings for smooth progress bar
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  })
+
+  // Parallax calculations for hero image
+  const imageY = useTransform(scrollY, [0, 600], [0, 180])
+  const imageScale = useTransform(scrollY, [0, 600], [1, 1.1])
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Ładowanie artykułu...</div>
+          <div className="text-lg animate-pulse text-muted-foreground">Ładowanie artykułu...</div>
         </div>
       </div>
     )
@@ -95,20 +109,18 @@ export default function BlogPostPage() {
   if (error || !post) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <Card className="text-center py-12">
-          <CardContent>
-            <h2 className="text-2xl font-bold mb-2">Artykuł nie znaleziony</h2>
-            <p className="text-muted-foreground mb-6">
-              {error || "Nie można znaleźć tego artykułu"}
-            </p>
-            <Button asChild>
-              <Link href="/blog">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Wróć do bloga
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="text-center py-16 bg-[#151513]/40 border border-neutral-800/60 rounded-3xl max-w-xl mx-auto p-8 backdrop-blur-sm shadow-xl">
+          <h2 className="text-2xl font-bold mb-2 font-playfair text-white">Artykuł nie znaleziony</h2>
+          <p className="text-muted-foreground mb-6">
+            {error || "Nie można znaleźć tego artykułu"}
+          </p>
+          <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6">
+            <Link href="/blog">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Wróć do bloga
+            </Link>
+          </Button>
+        </div>
       </div>
     )
   }
@@ -117,38 +129,179 @@ export default function BlogPostPage() {
   const estimatedReadingTime = post ? Math.ceil(post.tresc.replace(/<[^>]*>/g, '').split(/\s+/).length / 200) : 0
 
   return (
-    <div className="min-h-screen bg-background bg-[#0f0f0e]">
-      {/* Hero Section with Featured Image */}
-      {post.obrazekWyrozniajacy && (
-        <div className="relative h-[400px] md:h-[500px] bg-gradient-to-b from-black/50 to-black/70">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${post.obrazekWyrozniajacy})` }}
+    <div className="min-h-screen bg-[#0a0a09] text-neutral-100 selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
+      {/* Reading progress bar */}
+      <motion.div
+        className="fixed top-[65px] left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-teal-400 to-primary origin-left z-50 shadow-[0_0_8px_rgba(13,161,146,0.3)]"
+        style={{ scaleX }}
+      />
+
+      {/* Hero Section with Featured Image / Parallax */}
+      {post.obrazekWyrozniajacy ? (
+        <div className="relative h-[55vh] min-h-[400px] max-h-[600px] w-full overflow-hidden bg-neutral-950">
+          {/* Parallax Image wrapper */}
+          <motion.div
+            className="absolute inset-0 bg-cover bg-center will-change-transform"
+            style={{ 
+              backgroundImage: `url(${post.obrazekWyrozniajacy})`,
+              y: imageY,
+              scale: imageScale
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          <div className="container mx-auto px-4 h-full flex items-end pb-12 relative z-10">
+          {/* Immersive overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-[#0a0a09]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a09]/95 via-[#0a0a09]/40 to-transparent pointer-events-none" />
+          
+          <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-12 relative z-10">
             <div className="max-w-4xl">
-              {post.category && (
-                <Badge variant="secondary" className="mb-4 bg-white/90 hover:bg-white">
-                  {post.category.nazwa}
-                </Badge>
-              )}
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+              {/* Category & Breadcrumbs */}
+              <div className="flex flex-wrap items-center gap-3 mb-5">
+                <Link href="/blog" className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors group">
+                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                  Blog
+                </Link>
+                <span className="text-neutral-600 text-xs">/</span>
+                {post.category && (
+                  <Badge variant="secondary" className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5">
+                    {post.category.nazwa}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1 className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-8">
                 {post.tytul}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-white/90">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {formatDate(post.dataPublikacji)}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Eye className="w-4 h-4" />
-                  {post.wyswietlenia} wyświetleń
-                </div>
-                {estimatedReadingTime > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span>📖 {estimatedReadingTime} min czytania</span>
+
+              {/* Author & Stats bar */}
+              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-white/10 pt-6">
+                {/* Author Info */}
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-neutral-900 flex-shrink-0">
+                    {post.lawFirm.logo ? (
+                      <img
+                        src={post.lawFirm.logo}
+                        alt={post.lawFirm.nazwa}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Building2 className="w-4 h-4 text-neutral-400 m-2" />
+                    )}
                   </div>
+                  <Link
+                    href={`/ekspert/${post.lawFirm.slug}`}
+                    className="font-medium text-white hover:text-primary transition-colors"
+                  >
+                    {post.lawFirm.nazwa}
+                  </Link>
+                </div>
+
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+
+                {/* Date */}
+                <div className="flex items-center gap-2 text-neutral-455">
+                  <Calendar className="w-4 h-4 text-primary/80" />
+                  <span>{formatDate(post.dataPublikacji)}</span>
+                </div>
+
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+
+                {/* Views */}
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-primary/80" />
+                  <span>{post.wyswietlenia} wyświetleń</span>
+                </div>
+
+                {estimatedReadingTime > 0 && (
+                  <>
+                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+                    {/* Reading Time */}
+                    <div className="flex items-center gap-2">
+                      <span>📖</span>
+                      <span>{estimatedReadingTime} min czytania</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Typographic Text Hero Fallback */
+        <div className="relative border-b border-neutral-900/60 bg-gradient-to-br from-[#121211] via-[#0a0a09] to-[#0d0d0c] py-20 overflow-hidden">
+          {/* Ambient Glows */}
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-primary/5 blur-[90px] pointer-events-none" />
+          <div className="absolute bottom-10 right-1/4 w-[280px] h-[280px] rounded-full bg-teal-500/3 blur-[90px] pointer-events-none" />
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl">
+              {/* Category & Breadcrumbs */}
+              <div className="flex flex-wrap items-center gap-3 mb-5">
+                <Link href="/blog" className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors group">
+                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                  Blog
+                </Link>
+                <span className="text-neutral-600 text-xs">/</span>
+                {post.category && (
+                  <Badge variant="secondary" className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5">
+                    {post.category.nazwa}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1 className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-8">
+                {post.tytul}
+              </h1>
+
+              {/* Author & Stats bar */}
+              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-neutral-800/80 pt-6">
+                {/* Author Info */}
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-850 bg-neutral-900 flex-shrink-0">
+                    {post.lawFirm.logo ? (
+                      <img
+                        src={post.lawFirm.logo}
+                        alt={post.lawFirm.nazwa}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Building2 className="w-4 h-4 text-neutral-400 m-2" />
+                    )}
+                  </div>
+                  <Link
+                    href={`/ekspert/${post.lawFirm.slug}`}
+                    className="font-medium text-white hover:text-primary transition-colors"
+                  >
+                    {post.lawFirm.nazwa}
+                  </Link>
+                </div>
+
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+
+                {/* Date */}
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary/80" />
+                  <span>{formatDate(post.dataPublikacji)}</span>
+                </div>
+
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+
+                {/* Views */}
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-primary/80" />
+                  <span>{post.wyswietlenia} wyświetleń</span>
+                </div>
+
+                {estimatedReadingTime > 0 && (
+                  <>
+                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+                    {/* Reading Time */}
+                    <div className="flex items-center gap-2">
+                      <span>📖</span>
+                      <span>{estimatedReadingTime} min czytania</span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -156,187 +309,153 @@ export default function BlogPostPage() {
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Back button */}
-        <div className="mb-6">
-          <Button variant="ghost" asChild>
-            <Link href="/blog">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Wróć do bloga
-            </Link>
-          </Button>
-        </div>
+      {/* Main Grid Container */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Main Article Content */}
+          <div className="lg:col-span-2 space-y-8">
+            <article className="bg-[#151513]/40 border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+              <div
+                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-neutral-300 dark:prose-p:text-neutral-350 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-neutral-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-neutral-300"
+                dangerouslySetInnerHTML={{ __html: post.tresc }}
+              />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <article className="bg-card rounded-lg shadow-sm">
-              {/* Header (only if no featured image) */}
-              {!post.obrazekWyrozniajacy && (
-                <div className="p-6 md:p-8 border-b">
-                  {post.category && (
-                    <Badge variant="secondary" className="mb-4">
-                      {post.category.nazwa}
-                    </Badge>
-                  )}
-                  <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.tytul}</h1>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(post.dataPublikacji)}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {post.wyswietlenia} wyświetleń
-                    </div>
-                    {estimatedReadingTime > 0 && (
-                      <div className="flex items-center gap-1">
-                        <span>📖 {estimatedReadingTime} min czytania</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              <Separator className="my-10 bg-neutral-800/60" />
 
-              {/* Content */}
-              <div className="p-6 md:p-8">
-                <div
-                  className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-primary prose-img:rounded-xl prose-img:shadow-lg"
-                  dangerouslySetInnerHTML={{ __html: post.tresc }}
-                />
-              </div>
-
-
-              <Separator />
-
-              {/* Footer with tags or share */}
-              <div className="p-6 md:p-8 bg-muted/30">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div className="text-sm text-muted-foreground">
-                    <Building2 className="w-4 h-4 inline mr-1" />
+              {/* Article footer metadata info */}
+              <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-neutral-450 bg-neutral-900/20 p-5 rounded-2xl border border-neutral-800/30">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-primary" />
+                  <span>
                     Artykuł przygotowany przez{" "}
                     <Link
                       href={`/ekspert/${post.lawFirm.slug}`}
-                      className="font-medium text-primary hover:underline"
+                      className="font-semibold text-white hover:text-primary hover:underline transition-colors"
                     >
                       {post.lawFirm.nazwa}
                     </Link>
-                  </div>
+                  </span>
                 </div>
               </div>
             </article>
 
-            {/* CTA Section */}
-            <Card className="mt-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-              <CardContent className="p-6 md:p-8">
-                <h3 className="text-xl font-bold mb-2">Potrzebujesz pomocy prawnej?</h3>
-                <p className="text-muted-foreground mb-4">
-                  Skontaktuj się z naszym ekspertem, aby uzyskać profesjonalne wsparcie w Twojej sprawie.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Button asChild size="lg">
+            {/* Bottom Premium CTA Block */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#13201e]/60 to-[#0e0e0d] border border-primary/20 rounded-3xl p-8 shadow-2xl group">
+              {/* Blur accent glow */}
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-primary/10 blur-[70px] pointer-events-none" />
+              
+              <div className="relative z-10 space-y-6">
+                <div className="max-w-xl">
+                  <h3 className="font-playfair text-2xl md:text-3xl font-bold text-white mb-3">
+                    Potrzebujesz pomocy prawnej?
+                  </h3>
+                  <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
+                    Skonsultuj się bezpośrednio z autorem tej publikacji lub dodaj bezpłatnie opis swojej sprawy na platformie, a zarejestrowani eksperci prawni sami zgłoszą się do Ciebie z ofertami.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <Button asChild className="bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl px-6 py-6 transition-all shadow-lg hover:shadow-primary/20 text-sm font-semibold cursor-pointer">
                     <Link href={`/ekspert/${post.lawFirm.slug}`}>
                       Zobacz profil eksperta
                     </Link>
                   </Button>
-                  <Button asChild variant="outline" size="lg">
-                    <Link href="/dodaj-sprawe">Dodaj sprawę</Link>
+                  <Button asChild variant="outline" className="border-neutral-800 bg-[#0f0f0e]/50 hover:bg-neutral-850 hover:text-white text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer">
+                    <Link href="/dodaj-sprawe">Opisz swoją sprawę za darmo</Link>
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Author Info */}
-            <Card className="sticky top-4">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">O autorze</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Logo */}
-                {post.lawFirm.logo ? (
-                  <div className="flex justify-center">
-                    <div className="relative">
+          {/* Sticky Editorial Sidebar */}
+          <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[95px] h-fit">
+            {/* About Author card */}
+            <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+              {/* Visual glow on hover */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  {post.lawFirm.logo ? (
+                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-neutral-800/80 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-primary/40 transition-colors">
                       <img
                         src={post.lawFirm.logo}
                         alt={post.lawFirm.nazwa}
-                        className="w-24 h-24 rounded-full object-cover ring-4 ring-primary/10"
+                        className="w-full h-full object-cover"
                       />
-                      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-1.5">
-                        <Building2 className="w-4 h-4" />
-                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex justify-center">
-                    <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-primary/10">
-                      <Building2 className="w-12 h-12 text-primary" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                      <Building2 className="w-8 h-8 text-neutral-500" />
                     </div>
+                  )}
+                  
+                  <div>
+                    <Badge className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider mb-1.5 font-semibold">
+                      Ekspert prawny
+                    </Badge>
+                    <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">
+                      {post.lawFirm.nazwa}
+                    </h3>
+                    <p className="text-xs text-neutral-400 mt-1">
+                      {post.lawFirm.nazwaFirmy}
+                    </p>
                   </div>
-                )}
-
-                {/* Name */}
-                <div className="text-center">
-                  <h3 className="font-semibold text-lg mb-1">{post.lawFirm.nazwa}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {post.lawFirm.nazwaFirmy}
-                  </p>
                 </div>
-
-                <Separator />
-
+                
+                <Separator className="bg-neutral-800/60" />
+                
                 {/* Location */}
-                <div className="flex items-start gap-2 text-sm">
-                  <MapPin className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                  <span className="text-muted-foreground">
-                    {post.lawFirm.miasto}, {post.lawFirm.voivodeship.nazwa}
+                <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                  <MapPin className="w-4 h-4 text-primary/80 flex-shrink-0" />
+                  <span>
+                    {post.lawFirm.miasto}, woj. {post.lawFirm.voivodeship.nazwa}
                   </span>
                 </div>
 
-                {/* Description */}
+                {/* Description excerpt */}
                 {post.lawFirm.opis && (
                   <>
-                    <Separator />
-                    <div
-                      className="text-sm text-muted-foreground"
+                    <Separator className="bg-neutral-800/60" />
+                    <div 
+                      className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
                       dangerouslySetInnerHTML={{ __html: post.lawFirm.opis }}
                     />
                   </>
                 )}
-
-                <Separator />
-
+                
                 {/* View Profile Button */}
-                <Button asChild className="w-full" size="lg">
+                <Button asChild className="w-full bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl py-5 transition-all shadow-lg hover:shadow-primary/20 cursor-pointer">
                   <Link href={`/ekspert/${post.lawFirm.slug}`}>
                     <Building2 className="w-4 h-4 mr-2" />
                     Zobacz profil eksperta
                   </Link>
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Quick Contact Card */}
-            <Card className="bg-primary/5 border-primary/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Szybki kontakt</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Masz pytania? Skontaktuj się z ekspertem już teraz.
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href={`/ekspert/${post.lawFirm.slug}#kontakt`}>
-                    Skontaktuj się
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+            {/* Quick Contact CTA */}
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 border border-primary/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
+              <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+              
+              <h4 className="font-bold text-white text-base mb-2 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                Szybki kontakt
+              </h4>
+              <p className="text-sm text-neutral-400 mb-5 leading-relaxed">
+                Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do kancelarii.
+              </p>
+              <Button asChild variant="outline" className="w-full border-neutral-850 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-xl py-5 transition-all cursor-pointer">
+                <Link href={`/ekspert/${post.lawFirm.slug}#kontakt`}>
+                  Napisz wiadomość
+                </Link>
+              </Button>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
   )
 }
+
