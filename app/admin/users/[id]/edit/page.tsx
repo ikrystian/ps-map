@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react"
+import { ArrowLeft, Upload, X, Image as ImageIcon, Loader2, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
@@ -25,6 +25,8 @@ import * as z from "zod"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
 
 // Validation schema
 const userSchema = z.object({
@@ -36,17 +38,57 @@ const userSchema = z.object({
   image: z.string().optional(),
   // Client fields
   client: z.object({
-    imie: z.string().min(1, "First name is required"),
-    nazwisko: z.string().min(1, "Last name is required"),
+    imie: z.string().optional(),
+    nazwisko: z.string().optional(),
     telefon: z.string().optional(),
     adres: z.string().optional(),
     kodPocztowy: z.string().optional(),
     miasto: z.string().optional(),
     voivodeshipId: z.string().optional(),
-    zgodaRegulamin: z.boolean(),
-    zgodaNewsletter: z.boolean(),
-    zgodaMarketing: z.boolean(),
+    zgodaRegulamin: z.boolean().optional(),
+    zgodaNewsletter: z.boolean().optional(),
+    zgodaMarketing: z.boolean().optional(),
   }).optional(),
+  // Notification settings
+  notificationSettings: z.object({
+    emailNoweOferty: z.boolean().optional(),
+    emailWiadomosci: z.boolean().optional(),
+    emailStatusy: z.boolean().optional(),
+    smsPilne: z.boolean().optional(),
+    kontaktKlienci: z.boolean().optional(),
+    kluczowe: z.boolean().optional(),
+    wskazowkiPorady: z.boolean().optional(),
+    ofertPromocje: z.boolean().optional(),
+    przypomnienieWiadomosci: z.boolean().optional(),
+    noweFunkcje: z.boolean().optional(),
+    zmianyCenniki: z.boolean().optional(),
+    zmianyRegulamin: z.boolean().optional(),
+    kontaktDoradca: z.boolean().optional(),
+    wyswietlanieAwatara: z.boolean().optional(),
+    autoProsbOpinie: z.boolean().optional(),
+    powiadomienieDzwiekowe: z.boolean().optional(),
+    ustawieniaOgloszenia: z.boolean().optional(),
+    powiadomieniaSmNowa: z.boolean().optional(),
+    wiadomosciZbiorcze: z.boolean().optional(),
+    urlop: z.boolean().optional(),
+  }).optional(),
+}).superRefine((data, ctx) => {
+  if (data.role === "CLIENT") {
+    if (!data.client?.imie || data.client.imie.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Imię jest wymagane",
+        path: ["client", "imie"],
+      })
+    }
+    if (!data.client?.nazwisko || data.client.nazwisko.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Nazwisko jest wymagane",
+        path: ["client", "nazwisko"],
+      })
+    }
+  }
 })
 
 type UserFormValues = z.infer<typeof userSchema>
@@ -108,6 +150,28 @@ export default function EditUserPage() {
         zgodaNewsletter: false,
         zgodaMarketing: false,
       },
+      notificationSettings: {
+        emailNoweOferty: true,
+        emailWiadomosci: true,
+        emailStatusy: true,
+        smsPilne: false,
+        kontaktKlienci: true,
+        kluczowe: true,
+        wskazowkiPorady: true,
+        ofertPromocje: true,
+        przypomnienieWiadomosci: true,
+        noweFunkcje: true,
+        zmianyCenniki: true,
+        zmianyRegulamin: true,
+        kontaktDoradca: false,
+        wyswietlanieAwatara: true,
+        autoProsbOpinie: false,
+        powiadomienieDzwiekowe: false,
+        ustawieniaOgloszenia: true,
+        powiadomieniaSmNowa: false,
+        wiadomosciZbiorcze: true,
+        urlop: false,
+      },
     },
   })
 
@@ -136,6 +200,41 @@ export default function EditUserPage() {
         if (response.ok) {
           const user: UserData = await response.json()
           setUserData(user)
+
+          // Fetch notification settings
+          let settingsData = {
+            emailNoweOferty: true,
+            emailWiadomosci: true,
+            emailStatusy: true,
+            smsPilne: false,
+            kontaktKlienci: true,
+            kluczowe: true,
+            wskazowkiPorady: true,
+            ofertPromocje: true,
+            przypomnienieWiadomosci: true,
+            noweFunkcje: true,
+            zmianyCenniki: true,
+            zmianyRegulamin: true,
+            kontaktDoradca: false,
+            wyswietlanieAwatara: true,
+            autoProsbOpinie: false,
+            powiadomienieDzwiekowe: false,
+            ustawieniaOgloszenia: true,
+            powiadomieniaSmNowa: false,
+            wiadomosciZbiorcze: true,
+            urlop: false,
+          }
+
+          try {
+            const settingsResponse = await fetch(`/api/admin/users/${params.id}/notification-settings`)
+            if (settingsResponse.ok) {
+              const fetchedSettings = await settingsResponse.json()
+              settingsData = { ...settingsData, ...fetchedSettings }
+            }
+          } catch (error) {
+            console.error("Error fetching notification settings:", error)
+          }
+
           form.reset({
             name: user.name || "",
             email: user.email,
@@ -155,6 +254,7 @@ export default function EditUserPage() {
               zgodaNewsletter: user.client?.zgodaNewsletter || false,
               zgodaMarketing: user.client?.zgodaMarketing || false,
             },
+            notificationSettings: settingsData,
           })
         } else {
           throw new Error("Błąd podczas pobierania danych użytkownika")
@@ -242,13 +342,29 @@ export default function EditUserPage() {
         body: JSON.stringify(updateData),
       })
 
-      if (response.ok) {
-        toast.success("Użytkownik został zaktualizowany pomyślnie")
-        router.push("/admin/users")
-      } else {
+      if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || "Błąd podczas aktualizacji użytkownika")
       }
+
+      // Zapisz ustawienia powiadomień jeśli rola to Kancelaria
+      if (values.role === "LAW_FIRM" && values.notificationSettings) {
+        const settingsResponse = await fetch(`/api/admin/users/${params.id}/notification-settings`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values.notificationSettings),
+        })
+
+        if (!settingsResponse.ok) {
+          const error = await settingsResponse.json()
+          throw new Error(error.error || "Błąd podczas aktualizacji ustawień powiadomień")
+        }
+      }
+
+      toast.success("Użytkownik został zaktualizowany pomyślnie")
+      router.push("/admin/users")
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować użytkownika")
     } finally {
@@ -482,182 +598,640 @@ export default function EditUserPage() {
           </Card>
 
           {/* Personal Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dane osobowe</CardTitle>
-              <CardDescription>Podstawowe informacje o użytkowniku</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+          {form.watch("role") === "CLIENT" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Dane osobowe</CardTitle>
+                <CardDescription>Podstawowe informacje o użytkowniku</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="client.imie"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Imię</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Jan" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.nazwisko"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nazwisko</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Kowalski" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="client.imie"
+                  name="client.telefon"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Imię</FormLabel>
+                      <FormLabel>Telefon (opcjonalnie)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Jan" {...field} />
+                        <Input placeholder="+48 123 456 789" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="client.nazwisko"
+                  name="client.adres"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nazwisko</FormLabel>
+                      <FormLabel>Adres (opcjonalnie)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Kowalski" {...field} />
+                        <Input placeholder="ul. Przykładowa 123" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="client.kodPocztowy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="00-000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.miasto"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Miasto (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Warszawa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="client.voivodeshipId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Województwo (opcjonalnie)</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Wybierz województwo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {voivodeships.map((v) => (
+                            <SelectItem key={v.id} value={v.id}>
+                              {v.nazwa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaRegulamin"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na regulamin</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaNewsletter"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na newsletter</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="client.zgodaMarketing"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Zgoda na marketing</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Ustawienia powiadomień i preferencji Kancelarii */}
+          {form.watch("role") === "LAW_FIRM" && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Card 1: Ustawienia Ogólne Powiadomień */}
+              <Card className="border border-border/60 shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-bold flex items-center gap-2">
+                    <Info className="h-5 w-5 text-primary" />
+                    Ustawienia powiadomień e-mail
+                  </CardTitle>
+                  <CardDescription>
+                    Dostosuj preferencje powiadomień e-mail wysyłanych do kancelarii
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    {/* Kontakt z klientami */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.kontaktKlienci"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Kontakt z klientami <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Wymagane do prawidłowego kontaktu z klientami w serwisie.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Kluczowe informacje */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.kluczowe"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Kluczowe informacje <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Wymagane powiadomienia o regulaminie, cennikach i funkcjonowaniu serwisu.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Wskazówki, porady */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.wskazowkiPorady"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Wskazówki i porady
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Porady jak ulepszyć ofertę i zwiększyć widoczność.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Ciekawe oferty i promocje */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.ofertPromocje"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Ciekawe oferty i promocje
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Promocje i specjalne oferty przygotowane dla kancelarii.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Przypomnienie o nowych wiadomościach */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.przypomnienieWiadomosci"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Przypomnienie o wiadomościach
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Przypomnienia o nieprzeczytanych wiadomościach.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Powiadomienie o nowych funkcjach */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.noweFunkcje"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Nowe funkcje serwisu
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Informacje o wprowadzanych ulepszeniach i nowych modułach.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Zmiany cenników */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.zmianyCenniki"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Zmiany cenników
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Powiadomienia o aktualizacjach cennika usług.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Zmiany regulaminu */}
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.zmianyRegulamin"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Zmiany regulaminu
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Informacje o modyfikacjach w regulaminie portalu.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <Separator />
+
+                  {/* Kontakt telefoniczny */}
+                  <div className="space-y-3 pt-2">
+                    <h3 className="text-sm font-semibold text-muted-foreground px-1">Kontakt telefoniczny</h3>
+                    <FormField
+                      control={form.control}
+                      name="notificationSettings.kontaktDoradca"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-semibold cursor-pointer">
+                              Kontakt z doradcą
+                            </FormLabel>
+                            <FormDescription className="text-xs">
+                              Zgoda na bezpośredni kontakt telefoniczny z doradcą portalu.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Column 2: Inne ustawienia */}
+              <div className="space-y-6">
+                {/* Card 2.1: Ustawienia Ogłoszenia */}
+                <Card className="border border-border/60 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl font-bold flex items-center gap-2">
+                      Ustawienia ogłoszenia i tryb pracy
+                    </CardTitle>
+                    <CardDescription>
+                      Zarządzaj widocznością i preferencjami zleceń
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      {/* Ustawienia ogłoszenia */}
+                      <FormField
+                        control={form.control}
+                        name="notificationSettings.ustawieniaOgloszenia"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                            <div className="space-y-0.5 pr-2">
+                              <FormLabel className="text-sm font-semibold cursor-pointer">
+                                Włącz ustawienia ogłoszenia
+                              </FormLabel>
+                              <FormDescription className="text-xs">
+                                Aktywuje opcje dodatkowe powiązane z ogłoszeniami.
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      <Separator />
+
+                      {/* Powiadomienia SMS */}
+                      <div className="space-y-2 pt-1">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Powiadomienia SMS</h4>
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.powiadomieniaSmNowa"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  SMS o nowej wiadomości
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Otrzymuj natychmiastowe powiadomienia SMS o nowych zleceniach.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Separator />
+
+                      {/* Powiadomienia e-mail - zbiorcze */}
+                      <div className="space-y-2 pt-1">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Wiadomości zbiorcze</h4>
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.wiadomosciZbiorcze"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Otrzymywanie wiadomości zbiorczych
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Zbiorcze raporty e-mail zamiast pojedynczych powiadomień.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Separator />
+
+                      {/* Tryb urlopowy */}
+                      <div className="space-y-2 pt-1">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Tryb pracy</h4>
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.urlop"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer text-amber-600 dark:text-amber-500">
+                                  Tryb urlopowy
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Wstrzymuje powiadomienia o zleceniach na czas Twojej nieobecności.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 2.2: Zgody i preferencje systemowe */}
+                <Card className="border border-border/60 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl font-bold flex items-center gap-2">
+                      Zgody i dodatkowe funkcje
+                    </CardTitle>
+                    <CardDescription>
+                      Zarządzaj wizerunkiem i profilowaniem w serwisie
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      {/* Zgoda na wyświetlanie awatara */}
+                      <FormField
+                        control={form.control}
+                        name="notificationSettings.wyswietlanieAwatara"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                            <div className="space-y-0.5 pr-2">
+                              <FormLabel className="text-sm font-semibold cursor-pointer">
+                                Zgoda na wyświetlanie awatara (wizerunek)
+                              </FormLabel>
+                              <FormDescription className="text-xs">
+                                Zgoda na pokazywanie Twojego zdjęcia na profilu publicznym i w opiniach.
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Zgoda na auto prośbę o opinię */}
+                      <FormField
+                        control={form.control}
+                        name="notificationSettings.autoProsbOpinie"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                            <div className="space-y-0.5 pr-2">
+                              <FormLabel className="text-sm font-semibold cursor-pointer">
+                                Automatyczne prośby o opinie
+                              </FormLabel>
+                              <FormDescription className="text-xs">
+                                Automatyczne wysyłanie próśb do klientów o wystawienie opinii po zakończeniu sprawy.
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Powiadomienie dźwiękowe o nowej wiadomości */}
+                      <FormField
+                        control={form.control}
+                        name="notificationSettings.powiadomienieDzwiekowe"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                            <div className="space-y-0.5 pr-2">
+                              <FormLabel className="text-sm font-semibold cursor-pointer">
+                                Powiadomienie dźwiękowe
+                              </FormLabel>
+                              <FormDescription className="text-xs">
+                                Odtwarzaj dźwięk w przeglądarce przy nadejściu nowej wiadomości czatu.
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-
-              {form.watch("role") === "CLIENT" && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="client.telefon"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Telefon (opcjonalnie)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="+48 123 456 789" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="client.adres"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Adres (opcjonalnie)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ul. Przykładowa 123" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="client.kodPocztowy"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="00-000" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="client.miasto"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Miasto (opcjonalnie)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Warszawa" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="client.voivodeshipId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Województwo (opcjonalnie)</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Wybierz województwo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {voivodeships.map((v) => (
-                              <SelectItem key={v.id} value={v.id}>
-                                {v.nazwa}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="client.zgodaRegulamin"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Zgoda na regulamin</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="client.zgodaNewsletter"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Zgoda na newsletter</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="client.zgodaMarketing"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Zgoda na marketing</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
           {/* Form Actions */}
           <div className="flex justify-end gap-4">

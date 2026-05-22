@@ -31,6 +31,7 @@ export default function ClientRegistrationPage() {
   })
   const [isInitialized, setIsInitialized] = useState(false)
   const [error, setError] = useState("")
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [cities, setCities] = useState<string[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
@@ -89,19 +90,84 @@ export default function ClientRegistrationPage() {
     }
   }, [session])
 
+  const handleChange = (field: keyof typeof formData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    if (error) setError("")
+    if (errors[field]) {
+      setErrors(prev => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    // Imię
+    if (!formData.imie.trim()) {
+      newErrors.imie = "Imię jest wymagane"
+    } else if (formData.imie.trim().length < 2) {
+      newErrors.imie = "Imię musi mieć co najmniej 2 znaki"
+    }
+
+    // Nazwisko
+    if (!formData.nazwisko.trim()) {
+      newErrors.nazwisko = "Nazwisko jest wymagane"
+    } else if (formData.nazwisko.trim().length < 2) {
+      newErrors.nazwisko = "Nazwisko musi mieć co najmniej 2 znaki"
+    }
+
+    // Email
+    if (!formData.email.trim()) {
+      newErrors.email = "Adres email jest wymagany"
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = "Podaj poprawny adres email"
+      }
+    }
+
+    // Telefon (opcjonalny, ale jeśli wpisany, to musi być poprawny)
+    if (formData.telefon && formData.telefon.trim()) {
+      const phoneRegex = /^[+0-9\s-]{9,15}$/
+      if (!phoneRegex.test(formData.telefon)) {
+        newErrors.telefon = "Podaj poprawny numer telefonu (9-15 cyfr)"
+      }
+    }
+
+    // Hasło i potwierdzenie (tylko przy rejestracji tradycyjnej, bez sesji social)
+    if (!session) {
+      if (!formData.password) {
+        newErrors.password = "Hasło jest wymagane"
+      } else if (formData.password.length < 8) {
+        newErrors.password = "Hasło musi mieć co najmniej 8 znaków"
+      }
+
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Potwierdzenie hasła jest wymagane"
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Hasła nie są identyczne"
+      }
+    }
+
+    // Regulamin
+    if (!formData.zgodaRegulamin) {
+      newErrors.zgodaRegulamin = "Musisz zaakceptować regulamin i politykę prywatności"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
     // Walidacja
-    // Walidacja
-    if (!session?.user && formData.password !== formData.confirmPassword) {
-      setError("Hasła nie są identyczne")
-      return
-    }
-
-    if (!formData.zgodaRegulamin) {
-      setError("Musisz zaakceptować regulamin")
+    if (!validateForm()) {
+      setError("Formularz zawiera błędy. Popraw zaznaczone pola.")
       return
     }
 
@@ -171,7 +237,7 @@ export default function ClientRegistrationPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {error && (
               <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
                 {error}
@@ -180,55 +246,64 @@ export default function ClientRegistrationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="imie">Imię *</Label>
+                <Label htmlFor="imie" className={cn(errors.imie && "text-destructive")}>Imię *</Label>
                 <Input
                   id="imie"
                   type="text"
-                  required
                   value={formData.imie}
-                  onChange={(e) => setFormData({ ...formData, imie: e.target.value })}
+                  onChange={(e) => handleChange("imie", e.target.value)}
                   disabled={isLoading}
-                  className="h-11"
+                  className={cn("h-11", errors.imie && "border-destructive focus-visible:ring-destructive")}
                 />
+                {errors.imie && (
+                  <p className="text-xs text-destructive mt-1">{errors.imie}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="nazwisko">Nazwisko *</Label>
+                <Label htmlFor="nazwisko" className={cn(errors.nazwisko && "text-destructive")}>Nazwisko *</Label>
                 <Input
                   id="nazwisko"
                   type="text"
-                  required
                   value={formData.nazwisko}
-                  onChange={(e) => setFormData({ ...formData, nazwisko: e.target.value })}
+                  onChange={(e) => handleChange("nazwisko", e.target.value)}
                   disabled={isLoading}
-                  className="h-11"
+                  className={cn("h-11", errors.nazwisko && "border-destructive focus-visible:ring-destructive")}
                 />
+                {errors.nazwisko && (
+                  <p className="text-xs text-destructive mt-1">{errors.nazwisko}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email" className={cn(errors.email && "text-destructive")}>Email *</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="twoj@email.com"
-                  required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   disabled={isLoading}
-                  className="h-11"
+                  className={cn("h-11", errors.email && "border-destructive focus-visible:ring-destructive")}
                 />
+                {errors.email && (
+                  <p className="text-xs text-destructive mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="telefon">Telefon</Label>
+                <Label htmlFor="telefon" className={cn(errors.telefon && "text-destructive")}>Telefon</Label>
                 <Input
                   id="telefon"
                   type="tel"
                   value={formData.telefon}
-                  onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+                  onChange={(e) => handleChange("telefon", e.target.value)}
                   disabled={isLoading}
-                  className="h-11"
+                  className={cn("h-11", errors.telefon && "border-destructive focus-visible:ring-destructive")}
                 />
+                {errors.telefon && (
+                  <p className="text-xs text-destructive mt-1">{errors.telefon}</p>
+                )}
               </div>
 
               <div className="space-y-2 md:col-span-2">
@@ -258,7 +333,7 @@ export default function ClientRegistrationPage() {
                               value={city}
                               onSelect={(currentValue) => {
                                 const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
-                                setFormData({ ...formData, miasto: matchedCity })
+                                handleChange("miasto", matchedCity)
                                 setLocationOpen(false)
                               }}
                             >
@@ -281,49 +356,58 @@ export default function ClientRegistrationPage() {
               {!session && (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Hasło *</Label>
+                    <Label htmlFor="password" className={cn(errors.password && "text-destructive")}>Hasło *</Label>
                     <Input
                       id="password"
                       type="password"
                       placeholder="••••••••"
-                      required
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) => handleChange("password", e.target.value)}
                       disabled={isLoading}
-                      className="h-11"
+                      className={cn("h-11", errors.password && "border-destructive focus-visible:ring-destructive")}
                     />
+                    {errors.password && (
+                      <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+                    <Label htmlFor="confirmPassword" className={cn(errors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       placeholder="••••••••"
-                      required
                       value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
                       disabled={isLoading}
-                      className="h-11"
+                      className={cn("h-11", errors.confirmPassword && "border-destructive focus-visible:ring-destructive")}
                     />
+                    {errors.confirmPassword && (
+                      <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
+                    )}
                   </div>
                 </>
               )}
             </div>
 
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="zgodaRegulamin"
-                required
-                checked={formData.zgodaRegulamin}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, zgodaRegulamin: checked === true })
-                }
-                disabled={isLoading}
-              />
-              <label htmlFor="zgodaRegulamin" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> i <Link href="/polityka-prywatnosci" className="text-primary hover:underline">politykę prywatności</Link> *
-              </label>
+            <div className="space-y-1">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="zgodaRegulamin"
+                  checked={formData.zgodaRegulamin}
+                  onCheckedChange={(checked) =>
+                    handleChange("zgodaRegulamin", checked === true)
+                  }
+                  disabled={isLoading}
+                  className={cn(errors.zgodaRegulamin && "border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive")}
+                />
+                <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer", errors.zgodaRegulamin && "text-destructive")}>
+                  Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> i <Link href="/polityka-prywatnosci" className="text-primary hover:underline">politykę prywatności</Link> *
+                </label>
+              </div>
+              {errors.zgodaRegulamin && (
+                <p className="text-xs text-destructive mt-1 ml-7">{errors.zgodaRegulamin}</p>
+              )}
             </div>
 
             <div className="flex items-start space-x-2">
@@ -331,7 +415,7 @@ export default function ClientRegistrationPage() {
                 id="zgodaNewsletter"
                 checked={formData.zgodaNewsletter}
                 onCheckedChange={(checked) =>
-                  setFormData({ ...formData, zgodaNewsletter: checked === true })
+                  handleChange("zgodaNewsletter", checked === true)
                 }
                 disabled={isLoading}
               />
