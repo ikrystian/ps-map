@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import prisma from "@/lib/prisma"
+import { auth } from "@/auth"
+import { prisma } from "@/lib/prisma"
 import { readFile } from "fs/promises"
 import { join } from "path"
 import { existsSync } from "fs"
@@ -48,16 +48,8 @@ export async function GET(
       )
     }
 
-    // Read file from filesystem
-    const filePath = join(process.cwd(), "public", document.sciezka)
-    if (!existsSync(filePath)) {
-      return NextResponse.json(
-        { error: "File not found on server" },
-        { status: 404 }
-      )
-    }
-
-    const fileBuffer = await readFile(filePath)
+    let fileBuffer: Buffer
+    let contentType: string
 
     // Set content type based on extension
     const contentTypes: { [key: string]: string } = {
@@ -68,8 +60,31 @@ export async function GET(
       rtf: "application/rtf",
       odt: "application/vnd.oasis.opendocument.text",
     }
+    contentType = contentTypes[document.rozszerzenie] || "application/octet-stream"
 
-    const contentType = contentTypes[document.rozszerzenie] || "application/octet-stream"
+    if (document.sciezka.startsWith('http')) {
+      // Fetch from external service
+      const response = await fetch(document.sciezka)
+      if (!response.ok) {
+        return NextResponse.json(
+          { error: "Failed to fetch file from external service" },
+          { status: response.status }
+        )
+      }
+      const arrayBuffer = await response.arrayBuffer()
+      fileBuffer = Buffer.from(arrayBuffer)
+      contentType = response.headers.get("Content-Type") || contentType
+    } else {
+      // Read file from local filesystem
+      const filePath = join(process.cwd(), "public", document.sciezka)
+      if (!existsSync(filePath)) {
+        return NextResponse.json(
+          { error: "File not found on server" },
+          { status: 404 }
+        )
+      }
+      fileBuffer = await readFile(filePath)
+    }
 
     return new NextResponse(fileBuffer, {
       headers: {

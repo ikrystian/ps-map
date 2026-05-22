@@ -98,54 +98,76 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData()
-    const file = formData.get("file") as File
+    const file = formData.get("file") as File | null
+    const uploadedUrl = formData.get("uploadedUrl") as string | null
     const nazwa = formData.get("nazwa") as string
     const typDokumentu = formData.get("typDokumentu") as string
+    const rozmiarStr = formData.get("rozmiar") as string | null
+    const rozszerzenieStr = formData.get("rozszerzenie") as string | null
 
-    if (!file || !nazwa || !typDokumentu) {
+    if (!nazwa || !typDokumentu) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       )
     }
 
-    // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    let finalPath = ""
+    let finalSize = 0
+    let finalExtension = ""
+
+    if (uploadedUrl) {
+      finalPath = uploadedUrl
+      finalSize = rozmiarStr ? parseInt(rozmiarStr) : 0
+      finalExtension = rozszerzenieStr || ""
+    } else if (file) {
+      // Check file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: "Plik jest za duży. Maksymalny rozmiar to 10MB" },
+          { status: 400 }
+        )
+      }
+
+      // Get file extension
+      const fileName = file.name
+      const extension = fileName.split('.').pop()?.toLowerCase() || ""
+
+      // Validate file type
+      const allowedExtensions = ["pdf", "doc", "docx", "txt", "rtf", "odt"]
+      if (!allowedExtensions.includes(extension)) {
+        return NextResponse.json(
+          { error: "Nieobsługiwany format pliku" },
+          { status: 400 }
+        )
+      }
+
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = join(process.cwd(), "public", "uploads", "documents", lawFirm.id)
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true })
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now()
+      const safeFileName = `${timestamp}-${fileName.replace(/[^a-z0-9.-]/gi, '_')}`
+      const filePath = join(uploadsDir, safeFileName)
+      const relativePath = `/uploads/documents/${lawFirm.id}/${safeFileName}`
+
+      // Save file
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      await writeFile(filePath, buffer)
+
+      finalPath = relativePath
+      finalSize = file.size
+      finalExtension = extension
+    } else {
       return NextResponse.json(
-        { error: "Plik jest za duży. Maksymalny rozmiar to 10MB" },
+        { error: "No file or uploaded URL provided" },
         { status: 400 }
       )
     }
-
-    // Get file extension
-    const fileName = file.name
-    const extension = fileName.split('.').pop()?.toLowerCase() || ""
-
-    // Validate file type
-    const allowedExtensions = ["pdf", "doc", "docx", "txt", "rtf", "odt"]
-    if (!allowedExtensions.includes(extension)) {
-      return NextResponse.json(
-        { error: "Nieobsługiwany format pliku" },
-        { status: 400 }
-      )
-    }
-
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), "public", "uploads", "documents", lawFirm.id)
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now()
-    const safeFileName = `${timestamp}-${fileName.replace(/[^a-z0-9.-]/gi, '_')}`
-    const filePath = join(uploadsDir, safeFileName)
-    const relativePath = `/uploads/documents/${lawFirm.id}/${safeFileName}`
-
-    // Save file
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
 
     // Save to database
     const document = await prisma.document.create({
@@ -153,9 +175,9 @@ export async function POST(request: NextRequest) {
         lawFirmId: lawFirm.id,
         nazwa,
         typDokumentu,
-        rozmiar: file.size,
-        sciezka: relativePath,
-        rozszerzenie: extension,
+        rozmiar: finalSize,
+        sciezka: finalPath,
+        rozszerzenie: finalExtension,
       }
     })
 

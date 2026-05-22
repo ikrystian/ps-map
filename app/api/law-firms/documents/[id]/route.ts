@@ -48,10 +48,12 @@ export async function DELETE(
       )
     }
 
-    // Delete file from filesystem
-    const filePath = join(process.cwd(), "public", document.sciezka)
-    if (existsSync(filePath)) {
-      await unlink(filePath)
+    // Delete file from filesystem if it's a local file
+    if (document.sciezka && !document.sciezka.startsWith('http')) {
+      const filePath = join(process.cwd(), "public", document.sciezka)
+      if (existsSync(filePath)) {
+        await unlink(filePath)
+      }
     }
 
     // Delete from database

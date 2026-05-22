@@ -140,12 +140,31 @@ export default function DocumentsPage() {
     try {
       setUploadProgress(true)
       const file = values.file[0]
+      const uploadServiceUrl = process.env.NEXT_PUBLIC_UPLOAD_SERVICE_URL || "http://localhost:3005"
 
-      // Przygotowanie FormData dla endpointu dokumentów
+      // 1. Przesyłanie pliku do serwisu ps-upload
+      const uploadFormData = new FormData()
+      uploadFormData.append("file", file)
+
+      const uploadResponse = await fetch(`${uploadServiceUrl}/api/upload`, {
+        method: "POST",
+        body: uploadFormData,
+      })
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json()
+        throw new Error(errorData.error || "Błąd przesyłania pliku do serwisu uploadu")
+      }
+
+      const uploadData = await uploadResponse.json()
+
+      // 2. Zapisywanie informacji o dokumencie w głównej bazie ps-map
       const formData = new FormData()
-      formData.append("file", file)
       formData.append("nazwa", values.nazwa)
       formData.append("typDokumentu", values.typDokumentu)
+      formData.append("uploadedUrl", uploadData.url)
+      formData.append("rozmiar", uploadData.size.toString())
+      formData.append("rozszerzenie", uploadData.filename.split('.').pop() || "")
 
       const response = await fetch("/api/law-firms/documents", {
         method: "POST",
@@ -159,7 +178,7 @@ export default function DocumentsPage() {
         fetchDocuments()
       } else {
         const errorData = await response.json()
-        throw new Error(errorData.error || "Błąd przesyłania dokumentu")
+        throw new Error(errorData.error || "Błąd zapisywania dokumentu")
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się dodać dokumentu")
