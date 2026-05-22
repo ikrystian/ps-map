@@ -104,7 +104,23 @@ export default function InvoicePrintPage() {
   return (
     <>
       <style jsx global>{`
+        :global(.dark) {
+          --background: 0 0% 100% !important;
+          --foreground: 0 0% 0% !important;
+          --card: 0 0% 100% !important;
+          --card-foreground: 0 0% 0% !important;
+        }
+
+        :global(html), :global(body) {
+          background-color: #f3f4f6 !important;
+          color: #000000 !important;
+          color-scheme: light !important;
+        }
+
         @media print {
+          :global(html), :global(body) {
+            background-color: #ffffff !important;
+          }
           body {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;

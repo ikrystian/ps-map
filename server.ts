@@ -1,5 +1,4 @@
 import { createServer } from "http"
-import { parse } from "url"
 import next from "next"
 
 const dev = process.env.NODE_ENV !== "production"
@@ -12,8 +11,9 @@ const handle = app.getRequestHandler()
 app.prepare().then(() => {
   const server = createServer(async (req, res) => {
     try {
-      const parsedUrl = parse(req.url!, true)
-      await handle(req, res, parsedUrl)
+      // In modern Next.js, the request handler can parse the URL internally.
+      // This avoids using the deprecated `url.parse()` API.
+      await handle(req, res)
     } catch (err) {
       console.error("Error occurred handling", req.url, err)
       res.statusCode = 500

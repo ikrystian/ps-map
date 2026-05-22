@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { payuClient } from "@/lib/payu"
+import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +28,8 @@ export async function POST(request: NextRequest) {
       where: { id: extOrderId },
       include: {
         lawFirm: true,
-        subscriptionPlan: true
+        subscriptionPlan: true,
+        invoice: true
       }
     })
 
@@ -120,6 +122,23 @@ export async function POST(request: NextRequest) {
         } as any)
       } catch (e) {
         console.error("Socket emit error:", e)
+      }
+
+      // Generate or update invoice
+      try {
+        if (!dbOrder.invoice) {
+          await generateInvoiceForOrder(dbOrder.id)
+        } else {
+          await prisma.invoice.update({
+            where: { id: dbOrder.invoice.id },
+            data: {
+              status: "PAID",
+              paymentDate: new Date()
+            }
+          })
+        }
+      } catch (invoiceErr) {
+        console.error("Error generating/updating invoice in PayU notify:", invoiceErr)
       }
     } else if (status === 'CANCELED') {
       await prisma.order.update({

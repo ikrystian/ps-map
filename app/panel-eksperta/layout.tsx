@@ -265,6 +265,10 @@ export default function LawFirmPanelLayout({
     </nav>
   )
 
+  if (pathname?.endsWith("/drukuj")) {
+    return <>{children}</>
+  }
+
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar - hidden on mobile */}

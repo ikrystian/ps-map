@@ -146,6 +146,14 @@ export async function PUT(
       // Generate invoice if it doesn't exist yet
       if (!updatedOrder.invoice) {
         await generateInvoiceForOrder(updatedOrder.id)
+      } else {
+        await prisma.invoice.update({
+          where: { id: updatedOrder.invoice.id },
+          data: {
+            status: "PAID",
+            paymentDate: new Date(),
+          },
+        })
       }
     }
 

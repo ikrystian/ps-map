@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { p24Client } from "@/lib/przelewy24"
+import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +26,9 @@ export async function POST(request: NextRequest) {
     const order = await prisma.order.findFirst({
       where: {
         externalOrderId: sessionId,
+      },
+      include: {
+        invoice: true,
       },
     })
 
@@ -93,6 +97,23 @@ export async function POST(request: NextRequest) {
       result.lawFirm.userId,
       result.notification
     )
+
+    // Generate or update invoice
+    try {
+      if (!order.invoice) {
+        await generateInvoiceForOrder(order.id)
+      } else {
+        await prisma.invoice.update({
+          where: { id: order.invoice.id },
+          data: {
+            status: "PAID",
+            paymentDate: new Date(),
+          },
+        })
+      }
+    } catch (invoiceErr) {
+      console.error("Error generating/updating invoice in P24 notify:", invoiceErr)
+    }
 
     console.log("Payment verified and order updated:", order.id)
 

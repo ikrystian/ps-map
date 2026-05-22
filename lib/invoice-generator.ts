@@ -89,7 +89,7 @@ export async function generateInvoiceForOrder(orderId: string) {
         vatRate,
         vatAmount,
         grossAmount,
-        status: 'ISSUED',
+        status: 'PAID',
         issueDate: now,
         saleDate: now,
         paymentDate: order.zaplaconoData || now,
@@ -145,6 +145,14 @@ export async function markOrderAsPaidAndGenerateInvoice(
     // Generate invoice if it doesn't exist
     if (!order.invoice) {
       await generateInvoiceForOrder(orderId)
+    } else {
+      await prisma.invoice.update({
+        where: { id: order.invoice.id },
+        data: {
+          status: "PAID",
+          paymentDate: new Date(),
+        },
+      })
     }
 
     return order
