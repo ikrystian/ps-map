@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
 import Link from "next/link"
@@ -68,6 +69,7 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
     <div className="flex h-screen bg-background">
@@ -97,8 +99,12 @@ export default function AdminLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-            {navigation.map((item) => {
+          <nav
+            className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+            id="admin-nav-sidebar"
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            {navigation.map((item, index) => {
               const isActive = pathname === item.href ||
                 (item.href !== "/admin" && pathname.startsWith(item.href))
 
@@ -106,17 +112,72 @@ export default function AdminLayout({
                 <Link
                   key={item.name}
                   href={item.href}
+                  onMouseEnter={() => setHoveredIndex(index)}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "text-muted-foreground hover:text-foreground",
                     isCollapsed && "justify-center"
                   )}
                   title={isCollapsed ? item.name : undefined}
                 >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {!isCollapsed && <span>{item.name}</span>}
+                  {/* Sliding/Fading Hover Background Pill */}
+                  <AnimatePresence>
+                    {hoveredIndex === index && !isActive && (
+                      <motion.span
+                        layoutId="admin-sidebar-hover-pill"
+                        className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 380,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* Icon with interactive spring movement */}
+                  <motion.div
+                    animate={{
+                      scale: hoveredIndex === index || isActive ? 1.1 : 1,
+                      x: hoveredIndex === index && !isActive && !isCollapsed ? 2 : 0,
+                      rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
+                    }}
+                    transition={{
+                      scale: { type: "spring", stiffness: 400, damping: 20 },
+                      x: { type: "spring", stiffness: 400, damping: 20 },
+                      rotate: { duration: 0.4, ease: "easeInOut" }
+                    }}
+                    className="flex items-center justify-center flex-shrink-0"
+                  >
+                    <item.icon className="h-5 w-5" />
+                  </motion.div>
+
+                  {/* Text label with elegant fade-slide */}
+                  {!isCollapsed && (
+                    <motion.span
+                      animate={{
+                        x: hoveredIndex === index && !isActive ? 4 : 0,
+                        fontWeight: isActive ? 600 : 500,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                      {item.name}
+                    </motion.span>
+                  )}
+
+                  {/* Active accent dot for extra polish */}
+                  {isActive && !isCollapsed && (
+                    <motion.span
+                      layoutId="admin-sidebar-active-indicator"
+                      className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
+                  )}
                 </Link>
               )
             })}
@@ -130,8 +191,9 @@ export default function AdminLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center relative" id="main-logo">
               <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>
           </div>
 
