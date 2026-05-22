@@ -32,6 +32,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
+import AdminNotificationBell from "@/components/AdminNotificationBell"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -133,7 +134,10 @@ export default function AdminLayout({
           </div>
 
           {/* User menu */}
-          <UserMenu userRole="ADMIN" />
+          <div className="flex items-center gap-4">
+            <AdminNotificationBell />
+            <UserMenu userRole="ADMIN" />
+          </div>
         </header>
 
         {/* Main content */}
