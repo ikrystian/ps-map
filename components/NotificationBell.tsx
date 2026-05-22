@@ -29,6 +29,7 @@ interface Notification {
 }
 
 export function NotificationBell() {
+  const [mounted, setMounted] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
@@ -48,6 +49,11 @@ export function NotificationBell() {
       console.error("Error fetching notifications:", error)
     }
   }
+
+  // Set mounted on client
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Initial fetch
   useEffect(() => {
@@ -146,6 +152,8 @@ export function NotificationBell() {
         return "text-muted-foreground"
     }
   }
+
+  if (!mounted) return null
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
