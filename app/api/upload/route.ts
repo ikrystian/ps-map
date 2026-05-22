@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const filename = `${timestamp}-${randomString}.${extension}`
 
     // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), "uploads")
+    const uploadsDir = join(process.cwd(), "files")
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }

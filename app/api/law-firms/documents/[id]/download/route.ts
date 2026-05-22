@@ -86,7 +86,7 @@ export async function GET(
       fileBuffer = await readFile(filePath)
     }
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(fileBuffer as any, {
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${document.nazwa}.${document.rozszerzenie}"`,
