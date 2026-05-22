@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -75,6 +76,7 @@ export default function LawFirmPanelLayout({
   const pathname = usePathname()
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [punktySaldo, setPunktySaldo] = useState<number>(0)
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
@@ -179,7 +181,11 @@ export default function LawFirmPanelLayout({
 
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
-    <nav className="flex-1 space-y-3 overflow-y-auto p-4" id="left-nav">
+    <nav
+      className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+      id="left-nav"
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
       {/* User Avatar and Name */}
       {(inSheet || !isCollapsed) && session?.user && (
         <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
@@ -196,7 +202,7 @@ export default function LawFirmPanelLayout({
           </div>
         </div>
       )}
-      {navigation.map((item) => {
+      {navigation.map((item, index) => {
         const isActive = pathname === item.href ||
           (item.href !== "/panel-eksperta" && pathname.startsWith(item.href))
         const isMessagesItem = item.href === "/panel-eksperta/wiadomosci"
@@ -206,17 +212,64 @@ export default function LawFirmPanelLayout({
           <Link
             key={item.name}
             href={item.href}
+            onMouseEnter={() => setHoveredIndex(index)}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
+              "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
               isActive
-                ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
-                : "text-muted-foreground hover:bg-primary hover:text-primary-foreground",
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                : "text-muted-foreground hover:text-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            <item.icon className={cn("h-5 w-5 flex-shrink-0 transition-colors duration-300", isActive ? "text-white" : "text-primary group-hover:text-white")} />
-            {(inSheet || !isCollapsed) && <span>{item.name}</span>}
+            {/* Sliding/Fading Hover Background Pill */}
+            <AnimatePresence>
+              {hoveredIndex === index && !isActive && (
+                <motion.span
+                  layoutId="expert-sidebar-hover-pill"
+                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 380,
+                    damping: 30,
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Icon with interactive spring movement */}
+            <motion.div
+              animate={{
+                scale: hoveredIndex === index || isActive ? 1.1 : 1,
+                x: hoveredIndex === index && !isActive && (!inSheet && !isCollapsed) ? 2 : 0,
+                rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
+              }}
+              transition={{
+                scale: { type: "spring", stiffness: 400, damping: 20 },
+                x: { type: "spring", stiffness: 400, damping: 20 },
+                rotate: { duration: 0.4, ease: "easeInOut" }
+              }}
+              className="flex items-center justify-center flex-shrink-0"
+            >
+              <item.icon className="h-5 w-5" />
+            </motion.div>
+
+            {/* Text label with elegant fade-slide */}
+            {(inSheet || !isCollapsed) && (
+              <motion.span
+                animate={{
+                  x: hoveredIndex === index && !isActive ? 4 : 0,
+                  fontWeight: isActive ? 600 : 500,
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+                {item.name}
+              </motion.span>
+            )}
+
             {showBadge && (
               <span className={cn(
                 "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
@@ -224,6 +277,15 @@ export default function LawFirmPanelLayout({
               )}>
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>
+            )}
+
+            {/* Active accent dot for extra polish */}
+            {isActive && (inSheet || !isCollapsed) && (
+              <motion.span
+                layoutId="expert-sidebar-active-indicator"
+                className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              />
             )}
           </Link>
         )
@@ -237,14 +299,57 @@ export default function LawFirmPanelLayout({
             href={`/ekspert/${lawFirmSlug}`}
             target="_blank"
             rel="noopener noreferrer"
+            onMouseEnter={() => setHoveredIndex(navigation.length)}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98] text-muted-foreground hover:bg-primary hover:text-primary-foreground",
+              "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
+              "text-muted-foreground hover:text-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
           >
-            <ExternalLink className="h-5 w-5 flex-shrink-0 text-primary group-hover:text-white transition-colors duration-300" />
-            {(inSheet || !isCollapsed) && <span>Mój profil publiczny</span>}
+            <AnimatePresence>
+              {hoveredIndex === navigation.length && (
+                <motion.span
+                  layoutId="expert-sidebar-hover-pill"
+                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 380,
+                    damping: 30,
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            <motion.div
+              animate={{
+                scale: hoveredIndex === navigation.length ? 1.1 : 1,
+                x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
+                rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
+              }}
+              transition={{
+                scale: { type: "spring", stiffness: 400, damping: 20 },
+                x: { type: "spring", stiffness: 400, damping: 20 },
+                rotate: { duration: 0.4, ease: "easeInOut" }
+              }}
+              className="flex items-center justify-center flex-shrink-0"
+            >
+              <ExternalLink className="h-5 w-5" />
+            </motion.div>
+
+            {(inSheet || !isCollapsed) && (
+              <motion.span
+                animate={{
+                  x: hoveredIndex === navigation.length ? 4 : 0,
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+                Mój profil publiczny
+              </motion.span>
+            )}
           </Link>
         </>
       )}
@@ -252,15 +357,57 @@ export default function LawFirmPanelLayout({
       <div className="border-t border-border my-2" />
       <Button
         onClick={handleLogout}
+        onMouseEnter={() => setHoveredIndex(navigation.length + 1)}
         className={cn(
-          "w-full h-auto flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-300 relative group hover:scale-[1.02] hover:shadow-md active:scale-[0.98] text-muted-foreground hover:bg-primary hover:text-primary-foreground",
+          "w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
         title={!inSheet && isCollapsed ? "Wyloguj" : undefined}
       >
-        <LogOut className="h-5 w-5 flex-shrink-0 text-primary group-hover:text-white transition-colors duration-300" />
-        {(inSheet || !isCollapsed) && <span>Wyloguj</span>}
+        <AnimatePresence>
+          {hoveredIndex === navigation.length + 1 && (
+            <motion.span
+              layoutId="expert-sidebar-hover-pill"
+              className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{
+                type: "spring",
+                stiffness: 380,
+                damping: 30,
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <motion.div
+          animate={{
+            scale: hoveredIndex === navigation.length + 1 ? 1.1 : 1,
+            x: hoveredIndex === navigation.length + 1 && (!inSheet && !isCollapsed) ? 2 : 0,
+            rotate: hoveredIndex === navigation.length + 1 ? [0, -5, 5, 0] : 0,
+          }}
+          transition={{
+            scale: { type: "spring", stiffness: 400, damping: 20 },
+            x: { type: "spring", stiffness: 400, damping: 20 },
+            rotate: { duration: 0.4, ease: "easeInOut" }
+          }}
+          className="flex items-center justify-center flex-shrink-0"
+        >
+          <LogOut className="h-5 w-5" />
+        </motion.div>
+
+        {(inSheet || !isCollapsed) && (
+          <motion.span
+            animate={{
+              x: hoveredIndex === navigation.length + 1 ? 4 : 0,
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          >
+            Wyloguj
+          </motion.span>
+        )}
       </Button>
     </nav>
   )
