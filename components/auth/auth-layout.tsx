@@ -64,20 +64,7 @@ export function AuthLayout({
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="w-full max-w-xl space-y-8 relative z-10 py-12"
         >
-          {/* Logo/Brand */}
-          <div className="text-center space-y-3">
-            <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl shadow-primary/20 ring-4 ring-primary/5 transition-transform group-hover:scale-105 group-hover:rotate-3">
-                P
-              </div>
-              <div className="text-left">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                  ProstaSprawa
-                </h1>
-                <div className="h-1 w-12 bg-primary rounded-full mt-1" />
-              </div>
-            </Link>
-          </div>
+
 
           {/* Form Content */}
           <div className="space-y-6">
@@ -105,7 +92,7 @@ export function AuthLayout({
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-6"
             >
-              <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight">{heroTitle}</h2>
+              <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight font-playfair">{heroTitle}</h2>
               <p className="text-lg text-white/90 leading-relaxed font-medium">{heroDescription}</p>
             </motion.div>
 

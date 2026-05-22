@@ -58,7 +58,7 @@ export default function ClientPanelLayout({
     <div className="flex h-screen bg-background-sec">
       {/* Sidebar */}
       <aside className={cn(
-        "border-r border-border transition-all duration-300 ease-in-out",
+        "transition-all duration-300 ease-in-out",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex h-full flex-col">
