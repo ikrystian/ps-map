@@ -111,7 +111,7 @@ export default function SearchLawyerPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [cities, setCities] = useState<string[]>([])
+  const [cities, setCities] = useState<Array<{ id: string; nazwa: string; voivodeshipId: string; voivodeship: { slug: string } }>>([])
   const [total, setTotal] = useState(0)
   const [locationOpen, setLocationOpen] = useState(false)
 
@@ -181,7 +181,7 @@ export default function SearchLawyerPage() {
         if (response.ok) {
           const data = await response.json()
           if (Array.isArray(data)) {
-            setCities(data.map((c: any) => c.nazwa))
+            setCities(data)
           }
         }
       } catch (error) {
@@ -229,6 +229,33 @@ export default function SearchLawyerPage() {
   }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page])
 
   const totalPages = Math.ceil(total / limit)
+
+  // Cities filtered by selected voivodeship
+  const filteredCities = selectedVoivodeship === "all"
+    ? cities
+    : cities.filter(c => c.voivodeship.slug === selectedVoivodeship)
+
+  const handleVoivodeshipChange = (value: string) => {
+    setSelectedVoivodeship(value)
+    // Clear city if it doesn't belong to newly selected voivodeship
+    if (value !== "all" && selectedCity) {
+      const cityObj = cities.find(c => c.nazwa === selectedCity)
+      if (cityObj && cityObj.voivodeship.slug !== value) {
+        setSelectedCity("")
+      }
+    }
+    setPage(1)
+  }
+
+  const handleCityChange = (cityName: string) => {
+    setSelectedCity(cityName)
+    // Auto-set voivodeship based on selected city
+    const cityObj = cities.find(c => c.nazwa === cityName)
+    if (cityObj) {
+      setSelectedVoivodeship(cityObj.voivodeship.slug)
+    }
+    setPage(1)
+  }
 
   const handleResetFilters = () => {
     setSearchQuery("")
@@ -332,7 +359,7 @@ export default function SearchLawyerPage() {
                     {/* Voivodeship */}
                     <div className="space-y-2">
                       <Label className="text-xs">Województwo</Label>
-                      <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
+                      <Select value={selectedVoivodeship} onValueChange={handleVoivodeshipChange}>
                         <SelectTrigger>
                           <SelectValue placeholder="Wszystkie" />
                         </SelectTrigger>
@@ -379,23 +406,29 @@ export default function SearchLawyerPage() {
                             <CommandList>
                               <CommandEmpty>Nie znaleziono.</CommandEmpty>
                               <CommandGroup>
-                                {cities.map((city) => (
+                                {filteredCities.map((city) => (
                                   <CommandItem
-                                    key={city}
-                                    value={city}
+                                    key={city.id}
+                                    value={city.nazwa}
                                     onSelect={(currentValue) => {
-                                      const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
-                                      setSelectedCity(matchedCity === selectedCity ? "" : matchedCity)
+                                      const matchedCity = filteredCities.find(c => c.nazwa.toLowerCase() === currentValue.toLowerCase())
+                                      if (matchedCity) {
+                                        if (matchedCity.nazwa === selectedCity) {
+                                          setSelectedCity("")
+                                        } else {
+                                          handleCityChange(matchedCity.nazwa)
+                                        }
+                                      }
                                       setLocationOpen(false)
                                     }}
                                   >
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        selectedCity === city ? "opacity-100" : "opacity-0"
+                                        selectedCity === city.nazwa ? "opacity-100" : "opacity-0"
                                       )}
                                     />
-                                    {city}
+                                    {city.nazwa}
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
