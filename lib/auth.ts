@@ -47,6 +47,16 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
+        // Sprawdź czy konto jest zablokowane lub zawieszone
+        if (user.status === "BLOCKED" || user.status === "SUSPENDED") {
+          throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
+        }
+
+        // Sprawdź czy konto jest nieaktywne
+        if (user.status === "INACTIVE") {
+          throw new Error("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
+        }
+
         // Update last login
         await prisma.user.update({
           where: { id: user.id },
@@ -115,7 +125,17 @@ export const authOptions: NextAuthConfig = {
       return session
     },
     async signIn({ user }: { user: User }) {
-      // Możesz dodać tutaj dodatkową logikę weryfikacji
+      if (user.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id }
+        })
+        if (dbUser && (dbUser.status === "BLOCKED" || dbUser.status === "SUSPENDED")) {
+          return "/logowanie?error=BlockedAccount"
+        }
+        if (dbUser && dbUser.status === "INACTIVE") {
+          return "/logowanie?error=InactiveAccount"
+        }
+      }
       return true
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {

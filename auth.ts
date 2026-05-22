@@ -71,6 +71,16 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
+        // Sprawdź czy konto jest zablokowane lub zawieszone
+        if (user.status === "BLOCKED" || user.status === "SUSPENDED") {
+          throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
+        }
+
+        // Sprawdź czy konto jest nieaktywne
+        if (user.status === "INACTIVE") {
+          throw new Error("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
+        }
+
         // Sprawdź czy email został zweryfikowany
         if (!user.emailVerified) {
           throw new Error("Email nie został zweryfikowany. Sprawdź swoją skrzynkę pocztową i kliknij link weryfikacyjny.")
@@ -217,6 +227,16 @@ export const authOptions: NextAuthConfig = {
               }).catch(() => {})
             }
             return false
+          }
+
+          // Check if user is blocked or suspended
+          if (dbUser.status === "BLOCKED" || dbUser.status === "SUSPENDED") {
+            return "/logowanie?error=BlockedAccount"
+          }
+
+          // Check if user is inactive
+          if (dbUser.status === "INACTIVE") {
+            return "/logowanie?error=InactiveAccount"
           }
 
           // If user has CLIENT role but no Client profile, create one

@@ -105,6 +105,7 @@ enum UserStatus {
   ACTIVE      // Aktywny
   INACTIVE    // Nieaktywny
   SUSPENDED   // Zawieszony
+  BLOCKED     // Zablokowany
 }
 
 // ============================================================================

@@ -160,7 +160,7 @@ export async function PUT(
 
     // Validate status if provided
     if (status) {
-      const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED"]
+      const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: "Invalid status" }, { status: 400 })
       }

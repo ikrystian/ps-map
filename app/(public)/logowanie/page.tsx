@@ -63,11 +63,20 @@ export default function LoginPage() {
     }
   }, [registered])
 
-  // Check for OAuth errors (user not registered)
+  // Check for OAuth errors (user not registered) or blocked/inactive accounts
   useEffect(() => {
     const oauthError = searchParams.get("error")
-    if (oauthError === "OAuthSignin" || oauthError === "OAuthCallback" || oauthError === "AccessDenied") {
-      setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
+    if (oauthError) {
+      if (oauthError === "OAuthSignin" || oauthError === "OAuthCallback" || oauthError === "AccessDenied") {
+        setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
+      } else if (oauthError === "BlockedAccount") {
+        setError("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
+      } else if (oauthError === "InactiveAccount") {
+        setError("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
+      } else {
+        return // Don't clean up other unhandled errors
+      }
+
       // Clean up URL
       const url = new URL(window.location.href)
       url.searchParams.delete("error")
@@ -95,7 +104,7 @@ export default function LoginPage() {
         })
 
         if (result?.error) {
-          setError("Nieprawidłowy email lub hasło")
+          setError(result.error)
           setIsLoading(false)
           return
         }

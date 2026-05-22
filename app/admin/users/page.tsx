@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Edit, Trash2, Search, UserPlus, RefreshCw } from "lucide-react"
+import { Edit, Trash2, Search, UserPlus, RefreshCw, Lock, Unlock } from "lucide-react"
+import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -36,7 +37,7 @@ interface User {
   email: string
   image?: string | null
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED"
   emailVerified?: Date | null
   createdAt: string
   updatedAt: string
@@ -73,6 +74,9 @@ interface PaginatedResponse {
 }
 
 export default function AdminUsersPage() {
+  const { data: session } = useSession()
+  const currentUserId = session?.user?.id
+
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -120,6 +124,32 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers()
   }, [currentPage, searchQuery, roleFilter, statusFilter])
+
+  // Toggle user block status
+  const handleToggleBlock = async (user: User) => {
+    const newStatus = user.status === "BLOCKED" ? "ACTIVE" : "BLOCKED"
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      })
+
+      if (response.ok) {
+        toast.success(newStatus === "BLOCKED" ? "User blocked successfully" : "User unblocked successfully")
+        fetchUsers()
+      } else {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to update user status")
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to toggle block status")
+    }
+  }
 
   // Delete user (soft delete)
   const handleDeleteUser = async () => {
@@ -172,6 +202,7 @@ export default function AdminUsersPage() {
       case "INACTIVE":
         return "secondary"
       case "SUSPENDED":
+      case "BLOCKED":
         return "destructive"
       default:
         return "outline"
@@ -194,6 +225,7 @@ export default function AdminUsersPage() {
       ACTIVE: "Active",
       INACTIVE: "Inactive",
       SUSPENDED: "Suspended",
+      BLOCKED: "Blocked",
     }
     return statusMap[status] || status
   }
@@ -294,6 +326,7 @@ export default function AdminUsersPage() {
                 <SelectItem value="ACTIVE">Active</SelectItem>
                 <SelectItem value="INACTIVE">Inactive</SelectItem>
                 <SelectItem value="SUSPENDED">Suspended</SelectItem>
+                <SelectItem value="BLOCKED">Blocked</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={fetchUsers} size="icon">
@@ -383,6 +416,21 @@ export default function AdminUsersPage() {
                             <Edit className="h-4 w-4" />
                           </Link>
                         </Button>
+                        {user.id !== currentUserId && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleToggleBlock(user)}
+                            title={user.status === "BLOCKED" ? "Unlock user" : "Block user"}
+                            className={user.status === "BLOCKED" ? "text-green-600 hover:text-green-700 hover:bg-green-50" : "text-amber-600 hover:text-amber-700 hover:bg-amber-50"}
+                          >
+                            {user.status === "BLOCKED" ? (
+                              <Unlock className="h-4 w-4" />
+                            ) : (
+                              <Lock className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"

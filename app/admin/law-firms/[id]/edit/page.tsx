@@ -30,7 +30,7 @@ const lawFirmSchema = z.object({
   // User credentials
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
-  userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
+  userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
 
   // Basic info
   typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
@@ -280,7 +280,7 @@ export default function EditLawFirmPage() {
           form.reset({
             email: lawFirm.user.email,
             password: "",
-            userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED",
+            userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED",
             typ: lawFirm.typ,
             typInny: lawFirm.typInny || "",
             nazwa: lawFirm.nazwa,
@@ -496,6 +496,7 @@ export default function EditLawFirmPage() {
                         <SelectItem value="ACTIVE">Aktywne</SelectItem>
                         <SelectItem value="INACTIVE">Nieaktywne</SelectItem>
                         <SelectItem value="SUSPENDED">Zawieszone</SelectItem>
+                        <SelectItem value="BLOCKED">Zablokowane</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

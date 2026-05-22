@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate status
-    const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED"]
+    const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]
     if (status && !validStatuses.includes(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 })
     }

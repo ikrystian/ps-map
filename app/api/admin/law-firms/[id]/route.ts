@@ -417,7 +417,7 @@ export async function PUT(
       }
 
       if (body.userStatus) {
-        const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED"]
+        const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]
         if (!validStatuses.includes(body.userStatus)) {
           throw new Error("Invalid user status")
         }
