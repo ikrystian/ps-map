@@ -27,6 +27,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Validation schema
 const userSchema = z.object({
@@ -381,6 +382,7 @@ export default function EditUserPage() {
   }
 
   const imageValue = form.watch("image")
+  const userRole = form.watch("role")
 
   return (
     <div className="space-y-6">
@@ -398,844 +400,870 @@ export default function EditUserPage() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* Profile Image */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Zdjęcie profilowe</CardTitle>
-              <CardDescription>Avatar użytkownika (opcjonalnie)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {imageValue ? (
-                <div className="flex items-start gap-4">
-                  <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
-                    <Image
-                      src={imageValue}
-                      alt="Avatar"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label
-                      htmlFor="image-upload"
-                      className={cn(
-                        "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
-                        isUploadingImage
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                      )}
-                      onClick={(e) => {
-                        if (isUploadingImage) {
-                          e.preventDefault()
-                        }
-                      }}
-                    >
-                      {isUploadingImage ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Przesyłanie...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="mr-2 h-4 w-4" />
-                          Zmień zdjęcie
-                        </>
-                      )}
-                    </label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleRemoveImage}
-                      disabled={isUploadingImage}
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Usuń zdjęcie
-                    </Button>
-                  </div>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImage}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label
-                    htmlFor="image-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      {isUploadingImage ? (
-                        <>
-                          <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
-                          <p className="text-sm text-muted-foreground">Przesyłanie...</p>
-                        </>
-                      ) : (
-                        <>
-                          <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
-                          <p className="mb-2 text-sm text-muted-foreground">
-                            <span className="font-semibold">Kliknij aby przesłać</span> zdjęcie profilowe
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            PNG, JPG, WEBP (max 5MB)
-                          </p>
-                        </>
-                      )}
+          <Tabs defaultValue="account" className="w-full">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-8">
+              <TabsTrigger value="account">Konto</TabsTrigger>
+              <TabsTrigger 
+                value="client" 
+                disabled={userRole !== "CLIENT"}
+                className={cn(userRole !== "CLIENT" && "hidden")}
+              >
+                Dane klienta
+              </TabsTrigger>
+              <TabsTrigger 
+                value="notifications" 
+                disabled={userRole !== "LAW_FIRM"}
+                className={cn(userRole !== "LAW_FIRM" && "hidden")}
+              >
+                Ustawienia powiadomień
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="account" className="space-y-6">
+              {/* Profile Image */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Zdjęcie profilowe</CardTitle>
+                  <CardDescription>Avatar użytkownika (opcjonalnie)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {imageValue ? (
+                    <div className="flex items-start gap-4">
+                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
+                        <Image
+                          src={imageValue}
+                          alt="Avatar"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label
+                          htmlFor="image-upload"
+                          className={cn(
+                            "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
+                            isUploadingImage
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                          )}
+                          onClick={(e) => {
+                            if (isUploadingImage) {
+                              e.preventDefault()
+                            }
+                          }}
+                        >
+                          {isUploadingImage ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Przesyłanie...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Zmień zdjęcie
+                            </>
+                          )}
+                        </label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleRemoveImage}
+                          disabled={isUploadingImage}
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Usuń zdjęcie
+                        </Button>
+                      </div>
+                      <input
+                        id="image-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImage}
+                      />
                     </div>
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImage}
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dane konta</CardTitle>
-              <CardDescription>Email, hasło i podstawowe informacje</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="user@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hasło</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Pozostaw puste aby nie zmieniać" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Pozostaw puste jeśli nie chcesz zmieniać hasła (minimum 8 znaków jeśli podano)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nazwa (opcjonalnie)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Rola</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz rolę" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="CLIENT">Klient</SelectItem>
-                          <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
-                          <SelectItem value="ADMIN">Administrator</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="ACTIVE">Aktywny</SelectItem>
-                          <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
-                          <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
-                          <SelectItem value="BLOCKED">Zablokowany</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Personal Information */}
-          {form.watch("role") === "CLIENT" && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Dane osobowe</CardTitle>
-                <CardDescription>Podstawowe informacje o użytkowniku</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="client.imie"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Imię</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Jan" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.nazwisko"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nazwisko</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Kowalski" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="client.telefon"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefon (opcjonalnie)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+48 123 456 789" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="client.adres"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Adres (opcjonalnie)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ul. Przykładowa 123" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="client.kodPocztowy"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="00-000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.miasto"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Miasto (opcjonalnie)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Warszawa" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="client.voivodeshipId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Województwo (opcjonalnie)</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz województwo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {voivodeships.map((v) => (
-                            <SelectItem key={v.id} value={v.id}>
-                              {v.nazwa}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="client.zgodaRegulamin"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na regulamin</FormLabel>
+                  ) : (
+                    <div>
+                      <label
+                        htmlFor="image-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          {isUploadingImage ? (
+                            <>
+                              <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                              <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                              <p className="mb-2 text-sm text-muted-foreground">
+                                <span className="font-semibold">Kliknij aby przesłać</span> zdjęcie profilowe
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                PNG, JPG, WEBP (max 5MB)
+                              </p>
+                            </>
+                          )}
                         </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.zgodaNewsletter"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na newsletter</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="client.zgodaMarketing"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Zgoda na marketing</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                      </label>
+                      <input
+                        id="image-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImage}
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-          {/* Ustawienia powiadomień i preferencji Kancelarii */}
-          {form.watch("role") === "LAW_FIRM" && (
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Card 1: Ustawienia Ogólne Powiadomień */}
-              <Card className="border border-border/60 shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl font-bold flex items-center gap-2">
-                    <Info className="h-5 w-5 text-primary" />
-                    Ustawienia powiadomień e-mail
-                  </CardTitle>
-                  <CardDescription>
-                    Dostosuj preferencje powiadomień e-mail wysyłanych do kancelarii
-                  </CardDescription>
+              {/* Basic Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dane konta</CardTitle>
+                  <CardDescription>Email, hasło i podstawowe informacje</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {/* Kontakt z klientami */}
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="user@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hasło</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="Pozostaw puste aby nie zmieniać" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Pozostaw puste jeśli nie chcesz zmieniać hasła (minimum 8 znaków jeśli podano)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nazwa (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="notificationSettings.kontaktKlienci"
+                      name="role"
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Kontakt z klientami <span className="text-red-500">*</span>
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Wymagane do prawidłowego kontaktu z klientami w serwisie.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled
-                            />
-                          </FormControl>
+                        <FormItem>
+                          <FormLabel>Rola</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz rolę" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="CLIENT">Klient</SelectItem>
+                              <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
+                              <SelectItem value="ADMIN">Administrator</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    {/* Kluczowe informacje */}
                     <FormField
                       control={form.control}
-                      name="notificationSettings.kluczowe"
+                      name="status"
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Kluczowe informacje <span className="text-red-500">*</span>
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Wymagane powiadomienia o regulaminie, cennikach i funkcjonowaniu serwisu.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Wskazówki, porady */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.wskazowkiPorady"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Wskazówki i porady
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Porady jak ulepszyć ofertę i zwiększyć widoczność.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Ciekawe oferty i promocje */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.ofertPromocje"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Ciekawe oferty i promocje
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Promocje i specjalne oferty przygotowane dla kancelarii.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Przypomnienie o nowych wiadomościach */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.przypomnienieWiadomosci"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Przypomnienie o wiadomościach
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Przypomnienia o nieprzeczytanych wiadomościach.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Powiadomienie o nowych funkcjach */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.noweFunkcje"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Nowe funkcje serwisu
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Informacje o wprowadzanych ulepszeniach i nowych modułach.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Zmiany cenników */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.zmianyCenniki"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Zmiany cenników
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Powiadomienia o aktualizacjach cennika usług.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Zmiany regulaminu */}
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.zmianyRegulamin"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Zmiany regulaminu
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Informacje o modyfikacjach w regulaminie portalu.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <Separator />
-
-                  {/* Kontakt telefoniczny */}
-                  <div className="space-y-3 pt-2">
-                    <h3 className="text-sm font-semibold text-muted-foreground px-1">Kontakt telefoniczny</h3>
-                    <FormField
-                      control={form.control}
-                      name="notificationSettings.kontaktDoradca"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                          <div className="space-y-0.5 pr-2">
-                            <FormLabel className="text-sm font-semibold cursor-pointer">
-                              Kontakt z doradcą
-                            </FormLabel>
-                            <FormDescription className="text-xs">
-                              Zgoda na bezpośredni kontakt telefoniczny z doradcą portalu.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="ACTIVE">Aktywny</SelectItem>
+                              <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
+                              <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
+                              <SelectItem value="BLOCKED">Zablokowany</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              {/* Column 2: Inne ustawienia */}
-              <div className="space-y-6">
-                {/* Card 2.1: Ustawienia Ogłoszenia */}
-                <Card className="border border-border/60 shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                      Ustawienia ogłoszenia i tryb pracy
-                    </CardTitle>
-                    <CardDescription>
-                      Zarządzaj widocznością i preferencjami zleceń
-                    </CardDescription>
+            {/* Personal Information */}
+            <TabsContent value="client" className="space-y-6">
+              {userRole === "CLIENT" && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Dane osobowe</CardTitle>
+                    <CardDescription>Podstawowe informacje o użytkowniku</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      {/* Ustawienia ogłoszenia */}
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
-                        name="notificationSettings.ustawieniaOgloszenia"
+                        name="client.imie"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                            <div className="space-y-0.5 pr-2">
-                              <FormLabel className="text-sm font-semibold cursor-pointer">
-                                Włącz ustawienia ogłoszenia
-                              </FormLabel>
-                              <FormDescription className="text-xs">
-                                Aktywuje opcje dodatkowe powiązane z ogłoszeniami.
-                              </FormDescription>
-                            </div>
+                          <FormItem>
+                            <FormLabel>Imię</FormLabel>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Input placeholder="Jan" {...field} />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
-
-                      <Separator />
-
-                      {/* Powiadomienia SMS */}
-                      <div className="space-y-2 pt-1">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Powiadomienia SMS</h4>
-                        <FormField
-                          control={form.control}
-                          name="notificationSettings.powiadomieniaSmNowa"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                              <div className="space-y-0.5 pr-2">
-                                <FormLabel className="text-sm font-semibold cursor-pointer">
-                                  SMS o nowej wiadomości
-                                </FormLabel>
-                                <FormDescription className="text-xs">
-                                  Otrzymuj natychmiastowe powiadomienia SMS o nowych zleceniach.
-                                </FormDescription>
-                              </div>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <Separator />
-
-                      {/* Powiadomienia e-mail - zbiorcze */}
-                      <div className="space-y-2 pt-1">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Wiadomości zbiorcze</h4>
-                        <FormField
-                          control={form.control}
-                          name="notificationSettings.wiadomosciZbiorcze"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                              <div className="space-y-0.5 pr-2">
-                                <FormLabel className="text-sm font-semibold cursor-pointer">
-                                  Otrzymywanie wiadomości zbiorczych
-                                </FormLabel>
-                                <FormDescription className="text-xs">
-                                  Zbiorcze raporty e-mail zamiast pojedynczych powiadomień.
-                                </FormDescription>
-                              </div>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <Separator />
-
-                      {/* Tryb urlopowy */}
-                      <div className="space-y-2 pt-1">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Tryb pracy</h4>
-                        <FormField
-                          control={form.control}
-                          name="notificationSettings.urlop"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                              <div className="space-y-0.5 pr-2">
-                                <FormLabel className="text-sm font-semibold cursor-pointer text-amber-600 dark:text-amber-500">
-                                  Tryb urlopowy
-                                </FormLabel>
-                                <FormDescription className="text-xs">
-                                  Wstrzymuje powiadomienia o zleceniach na czas Twojej nieobecności.
-                                </FormDescription>
-                              </div>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                      <FormField
+                        control={form.control}
+                        name="client.nazwisko"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nazwisko</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Kowalski" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Card 2.2: Zgody i preferencje systemowe */}
-                <Card className="border border-border/60 shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                      Zgody i dodatkowe funkcje
-                    </CardTitle>
-                    <CardDescription>
-                      Zarządzaj wizerunkiem i profilowaniem w serwisie
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      {/* Zgoda na wyświetlanie awatara */}
+                    <FormField
+                      control={form.control}
+                      name="client.telefon"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefon (opcjonalnie)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="+48 123 456 789" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="client.adres"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Adres (opcjonalnie)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="ul. Przykładowa 123" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
-                        name="notificationSettings.wyswietlanieAwatara"
+                        name="client.kodPocztowy"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                            <div className="space-y-0.5 pr-2">
-                              <FormLabel className="text-sm font-semibold cursor-pointer">
-                                Zgoda na wyświetlanie awatara (wizerunek)
-                              </FormLabel>
-                              <FormDescription className="text-xs">
-                                Zgoda na pokazywanie Twojego zdjęcia na profilu publicznym i w opiniach.
-                              </FormDescription>
-                            </div>
+                          <FormItem>
+                            <FormLabel>Kod pocztowy (opcjonalnie)</FormLabel>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Input placeholder="00-000" {...field} />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
-
-                      {/* Zgoda na auto prośbę o opinię */}
                       <FormField
                         control={form.control}
-                        name="notificationSettings.autoProsbOpinie"
+                        name="client.miasto"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                            <div className="space-y-0.5 pr-2">
-                              <FormLabel className="text-sm font-semibold cursor-pointer">
-                                Automatyczne prośby o opinie
-                              </FormLabel>
-                              <FormDescription className="text-xs">
-                                Automatyczne wysyłanie próśb do klientów o wystawienie opinii po zakończeniu sprawy.
-                              </FormDescription>
-                            </div>
+                          <FormItem>
+                            <FormLabel>Miasto (opcjonalnie)</FormLabel>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Input placeholder="Warszawa" {...field} />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
+                    </div>
 
-                      {/* Powiadomienie dźwiękowe o nowej wiadomości */}
+                    <FormField
+                      control={form.control}
+                      name="client.voivodeshipId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Województwo (opcjonalnie)</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz województwo" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {voivodeships.map((v) => (
+                                <SelectItem key={v.id} value={v.id}>
+                                  {v.nazwa}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="space-y-2">
                       <FormField
                         control={form.control}
-                        name="notificationSettings.powiadomienieDzwiekowe"
+                        name="client.zgodaRegulamin"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
-                            <div className="space-y-0.5 pr-2">
-                              <FormLabel className="text-sm font-semibold cursor-pointer">
-                                Powiadomienie dźwiękowe
-                              </FormLabel>
-                              <FormDescription className="text-xs">
-                                Odtwarzaj dźwięk w przeglądarce przy nadejściu nowej wiadomości czatu.
-                              </FormDescription>
-                            </div>
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                             <FormControl>
-                              <Switch
+                              <Checkbox
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>Zgoda na regulamin</FormLabel>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="client.zgodaNewsletter"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>Zgoda na newsletter</FormLabel>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="client.zgodaMarketing"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>Zgoda na marketing</FormLabel>
+                            </div>
                           </FormItem>
                         )}
                       />
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </div>
-          )}
+              )}
+            </TabsContent>
+
+            {/* Ustawienia powiadomień i preferencji Kancelarii */}
+            <TabsContent value="notifications" className="space-y-6">
+              {userRole === "LAW_FIRM" && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Card 1: Ustawienia Ogólne Powiadomień */}
+                  <Card className="border border-border/60 shadow-sm">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-xl font-bold flex items-center gap-2">
+                        <Info className="h-5 w-5 text-primary" />
+                        Ustawienia powiadomień e-mail
+                      </CardTitle>
+                      <CardDescription>
+                        Dostosuj preferencje powiadomień e-mail wysyłanych do kancelarii
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-3">
+                        {/* Kontakt z klientami */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.kontaktKlienci"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Kontakt z klientami <span className="text-red-500">*</span>
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Wymagane do prawidłowego kontaktu z klientami w serwisie.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  disabled
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Kluczowe informacje */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.kluczowe"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg bg-muted/40 border border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Kluczowe informacje <span className="text-red-500">*</span>
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Wymagane powiadomienia o regulaminie, cennikach i funkcjonowaniu serwisu.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  disabled
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Wskazówki, porady */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.wskazowkiPorady"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Wskazówki i porady
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Porady jak ulepszyć ofertę i zwiększyć widoczność.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Ciekawe oferty i promocje */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.ofertPromocje"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Ciekawe oferty i promocje
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Promocje i specjalne oferty przygotowane dla kancelarii.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Przypomnienie o nowych wiadomościach */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.przypomnienieWiadomosci"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Przypomnienie o wiadomościach
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Przypomnienia o nieprzeczytanych wiadomościach.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Powiadomienie o nowych funkcjach */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.noweFunkcje"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Nowe funkcje serwisu
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Informacje o wprowadzanych ulepszeniach i nowych modułach.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Zmiany cenników */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.zmianyCenniki"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Zmiany cenników
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Powiadomienia o aktualizacjach cennika usług.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Zmiany regulaminu */}
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.zmianyRegulamin"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Zmiany regulaminu
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Informacje o modyfikacjach w regulaminie portalu.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Separator />
+
+                      {/* Kontakt telefoniczny */}
+                      <div className="space-y-3 pt-2">
+                        <h3 className="text-sm font-semibold text-muted-foreground px-1">Kontakt telefoniczny</h3>
+                        <FormField
+                          control={form.control}
+                          name="notificationSettings.kontaktDoradca"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                              <div className="space-y-0.5 pr-2">
+                                <FormLabel className="text-sm font-semibold cursor-pointer">
+                                  Kontakt z doradcą
+                                </FormLabel>
+                                <FormDescription className="text-xs">
+                                  Zgoda na bezpośredni kontakt telefoniczny z doradcą portalu.
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Column 2: Inne ustawienia */}
+                  <div className="space-y-6">
+                    {/* Card 2.1: Ustawienia Ogłoszenia */}
+                    <Card className="border border-border/60 shadow-sm">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl font-bold flex items-center gap-2">
+                          Ustawienia ogłoszenia i tryb pracy
+                        </CardTitle>
+                        <CardDescription>
+                          Zarządzaj widocznością i preferencjami zleceń
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-3">
+                          {/* Ustawienia ogłoszenia */}
+                          <FormField
+                            control={form.control}
+                            name="notificationSettings.ustawieniaOgloszenia"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                <div className="space-y-0.5 pr-2">
+                                  <FormLabel className="text-sm font-semibold cursor-pointer">
+                                    Włącz ustawienia ogłoszenia
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    Aktywuje opcje dodatkowe powiązane z ogłoszeniami.
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <Separator />
+
+                          {/* Powiadomienia SMS */}
+                          <div className="space-y-2 pt-1">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Powiadomienia SMS</h4>
+                            <FormField
+                              control={form.control}
+                              name="notificationSettings.powiadomieniaSmNowa"
+                              render={({ field }) => (
+                                <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                  <div className="space-y-0.5 pr-2">
+                                    <FormLabel className="text-sm font-semibold cursor-pointer">
+                                      SMS o nowej wiadomości
+                                    </FormLabel>
+                                    <FormDescription className="text-xs">
+                                      Otrzymuj natychmiastowe powiadomienia SMS o nowych zleceniach.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <Separator />
+
+                          {/* Powiadomienia e-mail - zbiorcze */}
+                          <div className="space-y-2 pt-1">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Wiadomości zbiorcze</h4>
+                            <FormField
+                              control={form.control}
+                              name="notificationSettings.wiadomosciZbiorcze"
+                              render={({ field }) => (
+                                <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                  <div className="space-y-0.5 pr-2">
+                                    <FormLabel className="text-sm font-semibold cursor-pointer">
+                                      Otrzymywanie wiadomości zbiorczych
+                                    </FormLabel>
+                                    <FormDescription className="text-xs">
+                                      Zbiorcze raporty e-mail zamiast pojedynczych powiadomień.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <Separator />
+
+                          {/* Tryb urlopowy */}
+                          <div className="space-y-2 pt-1">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">Tryb pracy</h4>
+                            <FormField
+                              control={form.control}
+                              name="notificationSettings.urlop"
+                              render={({ field }) => (
+                                <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                  <div className="space-y-0.5 pr-2">
+                                    <FormLabel className="text-sm font-semibold cursor-pointer text-amber-600 dark:text-amber-500">
+                                      Tryb urlopowy
+                                    </FormLabel>
+                                    <FormDescription className="text-xs">
+                                      Wstrzymuje powiadomienia o zleceniach na czas Twojej nieobecności.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Card 2.2: Zgody i preferencje systemowe */}
+                    <Card className="border border-border/60 shadow-sm">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl font-bold flex items-center gap-2">
+                          Zgody i dodatkowe funkcje
+                        </CardTitle>
+                        <CardDescription>
+                          Zarządzaj wizerunkiem i profilowaniem w serwisie
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-3">
+                          {/* Zgoda na wyświetlanie awatara */}
+                          <FormField
+                            control={form.control}
+                            name="notificationSettings.wyswietlanieAwatara"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                <div className="space-y-0.5 pr-2">
+                                  <FormLabel className="text-sm font-semibold cursor-pointer">
+                                    Zgoda na wyświetlanie awatara (wizerunek)
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    Zgoda na pokazywanie Twojego zdjęcia na profilu publicznym i w opiniach.
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Zgoda na auto prośbę o opinię */}
+                          <FormField
+                            control={form.control}
+                            name="notificationSettings.autoProsbOpinie"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                <div className="space-y-0.5 pr-2">
+                                  <FormLabel className="text-sm font-semibold cursor-pointer">
+                                    Automatyczne prośby o opinie
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    Automatyczne wysyłanie próśb do kancelarii o wystawienie opinii po zakończeniu sprawy.
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Powiadomienie dźwiękowe o nowej wiadomości */}
+                          <FormField
+                            control={form.control}
+                            name="notificationSettings.powiadomienieDzwiekowe"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center justify-between space-x-2 p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-muted-foreground/10">
+                                <div className="space-y-0.5 pr-2">
+                                  <FormLabel className="text-sm font-semibold cursor-pointer">
+                                    Powiadomienie dźwiękowe
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    Otrzymuj natychmiastowe powiadomienia dźwiękowe o nowych wiadomościach.
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
 
           {/* Form Actions */}
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => router.push("/admin/users")}>
               Anuluj
             </Button>

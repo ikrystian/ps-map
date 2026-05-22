@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedLawFirm } from "@/lib/api-permissions";
 import { getLawFirmPermissions } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
 
 /**
  * GET /api/law-firms/me/permissions
@@ -23,7 +24,18 @@ export async function GET() {
     );
   }
 
-  const permissions = getLawFirmPermissions(lawFirm);
+  // Pobierz domyślny limit kategorii z ustawień
+  const settings = await prisma.settings.findUnique({
+    where: { key: "maxLawFirmCategories" }
+  });
+  const defaultMaxCategories = settings ? parseInt(settings.value) : 10;
+
+  const permissionData = {
+    ...lawFirm,
+    defaultMaxCategories
+  };
+
+  const permissions = getLawFirmPermissions(permissionData);
 
   return NextResponse.json({
     id: lawFirm.id,
@@ -31,6 +43,7 @@ export async function GET() {
     dataPakietuOd: lawFirm.dataPakietuOd,
     dataPakietuDo: lawFirm.dataPakietuDo,
     autoRenewal: lawFirm.autoRenewal,
+    defaultMaxCategories,
     permissions,
   });
 }

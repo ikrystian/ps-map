@@ -318,10 +318,10 @@ export default function LawFirmDashboardPage() {
 
     try {
       // Pobierz liczbę kategorii
-      const categoriesResponse = await fetch("/api/law-firms/me/categories")
+      const categoriesResponse = await fetch("/api/law-firm/categories")
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json()
-        setCategoriesCount(categoriesData.length || 0)
+        setCategoriesCount(categoriesData.categories?.length || 0)
       }
 
       // Pobierz liczbę aktywnych ofert (sprawy)

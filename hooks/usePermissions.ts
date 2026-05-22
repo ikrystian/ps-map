@@ -118,6 +118,7 @@ export function usePermissions(): UsePermissionsReturn {
         dataPakietuOd: data.dataPakietuOd ? new Date(data.dataPakietuOd) : null,
         dataPakietuDo: data.dataPakietuDo ? new Date(data.dataPakietuDo) : null,
         autoRenewal: data.autoRenewal || false,
+        defaultMaxCategories: data.defaultMaxCategories,
       });
     } catch (err) {
       console.error("Error fetching law firm permissions:", err);

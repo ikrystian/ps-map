@@ -19,6 +19,7 @@ export interface LawFirmPermissionData {
   dataPakietuOd: Date | null;
   dataPakietuDo: Date | null;
   autoRenewal: boolean;
+  defaultMaxCategories?: number;
 }
 
 /**
@@ -267,14 +268,18 @@ export function daysUntilExpiry(lawFirm: LawFirmPermissionData): number | null {
  * Pobiera pełny zestaw uprawnień dla kancelarii
  */
 export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): PermissionsSet {
-  // Jeśli kancelaria nie ma pakietu, zwróć zerowe uprawnienia
-  if (!lawFirm.pakietSubskrypcji) {
+  const active = hasActivePackage(lawFirm);
+  const expired = isPackageExpired(lawFirm);
+  const defaultCategories = lawFirm.defaultMaxCategories ?? 0;
+
+  // Jeśli kancelaria nie ma pakietu LUB pakiet nie jest aktywny, zwróć podstawowe uprawnienia
+  if (!lawFirm.pakietSubskrypcji || !active) {
     return {
-      packageName: null,
-      packageActive: false,
-      packageExpired: false,
-      expiryDate: null,
-      autoRenewal: false,
+      packageName: lawFirm.pakietSubskrypcji,
+      packageActive: active,
+      packageExpired: expired,
+      expiryDate: lawFirm.dataPakietuDo,
+      autoRenewal: lawFirm.autoRenewal,
       features: {
         canAccessBlog: false,
         canAccessStatistics: false,
@@ -287,7 +292,7 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
       },
       limits: {
         activeCases: 0,
-        categories: 0,
+        categories: defaultCategories,
         voivodeships: 0,
         cities: 0,
       },
@@ -303,8 +308,6 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
   }
 
   const packageConfig = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
-  const active = hasActivePackage(lawFirm);
-  const expired = isPackageExpired(lawFirm);
 
   return {
     packageName: lawFirm.pakietSubskrypcji,
