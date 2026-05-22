@@ -347,11 +347,12 @@ export default function LawFirmPanelLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container mx-auto p-4 sm:p-6">
+          <div className="container mx-auto p-4 sm:p-6 pb-0 sm:pb-0">
             {children}
-            <div className="mt-12 pb-4">
+            <div className="mt-6">
               {/* Partners banner */}
-              <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 p-5 w-full mb-6">
+              <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 p-5 w-full">
+
                 <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
 
                 <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
@@ -403,7 +404,7 @@ export default function LawFirmPanelLayout({
               </div>
 
               {/* Separator line */}
-              <div className="border-t border-zinc-800/40 my-6 max-w-3xl mx-auto" />
+              <div className="border-t border-zinc-800/40 my-2 max-w-3xl mx-auto" />
 
               {/* Bottom Copyright and Social Links */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">
