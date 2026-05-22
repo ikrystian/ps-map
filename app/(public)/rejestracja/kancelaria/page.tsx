@@ -52,8 +52,8 @@ const step2Schema = z.object({
   nazwa: z.string().min(3, "Nazwa kancelarii musi mieć co najmniej 3 znaki"),
   nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
   nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
-  regon: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").optional().or(z.literal(""))),
-  krs: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").optional().or(z.literal(""))),
+  regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
+  krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
 })
 
 const step3Schema = z.object({
@@ -84,12 +84,8 @@ const step8Schema = z.object({
   email: z.string().email("Podaj poprawny adres email"),
   password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
   confirmPassword: z.string(),
-  zgodaRegulamin: z.literal(true, {
-    errorMap: () => ({ message: "Musisz zaakceptować regulamin" }),
-  }),
-  zgodaPrzetwarzanie: z.literal(true, {
-    errorMap: () => ({ message: "Musisz zaakceptować zgodę na przetwarzanie danych" }),
-  }),
+  zgodaRegulamin: z.boolean().refine(v => v === true, "Musisz zaakceptować regulamin"),
+  zgodaPrzetwarzanie: z.boolean().refine(v => v === true, "Musisz zaakceptować przetwarzanie danych"),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Hasła nie są identyczne",
   path: ["confirmPassword"]

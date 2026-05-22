@@ -1,6 +1,8 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, useInView } from "framer-motion"
+import { animate, utils } from "animejs"
+import React, { useEffect, useRef } from "react"
 
 // Custom high-fidelity white stroke line-art SVG icons matching the design exactly
 const IconLawyer = () => (
@@ -276,6 +278,54 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
 }
 
+const BenefitIcon = ({ icon: Icon }: { icon: React.ComponentType }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" })
+  const hasAnimatedIn = useRef(false)
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null)
+
+  const playAnimation = () => {
+    const targets = containerRef.current?.querySelectorAll('path, circle, rect')
+    if (!targets || targets.length === 0) return
+
+    // Cancel any running animation so the new one starts fresh
+    if (animationRef.current) {
+      animationRef.current.cancel()
+      animationRef.current = null
+    }
+
+    // Reset strokes to fully hidden before replaying
+    targets.forEach((el) => {
+      const length = (el as SVGGeometryElement).getTotalLength?.() ?? 100
+      utils.set(el, { strokeDasharray: length, strokeDashoffset: length })
+    })
+
+    animationRef.current = animate(targets, {
+      strokeDashoffset: [null, 0],
+      ease: 'inOutSine',
+      duration: 800,
+      delay: utils.stagger(40),
+    })
+  }
+
+  useEffect(() => {
+    if (isInView && !hasAnimatedIn.current) {
+      playAnimation()
+      hasAnimatedIn.current = true
+    }
+  }, [isInView])
+
+  return (
+    <div 
+      ref={containerRef}
+      onMouseEnter={playAnimation}
+      className="mb-6 transition-transform duration-300 ease-out group-hover:scale-108"
+    >
+      <Icon />
+    </div>
+  )
+}
+
 export function BenefitsSection() {
   return (
     <section className="py-20 md:py-24 bg-[#121212] border-b border-neutral-900/40 select-none overflow-hidden relative z-10">
@@ -287,23 +337,18 @@ export function BenefitsSection() {
           viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-y-16 gap-x-6 justify-center items-start"
         >
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon
-            return (
-              <motion.div 
-                key={index} 
-                variants={itemVariants} 
-                className="flex flex-col items-center text-center group cursor-pointer"
-              >
-                <div className="mb-6 transition-transform duration-300 ease-out group-hover:scale-108">
-                  <Icon />
-                </div>
-                <h3 className="text-xs md:text-sm font-medium tracking-wide text-neutral-300 group-hover:text-white leading-relaxed max-w-[180px] transition-colors duration-300 font-sans">
-                  {benefit.title}
-                </h3>
-              </motion.div>
-            )
-          })}
+          {benefits.map((benefit, index) => (
+            <motion.div 
+              key={index} 
+              variants={itemVariants} 
+              className="flex flex-col items-center text-center group cursor-pointer"
+            >
+              <BenefitIcon icon={benefit.icon} />
+              <h3 className="text-xs md:text-sm font-medium tracking-wide text-neutral-300 group-hover:text-white leading-relaxed max-w-[180px] transition-colors duration-300 font-sans">
+                {benefit.title}
+              </h3>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

@@ -145,8 +145,9 @@ export default function PublicHeader({
               </NavigationMenuItem>
 
               <NavigationMenuItem className="hidden md:flex">
-                <Link href="/szukaj-prawnika" legacyBehavior passHref>
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/szukaj-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent hover:bg-accent/50",
@@ -154,8 +155,8 @@ export default function PublicHeader({
                     )}
                   >
                     Eksperci
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Sprawy Firmowe - Mega Menu */}
@@ -173,26 +174,23 @@ export default function PublicHeader({
                     <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
                       {firmoweCat.map((category) => (
                         <div key={category.id}>
-                          <Link href={`/kategorie/${category.slug}`} legacyBehavior passHref>
-                            <NavigationMenuLink
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href={`/kategorie/${category.slug}`}
                               className={cn(
                                 "block font-semibold hover:text-primary mb-2 transition-colors",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
                               {category.nazwa}
-                            </NavigationMenuLink>
-                          </Link>
+                            </Link>
+                          </NavigationMenuLink>
                           {category.children && category.children.length > 0 && (
                             <div className="space-y-1">
                               {category.children.slice(0, 5).map((child) => (
-                                <Link
-                                  key={child.id}
-                                  href={`/kategorie/${category?.slug}/${child.slug}`}
-                                  legacyBehavior
-                                  passHref
-                                >
-                                  <NavigationMenuLink
+                                <NavigationMenuLink key={child.id} asChild>
+                                  <Link
+                                    href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
                                       "block text-sm transition-colors hover:text-primary",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
@@ -201,8 +199,8 @@ export default function PublicHeader({
                                     )}
                                   >
                                     {child.nazwa}
-                                  </NavigationMenuLink>
-                                </Link>
+                                  </Link>
+                                </NavigationMenuLink>
                               ))}
                             </div>
                           )}
@@ -210,11 +208,11 @@ export default function PublicHeader({
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t text-right">
-                      <Link href="/kategorie" legacyBehavior passHref>
-                        <NavigationMenuLink className="text-sm font-medium text-primary hover:underline">
+                      <NavigationMenuLink asChild>
+                        <Link href="/kategorie" className="text-sm font-medium text-primary hover:underline">
                           Zobacz wszystkie kategorie →
-                        </NavigationMenuLink>
-                      </Link>
+                        </Link>
+                      </NavigationMenuLink>
                     </div>
                   </div>
                 </NavigationMenuContent>
@@ -235,26 +233,23 @@ export default function PublicHeader({
                     <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
                       {prywatneCat.map((category) => (
                         <div key={category.id}>
-                          <Link href={`/kategorie/${category.slug}`} legacyBehavior passHref>
-                            <NavigationMenuLink
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href={`/kategorie/${category.slug}`}
                               className={cn(
                                 "block font-semibold hover:text-primary mb-2 transition-colors",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
                               {category.nazwa}
-                            </NavigationMenuLink>
-                          </Link>
+                            </Link>
+                          </NavigationMenuLink>
                           {category.children && category.children.length > 0 && (
                             <div className="space-y-1">
                               {category.children.slice(0, 5).map((child) => (
-                                <Link
-                                  key={child.id}
-                                  href={`/kategorie/${category?.slug}/${child.slug}`}
-                                  legacyBehavior
-                                  passHref
-                                >
-                                  <NavigationMenuLink
+                                <NavigationMenuLink key={child.id} asChild>
+                                  <Link
+                                    href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
                                       "block text-sm transition-colors hover:text-primary",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
@@ -263,8 +258,8 @@ export default function PublicHeader({
                                     )}
                                   >
                                     {child.nazwa}
-                                  </NavigationMenuLink>
-                                </Link>
+                                  </Link>
+                                </NavigationMenuLink>
                               ))}
                             </div>
                           )}
@@ -272,19 +267,20 @@ export default function PublicHeader({
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t">
-                      <Link href="/kategorie" legacyBehavior passHref>
-                        <NavigationMenuLink className="text-sm font-medium text-primary hover:underline">
+                      <NavigationMenuLink asChild>
+                        <Link href="/kategorie" className="text-sm font-medium text-primary hover:underline">
                           Zobacz wszystkie kategorie →
-                        </NavigationMenuLink>
-                      </Link>
+                        </Link>
+                      </NavigationMenuLink>
                     </div>
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
               {/* Mapa */}
               <NavigationMenuItem>
-                <Link href="/mapa" legacyBehavior passHref>
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/mapa"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent hover:bg-accent/50",
@@ -292,14 +288,15 @@ export default function PublicHeader({
                     )}
                   >
                     Mapa
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               {/* Dla prawnika */}
               <NavigationMenuItem>
-                <Link href="/dla-prawnika" legacyBehavior passHref>
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/dla-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent hover:bg-accent/50",
@@ -307,8 +304,8 @@ export default function PublicHeader({
                     )}
                   >
                     Dla prawnika
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuIndicator />
             </NavigationMenuList>
