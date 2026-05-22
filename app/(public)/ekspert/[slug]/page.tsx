@@ -61,6 +61,7 @@ import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
 import { BadgesSection } from "@/components/law-firm/BadgesSection"
+import { ReviewsSection } from "@/components/ekspert/ReviewsSection"
 
 interface LawFirm {
   id: string
@@ -254,36 +255,12 @@ export default function LawFirmProfilePage() {
   })
   const [sendingContact, setSendingContact] = useState(false)
 
-  // Review Form States
-  const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
-  const [reviewForm, setReviewForm] = useState({
-    ocenaOgolna: 5,
-    profesjonalizm: 5,
-    komunikacja: 5,
-    terminowosc: 5,
-    stosunekJakosci: 5,
-    tytulOpinii: "",
-    trescOpinii: "",
-    polecam: true,
-    anonimowa: false,
-  })
-  const [submittingReview, setSubmittingReview] = useState(false)
-
-  // Report Review States
-  const [reportDialogOpen, setReportDialogOpen] = useState(false)
-  const [selectedReviewToReport, setSelectedReviewToReport] = useState<LawFirm["reviews"][number] | null>(null)
-  const [reportForm, setReportForm] = useState({
-    reason: "SPAM",
-    description: "",
-  })
-  const [submittingReport, setSubmittingReport] = useState(false)
-
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
     return html.replace(/<[^>]*>/g, "")
   }
 
-  // Initialize active tab from URL and handle auto-opening of review dialog
+  // Initialize active tab from URL and handle auto-opening of reviews tab
   useEffect(() => {
     const tabParam = searchParams.get("tab")
     if (tabParam && ["about", "services", "reviews", "blog"].includes(tabParam)) {
@@ -292,17 +269,8 @@ export default function LawFirmProfilePage() {
 
     if (searchParams.has("review")) {
       setActiveTab("reviews")
-      if (session === null) {
-        toast.error("Musisz być zalogowany jako klient, aby dodać opinię.")
-      } else if (session) {
-        if (session.user?.role === "CLIENT") {
-          setReviewDialogOpen(true)
-        } else {
-          toast.error("Tylko klienci mogą dodawać opinie.")
-        }
-      }
     }
-  }, [searchParams, session])
+  }, [searchParams])
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -398,118 +366,6 @@ export default function LawFirmProfilePage() {
       toast.error(err instanceof Error ? err.message : "Nie udało się wysłać wiadomości")
     } finally {
       setSendingContact(false)
-    }
-  }
-
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!session?.user) {
-      toast.error("Musisz być zalogowany jako klient, aby wystawić opinię")
-      router.push("/logowanie")
-      return
-    }
-
-    if (session.user.role !== "CLIENT") {
-      toast.error("Tylko klienci mogą wystawiać opinie")
-      return
-    }
-
-    if (reviewForm.trescOpinii.length < 50) {
-      toast.error("Treść opinii musi mieć minimum 50 znaków")
-      return
-    }
-
-    setSubmittingReview(true)
-
-    try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lawFirmId: lawFirm?.id,
-          ...reviewForm,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Nie udało się dodać opinii")
-      }
-
-      toast.success("Twoja opinia została pomyślnie dodana")
-
-      setReviewDialogOpen(false)
-
-      // Odśwież dane kancelarii
-      const firmResponse = await fetch(`/api/law-firms/${params.slug}`)
-      if (firmResponse.ok) {
-        const data = await firmResponse.json()
-        setLawFirm(data)
-      }
-
-      // Reset formularza
-      setReviewForm({
-        ocenaOgolna: 5,
-        profesjonalizm: 5,
-        komunikacja: 5,
-        terminowosc: 5,
-        stosunekJakosci: 5,
-        tytulOpinii: "",
-        trescOpinii: "",
-        polecam: true,
-        anonimowa: false,
-      })
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
-    } finally {
-      setSubmittingReview(false)
-    }
-  }
-
-  const handleReportClick = (review: LawFirm["reviews"][number]) => {
-    if (!session?.user) {
-      toast.error("Musisz być zalogowany, aby zgłosić opinię")
-      router.push("/logowanie")
-      return
-    }
-    setSelectedReviewToReport(review)
-    setReportForm({
-      reason: "SPAM",
-      description: "",
-    })
-    setReportDialogOpen(true)
-  }
-
-  const handleReportSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedReviewToReport) return
-
-    setSubmittingReport(true)
-
-    try {
-      const response = await fetch(`/api/reviews/${selectedReviewToReport.id}/report`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reportForm),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Nie udało się zgłosić opinii")
-      }
-
-      toast.success("Opinia została zgłoszona do administratora. Dziękujemy.")
-      setReportDialogOpen(false)
-      setSelectedReviewToReport(null)
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
-    } finally {
-      setSubmittingReport(false)
     }
   }
 
@@ -1173,396 +1029,22 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Reviews Tab */}
+              {/* Reviews Tab */}
               <TabsContent value="reviews" className="space-y-4">
-                {/* Add Review Button */}
-                {session?.user?.role === "CLIENT" && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold text-lg">Masz doświadczenie z tą kancelarią?</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Podziel się swoją opinią i pomóż innym klientom
-                          </p>
-                        </div>
-                        <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
-                          <DialogTrigger asChild>
-                            <Button>
-                              <Star className="mr-2 h-4 w-4" />
-                              Dodaj opinię
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Dodaj opinię o kancelarii</DialogTitle>
-                              <DialogDescription>
-                                Podziel się swoimi doświadczeniami z {lawFirm.nazwa}
-                              </DialogDescription>
-                            </DialogHeader>
-                            <form onSubmit={handleReviewSubmit} className="space-y-4">
-                              <div className="space-y-4">
-                                {/* Ocena ogólna */}
-                                <div>
-                                  <Label htmlFor="ocenaOgolna">Ocena ogólna *</Label>
-                                  <Select
-                                    value={reviewForm.ocenaOgolna.toString()}
-                                    onValueChange={(value) =>
-                                      setReviewForm({ ...reviewForm, ocenaOgolna: parseInt(value) })
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {[5, 4, 3, 2, 1].map((rating) => (
-                                        <SelectItem key={rating} value={rating.toString()}>
-                                          {rating} {rating === 1 ? "gwiazdka" : "gwiazdki"}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-
-                                {/* Szczegółowe oceny */}
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <Label>Profesjonalizm</Label>
-                                    <Select
-                                      value={reviewForm.profesjonalizm.toString()}
-                                      onValueChange={(value) =>
-                                        setReviewForm({ ...reviewForm, profesjonalizm: parseInt(value) })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {[5, 4, 3, 2, 1].map((rating) => (
-                                          <SelectItem key={rating} value={rating.toString()}>
-                                            {rating}/5
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-
-                                  <div>
-                                    <Label>Komunikacja</Label>
-                                    <Select
-                                      value={reviewForm.komunikacja.toString()}
-                                      onValueChange={(value) =>
-                                        setReviewForm({ ...reviewForm, komunikacja: parseInt(value) })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {[5, 4, 3, 2, 1].map((rating) => (
-                                          <SelectItem key={rating} value={rating.toString()}>
-                                            {rating}/5
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-
-                                  <div>
-                                    <Label>Terminowość</Label>
-                                    <Select
-                                      value={reviewForm.terminowosc.toString()}
-                                      onValueChange={(value) =>
-                                        setReviewForm({ ...reviewForm, terminowosc: parseInt(value) })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {[5, 4, 3, 2, 1].map((rating) => (
-                                          <SelectItem key={rating} value={rating.toString()}>
-                                            {rating}/5
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-
-                                  <div>
-                                    <Label>Stosunek jakości do ceny</Label>
-                                    <Select
-                                      value={reviewForm.stosunekJakosci.toString()}
-                                      onValueChange={(value) =>
-                                        setReviewForm({ ...reviewForm, stosunekJakosci: parseInt(value) })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {[5, 4, 3, 2, 1].map((rating) => (
-                                          <SelectItem key={rating} value={rating.toString()}>
-                                            {rating}/5
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
-
-                                {/* Tytuł opinii */}
-                                <div>
-                                  <Label htmlFor="tytulOpinii">Tytuł opinii *</Label>
-                                  <Input
-                                    id="tytulOpinii"
-                                    value={reviewForm.tytulOpinii}
-                                    onChange={(e) =>
-                                      setReviewForm({ ...reviewForm, tytulOpinii: e.target.value })
-                                    }
-                                    placeholder="Podsumuj swoją opinię w jednym zdaniu"
-                                    required
-                                  />
-                                </div>
-
-                                {/* Treść opinii */}
-                                <div>
-                                  <Label htmlFor="trescOpinii">Treść opinii * (min. 50 znaków)</Label>
-                                  <Textarea
-                                    id="trescOpinii"
-                                    value={reviewForm.trescOpinii}
-                                    onChange={(e) =>
-                                      setReviewForm({ ...reviewForm, trescOpinii: e.target.value })
-                                    }
-                                    placeholder="Opisz szczegółowo swoje doświadczenia z kancelarią..."
-                                    rows={6}
-                                    required
-                                  />
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    {reviewForm.trescOpinii.length}/50 znaków
-                                  </p>
-                                </div>
-
-                                {/* Opcje */}
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id="polecam"
-                                    checked={reviewForm.polecam}
-                                    onCheckedChange={(checked) =>
-                                      setReviewForm({ ...reviewForm, polecam: !!checked })
-                                    }
-                                  />
-                                  <Label htmlFor="polecam" className="cursor-pointer">
-                                    Polecam tę kancelarię
-                                  </Label>
-                                </div>
-
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id="anonimowa"
-                                    checked={reviewForm.anonimowa}
-                                    onCheckedChange={(checked) =>
-                                      setReviewForm({ ...reviewForm, anonimowa: !!checked })
-                                    }
-                                  />
-                                  <Label htmlFor="anonimowa" className="cursor-pointer">
-                                    Opublikuj opinię anonimowo
-                                  </Label>
-                                </div>
-                              </div>
-
-                              <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>
-                                  Anuluj
-                                </Button>
-                                <Button type="submit" disabled={submittingReview}>
-                                  {submittingReview ? "Dodawanie..." : "Dodaj opinię"}
-                                </Button>
-                              </DialogFooter>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {lawFirm.reviews.length > 0 ? (
-                  lawFirm.reviews.map((review) => (
-                    <Card key={review.id}>
-                      <CardHeader>
-                        <div className="flex items-start gap-4">
-                          {/* Avatar klienta */}
-                          <Avatar className="h-12 w-12 flex-shrink-0">
-                            {!review.anonimowa && review.client.user?.image ? (
-                              <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
-                            ) : null}
-                            <AvatarFallback className="bg-primary text-primary-foreground">
-                              {review.anonimowa
-                                ? "AN"
-                                : `${review.client.imie[0]}${review.client.nazwisko[0]}`.toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-
-                          {/* Treść opinii */}
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <CardTitle className="text-lg">{review.tytulOpinii}</CardTitle>
-                                <CardDescription>
-                                  {review.anonimowa
-                                    ? "Anonim"
-                                    : `${review.client.imie} ${review.client.nazwisko}`}{" "}
-                                  • {formatDate(review.createdAt)}
-                                </CardDescription>
-                              </div>
-                              <div className="flex flex-col items-end gap-2">
-                                {renderStars(review.ocenaOgolna)}
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleReportClick(review)}
-                                  className="h-7 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1"
-                                >
-                                  <Flag className="h-3 w-3" />
-                                  <span>Zgłoś</span>
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <p className="whitespace-pre-wrap">{review.trescOpinii}</p>
-
-                        {(review.profesjonalizm || review.komunikacja || review.terminowosc || review.stosunekJakosci) && (
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            {review.profesjonalizm && (
-                              <div>
-                                <span className="text-muted-foreground">Profesjonalizm:</span>
-                                <div className="flex items-center gap-1 mt-1">
-                                  {renderStars(review.profesjonalizm)}
-                                </div>
-                              </div>
-                            )}
-                            {review.komunikacja && (
-                              <div>
-                                <span className="text-muted-foreground">Komunikacja:</span>
-                                <div className="flex items-center gap-1 mt-1">
-                                  {renderStars(review.komunikacja)}
-                                </div>
-                              </div>
-                            )}
-                            {review.terminowosc && (
-                              <div>
-                                <span className="text-muted-foreground">Terminowość:</span>
-                                <div className="flex items-center gap-1 mt-1">
-                                  {renderStars(review.terminowosc)}
-                                </div>
-                              </div>
-                            )}
-                            {review.stosunekJakosci && (
-                              <div>
-                                <span className="text-muted-foreground">Stosunek jakości do ceny:</span>
-                                <div className="flex items-center gap-1 mt-1">
-                                  {renderStars(review.stosunekJakosci)}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {review.odpowiedz && (
-                          <div className="bg-muted p-4 rounded-lg">
-                            <div className="flex items-start gap-3 mb-2">
-                              <Avatar className="h-10 w-10 flex-shrink-0">
-                                {lawFirm.logo ? (
-                                  <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
-                                ) : null}
-                                <AvatarFallback className="bg-primary text-primary-foreground">
-                                  {lawFirm.nazwa.substring(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <p className="font-semibold">Odpowiedź kancelarii:</p>
-                                <p className="text-sm mt-2">{review.odpowiedz}</p>
-                                {review.dataOdpowiedzi && (
-                                  <p className="text-xs text-muted-foreground mt-2">
-                                    {formatDate(review.dataOdpowiedzi)}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <Card>
-                    <CardContent className="py-12 text-center text-muted-foreground">
-                      Brak opinii
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Report Review Dialog */}
-                <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Zgłoś opinię</DialogTitle>
-                      <DialogDescription>
-                        Jeśli uważasz, że ta opinia narusza regulamin, zgłoś ją do administratora.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleReportSubmit} className="space-y-4">
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="reportReason">Powód zgłoszenia *</Label>
-                          <Select
-                            value={reportForm.reason}
-                            onValueChange={(value) =>
-                              setReportForm({ ...reportForm, reason: value })
-                            }
-                          >
-                            <SelectTrigger id="reportReason" className="mt-1">
-                              <SelectValue placeholder="Wybierz powód" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="SPAM">Spam lub reklama</SelectItem>
-                              <SelectItem value="WULGARYZMY">Wulgaryzmy lub obraźliwe treści</SelectItem>
-                              <SelectItem value="FALSZYWA_OPINIA">Niewiarygodna / fałszywa opinia</SelectItem>
-                              <SelectItem value="NIEODPOWIEDNIA">Nieodpowiednia treść</SelectItem>
-                              <SelectItem value="INNY">Inny powód</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="reportDescription">Dodatkowe uzasadnienie (opcjonalnie)</Label>
-                          <Textarea
-                            id="reportDescription"
-                            value={reportForm.description}
-                            onChange={(e) =>
-                              setReportForm({ ...reportForm, description: e.target.value })
-                            }
-                            placeholder="Opisz krótko dlaczego zgłaszasz tę opinię..."
-                            rows={4}
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-
-                      <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setReportDialogOpen(false)}>
-                          Anuluj
-                        </Button>
-                        <Button type="submit" variant="destructive" disabled={submittingReport}>
-                          {submittingReport ? "Zgłaszanie..." : "Zgłoś opinię"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                <ReviewsSection
+                  reviews={lawFirm.reviews}
+                  lawFirmId={lawFirm.id}
+                  lawFirmName={lawFirm.nazwa}
+                  lawFirmLogo={lawFirm.logo}
+                  session={session}
+                  onReviewSubmitted={async () => {
+                    const firmResponse = await fetch(`/api/law-firms/${params.slug}`)
+                    if (firmResponse.ok) {
+                      const data = await firmResponse.json()
+                      setLawFirm(data)
+                    }
+                  }}
+                />
               </TabsContent>
 
               {/* Blog Tab */}
