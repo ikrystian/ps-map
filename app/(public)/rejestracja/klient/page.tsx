@@ -178,136 +178,138 @@ export default function ClientRegistrationPage() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="imie">Imię *</Label>
-              <Input
-                id="imie"
-                type="text"
-                required
-                value={formData.imie}
-                onChange={(e) => setFormData({ ...formData, imie: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="imie">Imię *</Label>
+                <Input
+                  id="imie"
+                  type="text"
+                  required
+                  value={formData.imie}
+                  onChange={(e) => setFormData({ ...formData, imie: e.target.value })}
+                  disabled={isLoading}
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="nazwisko">Nazwisko *</Label>
+                <Input
+                  id="nazwisko"
+                  type="text"
+                  required
+                  value={formData.nazwisko}
+                  onChange={(e) => setFormData({ ...formData, nazwisko: e.target.value })}
+                  disabled={isLoading}
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="twoj@email.com"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={isLoading}
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="telefon">Telefon</Label>
+                <Input
+                  id="telefon"
+                  type="tel"
+                  value={formData.telefon}
+                  onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+                  disabled={isLoading}
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="miasto">Miasto</Label>
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={locationOpen}
+                      className="w-full justify-between h-11 font-normal"
+                      disabled={isLoading || !!session?.user}
+                    >
+                      {formData.miasto || "Wybierz miasto..."}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Szukaj miasta..." />
+                      <CommandList>
+                        <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
+                        <CommandGroup>
+                          {cities.map((city) => (
+                            <CommandItem
+                              key={city}
+                              value={city}
+                              onSelect={(currentValue) => {
+                                const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
+                                setFormData({ ...formData, miasto: matchedCity })
+                                setLocationOpen(false)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  formData.miasto === city ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {city}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {!session && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Hasło *</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      disabled={isLoading}
+                      className="h-11"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      disabled={isLoading}
+                      className="h-11"
+                    />
+                  </div>
+                </>
+              )}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="nazwisko">Nazwisko *</Label>
-              <Input
-                id="nazwisko"
-                type="text"
-                required
-                value={formData.nazwisko}
-                onChange={(e) => setFormData({ ...formData, nazwisko: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="twoj@email.com"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="telefon">Telefon</Label>
-              <Input
-                id="telefon"
-                type="tel"
-                value={formData.telefon}
-                onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
-                disabled={isLoading}
-                className="h-11"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="miasto">Miasto</Label>
-              <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={locationOpen}
-                    className="w-full justify-between h-11 font-normal"
-                    disabled={isLoading || !!session?.user}
-                  >
-                    {formData.miasto || "Wybierz miasto..."}
-                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Szukaj miasta..." />
-                    <CommandList>
-                      <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
-                      <CommandGroup>
-                        {cities.map((city) => (
-                          <CommandItem
-                            key={city}
-                            value={city}
-                            onSelect={(currentValue) => {
-                              const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
-                              setFormData({ ...formData, miasto: matchedCity })
-                              setLocationOpen(false)
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                formData.miasto === city ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            {city}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {!session && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Hasło *</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    disabled={isLoading}
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    disabled={isLoading}
-                    className="h-11"
-                  />
-                </div>
-              </>
-            )}
 
             <div className="flex items-start space-x-2">
               <Checkbox
