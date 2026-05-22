@@ -47,12 +47,12 @@ export default function LogoutSuccessPage() {
         delayChildren: 0.1,
       },
     },
-  }
+  } as const
 
   const childVariants = {
     hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  }
+  } as const
 
   const iconVariants = {
     hidden: { opacity: 0, scale: 0.5 },
@@ -61,7 +61,7 @@ export default function LogoutSuccessPage() {
       scale: 1,
       transition: { type: "spring", stiffness: 150, damping: 10 },
     },
-  }
+  } as const
 
   return (
     <div className="relative min-h-[calc(100vh-65px)] flex items-center justify-center py-12 md:py-24 px-4 overflow-hidden bg-background">

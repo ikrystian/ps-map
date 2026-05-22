@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
 
-    // Powiadom kancelarie o nowej sprawie (tylko te z pasującą kategorią)
+    // Powiadom kancelarie o nowej sprawie (tylko te z pasującą kategorią i pasującym obszarem działania)
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         zweryfikowana: true,
@@ -268,6 +268,14 @@ export async function POST(request: NextRequest) {
         categories: {
           some: { categoryId: category.id },
         },
+        OR: [
+          { callaPolska: true },
+          {
+            voivodeships: {
+              some: { voivodeshipId: voivodeship.id },
+            },
+          },
+        ],
       },
       select: {
         userId: true,
