@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -19,6 +20,11 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PackageBadge } from "@/components/permissions"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // Helper function to check if law firm is open (copied from pages)
 const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {
@@ -146,6 +152,8 @@ const OraIcon = () => (
 )
 
 export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
+    const { status } = useSession()
+    const isLoggedIn = status === "authenticated"
     const isOpen = isLawFirmOpen(lawFirm.godzinyOtwarcia, lawFirm.statusGodzinyOtwarcia)
     const pkg = lawFirm.pakietSubskrypcji
 
@@ -157,6 +165,42 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
     const professionalTitle = lawFirm.oraStatus ? "Adwokat" : lawFirm.oirpStatus ? "Radca prawny" : (lawFirm.categories[0]?.nazwa || "Adwokat");
     const chamberText = lawFirm.oraStatus && lawFirm.oraMiasto ? `ORA ${lawFirm.oraMiasto}` : lawFirm.oirpStatus && lawFirm.oirpMiasto ? `OIRP ${lawFirm.oirpMiasto}` : "ORA Kielce";
+
+    const ContactButton = ({ icon: Icon, onClick, type }: { icon: any, onClick: (e: any) => void, type: string }) => {
+        const button = (
+            <Button
+                size="icon"
+                variant="ghost"
+                onClick={(e) => {
+                    if (!isLoggedIn) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        return
+                    }
+                    onClick(e)
+                }}
+                className={cn(
+                    "rounded-full bg-[#058c80] text-white transition-all duration-300 h-11 w-11 shadow-md border-0",
+                    isLoggedIn ? "hover:bg-[#04756b]" : "opacity-70 cursor-help"
+                )}
+            >
+                <Icon className="w-5 h-5" />
+            </Button>
+        )
+
+        if (isLoggedIn) return button
+
+        return (
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    {button}
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-[#1a1a1a] border-neutral-800 text-white font-sans text-xs">
+                    Informacja dostępna po zalogowaniu
+                </TooltipContent>
+            </Tooltip>
+        )
+    }
 
     return (
         <Link href={`/ekspert/${lawFirm.slug}`} className="block group">
@@ -302,42 +346,33 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                         {/* Bottom Actions */}
                         <div className="flex items-center justify-between">
                             <div className="flex gap-3">
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
+                                <ContactButton 
+                                    icon={Phone} 
+                                    type="telefon"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
                                         if (lawFirm.telefon) window.location.href = `tel:${lawFirm.telefon}`
                                     }}
-                                    className="rounded-full bg-[#058c80] text-white hover:bg-[#04756b] transition-all duration-300 h-11 w-11 shadow-md border-0"
-                                >
-                                    <Phone className="w-5 h-5" />
-                                </Button>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
+                                />
+                                <ContactButton 
+                                    icon={Mail} 
+                                    type="email"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
                                         if (lawFirm.email) window.location.href = `mailto:${lawFirm.email}`
                                     }}
-                                    className="rounded-full bg-[#058c80] text-white hover:bg-[#04756b] transition-all duration-300 h-11 w-11 shadow-md border-0"
-                                >
-                                    <Mail className="w-5 h-5" />
-                                </Button>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
+                                />
+                                <ContactButton 
+                                    icon={Globe} 
+                                    type="strona"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
                                         if (lawFirm.stronaWww) window.open(lawFirm.stronaWww, "_blank")
                                     }}
-                                    className="rounded-full bg-[#058c80] text-white hover:bg-[#04756b] transition-all duration-300 h-11 w-11 shadow-md border-0"
-                                >
-                                    <Globe className="w-5 h-5" />
-                                </Button>
+                                />
                             </div>
 
                             <div className="bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 hover:bg-[#04756b] flex items-center justify-center">

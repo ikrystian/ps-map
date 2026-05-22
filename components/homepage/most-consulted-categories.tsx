@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   MapPin,
@@ -15,6 +16,12 @@ import {
 } from "lucide-react"
 import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 interface MostConsultedCategoriesProps {
   consultedData?: Record<string, LawFirm[]>
@@ -132,6 +139,8 @@ const PORTRAITS = [
 ]
 
 export function MostConsultedCategories({ consultedData, categories, lawFirms }: MostConsultedCategoriesProps) {
+  const { status } = useSession()
+  const isLoggedIn = status === "authenticated"
   const [activeIdx, setActiveIdx] = useState(0)
 
   // Filtrujemy zakładki po aktywnych promocjach (jeśli przekazano dane)
@@ -251,107 +260,135 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-8xl mx-auto"
             >
-              {getCategoryFirms(activeIdx).map((firm, index) => (
-                <div
-                  key={`${firm.id}-${index}`}
-                  className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
-                >
-                  {/* Image Container with Rating Overlay */}
-                  <div className="relative h-90 w-full overflow-hidden aspect-[5/3] bg-zinc-900">
-                    <img
-                      src={getFirmImage(firm, index)}
-                      alt={firm.nazwa}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+              {getCategoryFirms(activeIdx).map((firm, index) => {
+                const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
+                  const button = (
+                    <a
+                      href={isLoggedIn ? href : "#"}
+                      onClick={(e) => {
+                        if (!isLoggedIn) {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }
+                      }}
+                      className={cn(
+                        "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md",
+                        isLoggedIn ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95" : "opacity-70 cursor-help"
+                      )}
+                      title={isLoggedIn ? title : undefined}
+                    >
+                      <Icon className={cn("w-4.5 h-4.5 text-white", Icon === Phone && "fill-white")} />
+                    </a>
+                  )
 
-                    {/* Bottom-fade black gradient to blend image into card background */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-[#1c1c1e]/10 to-transparent to-50%" />
+                  if (isLoggedIn) return button
 
-                    {/* Rating Badge Overlay */}
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/5">
-                      <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
-                        {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
-                      </div>
-                      <div className="flex flex-col justify-center">
-                        <div className="flex gap-0.5">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
-                          ))}
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        {button}
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white font-sans text-xs">
+                        Informacja dostępna po zalogowaniu
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                }
+
+                return (
+                  <div
+                    key={`${firm.id}-${index}`}
+                    className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                  >
+                    {/* Image Container with Rating Overlay */}
+                    <div className="relative h-90 w-full overflow-hidden aspect-[5/3] bg-zinc-900">
+                      <img
+                        src={getFirmImage(firm, index)}
+                        alt={firm.nazwa}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+
+                      {/* Bottom-fade black gradient to blend image into card background */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-[#1c1c1e]/10 to-transparent to-50%" />
+
+                      {/* Rating Badge Overlay */}
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/5">
+                        <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
+                          {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
                         </div>
-                        <span className="text-[10px] text-zinc-300 font-semibold mt-1">
-                          {firm.reviewCount || 11} opinii
+                        <div className="flex flex-col justify-center">
+                          <div className="flex gap-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+                            ))}
+                          </div>
+                          <span className="text-[10px] text-zinc-300 font-semibold mt-1">
+                            {firm.reviewCount || 11} opinii
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Content and Metadata */}
+                    <div className="p-6 text-center flex-grow flex flex-col justify-between">
+                      <div>
+                        {/* Upper Case Category subtitle */}
+                        <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
+                          {getProfessionTitle(firm)}
                         </span>
+                        {/* Lawyer / Firm Name */}
+                        <h3 className="text-[19px] font-bold text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                          <Link href={`/ekspert/${firm.slug}`}>
+                            {firm.nazwa}
+                          </Link>
+                        </h3>
+                        {/* Location text */}
+                        <p className="text-xs text-zinc-400 flex items-center justify-center gap-1.5 mb-6">
+                          <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
+                          {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ", Świętokrzyskie"}
+                        </p>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Card Content and Metadata */}
-                  <div className="p-6 text-center flex-grow flex flex-col justify-between">
-                    <div>
-                      {/* Upper Case Category subtitle */}
-                      <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
-                        {getProfessionTitle(firm)}
-                      </span>
-                      {/* Lawyer / Firm Name */}
-                      <h3 className="text-[19px] font-bold text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
-                        <Link href={`/ekspert/${firm.slug}`}>
-                          {firm.nazwa}
+                      {/* Bottom Action Row with Circular and Square buttons */}
+                      <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
+                        <div className="flex gap-2">
+                          {/* Circular Phone Action */}
+                          <ContactButton 
+                            icon={Phone} 
+                            href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
+                            title="Zadzwoń do kancelarii"
+                          />
+
+                          {/* Circular Email Action */}
+                          <ContactButton 
+                            icon={Mail} 
+                            href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
+                            title="Wyślij e-mail"
+                          />
+
+                          {/* Circular Website Action */}
+                          {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
+                            <ContactButton 
+                              icon={Globe} 
+                              href={firm.stronaWww || "https://prostasprawa.pl"}
+                              title="Odwiedź stronę www"
+                            />
+                          )}
+                        </div>
+
+                        {/* Square Profile Navigation Link */}
+                        <Link
+                          href={`/ekspert/${firm.slug}`}
+                          className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                          title="Zobacz pełny profil"
+                        >
+                          <ArrowUpRight className="w-5 h-5 text-white" />
                         </Link>
-                      </h3>
-                      {/* Location text */}
-                      <p className="text-xs text-zinc-400 flex items-center justify-center gap-1.5 mb-6">
-                        <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-                        {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ", Świętokrzyskie"}
-                      </p>
-                    </div>
-
-                    {/* Bottom Action Row with Circular and Square buttons */}
-                    <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
-                      <div className="flex gap-2">
-                        {/* Circular Phone Action */}
-                        <a
-                          href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
-                          className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
-                          title="Zadzwoń do kancelarii"
-                        >
-                          <Phone className="w-4.5 h-4.5 text-white fill-white" />
-                        </a>
-
-                        {/* Circular Email Action */}
-                        <a
-                          href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
-                          className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
-                          title="Wyślij e-mail"
-                        >
-                          <Mail className="w-4.5 h-4.5 text-white" />
-                        </a>
-
-                        {/* Circular Website Action */}
-                        {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
-                          <a
-                            href={firm.stronaWww || "https://prostasprawa.pl"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-10 h-10 rounded-full bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
-                            title="Odwiedź stronę www"
-                          >
-                            <Globe className="w-4.5 h-4.5 text-white" />
-                          </a>
-                        )}
                       </div>
-
-                      {/* Square Profile Navigation Link */}
-                      <Link
-                        href={`/ekspert/${firm.slug}`}
-                        className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
-                        title="Zobacz pełny profil"
-                      >
-                        <ArrowUpRight className="w-5 h-5 text-white" />
-                      </Link>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </motion.div>
           </AnimatePresence>
         </div>

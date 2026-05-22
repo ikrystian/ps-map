@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Session } from "next-auth"
 
 export function Providers({
@@ -20,7 +21,9 @@ export function Providers({
         disableTransitionOnChange
         storageKey="theme"
       >
-        {children}
+        <TooltipProvider>
+          {children}
+        </TooltipProvider>
       </ThemeProvider>
     </SessionProvider>
   )
