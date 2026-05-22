@@ -296,14 +296,14 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
-                    href="/z-nami-wygrywasz"
+                    href="/dla-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent hover:bg-accent/50",
                       isDlaPrawnikaActive && "text-primary font-semibold"
                     )}
                   >
-                    Z nami wygrywasz
+                    Dla prawnika
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

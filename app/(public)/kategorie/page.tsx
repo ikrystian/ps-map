@@ -150,7 +150,7 @@ export default function CategoriesPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-slate-950 py-20 text-white lg:py-32">
+      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32">
         <ParticlesBackground />
 
         {/* Decorative elements */}
