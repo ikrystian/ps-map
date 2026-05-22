@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,7 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
+import { AlertCircle, Loader2, Upload, X, Image as ImageIcon, Globe, MapPin } from "lucide-react"
+import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { ImageCropper } from "@/components/ui/image-cropper"
@@ -24,6 +25,12 @@ import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationH
 interface Voivodeship {
   id: string
   nazwa: string
+}
+
+interface City {
+  id: string
+  nazwa: string
+  voivodeshipId: string
 }
 
 interface Category {
@@ -43,6 +50,10 @@ export default function LawFirmProfilePage() {
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
   const [showMainImageCropper, setShowMainImageCropper] = useState(false)
   const [limitSlowKluczowych, setLimitSlowKluczowych] = useState(5)
+  const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
+  const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
+  const [maxVoivodeships, setMaxVoivodeships] = useState(1)
+  const [maxCities, setMaxCities] = useState(3)
 
   const [formData, setFormData] = useState({
     id: "",
@@ -112,6 +123,7 @@ export default function LawFirmProfilePage() {
     callaPolska: false,
     onlineOnly: false,
     voivodeshipsIds: [] as string[],
+    citiesIds: [] as string[],
     categoriesIds: [] as string[],
 
     // Multimedia
@@ -128,10 +140,11 @@ export default function LawFirmProfilePage() {
     const fetchData = async () => {
       try {
         // Pobierz dane pomocnicze
-        const [voivRes, catRes, lawFirmRes] = await Promise.all([
+        const [voivRes, catRes, lawFirmRes, areaRes] = await Promise.all([
           fetch("/api/voivodeships"),
           fetch("/api/categories"),
           session?.user?.id ? fetch(`/api/law-firms/${session.user.id}`) : null,
+          fetch("/api/law-firm/area"),
         ])
 
         if (voivRes.ok) {
@@ -144,12 +157,19 @@ export default function LawFirmProfilePage() {
           setCategories(catData)
         }
 
+        if (areaRes && areaRes.ok) {
+          const areaData = await areaRes.json()
+          setMaxVoivodeships(areaData.maxVoivodeships || 1)
+          setMaxCities(areaData.maxCities || 3)
+        }
+
         if (lawFirmRes && lawFirmRes.ok) {
           const lawFirmData = await lawFirmRes.json()
           setLimitSlowKluczowych(lawFirmData.limitSlowKluczowych || 5)
           const normalizedData = {
             ...lawFirmData,
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
+            citiesIds: lawFirmData.cities?.map((c: any) => c.city.id) || [],
             categoriesIds: lawFirmData.categories?.map((c: any) => c.category.id) || [],
             godzinyOtwarcia: lawFirmData.godzinyOtwarcia || {
               poniedzialek: "",
@@ -171,6 +191,24 @@ export default function LawFirmProfilePage() {
             ...formData,
             ...normalizedData,
           })
+
+          // Pobierz miasta dla przypisanych województw
+          const initialVoivIds = lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || []
+          if (initialVoivIds.length > 0) {
+            await Promise.all(
+              initialVoivIds.map(async (vId: string) => {
+                try {
+                  const response = await fetch(`/api/cities?voivodeshipId=${vId}`)
+                  if (response.ok) {
+                    const data = await response.json()
+                    setCitiesByVoivodeship((prev) => ({ ...prev, [vId]: data }))
+                  }
+                } catch (e) {
+                  console.error("Error fetching initial cities:", e)
+                }
+              })
+            )
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -183,9 +221,86 @@ export default function LawFirmProfilePage() {
     fetchData()
   }, [session])
 
+  const fetchCities = async (voivodeshipId: string) => {
+    if (citiesByVoivodeship[voivodeshipId]) return
+
+    setLoadingCities((prev) => ({ ...prev, [voivodeshipId]: true }))
+    try {
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setCitiesByVoivodeship((prev) => ({ ...prev, [voivodeshipId]: data }))
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error)
+    } finally {
+      setLoadingCities((prev) => ({ ...prev, [voivodeshipId]: false }))
+    }
+  }
+
+  const toggleVoivodeship = (id: string) => {
+    const isSelected = formData.voivodeshipsIds.includes(id)
+    if (isSelected) {
+      const newCities = formData.citiesIds.filter((cityId) => {
+        const city = Object.values(citiesByVoivodeship)
+          .flat()
+          .find((c) => c.id === cityId)
+        return city?.voivodeshipId !== id
+      })
+      setFormData((prev) => ({
+        ...prev,
+        voivodeshipsIds: prev.voivodeshipsIds.filter((vId) => vId !== id),
+        citiesIds: newCities,
+      }))
+    } else {
+      if (formData.voivodeshipsIds.length >= maxVoivodeships) {
+        toast.error(`Limit województw (${maxVoivodeships}) osiągnięty.`)
+        return
+      }
+      fetchCities(id)
+      setFormData((prev) => ({
+        ...prev,
+        voivodeshipsIds: [...prev.voivodeshipsIds, id],
+      }))
+    }
+  }
+
+  const toggleCity = (id: string) => {
+    const isSelected = formData.citiesIds.includes(id)
+    if (isSelected) {
+      setFormData((prev) => ({
+        ...prev,
+        citiesIds: prev.citiesIds.filter((cId) => cId !== id),
+      }))
+    } else {
+      if (formData.citiesIds.length >= maxCities) {
+        toast.error(`Limit miast (${maxCities}) osiągnięty.`)
+        return
+      }
+      setFormData((prev) => ({
+        ...prev,
+        citiesIds: [...prev.citiesIds, id],
+      }))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
+
+    // Walidacja limitów obszaru działania
+    if (!formData.callaPolska) {
+      if (formData.voivodeshipsIds.length > maxVoivodeships) {
+        toast.error(`Przekroczono limit województw (${maxVoivodeships})`)
+        setIsSaving(false)
+        return
+      }
+      if (formData.citiesIds.length > maxCities) {
+        toast.error(`Przekroczono limit miast (${maxCities})`)
+        setIsSaving(false)
+        return
+      }
+    }
 
     try {
       // Wyklucz categoriesIds, aby nie nadpisać kolejności ustawionej w Zakresie usług
@@ -954,23 +1069,140 @@ export default function LawFirmProfilePage() {
                 </div>
               </div>
 
-              <Separator />
+            </CardContent>
+          </Card>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-base">Obszar działania</Label>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/panel-eksperta/zakres-uslug">
-                      Zarządzaj obszarem
-                    </Link>
-                  </Button>
+          <Card id="tour-zakres-area" className="shadow-sm border-muted/60">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                  <MapPin className="h-5 w-5" />
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/30">
-                  <p className="text-sm text-muted-foreground">
-                    Zarządzanie obszarem działania (województwa i miasta) zostało przeniesione do zakładki <strong>Zakres usług</strong>.
-                  </p>
+                <div>
+                  <CardTitle className="text-xl">Obszar działania</CardTitle>
+                  <CardDescription>
+                    Zdefiniuj, gdzie i w jaki sposób świadczysz pomoc prawną.
+                  </CardDescription>
                 </div>
               </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <h4 className="text-sm font-semibold mb-3">Tryb świadczenia usług</h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className={cn(
+                    "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                    formData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
+                  )} onClick={() => handleInputChange("callaPolska", !formData.callaPolska)}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn("p-2 rounded-lg", formData.callaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                        <Globe className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm">Cała Polska</p>
+                        <p className="text-xs text-muted-foreground">Widoczność w każdym mieście</p>
+                      </div>
+                    </div>
+                    <Switch checked={formData.callaPolska} onCheckedChange={(val) => handleInputChange("callaPolska", val)} />
+                  </div>
+
+                  <div className={cn(
+                    "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                    formData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
+                  )} onClick={() => handleInputChange("onlineOnly", !formData.onlineOnly)}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn("p-2 rounded-lg", formData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                        <div className="h-5 w-5 flex items-center justify-center font-bold text-[10px]">WEB</div>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm">Tylko online</p>
+                        <p className="text-xs text-muted-foreground">Konsultacje zdalne</p>
+                      </div>
+                    </div>
+                    <Switch checked={formData.onlineOnly} onCheckedChange={(val) => handleInputChange("onlineOnly", val)} />
+                  </div>
+                </div>
+              </div>
+
+              {!formData.callaPolska && (
+                <div className="pt-4 border-t border-muted">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-semibold">Lokalizacje stacjonarne</h4>
+                    <div className="flex gap-4 text-xs text-muted-foreground">
+                      <span>Województwa: <span className={formData.voivodeshipsIds.length >= maxVoivodeships ? "text-destructive font-bold" : "font-bold"}>{formData.voivodeshipsIds.length}</span> / {maxVoivodeships}</span>
+                      <span>Miasta: <span className={formData.citiesIds.length >= maxCities ? "text-destructive font-bold" : "font-bold"}>{formData.citiesIds.length}</span> / {maxCities}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Województwa</h5>
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
+                        {voivodeships.map(v => (
+                          <div key={v.id} className={cn(
+                            "flex items-center gap-3 p-2 rounded-lg border transition-all cursor-pointer",
+                            formData.voivodeshipsIds.includes(v.id)
+                              ? "bg-primary/5 border-primary/30 text-primary font-medium"
+                              : "border-transparent bg-card hover:bg-muted/50"
+                          )} onClick={() => toggleVoivodeship(v.id)}>
+                            <Checkbox checked={formData.voivodeshipsIds.includes(v.id)} onCheckedChange={() => toggleVoivodeship(v.id)} />
+                            <span className="text-sm">{v.nazwa}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Miasta w wybranych województwach</h5>
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
+                        {formData.voivodeshipsIds.length === 0 ? (
+                          <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-muted-foreground py-10 opacity-60">
+                            <MapPin className="h-8 w-8 mb-2 text-muted-foreground/55 animate-pulse" />
+                            <p className="text-xs font-medium">Wybierz województwo po lewej stronie</p>
+                          </div>
+                        ) : (
+                          formData.voivodeshipsIds.map(vId => {
+                            const vName = voivodeships.find(v => v.id === vId)?.nazwa
+                            const cities = citiesByVoivodeship[vId] || []
+                            const isLoading = loadingCities[vId]
+
+                            return (
+                              <div key={vId} className="mb-4 last:mb-0">
+                                <div className="text-[10px] font-bold text-muted-foreground mb-2 flex items-center gap-2">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                  {vName}
+                                </div>
+                                <div className="grid grid-cols-1 gap-1">
+                                  {isLoading ? (
+                                    <div className="py-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                      Ładowanie miast...
+                                    </div>
+                                  ) : cities.length === 0 ? (
+                                    <div className="py-2 text-[10px] italic text-muted-foreground">Brak miast w bazie.</div>
+                                  ) : (
+                                    cities.map(city => (
+                                      <div key={city.id} className={cn(
+                                        "flex items-center gap-2 p-1.5 rounded-md transition-all cursor-pointer",
+                                        formData.citiesIds.includes(city.id)
+                                          ? "bg-primary/10 text-primary font-medium"
+                                          : "hover:bg-muted"
+                                      )} onClick={() => toggleCity(city.id)}>
+                                        <Checkbox checked={formData.citiesIds.includes(city.id)} onCheckedChange={() => toggleCity(city.id)} />
+                                        <span className="text-xs">{city.nazwa}</span>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          })
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

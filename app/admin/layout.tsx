@@ -154,7 +154,7 @@ export default function AdminLayout({
                     }}
                     className="flex items-center justify-center flex-shrink-0"
                   >
-                    <item.icon className="h-5 w-5" />
+                    <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
                   </motion.div>
 
                   {/* Text label with elegant fade-slide */}

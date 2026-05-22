@@ -832,7 +832,7 @@ export default function LawFirmDashboardPage() {
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-between py-1 sm:h-[100px]">
+                    <div className="flex-1 min-w-0 flex flex-col justify-start py-1 sm:h-[100px]">
                       <h4 className="font-semibold text-lg text-white line-clamp-2 leading-snug">
                         {post.tytul}
                       </h4>

@@ -198,7 +198,6 @@ export default function LawFirmPanelLayout({
           <div className="text-center flex flex-col items-center gap-1">
             <p className="text-md font-semibold">{session.user.name}</p>
             <p className="text-sm text-primary">Ekspert prawny</p>
-            <PackageBadge packageType={subscriptionType as any} size="sm" className="mt-1" />
           </div>
         </div>
       )}
@@ -254,105 +253,113 @@ export default function LawFirmPanelLayout({
               }}
               className="flex items-center justify-center flex-shrink-0"
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
             </motion.div>
 
             {/* Text label with elegant fade-slide */}
-            {(inSheet || !isCollapsed) && (
-              <motion.span
-                animate={{
-                  x: hoveredIndex === index && !isActive ? 4 : 0,
-                  fontWeight: isActive ? 600 : 500,
-                }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              >
-                {item.name}
-              </motion.span>
-            )}
+            {
+              (inSheet || !isCollapsed) && (
+                <motion.span
+                  animate={{
+                    x: hoveredIndex === index && !isActive ? 4 : 0,
+                    fontWeight: isActive ? 600 : 500,
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  {item.name}
+                </motion.span>
+              )
+            }
 
-            {showBadge && (
-              <span className={cn(
-                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
-                !inSheet && isCollapsed && "absolute -right-1 -top-1"
-              )}>
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
-            )}
+            {
+              showBadge && (
+                <span className={cn(
+                  "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
+                  !inSheet && isCollapsed && "absolute -right-1 -top-1"
+                )}>
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )
+            }
 
             {/* Active accent dot for extra polish */}
-            {isActive && (inSheet || !isCollapsed) && (
-              <motion.span
-                layoutId="expert-sidebar-active-indicator"
-                className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              />
-            )}
+            {
+              isActive && (inSheet || !isCollapsed) && (
+                <motion.span
+                  layoutId="expert-sidebar-active-indicator"
+                  className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )
+            }
           </Link>
         )
       })}
 
       {/* Link do publicznej strony eksperta */}
-      {lawFirmSlug && (
-        <>
-          <div className="border-t border-border my-2" />
-          <Link
-            href={`/ekspert/${lawFirmSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() => setHoveredIndex(navigation.length)}
-            className={cn(
-              "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
-              "text-muted-foreground hover:text-foreground",
-              !inSheet && isCollapsed && "justify-center"
-            )}
-            title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
-          >
-            <AnimatePresence>
-              {hoveredIndex === navigation.length && (
-                <motion.span
-                  layoutId="expert-sidebar-hover-pill"
-                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 380,
-                    damping: 30,
-                  }}
-                />
+      {
+        lawFirmSlug && (
+          <>
+            <div className="border-t border-border my-2" />
+            <Link
+              href={`/ekspert/${lawFirmSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={() => setHoveredIndex(navigation.length)}
+              className={cn(
+                "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
+                "text-muted-foreground hover:text-foreground",
+                !inSheet && isCollapsed && "justify-center"
               )}
-            </AnimatePresence>
-
-            <motion.div
-              animate={{
-                scale: hoveredIndex === navigation.length ? 1.1 : 1,
-                x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
-                rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
-              }}
-              transition={{
-                scale: { type: "spring", stiffness: 400, damping: 20 },
-                x: { type: "spring", stiffness: 400, damping: 20 },
-                rotate: { duration: 0.4, ease: "easeInOut" }
-              }}
-              className="flex items-center justify-center flex-shrink-0"
+              title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
             >
-              <ExternalLink className="h-5 w-5" />
-            </motion.div>
+              <AnimatePresence>
+                {hoveredIndex === navigation.length && (
+                  <motion.span
+                    layoutId="expert-sidebar-hover-pill"
+                    className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 380,
+                      damping: 30,
+                    }}
+                  />
+                )}
+              </AnimatePresence>
 
-            {(inSheet || !isCollapsed) && (
-              <motion.span
+              <motion.div
                 animate={{
-                  x: hoveredIndex === navigation.length ? 4 : 0,
+                  scale: hoveredIndex === navigation.length ? 1.1 : 1,
+                  x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
+                  rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
                 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                transition={{
+                  scale: { type: "spring", stiffness: 400, damping: 20 },
+                  x: { type: "spring", stiffness: 400, damping: 20 },
+                  rotate: { duration: 0.4, ease: "easeInOut" }
+                }}
+                className="flex items-center justify-center flex-shrink-0"
               >
-                Mój profil publiczny
-              </motion.span>
-            )}
-          </Link>
-        </>
-      )}
+                <ExternalLink className="h-5 w-5 text-primary" />
+              </motion.div>
+
+              {(inSheet || !isCollapsed) && (
+                <motion.span
+                  animate={{
+                    x: hoveredIndex === navigation.length ? 4 : 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  Mój profil publiczny
+                </motion.span>
+              )}
+            </Link>
+          </>
+        )
+      }
 
       <div className="border-t border-border my-2" />
       <Button
@@ -395,7 +402,7 @@ export default function LawFirmPanelLayout({
           }}
           className="flex items-center justify-center flex-shrink-0"
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="h-5 w-5 text-primary" />
         </motion.div>
 
         {(inSheet || !isCollapsed) && (
@@ -409,7 +416,7 @@ export default function LawFirmPanelLayout({
           </motion.span>
         )}
       </Button>
-    </nav>
+    </nav >
   )
 
   if (pathname?.endsWith("/drukuj")) {
@@ -426,8 +433,7 @@ export default function LawFirmPanelLayout({
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center px-4 justify-between border-b bg-card">
-            {!isCollapsed && <h2 className="text-lg font-semibold ">Panel Eksperta</h2>}
+          <div className="flex h-16 items-center px-4 justify-start gap-2 border-b bg-card">
             <Button
               variant="ghost"
               size="icon"
@@ -437,7 +443,6 @@ export default function LawFirmPanelLayout({
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
           </div>
-
           {/* Navigation */}
           <NavigationItems />
         </div>
@@ -464,7 +469,7 @@ export default function LawFirmPanelLayout({
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 p-0">
                   <div className={cn("flex h-full flex-col", getBorderColorClass(subscriptionType))}>
-                    <div className="flex h-16 items-center border-b border-border px-4">
+                    <div className="flex h-16 items-center border-b border-border px-4 font-playfair">
                       <h2 className="text-lg font-semibold">Panel Eksperta</h2>
                     </div>
                     <NavigationItems inSheet />
