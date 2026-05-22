@@ -55,6 +55,7 @@ import {
   Eye,
   Calendar,
   ZoomIn,
+  Flag,
 } from "lucide-react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
@@ -268,6 +269,15 @@ export default function LawFirmProfilePage() {
   })
   const [submittingReview, setSubmittingReview] = useState(false)
 
+  // Report Review States
+  const [reportDialogOpen, setReportDialogOpen] = useState(false)
+  const [selectedReviewToReport, setSelectedReviewToReport] = useState<any>(null)
+  const [reportForm, setReportForm] = useState({
+    reason: "SPAM",
+    description: "",
+  })
+  const [submittingReport, setSubmittingReport] = useState(false)
+
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
     return html.replace(/<[^>]*>/g, "")
@@ -443,6 +453,50 @@ export default function LawFirmProfilePage() {
       toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
       setSubmittingReview(false)
+    }
+  }
+
+  const handleReportClick = (review: any) => {
+    if (!session?.user) {
+      toast.error("Musisz być zalogowany, aby zgłosić opinię")
+      router.push("/logowanie")
+      return
+    }
+    setSelectedReviewToReport(review)
+    setReportForm({
+      reason: "SPAM",
+      description: "",
+    })
+    setReportDialogOpen(true)
+  }
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedReviewToReport) return
+
+    setSubmittingReport(true)
+
+    try {
+      const response = await fetch(`/api/reviews/${selectedReviewToReport.id}/report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reportForm),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się zgłosić opinii")
+      }
+
+      toast.success("Opinia została zgłoszona do administratora. Dziękujemy.")
+      setReportDialogOpen(false)
+      setSelectedReviewToReport(null)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
+    } finally {
+      setSubmittingReport(false)
     }
   }
 
@@ -1348,7 +1402,18 @@ export default function LawFirmProfilePage() {
                                   • {formatDate(review.createdAt)}
                                 </CardDescription>
                               </div>
-                              {renderStars(review.ocenaOgolna)}
+                              <div className="flex flex-col items-end gap-2">
+                                {renderStars(review.ocenaOgolna)}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleReportClick(review)}
+                                  className="h-7 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1"
+                                >
+                                  <Flag className="h-3 w-3" />
+                                  <span>Zgłoś</span>
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1426,6 +1491,65 @@ export default function LawFirmProfilePage() {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Report Review Dialog */}
+                <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Zgłoś opinię</DialogTitle>
+                      <DialogDescription>
+                        Jeśli uważasz, że ta opinia narusza regulamin, zgłoś ją do administratora.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleReportSubmit} className="space-y-4">
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="reportReason">Powód zgłoszenia *</Label>
+                          <Select
+                            value={reportForm.reason}
+                            onValueChange={(value) =>
+                              setReportForm({ ...reportForm, reason: value })
+                            }
+                          >
+                            <SelectTrigger id="reportReason" className="mt-1">
+                              <SelectValue placeholder="Wybierz powód" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="SPAM">Spam lub reklama</SelectItem>
+                              <SelectItem value="WULGARYZMY">Wulgaryzmy lub obraźliwe treści</SelectItem>
+                              <SelectItem value="FALSZYWA_OPINIA">Niewiarygodna / fałszywa opinia</SelectItem>
+                              <SelectItem value="NIEODPOWIEDNIA">Nieodpowiednia treść</SelectItem>
+                              <SelectItem value="INNY">Inny powód</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="reportDescription">Dodatkowe uzasadnienie (opcjonalnie)</Label>
+                          <Textarea
+                            id="reportDescription"
+                            value={reportForm.description}
+                            onChange={(e) =>
+                              setReportForm({ ...reportForm, description: e.target.value })
+                            }
+                            placeholder="Opisz krótko dlaczego zgłaszasz tę opinię..."
+                            rows={4}
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+
+                      <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setReportDialogOpen(false)}>
+                          Anuluj
+                        </Button>
+                        <Button type="submit" variant="destructive" disabled={submittingReport}>
+                          {submittingReport ? "Zgłaszanie..." : "Zgłoś opinię"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </TabsContent>
 
               {/* Blog Tab */}
