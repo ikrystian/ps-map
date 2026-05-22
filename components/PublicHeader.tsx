@@ -170,7 +170,7 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[600px] lg:w-[800px] p-4">
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
                       {firmoweCat.map((category) => (
                         <div key={category.id}>
                           <Link href={`/kategorie/${category.slug}`} legacyBehavior passHref>
