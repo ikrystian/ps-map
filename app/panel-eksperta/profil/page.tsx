@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import { AlertCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
+import { AlertCircle, Loader2, Upload, X, Image as ImageIcon, Crop } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { ImageCropper } from "@/components/ui/image-cropper"
@@ -38,10 +38,20 @@ export default function LawFirmProfilePage() {
   const [isUploading, setIsUploading] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null)
   const [showLogoCropper, setShowLogoCropper] = useState(false)
+  
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
   const [showMainImageCropper, setShowMainImageCropper] = useState(false)
+
+  const [selectedGalleryFile, setSelectedGalleryFile] = useState<File | null>(null)
+  const [showGalleryCropper, setShowGalleryCropper] = useState(false)
+  const [galleryFilesQueue, setGalleryFilesQueue] = useState<File[]>([])
+
+  const [selectedVideoCoverFile, setSelectedVideoCoverFile] = useState<File | null>(null)
+  const [showVideoCoverCropper, setShowVideoCoverCropper] = useState(false)
+
   const [limitSlowKluczowych, setLimitSlowKluczowych] = useState(5)
 
   const [formData, setFormData] = useState({
@@ -123,6 +133,8 @@ export default function LawFirmProfilePage() {
     // Typ oferty
     typOferty: "WSZYSTKIE",
   })
+
+  const uploadServiceUrl = process.env.NEXT_PUBLIC_UPLOAD_SERVICE_URL || "http://localhost:3005"
 
   useEffect(() => {
     const fetchData = async () => {
@@ -220,48 +232,86 @@ export default function LawFirmProfilePage() {
     }))
   }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle Gallery Uploads with Cropping
+  const handleGalleryFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    // Sprawdź limit 10 zdjęć
-    if (formData.galeriaZdjec.length + files.length > 10) {
+    const newFiles = Array.from(files)
+    if (formData.galeriaZdjec.length + newFiles.length > 10) {
       toast.error("Możesz dodać maksymalnie 10 zdjęć do galerii")
       return
     }
 
+    setGalleryFilesQueue(newFiles)
+    setSelectedGalleryFile(newFiles[0])
+    setShowGalleryCropper(true)
+    
+    // Clear input
+    e.target.value = ""
+  }
+
+  const handleGalleryCropComplete = async (croppedBlob: Blob) => {
     setIsUploading(true)
+    setShowGalleryCropper(false)
 
     try {
-      const uploadedUrls = []
+      const file = new File([croppedBlob], selectedGalleryFile?.name || "gallery.jpg", {
+        type: croppedBlob.type,
+      })
 
-      for (const file of Array.from(files)) {
-        const formDataToSend = new FormData()
-        formDataToSend.append("file", file)
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
 
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataToSend,
-        })
+      const response = await fetch(`${uploadServiceUrl}/api/upload`, {
+        method: "POST",
+        body: formDataToSend,
+      })
 
-        if (!response.ok) {
-          throw new Error(`Failed to upload ${file.name}`)
-        }
-
-        const data = await response.json()
-        uploadedUrls.push(data.url)
+      if (!response.ok) {
+        throw new Error("Failed to upload image")
       }
 
-      handleInputChange("galeriaZdjec", [...formData.galeriaZdjec, ...uploadedUrls])
+      const data = await response.json()
+      const uploadUrl = data.url
+      if (uploadUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          galeriaZdjec: [...prev.galeriaZdjec, uploadUrl],
+        }))
+        toast.success("Zdjęcie zostało dodane do galerii")
+      }
 
-      toast.success(`Dodano ${uploadedUrls.length} zdjęć do galerii`)
+      // Check if there are more files in queue
+      const remainingQueue = galleryFilesQueue.slice(1)
+      if (remainingQueue.length > 0) {
+        setGalleryFilesQueue(remainingQueue)
+        setSelectedGalleryFile(remainingQueue[0])
+        setShowGalleryCropper(true)
+      } else {
+        setGalleryFilesQueue([])
+        setSelectedGalleryFile(null)
+      }
     } catch (error) {
-      console.error("Error uploading images:", error)
-      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęć")
+      console.error("Error uploading gallery image:", error)
+      toast.error("Nie udało się przesłać zdjęcia")
+      setGalleryFilesQueue([])
+      setSelectedGalleryFile(null)
     } finally {
       setIsUploading(false)
-      // Reset input
-      e.target.value = ""
+    }
+  }
+
+  const handleGalleryCropCancel = () => {
+    const remainingQueue = galleryFilesQueue.slice(1)
+    if (remainingQueue.length > 0) {
+      setGalleryFilesQueue(remainingQueue)
+      setSelectedGalleryFile(remainingQueue[0])
+      setShowGalleryCropper(true)
+    } else {
+      setGalleryFilesQueue([])
+      setSelectedGalleryFile(null)
+      setShowGalleryCropper(false)
     }
   }
 
@@ -306,7 +356,7 @@ export default function LawFirmProfilePage() {
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
-      const response = await fetch("/api/upload", {
+      const response = await fetch(`${uploadServiceUrl}/api/upload`, {
         method: "POST",
         body: formDataToSend,
       })
@@ -370,7 +420,7 @@ export default function LawFirmProfilePage() {
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
 
-      const response = await fetch("/api/upload", {
+      const response = await fetch(`${uploadServiceUrl}/api/upload`, {
         method: "POST",
         body: formDataToSend,
       })
@@ -399,11 +449,70 @@ export default function LawFirmProfilePage() {
     setSelectedMainImageFile(null)
   }
 
-  const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne") => {
+  // Video Cover Upload
+  const handleVideoCoverFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    setSelectedVideoCoverFile(file)
+    setShowVideoCoverCropper(true)
+  }
+
+  const handleVideoCoverCropComplete = async (croppedBlob: Blob) => {
+    setShowVideoCoverCropper(false)
+    setIsUploading(true)
+
+    try {
+      const file = new File([croppedBlob], selectedVideoCoverFile?.name || "video-cover.jpg", {
+        type: croppedBlob.type,
+      })
+
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch(`${uploadServiceUrl}/api/upload`, {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image")
+      }
+
+      const data = await response.json()
+      const uploadUrl = data.url
+      if (uploadUrl) {
+        handleInputChange("okladkaFilmu", uploadUrl)
+        toast.success("Okładka filmu została przesłana")
+      }
+    } catch (error) {
+      console.error("Error uploading video cover:", error)
+      toast.error("Nie udało się przesłać zdjęcia")
+    } finally {
+      setIsUploading(false)
+      setSelectedVideoCoverFile(null)
+    }
+  }
+
+  const handleVideoCoverCropCancel = () => {
+    setShowVideoCoverCropper(false)
+    setSelectedVideoCoverFile(null)
+  }
+
+  const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne" | "okladkaFilmu") => {
     handleInputChange(field, "")
-    toast.success(
-      field === "logo" ? "Logo zostało usunięte" : "Zdjęcie główne zostało usunięte"
-    )
+    const labels = {
+      logo: "Logo",
+      zdjecieGlowne: "Zdjęcie główne",
+      okladkaFilmu: "Okładka filmu"
+    }
+    toast.success(`${labels[field]} zostało usunięte`)
   }
 
   if (isLoading) {
@@ -1010,7 +1119,7 @@ export default function LawFirmProfilePage() {
                   accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                   multiple
                   className="hidden"
-                  onChange={handleImageUpload}
+                  onChange={handleGalleryFileSelect}
                   disabled={isUploading || formData.galeriaZdjec.length >= 10}
                 />
                 <span className="text-sm text-muted-foreground">
@@ -1070,9 +1179,9 @@ export default function LawFirmProfilePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Film YouTube (opcjonalnie)</CardTitle>
+              <CardTitle>Film YouTube i okładka</CardTitle>
               <CardDescription>
-                Dodaj link do filmu na YouTube prezentującego Twój profil
+                Dodaj link do filmu na YouTube oraz zdjęcie okładki
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1084,6 +1193,63 @@ export default function LawFirmProfilePage() {
                   onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
                 />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Okładka filmu (opcjonalnie)</Label>
+                {formData.okladkaFilmu ? (
+                  <div className="flex items-start gap-4">
+                    <div className="relative h-32 w-56 rounded-lg overflow-hidden border-2 border-border">
+                      <Image
+                        src={formData.okladkaFilmu}
+                        alt="Okładka filmu"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label
+                        htmlFor="video-cover-upload"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent h-10 px-4 py-2 cursor-pointer"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Zmień okładkę
+                      </label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleRemoveSingleImage("okladkaFilmu")}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Usuń okładkę
+                      </Button>
+                    </div>
+                    <input
+                      id="video-cover-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleVideoCoverFileSelect}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label
+                      htmlFor="video-cover-upload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50"
+                    >
+                      <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Dodaj okładkę filmu</p>
+                    </label>
+                    <input
+                      id="video-cover-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleVideoCoverFileSelect}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid gap-2">
@@ -1298,10 +1464,30 @@ export default function LawFirmProfilePage() {
       {selectedMainImageFile && (
         <ImageCropper
           image={selectedMainImageFile}
-          aspectRatio={2}
+          aspectRatio={16/9}
           onCropComplete={handleMainImageCropComplete}
           onCancel={handleMainImageCropCancel}
           open={showMainImageCropper}
+        />
+      )}
+
+      {selectedGalleryFile && (
+        <ImageCropper
+          image={selectedGalleryFile}
+          aspectRatio={3/2}
+          onCropComplete={handleGalleryCropComplete}
+          onCancel={handleGalleryCropCancel}
+          open={showGalleryCropper}
+        />
+      )}
+
+      {selectedVideoCoverFile && (
+        <ImageCropper
+          image={selectedVideoCoverFile}
+          aspectRatio={16/9}
+          onCropComplete={handleVideoCoverCropComplete}
+          onCancel={handleVideoCoverCropCancel}
+          open={showVideoCoverCropper}
         />
       )}
     </form>
