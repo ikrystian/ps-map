@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { ConsentManager } from "./consent-manager";
+import { ChatAssistant } from "@/components/ChatAssistant";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -46,6 +47,7 @@ export default async function RootLayout({
             {children}
             <Toaster />
             <Sonner />
+            <ChatAssistant />
           </Providers>
 
         </ConsentManager>
