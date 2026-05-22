@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "12")
     const categoryId = searchParams.get("categoryId")
     const lawFirmId = searchParams.get("lawFirmId")
+    const search = searchParams.get("search")
     const skip = (page - 1) * limit
 
     // Buduj warunki filtrowania
@@ -22,6 +23,13 @@ export async function GET(request: NextRequest) {
 
     if (lawFirmId) {
       where.lawFirmId = lawFirmId
+    }
+
+    if (search) {
+      where.OR = [
+        { tytul: { contains: search, mode: "insensitive" } },
+        { tresc: { contains: search, mode: "insensitive" } },
+      ]
     }
 
     // Pobierz wpisy

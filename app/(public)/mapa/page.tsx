@@ -198,10 +198,10 @@ export default function MapPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Page Title */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between ">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Mapa kancelarii</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-4xl font-bold mb-2 font-serif">Mapa kancelarii</h1>
+            <p className="text-muted-foreground font-serif">
               Znajdź kancelarię prawną w swojej okolicy
             </p>
           </div>
@@ -295,8 +295,8 @@ export default function MapPage() {
                       </span>
                       <div className="flex items-center gap-1">
                         {selectedCity && (
-                          <X 
-                            className="h-3 w-3 text-muted-foreground hover:text-foreground" 
+                          <X
+                            className="h-3 w-3 text-muted-foreground hover:text-foreground"
                             onClick={(e) => {
                               e.stopPropagation()
                               setSelectedCity("")
