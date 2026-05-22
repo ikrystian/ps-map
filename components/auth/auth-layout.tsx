@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { ReactNode } from "react"
-import { NumberTicker } from "../ui/number-ticker"
-import { motion } from "motion/react"
-import { ArrowLeft } from "lucide-react"
+import Link from "next/link";
+import { ReactNode } from "react";
+import { NumberTicker } from "../ui/number-ticker";
+import { motion } from "motion/react";
+import { ArrowLeft } from "lucide-react";
 
 interface HeroStat {
-  value: number
-  unit?: string
-  label: string
+  value: number;
+  unit?: string;
+  label: string;
 }
 
 interface AuthLayoutProps {
-  children: ReactNode
-  heroTitle?: string
-  heroDescription?: string
-  heroStats?: HeroStat[]
+  children: ReactNode;
+  heroTitle?: string;
+  heroDescription?: string;
+  heroStats?: HeroStat[];
 }
 
 export function AuthLayout({
@@ -40,23 +40,13 @@ export function AuthLayout({
         <div
           className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)',
-            backgroundSize: '32px 32px'
+            backgroundImage:
+              "radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)",
+            backgroundSize: "32px 32px",
           }}
         />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mt-64 z-0" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -ml-64 -mb-64 z-0" />
-
-        {/* Back to Home Link */}
-        <div className="absolute top-8 left-8 z-20">
-          <Link
-            href="/"
-            className="group flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Wróć do strony głównej
-          </Link>
-        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -64,16 +54,13 @@ export function AuthLayout({
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="w-full max-w-xl space-y-8 relative z-10 py-12"
         >
-
-
           {/* Form Content */}
-          <div className="space-y-6">
-            {children}
-          </div>
+          <div className="space-y-6">{children}</div>
 
           <div className="pt-8 border-t border-border/50">
             <p className="text-center text-xs text-muted-foreground">
-              © {new Date().getFullYear()} ProstaSprawa. Profesjonalna platforma prawna.
+              © {new Date().getFullYear()} ProstaSprawa. Profesjonalna platforma
+              prawna.
               <br />
               Wszystkie prawa zastrzeżone.
             </p>
@@ -92,8 +79,12 @@ export function AuthLayout({
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-6"
             >
-              <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight font-playfair">{heroTitle}</h2>
-              <p className="text-lg text-white/90 leading-relaxed font-medium">{heroDescription}</p>
+              <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight font-playfair">
+                {heroTitle}
+              </h2>
+              <p className="text-lg text-white/90 leading-relaxed font-medium">
+                {heroDescription}
+              </p>
             </motion.div>
 
             {heroStats && heroStats.length > 0 && (
@@ -106,10 +97,17 @@ export function AuthLayout({
                     transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
                   >
                     <div className="text-3xl lg:text-4xl font-bold">
-                      <NumberTicker value={stat.value} decimalPlaces={0} delay={index * 0.2} className="text-white" />
+                      <NumberTicker
+                        value={stat.value}
+                        decimalPlaces={0}
+                        delay={index * 0.2}
+                        className="text-white"
+                      />
                       {stat.unit}
                     </div>
-                    <div className="text-xs uppercase tracking-wider text-white/70 font-semibold mt-1">{stat.label}</div>
+                    <div className="text-xs uppercase tracking-wider text-white/70 font-semibold mt-1">
+                      {stat.label}
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -118,5 +116,5 @@ export function AuthLayout({
         </div>
       </div>
     </div>
-  )
+  );
 }

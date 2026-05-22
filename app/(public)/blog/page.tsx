@@ -1,190 +1,198 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"
-import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
-import { 
-  Calendar, 
-  Eye, 
-  User, 
-  Search, 
-  X, 
-  Clock, 
-  ChevronRight, 
-  BookOpen, 
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Calendar,
+  Eye,
+  User,
+  Search,
+  X,
+  Clock,
+  ChevronRight,
+  BookOpen,
   ArrowRight,
-  HelpCircle
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+  HelpCircle,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconArticle,
   IconScale,
   IconGavel,
   IconFileText,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
 interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  tresc: string
-  obrazekWyrozniajacy: string | null
-  dataPublikacji: string
-  wyswietlenia: number
+  id: string;
+  tytul: string;
+  slug: string;
+  tresc: string;
+  obrazekWyrozniajacy: string | null;
+  dataPublikacji: string;
+  wyswietlenia: number;
   category: {
-    id: string
-    nazwa: string
-    slug: string
-  } | null
+    id: string;
+    nazwa: string;
+    slug: string;
+  } | null;
   lawFirm: {
-    id: string
-    nazwa: string
-    nazwaFirmy: string
-    logo: string | null
-  }
+    id: string;
+    nazwa: string;
+    nazwaFirmy: string;
+    logo: string | null;
+  };
 }
 
 interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
+  id: string;
+  nazwa: string;
+  slug: string;
 }
 
 interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  pages: number
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
 }
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([])
-  const [categories, setCategories] = useState<BlogCategory[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
-  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
     page: 1,
     limit: 10, // 1 featured + 9 grid items is 10 per page
     pages: 0,
-  })
+  });
 
   // Debounce search input
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(searchQuery)
-      setPagination((prev) => ({ ...prev, page: 1 }))
-    }, 400)
+      setDebouncedSearch(searchQuery);
+      setPagination((prev) => ({ ...prev, page: 1 }));
+    }, 400);
 
-    return () => clearTimeout(handler)
-  }, [searchQuery])
-
-  useEffect(() => {
-    fetchCategories()
-  }, [])
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   useEffect(() => {
-    fetchPosts()
-  }, [selectedCategory, debouncedSearch, pagination.page])
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [selectedCategory, debouncedSearch, pagination.page]);
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/blog/categories")
+      const response = await fetch("/api/blog/categories");
       if (response.ok) {
-        const data = await response.json()
-        setCategories(data)
+        const data = await response.json();
+        setCategories(data);
       }
     } catch (error) {
-      console.error("Error fetching categories:", error)
+      console.error("Error fetching categories:", error);
     }
-  }
+  };
 
   const fetchPosts = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const params = new URLSearchParams({
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
-      })
+      });
 
       if (selectedCategory) {
-        params.append("categoryId", selectedCategory)
+        params.append("categoryId", selectedCategory);
       }
 
       if (debouncedSearch) {
-        params.append("search", debouncedSearch)
+        params.append("search", debouncedSearch);
       }
 
-      const response = await fetch(`/api/blog/posts?${params}`)
+      const response = await fetch(`/api/blog/posts?${params}`);
       if (response.ok) {
-        const data = await response.json()
-        setPosts(data.posts)
-        setPagination(data.pagination)
+        const data = await response.json();
+        setPosts(data.posts);
+        setPagination(data.pagination);
       }
     } catch (error) {
-      console.error("Error fetching posts:", error)
+      console.error("Error fetching posts:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCategoryChange = (categoryId: string | null) => {
-    setSelectedCategory(categoryId)
-    setPagination((prev) => ({ ...prev, page: 1 }))
-  }
+    setSelectedCategory(categoryId);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
 
   const handleResetFilters = () => {
-    setSearchQuery("")
-    setSelectedCategory(null)
-    setPagination((prev) => ({ ...prev, page: 1 }))
-  }
+    setSearchQuery("");
+    setSelectedCategory(null);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getExcerpt = (content: string, maxLength: number = 140) => {
-    const stripped = content.replace(/<[^>]*>/g, "")
-    if (stripped.length <= maxLength) return stripped
-    return stripped.slice(0, maxLength).trim() + "..."
-  }
+    const stripped = content.replace(/<[^>]*>/g, "");
+    if (stripped.length <= maxLength) return stripped;
+    return stripped.slice(0, maxLength).trim() + "...";
+  };
 
   const getReadingTime = (content: string) => {
-    const stripped = content.replace(/<[^>]*>/g, "")
-    const words = stripped.split(/\s+/).length
-    const minutes = Math.ceil(words / 200) // Average reading speed
-    return minutes
-  }
+    const stripped = content.replace(/<[^>]*>/g, "");
+    const words = stripped.split(/\s+/).length;
+    const minutes = Math.ceil(words / 200); // Average reading speed
+    return minutes;
+  };
 
-  const getCategoryIcon = (categoryName: string | undefined, className = "h-4 w-4") => {
-    if (!categoryName) return <IconArticle className={className} />
+  const getCategoryIcon = (
+    categoryName: string | undefined,
+    className = "h-4 w-4",
+  ) => {
+    if (!categoryName) return <IconArticle className={className} />;
 
-    const name = categoryName.toLowerCase()
+    const name = categoryName.toLowerCase();
     if (name.includes("prawo") || name.includes("cywilne")) {
-      return <IconScale className={className} />
+      return <IconScale className={className} />;
     }
     if (name.includes("karne") || name.includes("sąd")) {
-      return <IconGavel className={className} />
+      return <IconGavel className={className} />;
     }
-    if (name.includes("dokument") || name.includes("umowa") || name.includes("administracyjne")) {
-      return <IconFileText className={className} />
+    if (
+      name.includes("dokument") ||
+      name.includes("umowa") ||
+      name.includes("administracyjne")
+    ) {
+      return <IconFileText className={className} />;
     }
-    return <IconArticle className={className} />
-  }
+    return <IconArticle className={className} />;
+  };
 
   // Splitting posts to featured vs grid
-  const hasFeatured = posts.length > 0 && pagination.page === 1 && !debouncedSearch
-  const featuredPost = hasFeatured ? posts[0] : null
-  const gridPosts = hasFeatured ? posts.slice(1) : posts
+  const hasFeatured =
+    posts.length > 0 && pagination.page === 1 && !debouncedSearch;
+  const featuredPost = hasFeatured ? posts[0] : null;
+  const gridPosts = hasFeatured ? posts.slice(1) : posts;
 
   // Animation variants
   const containerVariants = {
@@ -195,31 +203,36 @@ export default function BlogPage() {
         staggerChildren: 0.05,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 100, damping: 15 } },
-  }
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring" as const, stiffness: 100, damping: 15 },
+    },
+  };
 
   return (
-    <div className="min-h-screen bg-background selection:bg-primary/20 selection:text-primary-foreground">
+    <div className="min-h-screen bg-background-sec selection:bg-primary/20 selection:text-primary-foreground">
       {/* Hero Header Section */}
-      <section className="relative py-20 px-4 border-b border-border/40 overflow-hidden bg-gradient-to-b from-muted/30 via-background to-background">
+      <section className="relative py-20 px-4 border-b border-border/40 overflow-hidden bg-gradient-to-b from-muted/30 via-background to-background-sec">
         {/* Glow ambient background */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-        
+
         <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
           <Badge className="bg-primary/10 text-primary border border-primary/20 rounded-full px-3 py-1 text-xs font-semibold tracking-wider uppercase">
             Baza Wiedzy
           </Badge>
-          
+
           <h1 className="text-4xl md:text-6xl font-playfair font-bold text-foreground tracking-tight leading-none">
             Poradniki i Analizy Prawne
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
-            Artykuły, opinie i porady prawne pisane bezpośrednio przez zweryfikowane kancelarie i ekspertów
+            Artykuły, opinie i porady prawne pisane bezpośrednio przez
+            zweryfikowane kancelarie i ekspertów
           </p>
 
           {/* Clean Floating Search Bar */}
@@ -253,7 +266,9 @@ export default function BlogPage() {
           <button
             onClick={() => handleCategoryChange(null)}
             className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${
-              selectedCategory === null ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              selectedCategory === null
+                ? "text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {selectedCategory === null && (
@@ -270,7 +285,9 @@ export default function BlogPage() {
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
               className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${
-                selectedCategory === category.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                selectedCategory === category.id
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {selectedCategory === category.id && (
@@ -312,11 +329,14 @@ export default function BlogPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Grid skeleton */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="border border-border/50 bg-card/40 rounded-2xl p-5 space-y-4">
+                <div
+                  key={i}
+                  className="border border-border/50 bg-card/40 rounded-2xl p-5 space-y-4"
+                >
                   <Skeleton className="aspect-video w-full rounded-xl" />
                   <Skeleton className="h-5 w-20 rounded-full" />
                   <Skeleton className="h-6 w-full rounded-md" />
@@ -334,7 +354,7 @@ export default function BlogPage() {
           </div>
         ) : posts.length === 0 ? (
           /* Sleek Empty State */
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-20 bg-card/20 border border-border/40 rounded-3xl max-w-xl mx-auto p-8 backdrop-blur-sm"
@@ -342,17 +362,23 @@ export default function BlogPage() {
             <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
               <HelpCircle className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-bold text-foreground mb-2">Brak artykułów</h3>
+            <h3 className="text-xl font-bold text-foreground mb-2">
+              Brak artykułów
+            </h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Nie znaleźliśmy wpisów pasujących do podanych kryteriów wyszukiwania lub kategorii.
+              Nie znaleźliśmy wpisów pasujących do podanych kryteriów
+              wyszukiwania lub kategorii.
             </p>
-            <Button onClick={handleResetFilters} variant="outline" className="rounded-xl border-border px-6 hover:bg-muted cursor-pointer">
+            <Button
+              onClick={handleResetFilters}
+              variant="outline"
+              className="rounded-xl border-border px-6 hover:bg-muted cursor-pointer"
+            >
               Wyczyść filtry i wyszukiwanie
             </Button>
           </motion.div>
         ) : (
           <div className="space-y-16">
-            
             {/* Featured Post Card (only page 1 & no search query) */}
             {featuredPost && (
               <motion.div
@@ -364,7 +390,10 @@ export default function BlogPage() {
                 {/* Subtle visual glow on hover */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                <Link href={`/blog/${featuredPost.slug}`} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center cursor-pointer">
+                <Link
+                  href={`/blog/${featuredPost.slug}`}
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center cursor-pointer"
+                >
                   {/* Image container */}
                   <div className="lg:col-span-7 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted relative">
                     {featuredPost.obrazekWyrozniajacy ? (
@@ -377,10 +406,16 @@ export default function BlogPage() {
                       /* Custom Mesh Gradient Design */
                       <div className="w-full h-full bg-gradient-to-br from-primary/10 via-background to-secondary/30 flex items-center justify-center">
                         <div className="absolute bottom-4 right-4 opacity-[0.03] text-foreground pointer-events-none">
-                          {getCategoryIcon(featuredPost.category?.nazwa, "w-48 h-48")}
+                          {getCategoryIcon(
+                            featuredPost.category?.nazwa,
+                            "w-48 h-48",
+                          )}
                         </div>
                         <div className="w-16 h-16 rounded-2xl bg-card border border-border/80 flex items-center justify-center shadow-md">
-                          {getCategoryIcon(featuredPost.category?.nazwa, "w-8 h-8 text-primary")}
+                          {getCategoryIcon(
+                            featuredPost.category?.nazwa,
+                            "w-8 h-8 text-primary",
+                          )}
                         </div>
                       </div>
                     )}
@@ -392,8 +427,14 @@ export default function BlogPage() {
                       {/* Meta: Category & Reading Time */}
                       <div className="flex items-center gap-3">
                         {featuredPost.category && (
-                          <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1 bg-secondary/80 text-secondary-foreground text-xs font-semibold rounded-full border-transparent">
-                            {getCategoryIcon(featuredPost.category.nazwa, "w-3.5 h-3.5 text-primary")}
+                          <Badge
+                            variant="secondary"
+                            className="flex items-center gap-1.5 px-3 py-1 bg-secondary/80 text-secondary-foreground text-xs font-semibold rounded-full border-transparent"
+                          >
+                            {getCategoryIcon(
+                              featuredPost.category.nazwa,
+                              "w-3.5 h-3.5 text-primary",
+                            )}
                             {featuredPost.category.nazwa}
                           </Badge>
                         )}
@@ -460,7 +501,10 @@ export default function BlogPage() {
               >
                 {gridPosts.map((post) => (
                   <motion.div key={post.id} variants={itemVariants}>
-                    <Link href={`/blog/${post.slug}`} className="block h-full group">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="block h-full group"
+                    >
                       <Card className="flex flex-col h-full bg-card hover:bg-card/80 border border-border/60 hover:border-primary/20 hover:shadow-xl rounded-2xl overflow-hidden transition-all duration-300">
                         {/* Cover Image */}
                         <div className="relative aspect-video w-full overflow-hidden bg-muted">
@@ -474,10 +518,16 @@ export default function BlogPage() {
                             /* Custom Placeholder design */
                             <div className="w-full h-full bg-gradient-to-br from-primary/5 via-background to-secondary/15 flex items-center justify-center relative">
                               <div className="absolute bottom-2 right-2 opacity-[0.02] text-foreground pointer-events-none">
-                                {getCategoryIcon(post.category?.nazwa, "w-32 h-32")}
+                                {getCategoryIcon(
+                                  post.category?.nazwa,
+                                  "w-32 h-32",
+                                )}
                               </div>
                               <div className="w-12 h-12 rounded-xl bg-card border border-border/80 flex items-center justify-center shadow-sm">
-                                {getCategoryIcon(post.category?.nazwa, "w-6 h-6 text-primary/80")}
+                                {getCategoryIcon(
+                                  post.category?.nazwa,
+                                  "w-6 h-6 text-primary/80",
+                                )}
                               </div>
                             </div>
                           )}
@@ -489,8 +539,14 @@ export default function BlogPage() {
                             {/* Category & Read Time */}
                             <div className="flex items-center justify-between gap-2">
                               {post.category && (
-                                <Badge variant="secondary" className="flex items-center gap-1.5 px-2.5 py-0.5 bg-secondary/80 text-secondary-foreground text-[10px] font-semibold tracking-wider rounded-full border-transparent">
-                                  {getCategoryIcon(post.category.nazwa, "w-3 h-3 text-primary")}
+                                <Badge
+                                  variant="secondary"
+                                  className="flex items-center gap-1.5 px-2.5 py-0.5 bg-secondary/80 text-secondary-foreground text-[10px] font-semibold tracking-wider rounded-full border-transparent"
+                                >
+                                  {getCategoryIcon(
+                                    post.category.nazwa,
+                                    "w-3 h-3 text-primary",
+                                  )}
                                   {post.category.nazwa}
                                 </Badge>
                               )}
@@ -536,7 +592,14 @@ export default function BlogPage() {
                                 <Eye className="w-3 h-3" />
                                 {post.wyswietlenia}
                               </span>
-                              <span>{new Date(post.dataPublikacji).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}</span>
+                              <span>
+                                {new Date(
+                                  post.dataPublikacji,
+                                ).toLocaleDateString("pl-PL", {
+                                  day: "numeric",
+                                  month: "short",
+                                })}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -552,21 +615,31 @@ export default function BlogPage() {
               <div className="flex items-center justify-center gap-4 pt-10">
                 <Button
                   variant="outline"
-                  onClick={() => setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.max(1, prev.page - 1),
+                    }))
+                  }
                   disabled={pagination.page === 1}
                   className="rounded-xl border-border hover:bg-muted flex items-center gap-1 cursor-pointer disabled:opacity-40"
                 >
                   <ChevronRight className="w-4 h-4 rotate-180" />
                   Poprzednia
                 </Button>
-                
+
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Strona {pagination.page} z {pagination.pages}
                 </span>
-                
+
                 <Button
                   variant="outline"
-                  onClick={() => setPagination((prev) => ({ ...prev, page: Math.min(prev.pages, prev.page + 1) }))}
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      page: Math.min(prev.pages, prev.page + 1),
+                    }))
+                  }
                   disabled={pagination.page === pagination.pages}
                   className="rounded-xl border-border hover:bg-muted flex items-center gap-1 cursor-pointer disabled:opacity-40"
                 >
@@ -579,5 +652,5 @@ export default function BlogPage() {
         )}
       </section>
     </div>
-  )
+  );
 }
