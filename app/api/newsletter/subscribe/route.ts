@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
         aktywny: false,
         potwierdzony: false,
         tokenPotwierdzajacy: verificationToken,
+        unsubscribeToken: unsubscribeToken,
       }
     })
 
@@ -86,6 +87,11 @@ export async function POST(request: NextRequest) {
     console.error("Error subscribing to newsletter:", error)
     return NextResponse.json(
       { error: "Wystąpił błąd podczas zapisywania do newslettera" },
+      { status: 500 }
+    )
+  }
+}
+czas zapisywania do newslettera" },
       { status: 500 }
     )
   }

@@ -1308,6 +1308,7 @@ model Newsletter {
   aktywny               Boolean   @default(true)
   potwierdzony          Boolean   @default(false)
   tokenPotwierdzajacy   String?   @unique
+  unsubscribeToken      String?   @unique
   dataPotwierdzenia     DateTime?
 
   dataZapisu      DateTime  @default(now())
@@ -1315,6 +1316,7 @@ model Newsletter {
 
   @@index([email])
   @@index([aktywny])
+  @@index([unsubscribeToken])
 }
 
 // ============================================================================

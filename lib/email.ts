@@ -1287,3 +1287,11 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 }
 
 
+
+/**
+ * Generuje URL do wypisania się z newslettera
+ */
+export function generateNewsletterUnsubscribeUrl(token: string): string {
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  return `${baseUrl}/api/newsletter/unsubscribe?token=${token}`
+}

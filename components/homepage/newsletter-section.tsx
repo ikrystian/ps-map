@@ -32,7 +32,7 @@ export function NewsletterSection() {
   }
 
   return (
-    <section className="relative overflow-hidden w-full bg-[#141414] border-t border-b border-neutral-900">
+    <section className="relative overflow-hidden w-full bg-[#141414] border-t border-b border-neutral-900" id="newsletter-section">
       {/* Left 25% green side panel background */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent z-0" />
 
