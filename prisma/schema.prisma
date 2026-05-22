@@ -2013,3 +2013,27 @@ enum ScheduledEmailStatus {
   CANCELLED
 }
 
+// ============================================================================
+// REKLAMY
+// ============================================================================
+
+model Advertisement {
+  id           String    @id @default(uuid())
+  name         String
+  imageUrl     String?   // URL do pliku graficznego banneru
+  linkUrl      String    // URL docelowy po kliknięciu
+  htmlContent  String?   // Alternatywnie: niestandardowy kod HTML/skrypt (np. AdSense)
+  location     String    // Miejsce wyświetlania: "search_top", "search_list_middle", "category_top", "category_sidebar"
+  active       Boolean   @default(true)
+  impressions  Int       @default(0)
+  clicks       Int       @default(0)
+  startDate    DateTime? // Opcjonalna data początkowa
+  endDate      DateTime? // Opcjonalna data końcowa
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([location])
+  @@index([active])
+}
+
+

@@ -29,6 +29,7 @@ import {
   Upload,
   Bell,
   MapPin,
+  Megaphone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -43,6 +44,7 @@ const navigation = [
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
   { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
+  { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
   { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },

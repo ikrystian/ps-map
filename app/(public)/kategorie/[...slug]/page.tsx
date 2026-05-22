@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Fragment } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import { AdBanner } from "@/components/ad-banner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -555,10 +556,12 @@ export default function CategoryPage() {
                 </div>
               </CardContent>
             </Card>
+            <AdBanner location="category_sidebar" className="mt-4" />
           </aside>
 
           {/* Results */}
           <div className="lg:col-span-3">
+            <AdBanner location="category_top" className="mb-6" />
             {/* Sort and Results Count */}
             <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
               <p className="text-sm text-muted-foreground">

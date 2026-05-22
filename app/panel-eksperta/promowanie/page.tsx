@@ -123,12 +123,12 @@ const getFutureMonths = () => {
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() // 0-11
-  
+
   const polishMonths = [
     "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
     "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
   ]
-  
+
   for (let i = 1; i <= 12; i++) {
     const targetDate = new Date(currentYear, currentMonth + i, 1)
     const monthIndex = targetDate.getMonth()
@@ -685,8 +685,8 @@ export default function LawFirmPromotionPage() {
                           {promo.pointsPerMonth
                             ? `${promo.pointsPerMonth} pkt`
                             : promo.pointsPerDay
-                            ? `${promo.pointsPerDay} pkt`
-                            : `${promo.pointsPerWeek} pkt`}
+                              ? `${promo.pointsPerDay} pkt`
+                              : `${promo.pointsPerWeek} pkt`}
                         </span>
                         <span className="text-sm text-muted-foreground">
                           /{" "}
@@ -962,8 +962,8 @@ export default function LawFirmPromotionPage() {
                       {promo.pointsPerMonth
                         ? `${promo.pointsPerMonth} pkt/miesiąc`
                         : promo.type === "PODBICIE_OGLOSZENIA"
-                        ? `${promo.pointsPerDay} pkt/dzień`
-                        : `${promo.pointsPerWeek} pkt/tydzień`}
+                          ? `${promo.pointsPerDay} pkt/dzień`
+                          : `${promo.pointsPerWeek} pkt/tydzień`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1238,8 +1238,8 @@ export default function LawFirmPromotionPage() {
                     {selectedType === "POLECANI_PRAWNICY"
                       ? selectedCategory
                       : selectedType === "NAJCZESCIEJ_KONSULTOWANE"
-                      ? MOST_CONSULTED_CATEGORIES.find(c => c.id === selectedCategory)?.name || selectedCategory
-                      : categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
+                        ? MOST_CONSULTED_CATEGORIES.find(c => c.id === selectedCategory)?.name || selectedCategory
+                        : categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
                   </span>
                 </div>
               )}
@@ -1296,7 +1296,7 @@ export default function LawFirmPromotionPage() {
 
       {/* Dialog historii zakupów */}
       <Dialog open={historyDialogOpen} onOpenChange={setHistoryDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-12xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
@@ -1306,14 +1306,14 @@ export default function LawFirmPromotionPage() {
               Pełna lista zakupionych przez Ciebie promowań wraz z kosztami i okresami ważności
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="py-4">
             {promotions.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
                 Brak zakupionych promowań w historii.
               </p>
             ) : (
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg">
                 <Table>
                   <TableHeader>
                     <TableRow>

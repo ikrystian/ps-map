@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Fragment } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { AdBanner } from "@/components/ad-banner"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -519,6 +520,8 @@ export default function SearchLawyerPage() {
           )}
         </AnimatePresence>
 
+        <AdBanner location="search_top" className="mb-6" />
+
         {/* Results */}
         <div>
           {/* Results Count */}
@@ -575,7 +578,7 @@ export default function SearchLawyerPage() {
             <>
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                  {lawFirms.map((firm) => {
+                  {lawFirms.map((firm, index) => {
                     const hasPromoPackage = firm.pakietSubskrypcji && firm.pakietSubskrypcji !== "PODSTAWOWY"
 
                     const cardContent = (
@@ -693,19 +696,33 @@ export default function SearchLawyerPage() {
                     )
 
                     return (
-                      <Link key={firm.id} href={`/ekspert/${firm.slug}`}>
-                        <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
-                          {cardContent}
-                        </LawFirmCardWrapper>
-                      </Link>
+                      <Fragment key={firm.id}>
+                        <Link href={`/ekspert/${firm.slug}`}>
+                          <LawFirmCardWrapper pakietSubskrypcji={firm.pakietSubskrypcji} className="h-full rounded-lg">
+                            {cardContent}
+                          </LawFirmCardWrapper>
+                        </Link>
+                        {index === 3 && (
+                          <div className="col-span-full py-2">
+                            <AdBanner location="search_list_middle" />
+                          </div>
+                        )}
+                      </Fragment>
                     )
                   })}
                 </div>
               ) : (
                 /* Law Firms List View */
                 <div className="space-y-4 mb-8">
-                  {lawFirms.map((firm) => (
-                    <LawFirmListItem key={firm.id} lawFirm={firm} />
+                  {lawFirms.map((firm, index) => (
+                    <Fragment key={firm.id}>
+                      <LawFirmListItem lawFirm={firm} />
+                      {index === 3 && (
+                        <div className="py-2">
+                          <AdBanner location="search_list_middle" />
+                        </div>
+                      )}
+                    </Fragment>
                   ))}
                 </div>
               )}
