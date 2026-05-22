@@ -5,21 +5,16 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
-  NavigationMenuList,
   NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Search, ChevronDown, Check, MapPin, IdCard, List, X } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
@@ -47,8 +42,6 @@ export default function PublicHeader({
 }: PublicHeaderProps) {
   const pathname = usePathname()
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
-  const [firmoweCategoriesOpen, setFirmoweCategoriesOpen] = useState(false)
-  const [prywatneCategoriesOpen, setPrywatneCategoriesOpen] = useState(false)
   const [searchFormOpen, setSearchFormOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCity, setSelectedCity] = useState("")
@@ -76,7 +69,7 @@ export default function PublicHeader({
         if (response.ok) {
           const data = await response.json()
           if (Array.isArray(data)) {
-            setCities(data.map((c: any) => c.nazwa))
+            setCities(data.map((c: { nazwa: string }) => c.nazwa))
           }
         }
       } catch (error) {
@@ -90,6 +83,7 @@ export default function PublicHeader({
 
   // Close search form on pathname change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchFormOpen(false)
   }, [pathname])
 
@@ -140,7 +134,10 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <button
                   onClick={() => setSearchFormOpen(!searchFormOpen)}
-                  className="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    "flex items-center gap-2 bg-transparent hover:bg-accent/50 transition-colors"
+                  )}
                 >
                   <Search className="h-4 w-4" />
                   Szukaj
@@ -148,42 +145,43 @@ export default function PublicHeader({
               </NavigationMenuItem>
 
               <NavigationMenuItem className="hidden md:flex">
-                <Link
-                  href="/szukaj-prawnika"
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 transition-colors hover:text-primary",
-                    isEksperciActive && "text-primary font-semibold"
-                  )}
-                >
-                  Eksperci
+                <Link href="/szukaj-prawnika" legacyBehavior passHref>
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent hover:bg-accent/50",
+                      isEksperciActive && "text-primary font-semibold"
+                    )}
+                  >
+                    Eksperci
+                  </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
 
               {/* Sprawy Firmowe - Mega Menu */}
               <NavigationMenuItem>
-                <DropdownMenu open={firmoweCategoriesOpen} onOpenChange={setFirmoweCategoriesOpen}>
-                  <DropdownMenuTrigger
-                    className={cn(
-                      "flex items-center gap-1 px-4 py-2 hover:text-primary transition-colors",
-                      isFirmoweActive && "text-primary font-semibold"
-                    )}
-                  >
-                    Sprawy firmowe
-                    <ChevronDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full max-w-[calc(100vw)] p-4">
-                    <div className="grid grid-cols-3  md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <NavigationMenuTrigger
+                  className={cn(
+                    "bg-transparent hover:bg-accent/50",
+                    isFirmoweActive && "text-primary font-semibold"
+                  )}
+                >
+                  Sprawy firmowe
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-[600px] lg:w-[800px] p-4">
+                    <div className="grid grid-cols-3 gap-4">
                       {firmoweCat.map((category) => (
                         <div key={category.id}>
-                          <Link
-                            href={`/kategorie/${category.slug}`}
-                            className={cn(
-                              "block font-semibold hover:text-primary mb-2 transition-colors",
-                              pathname === `/kategorie/${category.slug}` && "text-primary"
-                            )}
-                            onClick={() => setFirmoweCategoriesOpen(false)}
-                          >
-                            {category.nazwa}
+                          <Link href={`/kategorie/${category.slug}`} legacyBehavior passHref>
+                            <NavigationMenuLink
+                              className={cn(
+                                "block font-semibold hover:text-primary mb-2 transition-colors",
+                                pathname === `/kategorie/${category.slug}` && "text-primary"
+                              )}
+                            >
+                              {category.nazwa}
+                            </NavigationMenuLink>
                           </Link>
                           {category.children && category.children.length > 0 && (
                             <div className="space-y-1">
@@ -191,15 +189,19 @@ export default function PublicHeader({
                                 <Link
                                   key={child.id}
                                   href={`/kategorie/${category?.slug}/${child.slug}`}
-                                  className={cn(
-                                    "block text-sm transition-colors hover:text-primary",
-                                    pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                      ? "text-primary font-medium"
-                                      : "text-muted-foreground"
-                                  )}
-                                  onClick={() => setFirmoweCategoriesOpen(false)}
+                                  legacyBehavior
+                                  passHref
                                 >
-                                  {child.nazwa}
+                                  <NavigationMenuLink
+                                    className={cn(
+                                      "block text-sm transition-colors hover:text-primary",
+                                      pathname === `/kategorie/${category?.slug}/${child.slug}`
+                                        ? "text-primary font-medium"
+                                        : "text-muted-foreground"
+                                    )}
+                                  >
+                                    {child.nazwa}
+                                  </NavigationMenuLink>
                                 </Link>
                               ))}
                             </div>
@@ -208,43 +210,40 @@ export default function PublicHeader({
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t text-right">
-                      <Link
-                        href="/kategorie"
-                        className="text-sm font-medium text-primary hover:underline"
-                        onClick={() => setFirmoweCategoriesOpen(false)}
-                      >
-                        Zobacz wszystkie kategorie →
+                      <Link href="/kategorie" legacyBehavior passHref>
+                        <NavigationMenuLink className="text-sm font-medium text-primary hover:underline">
+                          Zobacz wszystkie kategorie →
+                        </NavigationMenuLink>
                       </Link>
                     </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </div>
+                </NavigationMenuContent>
               </NavigationMenuItem>
 
               {/* Sprawy Prywatne - Mega Menu */}
               <NavigationMenuItem>
-                <DropdownMenu open={prywatneCategoriesOpen} onOpenChange={setPrywatneCategoriesOpen}>
-                  <DropdownMenuTrigger
-                    className={cn(
-                      "flex items-center gap-1 px-4 py-2 hover:text-primary transition-colors",
-                      isPrywatneActive && "text-primary font-semibold"
-                    )}
-                  >
-                    Sprawy prywatne
-                    <ChevronDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full p-4">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <NavigationMenuTrigger
+                  className={cn(
+                    "bg-transparent hover:bg-accent/50",
+                    isPrywatneActive && "text-primary font-semibold"
+                  )}
+                >
+                  Sprawy prywatne
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-[600px] lg:w-[900px] p-4">
+                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
                       {prywatneCat.map((category) => (
                         <div key={category.id}>
-                          <Link
-                            href={`/kategorie/${category.slug}`}
-                            className={cn(
-                              "block font-semibold hover:text-primary mb-2 transition-colors",
-                              pathname === `/kategorie/${category.slug}` && "text-primary"
-                            )}
-                            onClick={() => setPrywatneCategoriesOpen(false)}
-                          >
-                            {category.nazwa}
+                          <Link href={`/kategorie/${category.slug}`} legacyBehavior passHref>
+                            <NavigationMenuLink
+                              className={cn(
+                                "block font-semibold hover:text-primary mb-2 transition-colors",
+                                pathname === `/kategorie/${category.slug}` && "text-primary"
+                              )}
+                            >
+                              {category.nazwa}
+                            </NavigationMenuLink>
                           </Link>
                           {category.children && category.children.length > 0 && (
                             <div className="space-y-1">
@@ -252,15 +251,19 @@ export default function PublicHeader({
                                 <Link
                                   key={child.id}
                                   href={`/kategorie/${category?.slug}/${child.slug}`}
-                                  className={cn(
-                                    "block text-sm transition-colors hover:text-primary",
-                                    pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                      ? "text-primary font-medium"
-                                      : "text-muted-foreground"
-                                  )}
-                                  onClick={() => setPrywatneCategoriesOpen(false)}
+                                  legacyBehavior
+                                  passHref
                                 >
-                                  {child.nazwa}
+                                  <NavigationMenuLink
+                                    className={cn(
+                                      "block text-sm transition-colors hover:text-primary",
+                                      pathname === `/kategorie/${category?.slug}/${child.slug}`
+                                        ? "text-primary font-medium"
+                                        : "text-muted-foreground"
+                                    )}
+                                  >
+                                    {child.nazwa}
+                                  </NavigationMenuLink>
                                 </Link>
                               ))}
                             </div>
@@ -269,47 +272,45 @@ export default function PublicHeader({
                       ))}
                     </div>
                     <div className="mt-4 pt-4 border-t">
-                      <Link
-                        href="/kategorie"
-                        className="text-sm font-medium text-primary hover:underline"
-                        onClick={() => setPrywatneCategoriesOpen(false)}
-                      >
-                        Zobacz wszystkie kategorie →
+                      <Link href="/kategorie" legacyBehavior passHref>
+                        <NavigationMenuLink className="text-sm font-medium text-primary hover:underline">
+                          Zobacz wszystkie kategorie →
+                        </NavigationMenuLink>
                       </Link>
                     </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </div>
+                </NavigationMenuContent>
               </NavigationMenuItem>
               {/* Mapa */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/mapa"
+                <Link href="/mapa" legacyBehavior passHref>
+                  <NavigationMenuLink
                     className={cn(
-                      "px-4 py-2 hover:text-primary transition-colors",
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent hover:bg-accent/50",
                       isMapaActive && "text-primary font-semibold"
                     )}
                   >
                     Mapa
-                  </Link>
-                </NavigationMenuLink>
+                  </NavigationMenuLink>
+                </Link>
               </NavigationMenuItem>
 
               {/* Dla prawnika */}
               <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/dla-prawnika"
+                <Link href="/dla-prawnika" legacyBehavior passHref>
+                  <NavigationMenuLink
                     className={cn(
-                      "px-4 py-2 hover:text-primary transition-colors",
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent hover:bg-accent/50",
                       isDlaPrawnikaActive && "text-primary font-semibold"
                     )}
                   >
                     Dla prawnika
-                  </Link>
-                </NavigationMenuLink>
+                  </NavigationMenuLink>
+                </Link>
               </NavigationMenuItem>
-
+              <NavigationMenuIndicator />
             </NavigationMenuList>
           </NavigationMenu>
 
