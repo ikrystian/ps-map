@@ -72,13 +72,13 @@ const itemVariants = {
 
 const BenefitIcon = ({ src, alt }: { src: string; alt: string }) => {
   return (
-    <div className="mb-6 transition-transform duration-300 ease-out group-hover:scale-110">
+    <div className="transition-transform duration-300 ease-out group-hover:scale-110">
       <Image
         src={src}
         alt={alt}
-        width={80}
-        height={80}
-        className="w-20 h-20 transition-all duration-300 group-hover:brightness-0 group-hover:invert"
+        width={100}
+        height={100}
+        className="w-30 h-30 transition-all duration-300 group-hover:brightness-0 group-hover:invert"
       />
     </div>
   )

@@ -9,6 +9,7 @@ import type { Category } from "@/types/categories"
 
 import { HeroSection } from "@/components/homepage/hero-section"
 import { BenefitsSection } from "@/components/homepage/benefits-section"
+import { SearchHelpSection } from "@/components/homepage/search-help-section"
 import { HowItWorksSection } from "@/components/homepage/how-it-works-section"
 import { CategoriesGrid } from "@/components/homepage/categories-grid"
 import { BusinessCategoriesGrid } from "@/components/homepage/business-categories-grid"
@@ -96,6 +97,7 @@ export default function HomePage() {
       <BenefitsSection />
 
       {/* SECTION 3: How It Works */}
+      <SearchHelpSection />
 
       {/* SECTION 4: Categories Grid */}
       <CategoriesGrid categories={categories} />
