@@ -163,7 +163,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-right">
             <Button asChild variant="outline" size="lg">
               <Link href="/kategorie">
                 Zobacz wszystkie kategorie

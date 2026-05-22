@@ -163,7 +163,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-right">
             <Button asChild variant="outline" size="lg">
               <Link href="/kategorie">
                 Zobacz wszystkie kategorie biznesowe

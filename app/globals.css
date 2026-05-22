@@ -460,8 +460,8 @@ a .bg-card {
 }
 
 #section-your-data {
-  background: url('/images/security-lock.png') right center no-repeat;
-  background-size: contain;
+  background: url('/images/security-lock.png') center no-repeat;
+  background-size: cover;
 }
 
 .bg-pattern-labyrinth {
@@ -473,14 +473,17 @@ a .bg-card {
 .custom-scrollbar::-webkit-scrollbar {
   height: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #1c1c1e;
   border-radius: 4px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #0da192;
   border-radius: 4px;
 }
+
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #0da192 #1c1c1e;
