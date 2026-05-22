@@ -4,6 +4,26 @@ import { prisma } from "@/lib/prisma"
 import { sendSystemNotification } from "@/lib/notifications"
 import { sendEmailWithTemplate } from "@/lib/email"
 import { EmailType } from "@prisma/client"
+import fs from "fs"
+import path from "path"
+
+function logErrorToFile(context: string, error: any) {
+  try {
+    const logDir = path.join(process.cwd(), "logs")
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true })
+    }
+    const logPath = path.join(logDir, "api-cases-errors.log")
+    const timestamp = new Date().toISOString()
+    const errMsg = error instanceof Error ? error.message : String(error)
+    const errStack = error instanceof Error ? error.stack : ""
+    const logEntry = `[${timestamp}] Context: ${context}\nError: ${errMsg}\nStack: ${errStack}\n${"=".repeat(80)}\n`
+    fs.appendFileSync(logPath, logEntry, "utf8")
+  } catch (e) {
+    console.error("Failed to write to log file", e)
+  }
+}
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,6 +48,7 @@ export async function GET(request: NextRequest) {
         include: {
           category: true,
           voivodeship: true,
+          city: true,
           offers: {
             include: {
               lawFirm: true,
@@ -74,6 +95,7 @@ export async function GET(request: NextRequest) {
         include: {
           category: true,
           voivodeship: true,
+          city: true,
           client: {
             select: {
               imie: true,
@@ -132,8 +154,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   } catch (error) {
+    logErrorToFile("GET /api/cases", error)
     console.error("Error fetching cases:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined 
+      }, 
+      { status: 500 }
+    )
   }
 }
 
@@ -161,6 +191,7 @@ export async function POST(request: NextRequest) {
       !body.typSprawy ||
       !body.categoryId ||
       !body.voivodeshipId ||
+      !body.cityId ||
       !body.nazwaSprawy ||
       !body.opisSprawy ||
       !body.imieNazwisko ||
@@ -220,6 +251,19 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Znajdź miasto
+    const city = await prisma.city.findUnique({
+      where: { id: body.cityId },
+    })
+
+    if (!city) {
+      return NextResponse.json({ error: "Selected city not found" }, { status: 404 })
+    }
+
+    if (city.voivodeshipId !== voivodeship.id) {
+      return NextResponse.json({ error: "City does not belong to the selected voivodeship" }, { status: 400 })
+    }
+
     // Konwersja daty jeśli istnieje
     let oczekiwanyTerminRealizacji = null
     if (body.oczekiwanyTerminRealizacji) {
@@ -232,8 +276,8 @@ export async function POST(request: NextRequest) {
         clientId: client.id,
         typSprawy: body.typSprawy,
         categoryId: category.id,
-        wybranadziedzinaPrawa: body.wybranadziedzinaPrawa || null,
-        wybranaSpecyfikacja: body.wybranaSpecyfikacja || null,
+        wybranadziedzinaPrawa: null,
+        wybranaSpecyfikacja: null,
         nazwaSprawy: body.nazwaSprawy,
         opisSprawy: body.opisSprawy,
         zalaczniki: body.zalaczniki?.length > 0 ? JSON.stringify(body.zalaczniki) : null,
@@ -247,12 +291,14 @@ export async function POST(request: NextRequest) {
         telefonKontakt: body.telefonKontakt,
         preferowanyKontakt: body.preferowanyKontakt,
         voivodeshipId: voivodeship.id,
+        cityId: city.id,
         akceptujeKlauzule: body.akceptujeKlauzule,
         status: "NOWA",
       },
       include: {
         category: true,
         voivodeship: true,
+        city: true,
       },
     })
 
@@ -297,8 +343,8 @@ export async function POST(request: NextRequest) {
         OR: [
           { callaPolska: true },
           {
-            voivodeships: {
-              some: { voivodeshipId: voivodeship.id },
+            cities: {
+              some: { cityId: city.id },
             },
           },
         ],
@@ -398,9 +444,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newCase, { status: 201 })
   } catch (error) {
+    logErrorToFile("POST /api/cases", error)
     console.error("Error creating case:", error)
     return NextResponse.json(
-      { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" },
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }

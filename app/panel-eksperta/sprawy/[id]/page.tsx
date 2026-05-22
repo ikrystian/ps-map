@@ -55,6 +55,9 @@ interface Case {
   voivodeship: {
     nazwa: string
   }
+  city?: {
+    nazwa: string
+  } | null
   client: {
     imie: string
     nazwisko: string
@@ -702,7 +705,7 @@ export default function LawFirmCaseDetailsPage() {
                 <p className="text-sm text-muted-foreground mb-1">Lokalizacja</p>
                 <p className="font-semibold flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  {caseData.voivodeship.nazwa}
+                  {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
                 </p>
               </div>
 

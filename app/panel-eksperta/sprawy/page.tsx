@@ -47,6 +47,10 @@ interface Case {
     id: string
     nazwa: string
   }
+  city?: {
+    id: string
+    nazwa: string
+  } | null
   client: {
     imie: string
     nazwisko: string
@@ -501,7 +505,9 @@ const SprawyPage = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-center ">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>{sprawa.voivodeship.nazwa}</span>
+                          <span>
+                            {sprawa.city ? `${sprawa.city.nazwa}, ${sprawa.voivodeship.nazwa}` : sprawa.voivodeship.nazwa}
+                          </span>
                         </div>
 
                         <div className="flex items-center text-sm text-muted-foreground">

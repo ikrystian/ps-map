@@ -482,6 +482,8 @@ model Case {
   // Lokalizacja
   voivodeshipId             String
   voivodeship               Voivodeship @relation(fields: [voivodeshipId], references: [id])
+  cityId                    String?
+  city                      City?       @relation(fields: [cityId], references: [id])
 
   // Status
   status                    CaseStatus @default(NOWA)
@@ -505,6 +507,7 @@ model Case {
   @@index([clientId])
   @@index([categoryId])
   @@index([voivodeshipId])
+  @@index([cityId])
   @@index([status])
   @@index([isArchived])
   @@index([createdAt])
@@ -1300,6 +1303,7 @@ model City {
 
   // Relacje
   lawFirms        LawFirmCity[]
+  cases           Case[]
 
   @@index([voivodeshipId])
   @@index([nazwa])

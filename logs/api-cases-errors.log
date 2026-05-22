@@ -1,0 +1,1634 @@
+[2026-05-22T22:44:26.730Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:30)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:44:26.869Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:30)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:44:29.814Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:163
+
+  2250     }
+  2251 };
+  2252 // Pobierz wszystkie sprawy zgodnie z warunkiem
+→ 2253 const allCases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           status: {
+             notIn: [
+               "ANULOWANA"
+             ]
+           }
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           client: {
+             select: {
+               imie: true,
+               nazwisko: true,
+               miasto: true
+             }
+           },
+           offers: {
+             select: {
+               id: true,
+               status: true,
+               kwotaNetto: true,
+               terminRealizacjiDni: true,
+               createdAt: true,
+               lawFirmId: true
+             }
+           },
+           _count: {
+             select: {
+               offers: true
+             }
+           },
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2253:30)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:44:58.785Z] Context: GET /api/cases/[id]
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:26)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:44:58.958Z] Context: GET /api/cases/[id]
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:26)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:01.799Z] Context: GET /api/cases/[id]
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:26)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:19.988Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:27)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:20.132Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:27)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:21.989Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:27)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:24.832Z] Context: GET /api/cases/[id]
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:26)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:43.250Z] Context: GET /api/cases/[id]
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:159
+
+  627 }
+  628 const { id } = await params;
+  629 // Pobierz sprawę z wszystkimi powiązanymi danymi
+→ 630 const caseData = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findUnique({
+        where: {
+          id: "475366a8-887a-4bfc-8182-9bc5954720da"
+        },
+        include: {
+          category: true,
+          voivodeship: true,
+          city: true,
+          ~~~~
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true,
+                  name: true
+                }
+              }
+            }
+          },
+          offers: {
+            include: {
+              lawFirm: {
+                select: {
+                  id: true,
+                  nazwa: true,
+                  nazwaFirmy: true,
+                  logo: true,
+                  miasto: true,
+                  voivodeship: true,
+                  emailKontakt: true,
+                  numerTelefonu: true,
+                  numerTelefonu2: true,
+                  adres: true,
+                  kodPocztowy: true,
+                  stronaWww: true,
+                  imieKontakt: true,
+                  nazwiskoKontakt: true,
+                  stanowisko: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          },
+          messages: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              },
+              receiver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: "desc"
+            }
+          }
+        }
+      })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__27c63d2a._.js:630:26)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_e28cd9df._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================
+[2026-05-22T22:45:50.595Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:160
+
+  2194         status: 404
+  2195     });
+  2196 }
+→ 2197 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "430fc7e3-d0a4-4616-a40d-2a07b64057f8"
+         },
+         include: {
+           category: true,
+           voivodeship: true,
+           city: true,
+           ~~~~
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `city` for include statement on model `Case`. Available options are marked with ?.
+    at Nn (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at ei.handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6911)
+    at ei.handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6593)
+    at ei.request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:121:6300)
+    at async a (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/library.js:130:9551)
+    at async GET (/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__e5a84898._.js:2197:27)
+    at async AppRouteRouteModule.do (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:37913)
+    at async AppRouteRouteModule.handle (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:23:45132)
+    at async responseGenerator (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16089:38)
+    at async AppRouteRouteModule.handleResponse (/home/krystian/Projects/ps-map/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:19:132654)
+    at async handleResponse (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16151:32)
+    at async handler (/home/krystian/Projects/ps-map/.next/dev/server/chunks/node_modules_next_fb6937a4._.js:16204:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1415:9)
+    at async DevServer.renderPageComponent (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1467:24)
+    at async DevServer.renderToResponseImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1517:32)
+    at async DevServer.pipeImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:1023:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/base-server.js:914:17)
+    at async /home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/krystian/Projects/ps-map/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/dev/next-dev-server.js:369:24)
+    at async invokeRender (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:436:24)
+    at async NextCustomServer.requestHandlerImpl (/home/krystian/Projects/ps-map/node_modules/next/dist/server/lib/router-server.js:484:13)
+    at async Server.<anonymous> (/home/krystian/Projects/ps-map/server.ts:2:1136)
+================================================================================

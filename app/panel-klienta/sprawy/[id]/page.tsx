@@ -55,6 +55,9 @@ interface Case {
   voivodeship: {
     nazwa: string
   }
+  city?: {
+    nazwa: string
+  } | null
   offers: Array<{
     id: string
     kwotaNetto: number
@@ -320,7 +323,9 @@ export default function ClientCaseDetailsPage() {
               <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm font-medium">Lokalizacja</p>
-                <p className="text-sm text-muted-foreground">{caseData.voivodeship.nazwa}</p>
+                <p className="text-sm text-muted-foreground">
+                  {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
+                </p>
               </div>
             </div>
 

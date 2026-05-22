@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import fs from "fs"
+import path from "path"
+
+function logErrorToFile(context: string, error: any) {
+  try {
+    const logDir = path.join(process.cwd(), "logs")
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true })
+    }
+    const logPath = path.join(logDir, "api-cases-errors.log")
+    const timestamp = new Date().toISOString()
+    const errMsg = error instanceof Error ? error.message : String(error)
+    const errStack = error instanceof Error ? error.stack : ""
+    const logEntry = `[${timestamp}] Context: ${context}\nError: ${errMsg}\nStack: ${errStack}\n${"=".repeat(80)}\n`
+    fs.appendFileSync(logPath, logEntry, "utf8")
+  } catch (e) {
+    console.error("Failed to write to log file", e)
+  }
+}
+
 
 export async function GET(
   _request: NextRequest,
@@ -21,6 +41,7 @@ export async function GET(
       include: {
         category: true,
         voivodeship: true,
+        city: true,
         client: {
           include: {
             user: {
@@ -144,8 +165,16 @@ export async function GET(
 
     return NextResponse.json(parsedCase)
   } catch (error) {
+    logErrorToFile("GET /api/cases/[id]", error)
     console.error("Error fetching case:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined 
+      }, 
+      { status: 500 }
+    )
   }
 }
 
@@ -198,8 +227,16 @@ export async function PUT(
 
     return NextResponse.json(updatedCase)
   } catch (error) {
+    logErrorToFile("PUT /api/cases/[id]", error)
     console.error("Error updating case:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined 
+      }, 
+      { status: 500 }
+    )
   }
 }
 
@@ -243,7 +280,15 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Case deleted successfully" })
   } catch (error) {
+    logErrorToFile("DELETE /api/cases/[id]", error)
     console.error("Error deleting case:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined 
+      }, 
+      { status: 500 }
+    )
   }
 }

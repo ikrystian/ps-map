@@ -33,6 +33,9 @@ interface Case {
   voivodeship: {
     nazwa: string
   }
+  city?: {
+    nazwa: string
+  } | null
   offers: Array<{
     id: string
     status: string
@@ -260,7 +263,9 @@ export default function ClientCasesPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
-                    <span>{caseItem.voivodeship.nazwa}</span>
+                    <span>
+                      {caseItem.city ? `${caseItem.city.nazwa}, ${caseItem.voivodeship.nazwa}` : caseItem.voivodeship.nazwa}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />

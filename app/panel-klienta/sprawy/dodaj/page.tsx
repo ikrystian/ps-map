@@ -25,9 +25,8 @@ interface FormData {
 
   // Krok 2: Kategoria
   categoryId: string
-  wybranadziedzinaPrawa: string
-  wybranaSpecyfikacja: string
   voivodeshipId: string
+  cityId: string
 
   // Krok 3: Opis
   nazwaSprawy: string
@@ -58,6 +57,34 @@ export default function ClientAddCasePage() {
 
   const [categories, setCategories] = useState<any[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const [voivodeships, setVoivodeships] = useState<any[]>([])
+  const [isLoadingVoivodeships, setIsLoadingVoivodeships] = useState(true)
+  const [cities, setCities] = useState<any[]>([])
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
+
+  const [formData, setFormData] = useState<FormData>({
+    typSprawy: "",
+    categoryId: "",
+    voivodeshipId: "",
+    cityId: "",
+    nazwaSprawy: "",
+    opisSprawy: "",
+    zalaczniki: [],
+    oczekiwanyTerminRealizacji: "",
+    trybPilny: false,
+    budzetOd: "",
+    budzetDo: "",
+    doNegocjacji: false,
+    imieNazwisko: "",
+    emailKontakt: "",
+    telefonKontakt: "",
+    preferowanyKontakt: "",
+    akceptujeKlauzule: false,
+  })
+
+  const updateFormData = (field: keyof FormData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -75,6 +102,48 @@ export default function ClientAddCasePage() {
     }
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    const fetchVoivodeships = async () => {
+      try {
+        const response = await fetch("/api/voivodeships")
+        if (response.ok) {
+          const data = await response.json()
+          setVoivodeships(data)
+        }
+      } catch (error) {
+        console.error("Error fetching voivodeships:", error)
+      } finally {
+        setIsLoadingVoivodeships(false)
+      }
+    }
+    fetchVoivodeships()
+  }, [])
+
+  useEffect(() => {
+    if (!formData.voivodeshipId) {
+      setCities([])
+      return
+    }
+    const selectedVoivodeship = voivodeships.find(v => v.slug === formData.voivodeshipId)
+    if (!selectedVoivodeship) return
+
+    const fetchCities = async () => {
+      setIsLoadingCities(true)
+      try {
+        const response = await fetch(`/api/cities?voivodeshipId=${selectedVoivodeship.id}`)
+        if (response.ok) {
+          const data = await response.json()
+          setCities(data)
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error)
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }
+    fetchCities()
+  }, [formData.voivodeshipId, voivodeships])
 
   const getFilteredCategories = () => {
     const isPrivate = formData.typSprawy === "OSOBA_PRYWATNA"
@@ -96,30 +165,7 @@ export default function ClientAddCasePage() {
     })
   }
 
-  const [formData, setFormData] = useState<FormData>({
-    typSprawy: "",
-    categoryId: "",
-    wybranadziedzinaPrawa: "",
-    wybranaSpecyfikacja: "",
-    voivodeshipId: "",
-    nazwaSprawy: "",
-    opisSprawy: "",
-    zalaczniki: [],
-    oczekiwanyTerminRealizacji: "",
-    trybPilny: false,
-    budzetOd: "",
-    budzetDo: "",
-    doNegocjacji: false,
-    imieNazwisko: "",
-    emailKontakt: "",
-    telefonKontakt: "",
-    preferowanyKontakt: "",
-    akceptujeKlauzule: false,
-  })
 
-  const updateFormData = (field: keyof FormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
 
   // Obsługa uploadu plików
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,7 +261,7 @@ export default function ClientAddCasePage() {
       case 1:
         return !!formData.typSprawy
       case 2:
-        return !!formData.categoryId && !!formData.voivodeshipId
+        return !!formData.categoryId && !!formData.voivodeshipId && !!formData.cityId
       case 3:
         return !!formData.nazwaSprawy && formData.opisSprawy.length >= 50
       case 4:
@@ -348,10 +394,10 @@ export default function ClientAddCasePage() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div>
-        <Label htmlFor="categoryId">Kategoria główna *</Label>
+        <Label htmlFor="categoryId">Kategoria *</Label>
         <Select value={formData.categoryId} onValueChange={(value) => updateFormData("categoryId", value)}>
           <SelectTrigger id="categoryId">
-            <SelectValue placeholder={isLoadingCategories ? "Ładowanie kategorii..." : "Wybierz kategorię / specjalizację"} />
+            <SelectValue placeholder={isLoadingCategories ? "Ładowanie kategorii..." : "Wybierz kategorię"} />
           </SelectTrigger>
           <SelectContent>
             {isLoadingCategories ? (
@@ -361,13 +407,12 @@ export default function ClientAddCasePage() {
             ) : (
               getFilteredCategories().map((parent: any) => (
                 <SelectGroup key={parent.id}>
-                  <SelectLabel className="font-bold text-primary px-2 py-1">{parent.nazwa}</SelectLabel>
-                  <SelectItem value={parent.id} className="pl-6 font-medium">
-                    {parent.nazwa} (Ogólna)
+                  <SelectItem value={parent.id} className="pl-8 font-semibold text-foreground">
+                    {parent.nazwa}
                   </SelectItem>
                   {parent.children?.map((child: any) => (
-                    <SelectItem key={child.id} value={child.id} className="pl-10">
-                      — {child.nazwa}
+                    <SelectItem key={child.id} value={child.id} className="pl-12 text-muted-foreground focus:text-accent-foreground">
+                      {child.nazwa}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -378,48 +423,52 @@ export default function ClientAddCasePage() {
       </div>
 
       <div>
-        <Label htmlFor="wybranadziedzinaPrawa">Dziedzina prawa</Label>
-        <Input
-          id="wybranadziedzinaPrawa"
-          value={formData.wybranadziedzinaPrawa}
-          onChange={(e) => updateFormData("wybranadziedzinaPrawa", e.target.value)}
-          placeholder="np. Umowy, Odszkodowania"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="wybranaSpecyfikacja">Specyfikacja</Label>
-        <Input
-          id="wybranaSpecyfikacja"
-          value={formData.wybranaSpecyfikacja}
-          onChange={(e) => updateFormData("wybranaSpecyfikacja", e.target.value)}
-          placeholder="Dokładne określenie problemu prawnego"
-        />
-      </div>
-
-      <div>
         <Label htmlFor="voivodeshipId">Województwo *</Label>
-        <Select value={formData.voivodeshipId} onValueChange={(value) => updateFormData("voivodeshipId", value)}>
+        <Select
+          value={formData.voivodeshipId}
+          onValueChange={(value) => {
+            setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
+          }}
+        >
           <SelectTrigger id="voivodeshipId">
-            <SelectValue placeholder="Wybierz województwo" />
+            <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="dolnoslaskie">Dolnośląskie</SelectItem>
-            <SelectItem value="kujawsko-pomorskie">Kujawsko-pomorskie</SelectItem>
-            <SelectItem value="lubelskie">Lubelskie</SelectItem>
-            <SelectItem value="lubuskie">Lubuskie</SelectItem>
-            <SelectItem value="lodzkie">Łódzkie</SelectItem>
-            <SelectItem value="malopolskie">Małopolskie</SelectItem>
-            <SelectItem value="mazowieckie">Mazowieckie</SelectItem>
-            <SelectItem value="opolskie">Opolskie</SelectItem>
-            <SelectItem value="podkarpackie">Podkarpackie</SelectItem>
-            <SelectItem value="podlaskie">Podlaskie</SelectItem>
-            <SelectItem value="pomorskie">Pomorskie</SelectItem>
-            <SelectItem value="slaskie">Śląskie</SelectItem>
-            <SelectItem value="swietokrzyskie">Świętokrzyskie</SelectItem>
-            <SelectItem value="warminsko-mazurskie">Warmińsko-mazurskie</SelectItem>
-            <SelectItem value="wielkopolskie">Wielkopolskie</SelectItem>
-            <SelectItem value="zachodniopomorskie">Zachodniopomorskie</SelectItem>
+            {voivodeships.map((voivodeship: any) => (
+              <SelectItem key={voivodeship.id} value={voivodeship.slug}>
+                {voivodeship.nazwa}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="cityId">Miasto *</Label>
+        <Select
+          value={formData.cityId}
+          onValueChange={(value) => updateFormData("cityId", value)}
+          disabled={!formData.voivodeshipId || isLoadingCities}
+        >
+          <SelectTrigger id="cityId">
+            <SelectValue placeholder={
+              !formData.voivodeshipId 
+                ? "Wybierz najpierw województwo" 
+                : isLoadingCities 
+                  ? "Ładowanie miast..." 
+                  : "Wybierz miasto"
+            } />
+          </SelectTrigger>
+          <SelectContent>
+            {cities.length === 0 ? (
+              <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
+            ) : (
+              cities.map((city: any) => (
+                <SelectItem key={city.id} value={city.id}>
+                  {city.nazwa}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
       </div>
