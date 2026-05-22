@@ -342,9 +342,21 @@ export default function LawFirmProfilePage() {
     setSendingContact(true)
 
     try {
-      // Tu możesz wysłać email lub zapisać wiadomość w bazie
-      // Na razie symulujemy wysłanie
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lawFirmId: lawFirm?.id,
+          ...contactForm,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Nie udało się wysłać wiadomości")
+      }
 
       toast.success("Twoja wiadomość została wysłana do kancelarii")
 
@@ -360,7 +372,7 @@ export default function LawFirmProfilePage() {
         politykaPrivacy: false,
       })
     } catch (err) {
-      toast.error("Nie udało się wysłać wiadomości")
+      toast.error(err instanceof Error ? err.message : "Nie udało się wysłać wiadomości")
     } finally {
       setSendingContact(false)
     }
