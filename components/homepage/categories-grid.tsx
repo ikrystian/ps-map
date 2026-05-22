@@ -97,12 +97,25 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <div className="mb-12">
-            <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
-                Popularne sprawy prywatne
+          <div className="mb-16 flex flex-col-reverse lg:flex-row lg:items-stretch lg:justify-between gap-8 lg:gap-12">
+            {/* Left side: Paragraph */}
+            <div className="flex-1 flex items-center lg:pr-8">
+              <p className="text-zinc-400 text-sm sm:text-base md:text-lg leading-relaxed font-sans max-w-xl">
+                Prosta Sprawa to nie tylko portal – to Twój partner w rozwiązywaniu problemów prawnych. Dołącz do grona zadowolonych klientów, którzy z nami wygrywają. Spróbuj, a przekonasz się, jak łatwo i skutecznie możemy rozwiązać <strong className="text-zinc-100 font-semibold">Twoją sprawę!</strong>
+              </p>
+            </div>
+
+            {/* Vertical separator */}
+            <div className="hidden lg:block w-[1px] bg-zinc-800/80 self-stretch my-2" />
+
+            {/* Right side: Label & Title */}
+            <div className="flex-1 flex flex-col justify-center gap-2 lg:pl-8">
+              <span className="text-xs font-semibold tracking-[0.25em] text-[#eab308] uppercase">
+                O NAS
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light text-white leading-tight">
+                Znajdź prawnika, rozwiąż problem: Prosta Sprawa
               </h2>
-              <div className="flex-grow border-t border-zinc-800/80" />
             </div>
           </div>
 
