@@ -402,11 +402,11 @@ export async function POST(request: NextRequest) {
           }
         }
       })
-      
+
       if (caseWithClient?.client?.user?.email) {
         const formattedKwota = `${offer.kwotaBrutto.toFixed(2)} PLN`
         const formattedTermin = `${offer.terminRealizacjiDni} dni`
-        
+
         await sendEmailWithTemplate({
           to: caseWithClient.client.user.email,
           templateType: EmailType.NOWA_OFERTA,

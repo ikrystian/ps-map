@@ -38,7 +38,7 @@ async function getLimits(userId: string) {
     const plan = await prisma.subscriptionPlan.findUnique({
       where: { typ: lawFirm.pakietSubskrypcji }
     })
-    
+
     if (plan) {
       maxVoivodeships = plan.wojewodztwa
       maxCities = plan.miasta
@@ -117,11 +117,11 @@ export async function PUT(request: Request) {
     // Validate limits
     if (!callaPolska) {
       const limits = await getLimits(session.user.id)
-      
+
       if (voivodeshipsIds && voivodeshipsIds.length > limits.maxVoivodeships) {
         return NextResponse.json({ error: `Przekroczono limit województw (${limits.maxVoivodeships})` }, { status: 400 })
       }
-      
+
       if (citiesIds && citiesIds.length > limits.maxCities) {
         return NextResponse.json({ error: `Przekroczono limit miast (${limits.maxCities})` }, { status: 400 })
       }
@@ -141,7 +141,7 @@ export async function PUT(request: Request) {
       await prisma.lawFirmVoivodeship.deleteMany({
         where: { lawFirmId: lawFirm.id }
       })
-      
+
       if (voivodeshipsIds.length > 0) {
         await prisma.lawFirmVoivodeship.createMany({
           data: voivodeshipsIds.map((id: string) => ({
@@ -157,7 +157,7 @@ export async function PUT(request: Request) {
       await prisma.lawFirmCity.deleteMany({
         where: { lawFirmId: lawFirm.id }
       })
-      
+
       if (citiesIds.length > 0) {
         await prisma.lawFirmCity.createMany({
           data: citiesIds.map((id: string) => ({

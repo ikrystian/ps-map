@@ -79,15 +79,15 @@ export async function GET(request: NextRequest) {
       // W przeciwnym razie tylko NOWA i OFERTY_OTRZYMANE
       const whereCondition: any = includeAll
         ? {
-            status: {
-              notIn: ["ANULOWANA"], // Ukryj tylko anulowane
-            },
-          }
+          status: {
+            notIn: ["ANULOWANA"], // Ukryj tylko anulowane
+          },
+        }
         : {
-            status: {
-              in: ["NOWA", "OFERTY_OTRZYMANE"],
-            },
-          }
+          status: {
+            in: ["NOWA", "OFERTY_OTRZYMANE"],
+          },
+        }
 
       // Pobierz wszystkie sprawy zgodnie z warunkiem
       const allCases = await prisma.case.findMany({
@@ -157,11 +157,11 @@ export async function GET(request: NextRequest) {
     logErrorToFile("GET /api/cases", error)
     console.error("Error fetching cases:", error)
     return NextResponse.json(
-      { 
-        error: "Internal server error", 
+      {
+        error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined 
-      }, 
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }
@@ -443,8 +443,8 @@ export async function POST(request: NextRequest) {
     logErrorToFile("POST /api/cases", error)
     console.error("Error creating case:", error)
     return NextResponse.json(
-      { 
-        error: "Internal server error", 
+      {
+        error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : undefined
       },
