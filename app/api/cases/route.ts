@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { sendSystemNotification } from "@/lib/notifications"
+import { sendEmailWithTemplate } from "@/lib/email"
+import { EmailType } from "@prisma/client"
 
 export async function GET(request: NextRequest) {
   try {
@@ -267,9 +269,48 @@ export async function POST(request: NextRequest) {
           some: { categoryId: category.id },
         },
       },
-      select: { userId: true },
+      select: {
+        userId: true,
+        nazwa: true,
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
       take: 50, // Limit aby nie tworzyć zbyt wielu powiadomień
     })
+
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    let budzetText = "Do negocjacji"
+    if (newCase.budzetOd || newCase.budzetDo) {
+      if (newCase.budzetOd && newCase.budzetDo) {
+        budzetText = `${newCase.budzetOd} - ${newCase.budzetDo} PLN`
+      } else if (newCase.budzetOd) {
+        budzetText = `od ${newCase.budzetOd} PLN`
+      } else if (newCase.budzetDo) {
+        budzetText = `do ${newCase.budzetDo} PLN`
+      }
+    } else if (newCase.doNegocjacji) {
+      budzetText = "Do negocjacji"
+    }
+
+    // 1. Wyślij email potwierdzający do klienta
+    try {
+      await sendEmailWithTemplate({
+        to: newCase.emailKontakt || session.user.email!,
+        templateType: EmailType.POTWIERDZENIE_DODANIA_SPRAWY,
+        variables: {
+          "{klient}": `${client.imie} ${client.nazwisko}`,
+          "{nazwaSprawy}": newCase.nazwaSprawy,
+          "{kategoria}": category.nazwa,
+          "{budzet}": budzetText,
+          "{linkDoSprawy}": `${baseUrl}/panel-klienta/sprawy/${newCase.id}`,
+        }
+      })
+    } catch (emailError) {
+      console.error("Failed to send case confirmation email to client:", emailError)
+    }
 
     // Utwórz powiadomienia dla kancelarii
     if (lawFirms.length > 0) {
@@ -281,6 +322,26 @@ export async function POST(request: NextRequest) {
           tresc: `Nowa sprawa: ${body.nazwaSprawy}. Sprawdź szczegóły i złóż ofertę.`,
           linkUrl: "/panel-eksperta/sprawy",
         })
+
+        // Wyślij e-mail powiadomienie do kancelarii
+        if (lf.user?.email) {
+          try {
+            await sendEmailWithTemplate({
+              to: lf.user.email,
+              templateType: EmailType.NOWA_SPRAWA,
+              variables: {
+                "{kancelaria}": lf.nazwa,
+                "{nazwaSprawi}": newCase.nazwaSprawy,
+                "{kategoria}": category.nazwa,
+                "{klient}": `${client.imie} ${client.nazwisko}`,
+                "{budżet}": budzetText,
+                "{linkDoPanelu}": `${baseUrl}/panel-eksperta/sprawy`,
+              }
+            })
+          } catch (emailError) {
+            console.error(`Failed to send case email to law firm ${lf.nazwa}:`, emailError)
+          }
+        }
       }
 
       // Emit notifications to law firms via Socket.IO

@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { sendEmailWithTemplate } from "@/lib/email"
+import { EmailType } from "@prisma/client"
 
 export async function GET(request: NextRequest) {
   try {
@@ -382,6 +384,45 @@ export async function POST(request: NextRequest) {
 
       return newOffer
     })
+
+    // Wyślij e-mail powiadomienie do klienta o nowej ofercie
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    try {
+      const caseWithClient = await prisma.case.findUnique({
+        where: { id: caseId },
+        include: {
+          client: {
+            include: {
+              user: {
+                select: {
+                  email: true
+                }
+              }
+            }
+          }
+        }
+      })
+      
+      if (caseWithClient?.client?.user?.email) {
+        const formattedKwota = `${offer.kwotaBrutto.toFixed(2)} PLN`
+        const formattedTermin = `${offer.terminRealizacjiDni} dni`
+        
+        await sendEmailWithTemplate({
+          to: caseWithClient.client.user.email,
+          templateType: EmailType.NOWA_OFERTA,
+          variables: {
+            "{klient}": caseWithClient.client.imie,
+            "{kancelaria}": lawFirm.nazwa,
+            "{nazwaSprawi}": caseWithClient.nazwaSprawy,
+            "{kwota}": formattedKwota,
+            "{termin}": formattedTermin,
+            "{linkDoPanelu}": `${baseUrl}/panel-klienta/oferty/${offer.id}`,
+          }
+        })
+      }
+    } catch (emailError) {
+      console.error("Failed to send new offer email to client:", emailError)
+    }
 
     return Response.json(offer, { status: 201 })
   } catch (error) {

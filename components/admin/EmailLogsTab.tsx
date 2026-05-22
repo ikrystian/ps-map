@@ -355,9 +355,12 @@ export default function EmailLogsTab() {
                 </TabsList>
 
                 <TabsContent value="preview" className="mt-4">
-                  <div className="p-4 border rounded-lg bg-white overflow-auto max-h-[400px]">
+                  <div className="p-4 border border-border rounded-lg bg-background overflow-auto max-h-[400px] shadow-inner">
                     {selectedLog.html ? (
-                      <div dangerouslySetInnerHTML={{ __html: selectedLog.html }} />
+                      <div
+                        dangerouslySetInnerHTML={{ __html: selectedLog.html }}
+                        className="prose max-w-none text-foreground dark:prose-invert [&_h2]:!text-foreground [&_h3]:!text-foreground [&_p]:!text-foreground [&_li]:!text-foreground [&_strong]:!text-foreground [&_span]:!text-foreground [&_div]:!bg-muted/30 [&_div]:!border-border/50 [&_ul]:!bg-transparent [&_a]:!text-indigo-500 [&_table]:!bg-transparent [&_td]:!bg-transparent [&_tr]:!bg-transparent [&_th]:!bg-transparent [&_td]:!text-foreground [&_th]:!text-foreground [&_*]:border-border"
+                      />
                     ) : (
                       <pre className="whitespace-pre-wrap font-sans text-sm">
                         {selectedLog.content}

@@ -1845,6 +1845,9 @@ enum EmailType {
   SUBSKRYPCJA_WYGASA       // Email o wygasającej subskrypcji
   NISKI_STAN_PUNKTOW       // Email o niskim stanie punktów
   CUSTOM                   // Własny szablon
+  POTWIERDZENIE_DODANIA_SPRAWY // Potwierdzenie dodania sprawy dla klienta
+  SUBSKRYPCJA_KONIEC       // Email o wygaśnięciu subskrypcji
+  PROSBA_O_OCENE           // E-mail z prośbą o ocenę prawnika
 }
 
 // ============================================================================
@@ -1978,3 +1981,34 @@ enum BadgeConditionType {
   OFFERS_SUBMITTED
   PROFILE_VIEWS
 }
+
+// ============================================================================
+// ZAPLANOWANE EMAILE (SCHEDULED EMAILS)
+// ============================================================================
+
+model ScheduledEmail {
+  id              String               @id @default(uuid())
+  to              String
+  subject         String
+  content         String?              // Treść tekstowa
+  html            String?              // Treść HTML
+  templateType    EmailType?           // Typ szablonu (opcjonalnie)
+  variables       String?              // Zmienne używane w szablonie jako JSON string
+  scheduledAt     DateTime             // Kiedy e-mail ma zostać wysłany
+  sentAt          DateTime?            // Kiedy faktycznie został wysłany
+  status          ScheduledEmailStatus @default(PENDING)
+  errorMessage    String?              // Komunikat o błędzie (jeśli wysyłka nie powiodła się)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+enum ScheduledEmailStatus {
+  PENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+

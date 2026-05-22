@@ -6,7 +6,16 @@ import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 export function ExpertCTA() {
   return (
-    <section className="relative overflow-hidden w-full bg-black py-20 md:py-28">
+    <section
+      className="relative overflow-hidden w-full bg-black py-6 md:py-12"
+      id="expert-cta"
+      style={{
+        backgroundImage: "url('/images/meet-expert.png')",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right center",
+        backgroundSize: "cover",
+      }}
+    >
       <div className="container mx-auto px-6 md:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Text Content and Button */}

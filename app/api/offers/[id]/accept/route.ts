@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
+import { sendEmailWithTemplate } from "@/lib/email"
+import { EmailType, ScheduledEmailStatus } from "@prisma/client"
 
 export async function POST(
   request: NextRequest,
@@ -52,7 +54,13 @@ export async function POST(
           select: {
             id: true,
             nazwa: true,
-            userId: true
+            userId: true,
+            slug: true,
+            user: {
+              select: {
+                email: true
+              }
+            }
           }
         }
       }
@@ -254,6 +262,60 @@ export async function POST(
       updatedOffer.lawFirmUserId,
       updatedOffer.notification
     )
+
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+
+    // 1. Wyślij e-mail o akceptacji do kancelarii
+    if (offer.lawFirm?.user?.email) {
+      try {
+        await sendEmailWithTemplate({
+          to: offer.lawFirm.user.email,
+          templateType: EmailType.AKCEPTACJA_OFERTY,
+          variables: {
+            "{kancelaria}": offer.lawFirm.nazwa,
+            "{klient}": `${client.imie} ${client.nazwisko}`,
+            "{nazwaSprawi}": offer.case.nazwaSprawy,
+            "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
+            "{emailKlienta}": session.user.email || "Brak",
+            "{telefonKlienta}": client.telefon || "Nie podano",
+            "{linkDoPanelu}": `${baseUrl}/panel-eksperta/oferty`,
+          }
+        })
+      } catch (emailError) {
+        console.error("Failed to send accept email to law firm:", emailError)
+      }
+    }
+
+    // 2. Zaplanuj e-mail z prośbą o ocenę do klienta (za 3 dni)
+    try {
+      const scheduledAt = new Date()
+      scheduledAt.setDate(scheduledAt.getDate() + 3) // Za 3 dni
+
+      const clientEmail = session.user.email || "Brak"
+      const linkDoOceny = `${baseUrl}/ekspert/${offer.lawFirm.slug}#reviews`
+
+      // Przygotuj zmienne jako JSON string do zapisania w bazie danych
+      const variablesObj = {
+        "{klient}": client.imie,
+        "{kancelaria}": offer.lawFirm.nazwa,
+        "{linkDoOceny}": linkDoOceny,
+      }
+
+      await prisma.scheduledEmail.create({
+        data: {
+          to: clientEmail,
+          subject: `Jak oceniasz współpracę z kancelarią ${offer.lawFirm.nazwa}?`,
+          templateType: EmailType.PROSBA_O_OCENE,
+          variables: JSON.stringify(variablesObj),
+          scheduledAt,
+          status: ScheduledEmailStatus.PENDING,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      })
+    } catch (schedError) {
+      console.error("Failed to schedule review request email:", schedError)
+    }
 
     return Response.json(updatedOffer.updated)
   } catch (error) {

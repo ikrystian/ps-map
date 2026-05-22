@@ -146,6 +146,23 @@ export async function POST(request: NextRequest) {
           zgodaMarketing: userData.client.zgodaMarketing || false,
         },
       })
+
+      // Wyślij e-mail powitalny dla klienta
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+      try {
+        await sendEmailWithTemplate({
+          to: user.email,
+          templateType: EmailType.REJESTRACJA_KLIENT,
+          variables: {
+            "{imie}": userData.client.imie,
+            "{nazwisko}": userData.client.nazwisko,
+            "{email}": user.email,
+            "{linkDodajSprawa}": `${baseUrl}/dodaj-sprawe`,
+          }
+        })
+      } catch (emailError) {
+        console.error('Failed to send client welcome email:', emailError)
+      }
     }
 
     // Jeśli LAW_FIRM, utwórz profil kancelarii
@@ -196,6 +213,23 @@ export async function POST(request: NextRequest) {
           zgodaPrzetwarzanie: userData.lawFirm.zgodaPrzetwarzanie || false,
         },
       })
+
+      // Wyślij e-mail powitalny dla kancelarii
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+      try {
+        await sendEmailWithTemplate({
+          to: user.email,
+          templateType: EmailType.REJESTRACJA_KANCELARIA,
+          variables: {
+            "{nazwa}": userData.lawFirm.nazwa,
+            "{email}": user.email,
+            "{nip}": nip,
+            "{linkDoPanelu}": `${baseUrl}/panel-eksperta`,
+          }
+        })
+      } catch (emailError) {
+        console.error('Failed to send law firm welcome email:', emailError)
+      }
     }
 
     return NextResponse.json(

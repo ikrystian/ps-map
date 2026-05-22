@@ -632,6 +632,133 @@ Zespół Prosta Sprawa`,
       },
       triggery: ['points_low'],
     },
+    {
+      typ: EmailType.POTWIERDZENIE_DODANIA_SPRAWY,
+      nazwa: 'Potwierdzenie dodania sprawy - dla klienta',
+      temat: 'Twoja sprawa została pomyślnie dodana: {nazwaSprawy}',
+      tresc: `Witaj {klient},
+
+Twoja sprawa "{nazwaSprawy}" została pomyślnie dodana do serwisu Prosta Sprawa!
+
+Szczegóły sprawy:
+- Tytuł: {nazwaSprawy}
+- Kategoria: {kategoria}
+- Budżet: {budzet}
+
+Nasi zweryfikowani prawnicy zostali powiadomieni i wkrótce mogą zacząć składać oferty pomocy. O każdej nowej ofercie poinformujemy Cię e-mailem.
+
+Status swojej sprawy możesz śledzić w panelu klienta.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+      trescHtml: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h2 style="color: #2563eb;">Witaj {klient},</h2>
+  <p>Twoja sprawa "<strong>{nazwaSprawy}</strong>" została pomyślnie dodana do serwisu Prosta Sprawa!</p>
+
+  <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin-top: 0; color: #1f2937;">Szczegóły Twojej sprawy:</h3>
+    <ul style="list-style: none; padding: 0;">
+      <li><strong>Tytuł:</strong> {nazwaSprawy}</li>
+      <li><strong>Kategoria:</strong> {kategoria}</li>
+      <li><strong>Budżet:</strong> {budzet}</li>
+    </ul>
+  </div>
+
+  <p>Nasi zweryfikowani prawnicy zostali powiadomieni i wkrótce mogą zacząć składać oferty pomocy. O każdej nowej ofercie poinformujemy Cię e-mailem.</p>
+
+  <a href="{linkDoSprawy}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Przejdź do swojej sprawy</a>
+
+  <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">Pozdrawiamy,<br>Zespół Prosta Sprawa</p>
+</div>`,
+      zmienne: ['{klient}', '{nazwaSprawy}', '{kategoria}', '{budzet}', '{linkDoSprawy}'],
+      opisZmiennych: {
+        '{klient}': 'Imię i nazwisko klienta',
+        '{nazwaSprawy}': 'Tytuł sprawy',
+        '{kategoria}': 'Kategoria prawna',
+        '{budzet}': 'Budżet sprawy',
+        '{linkDoSprawy}': 'Link do szczegółów sprawy w panelu klienta',
+      },
+      triggery: ['case_created_client_notification'],
+    },
+    {
+      typ: EmailType.SUBSKRYPCJA_KONIEC,
+      nazwa: 'Koniec pakietu subskrypcji - dla kancelarii',
+      temat: 'Twój pakiet subskrypcyjny {nazwaSubskrypcji} wygasł',
+      tresc: `Witaj {kancelaria},
+
+Informujemy, że Twój pakiet subskrypcyjny {nazwaSubskrypcji} w serwisie Prosta Sprawa wygasł z dniem {dataWygasniecia}.
+
+Z tego powodu dostęp do zaawansowanych funkcji Twojego konta został ograniczony. Nie możesz teraz składać nowych ofert ani promować swojego profilu.
+
+Aby przywrócić pełną funkcjonalność konta i dalej pozyskiwać klientów, wybierz i opłać jeden z dostępnych pakietów subskrypcji.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+      trescHtml: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h2 style="color: #ef4444;">⚠️ Twój pakiet subskrypcyjny wygasł</h2>
+
+  <p>Witaj {kancelaria},</p>
+
+  <p>Informujemy, że Twój pakiet subskrypcyjny <strong>{nazwaSubskrypcji}</strong> w serwisie Prosta Sprawa wygasł z dniem <strong>{dataWygasniecia}</strong>.</p>
+
+  <div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
+    <p style="margin: 0; color: #991b1b;"><strong>Dostęp do zaawansowanych funkcji Twojego konta został ograniczony.</strong> Nie możesz teraz składać nowych ofert ani promować swojego profilu.</p>
+  </div>
+
+  <p>Aby przywrócić pełną funkcjonalność konta i dalej pozyskiwać klientów, wybierz i opłać jeden z dostępnych pakietów subskrypcji.</p>
+
+  <a href="{linkDoPakietow}" style="display: inline-block; background-color: #ef4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Przejdź do pakietów subskrypcji</a>
+
+  <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">Pozdrawiamy,<br>Zespół Prosta Sprawa</p>
+</div>`,
+      zmienne: ['{kancelaria}', '{nazwaSubskrypcji}', '{dataWygasniecia}', '{linkDoPakietow}'],
+      opisZmiennych: {
+        '{kancelaria}': 'Nazwa kancelarii',
+        '{nazwaSubskrypcji}': 'Nazwa pakietu subskrypcyjnego',
+        '{dataWygasniecia}': 'Data wygaśnięcia subskrypcji',
+        '{linkDoPakietow}': 'Link do wyboru pakietów w panelu',
+      },
+      triggery: ['subscription_ended'],
+    },
+    {
+      typ: EmailType.PROSBA_O_OCENE,
+      nazwa: 'Prośba o ocenę prawnika - dla klienta',
+      temat: 'Jak oceniasz współpracę z kancelarią {kancelaria}?',
+      tresc: `Witaj {klient},
+
+Minęły 3 dni od momentu, w którym zaakceptowałeś ofertę kancelarii {kancelaria}. Chcielibyśmy zapytać, jak oceniasz dotychczasową współpracę oraz przebieg kontaktu?
+
+Twoja opinia jest dla nas niezwykle ważna. Pomaga innym użytkownikom wybrać odpowiednią pomoc prawną oraz motywuje kancelarie do świadczenia usług na najwyższym poziomie.
+
+Kliknij w poniższy link, aby wystawić ocenę i napisać krótką opinię:
+{linkDoOceny}
+
+Dziękujemy za zaufanie i korzystanie z serwisu Prosta Sprawa.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+      trescHtml: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h2 style="color: #2563eb;">Witaj {klient},</h2>
+  <p>Minęły 3 dni od momentu, w którym zaakceptowałeś ofertę kancelarii <strong>{kancelaria}</strong>. Chcielibyśmy zapytać, jak oceniasz dotychczasową współpracę oraz przebieg kontaktu?</p>
+
+  <p>Twoja opinia jest dla nas niezwykle ważna. Pomaga innym użytkownikom wybrać odpowiednią pomoc prawną oraz motywuje kancelarie do świadczenia usług na najwyższym poziomie.</p>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="{linkDoOceny}" style="display: inline-block; background-color: #f59e0b; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">⭐ Oceń współpracę</a>
+  </div>
+
+  <p>Dziękujemy za zaufanie i korzystanie z serwisu Prosta Sprawa.</p>
+
+  <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">Pozdrawiamy,<br>Zespół Prosta Sprawa</p>
+</div>`,
+      zmienne: ['{klient}', '{kancelaria}', '{linkDoOceny}'],
+      opisZmiennych: {
+        '{klient}': 'Imię klienta',
+        '{kancelaria}': 'Nazwa kancelarii',
+        '{linkDoOceny}': 'Link do wystawienia oceny na profilu kancelarii',
+      },
+      triggery: ['request_for_review_delayed'],
+    },
   ]
 
   for (const template of templates) {

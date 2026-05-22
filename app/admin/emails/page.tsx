@@ -68,20 +68,34 @@ const emailTypes = [
   { value: "PLATNOSC_POTWIERDZONA", label: "Płatność potwierdzona" },
   { value: "SUBSKRYPCJA_WYGASA", label: "Subskrypcja wygasa" },
   { value: "NISKI_STAN_PUNKTOW", label: "Niski stan punktów" },
+  { value: "POTWIERDZENIE_DODANIA_SPRAWY", label: "Potwierdzenie dodania sprawy (klient)" },
+  { value: "SUBSKRYPCJA_KONIEC", label: "Koniec subskrypcji" },
+  { value: "PROSBA_O_OCENE", label: "Prośba o ocenę po 3 dniach" },
   { value: "CUSTOM", label: "Własny szablon" },
 ]
 
 const availableVariables: Record<string, string[]> = {
-  NOWA_SPRAWA: ["{nazwaSprawi}", "{kategoria}", "{klient}", "{budżet}"],
-  NOWA_OFERTA: ["{kancelaria}", "{kwota}", "{nazwaSprawi}"],
-  AKCEPTACJA_OFERTY: ["{kancelaria}", "{klient}", "{nazwaSprawi}", "{kwota}"],
-  ODRZUCENIE_OFERTY: ["{kancelaria}", "{klient}", "{nazwaSprawi}"],
-  REJESTRACJA_KLIENT: ["{imie}", "{nazwisko}", "{email}"],
-  REJESTRACJA_KANCELARIA: ["{nazwa}", "{email}", "{nip}"],
+  NOWA_SPRAWA: ["{kancelaria}", "{nazwaSprawi}", "{kategoria}", "{klient}", "{budżet}", "{linkDoPanelu}"],
+  NOWA_OFERTA: ["{klient}", "{kancelaria}", "{nazwaSprawi}", "{kwota}", "{termin}", "{linkDoPanelu}"],
+  AKCEPTACJA_OFERTY: ["{kancelaria}", "{klient}", "{nazwaSprawi}", "{kwota}", "{emailKlienta}", "{telefonKlienta}", "{linkDoPanelu}"],
+  ODRZUCENIE_OFERTY: ["{kancelaria}", "{klient}", "{nazwaSprawi}", "{linkDoSpraw}"],
+  NOWA_WIADOMOSC: ["{odbiorca}", "{nadawca}", "{fragmentWiadomosci}", "{linkDoWiadomosci}"],
+  NOWA_OPINIA: ["{kancelaria}", "{klient}", "{ocena}", "{komentarz}", "{linkDoProfilu}"],
+  REJESTRACJA_KLIENT: ["{imie}", "{nazwisko}", "{email}", "{linkDodajSprawa}"],
+  REJESTRACJA_KANCELARIA: ["{nazwa}", "{email}", "{nip}", "{linkDoPanelu}"],
+  RESET_HASLA: ["{email}", "{linkResetHasla}"],
+  POTWIERDZENIE_EMAIL: ["{imie}", "{email}", "{linkPotwierdzenia}", "{kod}"],
+  PLATNOSC_POTWIERDZONA: ["{kancelaria}", "{numerZamowienia}", "{produkt}", "{kwota}", "{data}", "{szczegoly}", "{linkDoFaktury}"],
+  SUBSKRYPCJA_WYGASA: ["{kancelaria}", "{nazwaSubskrypcji}", "{dniDoWygasniecia}", "{dataWygasniecia}", "{listaFunkcji}", "{linkDoPakietow}"],
+  NISKI_STAN_PUNKTOW: ["{kancelaria}", "{aktualnyStanPunktow}", "{linkDoSklepu}"],
+  POTWIERDZENIE_DODANIA_SPRAWY: ["{klient}", "{nazwaSprawy}", "{kategoria}", "{budzet}", "{linkDoSprawy}"],
+  SUBSKRYPCJA_KONIEC: ["{kancelaria}", "{nazwaSubskrypcji}", "{dataWygasniecia}", "{linkDoPakietow}"],
+  PROSBA_O_OCENE: ["{klient}", "{kancelaria}", "{linkDoOceny}"],
   CUSTOM: [],
 }
 
 import EmailLogsTab from "@/components/admin/EmailLogsTab"
+import ScheduledEmailsTab from "@/components/admin/ScheduledEmailsTab"
 
 export default function EmailManagementPage() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
@@ -318,6 +332,7 @@ export default function EmailManagementPage() {
         <TabsList className="mb-4">
           <TabsTrigger value="templates">Szablony</TabsTrigger>
           <TabsTrigger value="logs">Logi maili</TabsTrigger>
+          <TabsTrigger value="scheduled">Zaplanowane</TabsTrigger>
         </TabsList>
 
         <TabsContent value="templates" className="space-y-6">
@@ -438,6 +453,10 @@ export default function EmailManagementPage() {
 
         <TabsContent value="logs">
           <EmailLogsTab />
+        </TabsContent>
+
+        <TabsContent value="scheduled">
+          <ScheduledEmailsTab />
         </TabsContent>
       </Tabs>
 
@@ -613,9 +632,10 @@ export default function EmailManagementPage() {
                 </TabsContent>
 
                 <TabsContent value="html">
-                  <div className="p-4 border rounded-lg bg-white">
+                  <div className="p-4 border border-border rounded-lg bg-background overflow-auto max-h-[400px] shadow-inner">
                     <div
                       dangerouslySetInnerHTML={{ __html: selectedTemplate.trescHtml }}
+                      className="prose max-w-none text-foreground dark:prose-invert [&_h2]:!text-foreground [&_h3]:!text-foreground [&_p]:!text-foreground [&_li]:!text-foreground [&_strong]:!text-foreground [&_span]:!text-foreground [&_div]:!bg-muted/30 [&_div]:!border-border/50 [&_ul]:!bg-transparent [&_a]:!text-indigo-500 [&_table]:!bg-transparent [&_td]:!bg-transparent [&_tr]:!bg-transparent [&_th]:!bg-transparent [&_td]:!text-foreground [&_th]:!text-foreground [&_*]:border-border"
                     />
                   </div>
                 </TabsContent>
