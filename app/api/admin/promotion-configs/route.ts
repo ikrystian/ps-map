@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       description,
       pointsPerDay,
       pointsPerWeek,
+      pointsPerMonth,
       features,
       icon,
       color,
@@ -74,9 +75,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!pointsPerDay && !pointsPerWeek) {
+    if (!pointsPerDay && !pointsPerWeek && !pointsPerMonth) {
       return NextResponse.json(
-        { error: "Either pointsPerDay or pointsPerWeek must be provided" },
+        { error: "Either pointsPerDay, pointsPerWeek, or pointsPerMonth must be provided" },
         { status: 400 }
       )
     }
@@ -108,6 +109,7 @@ export async function POST(request: NextRequest) {
         description,
         pointsPerDay: pointsPerDay || null,
         pointsPerWeek: pointsPerWeek || null,
+        pointsPerMonth: pointsPerMonth || null,
         features: JSON.stringify(features),
         icon: icon || null,
         color: color || null,

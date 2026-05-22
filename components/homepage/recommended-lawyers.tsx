@@ -16,6 +16,7 @@ import {
 import type { LawFirm } from "@/types/lawfirms"
 
 interface RecommendedLawyersProps {
+  recommendedData?: Record<string, LawFirm[]>
   lawFirms: LawFirm[]
 }
 
@@ -34,9 +35,16 @@ const PORTRAITS = [
   "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500"  // Joahim Mogba type
 ]
 
-export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
+export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLawyersProps) {
   const [activeIdx, setActiveIdx] = useState(0)
   const sliderRef = useRef<HTMLDivElement>(null)
+
+  const categoriesList = recommendedData ? Object.keys(recommendedData).sort() : CATEGORIES
+
+  // Jeśli przekazano dane promocyjne, a lista jest pusta, to ukrywamy cały blok
+  if (recommendedData && categoriesList.length === 0) {
+    return null
+  }
 
   // Carousel Prev/Next Handlers using ref-based scroll
   const handlePrev = () => {
@@ -70,9 +78,13 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
     }
   }
 
-  // Gets 8 law firms dynamically based on category index.
-  // Cycles the law firms list to ensure a rich scrolling layout.
+  // Gets law firms dynamically based on category index.
   const getCategoryFirms = (catIdx: number) => {
+    const currentCategory = categoriesList[catIdx]
+    if (recommendedData) {
+      return recommendedData[currentCategory] || []
+    }
+
     if (!lawFirms || lawFirms.length === 0) return []
 
     const list: LawFirm[] = []
@@ -107,13 +119,13 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
           <div className="hidden lg:block flex-grow border-t border-zinc-800/80 mx-6" />
 
           {/* Navigation & Selector Container */}
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end overflow-hidden">
             {/* Category tabs scrollable horizontally on mobile */}
             <div
-              className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth custom-scrollbar"
+              style={{ scrollbarWidth: 'thin' }}
             >
-              {CATEGORIES.map((cat, i) => (
+              {categoriesList.map((cat, i) => (
                 <button
                   key={cat}
                   onClick={() => handleCategoryChange(i)}
@@ -210,7 +222,7 @@ export function RecommendedLawyers({ lawFirms }: RecommendedLawyersProps) {
                     <div>
                       {/* Upper Case Category subtitle */}
                       <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
-                        {CATEGORIES[activeIdx]}
+                        {categoriesList[activeIdx]}
                       </span>
                       {/* Lawyer / Firm Name */}
                       <h3 className="text-[19px] font-bold text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">

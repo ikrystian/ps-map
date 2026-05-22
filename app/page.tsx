@@ -27,6 +27,10 @@ export default function HomePage() {
   const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [blogPosts, setBlogPosts] = useState<any[]>([])
+  const [homepagePromotions, setHomepagePromotions] = useState<{
+    recommended: Record<string, LawFirm[]>
+    consulted: Record<string, LawFirm[]>
+  } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -58,6 +62,13 @@ export default function HomePage() {
         if (blogResponse.ok) {
           const blogData = await blogResponse.json()
           setBlogPosts(blogData.posts || [])
+        }
+
+        // Fetch homepage promotions
+        const promotionsResponse = await fetch("/api/homepage-promotions")
+        if (promotionsResponse.ok) {
+          const promotionsData = await promotionsResponse.json()
+          setHomepagePromotions(promotionsData)
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -93,10 +104,10 @@ export default function HomePage() {
       <BusinessCategoriesGrid categories={categories} />
 
       {/* SECTION 5: Recommended Lawyers */}
-      <RecommendedLawyers lawFirms={lawFirms} />
+      <RecommendedLawyers recommendedData={homepagePromotions?.recommended} lawFirms={lawFirms} />
 
       {/* SECTION 6: Most Consulted Categories */}
-      <MostConsultedCategories categories={categories} lawFirms={lawFirms} />
+      <MostConsultedCategories consultedData={homepagePromotions?.consulted} categories={categories} lawFirms={lawFirms} />
 
       {/* SECTION 7: Expert CTA with Background */}
       <ExpertCTA />

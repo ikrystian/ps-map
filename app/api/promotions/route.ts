@@ -105,29 +105,161 @@ export async function POST(request: NextRequest) {
       automatyczneOdnowienie,
     } = body
 
+    const isMonthly = typPromocji === "POLECANI_PRAWNICY" || typPromocji === "NAJCZESCIEJ_KONSULTOWANE"
+
     // Walidacja
-    if (!typPromocji || !czasTrwaniaDni || !startPromocji) {
+    if (!typPromocji || !startPromocji || (!isMonthly && !czasTrwaniaDni)) {
       return Response.json(
         { error: "Brak wymaganych pól" },
         { status: 400 }
       )
     }
 
-    // Sprawdź czy typ promocji jest prawidłowy
-    if (!Object.keys(PROMOTION_COSTS).includes(typPromocji)) {
+    // Sprawdź czy typ promocji jest prawidłowy i pobierz konfigurację
+    const config = await prisma.promotionConfig.findUnique({
+      where: { type: typPromocji as PromotionType },
+    })
+
+    if (!config || !config.aktywna) {
       return Response.json(
-        { error: "Nieprawidłowy typ promocji" },
+        { error: "Nieprawidłowy lub nieaktywny typ promocji" },
         { status: 400 }
       )
     }
 
-    // Oblicz koszt
+    // Oblicz koszt i daty
     let kosztPunktow = 0
-    if (typPromocji === "PODBICIE_OGLOSZENIA") {
-      kosztPunktow = PROMOTION_COSTS.PODBICIE_OGLOSZENIA * czasTrwaniaDni
+    let start = new Date(startPromocji)
+    let end = new Date(start)
+    let finalCzasTrwaniaDni = czasTrwaniaDni
+
+    if (isMonthly) {
+      kosztPunktow = config.pointsPerMonth || 0
+
+      // Zawsze zaczynamy od pierwszego dnia wybranego miesiąca
+      const targetYear = start.getFullYear()
+      const targetMonth = start.getMonth()
+
+      start = new Date(targetYear, targetMonth, 1, 0, 0, 0, 0)
+      end = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999)
+      finalCzasTrwaniaDni = new Date(targetYear, targetMonth + 1, 0).getDate()
+
+      // Walidacja obecnego miesiąca: nie wolno kupić na obecny lub przeszły miesiąc
+      const now = new Date()
+      const currentYear = now.getFullYear()
+      const currentMonth = now.getMonth()
+
+      if (targetYear < currentYear || (targetYear === currentYear && targetMonth <= currentMonth)) {
+        return Response.json(
+          { error: "Nie można zakupić promocji na obecny lub przeszły miesiąc" },
+          { status: 400 }
+        )
+      }
+
+      // Sprawdź limit 4 promowań w roku na kancelarię (tylko z tych dwóch typów)
+      const yearStart = new Date(targetYear, 0, 1, 0, 0, 0, 0)
+      const yearEnd = new Date(targetYear, 11, 31, 23, 59, 59, 999)
+      const annualPromotionsCount = await prisma.promotion.count({
+        where: {
+          lawFirmId: lawFirm.id,
+          typPromocji: {
+            in: ["POLECANI_PRAWNICY", "NAJCZESCIEJ_KONSULTOWANE"],
+          },
+          startPromocji: {
+            gte: yearStart,
+            lte: yearEnd,
+          },
+          aktywna: true,
+        },
+      })
+
+      if (annualPromotionsCount >= 4) {
+        return Response.json(
+          { error: "Kancelaria może zakupić maksymalnie 4 promowania w roku kalendarzowym" },
+          { status: 400 }
+        )
+      }
+
+      // Sprawdź limit 1 promowania w miesiącu na kancelarię (tylko z tych dwóch typów)
+      const monthlyPromotionsCount = await prisma.promotion.count({
+        where: {
+          lawFirmId: lawFirm.id,
+          typPromocji: {
+            in: ["POLECANI_PRAWNICY", "NAJCZESCIEJ_KONSULTOWANE"],
+          },
+          startPromocji: {
+            gte: start,
+            lte: end,
+          },
+          aktywna: true,
+        },
+      })
+
+      if (monthlyPromotionsCount >= 1) {
+        return Response.json(
+          { error: "Kancelaria może zakupić maksymalnie 1 promowanie w miesiącu kalendarzowym" },
+          { status: 400 }
+        )
+      }
+
+      // Sprawdź limit miejsc dla wybranej kategorii
+      if (typPromocji === "POLECANI_PRAWNICY") {
+        if (!kategoriaPromocji) {
+          return Response.json(
+            { error: "Kategoria jest wymagana dla tej promocji" },
+            { status: 400 }
+          )
+        }
+        const activeSlotsCount = await prisma.promotion.count({
+          where: {
+            typPromocji: "POLECANI_PRAWNICY",
+            kategoriaPromocji,
+            startPromocji: {
+              gte: start,
+              lte: end,
+            },
+            aktywna: true,
+          },
+        })
+        if (activeSlotsCount >= 4) {
+          return Response.json(
+            { error: `Brak wolnych miejsc w miesiącu dla kategorii ${kategoriaPromocji} (maksymalnie 4)` },
+            { status: 400 }
+          )
+        }
+      } else if (typPromocji === "NAJCZESCIEJ_KONSULTOWANE") {
+        if (!kategoriaPromocji) {
+          return Response.json(
+            { error: "Kategoria jest wymagana dla tej promocji" },
+            { status: 400 }
+          )
+        }
+        const activeSlotsCount = await prisma.promotion.count({
+          where: {
+            typPromocji: "NAJCZESCIEJ_KONSULTOWANE",
+            kategoriaPromocji,
+            startPromocji: {
+              gte: start,
+              lte: end,
+            },
+            aktywna: true,
+          },
+        })
+        if (activeSlotsCount >= 5) {
+          return Response.json(
+            { error: `Brak wolnych miejsc w miesiącu dla kategorii ${kategoriaPromocji} (maksymalnie 5)` },
+            { status: 400 }
+          )
+        }
+      }
     } else {
-      const weeks = Math.ceil(czasTrwaniaDni / 7)
-      kosztPunktow = PROMOTION_COSTS[typPromocji as keyof typeof PROMOTION_COSTS] * weeks
+      if (typPromocji === "PODBICIE_OGLOSZENIA") {
+        kosztPunktow = (config.pointsPerDay || 20) * czasTrwaniaDni
+      } else {
+        const weeks = Math.ceil(czasTrwaniaDni / 7)
+        kosztPunktow = (config.pointsPerWeek || 50) * weeks
+      }
+      end.setDate(end.getDate() + czasTrwaniaDni)
     }
 
     // Sprawdź czy kancelaria ma wystarczająco punktów
@@ -138,18 +270,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Oblicz datę końca
-    const start = new Date(startPromocji)
-    const end = new Date(start)
-    end.setDate(end.getDate() + czasTrwaniaDni)
-
     // Utwórz promocję i odejmij punkty w transakcji
     const [promotion, updatedLawFirm] = await prisma.$transaction([
       prisma.promotion.create({
         data: {
           lawFirmId: lawFirm.id,
           typPromocji: typPromocji as PromotionType,
-          czasTrwaniaDni,
+          czasTrwaniaDni: finalCzasTrwaniaDni,
           kategoriaPromocji,
           wojewodztwoPromocji,
           startPromocji: start,
@@ -175,6 +302,8 @@ export async function POST(request: NextRequest) {
       WYROZNIENIE: 'Wyróżnienie profilu',
       TOP_LISTA: 'Top Lista',
       STRONA_GLOWNA: 'Strona Główna Premium',
+      POLECANI_PRAWNICY: 'Polecani prawnicy i adwokaci',
+      NAJCZESCIEJ_KONSULTOWANE: 'Najczęściej konsultowane kategorie',
     }
 
     const promotionLabel = promotionLabels[typPromocji as keyof typeof promotionLabels]

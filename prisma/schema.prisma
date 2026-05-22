@@ -1112,6 +1112,8 @@ enum PromotionType {
   WYROZNIENIE             // 50 pkt/tydzień
   TOP_LISTA               // 100 pkt/tydzień
   STRONA_GLOWNA           // 200 pkt/tydzień
+  POLECANI_PRAWNICY       // 500 pkt/miesiąc
+  NAJCZESCIEJ_KONSULTOWANE // 600 pkt/miesiąc
 }
 
 // ============================================================================
@@ -1129,6 +1131,7 @@ model PromotionConfig {
   // Koszt
   pointsPerDay      Int?     // Dla promocji rozliczanych dziennie
   pointsPerWeek     Int?     // Dla promocji rozliczanych tygodniowo
+  pointsPerMonth    Int?     // Dla promocji rozliczanych miesięcznie
 
   // Cechy/Features (JSON array stringów)
   features          String   // JSON: ["Feature 1", "Feature 2", ...]

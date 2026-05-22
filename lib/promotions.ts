@@ -5,6 +5,7 @@
  */
 
 import { prisma } from "@/lib/prisma"
+import { PromotionType } from "@prisma/client"
 import {
   sendEmail,
   generatePromotionRenewedEmail,
@@ -15,9 +16,11 @@ import {
 // TYPY
 // ============================================================================
 
+export type PromotionTypeUnion = "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | "POLECANI_PRAWNICY" | "NAJCZESCIEJ_KONSULTOWANE"
+
 export interface ActivePromotion {
   id: string
-  typPromocji: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA"
+  typPromocji: PromotionTypeUnion
   kategoriaPromocji: string | null
   wojewodztwoPromocji: string | null
   startPromocji: Date
@@ -27,7 +30,7 @@ export interface ActivePromotion {
 export interface PromotionBoost {
   hasBoost: boolean
   boostMultiplier: number
-  promotionTypes: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[]
+  promotionTypes: PromotionTypeUnion[]
 }
 
 // ============================================================================
@@ -71,7 +74,7 @@ export async function getActiveLawFirmPromotions(
  */
 export async function hasActivePromotion(
   lawFirmId: string,
-  promotionType: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA"
+  promotionType: PromotionTypeUnion
 ): Promise<boolean> {
   const promotions = await getActiveLawFirmPromotions(lawFirmId)
   return promotions.some((p) => p.typPromocji === promotionType)
@@ -186,18 +189,20 @@ export async function calculatePromotionBoost(
     WYROZNIENIE: 2,
     TOP_LISTA: 3,
     STRONA_GLOWNA: 5,
+    POLECANI_PRAWNICY: 1, // Brak wpływu na pozycjonowanie w standardowej wyszukiwarce
+    NAJCZESCIEJ_KONSULTOWANE: 1,
   }
 
   // Znajdź najwyższy mnożnik
   let maxMultiplier = 1
-  const promotionTypes: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[] = []
+  const promotionTypes: PromotionTypeUnion[] = []
 
   for (const promo of relevantPromotions) {
-    const multiplier = boostMultipliers[promo.typPromocji]
+    const multiplier = boostMultipliers[promo.typPromocji] || 1
     if (multiplier > maxMultiplier) {
       maxMultiplier = multiplier
     }
-    promotionTypes.push(promo.typPromocji as "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")
+    promotionTypes.push(promo.typPromocji as PromotionTypeUnion)
   }
 
   return {
@@ -297,11 +302,11 @@ export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean
  */
 export async function getLawFirmHighlightType(
   lawFirmId: string
-): Promise<"PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | null> {
+): Promise<PromotionTypeUnion | null> {
   const promotions = await getActiveLawFirmPromotions(lawFirmId)
 
   // Priorytet: STRONA_GLOWNA > TOP_LISTA > WYROZNIENIE > PODBICIE_OGLOSZENIA
-  const priority: ("PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA")[] = [
+  const priority: PromotionTypeUnion[] = [
     "STRONA_GLOWNA",
     "TOP_LISTA",
     "WYROZNIENIE",

@@ -40,6 +40,7 @@ interface PromotionConfig {
   description: string
   pointsPerDay: number | null
   pointsPerWeek: number | null
+  pointsPerMonth: number | null
   features: string[]
   icon: string | null
   color: string | null
@@ -54,6 +55,8 @@ const PROMOTION_TYPES = [
   { value: "WYROZNIENIE", label: "Wyróżnienie" },
   { value: "TOP_LISTA", label: "TOP Lista" },
   { value: "STRONA_GLOWNA", label: "Strona główna" },
+  { value: "POLECANI_PRAWNICY", label: "Polecani prawnicy i adwokaci" },
+  { value: "NAJCZESCIEJ_KONSULTOWANE", label: "Najczęściej konsultowane kategorie" },
 ]
 
 export default function AdminPromotionsPage() {
@@ -67,6 +70,7 @@ export default function AdminPromotionsPage() {
     description: "",
     pointsPerDay: "",
     pointsPerWeek: "",
+    pointsPerMonth: "",
     features: [""],
     icon: "",
     color: "#3b82f6",
@@ -103,6 +107,7 @@ export default function AdminPromotionsPage() {
         description: config.description,
         pointsPerDay: config.pointsPerDay?.toString() || "",
         pointsPerWeek: config.pointsPerWeek?.toString() || "",
+        pointsPerMonth: config.pointsPerMonth?.toString() || "",
         features: config.features,
         icon: config.icon || "",
         color: config.color || "#3b82f6",
@@ -117,6 +122,7 @@ export default function AdminPromotionsPage() {
         description: "",
         pointsPerDay: "",
         pointsPerWeek: "",
+        pointsPerMonth: "",
         features: [""],
         icon: "",
         color: "#3b82f6",
@@ -141,8 +147,8 @@ export default function AdminPromotionsPage() {
       return
     }
 
-    if (!formData.pointsPerDay && !formData.pointsPerWeek) {
-      toast.error("Podaj koszt dziennie lub tygodniowo")
+    if (!formData.pointsPerDay && !formData.pointsPerWeek && !formData.pointsPerMonth) {
+      toast.error("Podaj koszt dziennie, tygodniowo lub miesięcznie")
       return
     }
 
@@ -168,6 +174,7 @@ export default function AdminPromotionsPage() {
           description: formData.description,
           pointsPerDay: formData.pointsPerDay ? parseInt(formData.pointsPerDay) : null,
           pointsPerWeek: formData.pointsPerWeek ? parseInt(formData.pointsPerWeek) : null,
+          pointsPerMonth: formData.pointsPerMonth ? parseInt(formData.pointsPerMonth) : null,
           features: filteredFeatures,
           icon: formData.icon || null,
           color: formData.color || null,
@@ -284,7 +291,7 @@ export default function AdminPromotionsPage() {
 
               <div>
                 <p className="text-sm font-medium mb-2">Koszt:</p>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-2">
                   {config.pointsPerDay && (
                     <Badge variant="secondary">
                       {config.pointsPerDay} pkt/dzień
@@ -293,6 +300,11 @@ export default function AdminPromotionsPage() {
                   {config.pointsPerWeek && (
                     <Badge variant="secondary">
                       {config.pointsPerWeek} pkt/tydzień
+                    </Badge>
+                  )}
+                  {config.pointsPerMonth && (
+                    <Badge variant="secondary">
+                      {config.pointsPerMonth} pkt/miesiąc
                     </Badge>
                   )}
                 </div>
@@ -409,7 +421,7 @@ export default function AdminPromotionsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="pointsPerDay">Punkty/dzień</Label>
                 <Input
@@ -431,6 +443,18 @@ export default function AdminPromotionsPage() {
                   value={formData.pointsPerWeek}
                   onChange={(e) => setFormData({ ...formData, pointsPerWeek: e.target.value })}
                   placeholder="100"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="pointsPerMonth">Punkty/miesiąc</Label>
+                <Input
+                  id="pointsPerMonth"
+                  type="number"
+                  min="0"
+                  value={formData.pointsPerMonth}
+                  onChange={(e) => setFormData({ ...formData, pointsPerMonth: e.target.value })}
+                  placeholder="500"
                 />
               </div>
             </div>

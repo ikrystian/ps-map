@@ -17,6 +17,7 @@ import type { LawFirm } from "@/types/lawfirms"
 import type { Category } from "@/types/categories"
 
 interface MostConsultedCategoriesProps {
+  consultedData?: Record<string, LawFirm[]>
   categories: Category[]
   lawFirms: LawFirm[]
 }
@@ -130,22 +131,38 @@ const PORTRAITS = [
   "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500"  // Joahim Mogba type
 ]
 
-export function MostConsultedCategories({ categories, lawFirms }: MostConsultedCategoriesProps) {
+export function MostConsultedCategories({ consultedData, categories, lawFirms }: MostConsultedCategoriesProps) {
   const [activeIdx, setActiveIdx] = useState(0)
 
+  // Filtrujemy zakładki po aktywnych promocjach (jeśli przekazano dane)
+  const activeTabs = consultedData
+    ? CATEGORY_TABS.filter((tab) => consultedData[tab.id] && consultedData[tab.id].length > 0)
+    : CATEGORY_TABS
+
+  // Jeśli brak aktywnych promocji w trybie dynamicznym - ukrywamy blok
+  if (consultedData && activeTabs.length === 0) {
+    return null
+  }
+
   const handlePrev = () => {
-    setActiveIdx((prev) => (prev === 0 ? CATEGORY_TABS.length - 1 : prev - 1))
+    setActiveIdx((prev) => (prev === 0 ? activeTabs.length - 1 : prev - 1))
   }
 
   const handleNext = () => {
-    setActiveIdx((prev) => (prev === CATEGORY_TABS.length - 1 ? 0 : prev + 1))
+    setActiveIdx((prev) => (prev === activeTabs.length - 1 ? 0 : prev + 1))
   }
 
-  // Returns 3 law firms dynamically based on keywords. If not enough exist, falls back to rotating standard firms
+  // Returns law firms dynamically based on keywords/promotions.
   const getCategoryFirms = (catIdx: number) => {
+    if (activeTabs.length === 0) return []
+    const tab = activeTabs[catIdx]
+
+    if (consultedData) {
+      return consultedData[tab.id] || []
+    }
+
     if (!lawFirms || lawFirms.length === 0) return []
 
-    const tab = CATEGORY_TABS[catIdx]
     const filtered = lawFirms.filter((firm) => {
       if (!firm.categories) return false
       return firm.categories.some((cat) =>
@@ -196,15 +213,15 @@ export function MostConsultedCategories({ categories, lawFirms }: MostConsultedC
           <div className="flex-grow border-t border-zinc-800/80" />
         </div>
 
-        {/* 6 Category Tabs Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-          {CATEGORY_TABS.map((tab, idx) => {
+        {/* 6 Category Tabs Grid / Scrollable Row */}
+        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
+          {activeTabs.map((tab, idx) => {
             const isActive = activeIdx === idx
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveIdx(idx)}
-                className={`flex flex-col items-center justify-center p-4 text-center h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md ${isActive
+                className={`flex flex-col items-center justify-center p-4 text-center h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[150px] md:w-auto md:shrink ${isActive
                   ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
                   : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
                   }`}

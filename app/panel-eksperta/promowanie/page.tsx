@@ -103,6 +103,46 @@ const ICON_MAP: Record<string, any> = {
   Crown,
 }
 
+const RECOMMENDED_LAWYERS_CATEGORIES = [
+  "Adwokat", "Radca prawny", "Rzeczoznawca", "Notariusz", "Doradca podatkowy",
+  "Doradca finansowy", "Mediator", "Komornik", "Rzecznik patentowy", "Aplikant",
+  "BHP i PPOŻ", "Doradca prawny"
+]
+
+const MOST_CONSULTED_CATEGORIES = [
+  { id: "alimenty-i-rozwody", name: "Alimenty i rozwody" },
+  { id: "dlugi-windykacja-egzekucje", name: "Długi, windykacja, egzekucje" },
+  { id: "dziedziczenie-spadki-testamenty", name: "Dziedziczenie, spadki, testamenty" },
+  { id: "pozyczki-i-kredyty", name: "Pożyczki i kredyty" },
+  { id: "zatrudnienie-i-umowy", name: "Zatrudnienie i umowy" },
+  { id: "dotacje-unijne", name: "Dotacje unijne" }
+]
+
+const getFutureMonths = () => {
+  const months = []
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() // 0-11
+  
+  const polishMonths = [
+    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
+    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+  ]
+  
+  for (let i = 1; i <= 12; i++) {
+    const targetDate = new Date(currentYear, currentMonth + i, 1)
+    const monthIndex = targetDate.getMonth()
+    const year = targetDate.getFullYear()
+    months.push({
+      value: targetDate.toISOString(),
+      label: `${polishMonths[monthIndex]} ${year}`,
+      year,
+      month: monthIndex
+    })
+  }
+  return months
+}
+
 // Helper to get icon component
 const getIconComponent = (iconName: string | null) => {
   if (!iconName) return TrendingUp
@@ -185,6 +225,53 @@ export default function LawFirmPromotionPage() {
   const [autoRenewal, setAutoRenewal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
+  // Dialog historii zakupów
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false)
+
+  // Sprawdzanie dostępności miejsc dla promocji miesięcznych
+  const [availability, setAvailability] = useState<{
+    totalSlots: number
+    occupiedSlots: number
+    availableSlots: number
+  } | null>(null)
+  const [checkingAvailability, setCheckingAvailability] = useState(false)
+
+  // Effect to fetch availability
+  useEffect(() => {
+    const checkAvailability = async () => {
+      if (
+        (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") &&
+        startDate &&
+        selectedCategory &&
+        selectedCategory !== "all"
+      ) {
+        setCheckingAvailability(true)
+        try {
+          const response = await fetch(
+            `/api/promotions/availability?type=${selectedType}&startPromocji=${encodeURIComponent(
+              startDate
+            )}&kategoriaPromocji=${encodeURIComponent(selectedCategory)}`
+          )
+          if (response.ok) {
+            const data = await response.json()
+            setAvailability(data)
+          } else {
+            setAvailability(null)
+          }
+        } catch (error) {
+          console.error("Failed to check availability:", error)
+          setAvailability(null)
+        } finally {
+          setCheckingAvailability(false)
+        }
+      } else {
+        setAvailability(null)
+      }
+    }
+
+    checkAvailability()
+  }, [selectedType, startDate, selectedCategory])
+
   // Dialog anulowania promocji
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [promotionToCancel, setPromotionToCancel] = useState<Promotion | null>(null)
@@ -246,6 +333,10 @@ export default function LawFirmPromotionPage() {
     const promoType = promotionTypes.find((p) => p.type === selectedType)
     if (!promoType) return 0
 
+    if (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") {
+      return promoType.pointsPerMonth || 0
+    }
+
     if (selectedType === "PODBICIE_OGLOSZENIA") {
       return (promoType.pointsPerDay || 0) * duration
     } else {
@@ -254,9 +345,39 @@ export default function LawFirmPromotionPage() {
     }
   }
 
+  const handleTypeChange = (value: string) => {
+    setSelectedType(value)
+    setStartDate("")
+    setAvailability(null)
+    if (value === "POLECANI_PRAWNICY") {
+      setSelectedCategory("Adwokat")
+    } else if (value === "NAJCZESCIEJ_KONSULTOWANE") {
+      setSelectedCategory("alimenty-i-rozwody")
+    } else {
+      setSelectedCategory("all")
+    }
+  }
+
+  const isFormInvalid = () => {
+    if (!selectedType || !startDate) return true
+    const isMonthly = selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+    if (isMonthly) {
+      if (!selectedCategory || selectedCategory === "all") return true
+      if (availability && availability.availableSlots === 0) return true
+    }
+    if (lawFirm && lawFirm.punktySaldo < calculateCost()) return true
+    return false
+  }
+
   const handleOpenConfirmation = () => {
     if (!selectedType || !startDate) {
       setError("Wypełnij wszystkie wymagane pola")
+      return
+    }
+
+    const isMonthly = selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+    if (isMonthly && (!selectedCategory || selectedCategory === "all")) {
+      setError("Kategoria jest wymagana dla tego typu promocji")
       return
     }
 
@@ -276,6 +397,7 @@ export default function LawFirmPromotionPage() {
     setConfirmDialogOpen(false)
 
     try {
+      const isMonthly = selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
       const response = await fetch("/api/promotions", {
         method: "POST",
         headers: {
@@ -283,11 +405,11 @@ export default function LawFirmPromotionPage() {
         },
         body: JSON.stringify({
           typPromocji: selectedType,
-          czasTrwaniaDni: duration,
+          czasTrwaniaDni: isMonthly ? undefined : duration,
           kategoriaPromocji: selectedCategory && selectedCategory !== "all" ? selectedCategory : null,
-          wojewodztwoPromocji: selectedVoivodeship && selectedVoivodeship !== "all" ? selectedVoivodeship : null,
+          wojewodztwoPromocji: !isMonthly && selectedVoivodeship && selectedVoivodeship !== "all" ? selectedVoivodeship : null,
           startPromocji: new Date(startDate).toISOString(),
-          automatyczneOdnowienie: autoRenewal,
+          automatyczneOdnowienie: isMonthly ? false : autoRenewal,
         }),
       })
 
@@ -320,6 +442,7 @@ export default function LawFirmPromotionPage() {
     setStartDate("")
     setAutoRenewal(false)
     setError(null)
+    setAvailability(null)
   }
 
   const handleOpenDialog = () => {
@@ -476,10 +599,16 @@ export default function LawFirmPromotionPage() {
             Zwiększ widoczność swojego profilu i zdobądź więcej klientów
           </p>
         </div>
-        <Button onClick={handleOpenDialog} size="lg">
-          <Plus className="h-4 w-4 mr-2" />
-          Nowa promocja
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setHistoryDialogOpen(true)} size="lg">
+            <Clock className="h-4 w-4 mr-2" />
+            Historia zakupów
+          </Button>
+          <Button onClick={handleOpenDialog} size="lg">
+            <Plus className="h-4 w-4 mr-2" />
+            Nowa promocja
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -553,13 +682,15 @@ export default function LawFirmPromotionPage() {
                     <div className="space-y-4">
                       <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-bold">
-                          {promo.pointsPerDay
+                          {promo.pointsPerMonth
+                            ? `${promo.pointsPerMonth} pkt`
+                            : promo.pointsPerDay
                             ? `${promo.pointsPerDay} pkt`
                             : `${promo.pointsPerWeek} pkt`}
                         </span>
                         <span className="text-sm text-muted-foreground">
                           /{" "}
-                          {promo.pointsPerDay ? "dzień" : "tydzień"}
+                          {promo.pointsPerMonth ? "miesiąc" : promo.pointsPerDay ? "dzień" : "tydzień"}
                         </span>
                       </div>
 
@@ -820,7 +951,7 @@ export default function LawFirmPromotionPage() {
             {/* Typ promocji */}
             <div>
               <Label htmlFor="promotion-type">Typ promocji *</Label>
-              <Select value={selectedType} onValueChange={setSelectedType}>
+              <Select value={selectedType} onValueChange={handleTypeChange}>
                 <SelectTrigger id="promotion-type" className="mt-2">
                   <SelectValue placeholder="Wybierz typ promocji" />
                 </SelectTrigger>
@@ -828,7 +959,9 @@ export default function LawFirmPromotionPage() {
                   {promotionTypes.map((promo) => (
                     <SelectItem key={promo.type} value={promo.type}>
                       {promo.label} -{" "}
-                      {promo.type === "PODBICIE_OGLOSZENIA"
+                      {promo.pointsPerMonth
+                        ? `${promo.pointsPerMonth} pkt/miesiąc`
+                        : promo.type === "PODBICIE_OGLOSZENIA"
                         ? `${promo.pointsPerDay} pkt/dzień`
                         : `${promo.pointsPerWeek} pkt/tydzień`}
                     </SelectItem>
@@ -838,78 +971,176 @@ export default function LawFirmPromotionPage() {
             </div>
 
             {/* Czas trwania */}
-            <div>
-              <Label htmlFor="duration">Czas trwania (dni) *</Label>
-              <Input
-                id="duration"
-                type="number"
-                min="1"
-                max="90"
-                value={duration}
-                onChange={(e) => setDuration(parseInt(e.target.value) || 1)}
-                className="mt-2"
-              />
-            </div>
+            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
+              <div>
+                <Label>Czas trwania</Label>
+                <div className="mt-2 p-2 bg-secondary/50 rounded-lg text-sm font-medium">
+                  1 miesiąc kalendarzowy (pełny miesiąc)
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Label htmlFor="duration">Czas trwania (dni) *</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  min="1"
+                  max="90"
+                  value={duration}
+                  onChange={(e) => setDuration(parseInt(e.target.value) || 1)}
+                  className="mt-2"
+                />
+              </div>
+            )}
 
-            {/* Kategoria (opcjonalna) */}
-            <div>
-              <Label htmlFor="category">Kategoria (opcjonalna)</Label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger id="category" className="mt-2">
-                  <SelectValue placeholder="Wszystkie kategorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Wszystkie kategorie</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Kategoria dla Polecani Prawnicy */}
+            {selectedType === "POLECANI_PRAWNICY" && (
+              <div>
+                <Label htmlFor="category-monthly-rec">Wybierz kategorię prawnika *</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger id="category-monthly-rec" className="mt-2">
+                    <SelectValue placeholder="Wybierz kategorię" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RECOMMENDED_LAWYERS_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Kategoria dla najczęściej konsultowanych */}
+            {selectedType === "NAJCZESCIEJ_KONSULTOWANE" && (
+              <div>
+                <Label htmlFor="category-monthly-cons">Wybierz kategorię spraw *</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger id="category-monthly-cons" className="mt-2">
+                    <SelectValue placeholder="Wybierz kategorię" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOST_CONSULTED_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Kategoria (opcjonalna dla standardowych promocji) */}
+            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+              <div>
+                <Label htmlFor="category">Kategoria (opcjonalna)</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger id="category" className="mt-2">
+                    <SelectValue placeholder="Wszystkie kategorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Wszystkie kategorie</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             {/* Województwo (opcjonalne) */}
-            <div>
-              <Label htmlFor="voivodeship">Województwo (opcjonalne)</Label>
-              <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
-                <SelectTrigger id="voivodeship" className="mt-2">
-                  <SelectValue placeholder="Wszystkie województwa" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Wszystkie województwa</SelectItem>
-                  {voivodeships.map((voivodeship) => (
-                    <SelectItem key={voivodeship.id} value={voivodeship.id}>
-                      {voivodeship.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+              <div>
+                <Label htmlFor="voivodeship">Województwo (opcjonalne)</Label>
+                <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
+                  <SelectTrigger id="voivodeship" className="mt-2">
+                    <SelectValue placeholder="Wszystkie województwa" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Wszystkie województwa</SelectItem>
+                    {voivodeships.map((voivodeship) => (
+                      <SelectItem key={voivodeship.id} value={voivodeship.id}>
+                        {voivodeship.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            {/* Data startu */}
-            <div>
-              <Label htmlFor="start-date">Data i godzina rozpoczęcia *</Label>
-              <Input
-                id="start-date"
-                type="datetime-local"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="mt-2"
-              />
-            </div>
+            {/* Data startu / Wybór miesiąca */}
+            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
+              <div>
+                <Label htmlFor="target-month">Wybierz miesiąc promocji *</Label>
+                <Select value={startDate} onValueChange={setStartDate}>
+                  <SelectTrigger id="target-month" className="mt-2">
+                    <SelectValue placeholder="Wybierz miesiąc" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getFutureMonths().map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        {m.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div>
+                <Label htmlFor="start-date">Data i godzina rozpoczęcia *</Label>
+                <Input
+                  id="start-date"
+                  type="datetime-local"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="mt-2"
+                />
+              </div>
+            )}
 
             {/* Automatyczne odnowienie */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="auto-renewal"
-                checked={autoRenewal}
-                onCheckedChange={(checked) => setAutoRenewal(checked as boolean)}
-              />
-              <Label htmlFor="auto-renewal" className="text-sm cursor-pointer">
-                Automatyczne odnowienie po zakończeniu
-              </Label>
-            </div>
+            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="auto-renewal"
+                  checked={autoRenewal}
+                  onCheckedChange={(checked) => setAutoRenewal(checked as boolean)}
+                />
+                <Label htmlFor="auto-renewal" className="text-sm cursor-pointer">
+                  Automatyczne odnowienie po zakończeniu
+                </Label>
+              </div>
+            )}
+
+            {/* Sprawdzanie dostępności miejsc */}
+            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") && startDate && selectedCategory && selectedCategory !== "all" && (
+              <div className="bg-secondary/40 p-3 rounded-lg flex items-center justify-between text-sm mt-4">
+                <span className="text-muted-foreground flex items-center gap-1.5">
+                  <Info className="h-4 w-4 text-primary" />
+                  Dostępność miejsc w wybranej kategorii:
+                </span>
+                {checkingAvailability ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : availability ? (
+                  <span className="font-semibold">
+                    {availability.availableSlots} / {availability.totalSlots} wolnych
+                  </span>
+                ) : (
+                  <span className="text-destructive font-medium">Brak danych</span>
+                )}
+              </div>
+            )}
+
+            {/* Ostrzeżenie o braku wolnych miejsc */}
+            {availability && availability.availableSlots === 0 && (
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive p-3 rounded-lg flex items-center gap-2 text-sm mt-2 animate-pulse">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span>Brak wolnych miejsc w tym miesiącu dla wybranej kategorii!</span>
+              </div>
+            )}
 
             <Separator />
 
@@ -918,7 +1149,11 @@ export default function LawFirmPromotionPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">Czas trwania:</span>
-                  <span className="font-medium">{duration} dni</span>
+                  <span className="font-medium">
+                    {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE")
+                      ? "1 miesiąc kalendarzowy"
+                      : `${duration} dni`}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">Typ promocji:</span>
@@ -956,7 +1191,7 @@ export default function LawFirmPromotionPage() {
             </Button>
             <Button
               onClick={handleOpenConfirmation}
-              disabled={submitting || !selectedType || !startDate || (lawFirm ? lawFirm.punktySaldo < calculateCost() : false)}
+              disabled={submitting || isFormInvalid()}
             >
               Dalej
             </Button>
@@ -982,17 +1217,29 @@ export default function LawFirmPromotionPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Czas trwania:</span>
-                <span className="font-medium">{duration} dni</span>
+                <span className="font-medium">
+                  {selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+                    ? "1 miesiąc kalendarzowy"
+                    : `${duration} dni`}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Data rozpoczęcia:</span>
-                <span className="font-medium">{startDate ? formatDate(new Date(startDate)) : '-'}</span>
+                <span className="font-medium">
+                  {selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+                    ? startDate ? new Date(startDate).toLocaleDateString("pl-PL", { month: "long", year: "numeric" }) : '-'
+                    : startDate ? formatDate(new Date(startDate)) : '-'}
+                </span>
               </div>
               {selectedCategory && selectedCategory !== "all" && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Kategoria:</span>
                   <span className="font-medium">
-                    {categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
+                    {selectedType === "POLECANI_PRAWNICY"
+                      ? selectedCategory
+                      : selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+                      ? MOST_CONSULTED_CATEGORIES.find(c => c.id === selectedCategory)?.name || selectedCategory
+                      : categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
                   </span>
                 </div>
               )}
@@ -1004,10 +1251,12 @@ export default function LawFirmPromotionPage() {
                   </span>
                 </div>
               )}
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Automatyczne odnowienie:</span>
-                <span className="font-medium">{autoRenewal ? "Tak" : "Nie"}</span>
-              </div>
+              {selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Automatyczne odnowienie:</span>
+                  <span className="font-medium">{autoRenewal ? "Tak" : "Nie"}</span>
+                </div>
+              )}
             </div>
 
             <Separator />
@@ -1041,6 +1290,70 @@ export default function LawFirmPromotionPage() {
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Utwórz promocję
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog historii zakupów */}
+      <Dialog open={historyDialogOpen} onOpenChange={setHistoryDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              Historia zakupów promowań
+            </DialogTitle>
+            <DialogDescription>
+              Pełna lista zakupionych przez Ciebie promowań wraz z kosztami i okresami ważności
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            {promotions.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                Brak zakupionych promowań w historii.
+              </p>
+            ) : (
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Typ promocji</TableHead>
+                      <TableHead>Kategoria / Województwo</TableHead>
+                      <TableHead>Data zakupu</TableHead>
+                      <TableHead>Ważność</TableHead>
+                      <TableHead className="text-right">Koszt</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {promotions.map((promo) => (
+                      <TableRow key={promo.id}>
+                        <TableCell className="font-medium">
+                          {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Wszystkie"}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          {formatDate(promo.createdAt)}
+                        </TableCell>
+                        <TableCell className="text-xs space-y-0.5">
+                          <div>Od: {new Date(promo.startPromocji).toLocaleDateString("pl-PL")}</div>
+                          <div>Do: {new Date(promo.koniecPromocji).toLocaleDateString("pl-PL")}</div>
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {promo.kosztPunktow} pkt
+                        </TableCell>
+                        <TableCell>{getPromotionStatusBadge(promo)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setHistoryDialogOpen(false)}>Zamknij</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
