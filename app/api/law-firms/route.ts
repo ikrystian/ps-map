@@ -397,7 +397,7 @@ export async function POST(request: NextRequest) {
       // Dodaj województwa działania
       if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds) && body.voivodeshipsIds.length > 0) {
         // Filtruj puste ID i duplikaty
-        const uniqueVoivodeshipIds = [...new Set(body.voivodeshipsIds.filter(id => !!id))] as string[]
+        const uniqueVoivodeshipIds = [...new Set(body.voivodeshipsIds.filter((id: string) => !!id))] as string[]
         
         if (uniqueVoivodeshipIds.length > 0) {
           await tx.lawFirmVoivodeship.createMany({

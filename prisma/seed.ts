@@ -14,6 +14,7 @@ import { seedTransactions } from './seeds/transactions' // Importuj seeder trans
 import { seedBlogPosts } from './seeds/blog-posts' // Importuj seeder postów bloga
 import { seedCases } from './seeds/cases' // Importuj seeder spraw z ofertami
 import { seedTestUser } from './seeds/test-user'
+import { seedStaticPages } from './seeds/static-pages'
 
 const prisma = new PrismaClient()
 
@@ -76,6 +77,7 @@ async function main() {
   await seedBlogPosts(prisma) // Wywołaj seeder postów bloga
   await seedCases(prisma) // Wywołaj seeder spraw z ofertami
   await seedTestUser(prisma)
+  await seedStaticPages(prisma)
 
   // Seed admina
   const hashedPassword = await bcrypt.hash('ADmin123', 10)

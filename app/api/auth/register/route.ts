@@ -8,6 +8,8 @@ import crypto from "crypto"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    const { email, password, isSocialRegistration, role, userData = {} } = body
+
     // Walidacja
     if (!email || typeof email !== "string") {
       return NextResponse.json(

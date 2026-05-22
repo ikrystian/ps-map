@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { renderModule } from "@/lib/module-parser"
 import Link from "next/link"
+import { DynamicPageContent } from "@/components/DynamicPageContent"
 
 interface PageProps {
   params: Promise<{
@@ -73,8 +74,19 @@ export default async function DynamicPage({ params }: PageProps) {
     notFound()
   }
 
+  // Pre-render module HTML on the server
+  const modulesHtml = page.modules.map((pageModule: any) => {
+    const data = pageModule.data && pageModule.data.trim() ? JSON.parse(pageModule.data) : {}
+
+    if (pageModule.module.type === 'EDITABLE_HTML') {
+      return data.html || pageModule.module.code
+    } else {
+      return renderModule(pageModule.module.code, data)
+    }
+  })
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-neutral-300">
       {/* Breadcrumbs Banner */}
       <div
         className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
@@ -93,41 +105,13 @@ export default async function DynamicPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Page Title (optional, you can style this or remove it) */}
+      {/* Page Title (optional, styled or visually hidden) */}
       <div className="sr-only">
         <h1>{page.title}</h1>
       </div>
 
-      {/* Render page modules */}
-      <div className="page-content">
-        {page.modules.map((pageModule: any) => {
-          const data = pageModule.data && pageModule.data.trim() ? JSON.parse(pageModule.data) : {}
-
-          // Handle EDITABLE_HTML modules differently
-          let html: string
-          if (pageModule.module.type === 'EDITABLE_HTML') {
-            // For EDITABLE_HTML, use the edited HTML from data or fallback to original code
-            html = data.html || pageModule.module.code
-          } else {
-            // For TEMPLATE modules, use the parser to replace placeholders
-            html = renderModule(pageModule.module.code, data)
-          }
-
-          return (
-            <div
-              key={pageModule.id}
-              className="page-module"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
-          )
-        })}
-      </div>
-
-      {page.modules.length === 0 && (
-        <div className="container mx-auto px-4 py-16 text-center">
-          <p className="text-muted-foreground">Ta strona nie ma jeszcze żadnej zawartości.</p>
-        </div>
-      )}
+      {/* Render page modules using dynamic interactive content component */}
+      <DynamicPageContent modulesHtml={modulesHtml} />
     </div>
   )
 }

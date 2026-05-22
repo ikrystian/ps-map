@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendSystemNotification } from "@/lib/notifications"
 import { sendEmail, generateContactFormEmail } from "@/lib/email"
+import { ContactSubject } from "@prisma/client"
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +17,11 @@ export async function POST(request: NextRequest) {
       typSprawy,
       tresc,
       politykaPrivacy,
+      temat, // opcjonalny temat z formularza (enum ContactSubject)
     } = body
 
-    // Walidacja wymaganych pól
-    if (!lawFirmId || !imieNazwisko || !email || !tresc || !politykaPrivacy) {
+    // Walidacja wymaganych pól (lawFirmId jest teraz opcjonalny)
+    if (!imieNazwisko || !email || !tresc || !politykaPrivacy) {
       return Response.json(
         { error: "Brak wymaganych pól" },
         { status: 400 }
@@ -35,21 +37,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy kancelaria istnieje
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { id: lawFirmId },
-      select: {
-        nazwa: true,
-        emailKontakt: true,
-        userId: true,
-      },
-    })
-
-    if (!lawFirm) {
-      return Response.json(
-        { error: "Nie znaleziono kancelarii" },
-        { status: 404 }
-      )
+    // Ustal temat (enum ContactSubject)
+    let subjectEnum: ContactSubject = ContactSubject.INFORMACJA
+    if (temat && Object.values(ContactSubject).includes(temat)) {
+      subjectEnum = temat as ContactSubject
     }
 
     // Zapisz wiadomość w bazie danych
@@ -57,36 +48,56 @@ export async function POST(request: NextRequest) {
       data: {
         imieNazwisko,
         email,
-        telefon,
-        temat: "INFORMACJA",
+        telefon: telefon || null,
+        temat: subjectEnum,
         wiadomosc: tresc,
       },
     })
 
-    // Utwórz powiadomienie dla kancelarii (wraz z weryfikacją wysłania maila)
-    let emailData;
-    if (lawFirm.emailKontakt) {
-      emailData = generateContactFormEmail(
-        lawFirm.nazwa,
-        lawFirm.emailKontakt,
-        imieNazwisko,
-        email,
-        telefon,
-        typSprawy || "Kontakt przez formularz",
-        tresc
-      )
-    }
+    // Jeśli podano lawFirmId, powiąż/wyślij powiadomienie do kancelarii
+    if (lawFirmId) {
+      // Sprawdź czy kancelaria istnieje
+      const lawFirm = await prisma.lawFirm.findUnique({
+        where: { id: lawFirmId },
+        select: {
+          nazwa: true,
+          emailKontakt: true,
+          userId: true,
+        },
+      })
 
-    await sendSystemNotification({
-      userId: lawFirm.userId,
-      typ: "NOWA_WIADOMOSC",
-      tytul: "Nowa wiadomość kontaktowa",
-      tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
-      linkUrl: `/panel-eksperta/wiadomosci`,
-      emailSubject: emailData?.subject,
-      emailHtml: emailData?.html,
-      emailText: emailData?.text,
-    })
+      if (!lawFirm) {
+        return Response.json(
+          { error: "Nie znaleziono kancelarii" },
+          { status: 404 }
+        )
+      }
+
+      // Utwórz powiadomienie dla kancelarii (wraz z weryfikacją wysłania maila)
+      let emailData
+      if (lawFirm.emailKontakt) {
+        emailData = generateContactFormEmail(
+          lawFirm.nazwa,
+          lawFirm.emailKontakt,
+          imieNazwisko,
+          email,
+          telefon,
+          typSprawy || "Kontakt przez formularz",
+          tresc
+        )
+      }
+
+      await sendSystemNotification({
+        userId: lawFirm.userId,
+        typ: "NOWA_WIADOMOSC",
+        tytul: "Nowa wiadomość kontaktowa",
+        tresc: `${imieNazwisko} wysłał(a) wiadomość przez formularz kontaktowy`,
+        linkUrl: `/panel-eksperta/wiadomosci`,
+        emailSubject: emailData?.subject,
+        emailHtml: emailData?.html,
+        emailText: emailData?.text,
+      })
+    }
 
     return Response.json(
       {

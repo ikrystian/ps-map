@@ -9,9 +9,9 @@ export default function RegistrationPage() {
       heroTitle="Dołącz do społeczności ProstaSprawa"
       heroDescription="Niezależnie od tego, czy szukasz pomocy prawnej, czy oferujesz usługi prawne - jesteśmy tu dla Ciebie."
       heroStats={[
-        { value: "2000+", label: "Zaufanych prawników" },
-        { value: "15 000+", label: "Użytkowników" },
-        { value: "99%", label: "Pozytywnych opinii" },
+        { value: 2000, unit: "+", label: "Zaufanych prawników" },
+        { value: 15000, unit: "+", label: "Użytkowników" },
+        { value: 99, unit: "%", label: "Pozytywnych opinii" },
       ]}
     >
       <div className="space-y-8">
