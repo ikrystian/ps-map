@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
+    const formData = await request.formData()
+
     // Sprawdź autoryzację
     const session = await auth()
     if (!session?.user) {
@@ -15,8 +17,6 @@ export async function POST(request: NextRequest) {
     if (session.user.role !== "LAW_FIRM") {
       return NextResponse.json({ error: "Forbidden - only law firms can upload certificates" }, { status: 403 })
     }
-
-    const formData = await request.formData()
     const file = formData.get("file") as File
 
     if (!file) {

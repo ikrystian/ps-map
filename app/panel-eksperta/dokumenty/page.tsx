@@ -140,31 +140,11 @@ export default function DocumentsPage() {
     try {
       setUploadProgress(true)
       const file = values.file[0]
-      const uploadServiceUrl = process.env.NEXT_PUBLIC_UPLOAD_SERVICE_URL || "http://localhost:3005"
 
-      // 1. Przesyłanie pliku do serwisu ps-upload
-      const uploadFormData = new FormData()
-      uploadFormData.append("file", file)
-
-      const uploadResponse = await fetch(`${uploadServiceUrl}/api/upload`, {
-        method: "POST",
-        body: uploadFormData,
-      })
-
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json()
-        throw new Error(errorData.error || "Błąd przesyłania pliku do serwisu uploadu")
-      }
-
-      const uploadData = await uploadResponse.json()
-
-      // 2. Zapisywanie informacji o dokumencie w głównej bazie ps-map
       const formData = new FormData()
       formData.append("nazwa", values.nazwa)
       formData.append("typDokumentu", values.typDokumentu)
-      formData.append("uploadedUrl", uploadData.url)
-      formData.append("rozmiar", uploadData.size.toString())
-      formData.append("rozszerzenie", uploadData.filename.split('.').pop() || "")
+      formData.append("file", file)
 
       const response = await fetch("/api/law-firms/documents", {
         method: "POST",

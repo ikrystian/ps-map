@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useId } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,6 +32,7 @@ export function ImageUploadWithCrop({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [showCropDialog, setShowCropDialog] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const uniqueId = useId()
 
   const uploadImage = async (fileToUpload: File | Blob, originalFileName?: string) => {
     setIsUploading(true)
@@ -187,10 +188,10 @@ export function ImageUploadWithCrop({
                   onChange={handleFileSelect}
                   disabled={isUploading}
                   className="hidden"
-                  id="file-upload"
+                  id={uniqueId}
                 />
                 <label
-                  htmlFor="file-upload"
+                  htmlFor={uniqueId}
                   className={`cursor-pointer ${isUploading ? "pointer-events-none opacity-50" : ""}`}
                 >
                   {isUploading ? (

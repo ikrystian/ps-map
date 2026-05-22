@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useId } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
   const [isUploading, setIsUploading] = useState(false)
   const [urlInput, setUrlInput] = useState(value || "")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const uniqueId = useId()
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -137,10 +138,10 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
                 onChange={handleFileUpload}
                 disabled={isUploading}
                 className="hidden"
-                id="file-upload"
+                id={uniqueId}
               />
               <label
-                htmlFor="file-upload"
+                htmlFor={uniqueId}
                 className={`cursor-pointer ${isUploading ? "pointer-events-none opacity-50" : ""}`}
               >
                 {isUploading ? (

@@ -77,6 +77,8 @@ export async function GET() {
 // POST /api/law-firms/documents - Upload document
 export async function POST(request: NextRequest) {
   try {
+    const formData = await request.formData()
+
     const session = await auth()
 
     if (!session || session.user.role !== "LAW_FIRM") {
@@ -96,8 +98,6 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
-
-    const formData = await request.formData()
     const file = formData.get("file") as File | null
     const uploadedUrl = formData.get("uploadedUrl") as string | null
     const nazwa = formData.get("nazwa") as string
@@ -185,7 +185,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error uploading document:", error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: error instanceof Error ? error.message : "Internal server error",
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }
