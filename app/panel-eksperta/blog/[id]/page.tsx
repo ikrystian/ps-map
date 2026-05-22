@@ -186,7 +186,7 @@ export default function LawFirmEditBlogPostPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Edytuj artykuł</h1>
+            <h1 className="text-3xl font-bold" font-playfair>Edytuj artykuł</h1>
             <p className="text-muted-foreground">
               Zaktualizuj wpis na blogu swojego profilu
             </p>

@@ -107,7 +107,7 @@ export default function ConsultationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Zarządzanie konsultacjami</h1>
+        <h1 className="text-3xl font-bold font-playfair">Zarządzanie konsultacjami</h1>
         <p className="text-muted-foreground">Przeglądaj i zarządzaj prośbami o konsultacje od klientów.</p>
       </div>
       <Card>

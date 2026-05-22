@@ -687,7 +687,7 @@ export default function LawFirmDashboardPage() {
                 ))}
               </div>
               <div className="pt-3 border-t space-y-2">
-                <div className="flex items-center justify-betweentext-base">
+                <div className="flex items-center gap-1 justify-betweentext-base">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <TrendingUp className="h-3 w-3" />
                     Średnio dziennie
@@ -912,9 +912,9 @@ export default function LawFirmDashboardPage() {
             </div>
 
             <div className="pt-4 border-t space-y-3">
-              <div className="flex items-center justify-betweentext-base">
-                <span>Twoje punkty:</span>
-                <span className="font-bold text-lg">{lawFirm.punktySaldo} pkt</span>
+              <div className="flex items-center justify-betweentext-base gap-1">
+                <span>Twoje punkty: </span>
+                <span className="font-bold text-lg"> {lawFirm.punktySaldo} pkt</span>
               </div>
               <div className="flex gap-2">
                 <Link href="/panel-eksperta/promowanie" className="flex-1">
@@ -978,7 +978,7 @@ export default function LawFirmDashboardPage() {
             <div className="pt-4 border-t">
               <div className="mb-3 p-3 bg-background rounded-lg">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold">299 zł</span>
+                  <span className="text-2xl font-bold">299 punktów</span>
                   <span className="text-sm text-muted-foreground">/miesięcznie</span>
                 </div>
               </div>
