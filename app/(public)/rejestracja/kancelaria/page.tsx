@@ -38,6 +38,62 @@ import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, X } from "lucide-react"
+import { z } from "zod"
+
+const step1Schema = z.object({
+  typ: z.string().min(1, "Wybierz typ działalności"),
+  typInny: z.string().optional(),
+}).refine(data => data.typ !== "INNY" || (data.typInny && data.typInny.trim().length > 0), {
+  message: "Podaj typ działalności",
+  path: ["typInny"]
+})
+
+const step2Schema = z.object({
+  nazwa: z.string().min(3, "Nazwa kancelarii musi mieć co najmniej 3 znaki"),
+  nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
+  nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
+  regon: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").optional().or(z.literal(""))),
+  krs: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").optional().or(z.literal(""))),
+})
+
+const step3Schema = z.object({
+  imieKontakt: z.string().min(2, "Imię jest wymagane"),
+  nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
+  stanowisko: z.string().optional(),
+  emailKontakt: z.string().email("Podaj poprawny adres email"),
+  numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
+  numerTelefonu2: z.string().optional(),
+})
+
+const step4Schema = z.object({
+  adres: z.string().min(3, "Adres jest wymagany"),
+  kodPocztowy: z.string().regex(/^\d{2}-\d{3}$/, "Podaj poprawny kod pocztowy (XX-XXX)"),
+  miasto: z.string().min(2, "Miasto jest wymagane"),
+  voivodeshipId: z.string().min(1, "Wybierz województwo"),
+})
+
+const step6Schema = z.object({
+  categoriesIds: z.array(z.string()).min(1, "Wybierz główną specjalizację"),
+})
+
+const step7Schema = z.object({
+  typOferty: z.string().min(1, "Wybierz typ współpracy"),
+})
+
+const step8Schema = z.object({
+  email: z.string().email("Podaj poprawny adres email"),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
+  confirmPassword: z.string(),
+  zgodaRegulamin: z.literal(true, {
+    errorMap: () => ({ message: "Musisz zaakceptować regulamin" }),
+  }),
+  zgodaPrzetwarzanie: z.literal(true, {
+    errorMap: () => ({ message: "Musisz zaakceptować zgodę na przetwarzanie danych" }),
+  }),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Hasła nie są identyczne",
+  path: ["confirmPassword"]
+})
 
 interface Voivodeship {
   id: string
@@ -119,6 +175,7 @@ export default function LawFirmRegistrationPage() {
     zgodaPrzetwarzanie: false,
   })
   const [error, setError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
   const totalSteps = steps.length
@@ -130,6 +187,8 @@ export default function LawFirmRegistrationPage() {
       const step = parseInt(stepParam)
       if (step >= 1 && step <= totalSteps && step !== currentStep) {
         setCurrentStep(step)
+        setError("")
+        setFieldErrors({})
       }
     }
   }, [searchParams, totalSteps])
@@ -223,62 +282,64 @@ export default function LawFirmRegistrationPage() {
   }, [])
 
   const validateStep = () => {
+    setError("")
+    setFieldErrors({})
+
+    let schema
+    let dataToValidate = formData
+
     switch (currentStep) {
       case 1:
-        if (!formData.typ) {
-          setError("Wybierz typ działalności")
-          return false
-        }
+        schema = step1Schema
         break
       case 2:
-        if (!formData.nazwa || !formData.nazwaFirmy || !formData.nip) {
-          setError("Wypełnij nazwę kancelarii, nazwę firmy i NIP")
-          return false
-        }
-        if (formData.nip.length < 10) {
-          setError("NIP musi mieć co najmniej 10 znaków")
-          return false
-        }
+        schema = step2Schema
         break
       case 3:
-        if (!formData.imieKontakt || !formData.nazwiskoKontakt || !formData.numerTelefonu || !formData.emailKontakt) {
-          setError("Wypełnij wszystkie wymagane dane kontaktowe")
-          return false
-        }
+        schema = step3Schema
         break
       case 4:
-        if (!formData.adres || !formData.kodPocztowy || !formData.miasto || !formData.voivodeshipId) {
-          setError("Wypełnij wszystkie dane adresowe")
-          return false
-        }
+        schema = step4Schema
         break
       case 6:
-        if (formData.categoriesIds.length === 0) {
-          setError("Wybierz główną specjalizację")
-          return false
-        }
+        schema = step6Schema
         break
       case 7:
-        if (!formData.typOferty) {
-          setError("Wybierz typ oferty")
-          return false
-        }
+        schema = step7Schema
         break
       case 8:
-        if (!session && (!formData.email || !formData.password)) {
-          setError("Wypełnij email i hasło")
-          return false
-        }
-        if (!session && formData.password !== formData.confirmPassword) {
-          setError("Hasła nie są identyczne")
-          return false
-        }
-        if (!formData.zgodaRegulamin || !formData.zgodaPrzetwarzanie) {
-          setError("Musisz zaakceptować regulamin i zgodę na przetwarzanie danych")
-          return false
+        schema = step8Schema
+        if (session) {
+          dataToValidate = {
+            ...formData,
+            email: session.user?.email || "dummy@example.com",
+            password: "dummypassword",
+            confirmPassword: "dummypassword",
+          }
         }
         break
+      default:
+        return true
     }
+
+    if (schema) {
+      const result = schema.safeParse(dataToValidate)
+      if (!result.success) {
+        const errors: Record<string, string> = {}
+        result.error.issues.forEach((issue) => {
+          const path = issue.path[0] as string
+          if (!errors[path]) {
+            errors[path] = issue.message
+          }
+        })
+        setFieldErrors(errors)
+        if (result.error.issues.length > 0) {
+          setError(result.error.issues[0].message)
+        }
+        return false
+      }
+    }
+
     return true
   }
 
@@ -386,12 +447,19 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="typ">Typ działalności *</Label>
+              <Label htmlFor="typ" className={cn(fieldErrors.typ && "text-destructive")}>Typ działalności *</Label>
               <Select
                 value={formData.typ}
-                onValueChange={(value) => setFormData({ ...formData, typ: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, typ: value })
+                  if (fieldErrors.typ) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.typ
+                    setFieldErrors(newErrors)
+                  }
+                }}
               >
-                <SelectTrigger className="h-11">
+                <SelectTrigger className={cn("h-11", fieldErrors.typ && "border-destructive")}>
                   <SelectValue placeholder="Wybierz typ działalności" />
                 </SelectTrigger>
                 <SelectContent>
@@ -404,6 +472,7 @@ export default function LawFirmRegistrationPage() {
                   <SelectItem value="INNY">Inny</SelectItem>
                 </SelectContent>
               </Select>
+              {fieldErrors.typ && <p className="text-xs text-destructive">{fieldErrors.typ}</p>}
             </div>
             {formData.typ === "INNY" && (
               <motion.div
@@ -411,14 +480,22 @@ export default function LawFirmRegistrationPage() {
                 animate={{ opacity: 1, height: "auto" }}
                 className="space-y-2"
               >
-                <Label htmlFor="typInny">Podaj typ działalności</Label>
+                <Label htmlFor="typInny" className={cn(fieldErrors.typInny && "text-destructive")}>Podaj typ działalności</Label>
                 <Input
                   id="typInny"
                   value={formData.typInny}
-                  onChange={(e) => setFormData({ ...formData, typInny: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, typInny: e.target.value })
+                    if (fieldErrors.typInny) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.typInny
+                      setFieldErrors(newErrors)
+                    }
+                  }}
                   placeholder="Np. fundacja, stowarzyszenie..."
-                  className="h-11"
+                  className={cn("h-11", fieldErrors.typInny && "border-destructive")}
                 />
+                {fieldErrors.typInny && <p className="text-xs text-destructive">{fieldErrors.typInny}</p>}
               </motion.div>
             )}
             <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
@@ -433,64 +510,101 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="nazwa">Nazwa kancelarii *</Label>
+              <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa kancelarii *</Label>
               <Input
                 id="nazwa"
                 type="text"
-                required
                 value={formData.nazwa}
-                onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, nazwa: e.target.value })
+                  if (fieldErrors.nazwa) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.nazwa
+                    setFieldErrors(newErrors)
+                  }
+                }}
                 placeholder="Np. Kancelaria Adwokacka Jan Kowalski"
-                className="h-11"
+                className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
               />
+              {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nazwaFirmy">Pełna nazwa firmy (do faktur) *</Label>
+              <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>
               <Input
                 id="nazwaFirmy"
                 type="text"
-                required
                 value={formData.nazwaFirmy}
-                onChange={(e) => setFormData({ ...formData, nazwaFirmy: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, nazwaFirmy: e.target.value })
+                  if (fieldErrors.nazwaFirmy) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.nazwaFirmy
+                    setFieldErrors(newErrors)
+                  }
+                }}
                 placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
-                className="h-11"
+                className={cn("h-11", fieldErrors.nazwaFirmy && "border-destructive")}
               />
+              {fieldErrors.nazwaFirmy && <p className="text-xs text-destructive">{fieldErrors.nazwaFirmy}</p>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nip">NIP *</Label>
+                <Label htmlFor="nip" className={cn(fieldErrors.nip && "text-destructive")}>NIP *</Label>
                 <Input
                   id="nip"
                   type="text"
-                  required
                   placeholder="1234567890"
                   value={formData.nip}
-                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, nip: e.target.value })
+                    if (fieldErrors.nip) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.nip
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.nip && "border-destructive")}
                 />
+                {fieldErrors.nip && <p className="text-xs text-destructive">{fieldErrors.nip}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="regon">REGON</Label>
+                <Label htmlFor="regon" className={cn(fieldErrors.regon && "text-destructive")}>REGON</Label>
                 <Input
                   id="regon"
                   type="text"
                   placeholder="Opcjonalnie"
                   value={formData.regon}
-                  onChange={(e) => setFormData({ ...formData, regon: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, regon: e.target.value })
+                    if (fieldErrors.regon) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.regon
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.regon && "border-destructive")}
                 />
+                {fieldErrors.regon && <p className="text-xs text-destructive">{fieldErrors.regon}</p>}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="krs">KRS</Label>
+              <Label htmlFor="krs" className={cn(fieldErrors.krs && "text-destructive")}>KRS</Label>
               <Input
                 id="krs"
                 type="text"
                 placeholder="Dla spółek handlowych"
                 value={formData.krs}
-                onChange={(e) => setFormData({ ...formData, krs: e.target.value })}
-                className="h-11"
+                onChange={(e) => {
+                  setFormData({ ...formData, krs: e.target.value })
+                  if (fieldErrors.krs) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.krs
+                    setFieldErrors(newErrors)
+                  }
+                }}
+                className={cn("h-11", fieldErrors.krs && "border-destructive")}
               />
+              {fieldErrors.krs && <p className="text-xs text-destructive">{fieldErrors.krs}</p>}
             </div>
           </div>
         )
@@ -500,73 +614,117 @@ export default function LawFirmRegistrationPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="imieKontakt">Imię *</Label>
+                <Label htmlFor="imieKontakt" className={cn(fieldErrors.imieKontakt && "text-destructive")}>Imię *</Label>
                 <Input
                   id="imieKontakt"
                   type="text"
-                  required
                   value={formData.imieKontakt}
-                  onChange={(e) => setFormData({ ...formData, imieKontakt: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, imieKontakt: e.target.value })
+                    if (fieldErrors.imieKontakt) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.imieKontakt
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.imieKontakt && "border-destructive")}
                 />
+                {fieldErrors.imieKontakt && <p className="text-xs text-destructive">{fieldErrors.imieKontakt}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="nazwiskoKontakt">Nazwisko *</Label>
+                <Label htmlFor="nazwiskoKontakt" className={cn(fieldErrors.nazwiskoKontakt && "text-destructive")}>Nazwisko *</Label>
                 <Input
                   id="nazwiskoKontakt"
                   type="text"
-                  required
                   value={formData.nazwiskoKontakt}
-                  onChange={(e) => setFormData({ ...formData, nazwiskoKontakt: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, nazwiskoKontakt: e.target.value })
+                    if (fieldErrors.nazwiskoKontakt) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.nazwiskoKontakt
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.nazwiskoKontakt && "border-destructive")}
                 />
+                {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="stanowisko">Stanowisko / Tytuł zawodowy</Label>
+              <Label htmlFor="stanowisko" className={cn(fieldErrors.stanowisko && "text-destructive")}>Stanowisko / Tytuł zawodowy</Label>
               <Input
                 id="stanowisko"
                 type="text"
                 placeholder="Np. Adwokat, Radca Prawny"
                 value={formData.stanowisko}
-                onChange={(e) => setFormData({ ...formData, stanowisko: e.target.value })}
-                className="h-11"
+                onChange={(e) => {
+                  setFormData({ ...formData, stanowisko: e.target.value })
+                  if (fieldErrors.stanowisko) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.stanowisko
+                    setFieldErrors(newErrors)
+                  }
+                }}
+                className={cn("h-11", fieldErrors.stanowisko && "border-destructive")}
               />
+              {fieldErrors.stanowisko && <p className="text-xs text-destructive">{fieldErrors.stanowisko}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="emailKontakt">Email kontaktowy *</Label>
+              <Label htmlFor="emailKontakt" className={cn(fieldErrors.emailKontakt && "text-destructive")}>Email kontaktowy *</Label>
               <Input
                 id="emailKontakt"
                 type="email"
                 placeholder="kontakt@kancelaria.pl"
-                required
                 value={formData.emailKontakt}
-                onChange={(e) => setFormData({ ...formData, emailKontakt: e.target.value })}
-                className="h-11"
+                onChange={(e) => {
+                  setFormData({ ...formData, emailKontakt: e.target.value })
+                  if (fieldErrors.emailKontakt) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.emailKontakt
+                    setFieldErrors(newErrors)
+                  }
+                }}
+                className={cn("h-11", fieldErrors.emailKontakt && "border-destructive")}
               />
+              {fieldErrors.emailKontakt && <p className="text-xs text-destructive">{fieldErrors.emailKontakt}</p>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="numerTelefonu">Telefon główny *</Label>
+                <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
                 <Input
                   id="numerTelefonu"
                   type="tel"
-                  required
                   value={formData.numerTelefonu}
-                  onChange={(e) => setFormData({ ...formData, numerTelefonu: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, numerTelefonu: e.target.value })
+                    if (fieldErrors.numerTelefonu) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.numerTelefonu
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
                 />
+                {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="numerTelefonu2">Telefon dodatkowy</Label>
+                <Label htmlFor="numerTelefonu2" className={cn(fieldErrors.numerTelefonu2 && "text-destructive")}>Telefon dodatkowy</Label>
                 <Input
                   id="numerTelefonu2"
                   type="tel"
                   placeholder="Opcjonalnie"
                   value={formData.numerTelefonu2}
-                  onChange={(e) => setFormData({ ...formData, numerTelefonu2: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, numerTelefonu2: e.target.value })
+                    if (fieldErrors.numerTelefonu2) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.numerTelefonu2
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.numerTelefonu2 && "border-destructive")}
                 />
+                {fieldErrors.numerTelefonu2 && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu2}</p>}
               </div>
             </div>
           </div>
@@ -576,39 +734,53 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="adres">Adres (ulica i numer) *</Label>
+              <Label htmlFor="adres" className={cn(fieldErrors.adres && "text-destructive")}>Adres (ulica i numer) *</Label>
               <Input
                 id="adres"
                 type="text"
-                required
                 value={formData.adres}
-                onChange={(e) => setFormData({ ...formData, adres: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, adres: e.target.value })
+                  if (fieldErrors.adres) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.adres
+                    setFieldErrors(newErrors)
+                  }
+                }}
                 placeholder="Np. ul. Warszawska 1/2"
-                className="h-11"
+                className={cn("h-11", fieldErrors.adres && "border-destructive")}
               />
+              {fieldErrors.adres && <p className="text-xs text-destructive">{fieldErrors.adres}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="kodPocztowy">Kod pocztowy *</Label>
+                <Label htmlFor="kodPocztowy" className={cn(fieldErrors.kodPocztowy && "text-destructive")}>Kod pocztowy *</Label>
                 <Input
                   id="kodPocztowy"
                   type="text"
                   placeholder="00-000"
-                  required
                   value={formData.kodPocztowy}
-                  onChange={(e) => setFormData({ ...formData, kodPocztowy: e.target.value })}
-                  className="h-11"
+                  onChange={(e) => {
+                    setFormData({ ...formData, kodPocztowy: e.target.value })
+                    if (fieldErrors.kodPocztowy) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.kodPocztowy
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                  className={cn("h-11", fieldErrors.kodPocztowy && "border-destructive")}
                 />
+                {fieldErrors.kodPocztowy && <p className="text-xs text-destructive">{fieldErrors.kodPocztowy}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="miasto">Miasto *</Label>
+                <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
                 <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       role="combobox"
                       aria-expanded={locationOpen}
-                      className="w-full justify-between h-11 font-normal"
+                      className={cn("w-full justify-between h-11 font-normal", fieldErrors.miasto && "border-destructive")}
                       disabled={isLoading}
                     >
                       {formData.miasto || "Wybierz miasto..."}
@@ -632,6 +804,11 @@ export default function LawFirmRegistrationPage() {
                                   miasto: matchedCity.nazwa,
                                   voivodeshipId: matchedCity.voivodeshipId
                                 })
+                                if (fieldErrors.miasto) {
+                                  const newErrors = { ...fieldErrors }
+                                  delete newErrors.miasto
+                                  setFieldErrors(newErrors)
+                                }
                                 setLocationOpen(false)
                               }}
                             >
@@ -649,15 +826,23 @@ export default function LawFirmRegistrationPage() {
                     </Command>
                   </PopoverContent>
                 </Popover>
+                {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="voivodeshipId">Województwo siedziby *</Label>
+              <Label htmlFor="voivodeshipId" className={cn(fieldErrors.voivodeshipId && "text-destructive")}>Województwo siedziby *</Label>
               <Select
                 value={formData.voivodeshipId}
-                onValueChange={(value) => setFormData({ ...formData, voivodeshipId: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, voivodeshipId: value })
+                  if (fieldErrors.voivodeshipId) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.voivodeshipId
+                    setFieldErrors(newErrors)
+                  }
+                }}
               >
-                <SelectTrigger className="h-11">
+                <SelectTrigger className={cn("h-11", fieldErrors.voivodeshipId && "border-destructive")}>
                   <SelectValue placeholder="Wybierz województwo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -668,6 +853,7 @@ export default function LawFirmRegistrationPage() {
                   ))}
                 </SelectContent>
               </Select>
+              {fieldErrors.voivodeshipId && <p className="text-xs text-destructive">{fieldErrors.voivodeshipId}</p>}
             </div>
           </div>
         )
@@ -755,14 +941,14 @@ export default function LawFirmRegistrationPage() {
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-semibold">Główna specjalizacja *</Label>
+                <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna specjalizacja *</Label>
                 <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Zaznacz główną dziedzinę prawa, w której Twoja kancelaria się specjalizuje. 
                 Pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
-              <div className="grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2">
+              <div className={cn("grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
                 {categories
                   .filter((cat) => !cat.parentId)
                   .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
@@ -782,6 +968,11 @@ export default function LawFirmRegistrationPage() {
                             ...prev,
                             categoriesIds: [cat.id] // Tylko jedna pozycja
                           }))
+                          if (fieldErrors.categoriesIds) {
+                            const newErrors = { ...fieldErrors }
+                            delete newErrors.categoriesIds
+                            setFieldErrors(newErrors)
+                          }
                         }}
                       >
                         <div className="flex items-center space-x-4">
@@ -807,13 +998,8 @@ export default function LawFirmRegistrationPage() {
                     )
                   })}
               </div>
+              {fieldErrors.categoriesIds && <p className="text-xs text-destructive">{fieldErrors.categoriesIds}</p>}
             </div>
-            {error && currentStep === 6 && (
-              <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg text-sm">
-                <AlertCircle className="w-4 h-4" />
-                <span>{error}</span>
-              </div>
-            )}
           </div>
         )
 
@@ -822,12 +1008,19 @@ export default function LawFirmRegistrationPage() {
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="typOferty">Preferowany typ współpracy *</Label>
+              <Label htmlFor="typOferty" className={cn(fieldErrors.typOferty && "text-destructive")}>Preferowany typ współpracy *</Label>
               <Select
                 value={formData.typOferty}
-                onValueChange={(value) => setFormData({ ...formData, typOferty: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, typOferty: value })
+                  if (fieldErrors.typOferty) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.typOferty
+                    setFieldErrors(newErrors)
+                  }
+                }}
               >
-                <SelectTrigger className="h-11">
+                <SelectTrigger className={cn("h-11", fieldErrors.typOferty && "border-destructive")}>
                   <SelectValue placeholder="Wybierz typ współpracy" />
                 </SelectTrigger>
                 <SelectContent>
@@ -837,6 +1030,7 @@ export default function LawFirmRegistrationPage() {
                   <SelectItem value="WSZYSTKIE">Wszystkie rodzaje współpracy</SelectItem>
                 </SelectContent>
               </Select>
+              {fieldErrors.typOferty && <p className="text-xs text-destructive">{fieldErrors.typOferty}</p>}
             </div>
             <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -852,44 +1046,65 @@ export default function LawFirmRegistrationPage() {
             {!session ? (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email logowania (Twój login) *</Label>
+                  <Label htmlFor="email" className={cn(fieldErrors.email && "text-destructive")}>Email logowania (Twój login) *</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="login@portal.pl"
-                    required
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value })
+                      if (fieldErrors.email) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.email
+                        setFieldErrors(newErrors)
+                      }
+                    }}
                     disabled={isLoading}
-                    className="h-11"
+                    className={cn("h-11", fieldErrors.email && "border-destructive")}
                   />
+                  {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password">Hasło *</Label>
+                    <Label htmlFor="password" className={cn(fieldErrors.password && "text-destructive")}>Hasło *</Label>
                     <Input
                       id="password"
                       type="password"
                       placeholder="••••••••"
-                      required
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, password: e.target.value })
+                        if (fieldErrors.password) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.password
+                          setFieldErrors(newErrors)
+                        }
+                      }}
                       disabled={isLoading}
-                      className="h-11"
+                      className={cn("h-11", fieldErrors.password && "border-destructive")}
                     />
+                    {fieldErrors.password && <p className="text-xs text-destructive">{fieldErrors.password}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Potwierdź hasło *</Label>
+                    <Label htmlFor="confirmPassword" className={cn(fieldErrors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       placeholder="••••••••"
-                      required
                       value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, confirmPassword: e.target.value })
+                        if (fieldErrors.confirmPassword) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.confirmPassword
+                          setFieldErrors(newErrors)
+                        }
+                      }}
                       disabled={isLoading}
-                      className="h-11"
+                      className={cn("h-11", fieldErrors.confirmPassword && "border-destructive")}
                     />
+                    {fieldErrors.confirmPassword && <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>}
                   </div>
                 </div>
               </>
@@ -909,19 +1124,31 @@ export default function LawFirmRegistrationPage() {
                   "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
                   formData.zgodaRegulamin 
                     ? "bg-primary/5 border-primary shadow-sm" 
-                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
+                  fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
                 )}
-                onClick={() => setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))}
+                onClick={() => {
+                  setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))
+                  if (fieldErrors.zgodaRegulamin) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.zgodaRegulamin
+                    setFieldErrors(newErrors)
+                  }
+                }}
               >
                 <div className={cn(
                   "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                  formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                  formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
+                  fieldErrors.zgodaRegulamin && "border-destructive"
                 )}>
                   {formData.zgodaRegulamin && <Check className="w-3.5 h-3.5" />}
                 </div>
-                <label htmlFor="zgodaRegulamin" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                  Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
-                </label>
+                <div className="flex-1">
+                  <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaRegulamin && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                    Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
+                  </label>
+                  {fieldErrors.zgodaRegulamin && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaRegulamin}</p>}
+                </div>
               </div>
 
               <div 
@@ -929,19 +1156,31 @@ export default function LawFirmRegistrationPage() {
                   "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
                   formData.zgodaPrzetwarzanie 
                     ? "bg-primary/5 border-primary shadow-sm" 
-                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
+                  fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
                 )}
-                onClick={() => setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))}
+                onClick={() => {
+                  setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))
+                  if (fieldErrors.zgodaPrzetwarzanie) {
+                    const newErrors = { ...fieldErrors }
+                    delete newErrors.zgodaPrzetwarzanie
+                    setFieldErrors(newErrors)
+                  }
+                }}
               >
                 <div className={cn(
                   "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                  formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                  formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
+                  fieldErrors.zgodaPrzetwarzanie && "border-destructive"
                 )}>
                   {formData.zgodaPrzetwarzanie && <Check className="w-3.5 h-3.5" />}
                 </div>
-                <label htmlFor="zgodaPrzetwarzanie" className="text-sm leading-tight cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                  Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
-                </label>
+                <div className="flex-1">
+                  <label htmlFor="zgodaPrzetwarzanie" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaPrzetwarzanie && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                    Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
+                  </label>
+                  {fieldErrors.zgodaPrzetwarzanie && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaPrzetwarzanie}</p>}
+                </div>
               </div>
             </div>
           </div>
