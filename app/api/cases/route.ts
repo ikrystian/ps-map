@@ -316,35 +316,32 @@ export async function POST(request: NextRequest) {
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
 
-    // Znajdź wszystkie powiązane kategorie w hierarchii (samą kategorię, jej rodzica i dzieci)
-    const hierarchyCategoryIds = [category.id]
-    if (category.parentId) {
-      hierarchyCategoryIds.push(category.parentId)
-    }
-    const childCategories = await prisma.category.findMany({
-      where: { parentId: category.id },
-      select: { id: true },
-    })
-    childCategories.forEach(child => {
-      hierarchyCategoryIds.push(child.id)
-    })
-
-    // Powiadom kancelarie o nowej sprawie (tylko te z pasującą kategorią i pasującym obszarem działania)
+    // Powiadom kancelarie o nowej sprawie (te, które mają zadeklarowane województwo, miasto lub kategorię zgodną ze sprawą)
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         zweryfikowana: true,
         aktywna: true,
         user: { deletedAt: null },
-        categories: {
-          some: {
-            categoryId: { in: hierarchyCategoryIds },
-          },
-        },
         OR: [
-          { callaPolska: true },
           {
+            voivodeships: {
+              some: {
+                voivodeshipId: newCase.voivodeshipId,
+              },
+            },
+          },
+          ...(newCase.cityId ? [{
             cities: {
-              some: { cityId: city.id },
+              some: {
+                cityId: newCase.cityId,
+              },
+            },
+          }] : []),
+          {
+            categories: {
+              some: {
+                categoryId: newCase.categoryId,
+              },
             },
           },
         ],
@@ -358,7 +355,6 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      take: 50, // Limit aby nie tworzyć zbyt wielu powiadomień
     })
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"

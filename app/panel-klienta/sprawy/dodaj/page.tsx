@@ -9,7 +9,15 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Upload, X, Search, Check, FolderOpen } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog"
 
 type CaseType = "OSOBA_PRYWATNA" | "FIRMA" | "ORGANIZACJA"
 type PreferredContact = "EMAIL" | "TELEFON" | "OBA"
@@ -54,6 +62,10 @@ export default function ClientAddCasePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
+
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [categorySearchQuery, setCategorySearchQuery] = useState("")
+  const [selectedParentIdForModal, setSelectedParentIdForModal] = useState<string | null>(null)
 
   const [categories, setCategories] = useState<any[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
@@ -163,6 +175,44 @@ export default function ClientAddCasePage() {
         children
       }
     })
+  }
+
+  const getSelectedCategoryPath = () => {
+    if (!formData.categoryId) return null
+    const selected = categories.find((cat: any) => cat.id === formData.categoryId)
+    if (!selected) return null
+    if (selected.parentId) {
+      const parent = categories.find((cat: any) => cat.id === selected.parentId)
+      if (parent) {
+        return `${parent.nazwa} → ${selected.nazwa}`
+      }
+    }
+    return selected.nazwa
+  }
+
+  const getSearchResults = () => {
+    const isPrivate = formData.typSprawy === "OSOBA_PRYWATNA"
+    const targetType = isPrivate ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE"
+    const query = categorySearchQuery.toLowerCase().trim()
+    if (!query) return []
+    
+    const activeCats = categories.filter((cat: any) => cat.aktywna && cat.typ === targetType)
+    
+    return activeCats
+      .filter((cat: any) => cat.nazwa.toLowerCase().includes(query))
+      .map((cat: any) => {
+        let parentName = ""
+        if (cat.parentId) {
+          const parent = activeCats.find((p: any) => p.id === cat.parentId)
+          if (parent) {
+            parentName = parent.nazwa
+          }
+        }
+        return {
+          ...cat,
+          parentName
+        }
+      })
   }
 
 
@@ -364,6 +414,7 @@ export default function ClientAddCasePage() {
               onClick={() => {
                 updateFormData("typSprawy", option.value)
                 updateFormData("categoryId", "") // Reset selected category
+                setSelectedParentIdForModal(null) // Reset selected parent category in modal
               }}
             >
               <CardHeader>
@@ -391,89 +442,282 @@ export default function ClientAddCasePage() {
     </div>
   )
 
-  const renderStep2 = () => (
-    <div className="space-y-6">
-      <div>
-        <Label htmlFor="categoryId">Kategoria *</Label>
-        <Select value={formData.categoryId} onValueChange={(value) => updateFormData("categoryId", value)}>
-          <SelectTrigger id="categoryId">
-            <SelectValue placeholder={isLoadingCategories ? "Ładowanie kategorii..." : "Wybierz kategorię"} />
-          </SelectTrigger>
-          <SelectContent>
-            {isLoadingCategories ? (
-              <SelectItem value="loading" disabled>Ładowanie...</SelectItem>
-            ) : getFilteredCategories().length === 0 ? (
-              <SelectItem value="none" disabled>Brak dostępnych kategorii</SelectItem>
+  const renderStep2 = () => {
+    const filteredCats = getFilteredCategories()
+    const selectedPath = getSelectedCategoryPath()
+    const activeParentId = selectedParentIdForModal || (filteredCats.length > 0 ? filteredCats[0].id : null)
+    const activeParent = filteredCats.find((cat: any) => cat.id === activeParentId)
+    const activeChildren = activeParent?.children || []
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <Label className="mb-2 block">Kategoria *</Label>
+          <Dialog open={isCategoryModalOpen} onOpenChange={(open) => {
+            setIsCategoryModalOpen(open)
+            if (!open) {
+              setCategorySearchQuery("")
+            }
+          }}>
+            {selectedPath ? (
+              <Card className="border-primary bg-primary/5 transition-all">
+                <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <FolderOpen className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">Wybrana kategoria</p>
+                      <h4 className="text-sm font-semibold text-foreground mt-0.5">{selectedPath}</h4>
+                    </div>
+                  </div>
+                  <DialogTrigger asChild>
+                    <Button type="button" variant="outline" size="sm" className="ml-4">
+                      Zmień kategorię
+                    </Button>
+                  </DialogTrigger>
+                </CardHeader>
+              </Card>
             ) : (
-              getFilteredCategories().map((parent: any) => (
-                <SelectGroup key={parent.id}>
-                  <SelectItem value={parent.id} className="pl-8 font-semibold text-foreground">
-                    {parent.nazwa}
-                  </SelectItem>
-                  {parent.children?.map((child: any) => (
-                    <SelectItem key={child.id} value={child.id} className="pl-12 text-muted-foreground focus:text-accent-foreground">
-                      {child.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full flex flex-col items-center justify-center py-6 px-4 border-2 border-dashed border-muted hover:border-primary/50 rounded-xl hover:bg-accent/30 transition-all text-center group"
+                >
+                  <div className="h-10 w-10 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-all mb-3">
+                    <Search className="h-5 w-5" />
+                  </div>
+                  <span className="font-semibold text-sm text-foreground">Wybierz kategorię sprawy</span>
+                  <span className="text-xs text-muted-foreground mt-1">Kliknij, aby wyszukać lub wybrać z listy</span>
+                </button>
+              </DialogTrigger>
             )}
-          </SelectContent>
-        </Select>
-      </div>
 
-      <div>
-        <Label htmlFor="voivodeshipId">Województwo *</Label>
-        <Select
-          value={formData.voivodeshipId}
-          onValueChange={(value) => {
-            setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
-          }}
-        >
-          <SelectTrigger id="voivodeshipId">
-            <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
-          </SelectTrigger>
-          <SelectContent>
-            {voivodeships.map((voivodeship: any) => (
-              <SelectItem key={voivodeship.id} value={voivodeship.slug}>
-                {voivodeship.nazwa}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <DialogContent className="sm:max-w-3xl w-full p-6">
+              <DialogHeader>
+                <DialogTitle>Wybierz kategorię sprawy</DialogTitle>
+                <DialogDescription>
+                  Wyszukaj odpowiednią kategorię wpisując jej nazwę lub wybierz ją z listy poniżej.
+                </DialogDescription>
+              </DialogHeader>
 
-      <div>
-        <Label htmlFor="cityId">Miasto *</Label>
-        <Select
-          value={formData.cityId}
-          onValueChange={(value) => updateFormData("cityId", value)}
-          disabled={!formData.voivodeshipId || isLoadingCities}
-        >
-          <SelectTrigger id="cityId">
-            <SelectValue placeholder={
-              !formData.voivodeshipId 
-                ? "Wybierz najpierw województwo" 
-                : isLoadingCities 
-                  ? "Ładowanie miast..." 
-                  : "Wybierz miasto"
-            } />
-          </SelectTrigger>
-          <SelectContent>
-            {cities.length === 0 ? (
-              <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
-            ) : (
-              cities.map((city: any) => (
-                <SelectItem key={city.id} value={city.id}>
-                  {city.nazwa}
+              {/* Wyszukiwarka */}
+              <div className="relative my-2">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Wyszukaj kategorię..."
+                  value={categorySearchQuery}
+                  onChange={(e) => setCategorySearchQuery(e.target.value)}
+                  className="pl-9 pr-8"
+                />
+                {categorySearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setCategorySearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              {categorySearchQuery ? (
+                /* Wyniki wyszukiwania */
+                <div className="max-h-[350px] overflow-y-auto space-y-2 pr-1 my-2">
+                  {getSearchResults().length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      Brak wyników dla frazy "{categorySearchQuery}"
+                    </div>
+                  ) : (
+                    getSearchResults().map((cat: any) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => {
+                          updateFormData("categoryId", cat.id)
+                          setIsCategoryModalOpen(false)
+                          setCategorySearchQuery("")
+                        }}
+                        className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-colors ${
+                          formData.categoryId === cat.id
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-muted hover:border-primary/50 hover:bg-accent/50"
+                        }`}
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium text-sm text-foreground">
+                            {cat.nazwa}
+                          </span>
+                          {cat.parentName && (
+                            <span className="text-xs text-muted-foreground mt-0.5">
+                              {cat.parentName}
+                            </span>
+                          )}
+                        </div>
+                        {formData.categoryId === cat.id && (
+                          <Check className="h-4 w-4 text-primary shrink-0" />
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
+              ) : (
+                /* Układ dwukolumnowy */
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[350px] my-2">
+                  {/* Lewa kolumna: Kategorie główne (2/5) */}
+                  <div className="md:col-span-2 border rounded-lg p-2 overflow-y-auto bg-muted/20 space-y-1">
+                    <div className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider mb-1">
+                      Kategorie główne
+                    </div>
+                    {isLoadingCategories ? (
+                      <div className="text-sm text-muted-foreground px-2 py-1">Ładowanie...</div>
+                    ) : filteredCats.length === 0 ? (
+                      <div className="text-sm text-muted-foreground px-2 py-1">Brak kategorii</div>
+                    ) : (
+                      filteredCats.map((parent: any) => (
+                        <button
+                          key={parent.id}
+                          type="button"
+                          onClick={() => setSelectedParentIdForModal(parent.id)}
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left text-sm transition-all ${
+                            activeParentId === parent.id
+                              ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                          }`}
+                        >
+                          <span className="truncate">{parent.nazwa}</span>
+                          <ChevronRight className={`h-4 w-4 shrink-0 opacity-70 ${activeParentId === parent.id ? "text-primary-foreground" : "text-muted-foreground"}`} />
+                        </button>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Prawa kolumna: Podkategorie (3/5) */}
+                  <div className="md:col-span-3 border rounded-lg p-2 overflow-y-auto space-y-2">
+                    {activeParent ? (
+                      <>
+                        <div className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
+                          Podkategorie: {activeParent.nazwa}
+                        </div>
+                        
+                        <div className="space-y-1.5 pt-1">
+                          {/* Opcja wyboru samej kategorii głównej */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateFormData("categoryId", activeParent.id)
+                              setIsCategoryModalOpen(false)
+                            }}
+                            className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
+                              formData.categoryId === activeParent.id
+                                ? "border-primary bg-primary/5 text-primary"
+                                : "border-dashed border-muted hover:border-primary/50 hover:bg-accent/50"
+                            }`}
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-sm text-foreground">
+                                Cała kategoria: {activeParent.nazwa}
+                              </span>
+                              <span className="text-xs text-muted-foreground mt-0.5">
+                                Wybierz, jeśli sprawa dotyczy ogólnego zakresu
+                              </span>
+                            </div>
+                            {formData.categoryId === activeParent.id && (
+                              <Check className="h-4 w-4 text-primary shrink-0" />
+                            )}
+                          </button>
+
+                          {/* Separator */}
+                          {activeChildren.length > 0 && <div className="h-px bg-muted my-2" />}
+
+                          {/* Lista podkategorii */}
+                          {activeChildren.map((child: any) => (
+                            <button
+                              key={child.id}
+                              type="button"
+                              onClick={() => {
+                                updateFormData("categoryId", child.id)
+                                setIsCategoryModalOpen(false)
+                              }}
+                              className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
+                                formData.categoryId === child.id
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-muted hover:border-primary/50 hover:bg-accent/50"
+                              }`}
+                            >
+                              <span className="text-sm font-medium text-foreground">{child.nazwa}</span>
+                              {formData.categoryId === child.id && (
+                                <Check className="h-4 w-4 text-primary shrink-0" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-12 text-muted-foreground text-sm">
+                        Wybierz kategorię główną z lewej strony, aby zobaczyć szczegóły.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div>
+          <Label htmlFor="voivodeshipId">Województwo *</Label>
+          <Select
+            value={formData.voivodeshipId}
+            onValueChange={(value) => {
+              setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
+            }}
+          >
+            <SelectTrigger id="voivodeshipId">
+              <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
+            </SelectTrigger>
+            <SelectContent>
+              {voivodeships.map((voivodeship: any) => (
+                <SelectItem key={voivodeship.id} value={voivodeship.slug}>
+                  {voivodeship.nazwa}
                 </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="cityId">Miasto *</Label>
+          <Select
+            value={formData.cityId}
+            onValueChange={(value) => updateFormData("cityId", value)}
+            disabled={!formData.voivodeshipId || isLoadingCities}
+          >
+            <SelectTrigger id="cityId">
+              <SelectValue placeholder={
+                !formData.voivodeshipId 
+                  ? "Wybierz najpierw województwo" 
+                  : isLoadingCities 
+                    ? "Ładowanie miast..." 
+                    : "Wybierz miasto"
+              } />
+            </SelectTrigger>
+            <SelectContent>
+              {cities.length === 0 ? (
+                <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
+              ) : (
+                cities.map((city: any) => (
+                  <SelectItem key={city.id} value={city.id}>
+                    {city.nazwa}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   const renderStep3 = () => (
     <div className="space-y-6">
