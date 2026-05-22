@@ -8,6 +8,7 @@ import type { JWT } from "next-auth/jwt"
 import Google from "next-auth/providers/google"
 import Facebook from "next-auth/providers/facebook"
 import Apple from "next-auth/providers/apple"
+import { logLoginAttempt } from "@/lib/login-history"
 
 export const authOptions: NextAuthConfig = {
   // @ts-expect-error - version mismatch between @auth/prisma-adapter and next-auth
@@ -68,21 +69,25 @@ export const authOptions: NextAuthConfig = {
         )
 
         if (!isPasswordValid) {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
         // Sprawdź czy konto jest zablokowane lub zawieszone
         if (user.status === "BLOCKED" || user.status === "SUSPENDED") {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
         }
 
         // Sprawdź czy konto jest nieaktywne
         if (user.status === "INACTIVE") {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
         }
 
         // Sprawdź czy email został zweryfikowany
         if (!user.emailVerified) {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Email nie został zweryfikowany. Sprawdź swoją skrzynkę pocztową i kliknij link weryfikacyjny.")
         }
 
@@ -284,6 +289,9 @@ export const authOptions: NextAuthConfig = {
   events: {
     async signIn({ user }: { user: User }) {
       console.log(`User ${user.email} signed in`)
+      if (user?.id) {
+        await logLoginAttempt({ userId: user.id, success: true })
+      }
     },
     async signOut() {
       console.log(`User signed out`)

@@ -27,6 +27,7 @@ import { Loader2, Save, User, Upload, X, Image as ImageIcon } from "lucide-react
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { LoginHistory } from "@/components/auth"
 
 const profileFormSchema = z.object({
   imie: z.string().min(2, "Imię musi mieć minimum 2 znaki"),
@@ -615,6 +616,8 @@ export default function ClientProfilePage() {
           </div>
         </form>
       </Form>
+
+      <LoginHistory />
 
       {selectedAvatarFile && (
         <ImageCropper

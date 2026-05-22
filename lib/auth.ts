@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs"
 import type { NextAuthConfig, Session, User } from "next-auth"
 import type { JWT } from "next-auth/jwt"
 import { NextRequest, NextResponse } from "next/server"
+import { logLoginAttempt } from "@/lib/login-history"
 
 export const authOptions: NextAuthConfig = {
   session: {
@@ -44,16 +45,19 @@ export const authOptions: NextAuthConfig = {
         )
 
         if (!isPasswordValid) {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
         // Sprawdź czy konto jest zablokowane lub zawieszone
         if (user.status === "BLOCKED" || user.status === "SUSPENDED") {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
         }
 
         // Sprawdź czy konto jest nieaktywne
         if (user.status === "INACTIVE") {
+          await logLoginAttempt({ userId: user.id, success: false })
           throw new Error("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
         }
 
@@ -157,6 +161,9 @@ export const authOptions: NextAuthConfig = {
   events: {
     async signIn({ user }: { user: User }) {
       console.log(`User ${user.email} signed in`)
+      if (user?.id) {
+        await logLoginAttempt({ userId: user.id, success: true })
+      }
     },
     async signOut() {
       console.log(`User signed out`)

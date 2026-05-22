@@ -26,6 +26,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { LoginHistory } from "@/components/auth"
 
 const formatDateTime = (dateString: string): string => {
   const date = new Date(dateString)
@@ -699,6 +700,8 @@ export default function LawFirmSettingsPage() {
               </Alert>
             </CardContent>
           </Card>
+
+          <LoginHistory />
         </div>
 
         {/* Prawa kolumna - Ustawienia powiadomień */}

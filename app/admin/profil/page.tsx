@@ -13,6 +13,15 @@ import { User, Mail, Calendar, Shield, Loader2, Save, KeyRound } from "lucide-re
 import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"
 import { useSession } from "next-auth/react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { LoginHistory } from "@/components/auth"
 
 interface AdminProfile {
   id: string
@@ -368,13 +377,26 @@ export default function AdminProfilPage() {
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div>
                 <p className="font-medium">Historia logowań</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground">
                   Zobacz ostatnie logowania do konta
                 </p>
               </div>
-              <Button variant="outline" size="sm" disabled>
-                Zobacz historię
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    Zobacz historię
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader className="pb-4">
+                    <DialogTitle>Historia Logowań</DialogTitle>
+                    <DialogDescription>
+                      Lista ostatnich 20 prób logowania do Twojego konta administratora.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <LoginHistory noCard />
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
