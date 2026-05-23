@@ -65,29 +65,67 @@ export async function GET(request: NextRequest) {
       const searchParams = request.nextUrl.searchParams
       const includeAll = searchParams.get("includeAll") === "true"
 
-      // Pobierz ID kancelarii
+      // Pobierz pełny profil kancelarii (zakres usług)
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { userId: session.user.id },
-        select: { id: true }
+        select: {
+          id: true,
+          callaPolska: true,
+          voivodeships: { select: { voivodeshipId: true } },
+          cities: { select: { cityId: true } },
+          categories: { select: { categoryId: true } },
+        }
       })
 
       if (!lawFirm) {
         return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
       }
 
-      // Jeśli includeAll=true, zwróć wszystkie sprawy (bez względu na status)
-      // W przeciwnym razie tylko NOWA i OFERTY_OTRZYMANE
-      const whereCondition: any = includeAll
-        ? {
-          status: {
-            notIn: ["ANULOWANA"], // Ukryj tylko anulowane
-          },
+      // Zakres usług kancelarii
+      const lawFirmCategoryIds = lawFirm.categories.map((c) => c.categoryId)
+      const lawFirmVoivodeshipIds = lawFirm.voivodeships.map((v) => v.voivodeshipId)
+      const lawFirmCityIds = lawFirm.cities.map((c) => c.cityId)
+
+      // Buduj filtr zakresu:
+      // - callaPolska=true: brak filtra lokalizacji, filtruj tylko po kategorii
+      // - callaPolska=false: AND(lokalizacja, kategoria)
+      //   lokalizacja = voivodeship OR city (z zakresu firmy)
+      //   Jeśli firma nie ma skonfigurowanej lokalizacji lub kategorii, dana oś nie jest filtrowana
+      const scopeConditions: any[] = []
+
+      if (lawFirm.callaPolska) {
+        // Cała Polska – tylko filtr kategorii (jeśli zadeklarowane)
+        if (lawFirmCategoryIds.length > 0) {
+          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
         }
-        : {
-          status: {
-            in: ["NOWA", "OFERTY_OTRZYMANE"],
-          },
+      } else {
+        // Filtr lokalizacji: voivodeship OR city
+        const locationOr: any[] = []
+        if (lawFirmVoivodeshipIds.length > 0) {
+          locationOr.push({ voivodeshipId: { in: lawFirmVoivodeshipIds } })
         }
+        if (lawFirmCityIds.length > 0) {
+          locationOr.push({ cityId: { in: lawFirmCityIds } })
+        }
+        if (locationOr.length > 0) {
+          scopeConditions.push(locationOr.length === 1 ? locationOr[0] : { OR: locationOr })
+        }
+
+        // Filtr kategorii (jeśli zadeklarowane)
+        if (lawFirmCategoryIds.length > 0) {
+          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
+        }
+      }
+
+      // Filtr statusu
+      const statusFilter = includeAll
+        ? { status: { notIn: ["ANULOWANA"] } }
+        : { status: { in: ["NOWA", "OFERTY_OTRZYMANE"] } }
+
+      // Złóż końcowy warunek WHERE
+      const whereCondition: any = scopeConditions.length > 0
+        ? { AND: [statusFilter, ...scopeConditions] }
+        : statusFilter
 
       // Pobierz wszystkie sprawy zgodnie z warunkiem
       const allCases = await prisma.case.findMany({
@@ -316,43 +354,47 @@ export async function POST(request: NextRequest) {
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
 
-    // Powiadom kancelarie o nowej sprawie (te, które mają zadeklarowane województwo, miasto lub kategorię zgodną ze sprawą)
+    // Powiadom kancelarie o nowej sprawie – TYLKO te, którym ta sprawa pojawi się na liście:
+    // - callaPolska=true: pasuje do kategorii (lub brak kategorii → wszystkie)
+    // - callaPolska=false: AND(lokalizacja, kategoria)
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
-        zweryfikowana: true,
         aktywna: true,
         user: { deletedAt: null },
-        OR: [
+        AND: [
+          // Warunek lokalizacji: callaPolska LUB (voivodeship|city pasuje)
           {
-            voivodeships: {
-              some: {
-                voivodeshipId: newCase.voivodeshipId,
+            OR: [
+              { callaPolska: true },
+              {
+                voivodeships: {
+                  some: { voivodeshipId: newCase.voivodeshipId },
+                },
               },
-            },
+              ...(newCase.cityId
+                ? [{ cities: { some: { cityId: newCase.cityId } } }]
+                : []),
+            ],
           },
-          ...(newCase.cityId ? [{
-            cities: {
-              some: {
-                cityId: newCase.cityId,
-              },
-            },
-          }] : []),
+          // Warunek kategorii: firma nie ma zadeklarowanych kategorii (brak filtra) LUB kategoria pasuje
           {
-            categories: {
-              some: {
-                categoryId: newCase.categoryId,
+            OR: [
+              { categories: { none: {} } },
+              {
+                categories: {
+                  some: { categoryId: newCase.categoryId },
+                },
               },
-            },
+            ],
           },
         ],
       },
       select: {
         userId: true,
         nazwa: true,
+        callaPolska: true,
         user: {
-          select: {
-            email: true,
-          },
+          select: { email: true },
         },
       },
     })
@@ -389,15 +431,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Utwórz powiadomienia dla kancelarii
+    console.log(`[NOTIFY] Found ${lawFirms.length} law firm(s) matching new case "${newCase.nazwaSprawy}" (cat: ${newCase.categoryId}, voiv: ${newCase.voivodeshipId}, city: ${newCase.cityId})`)
+
     if (lawFirms.length > 0) {
+      const locationText = [
+        newCase.city?.nazwa,
+        newCase.voivodeship?.nazwa,
+      ].filter(Boolean).join(", ")
+
       for (const lf of lawFirms) {
-        await sendSystemNotification({
+        console.log(`[NOTIFY] Sending notification to: ${lf.nazwa} (userId: ${lf.userId})`)
+        const { notification: lfNotification, success, emailSent } = await sendSystemNotification({
           userId: lf.userId,
           typ: "NOWA_OFERTA",
-          tytul: "Nowa sprawa w Twojej specjalizacji",
-          tresc: `Nowa sprawa: ${body.nazwaSprawy}. Sprawdź szczegóły i złóż ofertę.`,
+          tytul: "Nowa sprawa zgodna z Twoim zakresem",
+          tresc: `📋 ${newCase.nazwaSprawy} · ${category.nazwa}${locationText ? ` · 📍 ${locationText}` : ""}. Sprawdź szczegóły i złóż ofertę.`,
           linkUrl: "/panel-eksperta/sprawy",
         })
+        console.log(`[NOTIFY] Result for ${lf.nazwa}: success=${success}, emailSent=${emailSent}, notificationId=${lfNotification?.id}`)
+
+        // Real-time socket emit do konkretnej kancelarii
+        await emitNewNotification(lf.userId, lfNotification)
 
         // Wyślij e-mail powiadomienie do kancelarii
         if (lf.user?.email) {
@@ -418,23 +472,6 @@ export async function POST(request: NextRequest) {
             console.error(`Failed to send case email to law firm ${lf.nazwa}:`, emailError)
           }
         }
-      }
-
-      // Emit notifications to law firms via Socket.IO
-      // We need to get the created notifications to emit them
-      const createdNotifications = await prisma.notification.findMany({
-        where: {
-          userId: { in: lawFirms.map((lf: any) => lf.userId) },
-          typ: "NOWA_OFERTA",
-          tytul: "Nowa sprawa w Twojej specjalizacji",
-        },
-        orderBy: { createdAt: "desc" },
-        take: lawFirms.length,
-      })
-
-      // Emit to each law firm
-      for (const notification of createdNotifications) {
-        await emitNewNotification(notification.userId, notification)
       }
     }
 
