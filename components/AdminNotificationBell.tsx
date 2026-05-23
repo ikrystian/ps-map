@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { Bell, CreditCard, Coins, CheckCircle, Clock, AlertTriangle, RefreshCw } from "lucide-react"
+import { Bell, CreditCard, Coins, CheckCircle, Clock, AlertTriangle, RefreshCw, Trash2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
 import {
@@ -137,6 +137,19 @@ export default function AdminNotificationBell() {
     }
   }, [isOpen, transactions])
 
+  // Clear transaction list from view
+  const clearTransactionList = () => {
+    const allIds = transactions.map(o => o.id)
+    const seenIdsRaw = localStorage.getItem("admin_seen_transaction_ids")
+    const seenIds: string[] = seenIdsRaw ? JSON.parse(seenIdsRaw) : []
+    const updatedIds = Array.from(new Set([...seenIds, ...allIds]))
+    localStorage.setItem("admin_seen_transaction_ids", JSON.stringify(updatedIds))
+    setTransactions([])
+    setUnreadCount(0)
+    setIsOpen(false)
+    toast.success("Lista transakcji wyczyszczona")
+  }
+
   if (!mounted) return null
 
   return (
@@ -157,11 +170,24 @@ export default function AdminNotificationBell() {
             <Coins className="h-4 w-4 text-primary" />
             <span>Nowe transakcje</span>
           </div>
-          {unreadCount > 0 && (
-            <Badge variant="secondary" className="bg-rose-500/10 text-rose-600 border-none dark:text-rose-400">
-              {unreadCount} nowe
-            </Badge>
-          )}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Badge variant="secondary" className="bg-rose-500/10 text-rose-600 border-none dark:text-rose-400">
+                {unreadCount} nowe
+              </Badge>
+            )}
+            {transactions.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearTransactionList}
+                className="h-auto p-1 text-muted-foreground hover:text-destructive transition-colors"
+                title="Wyczyść listę"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="my-1" />
         {transactions.length === 0 ? (

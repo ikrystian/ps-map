@@ -24,3 +24,24 @@ export async function GET() {
     )
   }
 }
+
+export async function DELETE() {
+  try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    await prisma.notification.deleteMany({
+      where: { userId: session.user.id },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error deleting notifications:", error)
+    return NextResponse.json(
+      { error: "Wystąpił błąd podczas usuwania powiadomień" },
+      { status: 500 }
+    )
+  }
+}

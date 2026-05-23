@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Bell } from "lucide-react"
+import { Bell, Trash2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
 import {
@@ -122,6 +122,23 @@ export function NotificationBell() {
     }
   }
 
+  // Delete all notifications
+  const deleteAllNotifications = async () => {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        setNotifications([])
+        setUnreadCount(0)
+        toast.success("Wszystkie powiadomienia zostały usunięte")
+      }
+    } catch (error) {
+      console.error("Error deleting notifications:", error)
+      toast.error("Wystąpił błąd podczas usuwania")
+    }
+  }
+
   // Handle notification click
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.przeczytane) {
@@ -173,16 +190,29 @@ export function NotificationBell() {
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
           <span>Powiadomienia</span>
-          {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={markAllAsRead}
-              className="h-auto p-0 text-xs text-primary hover:text-primary/80"
-            >
-              Oznacz wszystkie jako przeczytane
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={markAllAsRead}
+                className="h-auto p-0 text-xs text-primary hover:text-primary/80"
+              >
+                Oznacz wszystkie
+              </Button>
+            )}
+            {notifications.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={deleteAllNotifications}
+                className="h-auto p-1 text-muted-foreground hover:text-destructive transition-colors"
+                title="Usuń wszystkie powiadomienia"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
