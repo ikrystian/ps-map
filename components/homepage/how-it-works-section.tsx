@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, Check, User, Briefcase, Search } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { InteractiveHoverButton } from "../ui/interactive-hover-button"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import Image from "next/image"
 
 export function HowItWorksSection() {

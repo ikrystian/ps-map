@@ -20,7 +20,7 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock, ChevronDown, ChevronUp } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock, ChevronDown, ChevronUp, Check, X } from "lucide-react"
 import { MagicCard } from "@/components/magic-card"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
@@ -29,7 +29,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
-import { Check, X } from "lucide-react"
+
 
 interface LawFirm {
   id: string

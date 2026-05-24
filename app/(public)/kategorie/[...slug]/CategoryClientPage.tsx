@@ -19,7 +19,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock, ChevronDown } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock, ChevronDown, Check, X } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
@@ -27,7 +27,7 @@ import { PackageBadge } from "@/components/permissions"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
-import { Check, X } from "lucide-react"
+
 
 interface Category {
   id: string

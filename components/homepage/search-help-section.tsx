@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { InteractiveHoverButton } from "../ui/interactive-hover-button"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 
 const PillarIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-16 h-16 text-[#0da192]">

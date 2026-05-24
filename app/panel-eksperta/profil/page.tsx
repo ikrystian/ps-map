@@ -19,7 +19,16 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { ImageCropper } from "@/components/ui/image-cropper"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import dynamic from "next/dynamic"
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <div className="h-40 w-full flex items-center justify-center bg-background border border-border rounded-lg text-sm text-muted-foreground">Ładowanie edytora...</div>
+  }
+)
+
 import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationHoursForm"
 
 interface Voivodeship {

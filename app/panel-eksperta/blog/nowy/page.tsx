@@ -29,7 +29,16 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import dynamic from "next/dynamic"
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <div className="h-40 w-full flex items-center justify-center bg-background border border-border rounded-lg text-sm text-muted-foreground">Ładowanie edytora...</div>
+  }
+)
+
 import { ImageUpload } from "@/components/ui/image-upload"
 
 const postSchema = z.object({

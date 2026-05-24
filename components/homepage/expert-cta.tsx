@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { InteractiveHoverButton } from "../ui/interactive-hover-button"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 
 export function ExpertCTA() {
   return (

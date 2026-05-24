@@ -18,7 +18,9 @@ import {
   ChevronLeft,
   CheckCircle2,
   AlertCircle,
-  ChevronDown
+  ChevronDown,
+  Check,
+  X
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -37,7 +39,7 @@ import { AuthLayout } from "@/components/auth"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Check, X } from "lucide-react"
+
 import { z } from "zod"
 
 const step1Schema = z.object({

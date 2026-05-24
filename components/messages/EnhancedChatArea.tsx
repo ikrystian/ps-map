@@ -24,7 +24,17 @@ import {
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
-import EmojiPicker from "emoji-picker-react"
+import dynamic from "next/dynamic"
+
+const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[350px] w-[350px] flex items-center justify-center bg-background border border-border rounded-lg text-sm text-muted-foreground shadow-lg">
+      Ładowanie emoji...
+    </div>
+  )
+})
+
 import {
   DropdownMenu,
   DropdownMenuContent,
