@@ -170,7 +170,7 @@ export function SearchHelpSection() {
               </span>
 
               {/* Card Shape */}
-              <div className="w-36 h-36 rounded-xl bg-[#2C2B29]  border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-transform duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/30">
+              <div className="w-36 h-36 rounded-xl bg-[#121212]/60  border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-transform duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/30">
                 {step.icon}
               </div>
 

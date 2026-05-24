@@ -22,6 +22,16 @@ interface SendEmailParams {
 }
 
 /**
+ * Pomocnicza funkcja do owijania HTML w szatę graficzną ProstaSprawa, jeśli nie jest już owinięty
+ */
+export function wrapInBrandLayoutIfNeeded(html: string, preheader: string = ""): string {
+  if (html.includes('<html') || html.includes('<!DOCTYPE html') || html.includes('email-container')) {
+    return html
+  }
+  return getBrandEmailLayout(html, preheader)
+}
+
+/**
  * Wysyła email przy użyciu szablonu z bazy danych
  */
 export async function sendEmailWithTemplate({
@@ -60,6 +70,9 @@ export async function sendEmailWithTemplate({
         html = html.replace(regex, value || '')
         text = text.replace(regex, value || '')
       })
+
+      // Automatycznie owiń w szatę graficzną ProstaSprawa
+      html = wrapInBrandLayoutIfNeeded(html, subject)
     } else if (fallbackProvider) {
       const fallback = fallbackProvider()
       subject = fallback.subject
@@ -177,113 +190,147 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
   }
 }
 
+export function getBrandEmailLayout(
+  contentHtml: string,
+  preheaderText: string = ""
+): string {
+  return `
+    <!DOCTYPE html>
+    <html lang="pl">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ProstaSprawa</title>
+        <!--[if mso]>
+        <noscript>
+          <xml>
+            <o:OfficeDocumentSettings>
+              <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+          </xml>
+        </noscript>
+        <![endif]-->
+        <style>
+          body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+          table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+          img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+          table { border-collapse: collapse !important; }
+          body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+          
+          a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
+          
+          @media screen and (max-width: 600px) {
+            .email-container { width: 100% !important; max-width: 100% !important; }
+            .content-padding { padding: 20px !important; }
+            .btn { display: block !important; width: auto !important; margin-left: 0 !important; margin-right: 0 !important; text-align: center !important; }
+          }
+        </style>
+      </head>
+      <body style="background-color: #faf9f5; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; margin: 0; padding: 0; width: 100%; -webkit-font-smoothing: antialiased;">
+        <!-- Preheader text for inbox preview -->
+        ${preheaderText ? `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>` : ""}
+        
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #faf9f5; table-layout: fixed;">
+          <tr>
+            <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
+              <!--[if (gte mso 9)|(IE)]>
+              <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+                <tr>
+                  <td align="center" valign="top" width="600">
+              <![endif]-->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #ffffff; border: 1px solid #dad9d4; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);">
+                
+                <!-- Brand Header -->
+                <tr>
+                  <td align="center" valign="top" style="background-color: #faf9f5; padding: 30px 40px; border-bottom: 1px solid #dad9d4;" class="content-padding">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 28px; font-weight: bold; color: #c96442; letter-spacing: 0.5px;">
+                          Prosta<span style="color: #3d3929; font-weight: 300;">Sprawa</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Content Area -->
+                <tr>
+                  <td align="left" valign="top" style="padding: 40px 40px 30px 40px;" class="content-padding">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="left" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; line-height: 1.625; color: #3d3929;">
+                          ${contentHtml}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                  <td align="center" style="padding: 0 40px;" class="content-padding">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td style="border-top: 1px solid #dad9d4; line-height: 1px; font-size: 1px;">&nbsp;</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Premium Footer -->
+                <tr>
+                  <td align="center" valign="top" style="padding: 30px 40px 40px 40px;" class="content-padding">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 12px; line-height: 1.5; color: #83827d; text-align: center;">
+                          <p style="margin: 0 0 10px 0;">Wiadomość została wysłana automatycznie przez system, prosimy na nią nie odpowiadać bezpośrednio.</p>
+                          <p style="margin: 0 0 10px 0;"><strong>ProstaSprawa</strong> &bull; Portal spraw i kancelarii prawnych</p>
+                          <p style="margin: 0;">&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+              </table>
+              <!--[if (gte mso 9)|(IE)]>
+                  </td>
+                </tr>
+              </table>
+              <![endif]-->
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `
+}
+
 /**
  * Generuje HTML dla emaila resetowania hasła
  */
 export function generatePasswordResetEmail(resetUrl: string, userName?: string): { subject: string; html: string; text: string } {
   const subject = 'Resetowanie hasła - ProstaSprawa'
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-          .warning {
-            background-color: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 12px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
-
-          <div class="content">
-            <h2>Resetowanie hasła</h2>
-
-            ${userName ? `<p>Witaj ${userName},</p>` : '<p>Witaj,</p>'}
-
-            <p>Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta w serwisie ProstaSprawa.</p>
-
-            <p>Aby ustawić nowe hasło, kliknij poniższy przycisk:</p>
-
-            <div class="button-container">
-              <a href="${resetUrl}" class="button">Zresetuj hasło</a>
-            </div>
-
-            <p>Lub skopiuj i wklej poniższy link do przeglądarki:</p>
-            <p style="word-break: break-all; color: #2563eb;">${resetUrl}</p>
-
-            <div class="warning">
-              <strong>⚠️ Ważne:</strong> Link do resetowania hasła jest ważny przez 1 godzinę.
-            </div>
-
-            <p>Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość. Twoje hasło pozostanie bez zmian.</p>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+  const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
+  
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Resetowanie hasła</h2>
+    <p style="margin: 0 0 16px 0;">${greeting}</p>
+    <p style="margin: 0 0 16px 0;">Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta w serwisie ProstaSprawa.</p>
+    <p style="margin: 0 0 24px 0;">Aby ustawić nowe hasło, kliknij poniższy przycisk:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${resetUrl}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Zresetuj hasło</a>
+    </div>
+    <div style="background-color: #faf9f5; border-left: 4px solid #c96442; border-radius: 4px; padding: 16px; margin: 24px 0;">
+      <strong style="color: #3d3929; font-weight: 600; display: block; margin-bottom: 4px;">⚠️ Ważne:</strong>
+      <span style="font-size: 14px; color: #535146;">Link do resetowania hasła jest ważny przez 1 godzinę.</span>
+    </div>
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #83827d;">Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość. Twoje hasło pozostanie bez zmian.</p>
+    <p style="margin: 20px 0 0 0; font-size: 12px; color: #83827d; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${resetUrl}" style="color: #c96442; text-decoration: underline;">${resetUrl}</a></p>
   `
-
+  
+  const html = getBrandEmailLayout(contentHtml, "Instrukcja resetowania hasła do konta ProstaSprawa.")
+  
   const text = `
 Resetowanie hasła - ProstaSprawa
 
@@ -329,150 +376,50 @@ export function generatePromotionActivatedEmail(
     })
   }
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .success-badge {
-            background-color: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: 500;
-            margin-bottom: 20px;
-          }
-          .info-box {
-            background-color: #f3f4f6;
-            border-left: 4px solid #2563eb;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-          .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e5e7eb;
-          }
-          .info-row:last-child {
-            border-bottom: none;
-          }
-          .info-label {
-            font-weight: 500;
-            color: #6b7280;
-          }
-          .info-value {
-            color: #111827;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
+  const contentHtml = `
+    <div style="margin-bottom: 24px;">
+      <span style="background-color: #e6f4ea; color: #137333; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">✓ Promocja aktywna</span>
+    </div>
+    
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Promocja została pomyślnie aktywowana!</h2>
+    <p style="margin: 0 0 16px 0;">Witaj ${lawFirmName},</p>
+    <p style="margin: 0 0 20px 0;">Twoja promocja <strong>${promotionLabel}</strong> została właśnie aktywowana i jest już widoczna dla potencjalnych klientów!</p>
 
-          <div class="content">
-            <div class="success-badge">✓ Promocja aktywna</div>
+    <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #dad9d4; padding-bottom: 8px;">Szczegóły aktywacji:</h3>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500;" width="40%">Typ promocji:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="60%">${promotionLabel}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Rozpoczęcie:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDate(startDate)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Zakończenie:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDate(endDate)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Koszt:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #c96442; font-weight: 600; border-top: 1px solid #ede9de;">${cost} punktów</td>
+        </tr>
+      </table>
+    </div>
 
-            <h2>Promocja została pomyślnie aktywowana!</h2>
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #3d3929; margin-top: 24px; margin-bottom: 12px;">Co dalej?</h3>
+    <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
+      <li style="margin-bottom: 8px;">Twój profil jest teraz wyświetlany z większą widocznością w wynikach wyszukiwania.</li>
+      <li style="margin-bottom: 8px;">Możesz śledzić statystyki promocji i wyświetleń w panelu kancelarii.</li>
+      <li style="margin-bottom: 0;">Promocja odnowi się automatycznie, jeśli włączyłeś opcję automatycznego odnowienia.</li>
+    </ul>
 
-            <p>Witaj ${lawFirmName},</p>
-
-            <p>Twoja promocja <strong>${promotionLabel}</strong> została właśnie aktywowana i jest już widoczna dla potencjalnych klientów!</p>
-
-            <div class="info-box">
-              <div class="info-row">
-                <span class="info-label">Typ promocji:</span>
-                <span class="info-value">${promotionLabel}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Data rozpoczęcia:</span>
-                <span class="info-value">${formatDate(startDate)}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Data zakończenia:</span>
-                <span class="info-value">${formatDate(endDate)}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Koszt:</span>
-                <span class="info-value">${cost} punktów</span>
-              </div>
-            </div>
-
-            <p><strong>Co dalej?</strong></p>
-            <ul>
-              <li>Twój profil jest teraz wyświetlany z większą widocznością</li>
-              <li>Możesz śledzić statystyki promocji w panelu kancelarii</li>
-              <li>Promocja odnowi się automatycznie, jeśli włączyłeś automatyczne odnowienie</li>
-            </ul>
-
-            <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="button">
-                Zobacz statystyki promocji
-              </a>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Zobacz statystyki promocji</a>
+    </div>
   `
+
+  const html = getBrandEmailLayout(contentHtml, `Potwierdzenie aktywacji promocji ${promotionLabel} w ProstaSprawa.`)
 
   const text = `
 Promocja została pomyślnie aktywowana!
@@ -524,119 +471,41 @@ export function generatePromotionRenewedEmail(
     })
   }
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .success-badge {
-            background-color: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: 500;
-            margin-bottom: 20px;
-          }
-          .info-box {
-            background-color: #f3f4f6;
-            border-left: 4px solid #10b981;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
+  const contentHtml = `
+    <div style="margin-bottom: 24px;">
+      <span style="background-color: #e6f4ea; color: #137333; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">✓ Promocja odnowiona</span>
+    </div>
+    
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Promocja została automatycznie odnowiona</h2>
+    <p style="margin: 0 0 16px 0;">Witaj ${lawFirmName},</p>
+    <p style="margin: 0 0 20px 0;">Twoja promocja <strong>${promotionLabel}</strong> została automatycznie odnowiona zgodnie z Twoimi ustawieniami.</p>
 
-          <div class="content">
-            <div class="success-badge">✓ Promocja odnowiona</div>
+    <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #dad9d4; padding-bottom: 8px;">Szczegóły odnowienia:</h3>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500;" width="45%">Nowa data zakończenia:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="55%">${formatDate(newEndDate)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Koszt odnowienia:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #c96442; font-weight: 600; border-top: 1px solid #ede9de;">${cost} punktów</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Pozostałe punkty:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${remainingPoints} punktów</td>
+        </tr>
+      </table>
+    </div>
 
-            <h2>Promocja została automatycznie odnowiona</h2>
+    <p style="margin: 0 0 24px 0; color: #535146;">Twoja promocja nadal jest aktivna i działa z pełną mocą, pomagając pozyskiwać nowych klientów!</p>
 
-            <p>Witaj ${lawFirmName},</p>
-
-            <p>Twoja promocja <strong>${promotionLabel}</strong> została automatycznie odnowiona zgodnie z ustawieniami.</p>
-
-            <div class="info-box">
-              <p><strong>Szczegóły odnowienia:</strong></p>
-              <ul>
-                <li>Nowa data zakończenia: <strong>${formatDate(newEndDate)}</strong></li>
-                <li>Koszt odnowienia: <strong>${cost} punktów</strong></li>
-                <li>Pozostałe punkty: <strong>${remainingPoints} punktów</strong></li>
-              </ul>
-            </div>
-
-            <p>Twoja promocja nadal jest aktywna i działa z pełną mocą!</p>
-
-            <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="button">
-                Zarządzaj promocjami
-              </a>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Zarządzaj promocjami</a>
+    </div>
   `
+
+  const html = getBrandEmailLayout(contentHtml, `Promocja ${promotionLabel} została pomyślnie przedłużona w ProstaSprawa.`)
 
   const text = `
 Promocja została automatycznie odnowiona
@@ -675,130 +544,46 @@ export function generatePromotionRenewalFailedEmail(
 
   const pointsNeeded = requiredPoints - currentPoints
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .warning-badge {
-            background-color: #ef4444;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: 500;
-            margin-bottom: 20px;
-          }
-          .warning-box {
-            background-color: #fef2f2;
-            border-left: 4px solid #ef4444;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
+  const contentHtml = `
+    <div style="margin-bottom: 24px;">
+      <span style="background-color: #fce8e6; color: #c5221f; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">⚠️ Niewystarczające punkty</span>
+    </div>
+    
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Nie udało się odnowić promocji</h2>
+    <p style="margin: 0 0 16px 0;">Witaj ${lawFirmName},</p>
+    <p style="margin: 0 0 20px 0;">Niestety, nie mogliśmy automatycznie odnowić Twojej promocji <strong>${promotionLabel}</strong> z powodu niewystarczającej liczby punktów na Twoim koncie.</p>
 
-          <div class="content">
-            <div class="warning-badge">⚠ Niewystarczające punkty</div>
+    <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #dad9d4; padding-bottom: 8px;">Szczegóły bilansu:</h3>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500;" width="45%">Wymagane punkty:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="55%">${requiredPoints} punktów</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Stan Twojego konta:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #c96442; font-weight: 600; border-top: 1px solid #ede9de;">${currentPoints} punktów</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Brakujące punkty:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #c5221f; font-weight: 600; border-top: 1px solid #ede9de;">${pointsNeeded} punktów</td>
+        </tr>
+      </table>
+    </div>
 
-            <h2>Nie udało się odnowić promocji</h2>
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #3d3929; margin-top: 24px; margin-bottom: 12px;">Co się stało?</h3>
+    <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
+      <li style="margin-bottom: 8px;">Promocja została dezaktywowana i nie jest widoczna dla klientów.</li>
+      <li style="margin-bottom: 8px;">Automatyczne odnowienie zostało wyłączone.</li>
+      <li style="margin-bottom: 0;">Możesz aktywować ją ponownie ręcznie po doładowaniu punktów.</li>
+    </ul>
 
-            <p>Witaj ${lawFirmName},</p>
-
-            <p>Niestety, nie mogliśmy automatycznie odnowić Twojej promocji <strong>${promotionLabel}</strong> z powodu niewystarczającej liczby punktów.</p>
-
-            <div class="warning-box">
-              <p><strong>Szczegóły:</strong></p>
-              <ul>
-                <li>Wymagane punkty: <strong>${requiredPoints} punktów</strong></li>
-                <li>Twoje punkty: <strong>${currentPoints} punktów</strong></li>
-                <li>Brakuje: <strong>${pointsNeeded} punktów</strong></li>
-              </ul>
-            </div>
-
-            <p><strong>Co się stało?</strong></p>
-            <ul>
-              <li>Promocja została dezaktywowana</li>
-              <li>Automatyczne odnowienie zostało wyłączone</li>
-              <li>Możesz ją ponownie aktywować po doładowaniu punktów</li>
-            </ul>
-
-            <p><strong>Co możesz zrobić?</strong></p>
-            <ul>
-              <li>Dokup punkty w panelu kancelarii</li>
-              <li>Aktywuj promocję ponownie</li>
-            </ul>
-
-            <div class="button-container">
-              <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/punkty" class="button">
-                Dokup punkty
-              </a>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.NEXTAUTH_URL}/panel-eksperta/punkty" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Dokup punkty</a>
+    </div>
   `
+
+  const html = getBrandEmailLayout(contentHtml, `Brak punktów do odnowienia promocji ${promotionLabel} w ProstaSprawa.`)
 
   const text = `
 Nie udało się odnowić promocji
@@ -840,130 +625,50 @@ export function generateEmailVerificationEmail(
   isLawFirm?: boolean
 ): { subject: string; html: string; text: string } {
   const subject = 'Potwierdź swój adres email - ProstaSprawa'
+  const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-          .info-box {
-            background-color: #eff6ff;
-            border-left: 4px solid #2563eb;
-            padding: 12px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witamy w ProstaSprawa!</h2>
+    <p style="margin: 0 0 16px 0;">${greeting}</p>
+    <p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.</p>
+    <p style="margin: 0 0 24px 0;">Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email klikając w poniższy przycisk:</p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${verificationUrl}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Potwierdź adres email</a>
+    </div>
 
-          <div class="content">
-            <h2>Witamy w ProstaSprawa!</h2>
+    <div style="background-color: #faf9f5; border-left: 4px solid #c96442; border-radius: 4px; padding: 16px; margin: 24px 0;">
+      <strong style="color: #3d3929; font-weight: 600; display: block; margin-bottom: 6px;">ℹ️ Ważne informacje:</strong>
+      <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #535146; line-height: 1.5;">
+        <li style="margin-bottom: 4px;">Link weryfikacyjny jest ważny przez 24 godziny.</li>
+        <li style="margin-bottom: 4px;">Bez potwierdzenia adresu email nie będziesz mógł się zalogować.</li>
+        <li style="margin-bottom: 0;">Jeśli nie rejestrowałeś się w serwisie ProstaSprawa, zignoruj tę wiadomość.</li>
+      </ul>
+    </div>
 
-            ${userName ? `<p>Witaj ${userName},</p>` : '<p>Witaj,</p>'}
-
-            <p>Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.</p>
-
-            <p>Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email.</p>
-
-            <div class="button-container">
-              <a href="${verificationUrl}" class="button">Potwierdź adres email</a>
-            </div>
-
-            <p>Lub skopiuj i wklej poniższy link do przeglądarki:</p>
-            <p style="word-break: break-all; color: #2563eb;">${verificationUrl}</p>
-
-            <div class="info-box">
-              <strong>ℹ️ Ważne informacje:</strong>
-              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                <li>Link weryfikacyjny jest ważny przez 24 godziny</li>
-                <li>Bez potwierdzenia emaila nie będziesz mógł się zalogować</li>
-                <li>Jeśli nie rejestrowałeś się w ProstaSprawa, zignoruj tę wiadomość</li>
-              </ul>
-            </div>
-
-            ${isLawFirm ? `
-              <p><strong>Co dalej?</strong></p>
-              <p>Po potwierdzeniu emaila będziesz mógł:</p>
-              <ul>
-                <li>Uzupełnić profil swojej kancelarii</li>
-                <li>Przeglądać dostępne sprawy</li>
-                <li>Składać oferty klientom</li>
-                <li>Aktywować promocje swojego profilu</li>
-              </ul>
-            ` : `
-              <p><strong>Co dalej?</strong></p>
-              <p>Po potwierdzeniu emaila będziesz mógł:</p>
-              <ul>
-                <li>Dodawać sprawy prawne</li>
-                <li>Przeglądać oferty kancelarii</li>
-                <li>Kontaktować się z prawnikami</li>
-                <li>Wystawiać opinie</li>
-              </ul>
-            `}
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #3d3929; margin-top: 24px; margin-bottom: 12px;">Co dalej?</h3>
+    <p style="margin: 0 0 12px 0; color: #535146;">Po potwierdzeniu adresu email będziesz mógł:</p>
+    
+    ${isLawFirm ? `
+      <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
+        <li style="margin-bottom: 8px;">Uzupełnić profil swojej kancelarii prawnej.</li>
+        <li style="margin-bottom: 8px;">Przeglądać dostępne zapytania i sprawy od klientów.</li>
+        <li style="margin-bottom: 8px;">Składać profesjonalne oferty pomocy prawnej.</li>
+        <li style="margin-bottom: 0;">Aktywować promocje zwiększające widoczność Twojego profilu.</li>
+      </ul>
+    ` : `
+      <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
+        <li style="margin-bottom: 8px;">Dodawać nowe sprawy i zapytania prawne.</li>
+        <li style="margin-bottom: 8px;">Przeglądać oferty pomocy od zweryfikowanych kancelarii.</li>
+        <li style="margin-bottom: 8px;">Bezpośrednio i bezpiecznie kontaktować się z prawnikami.</li>
+        <li style="margin-bottom: 0;">Wystawiać oceny i opinie po zakończonej współpracy.</li>
+      </ul>
+    `}
+    
+    <p style="margin: 20px 0 0 0; font-size: 12px; color: #83827d; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${verificationUrl}" style="color: #c96442; text-decoration: underline;">${verificationUrl}</a></p>
   `
+
+  const html = getBrandEmailLayout(contentHtml, "Potwierdź swój adres email, aby zacząć korzystać z ProstaSprawa.")
 
   const text = `
 Witamy w ProstaSprawa!
@@ -1020,149 +725,46 @@ export function generateContactFormEmail(
 ): { subject: string; html: string; text: string } {
   const emailSubject = `Nowa wiadomość z formularza kontaktowego - ${senderName}`
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background-color: #2563eb;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .info-box {
-            background-color: #f3f4f6;
-            border-left: 4px solid #2563eb;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-          .info-row {
-            padding: 8px 0;
-            border-bottom: 1px solid #e5e7eb;
-          }
-          .info-row:last-child {
-            border-bottom: none;
-          }
-          .info-label {
-            font-weight: 500;
-            color: #6b7280;
-            display: inline-block;
-            width: 120px;
-          }
-          .info-value {
-            color: #111827;
-          }
-          .message-box {
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-            white-space: pre-wrap;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-            <p style="margin: 5px 0 0 0; font-size: 14px;">Nowa wiadomość kontaktowa</p>
-          </div>
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Nowa wiadomość kontaktowa</h2>
+    <p style="margin: 0 0 16px 0;">Witaj ${lawFirmName},</p>
+    <p style="margin: 0 0 20px 0;">Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu w serwisie ProstaSprawa:</p>
 
-          <div class="content">
-            <h2>Witaj ${lawFirmName}!</h2>
+    <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #dad9d4; padding-bottom: 8px;">Dane kontaktowe nadawcy:</h3>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500;" width="30%">Nadawca:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="70%">${senderName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Email:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;"><a href="mailto:${senderEmail}" style="color: #c96442; text-decoration: underline;">${senderEmail}</a></td>
+        </tr>
+        ${senderPhone ? `
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Telefon:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;"><a href="tel:${senderPhone}" style="color: #c96442; text-decoration: underline;">${senderPhone}</a></td>
+        </tr>
+        ` : ""}
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Temat:</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${subject}</td>
+        </tr>
+      </table>
+    </div>
 
-            <p>Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu:</p>
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #3d3929; margin-top: 24px; margin-bottom: 12px;">Treść wiadomości:</h3>
+    <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 16px 0; font-style: italic; color: #3d3929; line-height: 1.6; white-space: pre-wrap;">${message}</div>
 
-            <div class="info-box">
-              <div class="info-row">
-                <span class="info-label">Od:</span>
-                <span class="info-value">${senderName}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Email:</span>
-                <span class="info-value"><a href="mailto:${senderEmail}">${senderEmail}</a></span>
-              </div>
-              ${senderPhone ? `
-              <div class="info-row">
-                <span class="info-label">Telefon:</span>
-                <span class="info-value"><a href="tel:${senderPhone}">${senderPhone}</a></span>
-              </div>
-              ` : ''}
-              <div class="info-row">
-                <span class="info-label">Temat:</span>
-                <span class="info-value">${subject}</span>
-              </div>
-            </div>
+    <p style="margin: 20px 0 24px 0; color: #535146;"><strong>Pamiętaj:</strong> Szybka odpowiedź znacznie zwiększa szansę na pozyskanie klienta!</p>
 
-            <h3>Treść wiadomości:</h3>
-            <div class="message-box">${message}</div>
-
-            <p><strong>Pamiętaj:</strong> Szybka odpowiedź zwiększa szansę na pozyskanie klienta!</p>
-
-            <div class="button-container">
-              <a href="mailto:${senderEmail}" class="button">
-                Odpowiedz na email
-              </a>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="mailto:${senderEmail}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Odpowiedz na email</a>
+    </div>
   `
+
+  const html = getBrandEmailLayout(contentHtml, `Otrzymałeś nową wiadomość od ${senderName} w ProstaSprawa.`)
 
   const text = `
 Nowa wiadomość z formularza kontaktowego
@@ -1200,108 +802,28 @@ export function generateNewsletterVerificationEmail(
 ): { subject: string; html: string; text: string } {
   const subject = 'Potwierdź swój zapis do newslettera - ProstaSprawa'
 
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1e5e4e;
-          }
-          .content {
-            margin-bottom: 30px;
-          }
-          .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #1e5e4e;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-align: center;
-          }
-          .button-container {
-            text-align: center;
-            margin: 30px 0;
-          }
-          .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: center;
-          }
-          .info-box {
-            background-color: #f0fdf4;
-            border-left: 4px solid #1e5e4e;
-            padding: 12px;
-            margin: 20px 0;
-            border-radius: 4px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">ProstaSprawa</div>
-          </div>
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Potwierdź zapis do newslettera</h2>
+    <p style="margin: 0 0 16px 0;">Witaj,</p>
+    <p style="margin: 0 0 16px 0;">Dziękujemy za chęć zapisu do naszego newslettera w serwisie ProstaSprawa (dla adresu: <strong>${email}</strong>).</p>
+    <p style="margin: 0 0 24px 0;">Aby potwierdzić subskrypcję i zacząć otrzymywać praktyczne porady prawne, nowości oraz przydatne analizy, kliknij poniższy przycisk:</p>
 
-          <div class="content">
-            <h2>Potwierdź subskrypcję newslettera</h2>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${verificationUrl}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Potwierdzam subskrypcję</a>
+    </div>
 
-            <p>Witaj,</p>
-
-            <p>Dziękujemy za chęć zapisu do newslettera serwisu ProstaSprawa (dla adresu: <strong>${email}</strong>).</p>
-
-            <p>Aby potwierdzić subskrypcję i zacząć otrzymywać porady prawne, nowości oraz przydatne informacje, kliknij poniższy przycisk:</p>
-
-            <div class="button-container">
-              <a href="${verificationUrl}" class="button">Potwierdzam subskrypcję</a>
-            </div>
-
-            <p>Lub skopiuj i wklej poniższy link do przeglądarki:</p>
-            <p style="word-break: break-all; color: #1e5e4e;">${verificationUrl}</p>
-
-            <div class="info-box">
-              <strong>ℹ️ Ważne:</strong>
-              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                <li>Jeśli to nie Ty wpisałeś swój adres email na naszej stronie, zignoruj tę wiadomość.</li>
-                <li>Twój adres nie zostanie dodany do bazy dopóki nie klikniesz w powyższy link.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.</p>
-            <p>&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div style="background-color: #faf9f5; border-left: 4px solid #c96442; border-radius: 4px; padding: 16px; margin: 24px 0;">
+      <strong style="color: #3d3929; font-weight: 600; display: block; margin-bottom: 6px;">ℹ️ Ważna informacja:</strong>
+      <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #535146; line-height: 1.5;">
+        <li style="margin-bottom: 4px;">Jeśli to nie Ty wpisałeś swój adres email na naszej stronie, po prostu zignoruj tę wiadomość.</li>
+        <li style="margin-bottom: 0;">Twój adres nie zostanie dodany do bazy dopóki nie klikniesz w powyższy przycisk.</li>
+      </ul>
+    </div>
+    
+    <p style="margin: 20px 0 0 0; font-size: 12px; color: #83827d; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${verificationUrl}" style="color: #c96442; text-decoration: underline;">${verificationUrl}</a></p>
   `
+
+  const html = getBrandEmailLayout(contentHtml, "Potwierdź subskrypcję newslettera ProstaSprawa.")
 
   const text = `
 Potwierdź subskrypcję newslettera - ProstaSprawa
@@ -1320,8 +842,6 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 
   return { subject, html, text }
 }
-
-
 
 /**
  * Generuje URL do wypisania się z newslettera

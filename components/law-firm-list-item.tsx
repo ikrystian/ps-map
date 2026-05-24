@@ -449,10 +449,9 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               </div>
 
               {/* Divider */}
-              <div className="border-t border-neutral-800/80 my-4" />
 
               {/* Badges/Categories */}
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3 my-3">
                 {/* Purple badge (Professional title) */}
                 <div className="bg-[#3b0066] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md">
                   {professionalTitle}
@@ -469,7 +468,6 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-neutral-800/80 my-4" />
 
             {/* Bottom Actions */}
             <div className="flex items-center justify-between">

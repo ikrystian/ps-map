@@ -20,7 +20,7 @@ const BusinessCategoryCard = memo(({
   gridArea,
   imageUrl,
   aspectRatio,
-  titleClassName = "text-white text-lg font-bold text-center"
+  titleClassName = "text-white text-xl font-bold text-center"
 }: {
   category: Category,
   index: number,
@@ -127,7 +127,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
                 setHovered={setHovered}
                 gridArea={gridAreas[index]}
                 imageUrl={desktopImages[index]}
-                titleClassName={index === 0 || index === 3 || index === 6 ? "text-white text-xl font-bold text-center" : "text-white text-lg font-bold text-center"}
+                titleClassName={index === 0 || index === 3 || index === 6 ? "text-white text-xl font-bold text-center" : "text-white text-xl font-bold text-center"}
               />
             ))}
           </div>
