@@ -6,6 +6,7 @@
     "dev": "tsx server.ts",
     "build": "next build",
     "build:stage": "NODE_OPTIONS=\"--max-old-space-size=4096\" npm run build",
+    "analyze": "ANALYZE=true next build --webpack",
     "start": "NODE_ENV=production tsx server.ts",
     "lint": "eslint",
     "db:generate": "prisma generate",
@@ -93,6 +94,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
+    "@next/bundle-analyzer": "^16.2.6",
     "@tailwindcss/postcss": "^4",
     "@types/animejs": "^3.1.13",
     "@types/bcryptjs": "^2.4.6",

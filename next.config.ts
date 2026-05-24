@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import os from "node:os";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 // Determine optimal build cpus/workers based on system memory to prevent SIGKILL/OOM on low-resource environments
 const getOptimalBuildCPUs = () => {
@@ -60,8 +61,16 @@ const nextConfig: NextConfig = {
   experimental: {
     webpackMemoryOptimizations: true,
     cpus: getOptimalBuildCPUs(),
+    optimizePackageImports: [
+      "lucide-react",
+      "@tabler/icons-react",
+      "date-fns",
+      "sonner",
+    ],
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(nextConfig);
 

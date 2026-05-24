@@ -22,7 +22,7 @@ import { ImageUpload } from "@/components/ui/image-upload"
 import { toast } from "sonner"
 import { ChevronLeft, Trash } from "lucide-react"
 import Link from "next/link"
-import { Badge } from "@prisma/client"
+import type { Badge } from "@prisma/client"
 
 const badgeSchema = z.object({
     name: z.string().min(1, "Nazwa jest wymagana"),

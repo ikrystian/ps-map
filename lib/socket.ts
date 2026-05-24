@@ -1,16 +1,20 @@
 import { Server as SocketIOServer } from "socket.io"
 import { prisma } from "@/lib/prisma"
 
-// Get Socket.IO instance from API route
+const globalForSocket = globalThis as unknown as {
+  io: SocketIOServer | null
+}
+
+if (globalForSocket.io === undefined) {
+  globalForSocket.io = null
+}
+
 export function getIO(): SocketIOServer | null {
-  // Import dynamically to avoid circular dependencies
-  try {
-    const { getIO: getIOFromRoute } = require("@/app/api/socket/route")
-    return getIOFromRoute()
-  } catch (error) {
-    console.error("[Socket.IO] Error getting IO instance:", error)
-    return null
-  }
+  return globalForSocket.io
+}
+
+export function setIO(io: SocketIOServer) {
+  globalForSocket.io = io
 }
 
 // Helper functions to emit events

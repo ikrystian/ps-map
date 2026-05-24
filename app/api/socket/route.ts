@@ -2,10 +2,10 @@ import { NextRequest } from "next/server"
 import { Server as SocketIOServer } from "socket.io"
 import { Server as HTTPServer } from "http"
 import { prisma } from "@/lib/prisma"
-
-let io: SocketIOServer | null = null
+import { getIO, setIO } from "@/lib/socket"
 
 export async function GET(req: NextRequest) {
+  let io = getIO()
   if (!io) {
     // @ts-ignore - Next.js provides socket server
     const httpServer: HTTPServer = (req as any).socket?.server
@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
           methods: ["GET", "POST"],
         },
       })
+      setIO(io)
 
       io.on("connection", (socket) => {
         console.log(`[Socket.IO] Client connected: ${socket.id}`)
@@ -127,8 +128,4 @@ export async function GET(req: NextRequest) {
   }
 
   return new Response("Socket.IO server running", { status: 200 })
-}
-
-export function getIO(): SocketIOServer | null {
-  return io
 }

@@ -435,12 +435,12 @@ export default function LawFirmPanelLayout({
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
         "hidden md:block border-border transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-72",
+        isCollapsed ? "" : "w-72",
         getBorderColorClass(subscriptionType)
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center px-4 justify-start gap-2 border-b bg-card">
+          <div className="flex h-16 items-center px-4 justify-start gap-2 border-b bg-card w-full">
             <Button
               variant="ghost"
               size="icon"

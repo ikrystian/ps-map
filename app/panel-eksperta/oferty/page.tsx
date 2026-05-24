@@ -304,7 +304,7 @@ export default function LawFirmOffersPage() {
         <motion.div
           id="tour-oferty-list"
           layout
-          className="space-y-4"
+          className="space-y-4 mt-4"
         >
           <AnimatePresence mode="popLayout">
             {filteredOffers.map((offer) => {
