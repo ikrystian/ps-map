@@ -934,58 +934,60 @@ export default function ClientAddCasePage() {
   )
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Dodaj nową sprawę</h1>
-        <p className="text-muted-foreground mt-2">
-          Wypełnij formularz, aby dodać nową sprawę i otrzymać oferty od ekspertów prawnych
-        </p>
+    <div className="max-w-5xl mx-auto w-full space-y-6">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold font-playfair tracking-tight">Dodaj Nową Sprawę</h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
+            Wypełnij formularz, aby dodać nową sprawę i otrzymać oferty od ekspertów prawnych
+          </p>
+        </div>
+
+        <Card>
+          <CardContent className="pt-6">
+            {renderStepIndicator()}
+
+            <form className="space-y-6">
+              {currentStep === 1 && renderStep1()}
+              {currentStep === 2 && renderStep2()}
+              {currentStep === 3 && renderStep3()}
+              {currentStep === 4 && renderStep4()}
+              {currentStep === 5 && renderStep5()}
+
+              <div className="flex justify-between pt-6 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handlePrevious}
+                  disabled={currentStep === 1}
+                >
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Wstecz
+                </Button>
+
+                {currentStep < 5 ? (
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={!validateStep(currentStep)}
+                  >
+                    Dalej
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={!validateStep(5) || isSubmitting}
+                  >
+                    {isSubmitting ? "Dodawanie..." : "Dodaj sprawę"}
+                  </Button>
+                )}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-
-      <Card>
-        <CardContent className="pt-6">
-          {renderStepIndicator()}
-
-          <form className="space-y-6">
-            {currentStep === 1 && renderStep1()}
-            {currentStep === 2 && renderStep2()}
-            {currentStep === 3 && renderStep3()}
-            {currentStep === 4 && renderStep4()}
-            {currentStep === 5 && renderStep5()}
-
-            <div className="flex justify-between pt-6 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={currentStep === 1}
-              >
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Wstecz
-              </Button>
-
-              {currentStep < 5 ? (
-                <Button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={!validateStep(currentStep)}
-                >
-                  Dalej
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={!validateStep(5) || isSubmitting}
-                >
-                  {isSubmitting ? "Dodawanie..." : "Dodaj sprawę"}
-                </Button>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
     </div>
   )
 }

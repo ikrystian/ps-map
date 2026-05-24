@@ -143,11 +143,11 @@ export default function HelpCenterPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-5xl mx-auto w-full space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Centrum pomocy</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl font-bold font-playfair tracking-tight">Centrum Pomocy</h1>
+        <p className="text-sm text-muted-foreground mt-1.5">
           Znajdź odpowiedzi na najczęściej zadawane pytania
         </p>
       </div>

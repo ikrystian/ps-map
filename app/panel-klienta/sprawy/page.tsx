@@ -134,16 +134,16 @@ export default function ClientCasesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="max-w-5xl mx-auto w-full space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Moje Sprawy</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl font-bold font-playfair tracking-tight">Moje Sprawy</h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
             Zarządzaj swoimi sprawami prawnymi i przeglądaj oferty od ekspertów
           </p>
         </div>
-        <Button onClick={() => router.push("/panel-klienta/sprawy/dodaj")}>
+        <Button onClick={() => router.push("/panel-klienta/sprawy/dodaj")} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Dodaj sprawę
         </Button>

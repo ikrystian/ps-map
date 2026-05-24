@@ -303,10 +303,10 @@ export default function ClientProfilePage() {
     : "KL"
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto w-full space-y-6">
       <div>
-        <h1 className="text-xl  font-playfair font-bold">Edycja Profilu</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl font-bold font-playfair tracking-tight">Edycja Profilu</h1>
+        <p className="text-sm text-muted-foreground mt-1.5">
           Zaktualizuj swoje dane osobowe i ustawienia
         </p>
       </div>

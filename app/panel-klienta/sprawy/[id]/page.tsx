@@ -266,21 +266,21 @@ export default function ClientCaseDetailsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="max-w-5xl mx-auto w-full space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/panel-klienta/sprawy")}
-            className="mb-2"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Powrót do listy spraw
-          </Button>
-          <h1 className="text-3xl font-bold">{caseData.nazwaSprawy}</h1>
-          <div className="flex items-center gap-2">
+      <div className="space-y-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push("/panel-klienta/sprawy")}
+          className="-ml-2 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Powrót do listy spraw
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold font-playfair tracking-tight">{caseData.nazwaSprawy}</h1>
+          <div className="flex items-center gap-2 mt-2">
             <Badge variant={statusLabels[caseData.status]?.variant || "default"}>
               {statusLabels[caseData.status]?.label || caseData.status}
             </Badge>
