@@ -78,7 +78,7 @@ export default function ClientPanelLayout({
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
       id="left-nav"
-      className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+      className="flex-1 bg-background-sec space-y-1 overflow-y-auto p-4 relative"
       onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => {
         if (inSheet) {
@@ -250,7 +250,7 @@ export default function ClientPanelLayout({
     <div className="flex h-screen bg-background-sec">
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
-        "hidden md:block border-r border-border transition-all duration-300 ease-in-out bg-card",
+        "hidden md:block transition-all duration-300 ease-in-out bg-card",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex h-full flex-col">

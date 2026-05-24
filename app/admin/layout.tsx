@@ -82,7 +82,7 @@ export default function AdminLayout({
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-border px-4 justify-between">
+          <div className="flex h-16 items-center border-border px-4 justify-between bg-card">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
                 <Shield className="h-6 w-6 text-primary" />
