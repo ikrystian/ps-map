@@ -184,6 +184,29 @@ export async function GET(request: NextRequest) {
       voivodeshipId = voivodeshipRecord?.id || null
     }
 
+    // Prefetch all active promotions for the fetched law firms in a single query
+    const lawFirmIds = lawFirms.map((firm: any) => firm.id)
+    const now = new Date()
+    const allActivePromotions = lawFirmIds.length > 0
+      ? await prisma.promotion.findMany({
+          where: {
+            lawFirmId: { in: lawFirmIds },
+            aktywna: true,
+            startPromocji: { lte: now },
+            koniecPromocji: { gte: now },
+          },
+          select: {
+            id: true,
+            lawFirmId: true,
+            typPromocji: true,
+            kategoriaPromocji: true,
+            wojewodztwoPromocji: true,
+            startPromocji: true,
+            koniecPromocji: true,
+          },
+        })
+      : []
+
     // Calculate ratings, boosts, and highlight types for each law firm
     const lawFirmsWithData = await Promise.all(
       lawFirms.map(async (firm: any) => {
@@ -191,11 +214,16 @@ export async function GET(request: NextRequest) {
           ? firm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / firm.reviews.length
           : 0
 
+        // Filter preloaded promotions for this specific law firm
+        const firmPromotions = allActivePromotions.filter(
+          (promo) => promo.lawFirmId === firm.id
+        ) as any[]
+
         // Calculate promotion boost
-        const boost = await calculatePromotionBoost(firm.id, categoryId, voivodeshipId)
+        const boost = await calculatePromotionBoost(firm.id, categoryId, voivodeshipId, firmPromotions)
 
         // Get highlight type for visual distinction
-        const highlightType = await getLawFirmHighlightType(firm.id)
+        const highlightType = await getLawFirmHighlightType(firm.id, firmPromotions)
 
         // Calculate base score (verified firms get priority)
         const baseScore = firm.zweryfikowana ? 1000 : 0

@@ -152,9 +152,10 @@ export async function hasActiveVoivodeshipPromotion(
 export async function calculatePromotionBoost(
   lawFirmId: string,
   categoryId?: string | null,
-  voivodeshipId?: string | null
+  voivodeshipId?: string | null,
+  preloadedPromotions?: ActivePromotion[]
 ): Promise<PromotionBoost> {
-  const promotions = await getActiveLawFirmPromotions(lawFirmId)
+  const promotions = preloadedPromotions || await getActiveLawFirmPromotions(lawFirmId)
 
   // Filtruj promocje według kategorii i województwa jeśli podane
   const relevantPromotions = promotions.filter((promo) => {
@@ -301,9 +302,10 @@ export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean
  * Pobiera typ wyróżnienia dla kancelarii (jeśli ma aktywną promocję)
  */
 export async function getLawFirmHighlightType(
-  lawFirmId: string
+  lawFirmId: string,
+  preloadedPromotions?: ActivePromotion[]
 ): Promise<PromotionTypeUnion | null> {
-  const promotions = await getActiveLawFirmPromotions(lawFirmId)
+  const promotions = preloadedPromotions || await getActiveLawFirmPromotions(lawFirmId)
 
   // Priorytet: STRONA_GLOWNA > TOP_LISTA > WYROZNIENIE > PODBICIE_OGLOSZENIA
   const priority: PromotionTypeUnion[] = [
