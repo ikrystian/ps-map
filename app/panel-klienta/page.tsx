@@ -101,9 +101,9 @@ export default function ClientDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Panel Klienta</h1>
+        <h1 className="text-xl font-bold  font-playfair">Panel Klienta</h1>
         <p className="text-muted-foreground mt-2">
-          Witaj {clientData?.imie || ""}! Zarządzaj swoimi sprawami i komunikuj się z ekspertami.
+          Witaj {clientData?.imie || ""}!
         </p>
       </div>
 
@@ -114,7 +114,7 @@ export default function ClientDashboardPage() {
         {/* Box 1: Profil użytkownika */}
         <Card className="hover:shadow-lg transition-shadow col-span-2">
           <CardHeader>
-            <CardTitle className="text-lg">Twój Profil</CardTitle>
+            <CardTitle className="text-lg  font-playfair">Twój Profil</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ export default function ClientDashboardPage() {
         {/* Box 2: Korzyści */}
         <Card className="hover:shadow-lg transition-shadow md:col-span-2">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-lg flex items-center gap-2  font-playfair">
               <Star className="h-5 w-5 text-primary" />
               Korzystaj z pełni możliwości naszego serwisu!
             </CardTitle>
@@ -183,7 +183,7 @@ export default function ClientDashboardPage() {
               <MessageSquare className="h-12 w-12 text-primary" />
             </div>
             <div className="text-center">
-              <h3 className="font-semibold text-lg">Wiadomości</h3>
+              <h3 className="font-semibold text-lg  font-playfair">Wiadomości</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Komunikuj się z ekspertami
               </p>
@@ -201,7 +201,7 @@ export default function ClientDashboardPage() {
               <FileCheck className="h-12 w-12 text-primary" />
             </div>
             <div className="text-center">
-              <h3 className="font-semibold text-lg">Moje Sprawy</h3>
+              <h3 className="font-semibold text-lg  font-playfair">Moje Sprawy</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Zarządzaj swoimi sprawami
               </p>
@@ -213,7 +213,7 @@ export default function ClientDashboardPage() {
         <div className="md:col-span-2 row-span-2">
           <Card className="hover:shadow-lg transition-shadow ">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2  font-playfair">
                 <BookOpen className="h-5 w-5 text-primary" />
                 Najnowsze Artykuły
               </CardTitle>
@@ -262,7 +262,7 @@ export default function ClientDashboardPage() {
               <Star className="h-12 w-12 text-primary" />
             </div>
             <div className="text-center">
-              <h3 className="font-semibold text-lg">Wybrani Eksperci</h3>
+              <h3 className="font-semibold text-lg  font-playfair">Wybrani Eksperci</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Twoi ulubieni eksperci
               </p>

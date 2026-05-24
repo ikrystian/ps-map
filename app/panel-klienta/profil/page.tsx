@@ -305,7 +305,7 @@ export default function ClientProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Edycja Profilu</h1>
+        <h1 className="text-xl  font-playfair font-bold">Edycja Profilu</h1>
         <p className="text-muted-foreground mt-2">
           Zaktualizuj swoje dane osobowe i ustawienia
         </p>
@@ -314,7 +314,7 @@ export default function ClientProfilePage() {
       {/* Avatar Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Zdjęcie profilowe (Avatar)</CardTitle>
+          <CardTitle className="font-playfair">Zdjęcie profilowe (Avatar)</CardTitle>
           <CardDescription>
             Avatar będzie wyświetlany w górnym menu i będzie widoczny dla ekspertów. Zalecany rozmiar: 200x200px.
           </CardDescription>
@@ -420,7 +420,7 @@ export default function ClientProfilePage() {
           {/* Typ konta */}
           <Card>
             <CardHeader>
-              <CardTitle>Typ konta</CardTitle>
+              <CardTitle className="font-playfair">Typ konta</CardTitle>
               <CardDescription>
                 Wybierz czy korzystasz z serwisu jako osoba prywatna czy jako firma / B2B.
               </CardDescription>
@@ -470,7 +470,7 @@ export default function ClientProfilePage() {
           {form.watch("clientType") === "BUSINESS" && (
             <Card className="animate-in fade-in slide-in-from-top-4 duration-300">
               <CardHeader>
-                <CardTitle>Dane firmy</CardTitle>
+                <CardTitle className="font-playfair">Dane firmy</CardTitle>
                 <CardDescription>Uzupełnij dane rejestrowe firmy.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
