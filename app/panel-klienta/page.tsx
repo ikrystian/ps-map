@@ -110,9 +110,9 @@ export default function ClientDashboardPage() {
 
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 grid-rows-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:grid-rows-3">
         {/* Box 1: Profil użytkownika */}
-        <Card className="hover:shadow-lg transition-shadow col-span-2">
+        <Card className="hover:shadow-lg transition-shadow md:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg  font-playfair">Twój Profil</CardTitle>
           </CardHeader>
@@ -210,7 +210,7 @@ export default function ClientDashboardPage() {
         </Card>
 
         {/* Box 5: Najnowsze artykuły */}
-        <div className="md:col-span-2 row-span-2">
+        <div className="md:col-span-2 lg:row-span-2">
           <Card className="hover:shadow-lg transition-shadow ">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2  font-playfair">
@@ -254,7 +254,7 @@ export default function ClientDashboardPage() {
         </div>
         {/* Box 6: Wybrani eksperci */}
         <Card
-          className="hover:shadow-lg transition-shadow cursor-pointer group col-span-2"
+          className="hover:shadow-lg transition-shadow cursor-pointer group md:col-span-2"
           onClick={() => router.push("/panel-klienta/eksperci")}
         >
           <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
