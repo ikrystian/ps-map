@@ -39,6 +39,12 @@ export async function GET(request: NextRequest) {
         description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
       }
     }
+    if (!settingsObject.showExpertTutorial) {
+      settingsObject.showExpertTutorial = {
+        value: "true",
+        description: "Czy wyświetlać samouczek (krok po kroku) w panelu eksperta",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

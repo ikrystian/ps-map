@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { Save, Loader2, Settings2 } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 interface Settings {
   maxLawFirmCategories: {
@@ -42,6 +43,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  showExpertTutorial?: {
+    value: string
+    description: string | null
+  }
 }
 
 export default function AdminSettingsPage() {
@@ -56,6 +61,7 @@ export default function AdminSettingsPage() {
   const [minReviewLength, setMinReviewLength] = useState("50")
   const [featuredCategoriesLimit, setFeaturedCategoriesLimit] = useState("8")
   const [maxTags, setMaxTags] = useState("5")
+  const [showExpertTutorial, setShowExpertTutorial] = useState("true")
 
   useEffect(() => {
     fetchSettings()
@@ -75,6 +81,7 @@ export default function AdminSettingsPage() {
         setMinReviewLength(data.minReviewLength?.value || "50")
         setFeaturedCategoriesLimit(data.featuredCategoriesLimit?.value || "8")
         setMaxTags(data.maxLawFirmTags?.value || "5")
+        setShowExpertTutorial(data.showExpertTutorial?.value || "true")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -161,6 +168,10 @@ export default function AdminSettingsPage() {
             maxLawFirmTags: {
               value: maxTags,
               description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
+            },
+            showExpertTutorial: {
+              value: showExpertTutorial,
+              description: "Czy wyświetlać samouczek (krok po kroku) w panelu eksperta",
             },
           },
         }),
@@ -384,6 +395,22 @@ export default function AdminSettingsPage() {
             <p className="text-sm text-muted-foreground">
               Liczba wyróżnionych kategorii na stronie głównej (4-20)
             </p>
+          </div>
+
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="showExpertTutorial" className="text-base font-semibold">
+                Samouczek w panelu eksperta
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza interaktywny samouczek krok po kroku dla zalogowanych ekspertów w ich panelu.
+              </p>
+            </div>
+            <Switch
+              id="showExpertTutorial"
+              checked={showExpertTutorial === "true"}
+              onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
+            />
           </div>
         </CardContent>
       </Card>

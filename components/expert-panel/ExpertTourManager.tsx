@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback } from "react"
+import { useEffect, useCallback, useState } from "react"
 import { usePathname } from "next/navigation"
 import Script from "next/script"
 import { useExpertTour, TourStep } from "@/hooks/useExpertTour"
@@ -469,6 +469,27 @@ export function ExpertTourManager() {
   const pathname = usePathname()
   const pageKey = getTourKey(pathname)
   const { tourSeen, introLoaded, startTour } = useExpertTour(pageKey)
+  
+  const [isEnabled, setIsEnabled] = useState<boolean | null>(null)
+
+  // Fetch the global admin settings to check if tour is enabled
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("/api/settings")
+        if (response.ok) {
+          const data = await response.json()
+          setIsEnabled(data.showExpertTutorial === "true")
+        } else {
+          setIsEnabled(true) // fallback
+        }
+      } catch (err) {
+        console.error("Error fetching settings for expert tour:", err)
+        setIsEnabled(true) // fallback
+      }
+    }
+    fetchSettings()
+  }, [])
 
   const currentSteps = TOUR_STEPS[getPageKey(pathname)] ?? []
 
@@ -480,17 +501,17 @@ export function ExpertTourManager() {
 
   // Auto-start on first visit
   useEffect(() => {
-    if (!tourSeen && introLoaded && currentSteps.length > 0) {
+    if (isEnabled && !tourSeen && introLoaded && currentSteps.length > 0) {
       // Small delay to allow page content to render
       const timer = setTimeout(() => {
         startTour(currentSteps)
       }, 800)
       return () => clearTimeout(timer)
     }
-  }, [tourSeen, introLoaded, currentSteps, startTour])
+  }, [isEnabled, tourSeen, introLoaded, currentSteps, startTour])
 
-  // Don't render tour button if no steps defined for this page
-  if (currentSteps.length === 0) return null
+  // Don't render tour button if no steps defined or setting is disabled
+  if (isEnabled === false || currentSteps.length === 0) return null
 
   return (
     <>
