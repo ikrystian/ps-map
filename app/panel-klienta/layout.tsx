@@ -20,8 +20,10 @@ import {
   Instagram,
   Facebook,
   Linkedin,
+  Menu,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { NotificationBell } from "@/components/NotificationBell"
@@ -46,11 +48,16 @@ export default function ClientPanelLayout({
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [isClient, setIsClient] = useState(false)
 
   // Real-time unread messages count
   const { unreadCount } = useRealtimeMessages({
     enabled: !!session?.user && session.user.role === "CLIENT",
   })
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -66,17 +73,183 @@ export default function ClientPanelLayout({
     return name[0].toUpperCase()
   }
 
+  // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
+  const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
+    <nav
+      id="left-nav"
+      className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      {/* User Avatar and Name */}
+      {(inSheet || !isCollapsed) && session?.user && (
+        <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
+          <Avatar className="h-16 w-16">
+            <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
+            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+              {getUserInitials(session.user.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-center flex flex-col items-center gap-1">
+            <p className="text-md font-semibold text-foreground">{session.user.name}</p>
+            <p className="text-sm text-primary">Klient</p>
+          </div>
+        </div>
+      )}
+      {navigation.map((item, index) => {
+        const isActive = pathname === item.href ||
+          (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
+        const isMessagesItem = item.href === "/panel-klienta/wiadomosci"
+        const showBadge = isMessagesItem && unreadCount > 0
+
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            onMouseEnter={() => setHoveredIndex(index)}
+            className={cn(
+              "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
+              isActive
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                : "text-muted-foreground hover:text-foreground",
+              !inSheet && isCollapsed && "justify-center"
+            )}
+            title={!inSheet && isCollapsed ? item.name : undefined}
+          >
+            {/* Sliding/Fading Hover Background Pill */}
+            <AnimatePresence>
+              {hoveredIndex === index && !isActive && (
+                <motion.span
+                  layoutId="client-sidebar-hover-pill"
+                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 380,
+                    damping: 30,
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Icon with interactive spring movement */}
+            <motion.div
+              animate={{
+                scale: hoveredIndex === index || isActive ? 1.1 : 1,
+                x: hoveredIndex === index && !isActive && (!inSheet && !isCollapsed) ? 2 : 0,
+                rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
+              }}
+              transition={{
+                scale: { type: "spring", stiffness: 400, damping: 20 },
+                x: { type: "spring", stiffness: 400, damping: 20 },
+                rotate: { duration: 0.4, ease: "easeInOut" }
+              }}
+              className="flex items-center justify-center flex-shrink-0"
+            >
+              <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
+            </motion.div>
+
+            {/* Text label with elegant fade-slide */}
+            {(inSheet || !isCollapsed) && (
+              <motion.span
+                animate={{
+                  x: hoveredIndex === index && !isActive ? 4 : 0,
+                  fontWeight: isActive ? 600 : 500,
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+                {item.name}
+              </motion.span>
+            )}
+
+            {showBadge && (
+              <span className={cn(
+                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
+                !inSheet && isCollapsed && "absolute -right-1 -top-1"
+              )}>
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+
+            {/* Active accent dot for extra polish */}
+            {isActive && (inSheet || !isCollapsed) && (
+              <motion.span
+                layoutId="client-sidebar-active-indicator"
+                className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              />
+            )}
+          </Link>
+        )
+      })}
+      <Button
+        onClick={handleLogout}
+        onMouseEnter={() => setHoveredIndex(navigation.length)}
+        className={cn(
+          "w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
+          !inSheet && isCollapsed && "justify-center"
+        )}
+        variant="ghost"
+        title={!inSheet && isCollapsed ? "Wyloguj" : undefined}
+      >
+        <AnimatePresence>
+          {hoveredIndex === navigation.length && (
+            <motion.span
+              layoutId="client-sidebar-hover-pill"
+              className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{
+                type: "spring",
+                stiffness: 380,
+                damping: 30,
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <motion.div
+          animate={{
+            scale: hoveredIndex === navigation.length ? 1.1 : 1,
+            x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
+            rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
+          }}
+          transition={{
+            scale: { type: "spring", stiffness: 400, damping: 20 },
+            x: { type: "spring", stiffness: 400, damping: 20 },
+            rotate: { duration: 0.4, ease: "easeInOut" }
+          }}
+          className="flex items-center justify-center flex-shrink-0"
+        >
+          <LogOut className="h-5 w-5" />
+        </motion.div>
+
+        {(inSheet || !isCollapsed) && (
+          <motion.span
+            animate={{
+              x: hoveredIndex === navigation.length ? 4 : 0,
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          >
+            Wyloguj
+          </motion.span>
+        )}
+      </Button>
+    </nav>
+  )
+
   return (
     <div className="flex h-screen bg-background-sec">
-      {/* Sidebar */}
+      {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
-        "transition-all duration-300 ease-in-out",
+        "hidden md:block border-r border-border transition-all duration-300 ease-in-out bg-card",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
-          <div className="flex h-16 items-center border-border px-4 justify-between">
-            {!isCollapsed && <h2 className="text-lg font-semibold">Panel Klienta</h2>}
+          <div className="flex h-16 items-center px-4 justify-start gap-2 border-b bg-card">
             <Button
               variant="ghost"
               size="icon"
@@ -88,180 +261,43 @@ export default function ClientPanelLayout({
           </div>
 
           {/* Navigation */}
-          <nav
-            id="left-nav"
-            className="flex-1 space-y-1 overflow-y-auto p-4 relative"
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
-            {/* User Avatar and Name */}
-            {!isCollapsed && session?.user && (
-              <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                    {getUserInitials(session.user.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-center flex flex-col items-center gap-1">
-                  <p className="text-md font-semibold text-foreground">{session.user.name}</p>
-                  <p className="text-sm text-primary">Klient</p>
-                </div>
-              </div>
-            )}
-            {navigation.map((item, index) => {
-              const isActive = pathname === item.href ||
-                (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
-              const isMessagesItem = item.href === "/panel-klienta/wiadomosci"
-              const showBadge = isMessagesItem && unreadCount > 0
-
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  className={cn(
-                    "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                      : "text-muted-foreground hover:text-foreground",
-                    isCollapsed && "justify-center"
-                  )}
-                  title={isCollapsed ? item.name : undefined}
-                >
-                  {/* Sliding/Fading Hover Background Pill */}
-                  <AnimatePresence>
-                    {hoveredIndex === index && !isActive && (
-                      <motion.span
-                        layoutId="client-sidebar-hover-pill"
-                        className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                        initial={{ opacity: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 380,
-                          damping: 30,
-                        }}
-                      />
-                    )}
-                  </AnimatePresence>
-
-                  {/* Icon with interactive spring movement */}
-                  <motion.div
-                    animate={{
-                      scale: hoveredIndex === index || isActive ? 1.1 : 1,
-                      x: hoveredIndex === index && !isActive && !isCollapsed ? 2 : 0,
-                      rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
-                    }}
-                    transition={{
-                      scale: { type: "spring", stiffness: 400, damping: 20 },
-                      x: { type: "spring", stiffness: 400, damping: 20 },
-                      rotate: { duration: 0.4, ease: "easeInOut" }
-                    }}
-                    className="flex items-center justify-center flex-shrink-0"
-                  >
-                    <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
-                  </motion.div>
-
-                  {/* Text label with elegant fade-slide */}
-                  {!isCollapsed && (
-                    <motion.span
-                      animate={{
-                        x: hoveredIndex === index && !isActive ? 4 : 0,
-                        fontWeight: isActive ? 600 : 500,
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    >
-                      {item.name}
-                    </motion.span>
-                  )}
-
-                  {showBadge && (
-                    <span className={cn(
-                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
-                      isCollapsed && "absolute -right-1 -top-1"
-                    )}>
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
-
-                  {/* Active accent dot for extra polish */}
-                  {isActive && !isCollapsed && (
-                    <motion.span
-                      layoutId="client-sidebar-active-indicator"
-                      className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              )
-            })}
-            <Button
-              onClick={handleLogout}
-              onMouseEnter={() => setHoveredIndex(navigation.length)}
-              className={cn(
-                "w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
-                isCollapsed && "justify-center"
-              )}
-              variant="ghost"
-              title={isCollapsed ? "Wyloguj" : undefined}
-            >
-              <AnimatePresence>
-                {hoveredIndex === navigation.length && (
-                  <motion.span
-                    layoutId="client-sidebar-hover-pill"
-                    className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 30,
-                    }}
-                  />
-                )}
-              </AnimatePresence>
-
-              <motion.div
-                animate={{
-                  scale: hoveredIndex === navigation.length ? 1.1 : 1,
-                  x: hoveredIndex === navigation.length && !isCollapsed ? 2 : 0,
-                  rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
-                }}
-                transition={{
-                  scale: { type: "spring", stiffness: 400, damping: 20 },
-                  x: { type: "spring", stiffness: 400, damping: 20 },
-                  rotate: { duration: 0.4, ease: "easeInOut" }
-                }}
-                className="flex items-center justify-center flex-shrink-0"
-              >
-                <LogOut className="h-5 w-5" />
-              </motion.div>
-
-              {!isCollapsed && (
-                <motion.span
-                  animate={{
-                    x: hoveredIndex === navigation.length ? 4 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                >
-                  Wyloguj
-                </motion.span>
-              )}
-            </Button>
-          </nav>
+          <NavigationItems />
         </div>
       </aside>
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
-          {/* Logo */}
-          <div className="flex items-center">
+        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
+          {/* Mobile Menu Button + Logo */}
+          <div className="flex items-center gap-2">
+            {/* Mobile Menu Sheet */}
+            {isClient && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-64 p-0">
+                  <div className="flex h-full flex-col">
+                    <div className="flex h-16 items-center border-b border-border px-4 font-playfair">
+                      <h2 className="text-lg font-semibold">Panel Klienta</h2>
+                    </div>
+                    <NavigationItems inSheet />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+
             <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={150} height={38} />
+              <span className="sm:hidden text-lg font-semibold">PS</span>
               <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>
           </div>

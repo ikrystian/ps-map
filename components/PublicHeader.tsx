@@ -151,7 +151,7 @@ export default function PublicHeader({
                       onClick={() => setSearchFormOpen(true)}
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 transition-colors w-[108px]"
+                        "flex items-center justify-center gap-2 bg-transparent hover:bg-[#121212] transition-colors w-[108px]"
                       )}
                     >
                       <Search className="h-4 w-4 text-neutral-400" />
@@ -187,7 +187,7 @@ export default function PublicHeader({
                     href="/szukaj-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-accent/50",
+                      "bg-transparent hover:bg-[#121212]",
                       isEksperciActive && "text-primary font-semibold"
                     )}
                   >
@@ -200,7 +200,7 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-accent/50",
+                    "bg-transparent hover:bg-[#121212]",
                     isFirmoweActive && "text-primary font-semibold"
                   )}
                 >
@@ -271,7 +271,7 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-accent/50",
+                    "bg-transparent hover:bg-[#121212]",
                     isPrywatneActive && "text-primary font-semibold"
                   )}
                 >
@@ -344,7 +344,7 @@ export default function PublicHeader({
                     href="/mapa"
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-accent/50",
+                      "bg-transparent hover:bg-[#121212]",
                       isMapaActive && "text-primary font-semibold"
                     )}
                   >
@@ -360,7 +360,7 @@ export default function PublicHeader({
                     href="/dla-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-accent/50",
+                      "bg-transparent hover:bg-[#121212]",
                       isDlaPrawnikaActive && "text-primary font-semibold"
                     )}
                   >
@@ -411,7 +411,7 @@ export default function PublicHeader({
                       <Image src="/images/white-logo.png" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
                     </Link>
                   </div>
-                  
+
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
                     {/* Search inside Mobile Menu */}
