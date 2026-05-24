@@ -47,61 +47,77 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get("offset") || "0")
 
     // Build where clause
+    const andConditions: any[] = []
+
+    if (category) {
+      andConditions.push({
+        categories: {
+          some: {
+            category: {
+              slug: category,
+            },
+          },
+        },
+      })
+    } else if (type) {
+      const categoryType = type === "FIRMA" || type === "SPRAWY_FIRMOWE" ? "SPRAWY_FIRMOWE" : "SPRAWY_PRYWATNE"
+      andConditions.push({
+        categories: {
+          some: {
+            category: {
+              typ: categoryType,
+            },
+          },
+        },
+      })
+    }
+
+    if (voivodeship) {
+      andConditions.push({
+        OR: [
+          {
+            voivodeship: {
+              slug: voivodeship,
+            },
+          },
+          {
+            voivodeships: {
+              some: {
+                voivodeship: {
+                  slug: voivodeship,
+                },
+              },
+            },
+          },
+          {
+            callaPolska: true,
+          },
+        ],
+      })
+    }
+
+    if (city) {
+      andConditions.push({
+        miasto: { contains: city },
+      })
+    }
+
+    if (search) {
+      andConditions.push({
+        OR: [
+          { nazwa: { contains: search } },
+          { nazwaFirmy: { contains: search } },
+          { miasto: { contains: search } },
+        ],
+      })
+    }
+
     const where: any = {
       aktywna: true,
     }
 
-    if (category) {
-      where.categories = {
-        some: {
-          category: {
-            slug: category,
-          },
-        },
-      }
-    } else if (type) {
-      const categoryType = type === "FIRMA" || type === "SPRAWY_FIRMOWE" ? "SPRAWY_FIRMOWE" : "SPRAWY_PRYWATNE"
-      where.categories = {
-        some: {
-          category: {
-            typ: categoryType,
-          },
-        },
-      }
-    }
-
-    if (voivodeship) {
-      where.OR = [
-        {
-          voivodeship: {
-            slug: voivodeship,
-          },
-        },
-        {
-          voivodeships: {
-            some: {
-              voivodeship: {
-                slug: voivodeship,
-              },
-            },
-          },
-        },
-        {
-          callaPolska: true,
-        },
-      ]
-    }
-
-    if (city) {
-      where.miasto = { contains: city }
-    }
-
-    if (search) {
-      where.OR = [
-        { nazwa: { contains: search } },
-        { nazwaFirma: { contains: search } },
-        { miasto: { contains: search } },
-      ]
+    if (andConditions.length > 0) {
+      where.AND = andConditions
     }
 
     // Fetch law firms
