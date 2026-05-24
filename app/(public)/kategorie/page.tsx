@@ -156,7 +156,7 @@ export default function CategoriesPage() {
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
-          <div className="absolute top-1/2 -right-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
+          <div className="absolute top-1/2 -right-24 w-64 h-64 bg-[#d7b56d]/10 rounded-full blur-[80px]"></div>
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center">
@@ -179,7 +179,7 @@ export default function CategoriesPage() {
           {/* Search Bar in Hero */}
           <div className="mx-auto max-w-2xl">
             <div className="group relative">
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-emerald-600 opacity-20 blur transition duration-1000 group-hover:opacity-40 group-hover:duration-200"></div>
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-[#d7b56d] opacity-20 blur transition duration-1000 group-hover:opacity-40 group-hover:duration-200"></div>
               <div className="relative flex  items-center rounded-xl bg-slate-900 border border-slate-800 p-1 shadow-2xl">
                 <Input
                   placeholder="Czego szukasz? (np. alimenty, spółki, nieruchomości)"
@@ -200,19 +200,19 @@ export default function CategoriesPage() {
               <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Wszystkich kategorii</p>
             </div>
             <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold text-primary">
+              <p className="text-3xl md:text-4xl font-bold text-[#d7b56d]">
                 <NumberTicker value={stats.private} />
               </p>
               <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Prywatnych</p>
             </div>
             <div className="hidden md:flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold text-emerald-400">
+              <p className="text-3xl md:text-4xl font-bold text-primary">
                 <NumberTicker value={stats.business} />
               </p>
               <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
             </div>
             <div className="md:hidden col-span-2 flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <p className="text-3xl font-bold text-emerald-400">
+              <p className="text-3xl font-bold text-primary">
                 <NumberTicker value={stats.business} />
               </p>
               <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
@@ -285,21 +285,22 @@ export default function CategoriesPage() {
 
 function CategoryGrid({ categories }: { categories: Category[] }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="proste-kategorie-grid">
       {categories.map((category) => {
         const isBusiness = category.typ === "SPRAWY_FIRMOWE"
 
-        // Custom gradient and glow config per category type
-        const gradientFrom = isBusiness ? "#10b981" : "#3b82f6"
-        const gradientTo = isBusiness ? "#059669" : "#6366f1"
-        const gradientColor = isBusiness ? "rgba(16, 185, 129, 0.08)" : "rgba(59, 130, 246, 0.08)"
+        // Custom gradient and glow config per category type matching standard brand colors:
+        // Sprawy Firmowe -> Teal (#0da192), Sprawy Prywatne -> Gold/Amber (#d7b56d)
+        const gradientFrom = isBusiness ? "#0da192" : "#d7b56d"
+        const gradientTo = isBusiness ? "#00897b" : "#bfa05d"
+        const gradientColor = isBusiness ? "rgba(13, 161, 146, 0.08)" : "rgba(215, 181, 109, 0.08)"
 
         return (
           <MagicCard
             key={category.id}
             className={`flex flex-col h-full overflow-hidden border-border/60 transition-all duration-300 group ${isBusiness
-                ? "hover:border-emerald-500/40"
-                : "hover:border-blue-500/40"
+              ? "hover:border-[#0da192]/40"
+              : "hover:border-[#d7b56d]/40"
               }`}
             gradientFrom={gradientFrom}
             gradientTo={gradientTo}
@@ -308,8 +309,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
             {/* Subtle background glow highlight in top right */}
             <div
               className={`absolute top-0 right-0 h-36 w-36 bg-gradient-to-bl from-transparent via-transparent to-transparent rounded-bl-full pointer-events-none transition-all duration-500 ${isBusiness
-                  ? "from-emerald-500/5 group-hover:from-emerald-500/10"
-                  : "from-blue-500/5 group-hover:from-blue-500/10"
+                ? "from-[#0da192]/5 group-hover:from-[#0da192]/10"
+                : "from-[#d7b56d]/5 group-hover:from-[#d7b56d]/10"
                 }`}
             />
 
@@ -319,8 +320,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 <Link
                   href={`/kategorie/${category.slug}`}
                   className={`rounded-xl p-3 transition-all duration-500 transform group-hover:rotate-6 shadow-sm border ${isBusiness
-                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                      : "bg-blue-500/10 text-blue-400 border-blue-500/20 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    ? "bg-[#0da192]/10 text-[#0da192] border-[#0da192]/20 group-hover:bg-gradient-to-br group-hover:from-[#0da192] group-hover:to-[#00897b] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(13,161,146,0.3)]"
+                    : "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/20 group-hover:bg-gradient-to-br group-hover:from-[#d7b56d] group-hover:to-[#bfa05d] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(215,181,109,0.3)]"
                     }`}
                 >
                   <IconRenderer
@@ -334,8 +335,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 <div className="flex flex-col items-end gap-1">
                   <Badge
                     className={`rounded-md px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold gap-1 border transition-colors ${isBusiness
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
-                        : "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20"
+                      ? "bg-[#0da192]/10 text-[#0da192] border-[#0da192]/20 hover:bg-[#0da192]/20"
+                      : "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/20 hover:bg-[#d7b56d]/20"
                       }`}
                   >
                     {isBusiness ? (
@@ -355,7 +356,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
 
               {/* Title with matching color on hover */}
               <Link href={`/kategorie/${category.slug}`}>
-                <h3 className={`text-xl font-bold mb-3 transition-colors line-clamp-1 ${isBusiness ? "group-hover:text-emerald-400" : "group-hover:text-blue-400"
+                <h3 className={`text-xl font-bold mb-3 transition-colors line-clamp-1 ${isBusiness ? "group-hover:text-[#0da192]" : "group-hover:text-[#d7b56d]"
                   }`}>
                   {category.nazwa}
                 </h3>
@@ -376,8 +377,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                       key={child.id}
                       href={`/kategorie/${category.slug}/${child.slug}`}
                       className={`inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors ${isBusiness
-                          ? "hover:border-emerald-500/50 hover:bg-emerald-500/5 hover:text-emerald-400"
-                          : "hover:border-blue-500/50 hover:bg-blue-500/5 hover:text-blue-400"
+                        ? "hover:border-[#0da192]/50 hover:bg-[#0da192]/5 hover:text-[#0da192]"
+                        : "hover:border-[#d7b56d]/50 hover:bg-[#d7b56d]/5 hover:text-[#d7b56d]"
                         }`}
                     >
                       <IconRenderer
@@ -392,7 +393,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                   {category.children.length > 6 && (
                     <Link
                       href={`/kategorie/${category.slug}`}
-                      className={`inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground transition-colors font-medium ${isBusiness ? "hover:text-emerald-400" : "hover:text-blue-400"
+                      className={`inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground transition-colors font-medium ${isBusiness ? "hover:text-[#0da192]" : "hover:text-[#d7b56d]"
                         }`}
                     >
                       +{category.children.length - 6} więcej...
@@ -416,8 +417,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 <Link
                   href={`/kategorie/${category.slug}`}
                   className={`flex items-center gap-1 text-xs font-bold opacity-60 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 ${isBusiness
-                      ? "text-emerald-400 group-hover:text-emerald-300"
-                      : "text-blue-400 group-hover:text-blue-300"
+                    ? "text-[#0da192] group-hover:text-[#0da192]"
+                    : "text-[#d7b56d] group-hover:text-[#d7b56d]"
                     }`}
                 >
                   <span>SZCZEGÓŁY</span>
