@@ -22,6 +22,8 @@ import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -119,7 +121,7 @@ export default function PublicHeader({
   }
 
   return (
-    <header className="fixed left-0 top-0 right-0 z-20 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/70 top-bar-public">
+    <header className="fixed left-0 top-0 right-0 z-20 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/70 top-bar-public bg-[#141414]/40">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -131,18 +133,47 @@ export default function PublicHeader({
           {/* Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList className="flex gap-6">
-              {/* Szukaj Button */}
+              {/* Szukaj / Zamknij Animated Button */}
               <NavigationMenuItem>
-                <button
-                  onClick={() => setSearchFormOpen(!searchFormOpen)}
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "flex items-center gap-2 bg-transparent hover:bg-accent/50 transition-colors"
+                <AnimatePresence mode="wait">
+                  {!searchFormOpen ? (
+                    <motion.button
+                      key="search-btn"
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.92 }}
+                      transition={{ duration: 0.15, ease: "easeInOut" }}
+                      onClick={() => setSearchFormOpen(true)}
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 transition-colors w-[108px]"
+                      )}
+                    >
+                      <Search className="h-4 w-4 text-neutral-400" />
+                      <span>Szukaj</span>
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      key="close-btn"
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.92 }}
+                      transition={{ duration: 0.15, ease: "easeInOut" }}
+                      onClick={() => setSearchFormOpen(false)}
+                      className="flex w-[108px] h-9 items-center justify-center rounded-md  bg-[#141414] text-neutral-200 px-3 py-2 text-sm font-medium hover:bg-black focus:outline-none transition-colors gap-2 shadow-lg shadow-black/30"
+                    >
+                      <motion.div
+                        initial={{ rotate: -90, opacity: 0 }}
+                        animate={{ rotate: 0, opacity: 1 }}
+                        transition={{ type: "spring", stiffness: 220, damping: 15 }}
+                      >
+                        <X className="h-4 w-4 text-neutral-300" />
+                      </motion.div>
+                      <span className="text-neutral-700 select-none font-light">|</span>
+                      <span>Zamknij</span>
+                    </motion.button>
                   )}
-                >
-                  <Search className="h-4 w-4" />
-                  Szukaj
-                </button>
+                </AnimatePresence>
               </NavigationMenuItem>
 
               <NavigationMenuItem className="hidden md:flex">
@@ -347,7 +378,7 @@ export default function PublicHeader({
           <div className="border-t border-neutral-200/10 mt-1 pt-4">
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-white overflow-hidden">
 
-              <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-1000">
+              <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-3">
                 {/* Field 1: Kogo szukasz? */}
                 <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
                   <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />

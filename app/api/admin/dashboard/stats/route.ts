@@ -80,7 +80,9 @@ export async function GET(request: NextRequest) {
 
     for (let i = 5; i >= 0; i--) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
-      const monthKey = date.toISOString().slice(0, 7) // YYYY-MM format
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const monthKey = `${year}-${month}`
       const monthName = date.toLocaleDateString('pl-PL', { month: 'short', year: 'numeric' })
 
       const existingData = monthlyRevenueRaw.find((item: { month: string; revenue: bigint }) => item.month === monthKey)
