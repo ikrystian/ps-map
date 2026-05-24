@@ -18,7 +18,7 @@ interface LoginRecord {
 
 function parseUserAgent(ua: string | null): string {
   if (!ua) return "Nieznane urządzenie"
-  
+
   let browser = "Nieznana przeglądarka"
   let os = "Nieznany system"
 
@@ -111,65 +111,120 @@ export function LoginHistory({ noCard = false }: { noCard?: boolean }) {
           Brak zarejestrowanych logowań w historii.
         </div>
       ) : (
-        <div className="relative overflow-x-auto rounded-lg border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-muted/50 text-xs uppercase text-muted-foreground border-b border-border">
-              <tr>
-                <th scope="col" className="px-4 py-3">Data i godzina</th>
-                <th scope="col" className="px-4 py-3">Status</th>
-                <th scope="col" className="px-4 py-3">Adres IP</th>
-                <th scope="col" className="px-4 py-3">Lokalizacja</th>
-                <th scope="col" className="px-4 py-3">Urządzenie</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {history.map((record) => (
-                <tr
-                  key={record.id}
-                  className="hover:bg-muted/30 transition-colors duration-150"
-                >
-                  <td className="px-4 py-3.5 font-medium whitespace-nowrap">
+        <>
+          {/* Mobilny widok listy kart (ukryty na desktopie) */}
+          <div className="block md:hidden space-y-4">
+            {history.map((record) => (
+              <div key={record.id} className="p-4 rounded-lg border border-border bg-muted/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground font-medium">
                     {formatDateTime(record.createdAt)}
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap">
-                    {record.success ? (
-                      <Badge
-                        variant="secondary"
-                        className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center gap-1 w-fit"
-                      >
-                        <ShieldCheck className="h-3 w-3" />
-                        Udane
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="secondary"
-                        className="bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 border border-rose-500/20 flex items-center gap-1 w-fit"
-                      >
-                        <ShieldAlert className="h-3 w-3" />
-                        Nieudane
-                      </Badge>
-                    )}
-                  </td>
-                  <td className="px-4 py-3.5 text-muted-foreground font-mono">
-                    {record.ipAddress || "Brak danych"}
-                  </td>
-                  <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">
-                    <span className="flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-muted-foreground/75" />
-                      {record.location || "Nieznana"}
+                  </span>
+                  {record.success ? (
+                    <Badge
+                      variant="secondary"
+                      className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center gap-1 w-fit text-[11px]"
+                    >
+                      <ShieldCheck className="h-3 w-3" />
+                      Udane
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className="bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 border border-rose-500/20 flex items-center gap-1 w-fit text-[11px]"
+                    >
+                      <ShieldAlert className="h-3 w-3" />
+                      Nieudane
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted-foreground block mb-0.5">Adres IP</span>
+                    <span className="font-mono text-foreground font-medium">{record.ipAddress || "Brak danych"}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block mb-0.5">Lokalizacja</span>
+                    <span className="flex items-center gap-1 text-foreground font-medium">
+                      <MapPin className="h-3 w-3 text-muted-foreground/75 shrink-0" />
+                      <span className="truncate">{record.location || "Nieznana"}</span>
                     </span>
-                  </td>
-                  <td className="px-4 py-3.5 text-muted-foreground max-w-[200px] truncate" title={record.userAgent || ""}>
-                    <span className="flex items-center gap-1.5">
-                      <Laptop className="h-3.5 w-3.5 text-muted-foreground/75" />
-                      {parseUserAgent(record.userAgent)}
-                    </span>
-                  </td>
+                  </div>
+                </div>
+
+                <div className="border-t border-border/50 pt-2.5 text-xs">
+                  <span className="text-muted-foreground block mb-0.5">Urządzenie</span>
+                  <span className="flex items-center gap-1.5 text-foreground font-medium truncate" title={record.userAgent || ""}>
+                    <Laptop className="h-3.5 w-3.5 text-muted-foreground/75 shrink-0" />
+                    <span className="truncate">{parseUserAgent(record.userAgent)}</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktopowy widok tabeli (ukryty na mobilkach) */}
+          <div className="hidden md:block relative overflow-x-auto rounded-lg border border-border">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground border-b border-border">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Data i godzina</th>
+                  <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Adres IP</th>
+                  <th scope="col" className="px-4 py-3">Lokalizacja</th>
+                  <th scope="col" className="px-4 py-3">Urządzenie</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {history.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="hover:bg-muted/30 transition-colors duration-150"
+                  >
+                    <td className="px-4 py-3.5 font-medium whitespace-nowrap">
+                      {formatDateTime(record.createdAt)}
+                    </td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      {record.success ? (
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center gap-1 w-fit"
+                        >
+                          <ShieldCheck className="h-3 w-3" />
+                          Udane
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="secondary"
+                          className="bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 border border-rose-500/20 flex items-center gap-1 w-fit"
+                        >
+                          <ShieldAlert className="h-3 w-3" />
+                          Nieudane
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground font-mono">
+                      {record.ipAddress || "Brak danych"}
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-muted-foreground/75" />
+                        {record.location || "Nieznana"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground max-w-[200px] truncate" title={record.userAgent || ""}>
+                      <span className="flex items-center gap-1.5">
+                        <Laptop className="h-3.5 w-3.5 text-muted-foreground/75" />
+                        {parseUserAgent(record.userAgent)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )

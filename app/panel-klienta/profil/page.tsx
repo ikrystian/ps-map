@@ -321,8 +321,8 @@ export default function ClientProfilePage() {
         </CardHeader>
         <CardContent>
           {clientData?.user.image ? (
-            <div className="flex items-start gap-4">
-              <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card shrink-0">
                 <Image
                   src={clientData.user.image}
                   alt="Avatar"
@@ -330,11 +330,11 @@ export default function ClientProfilePage() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full sm:w-auto">
                 <label
                   htmlFor="avatar-upload"
                   className={cn(
-                    "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
+                    "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2 w-full sm:w-auto",
                     isUploadingAvatar
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
@@ -360,6 +360,7 @@ export default function ClientProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
+                  className="w-full sm:w-auto"
                   onClick={handleRemoveAvatar}
                   disabled={isUploadingAvatar}
                 >
@@ -432,7 +433,7 @@ export default function ClientProfilePage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex gap-4 p-1.5 bg-muted rounded-xl w-full max-w-md border border-border">
+                      <div className="flex gap-2 p-1.5 bg-muted rounded-xl w-full max-w-md border border-border">
                         <button
                           type="button"
                           className={cn(
@@ -700,7 +701,7 @@ export default function ClientProfilePage() {
                 control={form.control}
                 name="zgodaNewsletter"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-start justify-between rounded-lg border p-4 gap-4 sm:items-center">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Newsletter</FormLabel>
                       <FormDescription>
@@ -721,7 +722,7 @@ export default function ClientProfilePage() {
                 control={form.control}
                 name="zgodaMarketing"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-start justify-between rounded-lg border p-4 gap-4 sm:items-center">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Komunikacja marketingowa</FormLabel>
                       <FormDescription>
@@ -741,11 +742,11 @@ export default function ClientProfilePage() {
           </Card>
 
           {/* Submit Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button
               type="submit"
               disabled={submitting}
-              className="flex-1"
+              className="w-full sm:flex-1"
             >
               {submitting ? (
                 <>
@@ -762,6 +763,7 @@ export default function ClientProfilePage() {
             <Button
               type="button"
               variant="outline"
+              className="w-full sm:w-auto"
               onClick={() => router.push("/panel-klienta")}
               disabled={submitting}
             >
