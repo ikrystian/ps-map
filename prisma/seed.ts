@@ -17,6 +17,7 @@ import { seedCases } from './seeds/cases' // Importuj seeder spraw z ofertami
 import { seedTestUser } from './seeds/test-user'
 import { seedStaticPages } from './seeds/static-pages'
 import { seedHomepagePromotions } from './seeds/homepage-promotions'
+import { seedHomepageTestimonials } from './seeds/homepage-testimonials'
 
 const prisma = new PrismaClient()
 
@@ -64,6 +65,7 @@ async function main() {
   await prisma.settings.deleteMany()
   await prisma.emailTemplate.deleteMany()
   await prisma.accountManager.deleteMany()
+  await prisma.homepageTestimonial.deleteMany()
 
   // Seedowanie danych
   await seedVoivodeships(prisma)
@@ -72,6 +74,7 @@ async function main() {
   await seedPackages(prisma) // Wywołaj seeder pakietów
   await seedTestData(prisma) // Wywołaj seeder danych testowych
   await seedHomepagePromotions(prisma) // Wywołaj seeder promocji na stronie głównej
+  await seedHomepageTestimonials(prisma) // Wywołaj seeder opinii na stronie głównej
   await seedHelpCenter(prisma) // Wywołaj seeder centrum pomocy
   await seedBlogCategories(prisma) // Wywołaj seeder kategorii bloga
   await seedEmailTemplates(prisma) // Wywołaj seeder szablonów emaili

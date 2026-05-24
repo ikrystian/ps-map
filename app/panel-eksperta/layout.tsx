@@ -43,6 +43,7 @@ import {
 import UserMenu from "@/components/UserMenu"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationBell } from "@/components/NotificationBell"
+import { MessagesBell } from "@/components/MessagesBell"
 import { triggerBadgeCheck } from "@/app/actions/badges"
 import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -486,6 +487,7 @@ export default function LawFirmPanelLayout({
           </div>
 
           <div className="flex items-center gap-2">
+            <MessagesBell />
             <NotificationBell />
             <UserMenu
               userRole="LAW_FIRM"

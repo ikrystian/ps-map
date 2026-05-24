@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { NotificationBell } from "@/components/NotificationBell"
+import { MessagesBell } from "@/components/MessagesBell"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const navigation = [
@@ -267,6 +268,7 @@ export default function ClientPanelLayout({
 
           {/* Notifications and User menu */}
           <div className="flex items-center gap-2">
+            <MessagesBell />
             <NotificationBell />
             <UserMenu
               userRole="CLIENT"
