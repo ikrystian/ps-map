@@ -45,7 +45,14 @@ jobs:
             }' > commits.json
 
           cat commits.json
-
+          
+      - name: Send webhook with commits
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            --data @commits.json
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -71,10 +78,3 @@ jobs:
             pm2 reload 0
           EOF
 
-      - name: Send webhook with commits
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          curl -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            --data @commits.json
