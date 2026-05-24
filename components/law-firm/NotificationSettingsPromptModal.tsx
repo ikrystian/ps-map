@@ -114,18 +114,18 @@ export function NotificationSettingsPromptModal({
     setIsSaving(true);
     const dataToSave = useDefaults
       ? {
-          ...settings,
-          emailNoweOferty: true,
-          emailWiadomosci: true,
-          emailStatusy: true,
-          wskazowkiPorady: true,
-          ofertPromocje: true,
-          isConfigured: true,
-        }
+        ...settings,
+        emailNoweOferty: true,
+        emailWiadomosci: true,
+        emailStatusy: true,
+        wskazowkiPorady: true,
+        ofertPromocje: true,
+        isConfigured: true,
+      }
       : {
-          ...settings,
-          isConfigured: true,
-        };
+        ...settings,
+        isConfigured: true,
+      };
 
     try {
       const res = await fetch("/api/notification-settings", {
@@ -151,40 +151,40 @@ export function NotificationSettingsPromptModal({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-xl border border-zinc-800/40 bg-zinc-950/95 p-6 shadow-2xl backdrop-blur-xl md:p-8">
+      <AlertDialogContent className="max-w-xl border border-border bg-background p-6 shadow-2xl backdrop-blur-xl md:p-8">
         <AlertDialogHeader className="space-y-4">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 shadow-lg shadow-indigo-500/20">
-            <Bell className="h-7 w-7 text-white animate-pulse" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-primary/80 shadow-lg shadow-primary/20">
+            <Bell className="h-7 w-7 text-primary-foreground animate-pulse" />
           </div>
 
-          <AlertDialogTitle className="text-center text-2xl font-bold tracking-tight text-white md:text-3xl">
+          <AlertDialogTitle className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
             Witaj w Panelu Eksperta!
           </AlertDialogTitle>
 
-          <AlertDialogDescription className="text-center text-sm text-zinc-400 md:text-base max-w-md mx-auto">
+          <AlertDialogDescription className="text-center text-sm text-muted-foreground md:text-base max-w-md mx-auto">
             Zanim rozpoczniesz, dostosuj preferencje powiadomień, aby nie ominęły Cię żadne zlecenia i wiadomości od klientów.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="my-6 space-y-4 max-h-[350px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
+          <div className="my-6 space-y-4 max-h-[350px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-border">
             {/* Sekcja Powiadomienia e-mail */}
             <div className="space-y-3">
-              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-400">
+              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
                 <Mail className="h-3.5 w-3.5" /> Powiadomienia e-mail
               </h4>
 
               {/* Nowe oferty */}
-              <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-900 bg-zinc-900/30 p-3.5 transition-all hover:bg-zinc-900/50">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
                 <div className="space-y-1">
-                  <Label htmlFor="modal-emailNoweOferty" className="cursor-pointer text-sm font-medium text-zinc-200">
+                  <Label htmlFor="modal-emailNoweOferty" className="cursor-pointer text-sm font-medium text-foreground">
                     Nowe oferty spraw
                   </Label>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     Otrzymuj wiadomości e-mail o nowych sprawach pasujących do Twojej specjalizacji.
                   </p>
                 </div>
@@ -192,17 +192,17 @@ export function NotificationSettingsPromptModal({
                   id="modal-emailNoweOferty"
                   checked={settings.emailNoweOferty}
                   onCheckedChange={() => handleToggle("emailNoweOferty")}
-                  className="data-[state=checked]:bg-indigo-500"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
 
               {/* Nowe wiadomości */}
-              <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-900 bg-zinc-900/30 p-3.5 transition-all hover:bg-zinc-900/50">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
                 <div className="space-y-1">
-                  <Label htmlFor="modal-emailWiadomosci" className="cursor-pointer text-sm font-medium text-zinc-200">
+                  <Label htmlFor="modal-emailWiadomosci" className="cursor-pointer text-sm font-medium text-foreground">
                     Nowe wiadomości na czacie
                   </Label>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     Otrzymuj e-maile, gdy klient wyśle nową wiadomość w sprawie.
                   </p>
                 </div>
@@ -210,17 +210,17 @@ export function NotificationSettingsPromptModal({
                   id="modal-emailWiadomosci"
                   checked={settings.emailWiadomosci}
                   onCheckedChange={() => handleToggle("emailWiadomosci")}
-                  className="data-[state=checked]:bg-indigo-500"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
 
               {/* Statusy */}
-              <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-900 bg-zinc-900/30 p-3.5 transition-all hover:bg-zinc-900/50">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
                 <div className="space-y-1">
-                  <Label htmlFor="modal-emailStatusy" className="cursor-pointer text-sm font-medium text-zinc-200">
+                  <Label htmlFor="modal-emailStatusy" className="cursor-pointer text-sm font-medium text-foreground">
                     Zmiany statusów spraw i konsultacji
                   </Label>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     Powiadomienia o akceptacji oferty, opłaceniu lub anulowaniu konsultacji.
                   </p>
                 </div>
@@ -228,24 +228,24 @@ export function NotificationSettingsPromptModal({
                   id="modal-emailStatusy"
                   checked={settings.emailStatusy}
                   onCheckedChange={() => handleToggle("emailStatusy")}
-                  className="data-[state=checked]:bg-indigo-500"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
             </div>
 
             {/* Sekcja Powiadomienia SMS */}
             <div className="space-y-3 pt-2">
-              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-400">
+              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
                 <Smartphone className="h-3.5 w-3.5" /> Powiadomienia SMS (Pilne)
               </h4>
 
               {/* SMS Pilne */}
-              <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-900 bg-zinc-900/30 p-3.5 transition-all hover:bg-zinc-900/50">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
                 <div className="space-y-1">
-                  <Label htmlFor="modal-smsPilne" className="cursor-pointer text-sm font-medium text-zinc-200">
+                  <Label htmlFor="modal-smsPilne" className="cursor-pointer text-sm font-medium text-foreground">
                     Pilne powiadomienia SMS
                   </Label>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     Otrzymuj wiadomości SMS w sprawach wymagających natychmiastowej reakcji.
                   </p>
                 </div>
@@ -253,17 +253,17 @@ export function NotificationSettingsPromptModal({
                   id="modal-smsPilne"
                   checked={settings.smsPilne}
                   onCheckedChange={() => handleToggle("smsPilne")}
-                  className="data-[state=checked]:bg-indigo-500"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
 
               {/* SMS Nowa Wiadomosc */}
-              <div className="flex items-start justify-between gap-4 rounded-xl border border-zinc-900 bg-zinc-900/30 p-3.5 transition-all hover:bg-zinc-900/50">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
                 <div className="space-y-1">
-                  <Label htmlFor="modal-powiadomieniaSmNowa" className="cursor-pointer text-sm font-medium text-zinc-200">
+                  <Label htmlFor="modal-powiadomieniaSmNowa" className="cursor-pointer text-sm font-medium text-foreground">
                     SMS przy nowej wiadomości na czacie
                   </Label>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     Dostawaj krótką wiadomość SMS, gdy klient odpisze w ważnej sprawie.
                   </p>
                 </div>
@@ -271,14 +271,14 @@ export function NotificationSettingsPromptModal({
                   id="modal-powiadomieniaSmNowa"
                   checked={settings.powiadomieniaSmNowa}
                   onCheckedChange={() => handleToggle("powiadomieniaSmNowa")}
-                  className="data-[state=checked]:bg-indigo-500"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
             </div>
 
             {/* Powiadomienia obowiązkowe (informacyjnie) */}
-            <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-950 p-3">
-              <p className="flex items-center gap-1.5 text-xs text-zinc-500">
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-3">
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <ShieldAlert className="h-3.5 w-3.5 text-amber-500/80" />
                 Powiadomienia o kontaktach bezpośrednich oraz systemowe są domyślnie włączone jako obowiązkowe.
               </p>
@@ -286,10 +286,10 @@ export function NotificationSettingsPromptModal({
           </div>
         )}
 
-        <AlertDialogFooter className="flex flex-col sm:flex-row gap-2.5 pt-4 border-t border-zinc-900">
+        <AlertDialogFooter className="flex flex-col sm:flex-row gap-2.5 pt-4 border-t border-border">
           <Button
             variant="ghost"
-            className="w-full text-zinc-400 hover:text-white hover:bg-zinc-900/40 order-2 sm:order-1"
+            className="w-full text-muted-foreground hover:text-foreground hover:bg-muted/40 order-2 sm:order-1"
             onClick={() => handleSave(true)}
             disabled={isSaving || isLoading}
           >
@@ -297,7 +297,7 @@ export function NotificationSettingsPromptModal({
           </Button>
 
           <Button
-            className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 order-1 sm:order-2"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg shadow-primary/10 hover:shadow-primary/20 order-1 sm:order-2"
             onClick={() => handleSave(false)}
             disabled={isSaving || isLoading}
           >
