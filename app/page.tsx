@@ -21,6 +21,7 @@ import { HowItWorksPlatform } from "@/components/homepage/how-it-works-platform"
 import { LatestArticles } from "@/components/homepage/latest-articles"
 import { CitiesList } from "@/components/homepage/cities-list"
 import { NewsletterSection } from "@/components/homepage/newsletter-section"
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 
 export default function HomePage() {
   const { data: session } = useSession()
@@ -28,6 +29,7 @@ export default function HomePage() {
   const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [blogPosts, setBlogPosts] = useState<any[]>([])
+  const [testimonials, setTestimonials] = useState<any[]>([])
   const [homepagePromotions, setHomepagePromotions] = useState<{
     recommended: Record<string, LawFirm[]>
     consulted: Record<string, LawFirm[]>
@@ -70,6 +72,13 @@ export default function HomePage() {
         if (promotionsResponse.ok) {
           const promotionsData = await promotionsResponse.json()
           setHomepagePromotions(promotionsData)
+        }
+
+        // Fetch public testimonials
+        const testimonialsResponse = await fetch("/api/testimonials")
+        if (testimonialsResponse.ok) {
+          const testimonialsData = await testimonialsResponse.json()
+          setTestimonials(testimonialsData)
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -125,6 +134,21 @@ export default function HomePage() {
 
       {/* SECTION 11: Cities List */}
       <CitiesList />
+
+      {/* SECTION 11.5: Testimonials */}
+      {testimonials.length > 0 && (
+        <section className="py-20 bg-[#121212] border-t border-zinc-900/60 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-8xl relative">
+            <div className="flex items-center gap-6 mb-12">
+              <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
+                Co mówią nasi klienci
+              </h2>
+              <div className="flex-grow border-t border-zinc-800/80" />
+            </div>
+            <AnimatedTestimonials testimonials={testimonials} autoplay={true} />
+          </div>
+        </section>
+      )}
 
       {/* SECTION 12: Newsletter */}
       <NewsletterSection />

@@ -2077,4 +2077,23 @@ model ReviewReport {
   @@index([userId])
 }
 
+// ============================================================================
+// OPINIE NA STRONIE GŁÓWNEJ (HOMEPAGE TESTIMONIALS)
+// ============================================================================
+
+model HomepageTestimonial {
+  id          String   @id @default(uuid())
+  name        String
+  designation String
+  quote       String
+  src         String   // URL zdjęcia
+  active      Boolean  @default(true)
+  order       Int      @default(0) // do sortowania
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+  @@index([order])
+}
+
 
