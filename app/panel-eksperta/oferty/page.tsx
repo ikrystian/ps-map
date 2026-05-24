@@ -234,9 +234,9 @@ export default function LawFirmOffersPage() {
             Przeglądaj i zarządzaj złożonymi ofertami dla spraw klientów
           </p>
         </div>
-        
+
         {/* Subtle quick-stat dashboard indicator */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-secondary/35 px-3 py-2 rounded-xl border border-border/30 w-fit">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground px-3 py-2 rounded-xl border border-border/30 w-fit">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span>Wszystkie: <strong>{statusCounts.all}</strong></span>
           <span className="text-border mx-1">•</span>
@@ -245,12 +245,12 @@ export default function LawFirmOffersPage() {
       </div>
 
       {/* Unified Stats and Filters Tab Bar */}
-      <div 
-        id="tour-oferty-stats" 
-        className="w-full bg-secondary/30 p-1 rounded-2xl border border-border/40"
+      <div
+        id="tour-oferty-stats"
+        className="w-full  rounded-2xl border border-border/40"
       >
-        <div 
-          id="tour-oferty-filters" 
+        <div
+          id="tour-oferty-filters"
           className="flex items-center gap-1 overflow-x-auto scrollbar-none py-0.5 px-0.5"
         >
           {tabs.map((tab) => {
@@ -267,7 +267,7 @@ export default function LawFirmOffersPage() {
                 )}
               >
                 <span>{tab.label}</span>
-                <span 
+                <span
                   className={cn(
                     "px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold transition-colors duration-200",
                     isSelected
@@ -301,9 +301,9 @@ export default function LawFirmOffersPage() {
           </CardContent>
         </Card>
       ) : (
-        <motion.div 
-          id="tour-oferty-list" 
-          layout 
+        <motion.div
+          id="tour-oferty-list"
+          layout
           className="space-y-4"
         >
           <AnimatePresence mode="popLayout">
@@ -325,7 +325,7 @@ export default function LawFirmOffersPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.25 }}
-                  className="bg-card border border-border/40 rounded-2xl shadow-xs hover:shadow-md hover:border-border transition-all duration-300 overflow-hidden"
+                  className="w-full bg-card border border-border/40 rounded-2xl shadow-xs hover:shadow-md hover:border-border transition-all duration-300 overflow-hidden"
                 >
                   {/* Card Main Block */}
                   <div className="p-5 space-y-4">
@@ -336,7 +336,7 @@ export default function LawFirmOffersPage() {
                           <h3 className="text-lg font-bold tracking-tight text-foreground font-sans">
                             {offer.case.nazwaSprawy}
                           </h3>
-                          
+
                           {/* Modern glowing badge */}
                           <div className={cn(
                             "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all",
@@ -351,7 +351,7 @@ export default function LawFirmOffersPage() {
                             <span>{statusInfo.label}</span>
                           </div>
                         </div>
-                        
+
                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Briefcase className="h-3 w-3 text-muted-foreground/60" />
                           <span>{offer.case.category.nazwa}</span>
@@ -362,9 +362,9 @@ export default function LawFirmOffersPage() {
                       </div>
 
                       <Link href={`/panel-eksperta/sprawy/${offer.caseId}`} className="shrink-0">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="border-primary/20 hover:border-primary/60 hover:bg-primary/5 text-primary text-xs h-9 rounded-xl font-semibold gap-1.5"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
@@ -390,7 +390,7 @@ export default function LawFirmOffersPage() {
                       </div>
 
                       {/* Timeline Box */}
-                      <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
+                      <div className="bg-card-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
                         <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
                           Termin realizacji
@@ -404,7 +404,7 @@ export default function LawFirmOffersPage() {
                       </div>
 
                       {/* Date Box */}
-                      <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
+                      <div className="border-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
                         <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
                           Status czasowy
@@ -493,7 +493,7 @@ export default function LawFirmOffersPage() {
                   {/* Accordion Toggle Bar */}
                   <button
                     onClick={() => toggleOfferExpand(offer.id)}
-                    className="w-full py-2.5 px-4 text-xs font-bold text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 bg-secondary/15 hover:bg-secondary/25 border-t border-border/40 transition-all duration-200 cursor-pointer"
+                    className="w-full py-2.5 px-4 text-xs font-bold text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 border-t border-border/40 transition-all duration-200 cursor-pointer"
                   >
                     {isExpanded ? (
                       <>
