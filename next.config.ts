@@ -1,4 +1,21 @@
 import type { NextConfig } from "next";
+import os from "node:os";
+
+// Determine optimal build cpus/workers based on system memory to prevent SIGKILL/OOM on low-resource environments
+const getOptimalBuildCPUs = () => {
+  if (process.env.NEXT_BUILD_CPUS) {
+    return parseInt(process.env.NEXT_BUILD_CPUS, 10);
+  }
+  const totalMemBytes = os.totalmem();
+  const totalMemGB = totalMemBytes / (1024 * 1024 * 1024);
+  
+  if (totalMemGB < 4) {
+    return 1;
+  } else if (totalMemGB < 8) {
+    return 2;
+  }
+  return undefined; // Let Next.js use its default concurrency
+};
 
 const nextConfig: NextConfig = {
   env: {
@@ -36,9 +53,15 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  typescript: {
+    // Optionally ignore typecheck errors during build to save memory in resource-constrained systems
+    ignoreBuildErrors: process.env.NEXT_IGNORE_TYPECHECK === "true",
+  },
   experimental: {
     webpackMemoryOptimizations: true,
+    cpus: getOptimalBuildCPUs(),
   },
 };
 
 export default nextConfig;
+
