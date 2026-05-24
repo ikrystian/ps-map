@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
     // Search by title or slug
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { slug: { contains: search, mode: "insensitive" } },
+        { title: { contains: search } },
+        { slug: { contains: search } },
       ]
     }
 

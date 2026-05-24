@@ -26,14 +26,14 @@ export async function GET(request: NextRequest) {
     // Search by order number or law firm name
     if (search) {
       where.OR = [
-        { orderNumber: { contains: search, mode: "insensitive" } },
-        { transactionId: { contains: search, mode: "insensitive" } },
-        { externalOrderId: { contains: search, mode: "insensitive" } },
+        { orderNumber: { contains: search } },
+        { transactionId: { contains: search } },
+        { externalOrderId: { contains: search } },
         {
           lawFirm: {
             OR: [
-              { nazwa: { contains: search, mode: "insensitive" } },
-              { nazwaFirmy: { contains: search, mode: "insensitive" } }
+              { nazwa: { contains: search } },
+              { nazwaFirmy: { contains: search } }
             ]
           }
         },

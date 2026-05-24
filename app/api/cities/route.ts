@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       where.voivodeshipId = voivodeshipId
     }
     if (search) {
-      where.nazwa = { contains: search, mode: "insensitive" }
+      where.nazwa = { contains: search }
     }
 
     const cities = await prisma.city.findMany({

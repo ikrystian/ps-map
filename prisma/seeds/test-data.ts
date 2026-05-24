@@ -1,9 +1,9 @@
-import { PrismaClient, UserRole, LawFirmType, OfferType, SubscriptionPackage } from '@prisma/client'
+import { PrismaClient, UserRole, LawFirmType, OfferType, SubscriptionPackage, ClientType } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import { createRandomLawFirm, createRandomUser } from './generators'
+import { createRandomLawFirm, createRandomUser, createRandomClientB2B } from './generators'
 import { faker } from '@faker-js/faker'
 
-const USERS_TO_CREATE = 12;
+const USERS_TO_CREATE = 80;
 
 export async function seedTestData(prisma: PrismaClient) {
   console.log(`Seeding ${USERS_TO_CREATE} test users (law firms and clients)...`);
@@ -75,16 +75,39 @@ export async function seedTestData(prisma: PrismaClient) {
         }
         console.log(`  ✓ Categories: ${selectedCategories.length}`);
       } else {
-        // Stwórz klienta
-        await prisma.client.create({
-          data: {
-            userId: user.id,
-            imie: user.name ? user.name.split(' ')[0] : '',
-            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
-            telefon: faker.phone.number()
-          }
-        });
-        console.log(`  ✓ Client profile created for: ${user.email}`)
+        // Stwórz klienta (indywidualnego lub biznesowego)
+        const isB2B = faker.number.int({ min: 1, max: 100 }) <= 40; // 40% B2B, 60% INDIVIDUAL
+        const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships);
+
+        if (isB2B) {
+          const clientData = createRandomClientB2B();
+          await prisma.client.create({
+            data: {
+              ...clientData,
+              userId: user.id,
+              voivodeshipId: randomVoivodeship.id,
+              zgodaRegulamin: true,
+              zgodaNewsletter: faker.datatype.boolean(),
+              zgodaMarketing: faker.datatype.boolean(),
+            }
+          });
+          console.log(`  ✓ B2B Client profile created for: ${user.email} (${clientData.nazwaFirmy})`)
+        } else {
+          await prisma.client.create({
+            data: {
+              userId: user.id,
+              clientType: ClientType.INDIVIDUAL,
+              imie: user.name ? user.name.split(' ')[0] : faker.person.firstName(),
+              nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : faker.person.lastName(),
+              telefon: faker.phone.number(),
+              voivodeshipId: randomVoivodeship.id,
+              zgodaRegulamin: true,
+              zgodaNewsletter: faker.datatype.boolean(),
+              zgodaMarketing: faker.datatype.boolean(),
+            }
+          });
+          console.log(`  ✓ Individual Client profile created for: ${user.email}`)
+        }
       }
 
       console.log('---');

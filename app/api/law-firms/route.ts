@@ -93,14 +93,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (city) {
-      where.miasto = { contains: city, mode: "insensitive" }
+      where.miasto = { contains: city }
     }
 
     if (search) {
       where.OR = [
-        { nazwa: { contains: search, mode: "insensitive" } },
-        { nazwaFirma: { contains: search, mode: "insensitive" } },
-        { miasto: { contains: search, mode: "insensitive" } },
+        { nazwa: { contains: search } },
+        { nazwaFirma: { contains: search } },
+        { miasto: { contains: search } },
       ]
     }
 

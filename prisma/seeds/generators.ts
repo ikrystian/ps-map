@@ -1,6 +1,6 @@
 
 import { faker } from '@faker-js/faker/locale/pl';
-import { PrismaClient, UserRole, UserStatus, LawFirmType, OfferType, SubscriptionPackage, CaseType, CaseStatus, PreferredContact, PaymentMethod, PaymentStatus, OrderType, PaymentTerms, OfferStatus } from '@prisma/client';
+import { PrismaClient, UserRole, UserStatus, LawFirmType, OfferType, SubscriptionPackage, CaseType, CaseStatus, PreferredContact, PaymentMethod, PaymentStatus, OrderType, PaymentTerms, OfferStatus, ClientType } from '@prisma/client';
 
 export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     const firstName = faker.person.firstName();
@@ -14,6 +14,26 @@ export function createRandomUser(prisma: PrismaClient, role: UserRole) {
         role: role,
         emailVerified: new Date(),
         status: UserStatus.ACTIVE,
+    };
+}
+
+export function createRandomClientB2B() {
+    const companyType = faker.helpers.arrayElement(["Sp. z o.o.", "S.A.", "Sp. k.", "Sp. j.", "S.C."]);
+    const companyName = `${faker.company.name()} ${companyType}`;
+    const contactFirstName = faker.person.firstName();
+    const contactLastName = faker.person.lastName();
+    return {
+        clientType: ClientType.BUSINESS,
+        imie: contactFirstName,
+        nazwisko: contactLastName,
+        telefon: faker.phone.number(),
+        nazwaFirmy: companyName,
+        nip: faker.string.numeric('10'),
+        regon: faker.string.numeric('9'),
+        krs: faker.string.numeric('10'),
+        adres: faker.location.streetAddress(),
+        kodPocztowy: faker.location.zipCode('##-###'),
+        miasto: faker.location.city(),
     };
 }
 

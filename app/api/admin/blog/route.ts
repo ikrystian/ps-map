@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { tytul: { contains: search, mode: "insensitive" } },
-        { lawFirm: { nazwa: { contains: search, mode: "insensitive" } } },
-        { lawFirm: { nazwaFirmy: { contains: search, mode: "insensitive" } } },
+        { tytul: { contains: search } },
+        { lawFirm: { nazwa: { contains: search } } },
+        { lawFirm: { nazwaFirmy: { contains: search } } },
       ]
     }
 

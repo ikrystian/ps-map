@@ -28,12 +28,12 @@ export async function GET(request: NextRequest) {
     // Search by name, NIP, or contact info
     if (search) {
       where.OR = [
-        { nazwa: { contains: search, mode: "insensitive" } },
-        { nazwaFirmy: { contains: search, mode: "insensitive" } },
-        { nip: { contains: search, mode: "insensitive" } },
-        { emailKontakt: { contains: search, mode: "insensitive" } },
-        { imieKontakt: { contains: search, mode: "insensitive" } },
-        { nazwiskoKontakt: { contains: search, mode: "insensitive" } },
+        { nazwa: { contains: search } },
+        { nazwaFirmy: { contains: search } },
+        { nip: { contains: search } },
+        { emailKontakt: { contains: search } },
+        { imieKontakt: { contains: search } },
+        { nazwiskoKontakt: { contains: search } },
       ]
     }
 

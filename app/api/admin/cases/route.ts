@@ -43,10 +43,10 @@ export async function GET(request: NextRequest) {
     // Wyszukiwanie po tytule, opisie lub danych klienta
     if (search) {
       where.OR = [
-        { nazwaSprawy: { contains: search, mode: "insensitive" } },
-        { opisSprawy: { contains: search, mode: "insensitive" } },
-        { imieNazwisko: { contains: search, mode: "insensitive" } },
-        { emailKontakt: { contains: search, mode: "insensitive" } },
+        { nazwaSprawy: { contains: search } },
+        { opisSprawy: { contains: search } },
+        { imieNazwisko: { contains: search } },
+        { emailKontakt: { contains: search } },
       ]
     }
 
