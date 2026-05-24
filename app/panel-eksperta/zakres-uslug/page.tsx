@@ -159,6 +159,7 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
 
 export default function LawFirmServicesPage() {
   const [allCategories, setAllCategories] = useState<Category[]>([])
+  const [flatCategories, setFlatCategories] = useState<Category[]>([])
   const [selectedCategories, setSelectedCategories] = useState<LawFirmCategory[]>([])
   const [mainCategoryId, setMainCategoryId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -196,7 +197,32 @@ export default function LawFirmServicesPage() {
       const categoriesResponse = await fetch("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
-      const rootCategories = categoriesData.filter((cat: Category) => !cat.parentId && cat.aktywna)
+      
+      const activeCategories = categoriesData.filter((cat: Category) => cat.aktywna)
+      setFlatCategories(activeCategories)
+
+      // Build tree where children are complete Category objects
+      const categoryMap = new Map<string, Category>()
+      activeCategories.forEach((cat: Category) => {
+        categoryMap.set(cat.id, { ...cat, children: [] })
+      })
+
+      const rootCategories: Category[] = []
+      activeCategories.forEach((cat: Category) => {
+        const mappedCat = categoryMap.get(cat.id)!
+        if (cat.parentId) {
+          const parent = categoryMap.get(cat.parentId)
+          if (parent) {
+            parent.children = parent.children || []
+            parent.children.push(mappedCat)
+          } else {
+            rootCategories.push(mappedCat)
+          }
+        } else {
+          rootCategories.push(mappedCat)
+        }
+      })
+
       setAllCategories(rootCategories)
 
       const selectedResponse = await fetch("/api/law-firm/categories")
@@ -256,6 +282,36 @@ export default function LawFirmServicesPage() {
     }
   }
 
+  const findCategoryById = (id: string): Category | null => {
+    return flatCategories.find(cat => cat.id === id) || null
+  }
+
+  const getAncestors = (cat: Category): Category[] => {
+    const ancestors: Category[] = []
+    let currentParentId = cat.parentId
+    while (currentParentId) {
+      const parent = findCategoryById(currentParentId)
+      if (parent) {
+        ancestors.push(parent)
+        currentParentId = parent.parentId
+      } else {
+        break
+      }
+    }
+    return ancestors
+  }
+
+  const getDescendantIds = (cat: Category): string[] => {
+    const ids: string[] = []
+    if (cat.children) {
+      for (const child of cat.children) {
+        ids.push(child.id)
+        ids.push(...getDescendantIds(child))
+      }
+    }
+    return ids
+  }
+
   const isSelected = (categoryId: string) => {
     return selectedCategories.some(sc => sc.categoryId === categoryId)
   }
@@ -266,22 +322,35 @@ export default function LawFirmServicesPage() {
         toast.error("Nie możesz odznaczyć głównej kategorii")
         return
       }
-      setSelectedCategories(selectedCategories.filter(sc => sc.categoryId !== category.id))
+
+      const descendantIds = getDescendantIds(category)
+      if (mainCategoryId && (category.id === mainCategoryId || descendantIds.includes(mainCategoryId))) {
+        toast.error("Nie możesz odznaczyć głównej kategorii ani jej rodziców")
+        return
+      }
+
+      const idsToRemove = [category.id, ...descendantIds]
+      setSelectedCategories(selectedCategories.filter(sc => !idsToRemove.includes(sc.categoryId)))
     } else {
-      if (selectedCategories.length >= maxCategories) {
-        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii.`)
+      const ancestors = getAncestors(category)
+      const unselectedAncestors = ancestors.filter(anc => !isSelected(anc.id))
+
+      if (selectedCategories.length + 1 + unselectedAncestors.length > maxCategories) {
+        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej specjalizacji wymaga zaznaczenia jej rodziców (razem ${1 + unselectedAncestors.length} nowych kategorii).`)
         return
       }
 
       const maxKolejnosc = selectedCategories.reduce((max, sc) => Math.max(max, sc.kolejnosc), -1)
+      const newItems = [category, ...unselectedAncestors].map((cat, index) => ({
+        id: `temp-${Date.now()}-${index}`,
+        categoryId: cat.id,
+        kolejnosc: maxKolejnosc + 1 + index,
+        category: cat,
+      }))
+
       setSelectedCategories([
         ...selectedCategories,
-        {
-          id: `temp-${Date.now()}`,
-          categoryId: category.id,
-          kolejnosc: maxKolejnosc + 1,
-          category,
-        },
+        ...newItems,
       ])
     }
   }

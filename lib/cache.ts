@@ -69,7 +69,7 @@ class InMemoryServerCache {
     const keys = Array.from(this.cache.keys());
 
     for (const key of keys) {
-      const match = typeof pattern === "string" 
+      const match = typeof pattern === "string"
         ? key.startsWith(pattern) || key.includes(pattern)
         : pattern.test(key);
 
@@ -126,7 +126,7 @@ class InMemoryServerCache {
       this.cleanupInterval = setInterval(() => {
         this.evictExpired();
       }, 5 * 60 * 1000);
-      
+
       // Prevent timer from keeping the process alive if there are no other tasks
       if (this.cleanupInterval && typeof this.cleanupInterval.unref === "function") {
         this.cleanupInterval.unref();
@@ -176,12 +176,12 @@ export async function getOrSetCached<T>(
 
   const startTime = performance.now();
   console.log(`[Cache MISS] Key: "${key}". Fetching fresh data...`);
-  
+
   const freshData = await fetchFn();
-  
+
   const duration = (performance.now() - startTime).toFixed(1);
   console.log(`[Cache WRITE] Key: "${key}" | Fetched in ${duration}ms | TTL: ${ttlSeconds}s`);
-  
-  serverCache.set(key, freshData, ttlSeconds * 1000);
+
+  serverCache.set(key, freshData, ttlSeconds * 1);
   return freshData;
 }
