@@ -67,7 +67,7 @@ jobs:
             cd /root/projects/ps-map 
             git pull origin main
             npm install
-            NODE_OPTIONS="--max-old-space-size=8192" npm run build
+            npm run build:stage
             pm2 reload 0
           EOF
 
