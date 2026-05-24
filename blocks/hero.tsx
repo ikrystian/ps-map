@@ -9,16 +9,16 @@ export const heroBlockHtml = `<section class="relative bg-gradient-to-r from-blu
     <p class="text-xl mb-8 text-blue-100">
       Profesjonalne doradztwo prawne dla Twojego biznesu. Ponad 20 lat doświadczenia.
     </p>
-    <div class="flex gap-4 justify-center">
+    <div class="flex flex-col sm:flex-row gap-6 justify-center px-4">
       <a
         href="/kontakt"
-        class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
+        class="flex items-center justify-center min-w-[280px] h-[72px] bg-neutral-900/60 hover:bg-neutral-900/80 backdrop-blur-md border border-white/15 hover:border-white/30 text-white font-medium text-base md:text-lg uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-[1.02] text-center shadow-lg cursor-pointer"
       >
         Skontaktuj się z nami
       </a>
       <a
         href="/uslugi"
-        class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition"
+        class="flex items-center justify-center min-w-[280px] h-[72px] bg-neutral-900/60 hover:bg-neutral-900/80 backdrop-blur-md border border-white/15 hover:border-white/30 text-white font-medium text-base md:text-lg uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-[1.02] text-center shadow-lg cursor-pointer"
       >
         Nasze usługi
       </a>

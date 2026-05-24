@@ -1,8 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Home, Briefcase } from "lucide-react"
 import ParticlesBackground from "@/components/ParticlesBackground"
 import { motion } from "framer-motion"
 
@@ -27,8 +25,9 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-3xl md:text-4xl font-semibold mb-16 font-playfair"
             >
-              Opisz i dodaj swoją sprawę. Znajdź prawnika
-              Wybierz najlepszą dla siebie ofertę!
+
+              Tu rozwiązujemy Twoje problemy prawne!
+
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -36,26 +35,27 @@ export function HeroSection() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl md:text-2xl font-semibold mb-16 font-playfair"
             >
-              Tu rozwiązujemy Twoje problemy prawne!
+              Opisz i dodaj swoją sprawę. Znajdź prawnika
+              Wybierz najlepszą dla siebie ofertę!
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 mb-32 justify-center"
+              className="flex flex-col sm:flex-row gap-6 mb-32 justify-center px-4"
             >
-              <Button asChild size="lg" className="text-lg px-8 py-6">
-                <Link href="/kategorie/#sprawy-prywatne">
-                  <Home className="mr-2 h-5 w-5" />
-                  Sprawy prywatne
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
-                <Link href="/kategorie/#sprawy-firmowe">
-                  <Briefcase className="mr-2 h-5 w-5" />
-                  Sprawy firmowe
-                </Link>
-              </Button>
+              <Link
+                href="/kategorie/#sprawy-prywatne"
+                className="flex items-center justify-center min-w-[280px] h-[72px] bg-neutral-900/60 hover:bg-neutral-900/80 backdrop-blur-md border border-white/15 hover:border-white/30 text-white font-medium text-base md:text-lg uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-[1.02] text-center shadow-lg cursor-pointer"
+              >
+                Sprawy prywatne
+              </Link>
+              <Link
+                href="/kategorie/#sprawy-firmowe"
+                className="flex items-center justify-center min-w-[280px] h-[72px] bg-neutral-900/60 hover:bg-neutral-900/80 backdrop-blur-md border border-white/15 hover:border-white/30 text-white font-medium text-base md:text-lg uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-[1.02] text-center shadow-lg cursor-pointer"
+              >
+                Sprawy firmowe
+              </Link>
             </motion.div>
 
             <motion.p

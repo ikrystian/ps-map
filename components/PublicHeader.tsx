@@ -347,9 +347,9 @@ export default function PublicHeader({
           <div className="border-t border-neutral-200/10 mt-1 pt-4">
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-white overflow-hidden">
 
-              <form onSubmit={handleSearchSubmit} className="w-full md:pl-28 flex flex-col md:flex-row gap-3 items-stretch z-1000">
+              <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-1000">
                 {/* Field 1: Kogo szukasz? */}
-                <div className="flex flex-1 items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
+                <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
                   <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />
                   <input
                     type="text"
@@ -366,7 +366,7 @@ export default function PublicHeader({
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="flex flex-1 items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
                     >
                       <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
                       <span className="text-sm truncate flex-grow text-neutral-300">
@@ -385,7 +385,7 @@ export default function PublicHeader({
                       )}
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-64 p-0 bg-[#20201d] border-neutral-800 text-white" align="start">
+                  <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
                     <Command className="bg-[#20201d] text-white">
                       <CommandInput placeholder="Wyszukaj miasto..." className="text-white bg-transparent border-neutral-800" />
                       <CommandList className="max-h-60 overflow-y-auto">
@@ -422,7 +422,7 @@ export default function PublicHeader({
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="flex flex-1 items-center justify-between gap-2.5 px-4 bg-[#20201d] rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      className="flex flex-1 items-center justify-between gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5 truncate">
                         <List className="h-5 w-5 text-neutral-400 flex-shrink-0" />
