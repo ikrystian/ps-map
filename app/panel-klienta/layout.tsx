@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { NotificationBell } from "@/components/NotificationBell"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
@@ -54,6 +55,16 @@ export default function ClientPanelLayout({
     await signOut({ callbackUrl: "/" });
   };
 
+  // Get user initials for avatar fallback
+  const getUserInitials = (name: string | null | undefined) => {
+    if (!name) return "U"
+    const parts = name.split(" ")
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+    }
+    return name[0].toUpperCase()
+  }
+
   return (
     <div className="flex h-screen bg-background-sec">
       {/* Sidebar */}
@@ -81,6 +92,21 @@ export default function ClientPanelLayout({
             className="flex-1 space-y-1 overflow-y-auto p-4 relative"
             onMouseLeave={() => setHoveredIndex(null)}
           >
+            {/* User Avatar and Name */}
+            {!isCollapsed && session?.user && (
+              <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                    {getUserInitials(session.user.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-center flex flex-col items-center gap-1">
+                  <p className="text-md font-semibold text-foreground">{session.user.name}</p>
+                  <p className="text-sm text-primary">Klient</p>
+                </div>
+              </div>
+            )}
             {navigation.map((item, index) => {
               const isActive = pathname === item.href ||
                 (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
