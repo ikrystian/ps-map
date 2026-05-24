@@ -15,11 +15,13 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X } from "lucide-react"
+import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X, Menu as MenuIcon } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -51,6 +53,7 @@ export default function PublicHeader({
   const [locationOpen, setLocationOpen] = useState(false)
   const [typeOpen, setTypeOpen] = useState(false)
   const [cities, setCities] = useState<string[]>([])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -124,11 +127,164 @@ export default function PublicHeader({
     <header className="fixed left-0 top-0 right-0 z-50 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/70 top-bar-public bg-[#141414]/40">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center relative" id="main-logo">
-            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
-          </Link>
+          {/* Mobile Menu & Logo Container */}
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu Trigger */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <MenuIcon className="h-6 w-6 text-white" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[350px] bg-[#141414] border-neutral-800 p-0 flex flex-col h-full">
+                <SheetHeader className="p-6 border-b border-neutral-800 text-left">
+                  <SheetTitle className="text-white">Menu</SheetTitle>
+                </SheetHeader>
+
+                <div className="flex-1 overflow-y-auto">
+                  <div className="p-4 space-y-6">
+                    {/* Search Button for Mobile */}
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-neutral-300 border-neutral-700 bg-neutral-900/50 hover:bg-neutral-800 hover:text-white"
+                      onClick={() => {
+                        setMobileMenuOpen(false)
+                        setSearchFormOpen(true)
+                      }}
+                    >
+                      <Search className="mr-2 h-4 w-4" />
+                      Szukaj
+                    </Button>
+
+                    <nav className="flex flex-col space-y-1">
+                      <Link
+                        href="/szukaj-prawnika"
+                        className={cn(
+                          "px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                          isEksperciActive ? "bg-primary/10 text-primary" : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Eksperci
+                      </Link>
+
+                      <Accordion type="multiple" className="w-full">
+                        <AccordionItem value="firmowe" className="border-b-0">
+                          <AccordionTrigger
+                            className={cn(
+                              "px-4 py-3 rounded-md text-sm font-medium hover:no-underline transition-colors",
+                              isFirmoweActive ? "text-primary" : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                            )}
+                          >
+                            Sprawy firmowe
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-0 px-2">
+                            <div className="flex flex-col space-y-1 mt-1 pl-4 border-l border-neutral-800 ml-2">
+                              {firmoweCat.map((cat) => (
+                                <Link
+                                  key={cat.id}
+                                  href={`/kategorie/${cat.slug}`}
+                                  className={cn(
+                                    "py-2 px-2 rounded-md text-sm transition-colors",
+                                    pathname === `/kategorie/${cat.slug}` ? "text-primary" : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
+                                  )}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                >
+                                  {cat.nazwa}
+                                </Link>
+                              ))}
+                              <Link
+                                href="/kategorie"
+                                className="py-2 px-2 mt-2 rounded-md text-sm text-primary font-medium hover:text-primary/80 transition-colors"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                Wszystkie kategorie →
+                              </Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="prywatne" className="border-b-0">
+                          <AccordionTrigger
+                            className={cn(
+                              "px-4 py-3 rounded-md text-sm font-medium hover:no-underline transition-colors",
+                              isPrywatneActive ? "text-primary" : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                            )}
+                          >
+                            Sprawy prywatne
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-0 px-2">
+                            <div className="flex flex-col space-y-1 mt-1 pl-4 border-l border-neutral-800 ml-2">
+                              {prywatneCat.map((cat) => (
+                                <Link
+                                  key={cat.id}
+                                  href={`/kategorie/${cat.slug}`}
+                                  className={cn(
+                                    "py-2 px-2 rounded-md text-sm transition-colors",
+                                    pathname === `/kategorie/${cat.slug}` ? "text-primary" : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
+                                  )}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                >
+                                  {cat.nazwa}
+                                </Link>
+                              ))}
+                              <Link
+                                href="/kategorie"
+                                className="py-2 px-2 mt-2 rounded-md text-sm text-primary font-medium hover:text-primary/80 transition-colors"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                Wszystkie kategorie →
+                              </Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+
+                      <Link
+                        href="/mapa"
+                        className={cn(
+                          "px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                          isMapaActive ? "bg-primary/10 text-primary" : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Mapa
+                      </Link>
+
+                      <Link
+                        href="/dla-prawnika"
+                        className={cn(
+                          "px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                          isDlaPrawnikaActive ? "bg-primary/10 text-primary" : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Dla prawnika
+                      </Link>
+                    </nav>
+                  </div>
+                </div>
+
+                {(!isAuthenticated || !userRole) && (
+                  <div className="p-6 border-t border-neutral-800 space-y-3 bg-[#1a1a1a]">
+                    <Link href="/panel-klienta/dodaj-sprawe" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                      <Button variant="outline" className="w-full justify-center">Dodaj sprawę</Button>
+                    </Link>
+                    <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                      <InteractiveHoverButton className="w-full justify-center text-center">Zaloguj</InteractiveHoverButton>
+                    </Link>
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center relative" id="main-logo">
+              <Image className="w-[140px] md:w-[200px]" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-[10px] md:text-base" id="env">{process.env.ENV}</span>
+            </Link>
+          </div>
 
           {/* Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
@@ -378,14 +534,14 @@ export default function PublicHeader({
                 userId={userId}
               />
             ) : (
-              <>
+              <div className="hidden md:flex items-center gap-4">
                 <Link href="/panel-klienta/dodaj-sprawe">
                   <Button variant="outline">Dodaj sprawę</Button>
                 </Link>
                 <Link href="/logowanie">
                   <InteractiveHoverButton >Zaloguj</InteractiveHoverButton>
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>
