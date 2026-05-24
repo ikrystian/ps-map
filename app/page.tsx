@@ -38,7 +38,7 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         // Fetch featured law firms
-        const firmsResponse = await fetch("/api/law-firms?limit=6&verifiedOnly=true")
+        const firmsResponse = await fetch("/api/law-firms?limit=15&verifiedOnly=true")
         if (firmsResponse.ok) {
           const firmsData = await firmsResponse.json()
           setLawFirms(firmsData.lawFirms)

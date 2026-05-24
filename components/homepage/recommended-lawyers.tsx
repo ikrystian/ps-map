@@ -87,21 +87,37 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
     }
   }
 
-  // Gets law firms dynamically based on category index.
+  // Gets law firms dynamically based on category index, displaying exactly 10 items.
   const getCategoryFirms = (catIdx: number) => {
     const currentCategory = categoriesList[catIdx]
-    if (recommendedData) {
-      return recommendedData[currentCategory] || []
+    let list: LawFirm[] = []
+
+    if (recommendedData && recommendedData[currentCategory]) {
+      list = [...recommendedData[currentCategory]]
     }
 
-    if (!lawFirms || lawFirms.length === 0) return []
-
-    const list: LawFirm[] = []
-    for (let i = 0; i < 8; i++) {
-      const firmIdx = (catIdx + i) % lawFirms.length
-      list.push(lawFirms[firmIdx])
+    // Pad with other general lawFirms up to 10 items if we have fewer
+    if (list.length < 10 && lawFirms && lawFirms.length > 0) {
+      let i = 0
+      while (list.length < 10 && i < lawFirms.length * 2) {
+        const firmIdx = (catIdx + i) % lawFirms.length
+        const firm = lawFirms[firmIdx]
+        if (!list.some(f => f.id === firm.id)) {
+          list.push(firm)
+        }
+        i++
+      }
     }
-    return list
+
+    // Fallback if list is still empty or directly populated from fallback
+    if (list.length === 0 && lawFirms && lawFirms.length > 0) {
+      for (let i = 0; i < 10; i++) {
+        const firmIdx = (catIdx + i) % lawFirms.length
+        list.push(lawFirms[firmIdx])
+      }
+    }
+
+    return list.slice(0, 10)
   }
 
   // Returns a premium image for the lawyer, falling back to unsplash headshots if missing or placeholder
