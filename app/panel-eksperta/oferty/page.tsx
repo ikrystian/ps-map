@@ -225,7 +225,7 @@ export default function LawFirmOffersPage() {
   ]
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="w-full">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/40">
         <div>

@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/partner-program/allocate-points",
-      "schedule": "0 0 1 * *"
-    }
-  ]
-}

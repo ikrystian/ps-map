@@ -160,13 +160,13 @@ export default function ClientAddCasePage() {
   const getFilteredCategories = () => {
     const isPrivate = formData.typSprawy === "OSOBA_PRYWATNA"
     const targetType = isPrivate ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE"
-    
+
     // Filter active categories of targetType
     const activeCats = categories.filter((cat: any) => cat.aktywna && cat.typ === targetType)
-    
+
     // Build root categories (those without parentId)
     const rootCats = activeCats.filter((cat: any) => !cat.parentId)
-    
+
     return rootCats.map((root: any) => {
       // Find children belonging to this root
       const children = activeCats.filter((cat: any) => cat.parentId === root.id)
@@ -195,9 +195,9 @@ export default function ClientAddCasePage() {
     const targetType = isPrivate ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE"
     const query = categorySearchQuery.toLowerCase().trim()
     if (!query) return []
-    
+
     const activeCats = categories.filter((cat: any) => cat.aktywna && cat.typ === targetType)
-    
+
     return activeCats
       .filter((cat: any) => cat.nazwa.toLowerCase().includes(query))
       .map((cat: any) => {
@@ -366,10 +366,10 @@ export default function ClientAddCasePage() {
           <div key={step} className="flex items-center">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${step === currentStep
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : step < currentStep
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-muted-foreground/30 bg-muted text-muted-foreground"
+                ? "border-primary bg-primary text-primary-foreground"
+                : step < currentStep
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-muted-foreground/30 bg-muted text-muted-foreground"
                 }`}
             >
               {step}
@@ -408,8 +408,8 @@ export default function ClientAddCasePage() {
             <Card
               key={option.value}
               className={`cursor-pointer transition-colors ${formData.typSprawy === option.value
-                  ? "border-primary bg-primary/5"
-                  : "hover:border-primary/50"
+                ? "border-primary bg-primary/5"
+                : "hover:border-primary/50"
                 }`}
               onClick={() => {
                 updateFormData("typSprawy", option.value)
@@ -421,8 +421,8 @@ export default function ClientAddCasePage() {
                 <div className="flex items-center gap-3">
                   <div
                     className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${formData.typSprawy === option.value
-                        ? "border-primary"
-                        : "border-muted-foreground/30"
+                      ? "border-primary"
+                      : "border-muted-foreground/30"
                       }`}
                   >
                     {formData.typSprawy === option.value && (
@@ -538,11 +538,10 @@ export default function ClientAddCasePage() {
                           setIsCategoryModalOpen(false)
                           setCategorySearchQuery("")
                         }}
-                        className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-colors ${
-                          formData.categoryId === cat.id
+                        className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-colors ${formData.categoryId === cat.id
                             ? "border-primary bg-primary/5 text-primary"
                             : "border-muted hover:border-primary/50 hover:bg-accent/50"
-                        }`}
+                          }`}
                       >
                         <div className="flex flex-col">
                           <span className="font-medium text-sm text-foreground">
@@ -579,11 +578,10 @@ export default function ClientAddCasePage() {
                           key={parent.id}
                           type="button"
                           onClick={() => setSelectedParentIdForModal(parent.id)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left text-sm transition-all ${
-                            activeParentId === parent.id
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left text-sm transition-all ${activeParentId === parent.id
                               ? "bg-primary text-primary-foreground font-medium shadow-sm"
                               : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                          }`}
+                            }`}
                         >
                           <span className="truncate">{parent.nazwa}</span>
                           <ChevronRight className={`h-4 w-4 shrink-0 opacity-70 ${activeParentId === parent.id ? "text-primary-foreground" : "text-muted-foreground"}`} />
@@ -599,7 +597,7 @@ export default function ClientAddCasePage() {
                         <div className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
                           Podkategorie: {activeParent.nazwa}
                         </div>
-                        
+
                         <div className="space-y-1.5 pt-1">
                           {/* Opcja wyboru samej kategorii głównej */}
                           <button
@@ -608,11 +606,10 @@ export default function ClientAddCasePage() {
                               updateFormData("categoryId", activeParent.id)
                               setIsCategoryModalOpen(false)
                             }}
-                            className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
-                              formData.categoryId === activeParent.id
+                            className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${formData.categoryId === activeParent.id
                                 ? "border-primary bg-primary/5 text-primary"
                                 : "border-dashed border-muted hover:border-primary/50 hover:bg-accent/50"
-                            }`}
+                              }`}
                           >
                             <div className="flex flex-col">
                               <span className="font-semibold text-sm text-foreground">
@@ -639,11 +636,10 @@ export default function ClientAddCasePage() {
                                 updateFormData("categoryId", child.id)
                                 setIsCategoryModalOpen(false)
                               }}
-                              className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
-                                formData.categoryId === child.id
+                              className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${formData.categoryId === child.id
                                   ? "border-primary bg-primary/5 text-primary"
                                   : "border-muted hover:border-primary/50 hover:bg-accent/50"
-                              }`}
+                                }`}
                             >
                               <span className="text-sm font-medium text-foreground">{child.nazwa}</span>
                               {formData.categoryId === child.id && (
@@ -695,10 +691,10 @@ export default function ClientAddCasePage() {
           >
             <SelectTrigger id="cityId">
               <SelectValue placeholder={
-                !formData.voivodeshipId 
-                  ? "Wybierz najpierw województwo" 
-                  : isLoadingCities 
-                    ? "Ładowanie miast..." 
+                !formData.voivodeshipId
+                  ? "Wybierz najpierw województwo"
+                  : isLoadingCities
+                    ? "Ładowanie miast..."
                     : "Wybierz miasto"
               } />
             </SelectTrigger>
@@ -934,8 +930,8 @@ export default function ClientAddCasePage() {
   )
 
   return (
-    <div className="max-w-5xl mx-auto w-full space-y-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="w-full space-y-6">
+      <div>
         <div className="mb-8">
           <h1 className="text-2xl font-bold font-playfair tracking-tight">Dodaj Nową Sprawę</h1>
           <p className="text-sm text-muted-foreground mt-1.5">
