@@ -225,9 +225,9 @@ export default function PublicHeader({
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-[13px] transition-colors hover:text-primary leading-relaxed",
+                                      "block text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                        ? "text-primary font-medium"
+                                        ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
                                         : "text-muted-foreground"
                                     )}
                                   >
@@ -286,9 +286,9 @@ export default function PublicHeader({
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-[13px] transition-colors hover:text-primary leading-relaxed",
+                                      "block text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                        ? "text-primary font-medium"
+                                        ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
                                         : "text-muted-foreground"
                                     )}
                                   >
