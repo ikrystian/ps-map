@@ -114,13 +114,16 @@ export const authOptions: NextAuthConfig = {
         token.role = user.role
         token.id = user.id as string
         token.picture = user.image
+        token.firstName = user.firstName
+        token.lastName = user.lastName
+        token.phone = user.phone
 
         // Fetch lawFirm or client data
         let dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           include: {
             lawFirm: { select: { id: true } },
-            client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
+            client: { select: { id: true } }
           }
         })
 
@@ -130,18 +133,25 @@ export const authOptions: NextAuthConfig = {
           const nazwisko = nameParts.slice(1).join(" ") || "Klient"
 
           try {
+            await prisma.user.update({
+              where: { id: dbUser.id },
+              data: {
+                firstName: imie,
+                lastName: nazwisko
+              }
+            })
             const newClient = await prisma.client.create({
               data: {
                 userId: dbUser.id,
-                imie,
-                nazwisko,
                 zgodaRegulamin: true,
                 zgodaNewsletter: false,
                 zgodaMarketing: false,
               },
-              select: { id: true, imie: true, nazwisko: true, telefon: true }
+              select: { id: true }
             })
             dbUser.client = newClient
+            dbUser.firstName = imie
+            dbUser.lastName = nazwisko
           } catch (e) {
             console.error("Error auto-creating client profile in jwt callback:", e)
           }
@@ -152,9 +162,9 @@ export const authOptions: NextAuthConfig = {
         }
         if (dbUser?.client) {
           token.clientId = dbUser.client.id
-          token.clientImie = dbUser.client.imie
-          token.clientNazwisko = dbUser.client.nazwisko
-          token.clientTelefon = dbUser.client.telefon
+          token.clientImie = dbUser.firstName || ''
+          token.clientNazwisko = dbUser.lastName || ''
+          token.clientTelefon = dbUser.phone
         }
       }
 
@@ -166,6 +176,18 @@ export const authOptions: NextAuthConfig = {
         }
         if (session.image !== undefined) {
           token.picture = session.image
+        }
+        if (session.firstName !== undefined) {
+          token.firstName = session.firstName
+          token.clientImie = session.firstName
+        }
+        if (session.lastName !== undefined) {
+          token.lastName = session.lastName
+          token.clientNazwisko = session.lastName
+        }
+        if (session.phone !== undefined) {
+          token.phone = session.phone
+          token.clientTelefon = session.phone
         }
         token.lastRefresh = Date.now()
         return token
@@ -187,8 +209,11 @@ export const authOptions: NextAuthConfig = {
               name: true,
               role: true,
               image: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
               lawFirm: { select: { id: true } },
-              client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
+              client: { select: { id: true } }
             },
           })
 
@@ -198,18 +223,25 @@ export const authOptions: NextAuthConfig = {
             const nazwisko = nameParts.slice(1).join(" ") || "Klient"
 
             try {
+              await prisma.user.update({
+                where: { id: freshUser.id },
+                data: {
+                  firstName: imie,
+                  lastName: nazwisko
+                }
+              })
               const newClient = await prisma.client.create({
                 data: {
                   userId: freshUser.id,
-                  imie,
-                  nazwisko,
                   zgodaRegulamin: true,
                   zgodaNewsletter: false,
                   zgodaMarketing: false,
                 },
-                select: { id: true, imie: true, nazwisko: true, telefon: true }
+                select: { id: true }
               })
               freshUser.client = newClient
+              freshUser.firstName = imie
+              freshUser.lastName = nazwisko
             } catch (e) {
               console.error("Error auto-creating client profile during token refresh:", e)
             }
@@ -222,9 +254,12 @@ export const authOptions: NextAuthConfig = {
             token.role = freshUser.role
             token.lawFirmId = freshUser.lawFirm?.id
             token.clientId = freshUser.client?.id
-            token.clientImie = freshUser.client?.imie
-            token.clientNazwisko = freshUser.client?.nazwisko
-            token.clientTelefon = freshUser.client?.telefon
+            token.firstName = freshUser.firstName
+            token.lastName = freshUser.lastName
+            token.phone = freshUser.phone
+            token.clientImie = freshUser.firstName || ''
+            token.clientNazwisko = freshUser.lastName || ''
+            token.clientTelefon = freshUser.phone
             token.lastRefresh = Date.now()
           }
         } catch (error) {
@@ -240,6 +275,9 @@ export const authOptions: NextAuthConfig = {
         session.user.role = token.role as any
         session.user.image = token.picture as string | null | undefined
         session.user.name = token.name as string | null | undefined
+        session.user.firstName = token.firstName as string | null | undefined
+        session.user.lastName = token.lastName as string | null | undefined
+        session.user.phone = token.phone as string | null | undefined
 
         if (token.lawFirmId) {
           session.user.lawFirm = { id: token.lawFirmId }
@@ -296,11 +334,17 @@ export const authOptions: NextAuthConfig = {
             const imie = nameParts[0] || "Użytkownik"
             const nazwisko = nameParts.slice(1).join(" ") || "OAuth"
 
+            await prisma.user.update({
+              where: { id: dbUser.id },
+              data: {
+                firstName: imie,
+                lastName: nazwisko
+              }
+            })
+
             await prisma.client.create({
               data: {
                 userId: dbUser.id,
-                imie,
-                nazwisko,
                 zgodaRegulamin: true, // Assumed consent via OAuth
                 zgodaNewsletter: false,
                 zgodaMarketing: false,

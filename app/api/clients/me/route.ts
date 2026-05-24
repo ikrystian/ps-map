@@ -31,6 +31,9 @@ export async function GET() {
             email: true,
             name: true,
             image: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
           },
         },
         voivodeship: true,
@@ -43,11 +46,18 @@ export async function GET() {
         const imie = nameParts[0] || "Użytkownik"
         const nazwisko = nameParts.slice(1).join(" ") || "Klient"
 
+        // Update User first
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            firstName: imie,
+            lastName: nazwisko
+          }
+        })
+
         client = await prisma.client.create({
           data: {
             userId: session.user.id,
-            imie,
-            nazwisko,
             zgodaRegulamin: true,
             zgodaNewsletter: false,
             zgodaMarketing: false,
@@ -59,6 +69,9 @@ export async function GET() {
                 email: true,
                 name: true,
                 image: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
               },
             },
             voivodeship: true,
@@ -71,6 +84,12 @@ export async function GET() {
           { status: 404 }
         )
       }
+    }
+
+    if (client) {
+      (client as any).imie = client.user.firstName || '';
+      (client as any).nazwisko = client.user.lastName || '';
+      (client as any).telefon = client.user.phone || null;
     }
 
     return NextResponse.json(client)
@@ -162,9 +181,6 @@ export async function PUT(request: NextRequest) {
       where: { userId: session.user.id },
       data: {
         clientType: clientType || "INDIVIDUAL",
-        imie,
-        nazwisko,
-        telefon,
         nazwaFirmy: clientType === "BUSINESS" ? nazwaFirmy : null,
         nip: clientType === "BUSINESS" ? nip : null,
         regon: clientType === "BUSINESS" ? regon : null,
@@ -177,7 +193,10 @@ export async function PUT(request: NextRequest) {
         zgodaMarketing,
         user: {
           update: {
-            name: targetName
+            name: targetName,
+            firstName: imie,
+            lastName: nazwisko,
+            phone: telefon || null
           }
         }
       },
@@ -188,11 +207,20 @@ export async function PUT(request: NextRequest) {
             email: true,
             name: true,
             image: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
           },
         },
         voivodeship: true,
       },
     })
+
+    if (updatedClient) {
+      (updatedClient as any).imie = updatedClient.user.firstName || '';
+      (updatedClient as any).nazwisko = updatedClient.user.lastName || '';
+      (updatedClient as any).telefon = updatedClient.user.phone || null;
+    }
 
     return NextResponse.json(updatedClient)
   } catch (error) {

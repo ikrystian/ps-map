@@ -46,6 +46,8 @@ export async function seedTestUser(prisma: PrismaClient) {
         data: {
             email: "test-client@example.com",
             name: "Test Client",
+            firstName: "Test",
+            lastName: "Client",
             password: hashedPassword,
             role: UserRole.CLIENT,
             emailVerified: new Date(),
@@ -55,8 +57,6 @@ export async function seedTestUser(prisma: PrismaClient) {
     await prisma.client.create({
         data: {
             userId: clientUser.id,
-            imie: "Test",
-            nazwisko: "Client",
         }
     })
 

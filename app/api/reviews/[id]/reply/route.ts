@@ -77,19 +77,29 @@ export async function PUT(
       include: {
         client: {
           select: {
-            imie: true,
-            nazwisko: true,
+            id: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         },
       },
     })
 
     // Formatuj odpowiedź - ukryj dane klienta jeśli anonimowa
+    const clientData = updatedReview.client ? {
+      imie: updatedReview.client.user?.firstName || "",
+      nazwisko: updatedReview.client.user?.lastName || "",
+    } : null
+
     const formattedReview = {
       ...updatedReview,
       client: updatedReview.anonimowa
         ? { imie: "Anonimowy", nazwisko: "" }
-        : updatedReview.client,
+        : clientData,
     }
 
     return Response.json(formattedReview)

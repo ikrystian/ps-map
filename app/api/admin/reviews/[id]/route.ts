@@ -32,11 +32,11 @@ export async function GET(
         client: {
           select: {
             id: true,
-            imie: true,
-            nazwisko: true,
             user: {
               select: {
                 email: true,
+                firstName: true,
+                lastName: true,
               },
             },
           },
@@ -48,7 +48,16 @@ export async function GET(
       return NextResponse.json({ error: "Review not found" }, { status: 404 })
     }
 
-    return NextResponse.json(review)
+    const formattedReview = {
+      ...review,
+      client: review.client ? {
+        ...review.client,
+        imie: review.client.user?.firstName || "",
+        nazwisko: review.client.user?.lastName || "",
+      } : null
+    }
+
+    return NextResponse.json(formattedReview)
   } catch (error) {
     console.error("Error fetching review:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -147,11 +156,11 @@ export async function PUT(
         client: {
           select: {
             id: true,
-            imie: true,
-            nazwisko: true,
             user: {
               select: {
                 email: true,
+                firstName: true,
+                lastName: true,
               },
             },
           },
@@ -159,7 +168,16 @@ export async function PUT(
       },
     })
 
-    return NextResponse.json(review)
+    const formattedReview = review ? {
+      ...review,
+      client: review.client ? {
+        ...review.client,
+        imie: review.client.user?.firstName || "",
+        nazwisko: review.client.user?.lastName || "",
+      } : null
+    } : null
+
+    return NextResponse.json(formattedReview)
   } catch (error) {
     console.error("Error updating review:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

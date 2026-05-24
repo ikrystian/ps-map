@@ -9,6 +9,8 @@ export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     return {
         email,
         name: `${firstName} ${lastName} `,
+        firstName,
+        lastName,
         image: faker.image.avatar(),
         password: 'Password123', // Plain text for now, will be hashed in the seed script
         role: role,

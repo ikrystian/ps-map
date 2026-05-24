@@ -42,12 +42,14 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
   // Auto-fill contact data from logged-in client
   useEffect(() => {
-    if (session?.user?.client) {
-      const client = session.user.client
+    if (session?.user) {
+      const user = session.user
+      const client = user.client
+      const name = `${user.firstName || client?.imie || ""} ${user.lastName || client?.nazwisko || ""}`.trim()
       const contactInfo = [
-        `${client.imie || ''} ${client.nazwisko || ''}`.trim(),
-        session.user.email || '',
-        client.telefon || ''
+        name || user.name || "",
+        user.email || "",
+        client?.telefon || ""
       ].filter(Boolean).join(', ')
       setContact(contactInfo)
     }

@@ -136,9 +136,13 @@ export async function GET(request: NextRequest) {
           city: true,
           client: {
             select: {
-              imie: true,
-              nazwisko: true,
               miasto: true,
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                }
+              }
             },
           },
           offers: {
@@ -180,12 +184,21 @@ export async function GET(request: NextRequest) {
       })
 
       // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
-      const cases = filteredCases.map((caseItem: any) => ({
-        ...caseItem,
-        offers: caseItem.offers
-          .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
-          .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
-      }))
+      const cases = filteredCases.map((caseItem: any) => {
+        const client = caseItem.client ? {
+          ...caseItem.client,
+          imie: caseItem.client.user?.firstName || '',
+          nazwisko: caseItem.client.user?.lastName || '',
+        } : null
+
+        return {
+          ...caseItem,
+          client,
+          offers: caseItem.offers
+            .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
+            .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
+        }
+      })
 
       return NextResponse.json(cases)
     }
@@ -216,6 +229,15 @@ export async function POST(request: NextRequest) {
     // Znajdź klienta
     const client = await prisma.client.findUnique({
       where: { userId: session.user.id },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            phone: true,
+          }
+        }
+      }
     })
 
     if (!client) {
@@ -419,7 +441,7 @@ export async function POST(request: NextRequest) {
         to: newCase.emailKontakt || session.user.email!,
         templateType: EmailType.POTWIERDZENIE_DODANIA_SPRAWY,
         variables: {
-          "{klient}": `${client.imie} ${client.nazwisko}`,
+          "{klient}": `${client.user?.firstName || ''} ${client.user?.lastName || ''}`.trim(),
           "{nazwaSprawy}": newCase.nazwaSprawy,
           "{kategoria}": category.nazwa,
           "{budzet}": budzetText,
@@ -463,7 +485,7 @@ export async function POST(request: NextRequest) {
                 "{kancelaria}": lf.nazwa,
                 "{nazwaSprawi}": newCase.nazwaSprawy,
                 "{kategoria}": category.nazwa,
-                "{klient}": `${client.imie} ${client.nazwisko}`,
+                "{klient}": `${client.user?.firstName || ''} ${client.user?.lastName || ''}`.trim(),
                 "{budżet}": budzetText,
                 "{linkDoPanelu}": `${baseUrl}/panel-eksperta/sprawy`,
               }

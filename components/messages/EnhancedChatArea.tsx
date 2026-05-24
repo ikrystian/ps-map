@@ -578,7 +578,7 @@ export function EnhancedChatArea({
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
     ? conversation.lawFirmUser.lawFirm.nazwa
-    : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
+    : `${conversation.clientUser.firstName || conversation.clientUser.client?.imie || ""} ${conversation.clientUser.lastName || conversation.clientUser.client?.nazwisko || ""}`.trim() || conversation.clientUser.name || "Klient"
   const otherUserImage = isClient
     ? conversation.lawFirmUser.lawFirm.logo
     : conversation.clientUser.image

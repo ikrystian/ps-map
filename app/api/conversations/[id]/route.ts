@@ -40,12 +40,13 @@ export async function GET(
           select: {
             id: true,
             name: true,
+            firstName: true,
+            lastName: true,
             email: true,
             image: true,
             client: {
               select: {
-                imie: true,
-                nazwisko: true,
+                id: true,
               },
             },
           },
@@ -75,7 +76,19 @@ export async function GET(
       )
     }
 
-    return Response.json(conversation)
+    const formattedConversation = {
+      ...conversation,
+      clientUser: conversation.clientUser ? {
+        ...conversation.clientUser,
+        client: conversation.clientUser.client ? {
+          ...conversation.clientUser.client,
+          imie: conversation.clientUser.firstName || "",
+          nazwisko: conversation.clientUser.lastName || "",
+        } : null
+      } : null
+    }
+
+    return Response.json(formattedConversation)
   } catch (error) {
     console.error("Error fetching conversation:", error)
     return Response.json(

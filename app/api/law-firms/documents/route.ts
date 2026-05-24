@@ -35,11 +35,12 @@ export async function GET() {
           select: {
             id: true,
             name: true,
+            firstName: true,
+            lastName: true,
             email: true,
             client: {
               select: {
-                imie: true,
-                nazwisko: true,
+                id: true,
               },
             },
           },
@@ -50,10 +51,11 @@ export async function GET() {
             clientUser: {
               select: {
                 name: true,
+                firstName: true,
+                lastName: true,
                 client: {
                   select: {
-                    imie: true,
-                    nazwisko: true,
+                    id: true,
                   },
                 },
               },
@@ -64,7 +66,32 @@ export async function GET() {
       orderBy: { createdAt: "desc" }
     })
 
-    return NextResponse.json(documents)
+    const formattedDocuments = documents.map((doc: any) => {
+      const formattedDoc = { ...doc }
+      if (formattedDoc.clientUser) {
+        formattedDoc.clientUser = {
+          ...formattedDoc.clientUser,
+          client: formattedDoc.clientUser.client ? {
+            ...formattedDoc.clientUser.client,
+            imie: formattedDoc.clientUser.firstName || "",
+            nazwisko: formattedDoc.clientUser.lastName || "",
+          } : null
+        }
+      }
+      if (formattedDoc.conversation?.clientUser) {
+        formattedDoc.conversation.clientUser = {
+          ...formattedDoc.conversation.clientUser,
+          client: formattedDoc.conversation.clientUser.client ? {
+            ...formattedDoc.conversation.clientUser.client,
+            imie: formattedDoc.conversation.clientUser.firstName || "",
+            nazwisko: formattedDoc.conversation.clientUser.lastName || "",
+          } : null
+        }
+      }
+      return formattedDoc
+    })
+
+    return NextResponse.json(formattedDocuments)
   } catch (error) {
     console.error("Error fetching documents:", error)
     return NextResponse.json(

@@ -31,8 +31,6 @@ export async function seedReviews(prisma: PrismaClient) {
         const client = await prisma.client.create({
           data: {
             userId: user.id,
-            imie: user.name ? user.name.split(' ')[0] : '',
-            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
           },
         })
         clients.push({ ...client, user })

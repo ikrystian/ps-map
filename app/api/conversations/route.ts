@@ -58,12 +58,8 @@ export async function GET(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-            client: {
-              select: {
-                imie: true,
-                nazwisko: true,
-              },
-            },
+            firstName: true,
+            lastName: true,
           },
         },
         lawFirmUser: {
@@ -104,7 +100,7 @@ export async function GET(request: NextRequest) {
       const otherUser = isClient ? conv.lawFirmUser : conv.clientUser
       const otherUserName = isClient
         ? conv.lawFirmUser.lawFirm?.nazwa
-        : `${conv.clientUser.client?.imie} ${conv.clientUser.client?.nazwisko}`
+        : `${conv.clientUser.firstName || ''} ${conv.clientUser.lastName || ''}`.trim()
       const otherUserImage = isClient
         ? conv.lawFirmUser.lawFirm?.logo
         : conv.clientUser.image
@@ -227,12 +223,8 @@ export async function POST(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-            client: {
-              select: {
-                imie: true,
-                nazwisko: true,
-              },
-            },
+            firstName: true,
+            lastName: true,
           },
         },
         lawFirmUser: {
@@ -266,12 +258,8 @@ export async function POST(request: NextRequest) {
               name: true,
               email: true,
               image: true,
-              client: {
-                select: {
-                  imie: true,
-                  nazwisko: true,
-                },
-              },
+              firstName: true,
+              lastName: true,
             },
           },
           lawFirmUser: {
@@ -290,6 +278,13 @@ export async function POST(request: NextRequest) {
           },
         },
       })
+    }
+
+    if (conversation && conversation.clientUser) {
+      (conversation.clientUser as any).client = {
+        imie: conversation.clientUser.firstName || '',
+        nazwisko: conversation.clientUser.lastName || '',
+      }
     }
 
     return Response.json(conversation, { status: conversation ? 200 : 201 })

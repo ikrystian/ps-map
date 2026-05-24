@@ -53,11 +53,11 @@ export async function PATCH(
         client: {
           select: {
             id: true,
-            imie: true,
-            nazwisko: true,
             user: {
               select: {
                 email: true,
+                firstName: true,
+                lastName: true,
               },
             },
           },
@@ -65,7 +65,16 @@ export async function PATCH(
       },
     })
 
-    return NextResponse.json(review)
+    const formattedReview = review ? {
+      ...review,
+      client: review.client ? {
+        ...review.client,
+        imie: review.client.user?.firstName || "",
+        nazwisko: review.client.user?.lastName || "",
+      } : null
+    } : null
+
+    return NextResponse.json(formattedReview)
   } catch (error) {
     console.error("Error updating review status:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

@@ -9,6 +9,8 @@
 export interface ConversationClient {
   id: string
   name: string
+  firstName?: string
+  lastName?: string
   image?: string
   email?: string
   createdAt?: string

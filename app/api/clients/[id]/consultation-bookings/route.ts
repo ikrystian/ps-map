@@ -8,8 +8,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const session = await auth()
   const { id: clientId } = await params
 
-  if (!session || session.user.client?.id !== clientId) {
+  if (!session || session.user.role !== "CLIENT") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const client = await prisma.client.findUnique({
+    where: { userId: session.user.id }
+  })
+
+  if (!client || client.id !== clientId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   try {
