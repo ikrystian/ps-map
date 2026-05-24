@@ -11,6 +11,8 @@
 
 import { EmailType, EmailLogStatus } from '@prisma/client'
 import { sendSMTPEmail } from './smtp'
+import fs from 'fs'
+import path from 'path'
 
 interface SendEmailParams {
   to: string
@@ -194,6 +196,46 @@ export function getBrandEmailLayout(
   contentHtml: string,
   preheaderText: string = ""
 ): string {
+  try {
+    const templatePath = path.join(process.cwd(), 'prosta_sprawa_email.html')
+    if (fs.existsSync(templatePath)) {
+      let template = fs.readFileSync(templatePath, 'utf8')
+      
+      // Wstawianie treści w miejsce <!-- content here-->
+      let finalHtml = template.replace('<!-- content here-->', contentHtml)
+      
+      // Dynamiczne podmienianie linków w szablonie prosta_sprawa_email.html dla poprawności działania systemu
+      const nextAuthUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+      
+      // Podmień logo i link "Client Portal" na rzeczywiste linki
+      finalHtml = finalHtml.replace('href="#" class="logo"', `href="${nextAuthUrl}" class="logo"`)
+      finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${nextAuthUrl}/panel-klienta" class="header-link"`)
+      
+      // Podmień linki w stopce na poprawne URL-e systemowe
+      finalHtml = finalHtml.replace('href="#">Terms of Service</a>', `href="${nextAuthUrl}/terms">Terms of Service</a>`)
+      finalHtml = finalHtml.replace('href="#">Privacy Policy</a>', `href="${nextAuthUrl}/privacy">Privacy Policy</a>`)
+      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${nextAuthUrl}/cookies">Cookie Settings</a>`)
+      
+      // Podmień ikony w stopce na poprawne odnośniki
+      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${nextAuthUrl}" class="footer-icon" aria-label="Website"`)
+      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostaspawa.pl" class="footer-icon" aria-label="Email"`)
+      
+      // Dodaj preheader jeśli jest podany
+      if (preheaderText) {
+        const preheaderHtml = `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>`
+        finalHtml = finalHtml.replace('<body>', `<body>\n  ${preheaderHtml}`)
+      }
+      
+      // Aktualizacja roku w stopce
+      const currentYear = new Date().getFullYear().toString()
+      finalHtml = finalHtml.replace('© 2026 Prosta Sprawa', `© ${currentYear} Prosta Sprawa`)
+      
+      return finalHtml
+    }
+  } catch (err) {
+    console.error('Błąd podczas ładowania szablonu prosta_sprawa_email.html:', err)
+  }
+
   return `
     <!DOCTYPE html>
     <html lang="pl">

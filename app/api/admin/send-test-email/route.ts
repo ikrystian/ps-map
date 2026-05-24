@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { sendEmail } from "@/lib/email"
+import { sendEmail, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
 
     if (template.trescHtml) {
       html = testNotice + html
+      html = wrapInBrandLayoutIfNeeded(html, subject)
     }
 
     text = "⚠️ TO JEST EMAIL TESTOWY\n" +
