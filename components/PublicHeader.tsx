@@ -127,7 +127,7 @@ export default function PublicHeader({
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
             <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
+            <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
           </Link>
 
           {/* Navigation Menu */}

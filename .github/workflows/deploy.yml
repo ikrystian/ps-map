@@ -66,6 +66,9 @@ jobs:
             set -e
             cd /root/projects/ps-map 
             git pull origin main
+            npm install
+            NODE_OPTIONS="--max-old-space-size=8192" npm run build
+            pm2 reload 0
           EOF
 
       - name: Send webhook with commits
