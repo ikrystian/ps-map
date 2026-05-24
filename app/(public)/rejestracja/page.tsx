@@ -1,7 +1,13 @@
+import { Metadata } from "next"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AuthLayout } from "@/components/auth"
+
+export const metadata: Metadata = {
+  title: "Załóż bezpłatne konto | Prosta Sprawa",
+  description: "Wybierz rodzaj konta (Klient lub Kancelaria) i dołącz do platformy Prosta Sprawa już dziś.",
+}
 
 export default function RegistrationPage() {
   return (

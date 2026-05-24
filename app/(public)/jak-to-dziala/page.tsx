@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -5,6 +6,11 @@ import {
   FileText, Send, Users, MessageSquare, CheckCircle, Star,
   ArrowRight, Clock, Shield, TrendingUp, Lightbulb, HelpCircle
 } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Jak to działa? Przewodnik po Platformie | Prosta Sprawa",
+  description: "Dowiedz się, jak w prosty i bezpieczny sposób opublikować sprawę prawną lub dołączyć jako kancelaria i zdobywać zlecenia.",
+}
 
 export default function HowItWorksPage() {
   return (
