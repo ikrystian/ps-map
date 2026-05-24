@@ -1,40 +1,52 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getOrSetCached, serverCache } from "@/lib/cache"
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
-      select: {
-        id: true,
-        nazwa: true,
-        slug: true,
-        opis: true,
-        opisDodatkowy: true,
-        ikona: true,
-        ikonaUrl: true,
-        backgroundImageUrl: true,
-        typ: true,
-        parentId: true,
-        metaTitle: true,
-        metaDescription: true,
-        aktywna: true,
-        kolejnosc: true,
-        createdAt: true,
-        updatedAt: true,
-        parent: {
+    const categories = await getOrSetCached(
+      "categories:all",
+      async () => {
+        return await prisma.category.findMany({
           select: {
             id: true,
             nazwa: true,
             slug: true,
-          },
-        },
-        children: {
-          select: {
-            id: true,
-            nazwa: true,
-            slug: true,
+            opis: true,
+            opisDodatkowy: true,
             ikona: true,
             ikonaUrl: true,
+            backgroundImageUrl: true,
+            typ: true,
+            parentId: true,
+            metaTitle: true,
+            metaDescription: true,
+            aktywna: true,
+            kolejnosc: true,
+            createdAt: true,
+            updatedAt: true,
+            parent: {
+              select: {
+                id: true,
+                nazwa: true,
+                slug: true,
+              },
+            },
+            children: {
+              select: {
+                id: true,
+                nazwa: true,
+                slug: true,
+                ikona: true,
+                ikonaUrl: true,
+                _count: {
+                  select: {
+                    lawFirms: true,
+                    cases: true,
+                  },
+                },
+              },
+            },
             _count: {
               select: {
                 lawFirms: true,
@@ -42,19 +54,14 @@ export async function GET() {
               },
             },
           },
-        },
-        _count: {
-          select: {
-            lawFirms: true,
-            cases: true,
-          },
-        },
+          orderBy: [
+            { kolejnosc: "asc" },
+            { nazwa: "asc" },
+          ],
+        })
       },
-      orderBy: [
-        { kolejnosc: "asc" },
-        { nazwa: "asc" },
-      ],
-    })
+      7200 // Cache categories for 2 hours
+    )
 
     return NextResponse.json(categories)
   } catch (error) {
@@ -135,6 +142,9 @@ export async function POST(request: Request) {
       },
     })
 
+    // Invalidate categories cache
+    serverCache.invalidatePattern("categories")
+
     return NextResponse.json(category, { status: 201 })
   } catch (error) {
     console.error("Error creating category:", error)
@@ -144,3 +154,4 @@ export async function POST(request: Request) {
     )
   }
 }
+

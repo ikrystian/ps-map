@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getOrSetCached } from "@/lib/cache"
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,23 +8,32 @@ export async function GET(request: NextRequest) {
     const voivodeshipId = searchParams.get("voivodeshipId")
     const search = searchParams.get("search")
 
-    const where: any = {}
-    if (voivodeshipId) {
-      where.voivodeshipId = voivodeshipId
-    }
-    if (search) {
-      where.nazwa = { contains: search }
-    }
+    // Dynamic cache key based on query parameters
+    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:s_${search ?? "none"}`
 
-    const cities = await prisma.city.findMany({
-      where,
-      include: {
-        voivodeship: true,
+    const cities = await getOrSetCached(
+      cacheKey,
+      async () => {
+        const where: any = {}
+        if (voivodeshipId) {
+          where.voivodeshipId = voivodeshipId
+        }
+        if (search) {
+          where.nazwa = { contains: search }
+        }
+
+        return await prisma.city.findMany({
+          where,
+          include: {
+            voivodeship: true,
+          },
+          orderBy: {
+            nazwa: "asc",
+          },
+        })
       },
-      orderBy: {
-        nazwa: "asc",
-      },
-    })
+      3600 // Cache for 1 hour
+    )
 
     return NextResponse.json(cities)
   } catch (error) {
@@ -31,3 +41,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { serverCache } from "@/lib/cache"
+
 
 export async function GET(
   request: Request,
@@ -147,6 +149,9 @@ export async function PUT(
       },
     })
 
+    // Invalidate categories cache
+    serverCache.invalidatePattern("categories")
+
     return NextResponse.json(category)
   } catch (error) {
     console.error("Error updating category:", error)
@@ -206,6 +211,9 @@ export async function DELETE(
     await prisma.category.delete({
       where: { id },
     })
+
+    // Invalidate categories cache
+    serverCache.invalidatePattern("categories")
 
     return NextResponse.json(
       { message: "Kategoria usunięta pomyślnie" },

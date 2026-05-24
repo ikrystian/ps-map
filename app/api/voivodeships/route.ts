@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getOrSetCached } from "@/lib/cache"
 
 export async function GET() {
   try {
-    const voivodeships = await prisma.voivodeship.findMany({
-      orderBy: {
-        nazwa: "asc",
+    const voivodeships = await getOrSetCached(
+      "voivodeships:all",
+      async () => {
+        return await prisma.voivodeship.findMany({
+          orderBy: {
+            nazwa: "asc",
+          },
+        })
       },
-    })
+      86400 // Cache for 24 hours
+    )
 
     return NextResponse.json(voivodeships)
   } catch (error) {
@@ -15,3 +22,4 @@ export async function GET() {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
