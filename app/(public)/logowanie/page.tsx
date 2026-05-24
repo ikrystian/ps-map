@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa"
+import { Eye, EyeOff } from "lucide-react"
 import { AuthLayout } from "@/components/auth"
 
 interface DevUser {
@@ -29,6 +30,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [devUsers, setDevUsers] = useState<DevUser[]>([])
@@ -128,7 +130,7 @@ export default function LoginPage() {
         } else {
           router.push(callbackUrl)
         }
-      } catch (error) {
+      } catch {
         setError("Wystąpił błąd podczas logowania")
         setIsLoading(false)
       }
@@ -173,7 +175,7 @@ export default function LoginPage() {
       } else {
         router.push(callbackUrl)
       }
-    } catch (error) {
+    } catch {
       setError("Wystąpił błąd podczas logowania")
       setIsLoading(false)
     }
@@ -248,16 +250,30 @@ export default function LoginPage() {
                   Zapomniałeś hasła?
                 </Link>
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Wprowadź hasło"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                className="h-11"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Wprowadź hasło"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  className="h-11 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <Button type="submit" className="w-full h-11" disabled={isLoading}>

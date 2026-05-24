@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, Zap, Star, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type PackageType = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
+export type PackageType = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
 
 interface PackageBadgeProps {
   packageType: PackageType;

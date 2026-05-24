@@ -4,22 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   MapPin,
   Star,
-  CheckCircle2,
   Phone,
   Mail,
   Globe,
   ArrowUpRight,
-  Clock,
-  Award,
+  LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PackageBadge } from "@/components/permissions";
+import { PackageBadge, PackageType } from "@/components/permissions";
 import {
   Tooltip,
   TooltipContent,
@@ -119,6 +116,51 @@ const getOpinieText = (count: number) => {
     return "opinie";
   }
   return "opinii";
+};
+
+const ContactButton = ({
+  icon: Icon,
+  onClick,
+  isLoggedIn,
+}: {
+  icon: LucideIcon;
+  onClick: (e: React.MouseEvent) => void;
+  isLoggedIn: boolean;
+}) => {
+  const button = (
+    <Button
+      size="icon"
+      variant="ghost"
+      onClick={(e) => {
+        if (!isLoggedIn) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        onClick(e);
+      }}
+      className={cn(
+        "rounded-full bg-[#058c80] text-white transition-all duration-300 h-11 w-11 shadow-md border-0",
+        isLoggedIn ? "hover:bg-[#04756b]" : "opacity-70 cursor-help",
+      )}
+    >
+      <Icon className="w-5 h-5" />
+    </Button>
+  );
+
+  if (isLoggedIn) return button;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent
+        side="top"
+        className="bg-[#1a1a1a] border-neutral-800 text-white font-sans text-xs"
+      >
+        Informacja dostępna po zalogowaniu
+      </TooltipContent>
+    </Tooltip>
+  );
 };
 
 const AwardEmblem = () => (
@@ -259,12 +301,12 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
   const cardBorderAndGlow =
     pkg === "BIZNES"
-      ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-amber-950/10"
+      ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 hover:shadow-[0_0_35px_rgba(245,158,11,0.2)] bg-gradient-to-br from-[#131313] via-[#131313] to-amber-950/15"
       : pkg === "PREMIUM"
-        ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/10"
+        ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 hover:shadow-[0_0_35px_rgba(168,85,247,0.2)] bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/15"
         : pkg === "STANDARD"
-          ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/10"
-          : "border-neutral-800 hover:border-neutral-700 bg-[#131313]";
+          ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.15)] bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/15"
+          : "border-neutral-800 hover:border-neutral-700 bg-[#131313] hover:shadow-[0_10px_30px_rgba(0,0,0,0.4)]";
 
   const professionalTitle = lawFirm.oraStatus
     ? "Adwokat"
@@ -278,59 +320,17 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
         ? `OIRP ${lawFirm.oirpMiasto}`
         : "ORA Kielce";
 
-  const ContactButton = ({
-    icon: Icon,
-    onClick,
-    type,
-  }: {
-    icon: any;
-    onClick: (e: any) => void;
-    type: string;
-  }) => {
-    const button = (
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={(e) => {
-          if (!isLoggedIn) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          onClick(e);
-        }}
-        className={cn(
-          "rounded-full bg-[#058c80] text-white transition-all duration-300 h-11 w-11 shadow-md border-0",
-          isLoggedIn ? "hover:bg-[#04756b]" : "opacity-70 cursor-help",
-        )}
-      >
-        <Icon className="w-5 h-5" />
-      </Button>
-    );
-
-    if (isLoggedIn) return button;
-
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
-          side="top"
-          className="bg-[#1a1a1a] border-neutral-800 text-white font-sans text-xs"
-        >
-          Informacja dostępna po zalogowaniu
-        </TooltipContent>
-      </Tooltip>
-    );
-  };
-
   return (
     <Link href={`/ekspert/${lawFirm.slug}`} className="block group">
       <Card
         className={cn(
-          "overflow-hidden transition-all duration-300 hover:shadow-2xl border",
+          "relative overflow-hidden transition-all duration-500 hover:-translate-y-2 list-main-item border",
           cardBorderAndGlow,
         )}
       >
+        {/* Creative shine effect */}
+        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent skew-x-[-20deg] pointer-events-none z-20" />
+
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
           <div className="relative w-full md:w-[400px] h-[250px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
@@ -420,11 +420,11 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
                     <span className="truncate">{lawFirm.nazwa}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge
-                        packageType={lawFirm.pakietSubskrypcji as any}
+                        packageType={lawFirm.pakietSubskrypcji as PackageType}
                         size="sm"
                       />
                     )}
@@ -453,13 +453,13 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               {/* Badges/Categories */}
               <div className="flex flex-wrap items-center gap-3 my-3">
                 {/* Purple badge (Professional title) */}
-                <div className="bg-[#3b0066] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md">
+                <div className="bg-[#3b0066] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md transition-transform duration-300 group-hover:scale-[1.02]">
                   {professionalTitle}
                 </div>
 
                 {/* Teal badge (Regional Chamber) */}
-                <div className="flex items-center gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-2 pr-4 py-1.5 rounded-lg text-sm font-medium shadow-md">
-                  <div className="bg-[#058c80] p-1.5 rounded-md flex items-center justify-center">
+                <div className="flex items-center gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-2 pr-4 py-1.5 rounded-lg text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
+                  <div className="bg-[#058c80] p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
                     <OraIcon />
                   </div>
                   <span className="text-neutral-200">{chamberText}</span>
@@ -474,7 +474,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               <div className="flex gap-3">
                 <ContactButton
                   icon={Phone}
-                  type="telefon"
+                  isLoggedIn={isLoggedIn}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -484,7 +484,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 />
                 <ContactButton
                   icon={Mail}
-                  type="email"
+                  isLoggedIn={isLoggedIn}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -494,7 +494,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 />
                 <ContactButton
                   icon={Globe}
-                  type="strona"
+                  isLoggedIn={isLoggedIn}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -504,8 +504,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 />
               </div>
 
-              <div className="bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 hover:bg-[#04756b] flex items-center justify-center">
-                <ArrowUpRight className="w-6 h-6 stroke-[2.5]" />
+              <div className="bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 group-hover:bg-[#0db19f] group-hover:shadow-[0_0_15px_rgba(13,177,159,0.3)] flex items-center justify-center">
+                <ArrowUpRight className="w-6 h-6 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </div>
           </div>

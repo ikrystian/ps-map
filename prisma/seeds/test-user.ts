@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 export async function seedTestUser(prisma: PrismaClient) {
     console.log("Seeding test user...")
 
-    const hashedPassword = await bcrypt.hash("password123", 10)
+    const hashedPassword = await bcrypt.hash("Password123", 10)
 
     // Create Law Firm
     const lawFirmUser = await prisma.user.create({
