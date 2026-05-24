@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Prosta Sprawa</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #1a1e20;
+      font-family: 'DM Sans', Helvetica, Arial, sans-serif;
+      color: #e8e4dc;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .email-wrapper {
+      background-color: #1a1e20;
+      padding: 0;
+      width: 100%;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #1a1e20;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background-color: #141718;
+      padding: 20px 32px;
+      border-bottom: 1px solid #2a2e30;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 20px;
+      color: #e8e4dc;
+      letter-spacing: -0.3px;
+    }
+
+    .header-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: #2dd4bf;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+    }
+
+    .header-link::after {
+      content: ' →';
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background-color: #222628;
+      padding: 64px 40px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-card {
+      position: relative;
+      display: inline-block;
+      max-width: 440px;
+      border: 1.5px solid #2dd4bf;
+      border-radius: 6px;
+      padding: 28px 36px;
+      margin-bottom: 40px;
+      background: rgba(45, 212, 191, 0.03);
+    }
+
+    .hero-card p {
+      font-family: 'DM Sans', Helvetica, Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      color: #e8e4dc;
+      font-weight: 400;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background-color: #2dd4bf;
+      color: #141718;
+      font-family: 'DM Sans', Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 4px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background-color: #141718;
+      padding: 44px 32px 36px;
+      text-align: center;
+      border-top: 1px solid #2a2e30;
+    }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 22px;
+      color: #e8e4dc;
+      letter-spacing: -0.3px;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: #8a8f92;
+      text-decoration: none;
+      margin: 0 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: #5a5f62;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .footer-icon {
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid #3a3f42;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .footer-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: #8a8f92;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Responsive ── */
+    @media only screen and (max-width: 480px) {
+      .header {
+        padding: 16px 20px;
+      }
+
+      .hero {
+        padding: 48px 20px 56px;
+      }
+
+      .hero-card {
+        padding: 22px 22px;
+      }
+
+      .hero-card p {
+        font-size: 15px;
+      }
+
+      .footer {
+        padding: 36px 20px 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-wrapper">
+    <div class="email-container">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="header-inner">
+          <a href="#" class="logo">
+            <!-- Simplified Prosta Sprawa-style chevron icon -->
+            <svg class="logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 22 L14 6 L22 22" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M6 16 L14 10 L22 16" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" opacity="0.5" />
+            </svg>
+            <span class="logo-text">Prosta Sprawa</span>
+          </a>
+          <a href="#" class="header-link">Client Portal</a>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-card">
+          <!-- content here-->
+          </p>
+        </div>
+        <br />
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <div class="footer-logo">Prosta Sprawa</div>
+
+        <div class="footer-links">
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+
+        <p class="footer-copy">© 2026 Prosta Sprawa. All rights reserved. Professional Legal Services.</p>
+
+        <div class="footer-icons">
+          <!-- Globe icon -->
+          <a href="#" class="footer-icon" aria-label="Website">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 3 C9 7 9 17 12 21" />
+              <path d="M12 3 C15 7 15 17 12 21" />
+              <path d="M3.5 9 H20.5" />
+              <path d="M3.5 15 H20.5" />
+            </svg>
+          </a>
+          <!-- Mail icon -->
+          <a href="#" class="footer-icon" aria-label="Email">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="M3 7 L12 13 L21 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>

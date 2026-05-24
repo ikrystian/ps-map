@@ -221,16 +221,16 @@ export function getBrandEmailLayout(
           
           @media screen and (max-width: 600px) {
             .email-container { width: 100% !important; max-width: 100% !important; }
-            .content-padding { padding: 20px !important; }
+            .content-padding { padding: 25px 20px !important; }
             .btn { display: block !important; width: auto !important; margin-left: 0 !important; margin-right: 0 !important; text-align: center !important; }
           }
         </style>
       </head>
-      <body style="background-color: #faf9f5; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; margin: 0; padding: 0; width: 100%; -webkit-font-smoothing: antialiased;">
+      <body style="background-color: #0c0c0c; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; margin: 0; padding: 0; width: 100%; -webkit-font-smoothing: antialiased;">
         <!-- Preheader text for inbox preview -->
         ${preheaderText ? `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>` : ""}
         
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #faf9f5; table-layout: fixed;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0c0c0c; table-layout: fixed;">
           <tr>
             <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
               <!--[if (gte mso 9)|(IE)]>
@@ -238,60 +238,120 @@ export function getBrandEmailLayout(
                 <tr>
                   <td align="center" valign="top" width="600">
               <![endif]-->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #ffffff; border: 1px solid #dad9d4; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #121212; border: 1px solid #222222; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 
                 <!-- Brand Header -->
                 <tr>
-                  <td align="center" valign="top" style="background-color: #faf9f5; padding: 30px 40px; border-bottom: 1px solid #dad9d4;" class="content-padding">
+                  <td align="center" valign="top" style="background-color: #121212; padding: 30px 40px 10px 40px;" class="content-padding">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td align="center" style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 28px; font-weight: bold; color: #c96442; letter-spacing: 0.5px;">
-                          Prosta<span style="color: #3d3929; font-weight: 300;">Sprawa</span>
+                        <!-- Left side: Brand Logo -->
+                        <td align="left" valign="middle" style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 24px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px;">
+                          <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <!-- Brand Icon -->
+                              <td style="padding-right: 12px; vertical-align: middle;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                                  <path d="M3 17h6l3-3H6l-3 3zm5-5h6l3-3H11l-3 3zm5-5h6l3-3H16l-3 3z" fill="#00b49e"/>
+                                </svg>
+                              </td>
+                              <td style="vertical-align: middle; line-height: 24px;">
+                                Prosta<span style="color: #00b49e; font-weight: 300;">Sprawa</span>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <!-- Right side: Client Portal link -->
+                        <td align="right" valign="middle" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 13px; font-weight: 600;">
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/panel-klienta" style="color: #00b49e; text-decoration: none;">Client Portal &rarr;</a>
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-
+ 
                 <!-- Content Area -->
                 <tr>
-                  <td align="left" valign="top" style="padding: 40px 40px 30px 40px;" class="content-padding">
+                  <td align="left" valign="top" style="padding: 40px; background-image: radial-gradient(circle at center, rgba(0, 180, 158, 0.08) 0%, rgba(18, 18, 18, 0) 70%); background-repeat: no-repeat; background-position: center;" class="content-padding">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td align="left" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; line-height: 1.625; color: #3d3929;">
+                        <td align="left" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; line-height: 1.625; color: #e5e5e5;">
                           ${contentHtml}
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-
+ 
                 <!-- Divider -->
                 <tr>
-                  <td align="center" style="padding: 0 40px;" class="content-padding">
+                  <td align="center" style="padding: 0 40px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td style="border-top: 1px solid #dad9d4; line-height: 1px; font-size: 1px;">&nbsp;</td>
+                        <td style="border-top: 1px solid #222222; line-height: 1px; font-size: 1px;">&nbsp;</td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-
+ 
                 <!-- Premium Footer -->
                 <tr>
-                  <td align="center" valign="top" style="padding: 30px 40px 40px 40px;" class="content-padding">
+                  <td align="center" valign="top" style="padding: 40px;" class="content-padding">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <!-- Brand Title in Serif -->
                       <tr>
-                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 12px; line-height: 1.5; color: #83827d; text-align: center;">
-                          <p style="margin: 0 0 10px 0;">Wiadomość została wysłana automatycznie przez system, prosimy na nią nie odpowiadać bezpośrednio.</p>
-                          <p style="margin: 0 0 10px 0;"><strong>ProstaSprawa</strong> &bull; Portal spraw i kancelarii prawnych</p>
-                          <p style="margin: 0;">&copy; ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.</p>
+                        <td align="center" style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 20px; font-weight: bold; color: #ffffff; padding-bottom: 16px;">
+                          Prosta Sprawa
+                        </td>
+                      </tr>
+                      <!-- Terms / Privacy / Cookies Links -->
+                      <tr>
+                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #a3a3a3; padding-bottom: 20px;">
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Terms of Service</a>
+                          <span style="color: #404040;">&bull;</span>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/privacy" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Privacy Policy</a>
+                          <span style="color: #404040;">&bull;</span>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/cookies" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Cookie Settings</a>
+                        </td>
+                      </tr>
+                      <!-- Copyright text -->
+                      <tr>
+                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 11px; line-height: 1.6; color: #737373; padding-bottom: 20px; text-align: center;">
+                          &copy; ${new Date().getFullYear()} Prosta Sprawa. All rights reserved. Professional Legal Services.
+                        </td>
+                      </tr>
+                      <!-- Social/Utility Icons (Globe and Envelope) -->
+                      <tr>
+                        <td align="center">
+                          <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <!-- Globe icon -->
+                              <td style="padding: 0 10px;">
+                                <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}" style="color: #a3a3a3; text-decoration: none;">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                  </svg>
+                                </a>
+                              </td>
+                              <!-- Envelope icon -->
+                              <td style="padding: 0 10px;">
+                                <a href="mailto:kontakt@prostaspawa.pl" style="color: #a3a3a3; text-decoration: none;">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                  </svg>
+                                </a>
+                              </td>
+                            </tr>
+                          </table>
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-
+ 
               </table>
               <!--[if (gte mso 9)|(IE)]>
                   </td>
@@ -314,19 +374,19 @@ export function generatePasswordResetEmail(resetUrl: string, userName?: string):
   const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
   
   const contentHtml = `
-    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Resetowanie hasła</h2>
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Resetowanie hasła</h2>
     <p style="margin: 0 0 16px 0;">${greeting}</p>
     <p style="margin: 0 0 16px 0;">Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta w serwisie ProstaSprawa.</p>
     <p style="margin: 0 0 24px 0;">Aby ustawić nowe hasło, kliknij poniższy przycisk:</p>
     <div style="text-align: center; margin: 30px 0;">
-      <a href="${resetUrl}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Zresetuj hasło</a>
+      <a href="${resetUrl}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zresetuj hasło</a>
     </div>
-    <div style="background-color: #faf9f5; border-left: 4px solid #c96442; border-radius: 4px; padding: 16px; margin: 24px 0;">
-      <strong style="color: #3d3929; font-weight: 600; display: block; margin-bottom: 4px;">⚠️ Ważne:</strong>
-      <span style="font-size: 14px; color: #535146;">Link do resetowania hasła jest ważny przez 1 godzinę.</span>
+    <div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 16px; margin: 24px 0;">
+      <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 4px;">⚠️ Ważne:</strong>
+      <span style="font-size: 14px; color: #d4d4d4;">Link do resetowania hasła jest ważny przez 1 godzinę.</span>
     </div>
-    <p style="margin: 20px 0 0 0; font-size: 14px; color: #83827d;">Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość. Twoje hasło pozostanie bez zmian.</p>
-    <p style="margin: 20px 0 0 0; font-size: 12px; color: #83827d; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${resetUrl}" style="color: #c96442; text-decoration: underline;">${resetUrl}</a></p>
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #a3a3a3;">Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość. Twoje hasło pozostanie bez zmian.</p>
+    <p style="margin: 20px 0 0 0; font-size: 12px; color: #a3a3a3; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${resetUrl}" style="color: #00b49e; text-decoration: underline;">${resetUrl}</a></p>
   `
   
   const html = getBrandEmailLayout(contentHtml, "Instrukcja resetowania hasła do konta ProstaSprawa.")

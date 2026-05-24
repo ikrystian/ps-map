@@ -87,6 +87,7 @@ export default function LoginPage() {
   }, [searchParams])
 
   // Handle user selection from dropdown
+  // Handle user selection from dropdown
   const handleUserSelect = async (userId: string) => {
     setSelectedUserId(userId)
     const user = devUsers.find((u) => u.id === userId)
@@ -99,6 +100,21 @@ export default function LoginPage() {
       setError("")
 
       try {
+        // 1. Sprawdzenie pre-login
+        const checkResponse = await fetch("/api/auth/pre-login-check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email, password: user.password }),
+        })
+
+        if (!checkResponse.ok) {
+          const data = await checkResponse.json()
+          setError(data.error || "Nieprawidłowy email lub hasło")
+          setIsLoading(false)
+          return
+        }
+
+        // 2. NextAuth Sign In
         const result = await signIn("credentials", {
           email: user.email,
           password: user.password,
@@ -106,7 +122,7 @@ export default function LoginPage() {
         })
 
         if (result?.error) {
-          setError(result.error)
+          setError("Wystąpił błąd podczas autoryzacji sesji. Spróbuj ponownie.")
           setIsLoading(false)
           return
         }
@@ -130,7 +146,8 @@ export default function LoginPage() {
         } else {
           router.push(callbackUrl)
         }
-      } catch {
+      } catch (err) {
+        console.error("Login error:", err)
         setError("Wystąpił błąd podczas logowania")
         setIsLoading(false)
       }
@@ -143,6 +160,21 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
+      // 1. Sprawdzenie pre-login w celu pobrania dokładnego błędu w języku polskim
+      const checkResponse = await fetch("/api/auth/pre-login-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!checkResponse.ok) {
+        const data = await checkResponse.json()
+        setError(data.error || "Nieprawidłowy email lub hasło")
+        setIsLoading(false)
+        return
+      }
+
+      // 2. NextAuth Sign In
       const result = await signIn("credentials", {
         email,
         password,
@@ -150,13 +182,12 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // Wyświetl szczegółowy komunikat błędu z NextAuth
-        setError(result.error)
+        setError("Wystąpił błąd podczas autoryzacji sesji. Spróbuj ponownie.")
         setIsLoading(false)
         return
       }
 
-      // Pobierz dane użytkownika aby określić rolę
+      // 3. Pobierz dane użytkownika aby określić rolę
       const response = await fetch("/api/auth/me")
       if (response.ok) {
         const data = await response.json()
@@ -175,7 +206,8 @@ export default function LoginPage() {
       } else {
         router.push(callbackUrl)
       }
-    } catch {
+    } catch (err) {
+      console.error("Login error:", err)
       setError("Wystąpił błąd podczas logowania")
       setIsLoading(false)
     }

@@ -16,12 +16,12 @@ Zaloguj się do panelu, aby przeczytać pełną wiadomość i odpowiedzieć.
 
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witaj {odbiorca},</h2>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {odbiorca},</h2>
 <p style="margin: 0 0 16px 0;">Otrzymałeś nową wiadomość w systemie komunikacji <strong>ProstaSprawa</strong> od użytkownika <strong>{nadawca}</strong>.</p>
 
-<div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
-  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 10px;">Skrót wiadomości:</h3>
-  <div style="font-style: italic; color: #535146; line-height: 1.6; padding: 12px; background-color: #ffffff; border: 1px solid #ede9de; border-radius: 6px;">
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 10px;">Skrót wiadomości:</h3>
+  <div style="font-style: italic; color: #d4d4d4; line-height: 1.6; padding: 12px; background-color: #0c0c0c; border: 1px solid #222222; border-radius: 6px;">
     "{fragmentWiadomosci}..."
   </div>
 </div>
@@ -29,7 +29,7 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Aby przeczytać pełną treść i sprawnie odpowiedzieć nadawcy, kliknij poniższy przycisk przechodząc bezpośrednio do bezpiecznego czatu.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoWiadomosci}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Odpowiedz na wiadomość</a>
+  <a href="{linkDoWiadomosci}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Odpowiedz na wiadomość</a>
 </div>`,
     zmienne: ['{odbiorca}', '{nadawca}', '{fragmentWiadomosci}', '{linkDoWiadomosci}'],
     opisZmiennych: {
@@ -55,16 +55,16 @@ Dziękujemy za świadczenie usług prawnych za pośrednictwem platformy Prosta S
 
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witaj {kancelaria},</h2>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {kancelaria},</h2>
 <p style="margin: 0 0 16px 0;">Klient <strong>{klient}</strong> właśnie wystawił nową opinię o współpracy z Twoją kancelarią.</p>
 
-<div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
   <div style="text-align: center; margin-bottom: 16px;">
-    <span style="font-size: 14px; color: #83827d; font-weight: 500; display: block; margin-bottom: 4px;">Ocena klienta:</span>
+    <span style="font-size: 14px; color: #a3a3a3; font-weight: 500; display: block; margin-bottom: 4px;">Ocena klienta:</span>
     <span style="font-size: 26px; font-weight: bold; color: #f59e0b; letter-spacing: 2px;">{ocena} / 5 ⭐</span>
   </div>
-  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 8px; border-top: 1px solid #ede9de; padding-top: 12px;">Komentarz klienta:</h3>
-  <div style="font-style: italic; color: #535146; line-height: 1.6; padding: 12px; background-color: #ffffff; border: 1px solid #ede9de; border-radius: 6px;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 8px; border-top: 1px solid #222222; padding-top: 12px;">Komentarz klienta:</h3>
+  <div style="font-style: italic; color: #d4d4d4; line-height: 1.6; padding: 12px; background-color: #0c0c0c; border: 1px solid #222222; border-radius: 6px;">
     "{komentarz}"
   </div>
 </div>
@@ -72,7 +72,7 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Wspaniała opinia to najlepsza reklama Twoich usług w naszym portalu. Kliknij przycisk poniżej, aby przejść do swojego publicznego profilu.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoProfilu}" class="btn" style="display: inline-block; background-color: #c96442; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(201, 100, 66, 0.2); text-align: center;">Zobacz opinie na profilu</a>
+  <a href="{linkDoProfilu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz opinie na profilu</a>
 </div>`,
     zmienne: ['{kancelaria}', '{klient}', '{ocena}', '{komentarz}', '{linkDoProfilu}'],
     opisZmiennych: {
@@ -101,19 +101,19 @@ Dziękujemy za zaufanie i korzystanie z serwisu Prosta Sprawa.
 
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witaj {klient},</h2>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {klient},</h2>
 <p style="margin: 0 0 16px 0;">Minęło kilka dni od momentu, kiedy zaakceptowałeś ofertę pomocy prawnej od kancelarii <strong>{kancelaria}</strong>.</p>
 <p style="margin: 0 0 16px 0;">Chcielibyśmy zapytać, jak oceniasz dotychczasowy kontakt, fachowość oraz przebieg współpracy?</p>
 
-<div style="background-color: #faf9f5; border-left: 4px solid #c96442; border-radius: 4px; padding: 16px; margin: 24px 0;">
-  <strong style="color: #3d3929; font-weight: 600; display: block; margin-bottom: 6px;">💡 Dlaczego Twoja opinia jest ważna?</strong>
-  <span style="font-size: 14px; color: #535146; line-height: 1.5; display: block;">Pomaga to setkom innych użytkowników naszego serwisu w wyborze profesjonalnego i zaangażowanego adwokata czy radcy prawnego, a także dodatkowo motywuje kancelarie do podtrzymywania najwyższych standardów obsługi.</span>
+<div style="background-color: #1c1a12; border-left: 4px solid #f59e0b; border-radius: 4px; padding: 16px; margin: 24px 0;">
+  <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 6px;">💡 Dlaczego Twoja opinia jest ważna?</strong>
+  <span style="font-size: 14px; color: #d4d4d4; line-height: 1.5; display: block;">Pomaga to setkom innych użytkowników naszego serwisu w wyborze profesjonalnego i zaangażowanego adwokata czy radcy prawnego, a także dodatkowo motywuje kancelarie do podtrzymywania najwyższych standardów obsługi.</span>
 </div>
 
 <p style="margin: 0 0 24px 0;">Kliknij przycisk poniżej, aby w kilka sekund ocenić współpracę za pomocą gwiazdek oraz krótkiego komentarza.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoOceny}" class="btn" style="display: inline-block; background-color: #f59e0b; color: #ffffff !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2); text-align: center;">⭐ Wystaw ocenę prawnikowi</a>
+  <a href="{linkDoOceny}" class="btn" style="display: inline-block; background-color: #f59e0b; color: #0f0a02 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3); text-align: center; letter-spacing: 0.5px;">⭐ Wystaw ocenę prawnikowi</a>
 </div>`,
     zmienne: ['{klient}', '{kancelaria}', '{linkDoOceny}'],
     opisZmiennych: {

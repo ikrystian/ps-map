@@ -5,7 +5,7 @@ import { PrismaClient, UserRole, UserStatus, LawFirmType, OfferType, Subscriptio
 export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
-    const email = faker.internet.email({ firstName, lastName });
+    const email = faker.internet.email({ firstName, lastName }).toLowerCase();
     return {
         email,
         name: `${firstName} ${lastName} `,
