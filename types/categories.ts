@@ -11,6 +11,10 @@ export interface CategoryBase {
   nazwa: string
   slug: string
   typ?: 'SPRAWY_FIRMOWE' | 'SPRAWY_PRYWATNE'
+  _count?: {
+    lawFirms: number
+    cases: number
+  }
 }
 
 /**

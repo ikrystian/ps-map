@@ -45,6 +45,10 @@ interface Category {
     id: string
     nazwa: string
     slug: string
+    _count?: {
+      lawFirms: number
+      cases: number
+    }
   }>
   _count: {
     lawFirms: number
@@ -388,8 +392,13 @@ export default function CategoryPage() {
                 <div className="flex flex-wrap gap-2">
                   {category.children.map((child) => (
                     <Link key={child.id} href={`/kategorie/${category.slug}/${child.slug}`}>
-                      <Badge variant="outline" className="hover:bg-accent cursor-pointer">
-                        {child.nazwa}
+                      <Badge variant="outline" className="hover:bg-accent cursor-pointer gap-1.5">
+                        <span>{child.nazwa}</span>
+                        {child._count?.lawFirms !== undefined && (
+                          <span className="text-[10px] text-muted-foreground/80 font-medium">
+                            ({child._count.lawFirms})
+                          </span>
+                        )}
                       </Badge>
                     </Link>
                   ))}

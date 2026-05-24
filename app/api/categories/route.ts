@@ -35,6 +35,12 @@ export async function GET() {
             slug: true,
             ikona: true,
             ikonaUrl: true,
+            _count: {
+              select: {
+                lawFirms: true,
+                cases: true,
+              },
+            },
           },
         },
         _count: {

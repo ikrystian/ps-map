@@ -47,6 +47,10 @@ interface Category {
     slug: string
     ikona?: string | null
     ikonaUrl?: string | null
+    _count?: {
+      lawFirms: number
+      cases: number
+    }
   }[]
   _count?: {
     lawFirms: number
@@ -221,7 +225,6 @@ export default function CategoriesPage() {
         </div>
 
         {/* Bottom mesh gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
       </section>
 
       {/* Categories Content */}
@@ -376,7 +379,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                     <Link
                       key={child.id}
                       href={`/kategorie/${category.slug}/${child.slug}`}
-                      className={`inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors ${isBusiness
+                      className={`group inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-[11px] font-medium transition-colors ${isBusiness
                         ? "hover:border-[#0da192]/50 hover:bg-[#0da192]/5 hover:text-[#0da192]"
                         : "hover:border-[#d7b56d]/50 hover:bg-[#d7b56d]/5 hover:text-[#d7b56d]"
                         }`}
@@ -387,7 +390,15 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                         fallback={isBusiness ? Briefcase : Scale}
                         className="h-3 w-3"
                       />
-                      {child.nazwa}
+                      <span>{child.nazwa}</span>
+                      {child._count?.lawFirms !== undefined && (
+                        <span className={`text-[10px] transition-colors ml-0.5 font-semibold ${isBusiness
+                          ? "text-muted-foreground/60 group-hover:text-[#0da192]/80"
+                          : "text-muted-foreground/60 group-hover:text-[#d7b56d]/80"
+                          }`}>
+                          ({child._count.lawFirms})
+                        </span>
+                      )}
                     </Link>
                   ))}
                   {category.children.length > 6 && (

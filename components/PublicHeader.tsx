@@ -210,11 +210,16 @@ export default function PublicHeader({
                             <Link
                               href={`/kategorie/${category.slug}`}
                               className={cn(
-                                "group/cat-title inline-flex items-center gap-1 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
+                                "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
                               <span>{category.nazwa}</span>
+                              {category._count?.lawFirms !== undefined && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
+                                  {category._count.lawFirms}
+                                </span>
+                              )}
                               <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
                             </Link>
                           </NavigationMenuLink>
@@ -225,13 +230,18 @@ export default function PublicHeader({
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300",
+                                      "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
                                         ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
                                         : "text-muted-foreground"
                                     )}
                                   >
-                                    {child.nazwa}
+                                    <span>{child.nazwa}</span>
+                                    {child._count?.lawFirms !== undefined && (
+                                      <span className="text-[10px] text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
+                                        ({child._count.lawFirms})
+                                      </span>
+                                    )}
                                   </Link>
                                 </NavigationMenuLink>
                               ))}
@@ -271,11 +281,16 @@ export default function PublicHeader({
                             <Link
                               href={`/kategorie/${category.slug}`}
                               className={cn(
-                                "group/cat-title inline-flex items-center gap-1 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
+                                "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
                                 pathname === `/kategorie/${category.slug}` && "text-primary"
                               )}
                             >
                               <span>{category.nazwa}</span>
+                              {category._count?.lawFirms !== undefined && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
+                                  {category._count.lawFirms}
+                                </span>
+                              )}
                               <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
                             </Link>
                           </NavigationMenuLink>
@@ -286,13 +301,18 @@ export default function PublicHeader({
                                   <Link
                                     href={`/kategorie/${category?.slug}/${child.slug}`}
                                     className={cn(
-                                      "block text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300",
+                                      "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
                                       pathname === `/kategorie/${category?.slug}/${child.slug}`
                                         ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
                                         : "text-muted-foreground"
                                     )}
                                   >
-                                    {child.nazwa}
+                                    <span>{child.nazwa}</span>
+                                    {child._count?.lawFirms !== undefined && (
+                                      <span className="text-[10px] text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
+                                        ({child._count.lawFirms})
+                                      </span>
+                                    )}
                                   </Link>
                                 </NavigationMenuLink>
                               ))}
