@@ -111,7 +111,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { categories } = body
+    const { categories, mainCategoryId } = body
 
     if (!Array.isArray(categories)) {
       return NextResponse.json({ error: "Invalid categories data" }, { status: 400 })
@@ -126,12 +126,31 @@ export async function PUT(request: Request) {
       )
     }
 
-    // Sprawdź czy główna kategoria jest na liście
-    if (lawFirm.mainCategoryId) {
-      const hasMainCategory = categories.some(cat => cat.categoryId === lawFirm.mainCategoryId)
+    const activeMainCategoryId = mainCategoryId !== undefined ? mainCategoryId : lawFirm.mainCategoryId
+
+    // Sprawdź czy główna kategoria jest na liście i czy jest rodzicem
+    if (activeMainCategoryId) {
+      const hasMainCategory = categories.some(cat => cat.categoryId === activeMainCategoryId)
       if (!hasMainCategory) {
         return NextResponse.json(
           { error: "Główna kategoria musi być na liście wybranych kategorii" },
+          { status: 400 }
+        )
+      }
+
+      const categoryToCheck = await prisma.category.findUnique({
+        where: { id: activeMainCategoryId },
+        select: { parentId: true }
+      })
+      if (!categoryToCheck) {
+        return NextResponse.json(
+          { error: "Wybrana kategoria główna nie istnieje" },
+          { status: 400 }
+        )
+      }
+      if (categoryToCheck.parentId !== null) {
+        return NextResponse.json(
+          { error: "Główną kategorią może być tylko kategoria nadrzędna (rodzic)" },
           { status: 400 }
         )
       }
@@ -153,6 +172,14 @@ export async function PUT(request: Request) {
       })
     }
 
+    // Zapisz nową główną kategorię w bazie jeśli uległa zmianie
+    if (mainCategoryId !== undefined && mainCategoryId !== lawFirm.mainCategoryId) {
+      await prisma.lawFirm.update({
+        where: { id: lawFirm.id },
+        data: { mainCategoryId: mainCategoryId },
+      })
+    }
+
     // Fetch and return updated categories
     const updatedCategories = await prisma.lawFirmCategory.findMany({
       where: { lawFirmId: lawFirm.id },
@@ -164,7 +191,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       categories: updatedCategories,
-      mainCategoryId: lawFirm.mainCategoryId,
+      mainCategoryId: mainCategoryId !== undefined ? mainCategoryId : lawFirm.mainCategoryId,
       maxCategories,
     })
   } catch (error) {

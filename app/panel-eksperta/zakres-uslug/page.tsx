@@ -365,6 +365,23 @@ export default function LawFirmServicesPage() {
     setExpandedCategories(newExpanded)
   }
 
+  const handleSetMainCategory = (category: Category) => {
+    setMainCategoryId(category.id)
+
+    if (!isSelected(category.id)) {
+      const maxKolejnosc = selectedCategories.reduce((max, sc) => Math.max(max, sc.kolejnosc), -1)
+      const newItem = {
+        id: `temp-${Date.now()}-main`,
+        categoryId: category.id,
+        kolejnosc: maxKolejnosc + 1,
+        category: category,
+      }
+      setSelectedCategories([...selectedCategories, newItem])
+    }
+
+    toast.success(`Ustawiono "${category.nazwa}" jako główną specjalizację`)
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
@@ -398,10 +415,11 @@ export default function LawFirmServicesPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          categories: selectedCategories.map((sc, index) => ({
+          categories: sortedSelectedCategories.map((sc, index) => ({
             categoryId: sc.categoryId,
             kolejnosc: index,
           })),
+          mainCategoryId,
         }),
       })
 
@@ -511,10 +529,25 @@ export default function LawFirmServicesPage() {
                   }`}
               >
                 {category.nazwa}
-                {isMain && (
-                  <Badge variant="default" className="text-[10px]">
+                {isMain ? (
+                  <Badge variant="default" className="text-[10px] bg-primary text-white">
                     Główna
                   </Badge>
+                ) : (
+                  !category.parentId && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded transition-all ml-1"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleSetMainCategory(category)
+                      }}
+                    >
+                      Ustaw jako główną
+                    </Button>
+                  )
                 )}
               </label>
               {category.opis && (
