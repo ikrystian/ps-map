@@ -67,7 +67,7 @@ export async function sendEmailWithTemplate({
         // Ucieknij znaki specjalne w kluczu zmiennej dla RexExp
         const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         const regex = new RegExp(escapedKey, 'g')
-        
+
         subject = subject.replace(regex, value || '')
         html = html.replace(regex, value || '')
         text = text.replace(regex, value || '')
@@ -121,7 +121,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
       console.log(`Subject: ${subject}`)
       console.log(`Text: ${text || html.replace(/<[^>]*>/g, '')}`)
       console.log('='.repeat(80))
-      
+
       smtpLog = 'Development mode: SMTP not configured. Email logged to console.'
       status = EmailLogStatus.SUCCESS
       return true
@@ -200,36 +200,36 @@ export function getBrandEmailLayout(
     const templatePath = path.join(process.cwd(), 'prosta_sprawa_email.html')
     if (fs.existsSync(templatePath)) {
       let template = fs.readFileSync(templatePath, 'utf8')
-      
+
       // Wstawianie treści w miejsce <!-- content here-->
       let finalHtml = template.replace('<!-- content here-->', contentHtml)
-      
+
       // Dynamiczne podmienianie linków w szablonie prosta_sprawa_email.html dla poprawności działania systemu
       const nextAuthUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-      
+
       // Podmień logo i link "Client Portal" na rzeczywiste linki
       finalHtml = finalHtml.replace('href="#" class="logo"', `href="${nextAuthUrl}" class="logo"`)
       finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${nextAuthUrl}/panel-klienta" class="header-link"`)
-      
+
       // Podmień linki w stopce na poprawne URL-e systemowe
       finalHtml = finalHtml.replace('href="#">Terms of Service</a>', `href="${nextAuthUrl}/terms">Terms of Service</a>`)
       finalHtml = finalHtml.replace('href="#">Privacy Policy</a>', `href="${nextAuthUrl}/privacy">Privacy Policy</a>`)
-      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${nextAuthUrl}/cookies">Cookie Settings</a>`)
-      
+      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${nextAuthUrl}/cookies">Ciasteczka</a>`)
+
       // Podmień ikony w stopce na poprawne odnośniki
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${nextAuthUrl}" class="footer-icon" aria-label="Website"`)
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostaspawa.pl" class="footer-icon" aria-label="Email"`)
-      
+
       // Dodaj preheader jeśli jest podany
       if (preheaderText) {
         const preheaderHtml = `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>`
         finalHtml = finalHtml.replace('<body>', `<body>\n  ${preheaderHtml}`)
       }
-      
+
       // Aktualizacja roku w stopce
       const currentYear = new Date().getFullYear().toString()
       finalHtml = finalHtml.replace('© 2026 Prosta Sprawa', `© ${currentYear} Prosta Sprawa`)
-      
+
       return finalHtml
     }
   } catch (err) {
@@ -349,7 +349,7 @@ export function getBrandEmailLayout(
                       <!-- Terms / Privacy / Cookies Links -->
                       <tr>
                         <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #a3a3a3; padding-bottom: 20px;">
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Terms of Service</a>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;"></a>
                           <span style="color: #404040;">&bull;</span>
                           <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/privacy" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Privacy Policy</a>
                           <span style="color: #404040;">&bull;</span>
@@ -359,7 +359,7 @@ export function getBrandEmailLayout(
                       <!-- Copyright text -->
                       <tr>
                         <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 11px; line-height: 1.6; color: #737373; padding-bottom: 20px; text-align: center;">
-                          &copy; ${new Date().getFullYear()} Prosta Sprawa. All rights reserved. Professional Legal Services.
+                          &copy; ${new Date().getFullYear()} Prosta Sprawa. 
                         </td>
                       </tr>
                       <!-- Social/Utility Icons (Globe and Envelope) -->
@@ -414,7 +414,7 @@ export function getBrandEmailLayout(
 export function generatePasswordResetEmail(resetUrl: string, userName?: string): { subject: string; html: string; text: string } {
   const subject = 'Resetowanie hasła - ProstaSprawa'
   const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
-  
+
   const contentHtml = `
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Resetowanie hasła</h2>
     <p style="margin: 0 0 16px 0;">${greeting}</p>
@@ -430,9 +430,9 @@ export function generatePasswordResetEmail(resetUrl: string, userName?: string):
     <p style="margin: 20px 0 0 0; font-size: 14px; color: #a3a3a3;">Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość. Twoje hasło pozostanie bez zmian.</p>
     <p style="margin: 20px 0 0 0; font-size: 12px; color: #a3a3a3; word-break: break-all;">Gdyby przycisk nie działał, skopiuj poniższy link i wklej go do przeglądarki:<br><a href="${resetUrl}" style="color: #00b49e; text-decoration: underline;">${resetUrl}</a></p>
   `
-  
+
   const html = getBrandEmailLayout(contentHtml, "Instrukcja resetowania hasła do konta ProstaSprawa.")
-  
+
   const text = `
 Resetowanie hasła - ProstaSprawa
 
