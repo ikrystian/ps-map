@@ -111,6 +111,11 @@ enum UserStatus {
   BLOCKED     // Zablokowany
 }
 
+enum ClientType {
+  INDIVIDUAL  // Osoba prywatna
+  BUSINESS    // Firma / Organizacja
+}
+
 // ============================================================================
 // KLIENCI
 // ============================================================================
@@ -120,10 +125,19 @@ model Client {
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Dane osobowe
+  // Typ klienta
+  clientType      ClientType @default(INDIVIDUAL)
+
+  // Dane osobowe / reprezentanta
   imie            String
   nazwisko        String
   telefon         String?
+
+  // Dane firmowe (tylko dla BUSINESS)
+  nazwaFirmy      String?
+  nip             String?
+  regon           String?
+  krs             String?
 
   // Adres
   adres           String?

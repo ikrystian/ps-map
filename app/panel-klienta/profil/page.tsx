@@ -30,15 +30,46 @@ import { ImageCropper } from "@/components/ui/image-cropper"
 import { LoginHistory } from "@/components/auth"
 
 const profileFormSchema = z.object({
+  clientType: z.enum(["INDIVIDUAL", "BUSINESS"]),
   imie: z.string().min(2, "Imię musi mieć minimum 2 znaki"),
   nazwisko: z.string().min(2, "Nazwisko musi mieć minimum 2 znaki"),
   telefon: z.string().optional(),
+  nazwaFirmy: z.string().optional(),
+  nip: z.string().optional(),
+  regon: z.string().optional(),
+  krs: z.string().optional(),
   adres: z.string().optional(),
   kodPocztowy: z.string().optional(),
   miasto: z.string().optional(),
   voivodeshipId: z.string().optional(),
   zgodaNewsletter: z.any().transform(v => Boolean(v)),
   zgodaMarketing: z.any().transform(v => Boolean(v))
+}).superRefine((data, ctx) => {
+  if (data.clientType === "BUSINESS") {
+    if (!data.nazwaFirmy || data.nazwaFirmy.trim().length < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Nazwa firmy jest wymagana dla konta firmowego",
+        path: ["nazwaFirmy"]
+      })
+    }
+    if (!data.nip) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Numer NIP jest wymagany dla konta firmowego",
+        path: ["nip"]
+      })
+    } else {
+      const cleanNip = data.nip.replace(/[^0-9]/g, "")
+      if (cleanNip.length !== 10) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Numer NIP musi składać się z 10 cyfr",
+          path: ["nip"]
+        })
+      }
+    }
+  }
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
@@ -62,9 +93,14 @@ export default function ClientProfilePage() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
+      clientType: "INDIVIDUAL",
       imie: "",
       nazwisko: "",
       telefon: "",
+      nazwaFirmy: "",
+      nip: "",
+      regon: "",
+      krs: "",
       adres: "",
       kodPocztowy: "",
       miasto: "",
@@ -88,9 +124,14 @@ export default function ClientProfilePage() {
 
         // Ustaw wartości formularza
         form.reset({
+          clientType: data.clientType || "INDIVIDUAL",
           imie: data.imie || "",
           nazwisko: data.nazwisko || "",
           telefon: data.telefon || "",
+          nazwaFirmy: data.nazwaFirmy || "",
+          nip: data.nip || "",
+          regon: data.regon || "",
+          krs: data.krs || "",
           adres: data.adres || "",
           kodPocztowy: data.kodPocztowy || "",
           miasto: data.miasto || "",
@@ -389,11 +430,137 @@ export default function ClientProfilePage() {
       {/* Profile Form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Typ konta */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Typ konta</CardTitle>
+              <CardDescription>
+                Wybierz czy korzystasz z serwisu jako osoba prywatna czy jako firma / B2B.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="clientType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex gap-4 p-1.5 bg-muted rounded-xl w-full max-w-md border border-border">
+                        <button
+                          type="button"
+                          className={cn(
+                            "flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
+                            field.value === "INDIVIDUAL"
+                              ? "bg-background text-foreground shadow-sm scale-100"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                          onClick={() => field.onChange("INDIVIDUAL")}
+                        >
+                          Osoba Prywatna
+                        </button>
+                        <button
+                          type="button"
+                          className={cn(
+                            "flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
+                            field.value === "BUSINESS"
+                              ? "bg-background text-foreground shadow-sm scale-100"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                          onClick={() => field.onChange("BUSINESS")}
+                        >
+                          Firma / Organizacja
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Dane firmowe (B2B) */}
+          {form.watch("clientType") === "BUSINESS" && (
+            <Card className="animate-in fade-in slide-in-from-top-4 duration-300">
+              <CardHeader>
+                <CardTitle>Dane firmy</CardTitle>
+                <CardDescription>Uzupełnij dane rejestrowe firmy.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="nazwaFirmy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pełna nazwa firmy *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="ACME Sp. z o.o." {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="nip"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>NIP *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="1234567890" {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="regon"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>REGON (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123456789" {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="krs"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>KRS (opcjonalnie)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0000123456" {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Dane osobowe */}
           <Card>
             <CardHeader>
-              <CardTitle>Dane osobowe</CardTitle>
-              <CardDescription>Podstawowe informacje o Tobie</CardDescription>
+              <CardTitle>
+                {form.watch("clientType") === "BUSINESS" ? "Dane reprezentanta" : "Dane osobowe"}
+              </CardTitle>
+              <CardDescription>
+                {form.watch("clientType") === "BUSINESS"
+                  ? "Informacje o osobie reprezentującej firmę w kontaktach z ekspertami"
+                  : "Podstawowe informacje o Tobie"}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

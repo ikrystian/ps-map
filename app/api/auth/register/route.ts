@@ -133,18 +133,35 @@ export async function POST(request: NextRequest) {
 
     // Jeśli CLIENT, utwórz profil klienta
     if (user.role === "CLIENT" && userData.client) {
+      const clientType = userData.client.clientType || "INDIVIDUAL"
+      
       await prisma.client.create({
         data: {
           userId: user.id,
+          clientType,
           imie: userData.client.imie,
           nazwisko: userData.client.nazwisko,
           telefon: userData.client.telefon || null,
+          nazwaFirmy: clientType === "BUSINESS" ? userData.client.nazwaFirmy : null,
+          nip: clientType === "BUSINESS" ? userData.client.nip : null,
+          regon: clientType === "BUSINESS" ? userData.client.regon : null,
+          krs: clientType === "BUSINESS" ? userData.client.krs : null,
           voivodeshipId: userData.client.voivodeshipId || null,
           miasto: userData.client.miasto || null,
           zgodaRegulamin: userData.client.zgodaRegulamin || false,
           zgodaNewsletter: userData.client.zgodaNewsletter || false,
           zgodaMarketing: userData.client.zgodaMarketing || false,
         },
+      })
+
+      // Synchronizacja nazwy użytkownika
+      const targetName = clientType === "BUSINESS"
+        ? (userData.client.nazwaFirmy || `${userData.client.imie} ${userData.client.nazwisko}`)
+        : `${userData.client.imie} ${userData.client.nazwisko}`
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { name: targetName },
       })
 
       // Wyślij e-mail powitalny dla klienta
