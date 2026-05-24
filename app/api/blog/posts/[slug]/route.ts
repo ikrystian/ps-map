@@ -22,6 +22,7 @@ export async function GET(
             nazwaFirmy: true,
             logo: true,
             opis: true,
+            slug: true,
             miasto: true,
             voivodeship: true,
           },
