@@ -36,6 +36,9 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  experimental: {
+    webpackMemoryOptimizations: true,
+  },
 };
 
 export default nextConfig;
