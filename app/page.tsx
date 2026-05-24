@@ -137,14 +137,8 @@ export default function HomePage() {
 
       {/* SECTION 11.5: Testimonials */}
       {testimonials.length > 0 && (
-        <section className="py-20 bg-[#121212] border-t border-zinc-900/60 overflow-hidden">
+        <section className="py-0 bg-[#121212] border-t border-zinc-900/60 overflow-hidden">
           <div className="container mx-auto px-4 max-w-8xl relative">
-            <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
-                Co mówią nasi klienci
-              </h2>
-              <div className="flex-grow border-t border-zinc-800/80" />
-            </div>
             <AnimatedTestimonials testimonials={testimonials} autoplay={true} />
           </div>
         </section>
