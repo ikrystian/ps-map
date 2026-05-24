@@ -376,7 +376,7 @@ export default function AdminDashboardPage() {
                   <div className="absolute -top-6 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded shadow-md opacity-0 pointer-events-none transition-all duration-200 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 z-10 whitespace-nowrap">
                     {Number(item.count)} uż.
                   </div>
-                  
+
                   {/* Bar container */}
                   <div className="w-full bg-slate-100 dark:bg-slate-800/40 rounded-t-md relative flex-1 flex flex-col justify-end overflow-hidden border border-slate-200/30 dark:border-slate-700/20 min-h-[4px]">
                     <div
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
                       style={{ height: `${height}%` }}
                     />
                   </div>
-                  
+
                   {/* Label without year */}
                   <div className="text-[10px] sm:text-xs text-slate-500 mt-2 font-medium truncate w-full text-center">
                     {formatDate(item.date).replace(/ 202\d$/, '')}
@@ -410,7 +410,7 @@ export default function AdminDashboardPage() {
                 <div key={user.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <div className="font-medium">{user.name || user.email}</div>
-                    <div className="text-sm text-gray-500">{user.email}</div>
+                    <div className="text-sm text-base">{user.email}</div>
                   </div>
                   <div className="text-right">
                     <Badge className={getStatusBadge(user.role)}>{user.role}</Badge>
@@ -436,7 +436,7 @@ export default function AdminDashboardPage() {
                 <div key={caseItem.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <div className="font-medium">{caseItem.nazwaSprawy}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-base">
                       {caseItem.client.user.name || 'Brak nazwy'}
                     </div>
                   </div>
@@ -469,7 +469,7 @@ export default function AdminDashboardPage() {
                 <div key={order.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <div className="font-medium">{order.orderNumber}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-base">
                       {order.lawFirm?.nazwa || 'Brak nazwy'}
                     </div>
                   </div>
@@ -500,7 +500,7 @@ export default function AdminDashboardPage() {
                 <div key={post.id} className="flex items-center justify-between border-b pb-2">
                   <div>
                     <div className="font-medium">{post.tytul}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-base">
                       {post.lawFirm.nazwa || 'Brak kancelarii'}
                     </div>
                   </div>
