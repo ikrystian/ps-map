@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X } from "lucide-react"
+import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X, Menu } from "lucide-react"
 import UserMenu from "@/components/UserMenu"
 import type { CategoryWithChildren } from "@/types/categories"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
@@ -23,6 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 
 interface PublicHeaderProps {
@@ -45,6 +47,7 @@ export default function PublicHeader({
   const pathname = usePathname()
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
   const [searchFormOpen, setSearchFormOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCity, setSelectedCity] = useState("")
   const [selectedType, setSelectedType] = useState("all")
@@ -83,10 +86,11 @@ export default function PublicHeader({
     fetchCities()
   }, [])
 
-  // Close search form on pathname change
+  // Close search form and mobile menu on pathname change
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchFormOpen(false)
+    setMobileMenuOpen(false)
   }, [pathname])
 
   // Split categories into two groups (firmowe/prywatne)
@@ -127,6 +131,7 @@ export default function PublicHeader({
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
             <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="block md:hidden" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={130} height={32} style={{ width: "auto", height: "32px" }} />
             <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
           </Link>
 
@@ -367,8 +372,8 @@ export default function PublicHeader({
             </NavigationMenuList>
           </NavigationMenu>
 
-          {/* Right Side - User Menu / Login */}
-          <div className="flex items-center gap-4">
+          {/* Right Side - User Menu / Login & Hamburger */}
+          <div className="flex items-center gap-3 md:gap-4">
             {isAuthenticated && userRole ? (
               <UserMenu
                 userRole={userRole}
@@ -378,15 +383,235 @@ export default function PublicHeader({
                 userId={userId}
               />
             ) : (
-              <>
+              <div className="hidden md:flex items-center gap-4">
                 <Link href="/panel-klienta/dodaj-sprawe">
                   <Button variant="outline">Dodaj sprawę</Button>
                 </Link>
                 <Link href="/logowanie">
-                  <InteractiveHoverButton >Zaloguj</InteractiveHoverButton>
+                  <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
-              </>
+              </div>
             )}
+
+            {/* Mobile Navigation Trigger */}
+            <div className="md:hidden">
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 text-neutral-300 hover:text-white hover:bg-neutral-800/50 cursor-pointer"
+                  >
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[360px] bg-[#141414] border-neutral-850 p-0 text-white flex flex-col justify-between overflow-hidden">
+                  <div className="flex h-16 items-center px-6 border-b border-neutral-800 justify-between">
+                    <Link href="/" className="flex items-center relative" onClick={() => setMobileMenuOpen(false)}>
+                      <Image src="/images/white-logo.png" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
+                    </Link>
+                  </div>
+                  
+                  {/* Scrollable Content */}
+                  <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+                    {/* Search inside Mobile Menu */}
+                    <form onSubmit={(e) => {
+                      e.preventDefault()
+                      handleSearchSubmit(e)
+                      setMobileMenuOpen(false)
+                    }} className="space-y-3">
+                      <div className="flex items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-11 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
+                        <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                        <input
+                          type="text"
+                          placeholder="Szukaj..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
+                        />
+                      </div>
+                      <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 rounded-lg transition-colors cursor-pointer text-sm border-0">
+                        Wyszukaj
+                      </Button>
+                    </form>
+
+                    {/* Links & Accordions */}
+                    <div className="space-y-4">
+                      <Link
+                        href="/szukaj-prawnika"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isEksperciActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Eksperci
+                      </Link>
+
+                      <Accordion type="single" collapsible className="w-full">
+                        {/* Sprawy Firmowe Accordion */}
+                        <AccordionItem value="firmowe" className="border-neutral-800">
+                          <AccordionTrigger className={cn(
+                            "py-2 text-base font-medium hover:no-underline text-neutral-200 hover:text-primary transition-colors [&>svg]:text-neutral-400 [&>svg]:h-4 [&>svg]:w-4",
+                            isFirmoweActive && "text-primary"
+                          )}>
+                            Sprawy firmowe
+                          </AccordionTrigger>
+                          <AccordionContent className="pt-2 pb-4 pl-4 space-y-4">
+                            {firmoweCat.map((category) => (
+                              <div key={category.id} className="space-y-2">
+                                <Link
+                                  href={`/kategorie/${category.slug}`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={cn(
+                                    "flex items-center justify-between font-semibold text-sm hover:text-primary transition-colors",
+                                    pathname === `/kategorie/${category.slug}` ? "text-primary" : "text-neutral-350"
+                                  )}
+                                >
+                                  <span>{category.nazwa}</span>
+                                  {category._count?.lawFirms !== undefined && (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-450 font-semibold border border-neutral-700">
+                                      {category._count.lawFirms}
+                                    </span>
+                                  )}
+                                </Link>
+                                {category.children && category.children.length > 0 && (
+                                  <div className="border-l border-neutral-800 pl-3.5 space-y-2 ml-1">
+                                    {category.children.slice(0, 4).map((child) => (
+                                      <Link
+                                        key={child.id}
+                                        href={`/kategorie/${category.slug}/${child.slug}`}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={cn(
+                                          "flex items-center justify-between text-xs hover:text-primary transition-colors",
+                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-neutral-400"
+                                        )}
+                                      >
+                                        <span>{child.nazwa}</span>
+                                        {child._count?.lawFirms !== undefined && (
+                                          <span className="text-[10px] text-neutral-500 font-medium">
+                                            ({child._count.lawFirms})
+                                          </span>
+                                        )}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            <Link
+                              href="/kategorie"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block pt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Zobacz wszystkie kategorie →
+                            </Link>
+                          </AccordionContent>
+                        </AccordionItem>
+
+                        {/* Sprawy Prywatne Accordion */}
+                        <AccordionItem value="prywatne" className="border-neutral-800">
+                          <AccordionTrigger className={cn(
+                            "py-2 text-base font-medium hover:no-underline text-neutral-200 hover:text-primary transition-colors [&>svg]:text-neutral-400 [&>svg]:h-4 [&>svg]:w-4",
+                            isPrywatneActive && "text-primary"
+                          )}>
+                            Sprawy prywatne
+                          </AccordionTrigger>
+                          <AccordionContent className="pt-2 pb-4 pl-4 space-y-4">
+                            {prywatneCat.map((category) => (
+                              <div key={category.id} className="space-y-2">
+                                <Link
+                                  href={`/kategorie/${category.slug}`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={cn(
+                                    "flex items-center justify-between font-semibold text-sm hover:text-primary transition-colors",
+                                    pathname === `/kategorie/${category.slug}` ? "text-primary" : "text-neutral-350"
+                                  )}
+                                >
+                                  <span>{category.nazwa}</span>
+                                  {category._count?.lawFirms !== undefined && (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-semibold border border-neutral-700">
+                                      {category._count.lawFirms}
+                                    </span>
+                                  )}
+                                </Link>
+                                {category.children && category.children.length > 0 && (
+                                  <div className="border-l border-neutral-800 pl-3.5 space-y-2 ml-1">
+                                    {category.children.slice(0, 4).map((child) => (
+                                      <Link
+                                        key={child.id}
+                                        href={`/kategorie/${category.slug}/${child.slug}`}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={cn(
+                                          "flex items-center justify-between text-xs hover:text-primary transition-colors",
+                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-neutral-400"
+                                        )}
+                                      >
+                                        <span>{child.nazwa}</span>
+                                        {child._count?.lawFirms !== undefined && (
+                                          <span className="text-[10px] text-neutral-500 font-medium">
+                                            ({child._count.lawFirms})
+                                          </span>
+                                        )}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            <Link
+                              href="/kategorie"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block pt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Zobacz wszystkie kategorie →
+                            </Link>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+
+                      <Link
+                        href="/mapa"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isMapaActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Mapa
+                      </Link>
+
+                      <Link
+                        href="/dla-prawnika"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isDlaPrawnikaActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Dla prawnika
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Mobile Actions Footer */}
+                  {!isAuthenticated && (
+                    <div className="p-6 border-t border-neutral-800 bg-[#101010] flex flex-col gap-3">
+                      <Link href="/panel-klienta/dodaj-sprawe" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                        <Button className="w-full cursor-pointer border-neutral-700 hover:bg-neutral-850 text-neutral-200 h-11" variant="outline" size="lg">
+                          Dodaj sprawę
+                        </Button>
+                      </Link>
+                      <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                        <Button className="w-full cursor-pointer bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 border-0" size="lg">
+                          Zaloguj się
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
 
