@@ -46,20 +46,7 @@ const profileFormSchema = z.object({
   zgodaMarketing: z.any().transform(v => Boolean(v))
 }).superRefine((data, ctx) => {
   if (data.clientType === "BUSINESS") {
-    if (!data.nazwaFirmy || data.nazwaFirmy.trim().length < 2) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Nazwa firmy jest wymagana dla konta firmowego",
-        path: ["nazwaFirmy"]
-      })
-    }
-    if (!data.nip) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Numer NIP jest wymagany dla konta firmowego",
-        path: ["nip"]
-      })
-    } else {
+    if (data.nip && data.nip.trim() !== "") {
       const cleanNip = data.nip.replace(/[^0-9]/g, "")
       if (cleanNip.length !== 10) {
         ctx.addIssue({
@@ -493,7 +480,7 @@ export default function ClientProfilePage() {
                     name="nazwaFirmy"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Pełna nazwa firmy *</FormLabel>
+                        <FormLabel>Pełna nazwa firmy (opcjonalnie)</FormLabel>
                         <FormControl>
                           <Input placeholder="ACME Sp. z o.o." {...field} value={field.value || ""} />
                         </FormControl>
@@ -507,7 +494,7 @@ export default function ClientProfilePage() {
                     name="nip"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>NIP *</FormLabel>
+                        <FormLabel>NIP (opcjonalnie)</FormLabel>
                         <FormControl>
                           <Input placeholder="1234567890" {...field} value={field.value || ""} />
                         </FormControl>

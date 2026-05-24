@@ -128,20 +128,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Dodatkowa walidacja dla klientów biznesowych
-    if (clientType === "BUSINESS") {
-      if (!nazwaFirmy) {
-        return NextResponse.json(
-          { error: "Nazwa firmy jest wymagana dla konta biznesowego" },
-          { status: 400 }
-        )
-      }
-      if (!nip) {
-        return NextResponse.json(
-          { error: "Numer NIP jest wymagany dla konta biznesowego" },
-          { status: 400 }
-        )
-      }
+    // Dodatkowa walidacja dla klientów biznesowych (opcjonalna)
+    if (clientType === "BUSINESS" && nip) {
       // Prosta walidacja NIP (10 cyfr)
       const cleanNip = nip.replace(/[^0-9]/g, "")
       if (cleanNip.length !== 10) {

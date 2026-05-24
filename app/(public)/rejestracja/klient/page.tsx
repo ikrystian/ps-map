@@ -28,6 +28,12 @@ export default function ClientRegistrationPage() {
     miasto: "",
     zgodaRegulamin: false,
     zgodaNewsletter: false,
+    zgodaMarketing: false,
+    clientType: "INDIVIDUAL",
+    nazwaFirmy: "",
+    nip: "",
+    regon: "",
+    krs: "",
   })
   const [isInitialized, setIsInitialized] = useState(false)
   const [error, setError] = useState("")
@@ -137,6 +143,14 @@ export default function ClientRegistrationPage() {
       }
     }
 
+    // Walidacja NIP dla firm, jeśli podano
+    if (formData.clientType === "BUSINESS" && formData.nip && formData.nip.trim()) {
+      const cleanNip = formData.nip.replace(/[^0-9]/g, "")
+      if (cleanNip.length !== 10) {
+        newErrors.nip = "Numer NIP musi składać się z 10 cyfr"
+      }
+    }
+
     // Hasło i potwierdzenie (tylko przy rejestracji tradycyjnej, bez sesji social)
     if (!session) {
       if (!formData.password) {
@@ -184,15 +198,22 @@ export default function ClientRegistrationPage() {
           password: session?.user ? undefined : formData.password,
           isSocialRegistration: !!session?.user,
           role: "CLIENT",
-          name: `${formData.imie} ${formData.nazwisko}`,
+          name: formData.clientType === "BUSINESS" && formData.nazwaFirmy.trim()
+            ? formData.nazwaFirmy.trim()
+            : `${formData.imie} ${formData.nazwisko}`,
           client: {
+            clientType: formData.clientType,
             imie: formData.imie,
             nazwisko: formData.nazwisko,
             telefon: formData.telefon,
             miasto: formData.miasto,
+            nazwaFirmy: formData.clientType === "BUSINESS" ? (formData.nazwaFirmy || null) : null,
+            nip: formData.clientType === "BUSINESS" ? (formData.nip || null) : null,
+            regon: formData.clientType === "BUSINESS" ? (formData.regon || null) : null,
+            krs: formData.clientType === "BUSINESS" ? (formData.krs || null) : null,
             zgodaRegulamin: formData.zgodaRegulamin,
             zgodaNewsletter: formData.zgodaNewsletter,
-            zgodaMarketing: false,
+            zgodaMarketing: formData.zgodaMarketing,
           },
         }),
       })
@@ -245,6 +266,37 @@ export default function ClientRegistrationPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Typ konta */}
+              <div className="space-y-2 md:col-span-2">
+                <Label>Typ konta</Label>
+                <div className="flex gap-4 p-1.5 bg-muted rounded-xl w-full border border-border">
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
+                      formData.clientType === "INDIVIDUAL"
+                        ? "bg-background text-foreground shadow-sm scale-100"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    onClick={() => handleChange("clientType", "INDIVIDUAL")}
+                  >
+                    Osoba Prywatna
+                  </button>
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
+                      formData.clientType === "BUSINESS"
+                        ? "bg-background text-foreground shadow-sm scale-100"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    onClick={() => handleChange("clientType", "BUSINESS")}
+                  >
+                    Firma / Organizacja
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="imie" className={cn(errors.imie && "text-destructive")}>Imię *</Label>
                 <Input
@@ -353,6 +405,61 @@ export default function ClientRegistrationPage() {
                 </Popover>
               </div>
 
+              {formData.clientType === "BUSINESS" && (
+                <div className="space-y-4 p-4 border border-border rounded-xl bg-card/50 animate-in fade-in slide-in-from-top-4 duration-300 md:col-span-2">
+                  <h3 className="font-semibold text-sm">Dane firmy / organizacji (opcjonalnie)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nazwaFirmy">Nazwa firmy</Label>
+                      <Input
+                        id="nazwaFirmy"
+                        placeholder="ACME Sp. z o.o."
+                        value={formData.nazwaFirmy}
+                        onChange={(e) => handleChange("nazwaFirmy", e.target.value)}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="nip" className={cn(errors.nip && "text-destructive")}>NIP</Label>
+                      <Input
+                        id="nip"
+                        placeholder="1234567890"
+                        value={formData.nip}
+                        onChange={(e) => handleChange("nip", e.target.value)}
+                        disabled={isLoading}
+                        className={cn("h-11", errors.nip && "border-destructive focus-visible:ring-destructive")}
+                      />
+                      {errors.nip && (
+                        <p className="text-xs text-destructive mt-1">{errors.nip}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="regon">REGON</Label>
+                      <Input
+                        id="regon"
+                        placeholder="123456789"
+                        value={formData.regon}
+                        onChange={(e) => handleChange("regon", e.target.value)}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="krs">KRS</Label>
+                      <Input
+                        id="krs"
+                        placeholder="0000123456"
+                        value={formData.krs}
+                        onChange={(e) => handleChange("krs", e.target.value)}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {!session && (
                 <>
                   <div className="space-y-2">
@@ -421,6 +528,20 @@ export default function ClientRegistrationPage() {
               />
               <label htmlFor="zgodaNewsletter" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Chcę otrzymywać newsletter
+              </label>
+            </div>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="zgodaMarketing"
+                checked={formData.zgodaMarketing}
+                onCheckedChange={(checked) =>
+                  handleChange("zgodaMarketing", checked === true)
+                }
+                disabled={isLoading}
+              />
+              <label htmlFor="zgodaMarketing" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Chcę otrzymywać informacje marketingowe
               </label>
             </div>
 

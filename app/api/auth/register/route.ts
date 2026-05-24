@@ -132,32 +132,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Jeśli CLIENT, utwórz profil klienta
-    if (user.role === "CLIENT" && userData.client) {
-      const clientType = userData.client.clientType || "INDIVIDUAL"
+    const clientData = body.client || userData.client
+    if (user.role === "CLIENT" && clientData) {
+      const clientType = clientData.clientType || "INDIVIDUAL"
 
       await prisma.client.create({
         data: {
           userId: user.id,
           clientType,
-          imie: userData.client.imie,
-          nazwisko: userData.client.nazwisko,
-          telefon: userData.client.telefon || null,
-          nazwaFirmy: clientType === "BUSINESS" ? userData.client.nazwaFirmy : null,
-          nip: clientType === "BUSINESS" ? userData.client.nip : null,
-          regon: clientType === "BUSINESS" ? userData.client.regon : null,
-          krs: clientType === "BUSINESS" ? userData.client.krs : null,
-          voivodeshipId: userData.client.voivodeshipId || null,
-          miasto: userData.client.miasto || null,
-          zgodaRegulamin: userData.client.zgodaRegulamin || false,
-          zgodaNewsletter: userData.client.zgodaNewsletter || false,
-          zgodaMarketing: userData.client.zgodaMarketing || false,
+          imie: clientData.imie,
+          nazwisko: clientData.nazwisko,
+          telefon: clientData.telefon || null,
+          nazwaFirmy: clientType === "BUSINESS" ? (clientData.nazwaFirmy || null) : null,
+          nip: clientType === "BUSINESS" ? (clientData.nip || null) : null,
+          regon: clientType === "BUSINESS" ? (clientData.regon || null) : null,
+          krs: clientType === "BUSINESS" ? (clientData.krs || null) : null,
+          voivodeshipId: clientData.voivodeshipId || null,
+          miasto: clientData.miasto || null,
+          zgodaRegulamin: clientData.zgodaRegulamin || false,
+          zgodaNewsletter: clientData.zgodaNewsletter || false,
+          zgodaMarketing: clientData.zgodaMarketing || false,
         },
       })
 
       // Synchronizacja nazwy użytkownika
       const targetName = clientType === "BUSINESS"
-        ? (userData.client.nazwaFirmy || `${userData.client.imie} ${userData.client.nazwisko}`)
-        : `${userData.client.imie} ${userData.client.nazwisko}`
+        ? (clientData.nazwaFirmy || `${clientData.imie} ${clientData.nazwisko}`)
+        : `${clientData.imie} ${clientData.nazwisko}`
 
       await prisma.user.update({
         where: { id: user.id },
@@ -171,8 +172,8 @@ export async function POST(request: NextRequest) {
           to: user.email,
           templateType: EmailType.REJESTRACJA_KLIENT,
           variables: {
-            "{imie}": userData.client.imie,
-            "{nazwisko}": userData.client.nazwisko,
+            "{imie}": clientData.imie,
+            "{nazwisko}": clientData.nazwisko,
             "{email}": user.email,
             "{linkDodajSprawa}": `${baseUrl}/dodaj-sprawe`,
           }
@@ -268,5 +269,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
 }
