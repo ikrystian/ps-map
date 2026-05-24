@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { ArrowLeft, Upload, Award } from "lucide-react"
 import Link from "next/link"
 

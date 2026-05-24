@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { Wifi, WifiOff } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import type { Conversation } from "@/types/conversations"
 
 export function EnhancedMessengerLayout() {

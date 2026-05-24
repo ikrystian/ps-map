@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSearchParams } from "next/navigation"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   Star,
   ThumbsUp,

@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   AlertCircle,
   Loader2,

@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { Mail, Loader2, Search, ChevronLeft, ChevronRight, Filter, AlertCircle, CheckCircle2, Eye, Terminal } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"

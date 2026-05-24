@@ -9,7 +9,7 @@ import { Search, Archive, Trash2, RotateCcw, MessageCircle } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import type { Conversation } from "@/types/conversations"
 
 interface EnhancedConversationListProps {

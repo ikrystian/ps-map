@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   AlertCircle,
   ArrowLeft,

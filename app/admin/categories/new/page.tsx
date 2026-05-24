@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { CategoryForm, CategoryFormValues } from "@/components/admin/category-form"
 
 interface Category {

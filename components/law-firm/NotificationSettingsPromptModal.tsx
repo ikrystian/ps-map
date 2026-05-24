@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { Bell, Mail, MessageSquare, ShieldAlert, Loader2, Save, Sparkles, Smartphone, Check } from "lucide-react";
 
 interface NotificationSettings {

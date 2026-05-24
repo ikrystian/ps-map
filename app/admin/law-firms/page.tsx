@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import Link from "next/link"
 
 // Enums from Prisma

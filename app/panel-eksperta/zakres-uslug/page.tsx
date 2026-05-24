@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   DndContext,
   closestCenter,

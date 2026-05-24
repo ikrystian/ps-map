@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("")

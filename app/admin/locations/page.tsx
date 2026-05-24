@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { CITIES } from "@/components/homepage/cities-list"
 
 interface Voivodeship {

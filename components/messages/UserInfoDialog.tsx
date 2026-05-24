@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Ban, CheckCircle2, Mail, Calendar, UserCircle } from "lucide-react"
 import { formatLastSeen } from "@/lib/time-utils"
 import { useState } from "react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 interface UserInfo {
   id: string

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { Upload, FileJson, CheckCircle, XCircle, AlertCircle, Download } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 interface ImportResult {
   summary: {

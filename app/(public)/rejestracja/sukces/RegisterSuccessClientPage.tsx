@@ -7,7 +7,7 @@ import { motion } from "motion/react"
 import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { Mail, ArrowRight, Inbox, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react"
 
 export default function RegistrationSuccessPage() {

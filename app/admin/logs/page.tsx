@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { FileText, Loader2, Search, ChevronLeft, ChevronRight, Filter, AlertCircle, Info, AlertTriangle, XCircle, Bug } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"

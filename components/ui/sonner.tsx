@@ -1,32 +1,23 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
+import { GooeyToaster as GooeyToasterPrimitive, gooeyToast as toast } from "goey-toast"
+import type { GooeyToasterProps } from "goey-toast"
+import "goey-toast/styles.css"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
-
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ ...props }: GooeyToasterProps) => {
   const { theme = "system" } = useTheme()
 
+  // Map system/etc theme to light or dark. By default if not light, use dark.
+  const resolvedTheme = theme === "light" ? "light" : "dark"
+
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className="toaster group"
+    <GooeyToasterPrimitive
+      theme={resolvedTheme}
       position="bottom-right"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
       {...props}
     />
   )
 }
 
-export { Toaster }
+export { Toaster, toast }

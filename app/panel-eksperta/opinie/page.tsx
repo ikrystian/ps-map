@@ -26,7 +26,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { motion, AnimatePresence } from "framer-motion"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   Star,
   MessageSquare,

@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   Select,
   SelectContent,

@@ -21,7 +21,7 @@ import {
   CheckCheck,
   Check,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import dynamic from "next/dynamic"

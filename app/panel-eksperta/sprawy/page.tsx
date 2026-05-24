@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { BorderBeam } from "@/components/ui/border-beam"
 
 interface Case {

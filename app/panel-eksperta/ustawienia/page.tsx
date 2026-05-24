@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { AlertCircle, Loader2, Save, Info, LogOut, Trash2, CheckCircle2, Upload, X, Image as ImageIcon, Calendar, Shield } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"

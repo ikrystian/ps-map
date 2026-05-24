@@ -9,7 +9,7 @@ import { Loader2, Trash2, Calendar, Clock, FileText, CreditCard, Video } from "l
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 export default function ClientConsultationsPage() {
   const { data: session } = useSession()

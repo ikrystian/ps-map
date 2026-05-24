@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { toast } from 'sonner'
+import { toast } from "@/components/ui/sonner"
 import { Plus, Pencil, Trash2, Upload, Users } from 'lucide-react'
 
 interface AccountManager {

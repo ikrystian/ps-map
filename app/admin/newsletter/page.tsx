@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 interface NewsletterSubscriber {
   id: string

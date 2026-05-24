@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 
 interface PartnerProgram {
   id: string

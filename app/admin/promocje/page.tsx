@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   TrendingUp,
   Plus,

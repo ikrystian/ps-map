@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
       "lucide-react",
       "@tabler/icons-react",
       "date-fns",
-      "sonner",
+      "goey-toast",
     ],
   },
 };
