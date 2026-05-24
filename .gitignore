@@ -49,3 +49,6 @@ next-env.d.ts
 *.db-journal
 .uploads/
 files/
+public/uploads/
+.uploads
+files/
