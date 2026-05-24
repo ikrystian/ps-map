@@ -139,8 +139,56 @@ export async function GET(request: NextRequest) {
 
     const reviewsCount = reviews.length
 
-    // Statystyki wyświetleń (dla uproszczenia - w pełnej wersji należałoby to śledzić osobno)
-    const viewsThisMonth = 0 // TODO: Implementacja śledzenia wyświetleń
+    // Statystyki wyświetleń pobierane z LawFirmStats dla bieżącego miesiąca i roku
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth() + 1
+
+    const currentMonthStats = await prisma.lawFirmStats.findUnique({
+      where: {
+        lawFirmId_year_month: {
+          lawFirmId: lawFirm.id,
+          year: currentYear,
+          month: currentMonth,
+        },
+      },
+    })
+    const viewsThisMonth = currentMonthStats?.profileViews || 0
+
+    // Oblicz rzeczywistą pozycję w rankingu (w kategorii jeśli wybrano, lub ogólną)
+    let calculatedRankingPosition: number | null = null
+    if (lawFirm.mainCategoryId) {
+      const firmsInSameCategory = await prisma.lawFirm.findMany({
+        where: {
+          mainCategoryId: lawFirm.mainCategoryId,
+        },
+        select: {
+          id: true,
+          pozycjaRanking: true,
+          wyswietleniaProfilu: true,
+        },
+        orderBy: [
+          { pozycjaRanking: { sort: "desc", nulls: "last" } },
+          { wyswietleniaProfilu: "desc" },
+        ],
+      })
+      const pos = firmsInSameCategory.findIndex((f) => f.id === lawFirm.id)
+      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+    } else {
+      const allFirms = await prisma.lawFirm.findMany({
+        select: {
+          id: true,
+          pozycjaRanking: true,
+          wyswietleniaProfilu: true,
+        },
+        orderBy: [
+          { pozycjaRanking: { sort: "desc", nulls: "last" } },
+          { wyswietleniaProfilu: "desc" },
+        ],
+      })
+      const pos = allFirms.findIndex((f) => f.id === lawFirm.id)
+      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+    }
 
     return Response.json({
       lawFirm: {
@@ -148,6 +196,7 @@ export async function GET(request: NextRequest) {
         pakietSubskrypcji: updatedLawFirm.pakietSubskrypcji,
         dataPakietuOd: updatedLawFirm.dataPakietuOd,
         dataPakietuDo: updatedLawFirm.dataPakietuDo,
+        pozycjaRanking: calculatedRankingPosition,
       },
       recentCases,
       recentOffers,

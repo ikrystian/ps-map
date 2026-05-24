@@ -276,7 +276,7 @@ export default function LawFirmStatsPage() {
             <CardContent>
               <div className="space-y-4">
                 {monthlyViews.map((item) => {
-                  const percentage = (item.views / maxViews) * 100
+                  const percentage = maxViews > 0 ? (item.views / maxViews) * 100 : 0
                   return (
                     <div key={item.month}>
                       <div className="flex items-center justify-between mb-2">
@@ -288,14 +288,20 @@ export default function LawFirmStatsPage() {
                         </span>
                       </div>
                       <div className="h-8 bg-muted rounded-lg overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-primary to-primary/80 flex items-center px-3"
-                          style={{ width: `${percentage}%` }}
-                        >
-                          <span className="text-xs text-primary-foreground font-semibold">
-                            {item.views}
-                          </span>
-                        </div>
+                        {percentage > 0 ? (
+                          <div
+                            className="h-full bg-gradient-to-r from-primary to-primary/80 flex items-center px-3"
+                            style={{ width: `${percentage}%` }}
+                          >
+                            <span className="text-xs text-primary-foreground font-semibold">
+                              {item.views}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="h-full flex items-center px-3 text-muted-foreground text-xs">
+                            Brak wyświetleń
+                          </div>
+                        )}
                       </div>
                     </div>
                   )
@@ -313,7 +319,9 @@ export default function LawFirmStatsPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {Math.round(monthlyViews.reduce((sum, m) => sum + m.views, 0) / monthlyViews.length)}
+                    {monthlyViews.length > 0
+                      ? Math.round(monthlyViews.reduce((sum, m) => sum + m.views, 0) / monthlyViews.length)
+                      : 0}
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Średnia miesięczna

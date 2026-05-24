@@ -110,6 +110,41 @@ export async function GET(request: NextRequest) {
     )
     const viewsThisMonth = currentMonthStats?.profileViews || 0
 
+    // Oblicz rzeczywistą pozycję w rankingu (w kategorii jeśli wybrano, lub ogólną)
+    let calculatedRankingPosition: number | null = null
+    if (lawFirm.mainCategoryId) {
+      const firmsInSameCategory = await prisma.lawFirm.findMany({
+        where: {
+          mainCategoryId: lawFirm.mainCategoryId,
+        },
+        select: {
+          id: true,
+          pozycjaRanking: true,
+          wyswietleniaProfilu: true,
+        },
+        orderBy: [
+          { pozycjaRanking: { sort: "desc", nulls: "last" } },
+          { wyswietleniaProfilu: "desc" },
+        ],
+      })
+      const pos = firmsInSameCategory.findIndex((f) => f.id === lawFirm.id)
+      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+    } else {
+      const allFirms = await prisma.lawFirm.findMany({
+        select: {
+          id: true,
+          pozycjaRanking: true,
+          wyswietleniaProfilu: true,
+        },
+        orderBy: [
+          { pozycjaRanking: { sort: "desc", nulls: "last" } },
+          { wyswietleniaProfilu: "desc" },
+        ],
+      })
+      const pos = allFirms.findIndex((f) => f.id === lawFirm.id)
+      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+    }
+
     return Response.json({
       lawFirm: {
         id: lawFirm.id,
@@ -118,7 +153,7 @@ export async function GET(request: NextRequest) {
         zlozoneOferty: lawFirm.zlozoneOferty,
         wygraneOferty: lawFirm.wygraneOferty,
         konwersja: lawFirm.konwersja,
-        pozycjaRanking: lawFirm.pozycjaRanking,
+        pozycjaRanking: calculatedRankingPosition,
       },
       stats: {
         casesThisMonth: 0, // TODO: Można dodać jeśli potrzebne

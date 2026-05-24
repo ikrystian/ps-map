@@ -637,17 +637,19 @@ export default function LawFirmDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {/* Enhanced bar chart */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {(() => {
                   // Generate realistic daily views based on monthly stats
-                  const avgDailyViews = Math.max(1, Math.floor(stats.viewsThisMonth / 30))
+                  const avgDailyViews = stats.viewsThisMonth > 0 ? Math.max(1, Math.floor(stats.viewsThisMonth / 30)) : 0
                   const days = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"]
                   const weekData = days.map((day, index) => {
                     // More views on weekdays, less on weekends
                     const isWeekend = index >= 5
                     const baseFactor = isWeekend ? 0.5 : 1.2
                     const randomFactor = 0.7 + Math.random() * 0.6 // 0.7 to 1.3
-                    const views = Math.max(1, Math.floor(avgDailyViews * baseFactor * randomFactor))
+                    const views = avgDailyViews > 0
+                      ? Math.max(1, Math.floor(avgDailyViews * baseFactor * randomFactor))
+                      : 0
 
                     return { day, views }
                   })
@@ -664,23 +666,27 @@ export default function LawFirmDashboardPage() {
                   })
                 })().map((item, index) => (
                   <div key={item.day} className="group">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-medium w-10">{item.day}</span>
-                      <div className="flex-1 h-10 bg-muted rounded-lg overflow-hidden relative group-hover:shadow-sm transition-shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-medium w-10 text-muted-foreground">{item.day}</span>
+                      <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden relative">
                         <div
-                          className="h-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-between px-3 transition-all duration-500 ease-out"
+                          className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out"
                           style={{
                             width: `${item.percentage}%`,
-                            animationDelay: `${index * 100}ms`
+                            transitionDelay: `${index * 75}ms`
                           }}
-                        >
-                          <span className="text-xs text-primary-foreground font-semibold">
-                            {item.views}
-                          </span>
-                          <span className="text-xs text-primary-foreground/80">
+                        />
+                      </div>
+                      <div className="w-20 text-right flex items-center justify-end gap-1.5">
+                        <span className="text-xs font-semibold">{item.views}</span>
+                        {item.views > 0 && (
+                          <span className={cn(
+                            "text-[10px] font-medium px-1 rounded",
+                            item.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
+                          )}>
                             {item.trend}
                           </span>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
