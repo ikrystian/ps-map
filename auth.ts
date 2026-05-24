@@ -21,9 +21,6 @@ export const authOptions: NextAuthConfig = {
     signIn: "/logowanie",
     error: "/logowanie",
   },
-  // Konfiguracja zaufanych hostów dla środowiska deweloperskiego
-  // Dodajemy lokalne hosty i produkcyjny host
-  redirectProxyUrl: process.env.NEXTAUTH_URL,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
