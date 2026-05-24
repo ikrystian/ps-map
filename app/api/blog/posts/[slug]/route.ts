@@ -27,14 +27,6 @@ export async function GET(
             voivodeship: true,
           },
         },
-        comments: {
-          where: {
-            zatwierdzony: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
       },
     })
 

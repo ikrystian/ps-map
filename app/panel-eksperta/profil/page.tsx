@@ -1097,8 +1097,8 @@ export default function LawFirmProfilePage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h4 className="text-sm font-semibold mb-3">Tryb świadczenia usług</h4>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <h4 className="text-sm font-semibold mb-3 hidden">Tryb świadczenia usług</h4>
+                <div className="grid sm:grid-cols-2 gap-4 hidden">
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
                     formData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"

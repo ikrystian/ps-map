@@ -960,37 +960,10 @@ model BlogPost {
   updatedAt             DateTime @updatedAt
 
   // Relacje
-  comments              BlogComment[]
-
   @@index([lawFirmId])
   @@index([categoryId])
   @@index([slug])
   @@index([opublikowany])
-}
-
-// ============================================================================
-// KOMENTARZE DO BLOGA
-// ============================================================================
-
-model BlogComment {
-  id          String   @id @default(uuid())
-  blogPostId  String
-  blogPost    BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
-
-  // Autor (może być niezalogowany)
-  userId      String?
-  author      String   // Imię
-  email       String
-  url         String?
-
-  comment     String
-
-  zatwierdzony Boolean @default(false)
-
-  createdAt   DateTime @default(now())
-
-  @@index([blogPostId])
-  @@index([zatwierdzony])
 }
 
 // ============================================================================

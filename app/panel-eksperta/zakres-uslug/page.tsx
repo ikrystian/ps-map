@@ -197,7 +197,7 @@ export default function LawFirmServicesPage() {
       const categoriesResponse = await fetch("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
-      
+
       const activeCategories = categoriesData.filter((cat: Category) => cat.aktywna)
       setFlatCategories(activeCategories)
 
@@ -661,7 +661,7 @@ export default function LawFirmServicesPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
+              <div className="hidden">
                 <h4 className="text-sm font-semibold mb-3">Tryb świadczenia usług</h4>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className={cn(
