@@ -83,13 +83,6 @@ export default function AdminLayout({
         <div className="flex h-full flex-col">
           {/* Logo/Header */}
           <div className="flex h-16 items-center border-border px-4 justify-between bg-card">
-            {!isCollapsed && (
-              <div className="flex items-center gap-2">
-                <Shield className="h-6 w-6 text-primary" />
-                <h2 className="text-lg font-semibold">Panel Admina</h2>
-              </div>
-            )}
-            {isCollapsed && <Shield className="h-6 w-6 text-primary mx-auto" />}
             <Button
               variant="ghost"
               size="icon"
@@ -98,6 +91,10 @@ export default function AdminLayout({
             >
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
+            {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
+              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
+            </Link>}
           </div>
 
           {/* Navigation */}
@@ -193,10 +190,7 @@ export default function AdminLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
-            </Link>
+
           </div>
 
           {/* User menu */}

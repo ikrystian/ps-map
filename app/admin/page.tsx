@@ -126,13 +126,70 @@ export default function AdminDashboardPage() {
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
-      ACTIVE: 'bg-green-500/10 text-green-500',
-      PENDING: 'bg-yellow-500/10 text-yellow-500',
-      COMPLETED: 'bg-blue-500/10 text-blue-500',
-      REJECTED: 'bg-red-500/10 text-red-500',
-      IN_PROGRESS: 'bg-purple-500/10 text-purple-500',
+      // Roles
+      ADMIN: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
+      LAW_FIRM: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20',
+      CLIENT: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20',
+      
+      // Cases & Common Statuses
+      ACTIVE: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+      PENDING: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+      NOWA: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
+      IN_PROGRESS: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
+      W_TOKU: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
+      COMPLETED: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
+      ZAKONCZONA: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
+      REJECTED: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
+
+      // Payment Statuses
+      OCZEKUJE: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+      ZAPLACONE: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+      ANULOWANE: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20',
+      ZWROT: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
     }
-    return statusColors[status] || 'bg-gray-500/10 text-base'
+    return statusColors[status] || 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+  }
+
+  const formatRole = (role: string) => {
+    const roles: Record<string, string> = {
+      ADMIN: 'Admin',
+      LAW_FIRM: 'Kancelaria',
+      CLIENT: 'Klient',
+    }
+    return roles[role] || role
+  }
+
+  const formatPaymentStatus = (status: string) => {
+    const statuses: Record<string, string> = {
+      OCZEKUJE: 'Oczekuje',
+      ZAPLACONE: 'Zapłacone',
+      ANULOWANE: 'Anulowane',
+      ZWROT: 'Zwrot',
+    }
+    return statuses[status] || status
+  }
+
+  const getUserInitials = (name: string | null, email: string) => {
+    if (name) {
+      const parts = name.trim().split(/\s+/)
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+      }
+      return parts[0].substring(0, 2).toUpperCase()
+    }
+    return email.substring(0, 2).toUpperCase()
+  }
+
+  const getAvatarGradient = (role: string) => {
+    switch (role) {
+      case 'ADMIN':
+        return 'from-rose-400 to-red-500 dark:from-rose-500 dark:to-red-700 shadow-red-500/10'
+      case 'LAW_FIRM':
+        return 'from-indigo-400 to-blue-500 dark:from-indigo-500 dark:to-blue-700 shadow-indigo-500/10'
+      case 'CLIENT':
+      default:
+        return 'from-sky-400 to-cyan-500 dark:from-sky-500 dark:to-cyan-700 shadow-cyan-500/10'
+    }
   }
 
   const getStatusName = (status: string) => {
@@ -399,22 +456,37 @@ export default function AdminDashboardPage() {
       {/* Recent Activity Tables */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Recent Users */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Najnowsi użytkownicy</CardTitle>
-            <CardDescription>Ostatnio zarejestrowani</CardDescription>
+        <Card className="border border-muted/60 bg-card/60 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-bold">Najnowsi użytkownicy</CardTitle>
+            <CardDescription>Ostatnio zarejestrowani w systemie</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentActivity.users.map((user) => (
-                <div key={user.id} className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <div className="font-medium">{user.name || user.email}</div>
-                    <div className="text-sm text-base">{user.email}</div>
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarGradient(user.role)} text-white text-xs font-bold shadow-sm group-hover:scale-105 transition-transform duration-200`}>
+                      {getUserInitials(user.name, user.email)}
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                        {user.name || 'Użytkownik bez nazwy'}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-light">
+                        {user.email}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className={getStatusBadge(user.role)}>{user.role}</Badge>
-                    <div className="text-xs text-base mt-1">
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <Badge className={`${getStatusBadge(user.role)} font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
+                      {formatRole(user.role)}
+                    </Badge>
+                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                      <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(user.createdAt)}
                     </div>
                   </div>
@@ -425,26 +497,37 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Recent Cases */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Najnowsze sprawy</CardTitle>
-            <CardDescription>Ostatnio utworzone</CardDescription>
+        <Card className="border border-muted/60 bg-card/60 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-bold">Najnowsze sprawy</CardTitle>
+            <CardDescription>Ostatnio utworzone sprawy w systemie</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentActivity.cases.map((caseItem) => (
-                <div key={caseItem.id} className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <div className="font-medium">{caseItem.nazwaSprawy}</div>
-                    <div className="text-sm text-base">
-                      {caseItem.client.user.name || 'Brak nazwy'}
+                <div
+                  key={caseItem.id}
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 group-hover:scale-105 transition-transform duration-200">
+                      <Briefcase className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                        {caseItem.nazwaSprawy}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-light">
+                        Klient: {caseItem.client.user.name || 'Brak nazwy'}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className={getStatusBadge(caseItem.status)}>
-                      {caseItem.status}
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <Badge className={`${getStatusBadge(caseItem.status)} font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
+                      {getStatusName(caseItem.status)}
                     </Badge>
-                    <div className="text-xs text-base mt-1">
+                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                      <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(caseItem.createdAt)}
                     </div>
                   </div>
@@ -458,28 +541,42 @@ export default function AdminDashboardPage() {
       {/* Recent Orders and Blog Posts */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Recent Orders */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Najnowsze zamówienia</CardTitle>
-            <CardDescription>Ostatnie transakcje</CardDescription>
+        <Card className="border border-muted/60 bg-card/60 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-bold">Najnowsze zamówienia</CardTitle>
+            <CardDescription>Ostatnio dokonane transakcje</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentActivity.orders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <div className="font-medium">{order.orderNumber}</div>
-                    <div className="text-sm text-base">
-                      {order.lawFirm?.nazwa || 'Brak nazwy'}
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
+                      <CreditCard className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                        {order.orderNumber}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-light">
+                        {order.lawFirm?.nazwa || 'Brak nazwy'}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-medium">{formatCurrency(order.kwota)}</div>
-                    <Badge className={getStatusBadge(order.statusPlatnosci)}>
-                      {order.statusPlatnosci}
-                    </Badge>
-                    <div className="text-xs text-base mt-1">
-                      {formatDate(order.createdAt)}
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <div className="font-bold text-slate-800 dark:text-slate-100 text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">
+                      {formatCurrency(order.kwota)}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={`${getStatusBadge(order.statusPlatnosci)} font-semibold text-[9px] px-1.5 py-0.5 rounded-full shadow-none`}>
+                        {formatPaymentStatus(order.statusPlatnosci)}
+                      </Badge>
+                      <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-0.5">
+                        {formatDate(order.createdAt)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -489,26 +586,41 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Recent Blog Posts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Najnowsze artykuły</CardTitle>
-            <CardDescription>Ostatnio utworzone wpisy</CardDescription>
+        <Card className="border border-muted/60 bg-card/60 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-bold">Najnowsze artykuły</CardTitle>
+            <CardDescription>Ostatnio opublikowane wpisy na blogu</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recentActivity.blogPosts.map((post) => (
-                <div key={post.id} className="flex items-center justify-between border-b pb-2">
-                  <div>
-                    <div className="font-medium">{post.tytul}</div>
-                    <div className="text-sm text-base">
-                      {post.lawFirm.nazwa || 'Brak kancelarii'}
+                <div
+                  key={post.id}
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 max-w-[70%]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-500 border border-violet-500/20 group-hover:scale-105 transition-transform duration-200">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-0.5 truncate">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight truncate">
+                        {post.tytul}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-light truncate">
+                        Kancelaria: {post.lawFirm.nazwa || 'Brak kancelarii'}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className={post.opublikowany ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-base'}>
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <Badge className={`${
+                      post.opublikowany 
+                        ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20' 
+                        : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+                    } font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
                       {post.opublikowany ? 'Opublikowany' : 'Szkic'}
                     </Badge>
-                    <div className="text-xs text-base mt-1">
+                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                      <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(post.createdAt)}
                     </div>
                   </div>

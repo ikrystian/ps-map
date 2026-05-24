@@ -449,6 +449,11 @@ export default function LawFirmPanelLayout({
             >
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
+            {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
+              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <span className="sm:hidden text-lg font-semibold">PS</span>
+              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
+            </Link>}
           </div>
           {/* Navigation */}
           <NavigationItems />
@@ -485,11 +490,7 @@ export default function LawFirmPanelLayout({
               </Sheet>
             )}
 
-            <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={150} height={38} />
-              <span className="sm:hidden text-lg font-semibold">PS</span>
-              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
-            </Link>
+
           </div>
 
           <div className="flex items-center gap-2">

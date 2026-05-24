@@ -78,7 +78,7 @@ export default function ClientPanelLayout({
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
       id="left-nav"
-      className="flex-1 bg-background-sec space-y-1 overflow-y-auto p-4 relative"
+      className="flex-1 bg-background-sec space-y-1 overflow-y-auto p-4 lg:pt-7 relative"
       onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => {
         if (inSheet) {
@@ -264,6 +264,11 @@ export default function ClientPanelLayout({
             >
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
+            {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
+              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <span className="sm:hidden text-lg font-semibold">PS</span>
+              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
+            </Link>}
           </div>
 
           {/* Navigation */}
@@ -301,11 +306,7 @@ export default function ClientPanelLayout({
               </Sheet>
             )}
 
-            <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden sm:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={150} height={38} />
-              <span className="sm:hidden text-lg font-semibold">PS</span>
-              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
-            </Link>
+
           </div>
 
           {/* Notifications and User menu */}
