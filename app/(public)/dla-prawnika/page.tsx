@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { ChevronDown, Info } from "lucide-react"
+import { ChevronDown, Info, Phone, Mail } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 
 // Custom high-fidelity SVG Icons to perfectly match the premium dark theme design
@@ -202,6 +202,11 @@ export default function ForLawyersPage() {
   const [kategoria, setKategoria] = useState("Adwokat")
   const [lokalizacja, setLokalizacja] = useState("")
 
+  // Newsletter States
+  const [newsletterEmail, setNewsletterEmail] = useState("")
+  const [newsletterConsent, setNewsletterConsent] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   // Dropdown States - defaults to true for 'Kim jesteś' on load to exactly replicate the project screenshot!
   const [isKimJestesOpen, setIsKimJestesOpen] = useState(true)
   const [isKategorieOpen, setIsKategorieOpen] = useState(false)
@@ -253,6 +258,52 @@ export default function ForLawyersPage() {
     if (lokalizacja) params.set("city", lokalizacja)
 
     router.push(`/rejestracja/kancelaria?${params.toString()}`)
+  }
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!newsletterConsent) {
+      toast({
+        title: "Błąd zapisu",
+        description: "Musisz wyrazić zgodę na otrzymywanie wiadomości.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: newsletterEmail }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Nie udało się zapisać do newslettera")
+      }
+
+      toast({
+        title: "Pomyślnie zapisano!",
+        description: data.message || "Link potwierdzający został wysłany na Twój adres e-mail.",
+      })
+      setNewsletterEmail("")
+      setNewsletterConsent(false)
+    } catch (error) {
+      toast({
+        title: "Błąd zapisu",
+        description: error instanceof Error ? error.message : "Wystąpił błąd podczas zapisywania do newslettera.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -884,6 +935,127 @@ export default function ForLawyersPage() {
             >
               Zarejestruj się
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6: Szukasz klientów? & Bądź na bieżąco */}
+      <section className="relative bg-[#0f0f0f] border-t border-neutral-900 flex flex-col justify-center items-center py-20 px-4 md:px-8 overflow-hidden">
+        {/* Ambient premium glows */}
+        <div className="absolute top-0 left-1/4 w-[350px] h-[350px] bg-[#0da192]/5 blur-[130px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-[#0da192]/3 blur-[130px] rounded-full pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-5xl flex flex-col items-center">
+          {/* Top Centered Header Content */}
+          <div className="text-center max-w-4xl mb-20">
+            <h3 className="text-white text-[15px] md:text-[17px] font-bold tracking-wide mb-5">
+              Szukasz klientów? Dołącz do sprawdzonego rozwiązania.
+            </h3>
+            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-light font-sans max-w-4xl mx-auto">
+              Na prostasprawa.pl klienci prywatni i firmy każdego dnia zgłaszają sprawy, w których potrzebują profesjonalnej pomocy. Jako prawnik, doradca lub księgowy możesz szybko i wygodnie pozyskiwać nowe zlecenia bez inwestycji w reklamę. Zarejestruj się, uzupełnij profil i zacznij otrzymywać sprawy dopasowane do Twojej specjalizacji. Odpowiadasz tylko na te zapytania, które Cię interesują – pełna kontrola, realne zlecenia, nowi klienci.
+            </p>
+          </div>
+
+          {/* Two Column Section Grid */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-12 items-start relative">
+            
+            {/* Left Column: Masz pytania? */}
+            <div className="flex flex-col space-y-6 md:pr-16 md:border-r md:border-neutral-800/60 h-full">
+              <h2 className="text-4xl md:text-[44px] font-normal text-white font-playfair tracking-wide leading-tight">
+                Masz pytania?
+              </h2>
+              <div className="text-xs md:text-[13px] text-neutral-400 space-y-1.5 font-light leading-relaxed">
+                <p>Chętnie pomożemy na każdym etapie współpracy.</p>
+                <p>Jesteśmy dostępni od poniedziałku do piątku od 9:00 - 22:00.</p>
+              </div>
+
+              {/* Contact Icons Row */}
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-6">
+                {/* Phone Link */}
+                <a 
+                  href="tel:+48534888555" 
+                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
+                >
+                  <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
+                    <Phone className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <span>+48 534 888 555</span>
+                </a>
+
+                {/* Email Link */}
+                <a 
+                  href="mailto:kontakt@prostasprawa.pl" 
+                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
+                >
+                  <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
+                    <Mail className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <span>kontakt@prostasprawa.pl</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Bądź na bieżąco */}
+            <div className="flex flex-col space-y-6 md:pl-4">
+              <h2 className="text-4xl md:text-[44px] font-normal text-white font-playfair tracking-wide leading-tight">
+                Bądź na bieżąco
+              </h2>
+              <p className="text-xs md:text-[13px] text-neutral-400 font-light leading-relaxed">
+                Otrzymuj informacje o nowych rozwiązaniach dla firm i ekspertów.
+              </p>
+
+              {/* Newsletter Form */}
+              <form onSubmit={handleNewsletterSubmit} className="space-y-5 w-full">
+                {/* Input with inline submit button */}
+                <div className="relative flex items-center bg-[#1c1c1c] border border-neutral-800 rounded-md px-4 py-3.5 focus-within:border-[#0da192] focus-within:ring-1 focus-within:ring-[#0da192]/20 transition-all duration-200 shadow-inner">
+                  <input
+                    type="email"
+                    required
+                    placeholder="Twój e-mail"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    className="bg-transparent text-white outline-none flex-1 placeholder-neutral-600 text-xs md:text-sm w-full pr-4"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="text-[#0da192] hover:text-[#00897b] text-xs md:text-sm font-semibold tracking-wide transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Zapisywanie..." : "Zapisz się"}
+                  </button>
+                </div>
+
+                {/* Consent checkbox / privacy policy link */}
+                <div className="flex items-start gap-3 pt-1">
+                  <div className="relative flex items-center h-5">
+                    <input
+                      id="newsletter-consent"
+                      type="checkbox"
+                      required
+                      checked={newsletterConsent}
+                      onChange={(e) => setNewsletterConsent(e.target.checked)}
+                      className="w-4 h-4 rounded border-neutral-800 bg-[#1c1c1c] text-[#0da192] focus:ring-[#0da192] accent-[#0da192] cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label 
+                      htmlFor="newsletter-consent" 
+                      className="text-[10px] md:text-xs text-neutral-500 font-light leading-relaxed select-none cursor-pointer"
+                    >
+                      Wyrażam zgodę na otrzymywanie maili marketingowo-handlowych od Grupy Pracuj S.A.
+                    </label>
+                    <a 
+                      href="/polityka-prywatnosci" 
+                      target="_blank"
+                      className="text-[10px] md:text-xs text-[#0da192] hover:underline hover:text-[#00897b] transition-colors duration-150 inline-block w-fit font-medium"
+                    >
+                      Polityka prywatności
+                    </a>
+                  </div>
+                </div>
+              </form>
+            </div>
+
           </div>
         </div>
       </section>

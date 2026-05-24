@@ -70,7 +70,7 @@ export function AccountManagerWidget() {
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="fixed right-6 bottom-6 z-50"
+        className="fixed right-6 top-24 z-50"
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -84,7 +84,7 @@ export function AccountManagerWidget() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -top-1 -right-1 h-4 w-4 bg-success rounded-full border-2 border-background" />
+            <div className="absolute -top-1 -right-1 h-4 w-4 bg-success rounded-full border-2 border-primary" />
           </div>
 
           {/* Tooltip */}
