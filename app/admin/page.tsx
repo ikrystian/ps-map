@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Ładowanie...</div>
+        <div className="text-base">Ładowanie...</div>
       </div>
     )
   }
@@ -132,7 +132,7 @@ export default function AdminDashboardPage() {
       REJECTED: 'bg-red-500/10 text-red-500',
       IN_PROGRESS: 'bg-purple-500/10 text-purple-500',
     }
-    return statusColors[status] || 'bg-gray-500/10 text-gray-500'
+    return statusColors[status] || 'bg-gray-500/10 text-base'
   }
 
   const getStatusName = (status: string) => {
@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-500 mt-2">Przegląd systemu i statystyki</p>
+        <p className="text-base mt-2">Przegląd systemu i statystyki</p>
       </div>
 
       {/* Statistics Cards */}
@@ -181,7 +181,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{statistics.totalUsers}</div>
-            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1.5">
+            <p className="text-xs text-base mt-1 flex items-center gap-1.5">
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green-500"></span>
               <span className="text-green-600 dark:text-green-500 font-medium">{statistics.activeUsers} aktywnych</span>
             </p>
@@ -197,7 +197,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{statistics.totalCases}</div>
-            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1.5">
+            <p className="text-xs text-base mt-1 flex items-center gap-1.5">
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
               <span className="text-amber-600 dark:text-amber-500 font-medium">{statistics.pendingCases} oczekujących</span>
             </p>
@@ -414,7 +414,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="text-right">
                     <Badge className={getStatusBadge(user.role)}>{user.role}</Badge>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-base mt-1">
                       {formatDate(user.createdAt)}
                     </div>
                   </div>
@@ -444,7 +444,7 @@ export default function AdminDashboardPage() {
                     <Badge className={getStatusBadge(caseItem.status)}>
                       {caseItem.status}
                     </Badge>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-base mt-1">
                       {formatDate(caseItem.createdAt)}
                     </div>
                   </div>
@@ -478,7 +478,7 @@ export default function AdminDashboardPage() {
                     <Badge className={getStatusBadge(order.statusPlatnosci)}>
                       {order.statusPlatnosci}
                     </Badge>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-base mt-1">
                       {formatDate(order.createdAt)}
                     </div>
                   </div>
@@ -505,10 +505,10 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge className={post.opublikowany ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-gray-500'}>
+                    <Badge className={post.opublikowany ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-base'}>
                       {post.opublikowany ? 'Opublikowany' : 'Szkic'}
                     </Badge>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-base mt-1">
                       {formatDate(post.createdAt)}
                     </div>
                   </div>
