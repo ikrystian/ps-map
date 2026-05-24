@@ -129,11 +129,11 @@ export default function AdminDashboardPage() {
 
   const getAvatarBg = (id: string) => {
     const gradients = [
-      'from-indigo-500 to-purple-500',
-      'from-emerald-500 to-teal-500',
-      'from-blue-500 to-cyan-500',
-      'from-amber-500 to-orange-500',
-      'from-rose-500 to-pink-500',
+      'from-primary to-primary/70',
+      'from-secondary/80 to-secondary',
+      'from-primary to-secondary',
+      'from-secondary to-primary',
+      'from-primary/80 to-secondary/80',
     ]
     const index = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % gradients.length
     return gradients[index]
@@ -156,11 +156,11 @@ export default function AdminDashboardPage() {
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
-      ACTIVE: 'bg-green-500/10 text-green-500',
-      PENDING: 'bg-yellow-500/10 text-yellow-500',
-      COMPLETED: 'bg-blue-500/10 text-blue-500',
-      REJECTED: 'bg-red-500/10 text-red-500',
-      IN_PROGRESS: 'bg-purple-500/10 text-purple-500',
+      ACTIVE: 'bg-primary/10 text-primary border border-primary/20',
+      PENDING: 'bg-secondary/35 text-secondary-foreground dark:bg-secondary/15 dark:text-secondary border border-secondary/20',
+      COMPLETED: 'bg-green-500/10 text-green-500',
+      REJECTED: 'bg-destructive/10 text-destructive',
+      IN_PROGRESS: 'bg-primary/10 text-primary border border-primary/20',
     }
     return statusColors[status] || 'bg-gray-500/10 text-base'
   }
@@ -181,14 +181,14 @@ export default function AdminDashboardPage() {
 
   const getStatusGradient = (status: string) => {
     const gradients: Record<string, string> = {
-      NOWA: 'from-amber-400 to-orange-500 shadow-orange-500/10',
-      PENDING: 'from-yellow-400 to-amber-500 shadow-amber-500/10',
-      ACTIVE: 'from-emerald-400 to-green-500 shadow-green-500/10',
-      IN_PROGRESS: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',
-      W_TOKU: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',
-      COMPLETED: 'from-teal-400 to-emerald-500 shadow-emerald-500/10',
-      ZAKONCZONA: 'from-teal-400 to-emerald-500 shadow-emerald-500/10',
-      REJECTED: 'from-red-500 to-rose-600 shadow-rose-500/10',
+      NOWA: 'from-secondary/60 to-secondary/90 shadow-secondary/10',
+      PENDING: 'from-secondary/60 to-secondary/90 shadow-secondary/10',
+      ACTIVE: 'from-primary/70 to-primary shadow-primary/10',
+      IN_PROGRESS: 'from-primary/70 to-primary shadow-primary/10',
+      W_TOKU: 'from-primary/70 to-primary shadow-primary/10',
+      COMPLETED: 'from-emerald-400 to-emerald-600 shadow-emerald-500/10',
+      ZAKONCZONA: 'from-emerald-400 to-emerald-600 shadow-emerald-500/10',
+      REJECTED: 'from-destructive/80 to-destructive shadow-destructive/10',
     }
     return gradients[status] || 'from-slate-400 to-slate-500 shadow-slate-500/10'
   }
@@ -205,15 +205,15 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Użytkownicy</CardTitle>
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <Users className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{statistics.totalUsers}</div>
             <p className="text-xs text-base mt-1 flex items-center gap-1.5">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green-500"></span>
-              <span className="text-green-600 dark:text-green-500 font-medium">{statistics.activeUsers} aktywnych</span>
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+              <span className="text-primary font-medium">{statistics.activeUsers} aktywnych</span>
             </p>
           </CardContent>
         </Card>
@@ -221,15 +221,15 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sprawy</CardTitle>
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+            <div className="p-2 rounded-lg bg-secondary/35 text-secondary-foreground dark:bg-secondary/15 dark:text-secondary">
               <Briefcase className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{statistics.totalCases}</div>
             <p className="text-xs text-base mt-1 flex items-center gap-1.5">
-              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
-              <span className="text-amber-600 dark:text-amber-500 font-medium">{statistics.pendingCases} oczekujących</span>
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-secondary"></span>
+              <span className="text-secondary-foreground dark:text-secondary font-medium">{statistics.pendingCases} oczekujących</span>
             </p>
           </CardContent>
         </Card>
@@ -237,7 +237,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Przychody</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <TrendingUp className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Nieopłacone</CardTitle>
-            <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500">
+            <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
               <AlertCircle className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Klienci</CardTitle>
-            <div className="p-2 rounded-lg bg-sky-500/10 text-sky-500">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <UserCheck className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -282,7 +282,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Kancelarie</CardTitle>
-            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500">
+            <div className="p-2 rounded-lg bg-secondary/35 text-secondary-foreground dark:bg-secondary/15 dark:text-secondary">
               <Building2 className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -294,7 +294,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Artykuły</CardTitle>
-            <div className="p-2 rounded-lg bg-violet-500/10 text-violet-500">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <FileText className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -306,7 +306,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Opinie</CardTitle>
-            <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500">
+            <div className="p-2 rounded-lg bg-secondary/35 text-secondary-foreground dark:bg-secondary/15 dark:text-secondary">
               <Star className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -359,8 +359,10 @@ export default function AdminDashboardPage() {
         {/* Monthly Revenue */}
         <Card className="hover:shadow-md transition-all duration-300 border border-muted/60 bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold">Przychody miesięczne</CardTitle>
-            <CardDescription>Ostatnie 6 miesięcy (zamówienia opłacone)</CardDescription>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-bold">Przychody miesięczne</CardTitle>
+              <CardDescription>Ostatnie 6 miesięcy (zamówienia opłacone)</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -371,13 +373,13 @@ export default function AdminDashboardPage() {
                   <div key={item.month} className="group/bar">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item.month}</span>
-                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-500 group-hover/bar:scale-105 transition-transform origin-right">
+                      <span className="text-sm font-bold text-primary group-hover/bar:scale-105 transition-transform origin-right">
                         {formatCurrency(Number(item.revenue))}
                       </span>
                     </div>
                     <div className="w-full bg-slate-100 dark:bg-slate-800/80 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200/30 dark:border-slate-700/20">
                       <div
-                        className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_8px_rgba(20,184,166,0.15)]"
+                        className="bg-gradient-to-r from-primary via-primary/80 to-secondary h-full rounded-full transition-all duration-500 ease-out shadow-sm shadow-primary/20"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
@@ -410,7 +412,7 @@ export default function AdminDashboardPage() {
                   {/* Bar container */}
                   <div className="w-full bg-slate-100 dark:bg-slate-800/40 rounded-t-md relative flex-1 flex flex-col justify-end overflow-hidden border border-slate-200/30 dark:border-slate-700/20 min-h-[4px]">
                     <div
-                      className="w-full bg-gradient-to-t from-blue-600 via-indigo-500 to-cyan-400 dark:from-blue-500 dark:via-indigo-600 dark:to-cyan-400 rounded-t-sm transition-all duration-700 ease-out group-hover:brightness-110 shadow-md group-hover:shadow-lg shadow-indigo-500/10 group-hover:shadow-indigo-500/20"
+                      className="w-full bg-gradient-to-t from-primary/60 via-primary/90 to-primary rounded-t-sm transition-all duration-700 ease-out group-hover:brightness-115 shadow-md group-hover:shadow-lg shadow-primary/10 group-hover:shadow-primary/20"
                       style={{ height: `${height}%` }}
                     />
                   </div>
@@ -433,7 +435,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 text-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.05)] border border-indigo-500/10 group-hover:scale-105 transition-transform duration-300">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary shadow-sm shadow-primary/5 border border-primary/10 group-hover:scale-105 transition-transform duration-300">
                   <Users className="h-5 w-5" />
                 </div>
                 <div>
@@ -443,7 +445,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/users"
-                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-muted-foreground text-xs font-semibold gap-1"
+                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground text-xs font-semibold gap-1"
               >
                 Wszystkie
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -459,7 +461,7 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/admin/users?search=${user.email}`}
                     key={user.id}
-                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-indigo-500/20 dark:hover:border-indigo-500/35 hover:bg-indigo-500/[0.02] dark:hover:bg-indigo-500/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
+                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-primary/30 hover:bg-primary/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       {/* Avatar */}
@@ -467,7 +469,7 @@ export default function AdminDashboardPage() {
                         {initials}
                       </div>
                       <div>
-                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors">
+                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-primary transition-colors">
                           {user.name || user.email.split('@')[0]}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5 font-medium">
@@ -477,15 +479,15 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
                       {user.role === 'ADMIN' ? (
-                        <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.05)]">
+                        <span className="bg-primary/10 text-primary border border-primary/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(var(--primary),0.05)]">
                           Admin
                         </span>
                       ) : user.role === 'LAW_FIRM' ? (
-                        <span className="bg-violet-500/10 text-violet-700 dark:text-violet-400 border border-violet-500/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(139,92,246,0.05)]">
+                        <span className="bg-secondary/35 text-secondary-foreground dark:bg-secondary/15 dark:text-secondary border border-secondary/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(var(--secondary),0.05)]">
                           Kancelaria
                         </span>
                       ) : (
-                        <span className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.05)]">
+                        <span className="bg-muted text-muted-foreground border border-muted-foreground/10 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full">
                           Klient
                         </span>
                       )}
@@ -506,7 +508,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.05)] border border-amber-500/10 group-hover:scale-105 transition-transform duration-300">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 dark:from-secondary/15 dark:to-secondary/5 text-secondary-foreground dark:text-secondary shadow-sm shadow-secondary/5 border border-secondary/20 group-hover:scale-105 transition-transform duration-300">
                   <Briefcase className="h-5 w-5" />
                 </div>
                 <div>
@@ -516,7 +518,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/cases"
-                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 transition-colors text-muted-foreground text-xs font-semibold gap-1"
+                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-secondary/30 dark:hover:bg-secondary/15 hover:text-secondary-foreground dark:hover:text-secondary transition-colors text-muted-foreground text-xs font-semibold gap-1"
               >
                 Wszystkie
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -527,11 +529,11 @@ export default function AdminDashboardPage() {
             <div className="space-y-3">
               {recentActivity.cases.map((caseItem) => {
                 const caseGradients = {
-                  NOWA: 'from-amber-500/10 to-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400',
-                  OFERTY_OTRZYMANE: 'from-blue-500/10 to-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400',
-                  W_TRAKCIE: 'from-sky-500/10 to-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400',
-                  ZAKONCZONA: 'from-emerald-500/10 to-teal-500/10 border-teal-500/20 text-teal-600 dark:text-teal-400',
-                  ANULOWANA: 'from-rose-500/10 to-red-500/10 border-red-500/20 text-red-600 dark:text-red-400',
+                  NOWA: 'from-secondary/20 to-secondary/45 border-secondary/30 text-secondary-foreground dark:text-secondary',
+                  OFERTY_OTRZYMANE: 'from-primary/10 to-primary/20 border-primary/20 text-primary',
+                  W_TRAKCIE: 'from-primary/20 to-primary/30 border-primary/25 text-primary',
+                  ZAKONCZONA: 'from-emerald-500/10 to-emerald-500/20 border-emerald-500/20 text-emerald-600 dark:text-emerald-400',
+                  ANULOWANA: 'from-destructive/10 to-destructive/20 border-destructive/20 text-destructive',
                 }
                 const caseLabel = {
                   NOWA: 'Nowa',
@@ -547,15 +549,15 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/admin/cases/${caseItem.id}`}
                     key={caseItem.id}
-                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-amber-500/20 dark:hover:border-amber-500/35 hover:bg-amber-500/[0.02] dark:hover:bg-amber-500/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
+                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-secondary/30 hover:bg-secondary/[0.03] hover:shadow-sm transition-all duration-300 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       {/* Case visual tag */}
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500/5 to-orange-500/5 dark:from-amber-500/10 dark:to-orange-500/10 border border-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/10 text-secondary-foreground dark:text-secondary flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
                         <Scale className="h-4 w-4" />
                       </div>
                       <div className="max-w-[180px] sm:max-w-[240px]">
-                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400 transition-colors truncate">
+                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-secondary-foreground dark:group-hover/item:text-secondary transition-colors truncate">
                           {caseItem.nazwaSprawy}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5 font-medium flex items-center gap-1.5 truncate">
@@ -588,7 +590,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.05)] border border-emerald-500/10 group-hover:scale-105 transition-transform duration-300">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary shadow-sm shadow-primary/5 border border-primary/10 group-hover:scale-105 transition-transform duration-300">
                   <CreditCard className="h-5 w-5" />
                 </div>
                 <div>
@@ -598,7 +600,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/transakcje"
-                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-muted-foreground text-xs font-semibold gap-1"
+                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground text-xs font-semibold gap-1"
               >
                 Wszystkie
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -609,10 +611,10 @@ export default function AdminDashboardPage() {
             <div className="space-y-3">
               {recentActivity.orders.map((order) => {
                 const paymentGradients = {
-                  ZAPLACONE: 'from-emerald-500/10 to-teal-500/10 border-teal-500/20 text-teal-600 dark:text-teal-400',
-                  OCZEKUJE: 'from-amber-500/10 to-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400',
-                  ANULOWANE: 'from-rose-500/10 to-red-500/10 border-red-500/20 text-red-600 dark:text-red-400',
-                  ZWROT: 'from-blue-500/10 to-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400',
+                  ZAPLACONE: 'from-emerald-500/10 to-emerald-500/20 border-emerald-500/20 text-emerald-600 dark:text-emerald-400',
+                  OCZEKUJE: 'from-secondary/20 to-secondary/45 border-secondary/30 text-secondary-foreground dark:text-secondary',
+                  ANULOWANE: 'from-destructive/10 to-destructive/20 border-destructive/20 text-destructive',
+                  ZWROT: 'from-primary/10 to-primary/20 border-primary/20 text-primary',
                 }
                 const paymentLabel = {
                   ZAPLACONE: 'Opłacone',
@@ -627,15 +629,15 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/admin/transakcje?search=${order.orderNumber}`}
                     key={order.id}
-                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-emerald-500/20 dark:hover:border-emerald-500/35 hover:bg-emerald-500/[0.02] dark:hover:bg-emerald-500/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
+                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-primary/30 hover:bg-primary/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       {/* Order Visual */}
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 dark:from-emerald-500/10 dark:to-teal-500/10 border border-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 text-primary flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
                         <DollarSign className="h-4 w-4" />
                       </div>
                       <div className="max-w-[180px] sm:max-w-[240px]">
-                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors truncate">
+                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-primary transition-colors truncate">
                           {order.orderNumber}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5 font-medium flex items-center gap-1.5 truncate">
@@ -645,7 +647,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
-                      <div className="font-bold text-sm text-slate-900 dark:text-white group-hover/item:scale-105 transition-transform duration-200">
+                      <div className="font-bold text-sm text-primary group-hover/item:scale-105 transition-transform duration-200">
                         {formatCurrency(order.kwota)}
                       </div>
                       <span className={`bg-gradient-to-br ${badgeStyle} border font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full`}>
@@ -668,7 +670,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 text-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.05)] border border-violet-500/10 group-hover:scale-105 transition-transform duration-300">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 dark:from-secondary/15 dark:to-secondary/5 text-secondary-foreground dark:text-secondary shadow-sm shadow-secondary/5 border border-secondary/20 group-hover:scale-105 transition-transform duration-300">
                   <FileText className="h-5 w-5" />
                 </div>
                 <div>
@@ -678,7 +680,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/blog"
-                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-400 transition-colors text-muted-foreground text-xs font-semibold gap-1"
+                className="inline-flex items-center justify-center p-1.5 rounded-lg bg-muted/40 hover:bg-secondary/30 dark:hover:bg-secondary/15 hover:text-secondary-foreground dark:hover:text-secondary transition-colors text-muted-foreground text-xs font-semibold gap-1"
               >
                 Wszystkie
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -692,15 +694,15 @@ export default function AdminDashboardPage() {
                   <Link
                     href={`/admin/blog`}
                     key={post.id}
-                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-violet-500/20 dark:hover:border-violet-500/35 hover:bg-violet-500/[0.02] dark:hover:bg-violet-500/[0.02] hover:shadow-sm transition-all duration-300 cursor-pointer"
+                    className="group/item flex items-center justify-between p-3.5 rounded-xl border border-muted/20 hover:border-secondary/30 hover:bg-secondary/[0.03] hover:shadow-sm transition-all duration-300 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       {/* Article Visual */}
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 dark:from-violet-500/10 dark:to-fuchsia-500/10 border border-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/10 text-secondary-foreground dark:text-secondary flex items-center justify-center font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
                         <FileEdit className="h-4 w-4" />
                       </div>
                       <div className="max-w-[180px] sm:max-w-[240px]">
-                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-violet-600 dark:group-hover/item:text-violet-400 transition-colors truncate">
+                        <div className="font-semibold text-sm tracking-tight text-slate-800 dark:text-slate-100 group-hover/item:text-secondary-foreground dark:group-hover/item:text-secondary transition-colors truncate">
                           {post.tytul}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5 font-medium flex items-center gap-1.5 truncate">
@@ -711,11 +713,11 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
                       {post.opublikowany ? (
-                        <span className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full">
+                        <span className="bg-primary/15 text-primary border border-primary/25 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full">
                           Opublikowany
                         </span>
                       ) : (
-                        <span className="bg-slate-500/10 text-slate-700 dark:text-slate-400 border border-slate-500/20 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full">
+                        <span className="bg-muted text-muted-foreground border border-muted-foreground/10 font-semibold tracking-wider text-[10px] uppercase px-2.5 py-0.5 rounded-full">
                           Szkic
                         </span>
                       )}
