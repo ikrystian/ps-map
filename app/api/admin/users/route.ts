@@ -51,6 +51,9 @@ export async function GET(request: NextRequest) {
           client: {
             select: {
               id: true,
+              imie: true,
+              nazwisko: true,
+              telefon: true,
             },
           },
           lawFirm: {
@@ -80,16 +83,9 @@ export async function GET(request: NextRequest) {
       prisma.user.count({ where }),
     ])
 
+    // Remove password from response
     const sanitizedUsers = users.map((user: any) => {
       const { password, resetToken, resetTokenExpiry, ...userWithoutSensitiveData } = user
-      if (userWithoutSensitiveData.client) {
-        userWithoutSensitiveData.client = {
-          ...userWithoutSensitiveData.client,
-          imie: userWithoutSensitiveData.firstName || "",
-          nazwisko: userWithoutSensitiveData.lastName || "",
-          telefon: userWithoutSensitiveData.phone || "",
-        }
-      }
       return userWithoutSensitiveData
     })
 
@@ -168,15 +164,15 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.create({
       data: {
         name: name || (clientData ? `${clientData.imie || ""} ${clientData.nazwisko || ""}`.trim() : null),
-        firstName: clientData?.imie || null,
-        lastName: clientData?.nazwisko || null,
-        phone: clientData?.telefon || null,
         email,
         password: hashedPassword,
         role,
         status: status || "ACTIVE",
         client: clientData ? {
           create: {
+            imie: clientData.imie,
+            nazwisko: clientData.nazwisko,
+            telefon: clientData.telefon,
             adres: clientData.adres,
             kodPocztowy: clientData.kodPocztowy,
             miasto: clientData.miasto,
@@ -190,9 +186,6 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         name: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
         email: true,
         role: true,
         status: true,
@@ -200,23 +193,14 @@ export async function POST(request: NextRequest) {
         updatedAt: true,
         client: {
           select: {
-            id: true,
+            imie: true,
+            nazwisko: true,
           }
         }
       },
     })
 
-    const formattedUser = {
-      ...user,
-      client: user.client ? {
-        ...user.client,
-        imie: user.firstName || "",
-        nazwisko: user.lastName || "",
-        telefon: user.phone || "",
-      } : null
-    }
-
-    return NextResponse.json(formattedUser, { status: 201 })
+    return NextResponse.json(user, { status: 201 })
   } catch (error) {
     console.error("Error creating user:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

@@ -34,22 +34,19 @@ export async function GET(req: NextRequest) {
 
     for (const booking of upcomingConsultations) {
       const formattedDate = format(new Date(booking.consultationDate), "PPP p", { locale: pl })
-      const clientName = booking.client.user.firstName
-        ? `${booking.client.user.firstName} ${booking.client.user.lastName || ''}`.trim()
-        : (booking.client.user.name || booking.client.user.email)
 
       // Send reminder to client
       await sendEmail({
         to: booking.client.user.email,
         subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwa}`,
-        html: `<p>Witaj ${clientName},</p><p>Przypominamy o nadchodzącej konsultacji z kancelarią ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+        html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z kancelarią ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
       })
 
       // Send reminder to law firm
       await sendEmail({
         to: booking.lawFirm.user.email,
-        subject: `Przypomnienie o konsultacji z ${clientName}`,
-        html: `<p>Witaj ${booking.lawFirm.nazwa},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${clientName} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+        subject: `Przypomnienie o konsultacji z ${booking.client.user.name}`,
+        html: `<p>Witaj ${booking.lawFirm.nazwa},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
       })
     }
 

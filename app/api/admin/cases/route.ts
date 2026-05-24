@@ -58,11 +58,11 @@ export async function GET(request: NextRequest) {
           client: {
             select: {
               id: true,
+              imie: true,
+              nazwisko: true,
               user: {
                 select: {
                   email: true,
-                  firstName: true,
-                  lastName: true,
                 },
               },
             },
@@ -108,17 +108,8 @@ export async function GET(request: NextRequest) {
       prisma.case.count({ where }),
     ])
 
-    const formattedCases = cases.map((c: any) => ({
-      ...c,
-      client: c.client ? {
-        ...c.client,
-        imie: c.client.user?.firstName || "",
-        nazwisko: c.client.user?.lastName || "",
-      } : null
-    }))
-
     return NextResponse.json({
-      cases: formattedCases,
+      cases,
       pagination: {
         total,
         page,

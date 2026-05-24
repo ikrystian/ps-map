@@ -19,9 +19,6 @@ export async function GET() {
         id: true,
         email: true,
         name: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
         role: true,
         image: true,
         createdAt: true,
@@ -36,15 +33,6 @@ export async function GET() {
         { error: "Użytkownik nie znaleziony" },
         { status: 404 }
       )
-    }
-
-    if (user.client) {
-      user.client = {
-        ...user.client,
-        imie: user.firstName || '',
-        nazwisko: user.lastName || '',
-        telefon: user.phone || null,
-      } as any
     }
 
     return NextResponse.json({ user })

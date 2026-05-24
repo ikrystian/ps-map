@@ -114,7 +114,7 @@ export function EnhancedChatArea({
 
       // Play notification sound if message is from other user
       if (message.senderId !== session?.user?.id && notificationSound.current) {
-        notificationSound.current.play().catch(() => {})
+        notificationSound.current.play().catch(() => { })
       }
     }
 
@@ -578,7 +578,7 @@ export function EnhancedChatArea({
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
     ? conversation.lawFirmUser.lawFirm.nazwa
-    : `${conversation.clientUser.firstName || conversation.clientUser.client?.imie || ""} ${conversation.clientUser.lastName || conversation.clientUser.client?.nazwisko || ""}`.trim() || conversation.clientUser.name || "Klient"
+    : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
   const otherUserImage = isClient
     ? conversation.lawFirmUser.lawFirm.logo
     : conversation.clientUser.image
@@ -620,11 +620,11 @@ export function EnhancedChatArea({
               {isOnline
                 ? "Online"
                 : lastSeen
-                ? `Ostatnio widziany ${formatDistanceToNow(new Date(lastSeen), {
+                  ? `Ostatnio widziany ${formatDistanceToNow(new Date(lastSeen), {
                     addSuffix: true,
                     locale: pl,
                   })}`
-                : "Offline"}
+                  : "Offline"}
             </p>
           </div>
         </div>

@@ -18,13 +18,11 @@ export async function seedTestData(prisma: PrismaClient) {
       // 1. Stwórz użytkownika
       const randomUser = createRandomUser(prisma, role);
       const hashedPassword = await bcrypt.hash('password123', 10);
-      const phone = role === UserRole.CLIENT ? faker.phone.number() : null;
       const user = await prisma.user.upsert({
         where: { email: randomUser.email },
         update: {},
         create: {
           ...randomUser,
-          phone,
           password: hashedPassword,
         },
       });
@@ -81,6 +79,9 @@ export async function seedTestData(prisma: PrismaClient) {
         await prisma.client.create({
           data: {
             userId: user.id,
+            imie: user.name ? user.name.split(' ')[0] : '',
+            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
+            telefon: faker.phone.number()
           }
         });
         console.log(`  ✓ Client profile created for: ${user.email}`)

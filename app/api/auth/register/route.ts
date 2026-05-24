@@ -8,8 +8,7 @@ import crypto from "crypto"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, isSocialRegistration, role } = body
-    const userData = body.userData || body
+    const { email, password, isSocialRegistration, role, userData = {} } = body
 
     // Walidacja
     if (!email || typeof email !== "string") {
@@ -65,9 +64,6 @@ export async function POST(request: NextRequest) {
         where: { id: existingUser.id },
         data: {
           role: "CLIENT", // Ustaw rolę na CLIENT (lub obsłuż multorole w przyszłości)
-          firstName: userData.client?.imie || undefined,
-          lastName: userData.client?.nazwisko || undefined,
-          phone: userData.client?.telefon || undefined,
         }
       })
     } else {
@@ -80,10 +76,7 @@ export async function POST(request: NextRequest) {
           email: normalizedEmail,
           password: hashedPassword,
           role: (role as UserRole) || "CLIENT",
-          name: userData.name || (userData.client ? `${userData.client.imie || ""} ${userData.client.nazwisko || ""}`.trim() : null),
-          firstName: userData.client?.imie || null,
-          lastName: userData.client?.nazwisko || null,
-          phone: userData.client?.telefon || null,
+          name: userData.name || null,
           emailVerified: null, // Email nie zweryfikowany
         },
       })
@@ -108,7 +101,7 @@ export async function POST(request: NextRequest) {
       // Wyślij email weryfikacyjny
       const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${verificationToken}`
       const isLawFirm = user.role === "LAW_FIRM"
-      
+
       try {
         await sendEmailWithTemplate({
           to: user.email,
@@ -141,11 +134,14 @@ export async function POST(request: NextRequest) {
     // Jeśli CLIENT, utwórz profil klienta
     if (user.role === "CLIENT" && userData.client) {
       const clientType = userData.client.clientType || "INDIVIDUAL"
-      
+
       await prisma.client.create({
         data: {
           userId: user.id,
           clientType,
+          imie: userData.client.imie,
+          nazwisko: userData.client.nazwisko,
+          telefon: userData.client.telefon || null,
           nazwaFirmy: clientType === "BUSINESS" ? userData.client.nazwaFirmy : null,
           nip: clientType === "BUSINESS" ? userData.client.nip : null,
           regon: clientType === "BUSINESS" ? userData.client.regon : null,
@@ -160,17 +156,12 @@ export async function POST(request: NextRequest) {
 
       // Synchronizacja nazwy użytkownika
       const targetName = clientType === "BUSINESS"
-        ? (userData.client.nazwaFirmy || `${userData.client.imie || ""} ${userData.client.nazwisko || ""}`.trim())
-        : `${userData.client.imie || ""} ${userData.client.nazwisko || ""}`.trim()
+        ? (userData.client.nazwaFirmy || `${userData.client.imie} ${userData.client.nazwisko}`)
+        : `${userData.client.imie} ${userData.client.nazwisko}`
 
       await prisma.user.update({
         where: { id: user.id },
-        data: { 
-          name: targetName,
-          firstName: userData.client.imie,
-          lastName: userData.client.nazwisko,
-          phone: userData.client.telefon || null
-        },
+        data: { name: targetName },
       })
 
       // Wyślij e-mail powitalny dla klienta
@@ -277,4 +268,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
+}
 }

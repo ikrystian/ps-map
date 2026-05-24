@@ -92,12 +92,8 @@ export async function GET(request: NextRequest) {
               },
               client: {
                 select: {
-                  user: {
-                    select: {
-                      firstName: true,
-                      lastName: true,
-                    }
-                  }
+                  imie: true,
+                  nazwisko: true
                 }
               }
             }
@@ -125,19 +121,8 @@ export async function GET(request: NextRequest) {
       prisma.offer.count({ where })
     ])
 
-    const mappedOffers = offers.map((offer: any) => {
-      if (offer.case?.client) {
-        offer.case.client = {
-          ...offer.case.client,
-          imie: offer.case.client.user?.firstName || '',
-          nazwisko: offer.case.client.user?.lastName || '',
-        }
-      }
-      return offer
-    })
-
     return Response.json({
-      offers: mappedOffers,
+      offers,
       pagination: {
         page,
         limit,
@@ -410,8 +395,7 @@ export async function POST(request: NextRequest) {
             include: {
               user: {
                 select: {
-                  email: true,
-                  firstName: true,
+                  email: true
                 }
               }
             }
@@ -427,7 +411,7 @@ export async function POST(request: NextRequest) {
           to: caseWithClient.client.user.email,
           templateType: EmailType.NOWA_OFERTA,
           variables: {
-            "{klient}": caseWithClient.client.user.firstName || '',
+            "{klient}": caseWithClient.client.imie,
             "{kancelaria}": lawFirm.nazwa,
             "{nazwaSprawi}": caseWithClient.nazwaSprawy,
             "{kwota}": formattedKwota,

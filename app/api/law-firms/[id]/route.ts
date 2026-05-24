@@ -80,12 +80,11 @@ export async function GET(
           include: {
             client: {
               select: {
-                id: true,
+                imie: true,
+                nazwisko: true,
                 user: {
                   select: {
                     image: true,
-                    firstName: true,
-                    lastName: true,
                   },
                 },
               },
@@ -145,15 +144,6 @@ export async function GET(
     }
 
     // Parse JSON fields
-    const parsedReviews = lawFirm.reviews.map((review: any) => ({
-      ...review,
-      client: review.client ? {
-        ...review.client,
-        imie: review.client.user?.firstName || "",
-        nazwisko: review.client.user?.lastName || "",
-      } : null
-    }))
-
     const parsedLawFirm = {
       ...lawFirm,
       userId: lawFirm.userId, // Include userId for chat functionality
@@ -161,7 +151,6 @@ export async function GET(
       slowaKluczowe: lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.trim() ? JSON.parse(lawFirm.slowaKluczowe) : [],
       godzinyOtwarcia: lawFirm.godzinyOtwarcia && lawFirm.godzinyOtwarcia.trim() ? JSON.parse(lawFirm.godzinyOtwarcia) : null,
       edukacja: lawFirm.edukacja && lawFirm.edukacja.trim() ? JSON.parse(lawFirm.edukacja) : [],
-      reviews: parsedReviews,
       avgRating,
       reviewCount: lawFirm.reviews.length,
       limitSlowKluczowych: maxKeywords,

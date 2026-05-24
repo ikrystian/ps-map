@@ -42,14 +42,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
   // Auto-fill contact data from logged-in client
   useEffect(() => {
-    if (session?.user) {
-      const user = session.user
-      const client = user.client
-      const name = `${user.firstName || client?.imie || ""} ${user.lastName || client?.nazwisko || ""}`.trim()
+    if (session?.user?.client) {
+      const client = session.user.client
       const contactInfo = [
-        name || user.name || "",
-        user.email || "",
-        client?.telefon || ""
+        `${client.imie || ''} ${client.nazwisko || ''}`.trim(),
+        session.user.email || '',
+        client.telefon || ''
       ].filter(Boolean).join(', ')
       setContact(contactInfo)
     }
@@ -141,11 +139,11 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                       }
                     }}>
                       <DialogTrigger asChild>
-                         <Button variant="outline" size="sm" disabled={isBooked} onClick={() => {
-                             setSelectedDate(day)
-                             setSelectedSlot(slot)
-                             setIsDialogOpen(true)
-                         }}>
+                        <Button variant="outline" size="sm" disabled={isBooked} onClick={() => {
+                          setSelectedDate(day)
+                          setSelectedSlot(slot)
+                          setIsDialogOpen(true)
+                        }}>
                           {slot}
                         </Button>
                       </DialogTrigger>
@@ -185,7 +183,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
       </CardHeader>
       <CardContent>
         {(!lawFirm.consultationAvailabilities || lawFirm.consultationAvailabilities.length === 0) ? (
-            <p className="text-muted-foreground">Kancelaria nie oferuje obecnie konsultacji online.</p>
+          <p className="text-muted-foreground">Kancelaria nie oferuje obecnie konsultacji online.</p>
         ) : !duration ? (
           <div className="flex gap-4">
             <Button onClick={() => setDuration(15)}>
@@ -198,8 +196,8 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
         ) : (
           <div>
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Wybierz termin ({duration} min)</h3>
-                <Button variant="ghost" onClick={() => setDuration(null)}>Zmień</Button>
+              <h3 className="text-lg font-semibold">Wybierz termin ({duration} min)</h3>
+              <Button variant="ghost" onClick={() => setDuration(null)}>Zmień</Button>
             </div>
             {renderWeekView()}
           </div>

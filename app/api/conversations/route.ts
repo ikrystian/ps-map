@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
     const baseWhere = isClient
       ? { clientUserId: userId }
       : userRole === "LAW_FIRM"
-      ? { lawFirmUserId: userId }
-      : { OR: [{ clientUserId: userId }, { lawFirmUserId: userId }] }
+        ? { lawFirmUserId: userId }
+        : { OR: [{ clientUserId: userId }, { lawFirmUserId: userId }] }
 
     let statusFilter = {}
     if (filter === "active") {
@@ -58,8 +58,12 @@ export async function GET(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-            firstName: true,
-            lastName: true,
+            client: {
+              select: {
+                imie: true,
+                nazwisko: true,
+              },
+            },
           },
         },
         lawFirmUser: {
@@ -100,7 +104,7 @@ export async function GET(request: NextRequest) {
       const otherUser = isClient ? conv.lawFirmUser : conv.clientUser
       const otherUserName = isClient
         ? conv.lawFirmUser.lawFirm?.nazwa
-        : `${conv.clientUser.firstName || ''} ${conv.clientUser.lastName || ''}`.trim()
+        : `${conv.clientUser.client?.imie} ${conv.clientUser.client?.nazwisko}`
       const otherUserImage = isClient
         ? conv.lawFirmUser.lawFirm?.logo
         : conv.clientUser.image
@@ -133,11 +137,11 @@ export async function GET(request: NextRequest) {
         },
         lastMessage: lastMessage
           ? {
-              content: decryptedContent,
-              createdAt: lastMessage.createdAt,
-              isFromMe: lastMessage.senderId === userId,
-              isRead: lastMessage.isRead,
-            }
+            content: decryptedContent,
+            createdAt: lastMessage.createdAt,
+            isFromMe: lastMessage.senderId === userId,
+            isRead: lastMessage.isRead,
+          }
           : null,
         unreadCount,
         updatedAt: conv.lastMessageAt || conv.createdAt,
@@ -223,8 +227,12 @@ export async function POST(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-            firstName: true,
-            lastName: true,
+            client: {
+              select: {
+                imie: true,
+                nazwisko: true,
+              },
+            },
           },
         },
         lawFirmUser: {
@@ -258,8 +266,12 @@ export async function POST(request: NextRequest) {
               name: true,
               email: true,
               image: true,
-              firstName: true,
-              lastName: true,
+              client: {
+                select: {
+                  imie: true,
+                  nazwisko: true,
+                },
+              },
             },
           },
           lawFirmUser: {
@@ -278,13 +290,6 @@ export async function POST(request: NextRequest) {
           },
         },
       })
-    }
-
-    if (conversation && conversation.clientUser) {
-      (conversation.clientUser as any).client = {
-        imie: conversation.clientUser.firstName || '',
-        nazwisko: conversation.clientUser.lastName || '',
-      }
     }
 
     return Response.json(conversation, { status: conversation ? 200 : 201 })

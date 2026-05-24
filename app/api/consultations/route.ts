@@ -8,22 +8,14 @@ const prisma = new PrismaClient()
 export async function POST(req: NextRequest) {
   const session = await auth()
 
-  if (!session?.user || session.user.role !== "CLIENT") {
+  if (!session?.user?.client) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const { lawFirmId, clientId, consultationDate, duration, price, topic, clientContact } = await req.json()
 
-    const client = await prisma.client.findUnique({
-      where: { userId: session.user.id }
-    })
-
-    if (!client) {
-      return NextResponse.json({ error: "Nie znaleziono profilu klienta" }, { status: 404 })
-    }
-
-    if (client.id !== clientId) {
+    if (session.user.client.id !== clientId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

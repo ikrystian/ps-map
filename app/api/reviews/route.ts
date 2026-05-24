@@ -53,13 +53,8 @@ export async function GET(request: NextRequest) {
         include: {
           client: {
             select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  image: true,
-                }
-              }
+              imie: true,
+              nazwisko: true,
             },
           },
         },
@@ -73,20 +68,12 @@ export async function GET(request: NextRequest) {
     ])
 
     // Formatuj odpowiedź, ukrywając dane klienta dla anonimowych opinii
-    const formattedReviews = reviews.map((review) => {
-      const clientMapped = review.anonimowa
-        ? { imie: "Anonimowy", nazwisko: "", user: null }
-        : {
-            ...review.client,
-            imie: review.client?.user?.firstName || '',
-            nazwisko: review.client?.user?.lastName || '',
-          }
-
-      return {
-        ...review,
-        client: clientMapped,
-      }
-    })
+    const formattedReviews = reviews.map((review) => ({
+      ...review,
+      client: review.anonimowa
+        ? { imie: "Anonimowy", nazwisko: "" }
+        : review.client,
+    }))
 
     // Oblicz średnią ocen
     const avgRating = await prisma.review.aggregate({
@@ -235,25 +222,12 @@ export async function POST(request: NextRequest) {
       include: {
         client: {
           select: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                image: true,
-              }
-            }
+            imie: true,
+            nazwisko: true,
           },
         },
       },
     })
-
-    if (review) {
-      (review as any).client = {
-        ...review.client,
-        imie: review.client?.user?.firstName || '',
-        nazwisko: review.client?.user?.lastName || '',
-      }
-    }
 
     // Pobierz wszystkich aktywnych administratorów
     const admins = await prisma.user.findMany({

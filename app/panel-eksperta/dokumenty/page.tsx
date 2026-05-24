@@ -61,8 +61,6 @@ interface Document {
     id: string
     name: string
     email: string
-    firstName?: string
-    lastName?: string
     client?: {
       imie: string
       nazwisko: string
@@ -72,8 +70,6 @@ interface Document {
     id: string
     clientUser: {
       name: string
-      firstName?: string
-      lastName?: string
       client?: {
         imie: string
         nazwisko: string
@@ -369,9 +365,9 @@ export default function DocumentsPage() {
                 documents.map((document) => {
                   // Określ nazwę klienta z informacji o konwersacji lub użytkowniku
                   const clientName = document.zrodlo === "KLIENT"
-                    ? (document.clientUser
-                      ? `${document.clientUser.firstName || document.clientUser.client?.imie || ""} ${document.clientUser.lastName || document.clientUser.client?.nazwisko || ""}`.trim() || document.clientUser.name || "Nieznany klient"
-                      : "Nieznany klient")
+                    ? (document.clientUser?.client
+                      ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
+                      : document.clientUser?.name || "Nieznany klient")
                     : null
 
                   return (

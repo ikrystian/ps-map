@@ -17,23 +17,10 @@ export default function ClientConsultationsPage() {
   const [bookings, setBookings] = useState<any[]>([])
 
   const fetchBookings = async () => {
+    if (!session?.user?.client?.id) return
     setIsLoading(true)
     try {
-      let clientId = session?.user?.client?.id
-      if (!clientId) {
-        const meRes = await fetch("/api/clients/me")
-        if (meRes.ok) {
-          const meData = await meRes.json()
-          clientId = meData?.id
-        }
-      }
-
-      if (!clientId) {
-        setIsLoading(false)
-        return
-      }
-
-      const response = await fetch(`/api/clients/${clientId}/consultation-bookings`)
+      const response = await fetch(`/api/clients/${session.user.client.id}/consultation-bookings`)
       if (response.ok) {
         const data = await response.json()
         setBookings(data)

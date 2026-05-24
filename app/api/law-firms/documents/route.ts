@@ -35,12 +35,11 @@ export async function GET() {
           select: {
             id: true,
             name: true,
-            firstName: true,
-            lastName: true,
             email: true,
             client: {
               select: {
-                id: true,
+                imie: true,
+                nazwisko: true,
               },
             },
           },
@@ -51,11 +50,10 @@ export async function GET() {
             clientUser: {
               select: {
                 name: true,
-                firstName: true,
-                lastName: true,
                 client: {
                   select: {
-                    id: true,
+                    imie: true,
+                    nazwisko: true,
                   },
                 },
               },
@@ -66,32 +64,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" }
     })
 
-    const formattedDocuments = documents.map((doc: any) => {
-      const formattedDoc = { ...doc }
-      if (formattedDoc.clientUser) {
-        formattedDoc.clientUser = {
-          ...formattedDoc.clientUser,
-          client: formattedDoc.clientUser.client ? {
-            ...formattedDoc.clientUser.client,
-            imie: formattedDoc.clientUser.firstName || "",
-            nazwisko: formattedDoc.clientUser.lastName || "",
-          } : null
-        }
-      }
-      if (formattedDoc.conversation?.clientUser) {
-        formattedDoc.conversation.clientUser = {
-          ...formattedDoc.conversation.clientUser,
-          client: formattedDoc.conversation.clientUser.client ? {
-            ...formattedDoc.conversation.clientUser.client,
-            imie: formattedDoc.conversation.clientUser.firstName || "",
-            nazwisko: formattedDoc.conversation.clientUser.lastName || "",
-          } : null
-        }
-      }
-      return formattedDoc
-    })
-
-    return NextResponse.json(formattedDocuments)
+    return NextResponse.json(documents)
   } catch (error) {
     console.error("Error fetching documents:", error)
     return NextResponse.json(
@@ -212,7 +185,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error uploading document:", error)
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : "Internal server error",
         stack: error instanceof Error ? error.stack : undefined
       },

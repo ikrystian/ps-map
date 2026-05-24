@@ -12,19 +12,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id: bookingId } = await params
   const { status, paymentStatus } = await req.json()
 
-  if (!session?.user || session.user.role !== "LAW_FIRM") {
+  if (!session?.user?.lawFirm) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { userId: session.user.id }
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json({ error: "Nie znaleziono profilu kancelarii" }, { status: 404 })
-    }
-
     const booking = await prisma.consultationBooking.findUnique({
       where: { id: bookingId },
       include: {
@@ -41,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     })
 
-    if (!booking || booking.lawFirmId !== lawFirm.id) {
+    if (!booking || booking.lawFirmId !== session.user.lawFirm.id) {
       return NextResponse.json({ error: "Booking not found or access denied" }, { status: 404 })
     }
 
@@ -49,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     if (status) {
       updateData.status = status
-       if (status === "ACCEPTED") {
+      if (status === "ACCEPTED") {
         const meetLink = await createGoogleMeetLink({
           id: booking.id,
           proposedDateTime: booking.consultationDate.toISOString(),
@@ -137,20 +129,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Check if user is the law firm or the client
-    let isLawFirm = false
-    let isClient = false
-
-    if (session.user.role === "LAW_FIRM") {
-      const lawFirm = await prisma.lawFirm.findUnique({
-        where: { userId: session.user.id }
-      })
-      isLawFirm = !!lawFirm && lawFirm.id === booking.lawFirmId
-    } else if (session.user.role === "CLIENT") {
-      const client = await prisma.client.findUnique({
-        where: { userId: session.user.id }
-      })
-      isClient = !!client && client.id === booking.clientId
-    }
+    const isLawFirm = session.user.lawFirm?.id === booking.lawFirmId
+    const isClient = session.user.client?.id === booking.clientId
 
     if (!isLawFirm && !isClient) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 })

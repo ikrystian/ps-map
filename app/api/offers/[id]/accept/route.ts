@@ -29,16 +29,7 @@ export async function POST(
 
     // Pobierz dane klienta
     const client = await prisma.client.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            phone: true,
-          }
-        }
-      }
+      where: { userId: session.user.id }
     })
 
     if (!client) {
@@ -282,11 +273,11 @@ export async function POST(
           templateType: EmailType.AKCEPTACJA_OFERTY,
           variables: {
             "{kancelaria}": offer.lawFirm.nazwa,
-            "{klient}": `${client.user?.firstName || ''} ${client.user?.lastName || ''}`.trim(),
+            "{klient}": `${client.imie} ${client.nazwisko}`,
             "{nazwaSprawi}": offer.case.nazwaSprawy,
             "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
             "{emailKlienta}": session.user.email || "Brak",
-            "{telefonKlienta}": client.user?.phone || "Nie podano",
+            "{telefonKlienta}": client.telefon || "Nie podano",
             "{linkDoPanelu}": `${baseUrl}/panel-eksperta/oferty`,
           }
         })
@@ -305,7 +296,7 @@ export async function POST(
 
       // Przygotuj zmienne jako JSON string do zapisania w bazie danych
       const variablesObj = {
-        "{klient}": client.user?.firstName || '',
+        "{klient}": client.imie,
         "{kancelaria}": offer.lawFirm.nazwa,
         "{linkDoOceny}": linkDoOceny,
       }

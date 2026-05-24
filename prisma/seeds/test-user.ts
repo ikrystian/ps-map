@@ -18,7 +18,7 @@ export async function seedTestUser(prisma: PrismaClient) {
     })
 
     const voivodeship = await prisma.voivodeship.findFirst();
-    if(voivodeship) {
+    if (voivodeship) {
         await prisma.lawFirm.create({
             data: {
                 userId: lawFirmUser.id,
@@ -33,7 +33,7 @@ export async function seedTestUser(prisma: PrismaClient) {
                 nazwiskoKontakt: "Doe",
                 numerTelefonu: "123456789",
                 emailKontakt: "test-law-firm@example.com",
-                 typ: "SPOLKA_ZOO",
+                typ: "SPOLKA_ZOO",
                 typOferty: "WSZYSTKIE",
                 nazwaFirmy: "Test Law Firm LLC"
             },
@@ -46,8 +46,6 @@ export async function seedTestUser(prisma: PrismaClient) {
         data: {
             email: "test-client@example.com",
             name: "Test Client",
-            firstName: "Test",
-            lastName: "Client",
             password: hashedPassword,
             role: UserRole.CLIENT,
             emailVerified: new Date(),
@@ -57,6 +55,8 @@ export async function seedTestUser(prisma: PrismaClient) {
     await prisma.client.create({
         data: {
             userId: clientUser.id,
+            imie: "Test",
+            nazwisko: "Client",
         }
     })
 

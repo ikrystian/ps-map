@@ -81,11 +81,11 @@ export async function GET(request: NextRequest) {
           client: {
             select: {
               id: true,
+              imie: true,
+              nazwisko: true,
               user: {
                 select: {
                   email: true,
-                  firstName: true,
-                  lastName: true,
                 },
               },
             },
@@ -113,17 +113,8 @@ export async function GET(request: NextRequest) {
       prisma.review.count({ where }),
     ])
 
-    const formattedReviews = reviews.map((r: any) => ({
-      ...r,
-      client: r.client ? {
-        ...r.client,
-        imie: r.client.user?.firstName || "",
-        nazwisko: r.client.user?.lastName || "",
-      } : null
-    }))
-
     return NextResponse.json({
-      reviews: formattedReviews,
+      reviews,
       pagination: {
         total,
         page,
@@ -228,11 +219,11 @@ export async function POST(request: NextRequest) {
         client: {
           select: {
             id: true,
+            imie: true,
+            nazwisko: true,
             user: {
               select: {
                 email: true,
-                firstName: true,
-                lastName: true,
               },
             },
           },
@@ -240,16 +231,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    const formattedReview = review ? {
-      ...review,
-      client: (review as any).client ? {
-        ...(review as any).client,
-        imie: (review as any).client.user?.firstName || "",
-        nazwisko: (review as any).client.user?.lastName || "",
-      } : null
-    } : null
-
-    return NextResponse.json(formattedReview, { status: 201 })
+    return NextResponse.json(review, { status: 201 })
   } catch (error) {
     console.error("Error creating review:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

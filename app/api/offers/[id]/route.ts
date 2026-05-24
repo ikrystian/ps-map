@@ -37,15 +37,10 @@ export async function GET(
             },
             client: {
               select: {
-                id: true,
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                    phone: true,
-                  },
-                },
-              },
+                imie: true,
+                nazwisko: true,
+                telefon: true
+              }
             }
           }
         },
@@ -69,13 +64,8 @@ export async function GET(
           include: {
             client: {
               select: {
-                id: true,
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                  },
-                },
+                imie: true,
+                nazwisko: true
               }
             }
           },
@@ -125,28 +115,7 @@ export async function GET(
       }
     }
 
-    const formattedOffer = {
-      ...offer,
-      case: offer.case ? {
-        ...offer.case,
-        client: offer.case.client ? {
-          ...offer.case.client,
-          imie: offer.case.client.user?.firstName || "",
-          nazwisko: offer.case.client.user?.lastName || "",
-          telefon: offer.case.client.user?.phone || "",
-        } : null
-      } : null,
-      negotiations: offer.negotiations ? offer.negotiations.map((neg: any) => ({
-        ...neg,
-        client: neg.client ? {
-          ...neg.client,
-          imie: neg.client.user?.firstName || "",
-          nazwisko: neg.client.user?.lastName || "",
-        } : null
-      })) : []
-    }
-
-    return Response.json(formattedOffer)
+    return Response.json(offer)
   } catch (error) {
     console.error("Error fetching offer:", error)
     return Response.json(

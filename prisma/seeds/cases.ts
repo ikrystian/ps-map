@@ -9,11 +9,11 @@ const OFFERS_PER_CASE_MAX = 5
 interface ClientWithUser {
   id: string;
   userId: string;
+  imie: string;
+  nazwisko: string;
   user: {
     id: string;
     name: string | null;
-    firstName: string | null;
-    lastName: string | null;
     email: string;
   };
 }
@@ -36,32 +36,17 @@ interface CategoryType {
 export async function seedCases(prisma: PrismaClient) {
   console.log(`Seeding ${CASES_TO_CREATE} test cases...`)
 
-  const rawClients = await prisma.client.findMany({
+  const allClients: ClientWithUser[] = await prisma.client.findMany({
     include: {
       user: {
         select: {
           id: true,
           name: true,
-          firstName: true,
-          lastName: true,
           email: true,
         },
       },
     },
   })
-
-  const allClients: ClientWithUser[] = rawClients.map((c: any) => ({
-    id: c.id,
-    userId: c.userId,
-    user: {
-      id: c.user.id,
-      name: c.user.name,
-      firstName: c.user.firstName,
-      lastName: c.user.lastName,
-      email: c.user.email,
-    }
-  }))
-
   const allLawFirms: LawFirmType[] = await prisma.lawFirm.findMany({
     select: {
       id: true,
@@ -100,33 +85,24 @@ export async function seedCases(prisma: PrismaClient) {
           select: {
             id: true,
             name: true,
-            firstName: true,
-            lastName: true,
             email: true,
           },
         })
         const client = await prisma.client.create({
           data: {
             userId: user.id,
+            imie: user.name ? user.name.split(' ')[0] : '',
+            nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : '',
           },
           select: {
             id: true,
             userId: true,
+            imie: true,
+            nazwisko: true,
           },
         })
-        const clientWithUser = {
-          id: client.id,
-          userId: client.userId,
-          user: {
-            id: user.id,
-            name: user.name,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-          }
-        }
-        allClients.push(clientWithUser)
-        randomClient = clientWithUser
+        allClients.push({ ...client, user })
+        randomClient = { ...client, user }
       }
 
       const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships)

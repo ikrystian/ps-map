@@ -17,9 +17,6 @@ generator client {
 model User {
   id            String    @id @default(uuid())
   name          String?
-  firstName     String?   // Imię
-  lastName      String?   // Nazwisko
-  phone         String?   // Telefon
   email         String    @unique
   emailVerified DateTime?
   image         String?
@@ -130,6 +127,11 @@ model Client {
 
   // Typ klienta
   clientType      ClientType @default(INDIVIDUAL)
+
+  // Dane osobowe / reprezentanta
+  imie            String
+  nazwisko        String
+  telefon         String?
 
   // Dane firmowe (tylko dla BUSINESS)
   nazwaFirmy      String?
