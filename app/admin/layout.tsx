@@ -32,6 +32,7 @@ import {
   MapPin,
   Megaphone,
   MessageSquare,
+  ArrowUpDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -46,6 +47,7 @@ const navigation = [
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
   { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
+  { name: "Pozycjonowanie", href: "/admin/pozycjonowanie", icon: ArrowUpDown },
   { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Opinie główne", href: "/admin/testimonials", icon: MessageSquare },

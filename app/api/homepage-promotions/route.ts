@@ -67,6 +67,22 @@ export async function GET(request: NextRequest) {
           },
         })
 
+        // 3. Pobierz nadpisania kolejności
+        const allOverrides = await prisma.orderOverride.findMany({
+          where: {
+            context: { in: ["HOMEPAGE_RECOMMENDED", "HOMEPAGE_CONSULTED"] },
+            active: true,
+          },
+          select: {
+            context: true,
+            lawFirmId: true,
+            position: true,
+          },
+        })
+
+        const recommendedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_RECOMMENDED")
+        const consultedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_CONSULTED")
+
         // Mapuj wyniki na ustrukturyzowany format pogrupowany po kategoriach
         const recommendedByCat: Record<string, any[]> = {}
         recommendedPromotions.forEach((p) => {
@@ -78,6 +94,35 @@ export async function GET(request: NextRequest) {
             recommendedByCat[cat].push(p.lawFirm)
           }
         })
+
+        // Zastosuj nadpisania dla recommended
+        if (recommendedOverrides.length > 0) {
+          Object.keys(recommendedByCat).forEach(cat => {
+            const list = recommendedByCat[cat]
+            const relevantOverrides = recommendedOverrides.filter(o => list.some(f => f.id === o.lawFirmId))
+            if (relevantOverrides.length > 0) {
+              relevantOverrides.sort((a, b) => a.position - b.position)
+              const firmMap = new Map<string, any>()
+              list.forEach((f) => firmMap.set(f.id, f))
+
+              const standardFirms = list.filter(f => !relevantOverrides.some(o => o.lawFirmId === f.id))
+              const result = [...standardFirms]
+
+              relevantOverrides.forEach((ov) => {
+                const firm = firmMap.get(ov.lawFirmId)
+                if (firm) {
+                  const targetIdx = Math.max(0, ov.position - 1)
+                  if (targetIdx >= result.length) {
+                    result.push(firm)
+                  } else {
+                    result.splice(targetIdx, 0, firm)
+                  }
+                }
+              })
+              recommendedByCat[cat] = result
+            }
+          })
+        }
 
         const consultedByCat: Record<string, any[]> = {}
         consultedPromotions.forEach((p) => {
@@ -91,6 +136,35 @@ export async function GET(request: NextRequest) {
             }
           }
         })
+
+        // Zastosuj nadpisania dla consulted
+        if (consultedOverrides.length > 0) {
+          Object.keys(consultedByCat).forEach(cat => {
+            const list = consultedByCat[cat]
+            const relevantOverrides = consultedOverrides.filter(o => list.some(f => f.id === o.lawFirmId))
+            if (relevantOverrides.length > 0) {
+              relevantOverrides.sort((a, b) => a.position - b.position)
+              const firmMap = new Map<string, any>()
+              list.forEach((f) => firmMap.set(f.id, f))
+
+              const standardFirms = list.filter(f => !relevantOverrides.some(o => o.lawFirmId === f.id))
+              const result = [...standardFirms]
+
+              relevantOverrides.forEach((ov) => {
+                const firm = firmMap.get(ov.lawFirmId)
+                if (firm) {
+                  const targetIdx = Math.max(0, ov.position - 1)
+                  if (targetIdx >= result.length) {
+                    result.push(firm)
+                  } else {
+                    result.splice(targetIdx, 0, firm)
+                  }
+                }
+              })
+              consultedByCat[cat] = result
+            }
+          })
+        }
 
         return {
           recommended: recommendedByCat,

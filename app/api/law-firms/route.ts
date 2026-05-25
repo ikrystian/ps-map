@@ -270,17 +270,55 @@ export async function GET(request: NextRequest) {
       })
     )
 
-    // Sort by final score (with promotion boosts applied)
-    const sortedLawFirms = (
-      sortBy === "ranking"
-        ? lawFirmsWithData
-        : lawFirmsWithData.sort((a: any, b: any) => b._score - a._score)
-    )
-      .slice(0, limit) // Apply limit after sorting
+    // Sort by final score (with promotion boosts applied) and apply overrides
+    let sortedLawFirms = sortBy === "ranking"
+      ? lawFirmsWithData
+      : lawFirmsWithData.sort((a: any, b: any) => b._score - a._score)
+
+    if (lawFirmIds.length > 0) {
+      const overrides = await prisma.orderOverride.findMany({
+        where: {
+          context: "SEARCH",
+          active: true,
+          lawFirmId: { in: lawFirmIds },
+        },
+        select: {
+          lawFirmId: true,
+          position: true,
+        },
+      })
+
+      if (overrides.length > 0) {
+        overrides.sort((a, b) => a.position - b.position)
+        const firmMap = new Map<string, any>()
+        sortedLawFirms.forEach((f) => firmMap.set(f.id, f))
+
+        const standardFirms = sortedLawFirms.filter(
+          (f) => !overrides.some((ov) => ov.lawFirmId === f.id)
+        )
+
+        const result = [...standardFirms]
+        overrides.forEach((ov) => {
+          const firm = firmMap.get(ov.lawFirmId)
+          if (firm) {
+            const targetIdx = Math.max(0, ov.position - 1)
+            if (targetIdx >= result.length) {
+              result.push(firm)
+            } else {
+              result.splice(targetIdx, 0, firm)
+            }
+          }
+        })
+        sortedLawFirms = result
+      }
+    }
+
+    const limitedLawFirms = sortedLawFirms
+      .slice(0, limit) // Apply limit after sorting and overrides
       .map(({ _score, ...firm }: any) => firm) // Remove internal score from response
 
     return NextResponse.json({
-      lawFirms: sortedLawFirms,
+      lawFirms: limitedLawFirms,
       total,
       limit,
       offset,

@@ -299,6 +299,7 @@ model LawFirm {
   consultationAvailabilities ConsultationAvailability[]
   consultationBookings       ConsultationBooking[]
   badges                     LawFirmBadge[]
+  orderOverrides             OrderOverride[]
 
   @@index([userId])
   @@index([voivodeshipId])
@@ -2094,6 +2095,25 @@ model HomepageTestimonial {
 
   @@index([active])
   @@index([order])
+}
+
+// ============================================================================
+// RĘCZNE NADPISANIA POZYCJI W RANKINGU
+// ============================================================================
+
+model OrderOverride {
+  id            String   @id @default(uuid())
+  context       String   // "SEARCH", "HOMEPAGE_FEATURED", "HOMEPAGE_TOP", "HOMEPAGE_RECOMMENDED", "HOMEPAGE_CONSULTED"
+  lawFirmId     String
+  lawFirm       LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  position      Int      // Ręczna pozycja (1-indexed, np. 1 to pierwsze miejsce)
+  active        Boolean  @default(true)
+  notes         String?  // Notatka np. powód nadpisania ("Klient VIP")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([context, lawFirmId])
+  @@index([context])
 }
 
 
