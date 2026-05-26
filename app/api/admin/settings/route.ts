@@ -45,6 +45,24 @@ export async function GET(request: NextRequest) {
         description: "Czy wyświetlać samouczek (krok po kroku) w panelu eksperta",
       }
     }
+    if (!settingsObject.deleteReviewCostRating1) {
+      settingsObject.deleteReviewCostRating1 = {
+        value: "500",
+        description: "Koszt usunięcia opinii z oceną 1★ w punktach",
+      }
+    }
+    if (!settingsObject.deleteReviewCostRating2) {
+      settingsObject.deleteReviewCostRating2 = {
+        value: "300",
+        description: "Koszt usunięcia opinii z oceną 2★ w punktach",
+      }
+    }
+    if (!settingsObject.deleteReviewCostRating3) {
+      settingsObject.deleteReviewCostRating3 = {
+        value: "100",
+        description: "Koszt usunięcia opinii z oceną 3★ w punktach",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

@@ -29,6 +29,15 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.showExpertTutorial) {
       settingsObject.showExpertTutorial = "true"
     }
+    if (!settingsObject.deleteReviewCostRating1) {
+      settingsObject.deleteReviewCostRating1 = "500"
+    }
+    if (!settingsObject.deleteReviewCostRating2) {
+      settingsObject.deleteReviewCostRating2 = "300"
+    }
+    if (!settingsObject.deleteReviewCostRating3) {
+      settingsObject.deleteReviewCostRating3 = "100"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -41,6 +50,9 @@ export async function GET(request: NextRequest) {
         maxLawFirmCities: "3",
         maxLawFirmTags: "5",
         showExpertTutorial: "true",
+        deleteReviewCostRating1: "500",
+        deleteReviewCostRating2: "300",
+        deleteReviewCostRating3: "100",
       },
       { status: 200 }
     )
