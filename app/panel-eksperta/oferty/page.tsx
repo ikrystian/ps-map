@@ -216,12 +216,57 @@ export default function LawFirmOffersPage() {
 
   const statusCounts = getStatusCounts()
 
-  const tabs = [
-    { id: "all", label: "Wszystkie", count: statusCounts.all },
-    { id: "ZLOZONA", label: "Złożone", count: statusCounts.ZLOZONA },
-    { id: "ZAAKCEPTOWANA", label: "Zaakceptowane", count: statusCounts.ZAAKCEPTOWANA },
-    { id: "ODRZUCONA", label: "Odrzucone", count: statusCounts.ODRZUCONA },
-    { id: "NEGOCJACJE", label: "Negocjacje", count: statusCounts.NEGOCJACJE },
+  const filterCards = [
+    {
+      id: "all",
+      label: "Wszystkie",
+      count: statusCounts.all,
+      icon: Briefcase,
+      color: "primary",
+      activeClass: "bg-primary/5 dark:bg-primary/10 text-primary border-primary/40 ring-1 ring-primary/20",
+      inactiveClass: "bg-card border-border/40 text-muted-foreground hover:bg-secondary/10",
+      iconClass: "text-primary bg-primary/10"
+    },
+    {
+      id: "ZLOZONA",
+      label: "Złożone",
+      count: statusCounts.ZLOZONA,
+      icon: Clock,
+      color: "amber",
+      activeClass: "bg-amber-500/5 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/40 ring-1 ring-amber-500/20",
+      inactiveClass: "bg-card border-border/40 text-muted-foreground hover:bg-secondary/10",
+      iconClass: "text-amber-600 dark:text-amber-400 bg-amber-500/10"
+    },
+    {
+      id: "ZAAKCEPTOWANA",
+      label: "Zaakceptowane",
+      count: statusCounts.ZAAKCEPTOWANA,
+      icon: CheckCircle2,
+      color: "emerald",
+      activeClass: "bg-emerald-500/5 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/40 ring-1 ring-emerald-500/20",
+      inactiveClass: "bg-card border-border/40 text-muted-foreground hover:bg-secondary/10",
+      iconClass: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
+    },
+    {
+      id: "ODRZUCONA",
+      label: "Odrzucone",
+      count: statusCounts.ODRZUCONA,
+      icon: XCircle,
+      color: "rose",
+      activeClass: "bg-rose-500/5 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/40 ring-1 ring-rose-500/20",
+      inactiveClass: "bg-card border-border/40 text-muted-foreground hover:bg-secondary/10",
+      iconClass: "text-rose-600 dark:text-rose-400 bg-rose-500/10"
+    },
+    {
+      id: "NEGOCJACJE",
+      label: "Negocjacje",
+      count: statusCounts.NEGOCJACJE,
+      icon: FileText,
+      color: "indigo",
+      activeClass: "bg-indigo-500/5 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/40 ring-1 ring-indigo-500/20",
+      inactiveClass: "bg-card border-border/40 text-muted-foreground hover:bg-secondary/10",
+      iconClass: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10"
+    },
   ]
 
   return (
@@ -244,43 +289,83 @@ export default function LawFirmOffersPage() {
         </div>
       </div>
 
-      {/* Unified Stats and Filters Tab Bar */}
+      {/* Interactive Stats Dashboard Grid (Filters) */}
       <div
         id="tour-oferty-stats"
-        className="w-full max-w-full sm:rounded-2xl sm:border sm:border-border/40 overflow-hidden bg-transparent sm:bg-card/30"
+        className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6"
       >
-        <div
-          id="tour-oferty-filters"
-          className="w-full flex items-center gap-2 overflow-x-auto scrollbar-none py-1.5 sm:py-0.5 px-1 sm:px-0.5"
-        >
-          {tabs.map((tab) => {
-            const isSelected = statusFilter === tab.id
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setStatusFilter(tab.id)}
+        {filterCards.map((card) => {
+          const isSelected = statusFilter === card.id
+          const Icon = card.icon
+
+          return (
+            <button
+              key={card.id}
+              onClick={() => setStatusFilter(card.id)}
+              className={cn(
+                "relative flex flex-col items-start p-4 rounded-2xl border text-left transition-all duration-300 cursor-pointer overflow-hidden",
+                card.id === "all" ? "col-span-2 md:col-span-1" : "col-span-1",
+                isSelected
+                  ? card.activeClass + " shadow-md shadow-black/5 dark:shadow-none translate-y-[-2px]"
+                  : card.inactiveClass + " hover:border-border hover:translate-y-[-1px] shadow-xs"
+              )}
+            >
+              {/* Subtle top status border color */}
+              <div
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 sm:py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap cursor-pointer",
-                  isSelected
-                    ? "bg-primary text-primary-foreground shadow-xs font-bold scale-102"
-                    : "bg-secondary/30 sm:bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  "absolute top-0 left-0 right-0 h-[3px] opacity-0 transition-opacity duration-300",
+                  isSelected && "opacity-100",
+                  card.color === "primary" && "bg-primary",
+                  card.color === "amber" && "bg-amber-500",
+                  card.color === "emerald" && "bg-emerald-500",
+                  card.color === "rose" && "bg-rose-500",
+                  card.color === "indigo" && "bg-indigo-500"
                 )}
-              >
-                <span>{tab.label}</span>
-                <span
+              />
+
+              <div className="flex items-center gap-2.5 w-full justify-between mb-3">
+                <div
                   className={cn(
-                    "px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold transition-colors duration-200",
+                    "p-2 rounded-xl shrink-0 transition-all duration-300",
                     isSelected
-                      ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-muted dark:bg-muted/50 text-muted-foreground"
+                      ? card.iconClass
+                      : "text-muted-foreground/75 bg-muted/40 dark:bg-muted/10 group-hover:bg-muted/60"
                   )}
                 >
-                  {tab.count}
+                  <Icon className="h-4 w-4" />
+                </div>
+
+                {/* Large count */}
+                <span
+                  className={cn(
+                    "text-xl sm:text-2xl font-extrabold tracking-tight tabular-nums",
+                    isSelected ? "text-foreground" : "text-muted-foreground/90"
+                  )}
+                >
+                  {card.count}
                 </span>
-              </button>
-            )
-          })}
-        </div>
+              </div>
+
+              <div className="w-full">
+                <p
+                  className={cn(
+                    "text-[10px] sm:text-xs font-bold leading-none uppercase tracking-wider",
+                    isSelected ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {card.label}
+                </p>
+                <p className="text-[9px] sm:text-[10px] text-muted-foreground/60 mt-1 truncate">
+                  {card.id === "all" && "Suma wszystkich ofert"}
+                  {card.id === "ZLOZONA" && "Oczekujące na decyzję"}
+                  {card.id === "ZAAKCEPTOWANA" && "Zaakceptowane przez klienta"}
+                  {card.id === "ODRZUCONA" && "Odrzucone przez klienta"}
+                  {card.id === "NEGOCJACJE" && "W trakcie ustaleń"}
+                </p>
+              </div>
+            </button>
+          )
+        })}
       </div>
 
       {/* Offers List Section */}
