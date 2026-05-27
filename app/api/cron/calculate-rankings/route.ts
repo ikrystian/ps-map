@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       })
     })
 
-    await Promise.all(updates)
+    await prisma.$transaction(updates)
 
     return Response.json({
       success: true,

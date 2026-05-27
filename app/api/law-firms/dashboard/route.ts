@@ -123,21 +123,17 @@ export async function GET(request: NextRequest) {
     })
 
     // Oblicz średnią ocenę i liczbę opinii
-    const reviews = await prisma.review.findMany({
+    const reviewStats = await prisma.review.aggregate({
       where: {
         lawFirmId: updatedLawFirm.id,
         aktywna: true,
       },
-      select: {
-        ocenaOgolna: true,
-      },
+      _avg: { ocenaOgolna: true },
+      _count: { id: true },
     })
 
-    const averageRating = reviews.length > 0
-      ? reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / reviews.length
-      : 0
-
-    const reviewsCount = reviews.length
+    const averageRating = reviewStats._avg.ocenaOgolna || 0
+    const reviewsCount = reviewStats._count.id
 
     // Statystyki wyświetleń pobierane z LawFirmStats dla bieżącego miesiąca i roku
     const currentDate = new Date()
@@ -157,37 +153,49 @@ export async function GET(request: NextRequest) {
 
     // Oblicz rzeczywistą pozycję w rankingu (w kategorii jeśli wybrano, lub ogólną)
     let calculatedRankingPosition: number | null = null
-    if (lawFirm.mainCategoryId) {
-      const firmsInSameCategory = await prisma.lawFirm.findMany({
+    const currentRanking = lawFirm.pozycjaRanking
+    const currentViews = lawFirm.wyswietleniaProfilu
+
+    const baseWhere = lawFirm.mainCategoryId ? { mainCategoryId: lawFirm.mainCategoryId } : {}
+
+    if (currentRanking !== null && currentRanking !== undefined) {
+      const higherRankedCount = await prisma.lawFirm.count({
         where: {
-          mainCategoryId: lawFirm.mainCategoryId,
+          ...baseWhere,
+          OR: [
+            { pozycjaRanking: { gt: currentRanking } },
+            {
+              pozycjaRanking: currentRanking,
+              wyswietleniaProfilu: { gt: currentViews },
+            },
+            {
+              pozycjaRanking: currentRanking,
+              wyswietleniaProfilu: currentViews,
+              id: { lt: lawFirm.id }, // Tie-breaker
+            }
+          ],
         },
-        select: {
-          id: true,
-          pozycjaRanking: true,
-          wyswietleniaProfilu: true,
-        },
-        orderBy: [
-          { pozycjaRanking: { sort: "desc", nulls: "last" } },
-          { wyswietleniaProfilu: "desc" },
-        ],
       })
-      const pos = firmsInSameCategory.findIndex((f) => f.id === lawFirm.id)
-      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+      calculatedRankingPosition = higherRankedCount + 1
     } else {
-      const allFirms = await prisma.lawFirm.findMany({
-        select: {
-          id: true,
-          pozycjaRanking: true,
-          wyswietleniaProfilu: true,
+       const higherRankedCount = await prisma.lawFirm.count({
+        where: {
+          ...baseWhere,
+          OR: [
+            { pozycjaRanking: { not: null } },
+            {
+              pozycjaRanking: null,
+              wyswietleniaProfilu: { gt: currentViews },
+            },
+            {
+              pozycjaRanking: null,
+              wyswietleniaProfilu: currentViews,
+              id: { lt: lawFirm.id }, // Tie-breaker
+            }
+          ],
         },
-        orderBy: [
-          { pozycjaRanking: { sort: "desc", nulls: "last" } },
-          { wyswietleniaProfilu: "desc" },
-        ],
       })
-      const pos = allFirms.findIndex((f) => f.id === lawFirm.id)
-      calculatedRankingPosition = pos !== -1 ? pos + 1 : null
+      calculatedRankingPosition = higherRankedCount + 1
     }
 
     return Response.json({
