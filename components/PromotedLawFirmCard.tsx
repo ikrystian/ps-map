@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Star, CheckCircle2 } from "lucide-react"
 import { PromotionBadge } from "./PromotionBadge"
 import Link from "next/link"
-import { cn, getSubscriptionBorderColor } from "@/lib/utils"
+import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
 
 interface PromotedLawFirmCardProps {
   lawFirm: {
@@ -127,7 +127,7 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
         {/* Description */}
         {lawFirm.opis && (
           <p className="text-sm text-muted-foreground line-clamp-2">
-            {lawFirm.opis}
+            {stripHtmlTags(lawFirm.opis)}
           </p>
         )}
 
