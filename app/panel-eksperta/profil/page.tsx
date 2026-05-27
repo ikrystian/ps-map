@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, Suspense } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -47,7 +48,24 @@ interface Category {
   nazwa: string
 }
 
-export default function LawFirmProfilePage() {
+function LawFirmProfilePageContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState("basic")
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab")
+    if (tabParam && ["basic", "contact", "specialization", "multimedia", "consultations", "additional"].includes(tabParam)) {
+      setActiveTab(tabParam)
+    }
+  }, [searchParams])
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    const currentPath = window.location.pathname
+    const newUrl = `${currentPath}?tab=${value}`
+    router.push(newUrl, { scroll: false })
+  }
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -545,7 +563,7 @@ export default function LawFirmProfilePage() {
         <p className="text-muted-foreground">Zarządzaj informacjami o swoim profilu</p>
       </div>
 
-      <Tabs defaultValue="basic" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList id="tour-profil-tabs">
           <TabsTrigger value="basic">Podstawowe</TabsTrigger>
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
@@ -1546,6 +1564,18 @@ export default function LawFirmProfilePage() {
         />
       )}
     </form>
+  )
+}
+
+export default function LawFirmProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <LawFirmProfilePageContent />
+    </Suspense>
   )
 }
 
