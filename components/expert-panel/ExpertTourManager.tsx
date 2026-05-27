@@ -312,7 +312,7 @@ const TOUR_STEPS: Record<string, TourStep[]> = {
       element: "#tour-promo-new",
       title: "➕ Nowa promocja",
       intro:
-        "Kliknij tutaj, aby aktywować wybraną promocję. Wybierzesz typ, czas trwania i datę startu, a system odejmie odpowiednią liczbę punktów.",
+        "Kliknij tutaj, aby przejść do wyboru promocji. Wybierz odpowiedni typ z listy poniżej, a następnie skonfiguruj szczegóły w okienku.",
       position: "bottom",
     },
     {

@@ -345,18 +345,6 @@ export default function LawFirmPromotionPage() {
     }
   }
 
-  const handleTypeChange = (value: string) => {
-    setSelectedType(value)
-    setStartDate("")
-    setAvailability(null)
-    if (value === "POLECANI_PRAWNICY") {
-      setSelectedCategory("Adwokat")
-    } else if (value === "NAJCZESCIEJ_KONSULTOWANE") {
-      setSelectedCategory("alimenty-i-rozwody")
-    } else {
-      setSelectedCategory("all")
-    }
-  }
 
   const isFormInvalid = () => {
     if (!selectedType || !startDate) return true
@@ -445,8 +433,18 @@ export default function LawFirmPromotionPage() {
     setAvailability(null)
   }
 
-  const handleOpenDialog = () => {
+  const handleOpenDialog = (type: string) => {
     resetForm()
+    setSelectedType(type)
+    
+    if (type === "POLECANI_PRAWNICY") {
+      setSelectedCategory("Adwokat")
+    } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
+      setSelectedCategory("alimenty-i-rozwody")
+    } else {
+      setSelectedCategory("all")
+    }
+    
     setDialogOpen(true)
   }
 
@@ -604,7 +602,14 @@ export default function LawFirmPromotionPage() {
             <Clock className="h-4 w-4 mr-2" />
             Historia zakupów
           </Button>
-          <Button id="tour-promo-new" onClick={handleOpenDialog} size="lg">
+          <Button
+            id="tour-promo-new"
+            onClick={() => {
+              const element = document.getElementById("tour-promo-types")
+              element?.scrollIntoView({ behavior: "smooth" })
+            }}
+            size="lg"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Nowa promocja
           </Button>
@@ -706,8 +711,7 @@ export default function LawFirmPromotionPage() {
                       <Button
                         className="w-full"
                         onClick={() => {
-                          setSelectedType(promo.type)
-                          handleOpenDialog()
+                          handleOpenDialog(promo.type)
                         }}
                       >
                         Wybierz
@@ -949,26 +953,31 @@ export default function LawFirmPromotionPage() {
           </DialogHeader>
           <div className="space-y-4">
             {/* Typ promocji */}
-            <div>
-              <Label htmlFor="promotion-type">Typ promocji *</Label>
-              <Select value={selectedType} onValueChange={handleTypeChange}>
-                <SelectTrigger id="promotion-type" className="mt-2">
-                  <SelectValue placeholder="Wybierz typ promocji" />
-                </SelectTrigger>
-                <SelectContent>
-                  {promotionTypes.map((promo) => (
-                    <SelectItem key={promo.type} value={promo.type}>
-                      {promo.label} -{" "}
-                      {promo.pointsPerMonth
-                        ? `${promo.pointsPerMonth} pkt/miesiąc`
-                        : promo.type === "PODBICIE_OGLOSZENIA"
-                          ? `${promo.pointsPerDay} pkt/dzień`
-                          : `${promo.pointsPerWeek} pkt/tydzień`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {selectedType && (
+              <div>
+                <Label>Wybrany typ promocji</Label>
+                <div className="mt-2 p-3 bg-secondary/30 border border-border rounded-lg flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {(() => {
+                      const promo = promotionTypes.find((p) => p.type === selectedType)
+                      if (!promo) return null
+                      const Icon = getIconComponent(promo.icon)
+                      return (
+                        <>
+                          <div className="p-2 rounded-md bg-background border">
+                            <Icon className="h-5 w-5" style={{ color: promo.color || '#3b82f6' }} />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-sm">{promo.label}</div>
+                            <div className="text-xs text-muted-foreground">{promo.description}</div>
+                          </div>
+                        </>
+                      )
+                    })()}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Czas trwania */}
             {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
