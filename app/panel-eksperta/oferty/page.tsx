@@ -247,11 +247,11 @@ export default function LawFirmOffersPage() {
       {/* Unified Stats and Filters Tab Bar */}
       <div
         id="tour-oferty-stats"
-        className="w-full  rounded-2xl border border-border/40"
+        className="w-full max-w-full sm:rounded-2xl sm:border sm:border-border/40 overflow-hidden bg-transparent sm:bg-card/30"
       >
         <div
           id="tour-oferty-filters"
-          className="flex items-center gap-1 overflow-x-auto scrollbar-none py-0.5 px-0.5"
+          className="w-full flex items-center gap-2 overflow-x-auto scrollbar-none py-1.5 sm:py-0.5 px-1 sm:px-0.5"
         >
           {tabs.map((tab) => {
             const isSelected = statusFilter === tab.id
@@ -260,10 +260,10 @@ export default function LawFirmOffersPage() {
                 key={tab.id}
                 onClick={() => setStatusFilter(tab.id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap",
+                  "flex items-center gap-2 px-4 py-2.5 sm:py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap cursor-pointer",
                   isSelected
-                    ? "bg-primary text-primary-foreground shadow-xs font-bold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                    ? "bg-primary text-primary-foreground shadow-xs font-bold scale-102"
+                    : "bg-secondary/30 sm:bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 )}
               >
                 <span>{tab.label}</span>
@@ -272,7 +272,7 @@ export default function LawFirmOffersPage() {
                     "px-1.5 py-0.5 rounded-full text-[10px] leading-none font-bold transition-colors duration-200",
                     isSelected
                       ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
+                      : "bg-muted dark:bg-muted/50 text-muted-foreground"
                   )}
                 >
                   {tab.count}
