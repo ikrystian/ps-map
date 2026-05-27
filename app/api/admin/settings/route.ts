@@ -69,6 +69,30 @@ export async function GET(request: NextRequest) {
         description: "Czy płatność testowa (TEST) ma być automatycznie akceptowana przez system (status ZAPLACONE)",
       }
     }
+    if (!settingsObject.enablePaymentTest) {
+      settingsObject.enablePaymentTest = {
+        value: "true",
+        description: "Czy płatność testowa (TEST) ma być dostępna jako metoda płatności",
+      }
+    }
+    if (!settingsObject.enablePaymentPrzelewy24) {
+      settingsObject.enablePaymentPrzelewy24 = {
+        value: "true",
+        description: "Czy płatność przez Przelewy24 ma być dostępna jako metoda płatności",
+      }
+    }
+    if (!settingsObject.enablePaymentPayU) {
+      settingsObject.enablePaymentPayU = {
+        value: "true",
+        description: "Czy płatność przez PayU ma być dostępna jako metoda płatności",
+      }
+    }
+    if (!settingsObject.enablePaymentPrzelew) {
+      settingsObject.enablePaymentPrzelew = {
+        value: "true",
+        description: "Czy płatność przelewem tradycyjnym ma być dostępna jako metoda płatności",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

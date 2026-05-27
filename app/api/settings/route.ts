@@ -38,6 +38,18 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.deleteReviewCostRating3) {
       settingsObject.deleteReviewCostRating3 = "100"
     }
+    if (!settingsObject.enablePaymentTest) {
+      settingsObject.enablePaymentTest = "true"
+    }
+    if (!settingsObject.enablePaymentPrzelewy24) {
+      settingsObject.enablePaymentPrzelewy24 = "true"
+    }
+    if (!settingsObject.enablePaymentPayU) {
+      settingsObject.enablePaymentPayU = "true"
+    }
+    if (!settingsObject.enablePaymentPrzelew) {
+      settingsObject.enablePaymentPrzelew = "true"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -53,6 +65,10 @@ export async function GET(request: NextRequest) {
         deleteReviewCostRating1: "500",
         deleteReviewCostRating2: "300",
         deleteReviewCostRating3: "100",
+        enablePaymentTest: "true",
+        enablePaymentPrzelewy24: "true",
+        enablePaymentPayU: "true",
+        enablePaymentPrzelew: "true",
       },
       { status: 200 }
     )

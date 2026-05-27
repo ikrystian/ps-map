@@ -147,6 +147,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const paymentSettingKeys: Record<string, string> = {
+      TEST: "enablePaymentTest",
+      PRZELEWY24: "enablePaymentPrzelewy24",
+      PAYU: "enablePaymentPayU",
+      PRZELEW: "enablePaymentPrzelew",
+    }
+    
+    const settingKey = paymentSettingKeys[metodaPlatnosci]
+    if (settingKey) {
+      const paymentSetting = await prisma.settings.findUnique({
+        where: { key: settingKey },
+      })
+      const isEnabled = paymentSetting ? paymentSetting.value !== "false" : true
+      if (!isEnabled) {
+        return Response.json(
+          { error: "Wybrana metoda płatności jest obecnie wyłączona w systemie" },
+          { status: 400 }
+        )
+      }
+    } else {
+      return Response.json(
+        { error: "Wybrana metoda płatności nie jest obecnie obsługiwana" },
+        { status: 400 }
+      )
+    }
+
     const isTestPayment = metodaPlatnosci === "TEST"
 
     // Sprawdź czy płatność testowa ma być automatycznie akceptowana

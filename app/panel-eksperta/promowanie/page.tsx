@@ -436,7 +436,7 @@ export default function LawFirmPromotionPage() {
   const handleOpenDialog = (type: string) => {
     resetForm()
     setSelectedType(type)
-    
+
     if (type === "POLECANI_PRAWNICY") {
       setSelectedCategory("Adwokat")
     } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
@@ -444,7 +444,7 @@ export default function LawFirmPromotionPage() {
     } else {
       setSelectedCategory("all")
     }
-    
+
     setDialogOpen(true)
   }
 
@@ -946,7 +946,7 @@ export default function LawFirmPromotionPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Utwórz nową promocję</DialogTitle>
+            <DialogTitle>Wybieram</DialogTitle>
             <DialogDescription>
               Wypełnij formularz, aby rozpocząć promocję swojego profilu
             </DialogDescription>
@@ -1212,7 +1212,7 @@ export default function LawFirmPromotionPage() {
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Potwierdź utworzenie promocji</DialogTitle>
+            <DialogTitle>Potwierdź wykupienie promocji w systemie</DialogTitle>
             <DialogDescription>
               Sprawdź szczegóły promocji przed utworzeniem
             </DialogDescription>
@@ -1297,7 +1297,7 @@ export default function LawFirmPromotionPage() {
             </Button>
             <Button onClick={handleSubmit} disabled={submitting}>
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Utwórz promocję
+              Zamawiam
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -64,10 +64,56 @@ export default function CheckoutPage() {
   const [orderData, setOrderData] = useState<OrderData | null>(null)
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<string>("PRZELEWY24")
+  const [settings, setSettings] = useState<Record<string, string>>({
+    enablePaymentTest: "true",
+    enablePaymentPrzelewy24: "true",
+    enablePaymentPayU: "true",
+    enablePaymentPrzelew: "true",
+  })
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [termsAccepted, setTermsAccepted] = useState(false)
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch("/api/settings")
+      if (response.ok) {
+        const data = await response.json()
+        setSettings(data)
+        
+        // Fallback logic for selected payment method
+        const pendingOrder = sessionStorage.getItem("pendingOrder")
+        let defaultMethod = "PRZELEWY24"
+        if (pendingOrder) {
+          try {
+            const dataObj = JSON.parse(pendingOrder)
+            defaultMethod = dataObj.metodaPlatnosci || "PRZELEWY24"
+          } catch(e) {}
+        }
+        
+        const isTestEnabled = data.enablePaymentTest !== "false"
+        const isP24Enabled = data.enablePaymentPrzelewy24 !== "false"
+        const isPayUEnabled = data.enablePaymentPayU !== "false"
+        const isPrzelewEnabled = data.enablePaymentPrzelew !== "false"
+        
+        const isCurrentMethodEnabled = 
+          (defaultMethod === "TEST" && isTestEnabled) ||
+          (defaultMethod === "PRZELEWY24" && isP24Enabled) ||
+          (defaultMethod === "PAYU" && isPayUEnabled) ||
+          (defaultMethod === "PRZELEW" && isPrzelewEnabled)
+          
+        if (!isCurrentMethodEnabled) {
+          if (isP24Enabled) setPaymentMethod("PRZELEWY24")
+          else if (isPayUEnabled) setPaymentMethod("PAYU")
+          else if (isPrzelewEnabled) setPaymentMethod("PRZELEW")
+          else if (isTestEnabled) setPaymentMethod("TEST")
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching settings in checkout:", error)
+    }
+  }
 
   useEffect(() => {
     // Pobierz dane zamówienia z sessionStorage
@@ -88,6 +134,7 @@ export default function CheckoutPage() {
     }
 
     fetchLawFirmData()
+    fetchSettings()
   }, [router])
 
   const fetchLawFirmData = async () => {
@@ -262,7 +309,7 @@ export default function CheckoutPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
@@ -271,31 +318,43 @@ export default function CheckoutPage() {
     return null
   }
 
+  const isTestEnabled = settings.enablePaymentTest !== "false"
+  const isP24Enabled = settings.enablePaymentPrzelewy24 !== "false"
+  const isPayUEnabled = settings.enablePaymentPayU !== "false"
+  const isPrzelewEnabled = settings.enablePaymentPrzelew !== "false"
+  const anyPaymentMethodEnabled = isTestEnabled || isP24Enabled || isPayUEnabled || isPrzelewEnabled
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
-          onClick={() => router.push(orderData?.type === "PACKAGE" ? "/panel-eksperta/pakiet" : "/panel-eksperta/punkty")}
+          onClick={() => router.push(orderData.type === "PACKAGE" ? "/panel-eksperta/ustawienia" : "/panel-eksperta/punkty")}
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">Podsumowanie zamówienia</h1>
-          <p className="text-muted-foreground mt-2">
-            Sprawdź szczegóły i dokończ zakup
+          <h1 className="text-xl font-medium tracking-tight font-playfair flex items-center gap-2">
+            <ShoppingCart className="h-6 w-6" />
+            Finalizacja zamówienia
+          </h1>
+          <p className="text-muted-foreground">
+            Dokończ płatność, aby aktywować pakiet lub punkty
           </p>
         </div>
       </div>
 
+      <Separator />
+
       {error && (
-        <Card className="border-destructive">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
-              <p>{error}</p>
+        <Card className="border-destructive/20 bg-destructive/5">
+          <CardContent className="flex items-start gap-3 pt-6 text-destructive">
+            <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+            <div className="space-y-1">
+              <p className="font-medium">Wystąpił błąd</p>
+              <p className="text-sm text-muted-foreground">{error}</p>
             </div>
           </CardContent>
         </Card>
@@ -316,54 +375,74 @@ export default function CheckoutPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent border-primary/40 bg-primary/5 dark:bg-primary/10">
-                    <RadioGroupItem value="TEST" id="test" />
-                    <Label htmlFor="test" className="flex-1 cursor-pointer">
-                      <div className="font-medium flex items-center gap-2">
-                        Płatność Testowa
-                        <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
-                          Auto-akceptacja
-                        </span>
+              {anyPaymentMethodEnabled ? (
+                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <div className="space-y-3">
+                    {isTestEnabled && (
+                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent border-primary/40 bg-primary/5 dark:bg-primary/10">
+                        <RadioGroupItem value="TEST" id="test" />
+                        <Label htmlFor="test" className="flex-1 cursor-pointer">
+                          <div className="font-medium flex items-center gap-2">
+                            Płatność Testowa
+                            <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
+                              Auto-akceptacja
+                            </span>
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Natychmiastowe opłacenie i aktywacja zamówienia (symulacja płatności)
+                          </div>
+                        </Label>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Natychmiastowe opłacenie i aktywacja zamówienia (symulacja płatności)
-                      </div>
-                    </Label>
-                  </div>
+                    )}
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                    <RadioGroupItem value="PRZELEWY24" id="przelewy24" />
-                    <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Przelewy24</div>
-                      <div className="text-sm text-muted-foreground">
-                        Szybka płatność online (przelew, BLIK, karty)
+                    {isP24Enabled && (
+                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
+                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" />
+                        <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
+                          <div className="font-medium">Przelewy24</div>
+                          <div className="text-sm text-muted-foreground">
+                            Szybka płatność online (przelew, BLIK, karty)
+                          </div>
+                        </Label>
                       </div>
-                    </Label>
-                  </div>
+                    )}
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                    <RadioGroupItem value="PAYU" id="payu" />
-                    <Label htmlFor="payu" className="flex-1 cursor-pointer">
-                      <div className="font-medium">PayU</div>
-                      <div className="text-sm text-muted-foreground">
-                        Płatność online przez PayU
+                    {isPayUEnabled && (
+                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
+                        <RadioGroupItem value="PAYU" id="payu" />
+                        <Label htmlFor="payu" className="flex-1 cursor-pointer">
+                          <div className="font-medium">PayU</div>
+                          <div className="text-sm text-muted-foreground">
+                            Płatność online przez PayU
+                          </div>
+                        </Label>
                       </div>
-                    </Label>
-                  </div>
+                    )}
 
-                  <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                    <RadioGroupItem value="PRZELEW" id="przelew" />
-                    <Label htmlFor="przelew" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Przelew tradycyjny</div>
-                      <div className="text-sm text-muted-foreground">
-                        Punkty zostaną przyznane po zaksięgowaniu przelewu
+                    {isPrzelewEnabled && (
+                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
+                        <RadioGroupItem value="PRZELEW" id="przelew" />
+                        <Label htmlFor="przelew" className="flex-1 cursor-pointer">
+                          <div className="font-medium">Przelew tradycyjny</div>
+                          <div className="text-sm text-muted-foreground">
+                            Punkty zostaną przyznane po zaksięgowaniu przelewu
+                          </div>
+                        </Label>
                       </div>
-                    </Label>
+                    )}
+                  </div>
+                </RadioGroup>
+              ) : (
+                <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-destructive">
+                  <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="font-medium">Brak dostępnych metod płatności</p>
+                    <p className="text-sm text-muted-foreground">
+                      Wszystkie metody płatności są obecnie wyłączone w systemie. Skontaktuj się ze wsparciem technicznym w celu sfinalizowania zamówienia.
+                    </p>
                   </div>
                 </div>
-              </RadioGroup>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -378,14 +457,14 @@ export default function CheckoutPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Punkty:</span>
-                  <span className="font-medium">{lawFirm.punktySaldo} pkt</span>
+                  <span className="text-sm text-muted-foreground">Twój bilans:</span>
+                  <span className="font-semibold text-primary">{lawFirm.punktySaldo} pkt</span>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Podsumowanie zamówienia */}
+          {/* Podsumowanie płatności */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
@@ -399,34 +478,19 @@ export default function CheckoutPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Pakiet:</span>
-                      <span className="font-medium">{orderData.planName}</span>
+                      <span className="font-semibold">{orderData.planName}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Okres:</span>
                       <span className="font-medium">{orderData.periodLabel}</span>
                     </div>
-                    {orderData.punktyGratis && orderData.punktyGratis > 0 && (
-                      <div className="flex items-center justify-between text-sm text-green-600">
+                    {orderData.punktyGratis && orderData.punktyGratis > 0 ? (
+                      <div className="flex items-center justify-between text-sm text-green-600 font-medium">
                         <span>Punkty gratis:</span>
-                        <span className="font-medium">+{orderData.punktyGratis} pkt</span>
+                        <span>+{orderData.punktyGratis} pkt</span>
                       </div>
-                    )}
+                    ) : null}
                   </div>
-
-                  {orderData.features && (
-                    <>
-                      <Separator />
-                      <div className="space-y-1 text-xs text-muted-foreground">
-                        <div className="font-semibold text-foreground mb-2">Korzyści:</div>
-                        <div>✓ Dostęp do {orderData.features.dostepDoSpraw ?? "∞"} spraw</div>
-                        <div>✓ {orderData.features.kategorieSpraw ?? "∞"} kategorii spraw</div>
-                        <div>✓ {orderData.features.wojewodztwa} województw</div>
-                        {orderData.features.priorytetWyszukiwanie && <div>✓ Priorytet w wyszukiwaniu</div>}
-                        {orderData.features.statystykiAnalizy && <div>✓ Statystyki i analizy</div>}
-                        {orderData.features.mozliwoscBloga && <div>✓ Możliwość prowadzenia bloga</div>}
-                      </div>
-                    </>
-                  )}
 
                   <Separator />
 
@@ -469,7 +533,7 @@ export default function CheckoutPage() {
                 </>
               )}
 
-              <div className="space-y-3">
+              <div className="space-y-3 pt-2">
                 <div className="flex items-start space-x-2">
                   <Checkbox
                     id="terms"
@@ -493,7 +557,7 @@ export default function CheckoutPage() {
                   className="w-full"
                   size="lg"
                   onClick={handleSubmitOrder}
-                  disabled={submitting || !termsAccepted}
+                  disabled={submitting || !termsAccepted || !anyPaymentMethodEnabled}
                 >
                   {submitting ? (
                     <>

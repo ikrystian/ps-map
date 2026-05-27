@@ -118,6 +118,43 @@ export async function POST(request: NextRequest) {
     // Oblicz finalną cenę po uwzględnieniu kredytu
     const finalPrice = Math.max(price - proRataCredit, 0)
 
+    // Walidacja metody płatności
+    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "POINTS", "TEST"]
+    if (!validPaymentMethods.includes(metodaPlatnosci)) {
+      return Response.json(
+        { error: "Nieprawidłowa metoda płatności" },
+        { status: 400 }
+      )
+    }
+
+    if (metodaPlatnosci !== "POINTS") {
+      const paymentSettingKeys: Record<string, string> = {
+        TEST: "enablePaymentTest",
+        PRZELEWY24: "enablePaymentPrzelewy24",
+        PAYU: "enablePaymentPayU",
+        PRZELEW: "enablePaymentPrzelew",
+      }
+      
+      const settingKey = paymentSettingKeys[metodaPlatnosci]
+      if (settingKey) {
+        const paymentSetting = await prisma.settings.findUnique({
+          where: { key: settingKey },
+        })
+        const isEnabled = paymentSetting ? paymentSetting.value !== "false" : true
+        if (!isEnabled) {
+          return Response.json(
+            { error: "Wybrana metoda płatności jest obecnie wyłączona w systemie" },
+            { status: 400 }
+          )
+        }
+      } else {
+        return Response.json(
+          { error: "Wybrana metoda płatności nie jest obecnie obsługiwana" },
+          { status: 400 }
+        )
+      }
+    }
+
     // Oblicz daty subskrypcji
     const dataPakietuOd = new Date()
     const dataPakietuDo = new Date()

@@ -51,6 +51,22 @@ interface Settings {
     value: string
     description: string | null
   }
+  enablePaymentTest?: {
+    value: string
+    description: string | null
+  }
+  enablePaymentPrzelewy24?: {
+    value: string
+    description: string | null
+  }
+  enablePaymentPayU?: {
+    value: string
+    description: string | null
+  }
+  enablePaymentPrzelew?: {
+    value: string
+    description: string | null
+  }
   deleteReviewCostRating1?: {
     value: string
     description: string | null
@@ -79,6 +95,10 @@ export default function AdminSettingsPage() {
   const [maxTags, setMaxTags] = useState("5")
   const [showExpertTutorial, setShowExpertTutorial] = useState("true")
   const [autoApproveTestPayment, setAutoApproveTestPayment] = useState("true")
+  const [enablePaymentTest, setEnablePaymentTest] = useState("true")
+  const [enablePaymentPrzelewy24, setEnablePaymentPrzelewy24] = useState("true")
+  const [enablePaymentPayU, setEnablePaymentPayU] = useState("true")
+  const [enablePaymentPrzelew, setEnablePaymentPrzelew] = useState("true")
   const [deleteCost1, setDeleteCost1] = useState("500")
   const [deleteCost2, setDeleteCost2] = useState("300")
   const [deleteCost3, setDeleteCost3] = useState("100")
@@ -103,6 +123,10 @@ export default function AdminSettingsPage() {
         setMaxTags(data.maxLawFirmTags?.value || "5")
         setShowExpertTutorial(data.showExpertTutorial?.value || "true")
         setAutoApproveTestPayment(data.autoApproveTestPayment?.value || "true")
+        setEnablePaymentTest(data.enablePaymentTest?.value || "true")
+        setEnablePaymentPrzelewy24(data.enablePaymentPrzelewy24?.value || "true")
+        setEnablePaymentPayU(data.enablePaymentPayU?.value || "true")
+        setEnablePaymentPrzelew(data.enablePaymentPrzelew?.value || "true")
         setDeleteCost1(data.deleteReviewCostRating1?.value || "500")
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
         setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
@@ -208,6 +232,22 @@ export default function AdminSettingsPage() {
             autoApproveTestPayment: {
               value: autoApproveTestPayment,
               description: "Czy płatność testowa (TEST) ma być automatycznie akceptowana przez system (status ZAPLACONE)",
+            },
+            enablePaymentTest: {
+              value: enablePaymentTest,
+              description: "Czy płatność testowa (TEST) ma być dostępna jako metoda płatności",
+            },
+            enablePaymentPrzelewy24: {
+              value: enablePaymentPrzelewy24,
+              description: "Czy płatność przez Przelewy24 ma być dostępna jako metoda płatności",
+            },
+            enablePaymentPayU: {
+              value: enablePaymentPayU,
+              description: "Czy płatność przez PayU ma być dostępna jako metoda płatności",
+            },
+            enablePaymentPrzelew: {
+              value: enablePaymentPrzelew,
+              description: "Czy płatność przelewem tradycyjnym ma być dostępna jako metoda płatności",
             },
             deleteReviewCostRating1: {
               value: deleteCost1,
@@ -509,25 +549,108 @@ export default function AdminSettingsPage() {
               onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
             />
           </div>
+        </CardContent>
+      </Card>
 
-          <Separator className="my-4" />
-
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
+      {/* Metody płatności */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Metody płatności</CardTitle>
+          <CardDescription>
+            Włączaj i wyłączaj poszczególne metody płatności w systemie oraz konfiguruj ich działanie
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Przelewy24 */}
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
             <div className="space-y-0.5">
-              <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
-                Automatyczna akceptacja płatności testowych
-                <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+              <Label htmlFor="enablePaymentPrzelewy24" className="text-base font-semibold">
+                Przelewy24
               </Label>
               <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
+                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Przelewy24 (BLIK, szybkie przelewy, karty).
               </p>
             </div>
             <Switch
-              id="autoApproveTestPayment"
-              checked={autoApproveTestPayment === "true"}
-              onCheckedChange={(checked) => setAutoApproveTestPayment(checked ? "true" : "false")}
+              id="enablePaymentPrzelewy24"
+              checked={enablePaymentPrzelewy24 === "true"}
+              onCheckedChange={(checked) => setEnablePaymentPrzelewy24(checked ? "true" : "false")}
             />
           </div>
+
+          {/* PayU */}
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="enablePaymentPayU" className="text-base font-semibold">
+                PayU
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu PayU.
+              </p>
+            </div>
+            <Switch
+              id="enablePaymentPayU"
+              checked={enablePaymentPayU === "true"}
+              onCheckedChange={(checked) => setEnablePaymentPayU(checked ? "true" : "false")}
+            />
+          </div>
+
+          {/* Przelew tradycyjny */}
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="enablePaymentPrzelew" className="text-base font-semibold">
+                Przelew tradycyjny
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza opcję zapłaty przelewem tradycyjnym (wymaga ręcznego zatwierdzenia po zaksięgowaniu wpłaty).
+              </p>
+            </div>
+            <Switch
+              id="enablePaymentPrzelew"
+              checked={enablePaymentPrzelew === "true"}
+              onCheckedChange={(checked) => setEnablePaymentPrzelew(checked ? "true" : "false")}
+            />
+          </div>
+
+          <Separator className="my-4" />
+
+          {/* Płatność testowa */}
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
+            <div className="space-y-0.5">
+              <Label htmlFor="enablePaymentTest" className="text-base font-semibold flex items-center gap-2">
+                Płatność testowa
+                <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza możliwość korzystania z płatności testowej (TEST) w systemie (symulacja płatności).
+              </p>
+            </div>
+            <Switch
+              id="enablePaymentTest"
+              checked={enablePaymentTest === "true"}
+              onCheckedChange={(checked) => setEnablePaymentTest(checked ? "true" : "false")}
+            />
+          </div>
+
+          {/* Automatyczna akceptacja płatności testowych (widoczna tylko gdy włączona płatność testowa) */}
+          {enablePaymentTest === "true" && (
+            <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
+              <div className="space-y-0.5">
+                <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
+                  Automatyczna akceptacja płatności testowych
+                  <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                </Label>
+                <p className="text-sm text-muted-foreground max-w-xl">
+                  Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
+                </p>
+              </div>
+              <Switch
+                id="autoApproveTestPayment"
+                checked={autoApproveTestPayment === "true"}
+                onCheckedChange={(checked) => setAutoApproveTestPayment(checked ? "true" : "false")}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
