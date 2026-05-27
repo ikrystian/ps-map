@@ -318,6 +318,21 @@ export default function CheckoutPage() {
             <CardContent>
               <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                 <div className="space-y-3">
+                  <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent border-primary/40 bg-primary/5 dark:bg-primary/10">
+                    <RadioGroupItem value="TEST" id="test" />
+                    <Label htmlFor="test" className="flex-1 cursor-pointer">
+                      <div className="font-medium flex items-center gap-2">
+                        Płatność Testowa
+                        <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
+                          Auto-akceptacja
+                        </span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Natychmiastowe opłacenie i aktywacja zamówienia (symulacja płatności)
+                      </div>
+                    </Label>
+                  </div>
+
                   <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
                     <RadioGroupItem value="PRZELEWY24" id="przelewy24" />
                     <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">

@@ -100,6 +100,7 @@ const paymentMethodLabels: Record<string, string> = {
   PRZELEW: "Przelew",
   PAYPAL: "PayPal",
   BACS: "BACS",
+  TEST: "Testowa (autozgoda)",
 }
 
 const orderTypeLabels: Record<string, string> = {
@@ -359,6 +360,7 @@ export default function AdminTransakcjePage() {
                 <SelectItem value="PRZELEW">Przelew</SelectItem>
                 <SelectItem value="PAYPAL">PayPal</SelectItem>
                 <SelectItem value="BACS">BACS</SelectItem>
+                <SelectItem value="TEST">Testowa</SelectItem>
               </SelectContent>
             </Select>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -536,6 +538,7 @@ export default function AdminTransakcjePage() {
                   <SelectItem value="PRZELEW">Przelew</SelectItem>
                   <SelectItem value="PAYPAL">PayPal</SelectItem>
                   <SelectItem value="BACS">BACS</SelectItem>
+                  <SelectItem value="TEST">Testowa</SelectItem>
                 </SelectContent>
               </Select>
             </div>

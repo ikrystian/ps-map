@@ -287,6 +287,7 @@ export default function LawFirmPointsPage() {
       case "PRZELEW": return "Przelew tradycyjny"
       case "PAYPAL": return "PayPal"
       case "BACS": return "BACS"
+      case "TEST": return "Płatność testowa"
       default: return method
     }
   }
@@ -656,6 +657,7 @@ export default function LawFirmPointsPage() {
                   <SelectItem value="PRZELEWY24">Przelewy24</SelectItem>
                   <SelectItem value="PRZELEW">Przelew tradycyjny</SelectItem>
                   <SelectItem value="PAYPAL">PayPal</SelectItem>
+                  <SelectItem value="TEST">Płatność testowa (autozgoda)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 
 // GET - Pobierz historię zamówień punktów dla kancelarii
 export async function GET(request: NextRequest) {
@@ -138,13 +139,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Walidacja metody płatności
-    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "PAYPAL", "BACS"]
+    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "PAYPAL", "BACS", "TEST"]
     if (!validPaymentMethods.includes(metodaPlatnosci)) {
       return Response.json(
         { error: "Nieprawidłowa metoda płatności" },
         { status: 400 }
       )
     }
+
+    const isTestPayment = metodaPlatnosci === "TEST"
 
     // Utwórz zamówienie
     const order = await prisma.order.create({
@@ -155,13 +158,24 @@ export async function POST(request: NextRequest) {
         kwota,
         metodaPlatnosci,
         daneFaktury: daneFaktury ? JSON.stringify(daneFaktury) : null,
-        statusPlatnosci: "OCZEKUJE",
+        statusPlatnosci: isTestPayment ? "ZAPLACONE" : "OCZEKUJE",
+        zaplaconoData: isTestPayment ? new Date() : null,
       },
     })
 
-    // W przypadku przelewu tradycyjnego, możemy od razu zmienić status
-    // (wymaga to później ręcznej weryfikacji przez admina)
-    // Dla PayU/Przelewy24 - trzeba by zintegrować API płatności
+    if (isTestPayment) {
+      // 1. Zwiększ saldo punktów kancelarii natychmiast
+      await prisma.lawFirm.update({
+        where: { id: lawFirm.id },
+        data: {
+          punktySaldo: {
+            increment: liczbaPunktow,
+          },
+        },
+      })
+      // 2. Wygeneruj opłaconą fakturę
+      await generateInvoiceForOrder(order.id)
+    }
 
     return Response.json(order, { status: 201 })
   } catch (error) {

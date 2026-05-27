@@ -1029,6 +1029,7 @@ enum PaymentMethod {
   PAYPAL
   BACS
   POINTS
+  TEST
 }
 
 enum PaymentStatus {
