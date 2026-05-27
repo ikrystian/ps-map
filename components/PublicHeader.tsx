@@ -131,7 +131,7 @@ export default function PublicHeader({
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
             <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="block md:hidden" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={130} height={32} style={{ width: "auto", height: "32px" }} />
+            <Image className="block md:hidden" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
             <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
           </Link>
 
