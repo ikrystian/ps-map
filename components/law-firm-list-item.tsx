@@ -15,7 +15,7 @@ import {
   ArrowUpRight,
   LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, stripHtmlTags } from "@/lib/utils";
 import { PackageBadge, PackageType } from "@/components/permissions";
 import {
   Tooltip,
@@ -444,7 +444,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               {/* Description */}
               <div className="flex-1">
                 <p className="text-neutral-400 text-sm leading-relaxed font-light line-clamp-3">
-                  {lawFirm.opis || "Brak opisu kancelarii."}
+                  {stripHtmlTags(lawFirm.opis) || "Brak opisu kancelarii."}
                 </p>
               </div>
 
