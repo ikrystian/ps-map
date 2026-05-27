@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import Link from "next/link"
 import { Trash2, Eye, Edit, Search, CreditCard, Euro, Receipt } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -284,6 +285,22 @@ export default function AdminTransakcjePage() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex border-b border-border space-x-6 pb-px">
+        <Link
+          href="/admin/transakcje"
+          className="border-b-2 border-primary pb-3 text-sm font-semibold text-primary transition-all"
+        >
+          Transakcje pieniężne
+        </Link>
+        <Link
+          href="/admin/transakcje/punkty"
+          className="border-b-2 border-transparent pb-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-all"
+        >
+          Transakcje punktami
+        </Link>
+      </div>
+
       {/* Statistics Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -370,7 +387,6 @@ export default function AdminTransakcjePage() {
                 <SelectItem value="PRZELEW">Przelew</SelectItem>
                 <SelectItem value="PAYPAL">PayPal</SelectItem>
                 <SelectItem value="BACS">BACS</SelectItem>
-                <SelectItem value="POINTS">Opłacone punktami</SelectItem>
                 <SelectItem value="TEST">Testowa</SelectItem>
               </SelectContent>
             </Select>
@@ -564,7 +580,6 @@ export default function AdminTransakcjePage() {
                   <SelectItem value="PRZELEW">Przelew</SelectItem>
                   <SelectItem value="PAYPAL">PayPal</SelectItem>
                   <SelectItem value="BACS">BACS</SelectItem>
-                  <SelectItem value="POINTS">Opłacone punktami</SelectItem>
                   <SelectItem value="TEST">Testowa</SelectItem>
                 </SelectContent>
               </Select>

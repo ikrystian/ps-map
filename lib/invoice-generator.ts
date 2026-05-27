@@ -30,6 +30,12 @@ export async function generateInvoiceForOrder(orderId: string) {
       return null
     }
 
+    // Point transactions do not need invoice generation
+    if (order.metodaPlatnosci === "POINTS") {
+      console.log(`Order ${orderId} is paid with points. Invoice generation skipped.`)
+      return null
+    }
+
     // Check if order is paid
     if (order.statusPlatnosci !== "ZAPLACONE") {
       console.error(`Order ${orderId} is not paid yet`)

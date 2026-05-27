@@ -33,6 +33,7 @@ import {
   Megaphone,
   MessageSquare,
   ArrowUpDown,
+  Coins,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
@@ -46,6 +47,7 @@ const navigation = [
   { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
+  { name: "Transakcje punktami", href: "/admin/transakcje/punkty", icon: Coins, isSubmenu: true },
   { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
   { name: "Pozycjonowanie", href: "/admin/pozycjonowanie", icon: ArrowUpDown },
   { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
@@ -107,7 +109,9 @@ export default function AdminLayout({
           >
             {navigation.map((item, index) => {
               const isActive = pathname === item.href ||
-                (item.href !== "/admin" && pathname.startsWith(item.href))
+                (item.href !== "/admin" &&
+                 item.href !== "/admin/transakcje" &&
+                 pathname.startsWith(item.href))
 
               return (
                 <Link
@@ -119,7 +123,8 @@ export default function AdminLayout({
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                       : "text-muted-foreground hover:text-foreground",
-                    isCollapsed && "justify-center"
+                    isCollapsed && "justify-center",
+                    item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
                   )}
                   title={isCollapsed ? item.name : undefined}
                 >

@@ -45,9 +45,18 @@ export async function GET(request: NextRequest) {
       where.statusPlatnosci = statusPlatnosci
     }
 
-    // Filter by payment method
-    if (metodaPlatnosci) {
-      where.metodaPlatnosci = metodaPlatnosci
+    // Filter by payment method (exclude POINTS as it has its own dedicated page)
+    if (metodaPlatnosci && metodaPlatnosci !== "all") {
+      if (metodaPlatnosci === "POINTS") {
+        // Just in case, return nothing if they somehow request POINTS on this endpoint
+        where.metodaPlatnosci = "NEVER_MATCH_POINTS_ON_MONEY_PAGE"
+      } else {
+        where.metodaPlatnosci = metodaPlatnosci
+      }
+    } else {
+      where.metodaPlatnosci = {
+        not: "POINTS",
+      }
     }
 
     // Filter by order type
