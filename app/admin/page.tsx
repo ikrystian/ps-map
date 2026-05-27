@@ -137,6 +137,7 @@ export default function AdminDashboardPage() {
       NOWA: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
       IN_PROGRESS: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
       W_TOKU: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
+      W_TRAKCIE: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
       COMPLETED: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
       ZAKONCZONA: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
       REJECTED: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
@@ -201,6 +202,7 @@ export default function AdminDashboardPage() {
       REJECTED: 'Odrzucone',
       IN_PROGRESS: 'W toku',
       W_TOKU: 'W toku',
+      W_TRAKCIE: 'W toku',
       ZAKONCZONA: 'Zakończone',
     }
     return statusNames[status] || status
@@ -213,6 +215,7 @@ export default function AdminDashboardPage() {
       ACTIVE: 'from-emerald-400 to-green-500 shadow-green-500/10',
       IN_PROGRESS: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',
       W_TOKU: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',
+      W_TRAKCIE: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',
       COMPLETED: 'from-teal-400 to-emerald-500 shadow-emerald-500/10',
       ZAKONCZONA: 'from-teal-400 to-emerald-500 shadow-emerald-500/10',
       REJECTED: 'from-red-500 to-rose-600 shadow-rose-500/10',

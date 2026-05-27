@@ -95,7 +95,7 @@ interface PaginationData {
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   NOWA: { label: "Nowa", variant: "secondary" },
   OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "default" },
-  W_TRAKCIE: { label: "W trakcie", variant: "default" },
+  W_TRAKCIE: { label: "W toku", variant: "default" },
   ZAKONCZONA: { label: "Zakończona", variant: "outline" },
   ANULOWANA: { label: "Anulowana", variant: "destructive" },
 }
@@ -241,7 +241,7 @@ export default function AdminCasesPage() {
                 <SelectItem value="all">Wszystkie statusy</SelectItem>
                 <SelectItem value="NOWA">Nowa</SelectItem>
                 <SelectItem value="OFERTY_OTRZYMANE">Oferty otrzymane</SelectItem>
-                <SelectItem value="W_TRAKCIE">W trakcie</SelectItem>
+                <SelectItem value="W_TRAKCIE">W toku</SelectItem>
                 <SelectItem value="ZAKONCZONA">Zakończona</SelectItem>
                 <SelectItem value="ANULOWANA">Anulowana</SelectItem>
               </SelectContent>

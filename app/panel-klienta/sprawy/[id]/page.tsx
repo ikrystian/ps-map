@@ -99,7 +99,7 @@ interface Case {
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   NOWA: { label: "Nowa", variant: "default" },
   OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "secondary" },
-  W_TRAKCIE: { label: "W trakcie", variant: "default" },
+  W_TRAKCIE: { label: "W toku", variant: "default" },
   ZAKONCZONA: { label: "Zakończona", variant: "outline" },
   ANULOWANA: { label: "Anulowana", variant: "destructive" },
 }

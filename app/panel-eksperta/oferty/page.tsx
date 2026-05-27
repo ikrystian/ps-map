@@ -360,7 +360,7 @@ export default function LawFirmOffersPage() {
                   {card.id === "ZLOZONA" && "Oczekujące na decyzję"}
                   {card.id === "ZAAKCEPTOWANA" && "Zaakceptowane przez klienta"}
                   {card.id === "ODRZUCONA" && "Odrzucone przez klienta"}
-                  {card.id === "NEGOCJACJE" && "W trakcie ustaleń"}
+                  {card.id === "NEGOCJACJE" && "W toku ustaleń"}
                 </p>
               </div>
             </button>

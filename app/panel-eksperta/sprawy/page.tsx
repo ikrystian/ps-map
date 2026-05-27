@@ -275,7 +275,7 @@ const SprawyPage = () => {
       case "OFERTY_OTRZYMANE":
         return "Oferty otrzymane"
       case "W_TRAKCIE":
-        return "W trakcie"
+        return "W toku"
       case "ZAKONCZONA":
         return "Zakończona"
       case "ANULOWANA":

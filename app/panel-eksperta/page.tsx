@@ -176,7 +176,7 @@ const getCaseStatusLabel = (status: string) => {
     case "OFERTY_OTRZYMANE":
       return "Oferty otrzymane"
     case "W_TRAKCIE":
-      return "W trakcie"
+      return "W toku"
     case "ZAKONCZONA":
       return "Zakończona"
     case "ANULOWANA":
@@ -784,7 +784,7 @@ export default function LawFirmDashboardPage() {
                     <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
                     <div>
                       <span className="text-sm font-medium">Pozostałe</span>
-                      <p className="text-xs text-muted-foreground">W trakcie/odrzucone</p>
+                      <p className="text-xs text-muted-foreground">W toku/odrzucone</p>
                     </div>
                   </div>
                   <span className="text-lg font-bold">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>

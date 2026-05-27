@@ -638,7 +638,7 @@ export default function NewCasePage() {
                       <SelectContent>
                         <SelectItem value="NOWA">Nowa</SelectItem>
                         <SelectItem value="OFERTY_OTRZYMANE">Oferty otrzymane</SelectItem>
-                        <SelectItem value="W_TRAKCIE">W trakcie</SelectItem>
+                        <SelectItem value="W_TRAKCIE">W toku</SelectItem>
                         <SelectItem value="ZAKONCZONA">Zakończona</SelectItem>
                         <SelectItem value="ANULOWANA">Anulowana</SelectItem>
                       </SelectContent>
