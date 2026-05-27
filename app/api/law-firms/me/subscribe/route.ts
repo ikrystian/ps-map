@@ -148,6 +148,14 @@ export async function POST(request: NextRequest) {
     let updatedLawFirm = lawFirm
     let order
 
+    const finalDaneFaktury = JSON.stringify({
+      nazwaFirmy: lawFirm.nazwaFirmy || lawFirm.nazwa || "",
+      nip: lawFirm.nip || "",
+      adres: lawFirm.adres || "",
+      kodPocztowy: lawFirm.kodPocztowy || "",
+      miasto: lawFirm.miasto || "",
+    })
+
     if (isPointPayment) {
       if (lawFirm.punktySaldo < pointsCost) {
         return Response.json(
@@ -212,6 +220,7 @@ export async function POST(request: NextRequest) {
             metodaPlatnosci: "POINTS",
             statusPlatnosci: "ZAPLACONE",
             zaplaconoData: new Date(),
+            daneFaktury: finalDaneFaktury,
           },
         }),
         ...pointTransactions,
@@ -233,6 +242,9 @@ export async function POST(request: NextRequest) {
           metodaPlatnosci: metodaPlatnosci,
           statusPlatnosci: "OCZEKUJE",
           zaplaconoData: null,
+          daneFaktury: finalDaneFaktury,
+          transactionId: isTestPayment ? `TXN-TEST-SUB-${Date.now()}` : null,
+          externalOrderId: isTestPayment ? `EXT-TEST-SUB-${Date.now()}` : null,
         },
       })
     } else {
@@ -263,6 +275,9 @@ export async function POST(request: NextRequest) {
             metodaPlatnosci: metodaPlatnosci,
             statusPlatnosci: "ZAPLACONE",
             zaplaconoData: new Date(),
+            daneFaktury: finalDaneFaktury,
+            transactionId: isTestPayment ? `TXN-TEST-SUB-${Date.now()}` : null,
+            externalOrderId: isTestPayment ? `EXT-TEST-SUB-${Date.now()}` : null,
           },
         }),
       ])

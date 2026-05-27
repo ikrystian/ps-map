@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Trash2, Eye, Edit, Search, CreditCard, Euro } from "lucide-react"
+import { Trash2, Eye, Edit, Search, CreditCard, Euro, Receipt } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -51,7 +51,7 @@ interface LawFirm {
 
 interface SubscriptionPlan {
   id: string
-  name: string
+  nazwa: string
 }
 
 interface Invoice {
@@ -75,6 +75,7 @@ interface Order {
   createdAt: string
   updatedAt: string
   zaplaconoData: string | null
+  daneFaktury: string | null
   lawFirm: LawFirm
   subscriptionPlan: SubscriptionPlan | null
   invoice: Invoice | null
@@ -114,6 +115,13 @@ export default function AdminTransakcjePage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [detailedOrder, setDetailedOrder] = useState<Order | null>(null)
+
+  const openDetailsDialog = (order: Order) => {
+    setDetailedOrder(order)
+    setIsDetailsOpen(true)
+  }
   const [editFormData, setEditFormData] = useState({
     statusPlatnosci: "",
     metodaPlatnosci: "",
@@ -425,7 +433,7 @@ export default function AdminTransakcjePage() {
                         </div>
                       ) : (
                         <div>
-                          <div className="font-medium">{order.subscriptionPlan?.name}</div>
+                          <div className="font-medium">{order.subscriptionPlan?.nazwa || "—"}</div>
                           <div className="text-sm text-muted-foreground">{order.subscriptionPeriod} mies.</div>
                         </div>
                       )}
@@ -444,7 +452,16 @@ export default function AdminTransakcjePage() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          onClick={() => openDetailsDialog(order)}
+                          title="Szczegóły"
+                        >
+                          <Eye className="h-4 w-4 text-primary" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => openEditDialog(order)}
+                          title="Edytuj"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -452,6 +469,7 @@ export default function AdminTransakcjePage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openDeleteDialog(order)}
+                          title="Usuń"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -580,6 +598,194 @@ export default function AdminTransakcjePage() {
               Anuluj
             </Button>
             <Button onClick={handleUpdateOrder}>Zapisz zmiany</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 font-playfair text-lg">
+              <Receipt className="h-5 w-5 text-primary" />
+              Szczegóły transakcji
+            </DialogTitle>
+            <DialogDescription>
+              Kompletne informacje oraz metadane zamówienia {detailedOrder?.orderNumber || detailedOrder?.id.slice(0, 8)}
+            </DialogDescription>
+          </DialogHeader>
+
+          {detailedOrder && (
+            <div className="space-y-6 py-2">
+              {/* Sekcja 1: Status i Typ */}
+              <div className="grid grid-cols-2 gap-4 bg-muted/30 p-4 rounded-xl border">
+                <div>
+                  <span className="text-xs uppercase font-semibold text-muted-foreground block mb-1">Status płatności</span>
+                  <Badge variant={statusLabels[detailedOrder.statusPlatnosci]?.variant || "default"} className="px-2.5 py-1">
+                    {statusLabels[detailedOrder.statusPlatnosci]?.label || detailedOrder.statusPlatnosci}
+                  </Badge>
+                </div>
+                <div>
+                  <span className="text-xs uppercase font-semibold text-muted-foreground block mb-1">Typ zamówienia</span>
+                  <Badge variant="outline" className="px-2.5 py-1 text-foreground bg-background">
+                    {orderTypeLabels[detailedOrder.orderType]}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Sekcja 2: Szczegóły Zakupu */}
+              <div>
+                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Szczegóły przedmiotu zamówienia</h4>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
+                  {detailedOrder.orderType === "POINTS" ? (
+                    <>
+                      <div>
+                        <span className="text-muted-foreground block text-xs">Pakiet punktów</span>
+                        <span className="font-semibold">{detailedOrder.pakietPunktow}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-xs">Liczba punktów</span>
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-500 font-mono">+{detailedOrder.liczbaPunktow} pkt</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <span className="text-muted-foreground block text-xs">Plan subskrypcji</span>
+                        <span className="font-semibold">{detailedOrder.subscriptionPlan?.nazwa || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-xs">Okres</span>
+                        <span className="font-semibold">{detailedOrder.subscriptionPeriod} mies.</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="border-t pt-2 col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-muted-foreground block text-xs">Kwota brutto</span>
+                      <span className="font-bold text-base text-primary">{formatCurrency(detailedOrder.kwota)}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-xs">Metoda płatności</span>
+                      <span className="font-semibold">{paymentMethodLabels[detailedOrder.metodaPlatnosci]}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 3: Kancelaria */}
+              <div>
+                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Dane Kancelarii</h4>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
+                  <div>
+                    <span className="text-muted-foreground block text-xs">Nazwa firmy / Nazwa</span>
+                    <span className="font-semibold">{detailedOrder.lawFirm.nazwaFirmy || detailedOrder.lawFirm.nazwa || "—"}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-xs">Email kontaktowy</span>
+                    <span className="font-semibold select-all text-primary/90">{detailedOrder.lawFirm.emailKontakt}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 4: Bramka Płatnicza (Metadane) */}
+              <div>
+                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Metadane bramki płatniczej</h4>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
+                  <div>
+                    <span className="text-muted-foreground block text-xs">ID transakcji (Gateway ID)</span>
+                    <span className="font-mono text-xs select-all bg-muted px-2 py-0.5 rounded text-foreground">
+                      {detailedOrder.transactionId || "brak (nie zarejestrowano)"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-xs">ID zewnętrznego zamówienia</span>
+                    <span className="font-mono text-xs select-all bg-muted px-2 py-0.5 rounded text-foreground">
+                      {detailedOrder.externalOrderId || "brak (nie zarejestrowano)"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 5: Powiązana Faktura */}
+              <div>
+                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Status Faktury VAT</h4>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
+                  <div>
+                    <span className="text-muted-foreground block text-xs">Numer faktury</span>
+                    <span className="font-semibold">
+                      {detailedOrder.invoice?.invoiceNumber || "brak (nie wygenerowano)"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-xs">Status faktury</span>
+                    {detailedOrder.invoice ? (
+                      <Badge variant={detailedOrder.invoice.status === "PAID" ? "default" : "secondary"}>
+                        {detailedOrder.invoice.status === "PAID" ? "Opłacona" : detailedOrder.invoice.status}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 6: Dane do faktury */}
+              {detailedOrder.daneFaktury && (
+                <div>
+                  <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Dane do faktury (Billing Details)</h4>
+                  <div className="border rounded-xl p-4 bg-background shadow-sm text-sm space-y-2">
+                    {(() => {
+                      try {
+                        const billing = JSON.parse(detailedOrder.daneFaktury);
+                        return (
+                          <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                            <div className="col-span-2 border-b pb-1">
+                              <span className="text-muted-foreground text-xs block">Nabywca</span>
+                              <span className="font-semibold text-foreground">{billing.nazwaFirmy || "—"}</span>
+                            </div>
+                            {billing.nip && (
+                              <div>
+                                <span className="text-muted-foreground text-xs block">NIP</span>
+                                <span className="font-semibold font-mono text-foreground">{billing.nip}</span>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-muted-foreground text-xs block">Miejscowość</span>
+                              <span className="font-semibold text-foreground">{billing.miasto || "—"}</span>
+                            </div>
+                            <div className="col-span-2">
+                              <span className="text-muted-foreground text-xs block">Adres bilingowy</span>
+                              <span className="font-semibold text-foreground">{billing.adres || "—"}{billing.kodPocztowy ? `, ${billing.kodPocztowy}` : ""}</span>
+                            </div>
+                          </div>
+                        );
+                      } catch (e) {
+                        return <span className="text-xs text-muted-foreground italic">Nieprawidłowy format JSON: {detailedOrder.daneFaktury}</span>;
+                      }
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* Sekcja 7: Sygnatury czasowe */}
+              <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground bg-muted/10 p-3 rounded-lg border border-dashed">
+                <div>
+                  <span>Utworzono: </span>
+                  <span className="font-medium text-foreground">{formatDate(detailedOrder.createdAt)}</span>
+                </div>
+                <div>
+                  <span>Opłacono: </span>
+                  <span className="font-medium text-foreground">{detailedOrder.zaplaconoData ? formatDate(detailedOrder.zaplaconoData) : "—"}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="border-t pt-3">
+            <Button onClick={() => setIsDetailsOpen(false)} className="w-full sm:w-auto">
+              Zamknij
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

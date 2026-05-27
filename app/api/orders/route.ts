@@ -158,6 +158,16 @@ export async function POST(request: NextRequest) {
       shouldAutoApprove = autoApproveSetting ? autoApproveSetting.value === "true" : true
     }
 
+    const finalDaneFaktury = daneFaktury
+      ? JSON.stringify(daneFaktury)
+      : JSON.stringify({
+          nazwaFirmy: lawFirm.nazwaFirmy || lawFirm.nazwa || "",
+          nip: lawFirm.nip || "",
+          adres: lawFirm.adres || "",
+          kodPocztowy: lawFirm.kodPocztowy || "",
+          miasto: lawFirm.miasto || "",
+        })
+
     // Utwórz zamówienie
     const order = await prisma.order.create({
       data: {
@@ -166,9 +176,11 @@ export async function POST(request: NextRequest) {
         liczbaPunktow,
         kwota,
         metodaPlatnosci,
-        daneFaktury: daneFaktury ? JSON.stringify(daneFaktury) : null,
+        daneFaktury: finalDaneFaktury,
         statusPlatnosci: shouldAutoApprove ? "ZAPLACONE" : "OCZEKUJE",
         zaplaconoData: shouldAutoApprove ? new Date() : null,
+        transactionId: isTestPayment ? `TXN-TEST-PTS-${Date.now()}` : null,
+        externalOrderId: isTestPayment ? `EXT-TEST-PTS-${Date.now()}` : null,
       },
     })
 
