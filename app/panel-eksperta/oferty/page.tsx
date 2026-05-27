@@ -328,18 +328,18 @@ export default function LawFirmOffersPage() {
                   className="w-full bg-card border border-border/40 rounded-2xl shadow-xs hover:shadow-md hover:border-border transition-all duration-300 overflow-hidden"
                 >
                   {/* Card Main Block */}
-                  <div className="p-5 space-y-4">
+                  <div className="p-4 sm:p-5 space-y-4">
                     {/* Header: Title & Action */}
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                      <div className="space-y-1 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-lg font-bold tracking-tight text-foreground font-sans">
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-start gap-2">
+                          <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground font-sans leading-snug break-words">
                             {offer.case.nazwaSprawy}
                           </h3>
 
                           {/* Modern glowing badge */}
                           <div className={cn(
-                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all",
+                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all shrink-0",
                             statusInfo.colors
                           )}>
                             <span className="relative flex h-1.5 w-1.5">
@@ -352,20 +352,22 @@ export default function LawFirmOffersPage() {
                           </div>
                         </div>
 
-                        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <Briefcase className="h-3 w-3 text-muted-foreground/60" />
-                          <span>{offer.case.category.nazwa}</span>
-                          <span className="text-muted-foreground/30">•</span>
-                          <User className="h-3 w-3 text-muted-foreground/60" />
-                          <span>Klient: {offer.case.client.imie} {offer.case.client.nazwisko}</span>
+                        <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-1.5 leading-relaxed">
+                          <Briefcase className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+                          <span className="shrink-0">{offer.case.category.nazwa}</span>
+                          <span className="text-muted-foreground/30 hidden sm:inline">•</span>
+                          <span className="flex items-center gap-1.5 w-full sm:w-auto mt-0.5 sm:mt-0">
+                            <User className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+                            <span>Klient: {offer.case.client.imie} {offer.case.client.nazwisko}</span>
+                          </span>
                         </p>
                       </div>
 
-                      <Link href={`/panel-eksperta/sprawy/${offer.caseId}`} className="shrink-0">
+                      <Link href={`/panel-eksperta/sprawy/${offer.caseId}`} className="shrink-0 w-full sm:w-auto">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-primary/20 hover:border-primary/60 hover:bg-primary/5 text-primary text-xs h-9 rounded-xl font-semibold gap-1.5"
+                          className="w-full sm:w-auto border-primary/20 hover:border-primary/60 hover:bg-primary/5 text-primary text-xs h-9 rounded-xl font-semibold gap-1.5"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           Zobacz sprawę
@@ -374,45 +376,45 @@ export default function LawFirmOffersPage() {
                     </div>
 
                     {/* Key Metrics Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 min-[450px]:grid-cols-3 gap-2.5 sm:gap-3">
                       {/* Price Box */}
                       <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 relative overflow-hidden group">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary/60" />
-                        <p className="text-[10px] uppercase tracking-wider text-primary/75 font-bold">
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-primary/75 font-bold">
                           Kwota brutto
                         </p>
-                        <p className="text-lg font-extrabold text-foreground mt-0.5">
+                        <p className="text-base sm:text-lg font-extrabold text-foreground mt-0.5">
                           {formatCurrency(offer.kwotaBrutto)}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 leading-tight">
                           Netto: {formatCurrency(offer.kwotaNetto)} + {offer.vat}% VAT
                         </p>
                       </div>
 
                       {/* Timeline Box */}
-                      <div className="bg-card-border/30 rounded-xl p-3 relative overflow-hidden">
+                      <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
                           Termin realizacji
                         </p>
-                        <p className="text-lg font-extrabold text-foreground mt-0.5">
+                        <p className="text-base sm:text-lg font-extrabold text-foreground mt-0.5">
                           {offer.terminRealizacjiDni} dni
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 leading-tight">
                           Dni robocze
                         </p>
                       </div>
 
                       {/* Date Box */}
-                      <div className="border-border/30 rounded-xl p-3 relative overflow-hidden">
+                      <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
                           Status czasowy
                         </p>
-                        <p className="text-xs font-bold text-foreground mt-1.5 truncate">
+                        <p className="text-[11px] sm:text-xs font-bold text-foreground mt-1.5 truncate">
                           Złożono: {new Date(offer.createdAt).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 truncate">
                           {offer.zaakceptowanaData && `Zaakceptowano: ${new Date(offer.zaakceptowanaData).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}`}
                           {offer.odrzuconaData && `Odrzucono: ${new Date(offer.odrzuconaData).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}`}
                           {!offer.zaakceptowanaData && !offer.odrzuconaData && "Oczekuje na klienta"}
@@ -431,7 +433,7 @@ export default function LawFirmOffersPage() {
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 bg-secondary/10 border-t border-border/30 space-y-4 pt-4 text-sm">
+                        <div className="px-4 sm:px-5 pb-5 bg-secondary/10 border-t border-border/30 space-y-4 pt-4 text-sm">
                           {offer.opisOferty && (
                             <div className="space-y-1">
                               <h4 className="text-xs font-bold uppercase tracking-wider text-foreground/80 flex items-center gap-1.5">
@@ -479,7 +481,7 @@ export default function LawFirmOffersPage() {
                             </div>
 
                             {offer.status === "ZLOZONA" && (
-                              <div className="inline-flex items-center gap-1.5 bg-amber-500/5 border border-amber-500/10 px-3 py-1.5 rounded-lg text-xs text-amber-600 font-semibold">
+                              <div className="inline-flex items-center justify-center gap-1.5 bg-amber-500/5 border border-amber-500/10 px-3 py-1.5 rounded-lg text-xs text-amber-600 font-semibold w-full sm:w-auto">
                                 <Clock className="h-3.5 w-3.5 animate-spin [animation-duration:3s]" />
                                 Oczekuje na decyzję klienta
                               </div>

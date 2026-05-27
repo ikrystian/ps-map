@@ -489,6 +489,16 @@ a .bg-card {
   scrollbar-color: #0da192 #1c1c1e;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
 /* ─── Intro.js Custom Theme ────────────────────────────────────────────────── */
 
 /* Tooltip container */
