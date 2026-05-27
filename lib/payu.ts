@@ -140,6 +140,32 @@ export class PayUClient {
         }
     }
 
+    async captureOrder(orderId: string): Promise<any> {
+        const token = await this.getAccessToken()
+
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v2_1/orders/${orderId}/captures`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({}),
+            })
+
+            if (!response.ok) {
+                const error = await response.json()
+                console.error("PayU Capture Order Error:", error)
+                throw new Error("Failed to capture order in PayU")
+            }
+
+            return await response.json()
+        } catch (error) {
+            console.error("PayU Capture Order Exception:", error)
+            throw error
+        }
+    }
+
     async createOrder(orderRequest: PayUOrderRequest): Promise<PayUOrderResponse> {
         const token = await this.getAccessToken()
 

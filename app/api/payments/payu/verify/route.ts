@@ -44,7 +44,16 @@ export async function POST(request: NextRequest) {
 
         // Verify with PayU
         const payuOrder = await payuClient.retrieveOrder(order.transactionId)
-        const status = payuOrder.orders?.[0]?.status
+        let status = payuOrder.orders?.[0]?.status
+
+        if (status === 'WAITING_FOR_CONFIRMATION') {
+            try {
+                await payuClient.captureOrder(order.transactionId)
+                status = 'COMPLETED'
+            } catch (captureErr) {
+                console.error("Failed to capture order during verification:", captureErr)
+            }
+        }
 
         if (status === 'COMPLETED') {
             // Update Order and LawFirm

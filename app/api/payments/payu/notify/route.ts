@@ -40,6 +40,15 @@ export async function POST(request: NextRequest) {
       return Response.json({ message: "Order not found" }, { status: 200 })
     }
 
+    if (status === 'WAITING_FOR_CONFIRMATION') {
+      try {
+        await payuClient.captureOrder(orderId)
+      } catch (captureErr) {
+        console.error("Failed to capture order in notify:", captureErr)
+      }
+      return Response.json({ status: "OK" })
+    }
+
     if (status === 'COMPLETED' && dbOrder.statusPlatnosci !== 'ZAPLACONE') {
       // Update Order and LawFirm
       await prisma.$transaction(async (tx) => {
