@@ -2,6 +2,10 @@
 
 import { useState } from "react"
 import { toast } from "@/components/ui/sonner"
+import { Button } from "../ui/button"
+import { InteractiveHoverButton } from "../ui/interactive-hover-button"
+import { Input } from "../ui/input"
+import Link from "next/link"
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("")
@@ -50,20 +54,16 @@ export function NewsletterSection() {
           </p>
 
           <form onSubmit={handleNewsletterSubmit} className="flex max-w-md mx-auto items-stretch shadow-2xl relative z-30">
-            <input
+            <Input
               type="email"
               placeholder="Wpisz swój adres e-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 bg-black text-white placeholder-neutral-600 px-4 py-3 outline-none border border-neutral-800 border-r-0 rounded-none focus:border-[#1e5e4e] focus:ring-1 focus:ring-[#1e5e4e] transition-all text-xs md:text-sm"
             />
-            <button
-              type="submit"
-              className="bg-[#1e5e4e] hover:bg-[#154338] active:bg-[#0f3028] text-white font-medium px-6 py-3 rounded-none transition-colors text-xs md:text-sm whitespace-nowrap cursor-pointer"
-            >
-              Zapisz się
-            </button>
+            <div className="w-36 min-w-36 flex mr-1">
+              <InteractiveHoverButton type="submit" className="no-wrap white-space-nowrap">Zapisz isę</InteractiveHoverButton>
+            </div>
           </form>
         </div>
       </div>
