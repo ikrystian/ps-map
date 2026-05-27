@@ -77,7 +77,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`Password reset email sent to: ${user.email}`)
-    console.log(`Reset URL (dev only): ${resetUrl}`)
+    if (process.env.NODE_ENV === "development") {
+      console.log(`Reset URL (dev only): ${resetUrl}`)
+    }
 
     return NextResponse.json(
       { message: "Jeśli konto istnieje, link resetujący został wysłany" },

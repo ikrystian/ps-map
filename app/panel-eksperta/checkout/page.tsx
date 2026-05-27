@@ -89,7 +89,9 @@ export default function CheckoutPage() {
           try {
             const dataObj = JSON.parse(pendingOrder)
             defaultMethod = dataObj.metodaPlatnosci || "PRZELEWY24"
-          } catch(e) {}
+          } catch(e) {
+            console.error("Error parsing pendingOrder in settings fallback:", e)
+          }
         }
         
         const isTestEnabled = data.enablePaymentTest !== "false"
