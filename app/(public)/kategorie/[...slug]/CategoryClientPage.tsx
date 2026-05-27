@@ -26,7 +26,7 @@ import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { PackageBadge } from "@/components/permissions"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { cn } from "@/lib/utils"
+import { cn, stripHtmlTags } from "@/lib/utils"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 
@@ -696,10 +696,9 @@ export default function CategoryPage() {
 
                                 {/* Description */}
                                 {firm.opis && (
-                                  <div
-                                    className="text-sm text-muted-foreground line-clamp-2"
-                                    dangerouslySetInnerHTML={{ __html: firm.opis }}
-                                  />
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {stripHtmlTags(firm.opis)}
+                                  </p>
                                 )}
 
                                 {/* Badges */}
