@@ -95,6 +95,14 @@ export async function GET(request: NextRequest) {
     const reviewsCount = reviews.length
 
     // Statystyki bieżącego miesiąca
+    const casesThisMonth = await prisma.case.count({
+      where: {
+        createdAt: {
+          gte: startOfMonth,
+        },
+      },
+    })
+
     const offersThisMonth = await prisma.offer.count({
       where: {
         lawFirmId: lawFirm.id,
@@ -156,7 +164,7 @@ export async function GET(request: NextRequest) {
         pozycjaRanking: calculatedRankingPosition,
       },
       stats: {
-        casesThisMonth: 0, // TODO: Można dodać jeśli potrzebne
+        casesThisMonth,
         offersThisMonth,
         viewsThisMonth,
         averageRating,
