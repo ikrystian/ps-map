@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Trophy, Medal, Award, MapPin, Star, CheckCircle2, TrendingUp, Coins, Sparkles } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { cn, getSubscriptionBorderColor } from "@/lib/utils"
+import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 
 interface LawFirm {
@@ -242,7 +242,7 @@ export default function RankingPage() {
                           {/* Description */}
                           {firm.opis && (
                             <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                              {firm.opis}
+                              {stripHtmlTags(firm.opis)}
                             </p>
                           )}
 
