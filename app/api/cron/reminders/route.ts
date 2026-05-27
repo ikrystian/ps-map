@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
-
-const prisma = new PrismaClient()
 
 export async function GET(req: NextRequest) {
   // Protect this route with a secret
