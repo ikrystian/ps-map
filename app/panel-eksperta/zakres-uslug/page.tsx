@@ -858,13 +858,7 @@ export default function LawFirmServicesPage() {
                 )}
               </div>
 
-              <Separator className="bg-primary/10" />
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Limity wynikają z Twojego aktualnego pakietu subskrypcyjnego. Wyższe pakiety pozwalają na zaznaczenie większego obszaru działania oraz większej liczby kategorii usług.
-              </p>
-              <Button variant="outline" size="sm" className="w-full bg-primary text-white border-primary/20 hover:bg-primary/5 hover:text-primary transition-all font-semibold" asChild>
-                <Link href="/panel-eksperta/pakiet">Zmień pakiet</Link>
-              </Button>
+
             </CardContent>
           </Card>
 

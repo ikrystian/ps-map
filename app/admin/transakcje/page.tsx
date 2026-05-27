@@ -68,6 +68,7 @@ interface Order {
   liczbaPunktow: number | null
   subscriptionPeriod: number | null
   kwota: number
+  punktyKoszt: number | null
   metodaPlatnosci: string
   statusPlatnosci: string
   transactionId: string | null
@@ -101,6 +102,7 @@ const paymentMethodLabels: Record<string, string> = {
   PRZELEW: "Przelew",
   PAYPAL: "PayPal",
   BACS: "BACS",
+  POINTS: "Opłacone punktami",
   TEST: "Testowa (autozgoda)",
 }
 
@@ -368,6 +370,7 @@ export default function AdminTransakcjePage() {
                 <SelectItem value="PRZELEW">Przelew</SelectItem>
                 <SelectItem value="PAYPAL">PayPal</SelectItem>
                 <SelectItem value="BACS">BACS</SelectItem>
+                <SelectItem value="POINTS">Opłacone punktami</SelectItem>
                 <SelectItem value="TEST">Testowa</SelectItem>
               </SelectContent>
             </Select>
@@ -439,7 +442,12 @@ export default function AdminTransakcjePage() {
                       )}
                     </TableCell>
                     <TableCell>{formatCurrency(order.kwota)}</TableCell>
-                    <TableCell>{paymentMethodLabels[order.metodaPlatnosci]}</TableCell>
+                    <TableCell>
+                      {paymentMethodLabels[order.metodaPlatnosci]}
+                      {order.metodaPlatnosci === "POINTS" && order.punktyKoszt && (
+                        <span className="text-xs text-amber-600 block">({order.punktyKoszt} pkt)</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={statusLabels[order.statusPlatnosci]?.variant || "default"}>
                         {statusLabels[order.statusPlatnosci]?.label || order.statusPlatnosci}
@@ -556,6 +564,7 @@ export default function AdminTransakcjePage() {
                   <SelectItem value="PRZELEW">Przelew</SelectItem>
                   <SelectItem value="PAYPAL">PayPal</SelectItem>
                   <SelectItem value="BACS">BACS</SelectItem>
+                  <SelectItem value="POINTS">Opłacone punktami</SelectItem>
                   <SelectItem value="TEST">Testowa</SelectItem>
                 </SelectContent>
               </Select>
@@ -658,12 +667,23 @@ export default function AdminTransakcjePage() {
                         <span className="text-muted-foreground block text-xs">Okres</span>
                         <span className="font-semibold">{detailedOrder.subscriptionPeriod} mies.</span>
                       </div>
+                      {detailedOrder.metodaPlatnosci === "POINTS" && detailedOrder.punktyKoszt && (
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground block text-xs">Koszt w punktach</span>
+                          <span className="font-semibold text-amber-600 font-mono">-{detailedOrder.punktyKoszt} pkt</span>
+                        </div>
+                      )}
                     </>
                   )}
                   <div className="border-t pt-2 col-span-2 grid grid-cols-2 gap-4">
                     <div>
                       <span className="text-muted-foreground block text-xs">Kwota brutto</span>
-                      <span className="font-bold text-base text-primary">{formatCurrency(detailedOrder.kwota)}</span>
+                      <span className="font-bold text-base text-primary">
+                        {formatCurrency(detailedOrder.kwota)}
+                        {detailedOrder.metodaPlatnosci === "POINTS" && detailedOrder.punktyKoszt && (
+                          <span className="text-sm text-amber-600 font-medium ml-2">({detailedOrder.punktyKoszt} pkt)</span>
+                        )}
+                      </span>
                     </div>
                     <div>
                       <span className="text-muted-foreground block text-xs">Metoda płatności</span>

@@ -51,6 +51,8 @@ import {
   ChevronRight,
   Star,
   Info,
+  Copy,
+  Check
 } from "lucide-react"
 
 // Format date helper
@@ -175,6 +177,15 @@ export default function LawFirmPointsPage() {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const handleCopy = (id: string) => {
+    navigator.clipboard.writeText(id)
+    setCopiedId(id)
+    setTimeout(() => {
+      setCopiedId(null)
+    }, 2000)
+  }
 
   // Dialog zakupu
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
@@ -508,6 +519,7 @@ export default function LawFirmPointsPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/40 hover:bg-muted/40">
                     <TableHead className="text-xs font-semibold uppercase tracking-wide">Data</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wide">ID Transakcji</TableHead>
                     <TableHead className="text-xs font-semibold uppercase tracking-wide">Pakiet</TableHead>
                     <TableHead className="text-xs font-semibold uppercase tracking-wide text-right">Punkty</TableHead>
                     <TableHead className="text-xs font-semibold uppercase tracking-wide text-right">Kwota</TableHead>
@@ -520,6 +532,44 @@ export default function LawFirmPointsPage() {
                     <TableRow key={order.id} className="hover:bg-muted/30 transition-colors">
                       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                         {formatDate(order.createdAt)}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5 group">
+                            <span className="font-medium text-foreground/85 cursor-help select-all" title={`Pełne ID Zamówienia: ${order.id}`}>
+                              #{order.id.slice(0, 8)}...
+                            </span>
+                            <button
+                              onClick={() => handleCopy(order.id)}
+                              className="text-muted-foreground/50 hover:text-primary transition-colors p-0.5 rounded hover:bg-muted"
+                              title="Skopiuj ID Zamówienia"
+                            >
+                              {copiedId === order.id ? (
+                                <Check className="h-3 w-3 text-emerald-500" />
+                              ) : (
+                                <Copy className="h-3 w-3" />
+                              )}
+                            </button>
+                          </div>
+                          {(order.transactionId || order.externalOrderId) && (
+                            <div className="flex items-center gap-1.5 group">
+                              <span className="text-[10px] text-muted-foreground/60 cursor-help select-all" title={`Pełne ID Transakcji Płatniczej: ${order.transactionId || order.externalOrderId}`}>
+                                TID: {(order.transactionId || order.externalOrderId)?.slice(0, 8)}...
+                              </span>
+                              <button
+                                onClick={() => handleCopy(order.transactionId || order.externalOrderId || "")}
+                                className="text-muted-foreground/40 hover:text-primary transition-colors p-0.5 rounded hover:bg-muted"
+                                title="Skopiuj ID Transakcji"
+                              >
+                                {copiedId === (order.transactionId || order.externalOrderId) ? (
+                                  <Check className="h-3 w-3 text-emerald-500" />
+                                ) : (
+                                  <Copy className="h-3 w-3" />
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium text-sm">{order.pakietPunktow}</TableCell>
                       <TableCell className="text-right">
