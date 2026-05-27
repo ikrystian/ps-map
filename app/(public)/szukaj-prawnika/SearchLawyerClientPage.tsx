@@ -28,7 +28,7 @@ import { PackageBadge } from "@/components/permissions"
 import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { cn } from "@/lib/utils"
+import { cn, stripHtmlTags } from "@/lib/utils"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 
@@ -644,7 +644,7 @@ export default function SearchLawyerPage() {
                             {/* Description */}
                             {firm.opis && (
                               <p className="text-sm text-muted-foreground line-clamp-2">
-                                {firm.opis}
+                                {stripHtmlTags(firm.opis)}
                               </p>
                             )}
 
