@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { usePermissions } from "@/hooks/usePermissions"
 import { FeatureLockedCard } from "@/components/permissions"
 import {
@@ -1100,11 +1101,10 @@ export default function LawFirmPromotionPage() {
             ) : (
               <div>
                 <Label htmlFor="start-date">Data i godzina rozpoczęcia *</Label>
-                <Input
+                <DateTimePicker
                   id="start-date"
-                  type="datetime-local"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={setStartDate}
                   className="mt-2"
                 />
               </div>
