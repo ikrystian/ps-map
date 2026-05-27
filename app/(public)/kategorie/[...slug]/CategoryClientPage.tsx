@@ -27,6 +27,7 @@ import { PackageBadge } from "@/components/permissions"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 
 interface Category {
@@ -323,36 +324,22 @@ export default function CategoryPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
         <div className="absolute inset-0 bg-black/10" />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center gap-2 text-sm text-neutral-400 font-sans tracking-wide">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
-            <Link href="/kategorie" className="hover:text-white transition-colors">
-              Kategorie
-            </Link>
-
-            {slugArray.length > 1 && slugArray.slice(0, -1).map((s, index) => {
-              const cat = allCategories.find(c => c.slug === s)
-              if (!cat) return null
-              return (
-                <div key={cat.id} className="flex items-center gap-2">
-                  <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
-                  <Link
-                    href={`/kategorie/${slugArray.slice(0, index + 1).join('/')}`}
-                    className="hover:text-white transition-colors"
-                  >
-                    {cat.nazwa}
-                  </Link>
-                </div>
-              )
-            })}
-
-            <span className="text-[10px] text-neutral-600 font-bold">&gt;</span>
-            <span className="text-white font-medium">
-              {category ? category.nazwa : <Skeleton className="h-4 w-24 inline-block bg-neutral-800" />}
-            </span>
-          </div>
+          <ResponsiveBreadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Kategorie", href: "/kategorie" },
+              ...(slugArray.length > 1
+                ? slugArray.slice(0, -1).map((s, index) => {
+                    const cat = allCategories.find(c => c.slug === s)
+                    return {
+                      label: cat ? cat.nazwa : s,
+                      href: `/kategorie/${slugArray.slice(0, index + 1).join('/')}`,
+                    }
+                  })
+                : []),
+              { label: category ? category.nazwa : "Kategoria" },
+            ]}
+          />
         </div>
       </div>
 
