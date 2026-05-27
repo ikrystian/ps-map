@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
 export function ExpertCTA() {
   return (
@@ -27,17 +27,17 @@ export function ExpertCTA() {
             className="lg:col-span-7 flex flex-col items-start text-left"
           >
             {/* Heading */}
-            <h2 className="text-4xl md:text-5xl lg:text-5xl font-light tracking-tight leading-tight text-white mb-6">
-              <span className="font-playfair italic">Daj się </span>
-              <span className="font-sans font-bold text-white">poznać</span>
-              <span className="font-playfair italic"> jako Ekspert Prawa</span>
+            <h2 className="text-4xl md:text-5xl lg:text-5xl font-light font-playfair tracking-tight leading-tight text-white mb-6">
+              <span className="italic">Daj się </span>
+              <span className="font-bold text-white">poznać</span>
+              <span className="italic"> jako Ekspert Prawa</span>
             </h2>
 
             {/* Description */}
             <div className="space-y-4 mt-4 md:mt-6 max-w-2xl">
               <p className="text-neutral-400 font-sans text-base md:text-lg lg:text-xl leading-relaxed">
-                Zyskaj dostęp do narzędzi, które pomogą Ci skuteczniej
-                docierać do osób poszukujących pomocy prawnej.
+                Zyskaj dostęp do narzędzi, które pomogą Ci skuteczniej docierać
+                do osób poszukujących pomocy prawnej.
               </p>
               <p className="text-white font-bold font-sans text-base md:text-lg lg:text-xl block">
                 Stwórz profil i zdobądź nowych klientów!
@@ -47,9 +47,8 @@ export function ExpertCTA() {
             {/* Button */}
             <div className="mt-8 md:mt-10">
               <Link href="/rejestracja/kancelaria">
-                <InteractiveHoverButton >Załóż konto</InteractiveHoverButton>
+                <InteractiveHoverButton>Załóż konto</InteractiveHoverButton>
               </Link>
-
             </div>
           </motion.div>
 
@@ -58,7 +57,5 @@ export function ExpertCTA() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-
-

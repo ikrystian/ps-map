@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
 const PillarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-16 h-16 text-[#0da192]">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    className="w-16 h-16 text-[#0da192]"
+  >
     {/* Greek/Roman style law pillar */}
     <path d="M4 4h16M5 7h14" strokeLinecap="round" />
     <line x1="8" y1="7" x2="8" y2="17" strokeLinecap="round" />
@@ -14,23 +20,67 @@ const PillarIcon = () => (
     <line x1="16" y1="7" x2="16" y2="17" strokeLinecap="round" />
     <path d="M5 17h14M3 20h18" strokeLinecap="round" />
   </svg>
-)
+);
 
 const UserPlusIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-16 h-16 text-[#0da192]">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="8.5" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
-    <line x1="20" y1="8" x2="20" y2="14" strokeLinecap="round" strokeLinejoin="round" />
-    <line x1="17" y1="11" x2="23" y2="11" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    className="w-16 h-16 text-[#0da192]"
+  >
+    <path
+      d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle
+      cx="8.5"
+      cy="7"
+      r="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line
+      x1="20"
+      y1="8"
+      x2="20"
+      y2="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line
+      x1="17"
+      y1="11"
+      x2="23"
+      y2="11"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 const HomeIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-16 h-16 text-[#0da192]">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" strokeLinecap="round" strokeLinejoin="round" />
-    <polyline points="9 22 9 12 15 12 15 22" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    className="w-16 h-16 text-[#0da192]"
+  >
+    <path
+      d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <polyline
+      points="9 22 9 12 15 12 15 22"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 const DoubleCheckmarkLogo = () => (
   <div className="flex items-center mr-3 relative w-8 h-8 scale-95">
@@ -53,10 +103,10 @@ const DoubleCheckmarkLogo = () => (
       />
     </svg>
   </div>
-)
+);
 
 export function SearchHelpSection() {
-  const router = useRouter()
+  const router = useRouter();
 
   const steps = [
     {
@@ -69,7 +119,8 @@ export function SearchHelpSection() {
           obsługa ekspertów
         </>
       ),
-      description: "Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników i ekspertów z całego kraju."
+      description:
+        "Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników i ekspertów z całego kraju.",
     },
     {
       number: "02",
@@ -81,7 +132,8 @@ export function SearchHelpSection() {
           Twojej sprawy
         </>
       ),
-      description: "Nasz portal umożliwia dodawanie sprawy całkowicie za darmo. Wystarczy kilka kliknięć, aby opisać Twoją sytuację."
+      description:
+        "Nasz portal umożliwia dodawanie sprawy całkowicie za darmo. Wystarczy kilka kliknięć, aby opisać Twoją sytuację.",
     },
     {
       number: "03",
@@ -93,20 +145,26 @@ export function SearchHelpSection() {
           wychodzenia z domu
         </>
       ),
-      description: "Prosta Sprawa to miejsce gdzie wszystko załatwisz online, bez konieczności wychodzenia z domu czy tracenia czasu na dojazdy."
-    }
-  ]
+      description:
+        "Prosta Sprawa to miejsce gdzie wszystko załatwisz online, bez konieczności wychodzenia z domu czy tracenia czasu na dojazdy.",
+    },
+  ];
 
   return (
     <section className="relative bg-[#2C2B29] text-white py-24 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10">
       {/* Container */}
       <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
-        <h2 className="text-3xl md:text-4xl font-light text-white tracking-tight text-center leading-tight mb-5 font-sans">
-          Powiedz nam <span className="font-playfair font-bold italic text-white normal-case">jakiej pomocy</span> szukasz
+        <h2 className="text-3xl md:text-4xl font-light text-white tracking-tight text-center leading-tight mb-5 font-playfair">
+          Powiedz nam{" "}
+          <span className="font-bold italic text-white normal-case">
+            jakiej pomocy
+          </span>{" "}
+          szukasz
         </h2>
         <p className="text-sm md:text-base text-[#A8A7A4] font-normal leading-relaxed text-center mb-6 max-w-2xl mx-auto font-sans tracking-wide">
-          Dodaj swoją sprawę bez zbędnych formalności, czekaj na ofertę i wybierz tę, która najlepiej odpowiada Twoim potrzebom.
+          Dodaj swoją sprawę bez zbędnych formalności, czekaj na ofertę i
+          wybierz tę, która najlepiej odpowiada Twoim potrzebom.
         </p>
 
         {/* Steps Grid */}
@@ -196,11 +254,10 @@ export function SearchHelpSection() {
           className="mt-8 flex justify-center items-center w-full"
         >
           <Link href="/logowanie">
-            <InteractiveHoverButton >Dodaj sprawę</InteractiveHoverButton>
+            <InteractiveHoverButton>Dodaj sprawę</InteractiveHoverButton>
           </Link>
-
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
