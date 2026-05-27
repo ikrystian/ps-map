@@ -147,7 +147,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
 
           {/* Navigation & Selector Container */}
-          <div className="flex items-center gap-4 w-full justify-beetween overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full justify-beetween overflow-hidden">
             {/* Category tabs scrollable horizontally on mobile */}
             <div
               className="flex items-center flex flex-1 gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth custom-scrollbar"
