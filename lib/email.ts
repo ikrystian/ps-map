@@ -412,14 +412,14 @@ export function getBrandEmailLayout(
  * Generuje HTML dla emaila resetowania hasła
  */
 export function generatePasswordResetEmail(resetUrl: string, userName?: string): { subject: string; html: string; text: string } {
-  const subject = 'Resetowanie hasła - ProstaSprawa'
-  const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
+  const subject = 'Zresetuj swoje hasło w Prosta Sprawa'
+  const greeting = userName ? `Cześć ${userName},` : 'Cześć,'
 
   const contentHtml = `
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Resetowanie hasła</h2>
     <p style="margin: 0 0 16px 0;">${greeting}</p>
-    <p style="margin: 0 0 16px 0;">Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta w serwisie ProstaSprawa.</p>
-    <p style="margin: 0 0 24px 0;">Aby ustawić nowe hasło, kliknij poniższy przycisk:</p>
+    <p style="margin: 0 0 16px 0;">Otrzymujesz tę wiadomość, ponieważ poproszono o zresetowanie hasła dla Twojego konta.</p>
+    <p style="margin: 0 0 24px 0;">Kliknij w poniższy link, aby ustawić nowe hasło:</p>
     <div style="text-align: center; margin: 30px 0;">
       <a href="${resetUrl}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zresetuj hasło</a>
     </div>
@@ -436,9 +436,9 @@ export function generatePasswordResetEmail(resetUrl: string, userName?: string):
   const text = `
 Resetowanie hasła - ProstaSprawa
 
-${userName ? `Witaj ${userName},` : 'Witaj,'}
+${userName ? `Cześć ${userName},` : 'Cześć,'}
 
-Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta w serwisie ProstaSprawa.
+Otrzymujesz tę wiadomość, ponieważ poproszono o zresetowanie hasła dla Twojego konta.
 
 Aby ustawić nowe hasło, otwórz poniższy link w przeglądarce:
 ${resetUrl}
@@ -727,7 +727,7 @@ export function generateEmailVerificationEmail(
   isLawFirm?: boolean
 ): { subject: string; html: string; text: string } {
   const subject = 'Potwierdź swój adres email - ProstaSprawa'
-  const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
+  const greeting = userName ? `Cześć ${userName},` : 'Cześć,'
 
   const contentHtml = `
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witamy w ProstaSprawa!</h2>
@@ -775,7 +775,7 @@ export function generateEmailVerificationEmail(
   const text = `
 Witamy w ProstaSprawa!
 
-${userName ? `Witaj ${userName},` : 'Witaj,'}
+${userName ? `Cześć ${userName},` : 'Cześć,'}
 
 Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.
 
