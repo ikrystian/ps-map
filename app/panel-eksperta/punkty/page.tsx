@@ -180,7 +180,6 @@ export default function LawFirmPointsPage() {
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<typeof POINT_PACKAGES[0] | null>(null)
   const [customPoints, setCustomPoints] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState<string>("PAYU")
 
   useEffect(() => {
     fetchData()
@@ -225,10 +224,6 @@ export default function LawFirmPointsPage() {
       setError("Wybierz pakiet lub wprowadź liczbę punktów")
       return
     }
-    if (!paymentMethod) {
-      setError("Wybierz metodę płatności")
-      return
-    }
 
     const points = selectedPackage ? selectedPackage.points : parseInt(customPoints)
     const price = selectedPackage ? selectedPackage.price : Math.round(points * 0.49)
@@ -238,7 +233,6 @@ export default function LawFirmPointsPage() {
       pakietLabel: selectedPackage ? selectedPackage.sublabel : `${points} punktów`,
       liczbaPunktow: points,
       kwota: price,
-      metodaPlatnosci: paymentMethod,
     }
 
     sessionStorage.setItem("pendingOrder", JSON.stringify(orderData))
@@ -645,22 +639,6 @@ export default function LawFirmPointsPage() {
               </div>
             )}
 
-            {/* Metoda płatności */}
-            <div>
-              <Label htmlFor="payment-method" className="text-sm">Metoda płatności</Label>
-              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger id="payment-method" className="mt-1.5">
-                  <SelectValue placeholder="Wybierz metodę płatności" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PAYU">PayU</SelectItem>
-                  <SelectItem value="PRZELEWY24">Przelewy24</SelectItem>
-                  <SelectItem value="PRZELEW">Przelew tradycyjny</SelectItem>
-                  <SelectItem value="PAYPAL">PayPal</SelectItem>
-                  <SelectItem value="TEST">Płatność testowa (autozgoda)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           <DialogFooter className="gap-2">
