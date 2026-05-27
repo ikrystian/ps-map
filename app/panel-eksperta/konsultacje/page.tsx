@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -120,7 +121,19 @@ export default function ConsultationsPage() {
         <CardContent>
           <div className="space-y-4">
             {bookings.length === 0 ? (
-              <p>Brak próśb o konsultacje.</p>
+              <div className="text-center py-8 space-y-3">
+                <p className="text-muted-foreground">Brak próśb o konsultacje.</p>
+                <div className="bg-muted/50 border rounded-lg p-4 max-w-lg mx-auto text-sm text-left">
+                  <p className="text-muted-foreground">
+                    Możesz ustawić swoje godziny konsultacji w zakładce <strong>Godziny konsultacji</strong> w sekcji profilu pod adresem:
+                  </p>
+                  <p className="mt-2 font-mono text-xs text-center bg-background p-2 rounded border">
+                    <Link href="/panel-eksperta/profil?tab=consultations" className="text-primary hover:underline font-semibold">
+                      /panel-eksperta/profil?tab=consultations
+                    </Link>
+                  </p>
+                </div>
+              </div>
             ) : (
               bookings.map((booking) => (
                 <div key={booking.id} className="border p-4 rounded-lg consulting-item">
