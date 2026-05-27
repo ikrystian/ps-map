@@ -66,3 +66,19 @@ export function getSubscriptionRingColor(subscriptionType?: string | null): stri
       return 'ring-gray-300'
   }
 }
+
+/**
+ * Strips HTML tags from a string and replaces basic HTML entities with text counterparts
+ */
+export function stripHtmlTags(html: string | null | undefined): string {
+  if (!html) return ""
+  const stripped = html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+  return stripped.replace(/\s+/g, " ").trim()
+}
