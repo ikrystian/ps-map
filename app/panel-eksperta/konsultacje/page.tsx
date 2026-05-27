@@ -121,17 +121,86 @@ export default function ConsultationsPage() {
         <CardContent>
           <div className="space-y-4">
             {bookings.length === 0 ? (
-              <div className="text-center py-8 space-y-3">
-                <p className="text-muted-foreground">Brak próśb o konsultacje.</p>
-                <div className="bg-muted/50 border rounded-lg p-4 max-w-lg mx-auto text-sm text-left">
-                  <p className="text-muted-foreground">
-                    Możesz ustawić swoje godziny konsultacji w zakładce <strong>Godziny konsultacji</strong> w sekcji profilu pod adresem:
+              <div className="text-center py-10 px-4 space-y-6 max-w-lg mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" className="w-full max-w-[260px] h-auto mx-auto mb-2 opacity-95">
+                  {/* Background details */}
+                  <circle cx="120" cy="180" r="80" fill="#e9e6dc" opacity="0.4" />
+                  <circle cx="360" cy="100" r="50" fill="#ede9de" opacity="0.6" />
+                  <circle cx="250" cy="270" r="10" fill="#c96442" opacity="0.2" />
+                  <circle cx="90" cy="80" r="15" fill="#c96442" opacity="0.15" />
+                  <circle cx="410" cy="220" r="12" fill="#c96442" opacity="0.1" />
+
+                  {/* Clipboard / Checklist Card */}
+                  <rect x="80" y="60" width="160" height="220" rx="16" fill="#ffffff" stroke="#dad9d4" strokeWidth="3" />
+                  {/* Clipboard header */}
+                  <path d="M130 50 h60 a10 10 0 0 1 10 10 v10 a0 0 0 0 1 0 0 h-80 a0 0 0 0 1 0 0 v-10 a10 10 0 0 1 10 -10 Z" fill="#b4b2a7" />
+                  <circle cx="160" cy="42" r="6" fill="#3d3929" />
+
+                  {/* Checklist lines and checked boxes */}
+                  {/* Item 1 */}
+                  <rect x="108" y="100" width="20" height="20" rx="4" fill="#c96442" />
+                  <path d="M113 110 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="138" y="106" width="80" height="8" rx="4" fill="#ede9de" />
+
+                  {/* Item 2 */}
+                  <rect x="108" y="145" width="20" height="20" rx="4" fill="#c96442" />
+                  <path d="M113 155 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="138" y="151" width="70" height="8" rx="4" fill="#ede9de" />
+
+                  {/* Item 3 */}
+                  <rect x="108" y="190" width="20" height="20" rx="4" fill="#c96442" />
+                  <path d="M113 200 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="138" y="196" width="75" height="8" rx="4" fill="#ede9de" />
+
+                  {/* Item 4 */}
+                  <rect x="108" y="235" width="20" height="20" rx="4" fill="#c96442" />
+                  <path d="M113 245 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="138" y="241" width="60" height="8" rx="4" fill="#ede9de" />
+
+                  {/* Character */}
+                  {/* Legs */}
+                  <path d="M300 220 l-10 80 h15 l10 -80 Z" fill="#3d3929" />
+                  <path d="M325 220 l5 80 h15 l-5 -80 Z" fill="#3d3929" />
+                  {/* Shoes */}
+                  <path d="M280 300 h25 r4 v-8 Z" fill="#141413" />
+                  <path d="M335 300 h25 r4 v-8 Z" fill="#141413" />
+                  {/* Torso */}
+                  <path d="M280 140 h60 l-10 90 h-40 Z" fill="#c96442" />
+                  {/* Neck & Head */}
+                  <path d="M305 125 h10 v20 h-10 Z" fill="#e9e6dc" />
+                  <circle cx="310" cy="115" r="22" fill="#e9e6dc" />
+                  {/* Hair */}
+                  <path d="M292 108 c0 -15 25 -25 35 -10 c5 15 -10 20 -20 20 Z" fill="#3d3929" />
+                  {/* Arms & Hands */}
+                  <path d="M282 145 l-40 30 l5 15 l35 -35 Z" fill="#c96442" />
+                  <circle cx="242" cy="177" r="8" fill="#e9e6dc" />
+                  <path d="M338 145 l35 -10 l10 12 l-35 18 Z" fill="#c96442" />
+                  {/* Large completion checkmark */}
+                  <path d="M380 115 l12 12 l25 -25" stroke="#c96442" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <circle cx="377" cy="138" r="8" fill="#e9e6dc" />
+
+                  {/* Floor ground line */}
+                  <line x1="50" y1="300" x2="450" y2="300" stroke="#dad9d4" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Obecnie nie masz żadnych próśb o konsultacje od klientów.
                   </p>
-                  <p className="mt-2 font-mono text-xs text-center bg-background p-2 rounded border">
-                    <Link href="/panel-eksperta/profil?tab=consultations" className="text-primary hover:underline font-semibold">
-                      /panel-eksperta/profil?tab=consultations
-                    </Link>
+                </div>
+
+                <div className="bg-muted/40 border border-border/80 rounded-xl p-5 text-sm space-y-4 shadow-sm text-left">
+                  <p className="text-muted-foreground leading-relaxed">
+                    Obecnie nie masz ustawionych <strong>godzin konsultacji</strong>, zmień to w profilu, aby klienci mogli wygodnie rezerwować wolne terminy bezpośrednio z Twojego profilu:
                   </p>
+
+                  <div className="pt-2 text-center">
+                    <Button asChild className="w-full sm:w-auto font-semibold shadow-sm hover:shadow-md transition-all duration-200">
+                      <Link href="/panel-eksperta/profil?tab=consultations">
+                        Ustaw godziny konsultacji
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
