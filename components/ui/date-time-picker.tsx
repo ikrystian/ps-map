@@ -186,7 +186,7 @@ export function DateTimePicker({
                 <SelectTrigger className="w-[70px] h-9 focus:ring-0">
                   <SelectValue placeholder="GG" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[200px]">
+                <SelectContent className="max-h-[200px] z-[10000]">
                   {hours.map((h) => (
                     <SelectItem key={h} value={h}>
                       {h}
@@ -199,7 +199,7 @@ export function DateTimePicker({
                 <SelectTrigger className="w-[70px] h-9 focus:ring-0">
                   <SelectValue placeholder="MM" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[200px]">
+                <SelectContent className="max-h-[200px] z-[10000]">
                   {minutes.map((m) => (
                     <SelectItem key={m} value={m}>
                       {m}
