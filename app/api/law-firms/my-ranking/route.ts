@@ -36,27 +36,32 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Pobierz wszystkie zweryfikowane kancelarie dla rankingu ogólnego
-    const allLawFirms = await prisma.lawFirm.findMany({
+    // Znajdź pozycję aktualnej kancelarii w rankingu ogólnym
+    const higherRankedCount = await prisma.lawFirm.count({
       where: {
-        user: {
-          deletedAt: null,
-        },
+        user: { deletedAt: null },
         zweryfikowana: true,
-      },
-      select: {
-        id: true,
-        punktySaldo: true,
-        wyswietleniaProfilu: true,
-      },
-      orderBy: {
-        punktySaldo: "desc",
+        punktySaldo: { gt: lawFirm.punktySaldo },
       },
     })
 
-    // Znajdź pozycję aktualnej kancelarii w rankingu ogólnym
-    const overallPosition = allLawFirms.findIndex((firm: any) => firm.id === lawFirm.id) + 1
-    const totalLawFirms = allLawFirms.length
+    // Obsługa remisów po ID
+    const tieBreakCount = await prisma.lawFirm.count({
+        where: {
+            user: { deletedAt: null },
+            zweryfikowana: true,
+            punktySaldo: lawFirm.punktySaldo,
+            id: { lt: lawFirm.id }
+        }
+    })
+
+    const overallPosition = higherRankedCount + tieBreakCount + 1
+    const totalLawFirms = await prisma.lawFirm.count({
+      where: {
+        user: { deletedAt: null },
+        zweryfikowana: true,
+      },
+    })
 
     // Oblicz statystyki ofert
     const totalOffers = lawFirm.offers.length
@@ -64,7 +69,14 @@ export async function GET(request: NextRequest) {
     const conversionRate = totalOffers > 0 ? (acceptedOffers / totalOffers) * 100 : 0
 
     // Oblicz średnie statystyki konkurencji
-    const avgViews = allLawFirms.reduce((sum: number, firm: any) => sum + firm.wyswietleniaProfilu, 0) / allLawFirms.length
+    const viewsStats = await prisma.lawFirm.aggregate({
+      where: {
+        user: { deletedAt: null },
+        zweryfikowana: true,
+      },
+      _avg: { wyswietleniaProfilu: true },
+    })
+    const avgViews = viewsStats._avg.wyswietleniaProfilu || 0
 
     // Pobierz statystyki ofert dla wszystkich kancelarii
     const allOffersStats = await prisma.offer.groupBy({
@@ -124,30 +136,35 @@ export async function GET(request: NextRequest) {
     for (const lawFirmCategory of lawFirm.categories) {
       const categoryId = lawFirmCategory.categoryId
 
-      // Pobierz wszystkie kancelarie w tej kategorii
-      const categoryLawFirms = await prisma.lawFirm.findMany({
+      // Znajdź pozycję w kategorii
+      const higherRankedCategoryCount = await prisma.lawFirm.count({
         where: {
-          user: {
-            deletedAt: null,
-          },
+          user: { deletedAt: null },
           zweryfikowana: true,
-          categories: {
-            some: {
-              categoryId: categoryId,
-            },
-          },
-        },
-        select: {
-          id: true,
-          punktySaldo: true,
-        },
-        orderBy: {
-          punktySaldo: "desc",
+          categories: { some: { categoryId: categoryId } },
+          punktySaldo: { gt: lawFirm.punktySaldo },
         },
       })
 
-      const categoryPosition = categoryLawFirms.findIndex((firm: any) => firm.id === lawFirm.id) + 1
-      const categoryTotal = categoryLawFirms.length
+      // Obsługa remisów po ID
+      const tieBreakCategoryCount = await prisma.lawFirm.count({
+        where: {
+          user: { deletedAt: null },
+          zweryfikowana: true,
+          categories: { some: { categoryId: categoryId } },
+          punktySaldo: lawFirm.punktySaldo,
+          id: { lt: lawFirm.id }
+        }
+      })
+
+      const categoryPosition = higherRankedCategoryCount + tieBreakCategoryCount + 1
+      const categoryTotal = await prisma.lawFirm.count({
+        where: {
+          user: { deletedAt: null },
+          zweryfikowana: true,
+          categories: { some: { categoryId: categoryId } },
+        },
+      })
       const percentile = categoryTotal > 0 ? (categoryPosition / categoryTotal) * 100 : 0
 
       categoryRankings.push({
