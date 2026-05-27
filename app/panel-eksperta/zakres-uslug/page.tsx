@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -179,6 +179,14 @@ export default function LawFirmServicesPage() {
     maxCities: 3
   })
   const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
+
+  const voivodeshipsMap = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const v of allVoivodeships) {
+      map.set(v.id, v.nazwa)
+    }
+    return map
+  }, [allVoivodeships])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -736,7 +744,7 @@ export default function LawFirmServicesPage() {
                           </div>
                         ) : (
                           areaData.selectedVoivodeships.map(vId => {
-                            const vName = allVoivodeships.find(v => v.id === vId)?.nazwa
+                            const vName = voivodeshipsMap.get(vId)
                             const cities = citiesByVoivodeship[vId] || []
                             const isLoading = loadingCities[vId]
 
