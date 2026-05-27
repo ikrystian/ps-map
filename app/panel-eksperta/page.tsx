@@ -317,15 +317,16 @@ export default function LawFirmDashboardPage() {
     if (!session?.user?.id) return
 
     try {
-      // Pobierz liczbę kategorii
-      const categoriesResponse = await fetch("/api/law-firm/categories")
+      const [categoriesResponse, offersResponse] = await Promise.all([
+        fetch("/api/law-firm/categories"),
+        fetch("/api/offers?status=active")
+      ])
+
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json()
         setCategoriesCount(categoriesData.categories?.length || 0)
       }
 
-      // Pobierz liczbę aktywnych ofert (sprawy)
-      const offersResponse = await fetch("/api/offers?status=active")
       if (offersResponse.ok) {
         const offersData = await offersResponse.json()
         setActiveCasesCount(offersData.total || offersData.length || 0)

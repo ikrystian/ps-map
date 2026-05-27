@@ -1015,6 +1015,7 @@ model Order {
   @@index([orderNumber])
   @@index([statusPlatnosci])
   @@index([createdAt])
+  @@index([externalOrderId])
 }
 
 enum OrderType {

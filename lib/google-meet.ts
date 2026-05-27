@@ -26,7 +26,7 @@ export async function createGoogleMeetLink(consultation: any) {
       timeZone: "Europe/Warsaw",
     },
     end: {
-      dateTime: new Date(new Date(consultation.proposedDateTime).getTime() + 60 * 60 * 1000).toISOString(),
+      dateTime: new Date(new Date(consultation.proposedDateTime).getTime() + (consultation.duration || 60) * 60 * 1000).toISOString(),
       timeZone: "Europe/Warsaw",
     },
     conferenceData: {

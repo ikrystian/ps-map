@@ -78,13 +78,23 @@ export async function POST(request: NextRequest) {
 
       // Handle Points
       if (orderWithPlan?.orderType === 'POINTS') {
-        await tx.lawFirm.update({
+        const updatedFirm = await tx.lawFirm.update({
           where: { id: order.lawFirmId },
           data: {
             punktySaldo: {
               increment: order.liczbaPunktow || 0,
             },
           },
+        })
+
+        await tx.pointTransaction.create({
+          data: {
+            lawFirmId: order.lawFirmId,
+            amount: order.liczbaPunktow || 0,
+            balanceAfter: updatedFirm.punktySaldo,
+            type: "POINTS_PURCHASE",
+            description: `Zakup punktów (Zamówienie ${order.orderNumber})`
+          }
         })
       }
 
@@ -100,7 +110,7 @@ export async function POST(request: NextRequest) {
         const endDate = new Date(startDate)
         endDate.setMonth(endDate.getMonth() + months)
 
-        await tx.lawFirm.update({
+        const updatedFirm = await tx.lawFirm.update({
           where: { id: order.lawFirmId },
           data: {
             pakietSubskrypcji: orderWithPlan.subscriptionPlan.typ,
@@ -111,6 +121,18 @@ export async function POST(request: NextRequest) {
             },
           },
         })
+
+        if (orderWithPlan.subscriptionPlan.punktyGratis && orderWithPlan.subscriptionPlan.punktyGratis > 0) {
+          await tx.pointTransaction.create({
+            data: {
+              lawFirmId: order.lawFirmId,
+              amount: orderWithPlan.subscriptionPlan.punktyGratis,
+              balanceAfter: updatedFirm.punktySaldo,
+              type: "SUBSCRIPTION_BONUS",
+              description: `Bonus punktów za pakiet ${orderWithPlan.subscriptionPlan.nazwa}`
+            }
+          })
+        }
       }
 
       // Pobierz zaktualizowaną kancelarię

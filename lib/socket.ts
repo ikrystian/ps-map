@@ -107,45 +107,29 @@ async function updateUnreadCount(userId: string) {
     let unreadCount = 0
 
     if (client) {
-      const conversations = await prisma.conversation.findMany({
+      unreadCount = await prisma.chatMessage.count({
         where: {
-          clientUserId: client.userId,
-          isArchivedByClient: false,
-          isDeletedByClient: false,
-        },
-        include: {
-          messages: {
-            where: {
-              isRead: false,
-              senderId: { not: client.userId },
-            },
+          conversation: {
+            clientUserId: client.userId,
+            isArchivedByClient: false,
+            isDeletedByClient: false,
           },
+          isRead: false,
+          senderId: { not: client.userId },
         },
       })
-      unreadCount = conversations.reduce(
-        (sum: number, conv: any) => sum + conv.messages.length,
-        0
-      )
     } else if (lawFirm) {
-      const conversations = await prisma.conversation.findMany({
+      unreadCount = await prisma.chatMessage.count({
         where: {
-          lawFirmUserId: lawFirm.userId,
-          isArchivedByLawFirm: false,
-          isDeletedByLawFirm: false,
-        },
-        include: {
-          messages: {
-            where: {
-              isRead: false,
-              senderId: { not: lawFirm.userId },
-            },
+          conversation: {
+            lawFirmUserId: lawFirm.userId,
+            isArchivedByLawFirm: false,
+            isDeletedByLawFirm: false,
           },
+          isRead: false,
+          senderId: { not: lawFirm.userId },
         },
       })
-      unreadCount = conversations.reduce(
-        (sum: number, conv: any) => sum + conv.messages.length,
-        0
-      )
     }
 
     io.to(`user:${userId}`).emit("unread_count", { unreadCount })

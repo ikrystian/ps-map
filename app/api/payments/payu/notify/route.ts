@@ -64,12 +64,22 @@ export async function POST(request: NextRequest) {
 
         // Handle Points
         if (dbOrder.orderType === 'POINTS') {
-          await tx.lawFirm.update({
+          const updatedFirm = await tx.lawFirm.update({
             where: { id: dbOrder.lawFirmId },
             data: {
               punktySaldo: {
                 increment: dbOrder.liczbaPunktow || 0
               }
+            }
+          })
+
+          await tx.pointTransaction.create({
+            data: {
+              lawFirmId: dbOrder.lawFirmId,
+              amount: dbOrder.liczbaPunktow || 0,
+              balanceAfter: updatedFirm.punktySaldo,
+              type: "POINTS_PURCHASE",
+              description: `Zakup punktów (Zamówienie ${dbOrder.orderNumber})`
             }
           })
         }
@@ -90,7 +100,7 @@ export async function POST(request: NextRequest) {
           const endDate = new Date(startDate)
           endDate.setMonth(endDate.getMonth() + months)
 
-          await tx.lawFirm.update({
+          const updatedFirm = await tx.lawFirm.update({
             where: { id: dbOrder.lawFirmId },
             data: {
               pakietSubskrypcji: dbOrder.subscriptionPlan.typ,
@@ -102,6 +112,18 @@ export async function POST(request: NextRequest) {
               }
             }
           })
+
+          if (dbOrder.subscriptionPlan.punktyGratis && dbOrder.subscriptionPlan.punktyGratis > 0) {
+            await tx.pointTransaction.create({
+              data: {
+                lawFirmId: dbOrder.lawFirmId,
+                amount: dbOrder.subscriptionPlan.punktyGratis,
+                balanceAfter: updatedFirm.punktySaldo,
+                type: "SUBSCRIPTION_BONUS",
+                description: `Bonus punktów za pakiet ${dbOrder.subscriptionPlan.nazwa}`
+              }
+            })
+          }
         }
 
         // Create Notification
