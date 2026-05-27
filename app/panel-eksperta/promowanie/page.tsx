@@ -82,6 +82,7 @@ interface Promotion {
   automatyczneOdnowienie: boolean
   aktywna: boolean
   createdAt: Date
+  isVirtualUpcoming?: boolean
 }
 
 interface Category {
@@ -171,6 +172,15 @@ const getPromotionStatusBadge = (promotion: Promotion) => {
   const start = new Date(promotion.startPromocji)
   const end = new Date(promotion.koniecPromocji)
 
+  if (promotion.isVirtualUpcoming) {
+    return (
+      <Badge variant="secondary" className="gap-1 bg-sky-500/10 text-sky-600 border-sky-500/20">
+        <RefreshCw className="h-3 w-3 animate-spin" style={{ animationDuration: '4s' }} />
+        Autoprzedłużenie
+      </Badge>
+    )
+  }
+
   if (start > now) {
     return (
       <Badge variant="secondary" className="gap-1">
@@ -190,6 +200,14 @@ const getPromotionStatusBadge = (promotion: Promotion) => {
   }
 
   if (promotion.aktywna) {
+    if (promotion.automatyczneOdnowienie) {
+      return (
+        <Badge variant="default" className="gap-1 bg-emerald-600 text-white hover:bg-emerald-600">
+          <CheckCircle2 className="h-3 w-3" />
+          Aktywna (Auto-odnowienie)
+        </Badge>
+      )
+    }
     return (
       <Badge variant="default" className="gap-1">
         <CheckCircle2 className="h-3 w-3" />
@@ -451,7 +469,11 @@ export default function LawFirmPromotionPage() {
 
   const handleToggleAutoRenewal = async (promotion: Promotion) => {
     try {
-      const response = await fetch(`/api/promotions/${promotion.id}`, {
+      const targetId = promotion.isVirtualUpcoming
+        ? promotion.id.replace("virtual-upcoming-", "")
+        : promotion.id
+
+      const response = await fetch(`/api/promotions/${targetId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -520,7 +542,16 @@ export default function LawFirmPromotionPage() {
   }
 
   const openCancelDialog = (promotion: Promotion) => {
-    setPromotionToCancel(promotion)
+    if (promotion.isVirtualUpcoming) {
+      const realPromo = promotions.find(p => p.id === promotion.id.replace("virtual-upcoming-", ""))
+      if (realPromo) {
+        setPromotionToCancel(realPromo)
+      } else {
+        setPromotionToCancel(promotion)
+      }
+    } else {
+      setPromotionToCancel(promotion)
+    }
     setCancelDialogOpen(true)
   }
 
@@ -576,11 +607,34 @@ export default function LawFirmPromotionPage() {
     return p.aktywna && end > now
   })
 
-  const upcomingPromotions = promotions.filter((p) => {
-    const now = new Date()
-    const start = new Date(p.startPromocji)
-    return start > now
-  })
+  const virtualUpcomingPromotions: Promotion[] = promotions
+    .filter((p) => {
+      const now = new Date()
+      const start = new Date(p.startPromocji)
+      const end = new Date(p.koniecPromocji)
+      return p.aktywna && p.automatyczneOdnowienie && start <= now && end >= now
+    })
+    .map((p) => {
+      const start = new Date(p.koniecPromocji)
+      const end = new Date(start)
+      end.setDate(end.getDate() + p.czasTrwaniaDni)
+      return {
+        ...p,
+        id: `virtual-upcoming-${p.id}`,
+        startPromocji: start,
+        koniecPromocji: end,
+        isVirtualUpcoming: true,
+      }
+    })
+
+  const upcomingPromotions = [
+    ...promotions.filter((p) => {
+      const now = new Date()
+      const start = new Date(p.startPromocji)
+      return start > now
+    }),
+    ...virtualUpcomingPromotions,
+  ]
 
   const pastPromotions = promotions.filter((p) => {
     const now = new Date()

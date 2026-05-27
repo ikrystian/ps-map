@@ -329,6 +329,45 @@ export async function getLawFirmHighlightType(
 // ============================================================================
 
 /**
+ * Dezaktywuje wygasłe promocje, które nie mają włączonego automatycznego odnowienia
+ */
+export async function deactivateExpiredPromotions() {
+  const now = new Date()
+
+  // Znajdź promocje bez automatycznego odnowienia, które się skończyły ale wciąż są oznaczone jako aktywne
+  const expiredPromotions = await prisma.promotion.findMany({
+    where: {
+      aktywna: true,
+      automatyczneOdnowienie: false,
+      koniecPromocji: {
+        lt: now,
+      },
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  const ids = expiredPromotions.map((p) => p.id)
+
+  if (ids.length > 0) {
+    await prisma.promotion.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        aktywna: false,
+      },
+    })
+    console.log(`[PROMOTIONS] Deactivated ${ids.length} expired promotions without auto-renewal`)
+  }
+
+  return ids
+}
+
+/**
  * Automatycznie odnawia promocje, które się zakończyły i mają włączone auto-odnowienie
  * (Ta funkcja powinna być wywoływana przez cron job)
  */

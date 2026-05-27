@@ -1,5 +1,6 @@
 import { createServer } from "http"
 import next from "next"
+import { initScheduler } from "./lib/scheduler"
 
 const dev = process.env.NODE_ENV !== "production"
 const hostname = "localhost"
@@ -9,6 +10,9 @@ const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
+  // Inicjalizacja lokalnego harmonogramu zadań w tle (schedulera)
+  initScheduler()
+
   const server = createServer(async (req, res) => {
     try {
       // In modern Next.js, the request handler can parse the URL internally.

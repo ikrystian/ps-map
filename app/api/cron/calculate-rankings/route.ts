@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { calculateRankings } from "@/lib/rankings"
 
 export async function GET(request: NextRequest) {
   try {
@@ -81,8 +81,8 @@ export async function GET(request: NextRequest) {
 
     return Response.json({
       success: true,
-      message: `Updated rankings for ${lawFirmsWithScore.length} law firms`,
-      totalFirms: lawFirmsWithScore.length,
+      message: `Updated rankings for ${count} law firms`,
+      totalFirms: count,
     })
   } catch (error) {
     console.error("Error calculating rankings:", error)

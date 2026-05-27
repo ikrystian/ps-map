@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { renewExpiredPromotions } from "@/lib/promotions"
+import { renewExpiredPromotions, deactivateExpiredPromotions } from "@/lib/promotions"
 
 /**
  * Cron Job: Automatyczne odnowienie promocji
@@ -28,12 +28,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log("[CRON] Starting promotion renewal process...")
+    console.log("[CRON] Starting promotion renewal and deactivation process...")
 
-    // Odnów wygasłe promocje
+    // Najpierw zdezaktywuj wygasłe promocje bez autoodnowienia
+    const deactivatedIds = await deactivateExpiredPromotions()
+
+    // Odnów wygasłe promocje z autoodnowieniem
     const results = await renewExpiredPromotions()
 
     console.log("[CRON] Promotion renewal completed:", {
+      deactivated: deactivatedIds.length,
       renewed: results.renewed.length,
       failed: results.failed.length,
     })
@@ -41,6 +45,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Promotion renewal completed",
+      deactivated: deactivatedIds.length,
       renewed: results.renewed.length,
       failed: results.failed.length,
       details: results,

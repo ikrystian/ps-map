@@ -74,6 +74,10 @@ const step4Schema = z.object({
   voivodeshipId: z.string().min(1, "Wybierz województwo"),
 })
 
+const step5Schema = z.object({
+  voivodeshipsIds: z.array(z.string()).length(1, "Wybierz dokładnie jedno województwo"),
+})
+
 const step6Schema = z.object({
   categoriesIds: z.array(z.string()).min(1, "Wybierz główną specjalizację"),
 })
@@ -298,6 +302,9 @@ export default function LawFirmRegistrationPage() {
         break
       case 4:
         schema = step4Schema
+        break
+      case 5:
+        schema = step5Schema
         break
       case 6:
         schema = step6Schema
@@ -859,78 +866,50 @@ export default function LawFirmRegistrationPage() {
       case 5:
         return (
           <div className="space-y-6">
-            <div 
-              className={cn(
-                "flex items-center space-x-3 p-4 rounded-xl border-2 transition-all cursor-pointer",
-                formData.callaPolska 
-                  ? "bg-primary/5 border-primary shadow-sm" 
-                  : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
-              )}
-              onClick={() => setFormData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}
-            >
-              <div className={cn(
-                "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors",
-                formData.callaPolska ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-              )}>
-                {formData.callaPolska && <Check className="w-4 h-4" />}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className={cn("text-base font-semibold", fieldErrors.voivodeshipsIds && "text-destructive")}>Województwo działania *</Label>
               </div>
-              <label htmlFor="callaPolska" className="text-sm font-semibold cursor-pointer flex-1" onClick={(e) => e.stopPropagation()}>
-                Działam na terenie całej Polski
-              </label>
+              <p className="text-sm text-muted-foreground">Wybierz województwo, w którym świadczysz usługi stacjonarnie.</p>
+              <div className={cn("grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card", fieldErrors.voivodeshipsIds && "border-2 border-destructive")}>
+                {voivodeships.map((v) => {
+                  const isSelected = formData.voivodeshipsIds.includes(v.id)
+                  return (
+                    <div
+                      key={v.id}
+                      className={cn(
+                        "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
+                        isSelected
+                          ? "bg-primary/5 border-primary shadow-sm"
+                          : "hover:bg-muted border-transparent"
+                      )}
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, voivodeshipsIds: [v.id], callaPolska: false }))
+                        if (fieldErrors.voivodeshipsIds) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.voivodeshipsIds
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                    >
+                      <div className={cn(
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
+                        isSelected ? "border-primary" : "border-muted-foreground/30"
+                      )}>
+                        {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                      </div>
+                      <span className={cn(
+                        "text-sm transition-colors",
+                        isSelected ? "text-primary font-medium" : "text-muted-foreground"
+                      )}>
+                        {v.nazwa}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+              {fieldErrors.voivodeshipsIds && <p className="text-sm text-destructive font-medium">{fieldErrors.voivodeshipsIds}</p>}
             </div>
-
-            <AnimatePresence mode="wait">
-              {!formData.callaPolska && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
-                >
-                  <Label>Województwa działania</Label>
-                  <p className="text-sm text-muted-foreground">Wybierz województwa, w których świadczysz usługi stacjonarnie.</p>
-                  <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card">
-                    {voivodeships.map((v) => {
-                      const isSelected = formData.voivodeshipsIds.includes(v.id)
-                      return (
-                        <div 
-                          key={v.id} 
-                          className={cn(
-                            "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
-                            isSelected 
-                              ? "bg-primary/5 border-primary shadow-sm" 
-                              : "hover:bg-muted border-transparent"
-                          )}
-                          onClick={() => {
-                            setFormData(prev => {
-                              const exists = prev.voivodeshipsIds.includes(v.id)
-                              if (exists) {
-                                return { ...prev, voivodeshipsIds: prev.voivodeshipsIds.filter(id => id !== v.id) }
-                              } else {
-                                return { ...prev, voivodeshipsIds: [...prev.voivodeshipsIds, v.id] }
-                              }
-                            })
-                          }}
-                        >
-                          <div className={cn(
-                            "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-                          )}>
-                            {isSelected && <Check className="w-3.5 h-3.5" />}
-                          </div>
-                          <span className={cn(
-                            "text-sm transition-colors",
-                            isSelected ? "text-primary font-medium" : "text-muted-foreground"
-                          )}>
-                            {v.nazwa}
-                          </span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         )
 

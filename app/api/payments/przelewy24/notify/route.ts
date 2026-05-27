@@ -55,7 +55,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Zaktualizuj status zamówienia i dodaj punkty
+    // Find order with subscription plan data
+    const orderWithPlan = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: {
+        subscriptionPlan: true,
+        lawFirm: true,
+      },
+    })
+
+    // Zaktualizuj status zamówienia i obsłuż typ zamówienia
     const result = await prisma.$transaction(async (tx: any) => {
       // Zaktualizuj zamówienie
       await tx.order.update({
@@ -63,31 +72,66 @@ export async function POST(request: NextRequest) {
         data: {
           statusPlatnosci: "ZAPLACONE",
           zaplaconoData: new Date(),
+          transactionId: String(orderId),
         },
       })
 
-      // Dodaj punkty do kancelarii
-      const lawFirm = await tx.lawFirm.update({
-        where: { id: order.lawFirmId },
-        data: {
-          punktySaldo: {
-            increment: order.liczbaPunktow || 0,
+      // Handle Points
+      if (orderWithPlan?.orderType === 'POINTS') {
+        await tx.lawFirm.update({
+          where: { id: order.lawFirmId },
+          data: {
+            punktySaldo: {
+              increment: order.liczbaPunktow || 0,
+            },
           },
-        },
+        })
+      }
+
+      // Handle Subscription
+      if (orderWithPlan?.orderType === 'SUBSCRIPTION' && orderWithPlan.subscriptionPlan) {
+        const now = new Date()
+        let startDate = now
+        if (orderWithPlan.lawFirm.dataPakietuDo && orderWithPlan.lawFirm.dataPakietuDo > now) {
+          startDate = orderWithPlan.lawFirm.dataPakietuDo
+        }
+
+        const months = orderWithPlan.subscriptionPeriod || 12
+        const endDate = new Date(startDate)
+        endDate.setMonth(endDate.getMonth() + months)
+
+        await tx.lawFirm.update({
+          where: { id: order.lawFirmId },
+          data: {
+            pakietSubskrypcji: orderWithPlan.subscriptionPlan.typ,
+            dataPakietuOd: startDate,
+            dataPakietuDo: endDate,
+            punktySaldo: {
+              increment: orderWithPlan.subscriptionPlan.punktyGratis || 0,
+            },
+          },
+        })
+      }
+
+      // Pobierz zaktualizowaną kancelarię
+      const lawFirm = await tx.lawFirm.findUnique({
+        where: { id: order.lawFirmId },
       })
 
       // Utwórz powiadomienie o zmianie statusu płatności
+      const isSubscription = orderWithPlan?.orderType === 'SUBSCRIPTION'
       const notification = await tx.notification.create({
         data: {
           userId: lawFirm.userId,
           typ: "ZMIANA_STATUSU",
           tytul: "Płatność zakończona pomyślnie",
-          tresc: `Twoja płatność została przetworzona. Dodano ${order.liczbaPunktow || 0} punktów do konta.`,
-          linkUrl: "/panel-eksperta/punkty",
+          tresc: isSubscription
+            ? `Subskrypcja ${orderWithPlan?.subscriptionPlan?.nazwa} została aktywowana.`
+            : `Twoja płatność została przetworzona. Dodano ${order.liczbaPunktow || 0} punktów do konta.`,
+          linkUrl: isSubscription ? "/panel-eksperta/pakiet" : "/panel-eksperta/punkty",
         },
       })
 
-      // Emit real-time notification via Socket.IO (after transaction)
       return { lawFirm, notification }
     })
 
