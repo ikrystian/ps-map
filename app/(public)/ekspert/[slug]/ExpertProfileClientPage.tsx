@@ -232,6 +232,7 @@ export default function LawFirmProfilePage() {
   const searchParams = useSearchParams()
   const { data: session } = useSession()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+  const isOwnProfile = !!(session?.user?.lawFirm?.id && lawFirm?.id && session.user.lawFirm.id === lawFirm.id)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
@@ -791,10 +792,10 @@ export default function LawFirmProfilePage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className={cn("grid w-full", isOwnProfile ? "grid-cols-4" : "grid-cols-5")}>
                 <TabsTrigger value="about">O nas</TabsTrigger>
                 <TabsTrigger value="services">Usługi</TabsTrigger>
-                <TabsTrigger value="consultations">Konsultacje</TabsTrigger>
+                {!isOwnProfile && <TabsTrigger value="consultations">Konsultacje</TabsTrigger>}
                 <TabsTrigger value="reviews">Opinie</TabsTrigger>
                 <TabsTrigger value="blog">Blog</TabsTrigger>
               </TabsList>
@@ -1024,9 +1025,11 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Consultations Tab */}
-              <TabsContent value="consultations">
-                <ConsultationBooking lawFirm={lawFirm} />
-              </TabsContent>
+              {!isOwnProfile && (
+                <TabsContent value="consultations">
+                  <ConsultationBooking lawFirm={lawFirm} />
+                </TabsContent>
+              )}
 
               {/* Reviews Tab */}
               {/* Reviews Tab */}
