@@ -128,6 +128,18 @@ export async function POST(request: NextRequest) {
 
     const isOnlinePayment = metodaPlatnosci === "PAYU" || metodaPlatnosci === "PRZELEWY24"
     const isPointPayment = metodaPlatnosci === "POINTS"
+    const isTestPayment = metodaPlatnosci === "TEST"
+
+    // Sprawdź czy płatność testowa ma być automatycznie akceptowana
+    let shouldAutoApprove = true
+    if (isTestPayment) {
+      const autoApproveSetting = await prisma.settings.findUnique({
+        where: { key: "autoApproveTestPayment" }
+      })
+      shouldAutoApprove = autoApproveSetting ? autoApproveSetting.value === "true" : true
+    }
+
+    const isPendingPayment = isOnlinePayment || (isTestPayment && !shouldAutoApprove)
 
     // Konwersja ceny na punkty (1 PLN = 2 pkt)
     const POINTS_PER_PLN = 2
@@ -206,8 +218,8 @@ export async function POST(request: NextRequest) {
       ])
       updatedLawFirm = result[0]
       order = result[1]
-    } else if (isOnlinePayment) {
-      // Dla płatności online tworzymy tylko zamówienie oczekujące
+    } else if (isPendingPayment) {
+      // Dla płatności online lub niezatwierdzonej testowej tworzymy tylko zamówienie oczekujące
       order = await prisma.order.create({
         data: {
           orderNumber,
@@ -286,15 +298,15 @@ export async function POST(request: NextRequest) {
         vatRate,
         vatAmount,
         grossAmount,
-        status: isOnlinePayment ? "ISSUED" : "PAID",
+        status: isPendingPayment ? "ISSUED" : "PAID",
         dueDate,
-        paymentDate: isOnlinePayment ? null : new Date(),
+        paymentDate: isPendingPayment ? null : new Date(),
       },
     })
 
     return Response.json({
       success: true,
-      message: isOnlinePayment ? "Zamówienie utworzone, oczekiwanie na płatność" : "Pakiet został aktywowany",
+      message: isPendingPayment ? "Zamówienie utworzone, oczekiwanie na płatność" : "Pakiet został aktywowany",
       lawFirm: updatedLawFirm,
       plan: {
         nazwa: plan.nazwa,

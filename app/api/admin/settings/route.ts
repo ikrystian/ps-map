@@ -63,6 +63,12 @@ export async function GET(request: NextRequest) {
         description: "Koszt usunięcia opinii z oceną 3★ w punktach",
       }
     }
+    if (!settingsObject.autoApproveTestPayment) {
+      settingsObject.autoApproveTestPayment = {
+        value: "true",
+        description: "Czy płatność testowa (TEST) ma być automatycznie akceptowana przez system (status ZAPLACONE)",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

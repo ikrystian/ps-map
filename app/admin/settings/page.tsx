@@ -47,6 +47,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  autoApproveTestPayment?: {
+    value: string
+    description: string | null
+  }
   deleteReviewCostRating1?: {
     value: string
     description: string | null
@@ -74,6 +78,7 @@ export default function AdminSettingsPage() {
   const [featuredCategoriesLimit, setFeaturedCategoriesLimit] = useState("8")
   const [maxTags, setMaxTags] = useState("5")
   const [showExpertTutorial, setShowExpertTutorial] = useState("true")
+  const [autoApproveTestPayment, setAutoApproveTestPayment] = useState("true")
   const [deleteCost1, setDeleteCost1] = useState("500")
   const [deleteCost2, setDeleteCost2] = useState("300")
   const [deleteCost3, setDeleteCost3] = useState("100")
@@ -97,6 +102,7 @@ export default function AdminSettingsPage() {
         setFeaturedCategoriesLimit(data.featuredCategoriesLimit?.value || "8")
         setMaxTags(data.maxLawFirmTags?.value || "5")
         setShowExpertTutorial(data.showExpertTutorial?.value || "true")
+        setAutoApproveTestPayment(data.autoApproveTestPayment?.value || "true")
         setDeleteCost1(data.deleteReviewCostRating1?.value || "500")
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
         setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
@@ -198,6 +204,10 @@ export default function AdminSettingsPage() {
             showExpertTutorial: {
               value: showExpertTutorial,
               description: "Czy wyświetlać samouczek (krok po kroku) w panelu eksperta",
+            },
+            autoApproveTestPayment: {
+              value: autoApproveTestPayment,
+              description: "Czy płatność testowa (TEST) ma być automatycznie akceptowana przez system (status ZAPLACONE)",
             },
             deleteReviewCostRating1: {
               value: deleteCost1,
@@ -497,6 +507,25 @@ export default function AdminSettingsPage() {
               id="showExpertTutorial"
               checked={showExpertTutorial === "true"}
               onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
+            />
+          </div>
+
+          <Separator className="my-4" />
+
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
+            <div className="space-y-0.5">
+              <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
+                Automatyczna akceptacja płatności testowych
+                <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
+              </p>
+            </div>
+            <Switch
+              id="autoApproveTestPayment"
+              checked={autoApproveTestPayment === "true"}
+              onCheckedChange={(checked) => setAutoApproveTestPayment(checked ? "true" : "false")}
             />
           </div>
         </CardContent>

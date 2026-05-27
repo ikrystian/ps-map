@@ -149,6 +149,15 @@ export async function POST(request: NextRequest) {
 
     const isTestPayment = metodaPlatnosci === "TEST"
 
+    // Sprawdź czy płatność testowa ma być automatycznie akceptowana
+    let shouldAutoApprove = isTestPayment
+    if (isTestPayment) {
+      const autoApproveSetting = await prisma.settings.findUnique({
+        where: { key: "autoApproveTestPayment" },
+      })
+      shouldAutoApprove = autoApproveSetting ? autoApproveSetting.value === "true" : true
+    }
+
     // Utwórz zamówienie
     const order = await prisma.order.create({
       data: {
@@ -158,12 +167,12 @@ export async function POST(request: NextRequest) {
         kwota,
         metodaPlatnosci,
         daneFaktury: daneFaktury ? JSON.stringify(daneFaktury) : null,
-        statusPlatnosci: isTestPayment ? "ZAPLACONE" : "OCZEKUJE",
-        zaplaconoData: isTestPayment ? new Date() : null,
+        statusPlatnosci: shouldAutoApprove ? "ZAPLACONE" : "OCZEKUJE",
+        zaplaconoData: shouldAutoApprove ? new Date() : null,
       },
     })
 
-    if (isTestPayment) {
+    if (shouldAutoApprove) {
       // 1. Zwiększ saldo punktów kancelarii natychmiast
       await prisma.lawFirm.update({
         where: { id: lawFirm.id },
