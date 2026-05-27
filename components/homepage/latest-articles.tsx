@@ -43,8 +43,8 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
         >
           {/* Header section with elegant title and divider line */}
           <div className="flex items-center gap-6 mb-12 w-full">
-            <h2 className="text-2xl md:text-3xl font-playfair text-white tracking-wide whitespace-nowrap font-medium">
-              Prawo i finanse: <span 
+            <h2 className="text-2xl md:text-3xl font-playfair text-white tracking-wide font-medium">
+              Prawo i finanse: <span
                 className="italic font-light text-transparent"
                 style={{ WebkitTextStroke: "1px rgba(255, 255, 255, 0.4)" }}
               >
@@ -78,7 +78,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
 
                       {/* Sophisticated Dark Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
-                      
+
                       {/* Accent highlight on hover */}
                       <div className="absolute inset-0 bg-[#0da192]/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
@@ -103,7 +103,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                           </span>
                         </div>
                       </div>
-                      
+
                       {/* Top border highlight on hover */}
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#0da192]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>

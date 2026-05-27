@@ -317,7 +317,7 @@ export default function CategoryPage() {
     <div className="min-h-screen bg-[#0f0f0e]">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        className="relative w-full h-32 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
