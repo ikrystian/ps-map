@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const allVoivodeships = await prisma.voivodeship.findMany()
     const voivodeshipMap = new Map(allVoivodeships.map(v => [v.nazwa.toLowerCase(), v.id]))
 
-    const createdCities = []
+    const validCitiesToCreate = []
 
     for (const cityData of cities) {
       const { nazwa, wojewodztwo } = cityData
@@ -33,26 +33,48 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      // Check if city already exists in this voivodeship
-      const existing = await prisma.city.findFirst({
-        where: { 
-          nazwa: nazwa,
-          voivodeshipId: vId
-        }
+      validCitiesToCreate.push({
+        nazwa: nazwa,
+        voivodeshipId: vId
+      })
+    }
+
+    let createdCount = 0
+
+    if (validCitiesToCreate.length > 0) {
+      const vIds = [...new Set(validCitiesToCreate.map(c => c.voivodeshipId))]
+
+      const existingCities = await prisma.city.findMany({
+        where: {
+          voivodeshipId: { in: vIds }
+        },
+        select: { nazwa: true, voivodeshipId: true }
       })
 
-      if (!existing) {
-        const newCity = await prisma.city.create({
-          data: {
-            nazwa: nazwa,
-            voivodeshipId: vId
-          }
+      const existingSet = new Set(existingCities.map(c => `${c.nazwa}-${c.voivodeshipId}`))
+
+      const newCitiesToCreate = validCitiesToCreate.filter(c => !existingSet.has(`${c.nazwa}-${c.voivodeshipId}`))
+
+      const uniqueNewCities = []
+      const seen = new Set()
+
+      for (const c of newCitiesToCreate) {
+        const key = `${c.nazwa}-${c.voivodeshipId}`
+        if (!seen.has(key)) {
+          seen.add(key)
+          uniqueNewCities.push(c)
+        }
+      }
+
+      if (uniqueNewCities.length > 0) {
+        await prisma.city.createMany({
+          data: uniqueNewCities
         })
-        createdCities.push(newCity)
+        createdCount = uniqueNewCities.length
       }
     }
 
-    return NextResponse.json({ count: createdCities.length })
+    return NextResponse.json({ count: createdCount })
   } catch (error) {
     console.error("Error seeding cities:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
