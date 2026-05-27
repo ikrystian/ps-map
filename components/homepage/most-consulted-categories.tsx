@@ -223,19 +223,19 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
         </div>
 
         {/* 6 Category Tabs Grid / Scrollable Row */}
-        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
+        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 md:mb-12 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
           {activeTabs.map((tab, idx) => {
             const isActive = activeIdx === idx
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveIdx(idx)}
-                className={`flex flex-col items-center justify-center p-4 text-center h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[150px] md:w-auto md:shrink ${isActive
+                className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-[150px] md:w-auto md:shrink ${isActive
                   ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
                   : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
                   }`}
               >
-                <div className="mb-4">
+                <div className="mb-1 md:mb-4">
                   {tab.icon(
                     `w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"
                     }`
