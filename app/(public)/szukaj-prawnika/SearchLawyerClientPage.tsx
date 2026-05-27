@@ -277,7 +277,7 @@ export default function SearchLawyerPage() {
     <div className="min-h-screen bg-background-sec">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900"
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -525,29 +525,30 @@ export default function SearchLawyerPage() {
         {/* Results */}
         <div>
           {/* Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-lg font-medium">
-              Znaleziono <span className="text-primary">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
+            <p className="text-lg font-medium text-foreground">
+              Znaleziono <span className="text-primary font-semibold">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
             </p>
 
             {/* View Toggle */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="gap-2"
+                className="gap-2 flex-1 sm:flex-initial h-9"
               >
                 <Filter className="h-4 w-4" />
-                {showFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                <span className="hidden sm:inline">{showFilters ? "Ukryj filtry" : "Pokaż filtry"}</span>
+                <span className="sm:hidden">Filtry</span>
                 {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
-              <div className="flex items-center gap-1 border rounded-md p-1">
+              <div className="flex items-center gap-1 border rounded-md p-1 bg-neutral-950/40 border-neutral-800 h-9">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
-                  className="px-3"
+                  className="px-3 h-7"
                 >
                   <Grid3x3 className="h-4 w-4" />
                 </Button>
@@ -555,15 +556,15 @@ export default function SearchLawyerPage() {
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
-                  className="px-3"
+                  className="px-3 h-7"
                 >
                   <List className="h-4 w-4" />
                 </Button>
               </div>
-              <Link href="/mapa">
-                <Button variant="outline" size="sm" className="px-3">
-                  <MapIcon className="h-4 w-4 mr-2" />
-                  Mapa
+              <Link href="/mapa" className="flex-1 sm:flex-initial">
+                <Button variant="outline" size="sm" className="w-full gap-2 h-9 px-3">
+                  <MapIcon className="h-4 w-4" />
+                  <span>Mapa</span>
                 </Button>
               </Link>
             </div>

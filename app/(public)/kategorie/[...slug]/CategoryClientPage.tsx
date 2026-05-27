@@ -19,7 +19,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock, ChevronDown, Check, X } from "lucide-react"
+import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock, ChevronDown, Check, X, Filter } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
@@ -140,6 +140,7 @@ export default function CategoryPage() {
 
   // View mode
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -318,7 +319,7 @@ export default function CategoryPage() {
     <div className="min-h-screen bg-[#0f0f0e]">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-32 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -330,12 +331,12 @@ export default function CategoryPage() {
               { label: "Kategorie", href: "/kategorie" },
               ...(slugArray.length > 1
                 ? slugArray.slice(0, -1).map((s, index) => {
-                    const cat = allCategories.find(c => c.slug === s)
-                    return {
-                      label: cat ? cat.nazwa : s,
-                      href: `/kategorie/${slugArray.slice(0, index + 1).join('/')}`,
-                    }
-                  })
+                  const cat = allCategories.find(c => c.slug === s)
+                  return {
+                    label: cat ? cat.nazwa : s,
+                    href: `/kategorie/${slugArray.slice(0, index + 1).join('/')}`,
+                  }
+                })
                 : []),
               { label: category ? category.nazwa : "Kategoria" },
             ]}
@@ -403,7 +404,7 @@ export default function CategoryPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
-          <aside className="lg:col-span-1">
+          <aside className={cn("lg:col-span-1 transition-all duration-300", showMobileFilters ? "block" : "hidden lg:block")}>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -559,21 +560,31 @@ export default function CategoryPage() {
           <div className="lg:col-span-3">
             <AdBanner location="category_top" className="mb-6" />
             {/* Sort and Results Count */}
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
               <p className="text-sm text-muted-foreground">
-                Znaleziono <span className="font-semibold text-foreground">{total}</span>{" "}
+                Znaleziono <span className="font-semibold text-foreground text-primary">{total}</span>{" "}
                 {total === 1 ? "kancelarię" : "kancelarie"}
               </p>
 
-              <div className="flex items-center gap-4">
-                {/* View Toggle */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                {/* Mobile Filter Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className="lg:hidden gap-2 flex-1 sm:flex-initial h-9"
+                >
+                  <Filter className="h-4 w-4" />
+                  {showMobileFilters ? "Ukryj filtry" : "Pokaż filtry"}
+                </Button>
 
-                <div className="flex items-center gap-1 border rounded-md p-1">
+                {/* View Toggle */}
+                <div className="flex items-center gap-1 border rounded-md p-1 bg-neutral-950/40 border-neutral-800 h-9">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
-                    className="px-3"
+                    className="px-3 h-7"
                   >
                     <Grid3x3 className="h-4 w-4" />
                   </Button>
@@ -581,20 +592,17 @@ export default function CategoryPage() {
                     variant={viewMode === "list" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("list")}
-                    className="px-3"
+                    className="px-3 h-7"
                   >
                     <List className="h-4 w-4" />
                   </Button>
                 </div>
 
                 {/* Sort */}
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="sort" className="text-sm">
-                    Sortuj:
-                  </Label>
+                <div className="flex items-center gap-2 flex-1 sm:flex-initial min-w-[140px]">
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger id="sort" className="w-[180px]">
-                      <SelectValue />
+                    <SelectTrigger id="sort" className="w-full sm:w-[160px] h-9 bg-neutral-950/40 border-neutral-800">
+                      <SelectValue placeholder="Sortuj według" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ranking">Ranking</SelectItem>

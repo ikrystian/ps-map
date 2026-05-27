@@ -171,7 +171,7 @@ const AwardEmblem = () => (
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-14 h-14 md:w-16 md:h-16"
+      className="w-10 h-10 sm:w-14 md:w-16 flex-shrink-0"
     >
       <defs>
         <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="1">
@@ -333,7 +333,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
-          <div className="relative w-full md:w-[400px] h-[250px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
+          <div className="relative w-full md:w-[320px] lg:w-[400px] h-[180px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
               {lawFirm.zdjecieGlowne || lawFirm.logo ? (
                 <Image
@@ -402,7 +402,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             {/* Logo Overlay - Bottom Right */}
             {lawFirm.logo && (
               <div className="absolute bottom-4 right-4 z-10">
-                <div className="w-24 h-24 rounded-full border border-amber-400/30 bg-black/90 p-1 flex items-center justify-center shadow-xl overflow-hidden">
+                <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border border-amber-400/30 bg-black/90 p-1 flex items-center justify-center shadow-xl overflow-hidden">
                   <Image
                     src={lawFirm.logo}
                     alt="Logo"
@@ -416,11 +416,11 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
           </div>
 
           {/* Right Column - Content */}
-          <div className="flex-1 p-6 flex flex-col justify-between relative bg-card">
+          <div className="flex-1 p-4 md:p-6 flex flex-col justify-between relative bg-card">
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
+                  <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
                     <span className="truncate">{lawFirm.nazwa}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge
@@ -451,15 +451,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               {/* Divider */}
 
               {/* Badges/Categories */}
-              <div className="flex flex-wrap items-center gap-3 my-3">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 my-3">
                 {/* Purple badge (Professional title) */}
-                <div className="bg-[#3b0066] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md transition-transform duration-300 group-hover:scale-[1.02]">
+                <div className="bg-[#3b0066] text-white px-3 py-1.5 md:px-5 md:py-2 rounded-lg text-xs md:text-sm font-medium shadow-md transition-transform duration-300 group-hover:scale-[1.02]">
                   {professionalTitle}
                 </div>
 
                 {/* Teal badge (Regional Chamber) */}
-                <div className="flex items-center gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-2 pr-4 py-1.5 rounded-lg text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
-                  <div className="bg-[#058c80] p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
+                <div className="flex items-center gap-1.5 md:gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-1.5 pr-2.5 md:pl-2 md:pr-4 py-1 md:py-1.5 rounded-lg text-xs md:text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
+                  <div className="bg-[#058c80] p-1 md:p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
                     <OraIcon />
                   </div>
                   <span className="text-neutral-200">{chamberText}</span>
