@@ -15,6 +15,7 @@ import {
   Clock,
   XCircle,
 } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import {
   Table,
   TableBody,
@@ -108,12 +109,10 @@ export default function InvoicesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Faktury VAT</h1>
-        <p className="text-muted-foreground mt-2">
-          Historia faktur VAT dla Twojego profilu
-        </p>
-      </div>
+      <PageHeader
+        title="Faktury VAT"
+        subtitle="Historia faktur VAT dla Twojego profilu"
+      />
 
       {invoices.length === 0 ? (
         <Card>

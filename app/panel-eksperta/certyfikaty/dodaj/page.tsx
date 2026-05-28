@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -105,16 +106,10 @@ export default function LawFirmAddCertificatePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">
-            Dodaj nowy certyfikat
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Wypełnij formularz, aby dodać nowy certyfikat lub uprawnienie
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Dodaj nowy certyfikat"
+        subtitle="Wypełnij formularz, aby dodać nowy certyfikat lub uprawnienie"
+      />
 
       <Card>
         <CardHeader>

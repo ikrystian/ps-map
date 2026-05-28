@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Eye, FileText, BookOpen } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -185,20 +186,17 @@ export default function LawFirmBlogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold font-playfair">Mój blog</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj wpisami na blogu swojego profilu
-          </p>
-        </div>
+      <PageHeader
+        title="Mój blog"
+        subtitle="Zarządzaj wpisami na blogu swojego profilu"
+      >
         <Button id="tour-blog-new" asChild>
           <Link href="/panel-eksperta/blog/nowy">
             <Plus className="h-4 w-4 mr-2" />
             Dodaj artykuł
           </Link>
         </Button>
-      </div>
+      </PageHeader>
 
       {posts.length === 0 ? (
         <Card>

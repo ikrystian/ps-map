@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -406,10 +407,10 @@ export default function LawFirmSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">Ustawienia</h1>
-        <p className="text-muted-foreground">Zarządzaj swoim kontem i preferencjami powiadomień</p>
-      </div>
+      <PageHeader
+        title="Ustawienia"
+        subtitle="Zarządzaj swoim kontem i preferencjami powiadomień"
+      />
 
       <div className="grid xl:grid-cols-2 gap-6">
         {/* Lewa kolumna - Dane osobowe i Konto */}

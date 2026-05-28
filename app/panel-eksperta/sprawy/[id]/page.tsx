@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -276,20 +277,17 @@ export default function LawFirmCaseDetailsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-xl font-medium tracking-tight font-playfair">{caseData.nazwaSprawy}</h1>
-            <Badge>{getCaseStatusLabel(caseData.status)}</Badge>
-            {caseData.trybPilny && (
-              <Badge variant="destructive">Pilne</Badge>
-            )}
-          </div>
-          <p className="text-muted-foreground">
-            {caseData.category.nazwa} • {getCaseTypeLabel(caseData.typSprawy)}
-          </p>
+      <PageHeader
+        title={caseData.nazwaSprawy}
+        subtitle={`${caseData.category.nazwa} • ${getCaseTypeLabel(caseData.typSprawy)}`}
+      >
+        <div className="flex items-center gap-3">
+          <Badge>{getCaseStatusLabel(caseData.status)}</Badge>
+          {caseData.trybPilny && (
+            <Badge variant="destructive">Pilne</Badge>
+          )}
         </div>
-      </div>
+      </PageHeader>
 
       {error && (
         <Card className="border-destructive">

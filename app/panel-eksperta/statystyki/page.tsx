@@ -21,6 +21,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 interface StatsData {
   lawFirm: {
@@ -128,12 +129,10 @@ export default function LawFirmStatsPage() {
   if (!canAccessStatistics) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">Statystyki i analizy</h1>
-          <p className="text-muted-foreground">
-            Zaawansowane statystyki i analityka dla Twojego profilu
-          </p>
-        </div>
+        <PageHeader 
+          title="Statystyki i analizy"
+          subtitle="Zaawansowane statystyki i analityka dla Twojego profilu"
+        />
 
         <FeatureLockedCard
           title="Zaawansowane statystyki"
@@ -180,13 +179,10 @@ export default function LawFirmStatsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">Statystyki</h1>
-        <p className="text-muted-foreground mt-2">
-          Pełna analiza wydajności Twojego profilu
-        </p>
-      </div>
+      <PageHeader
+        title="Statystyki"
+        subtitle="Pełna analiza wydajności Twojego profilu"
+      />
 
       {/* Overview Stats */}
       <div id="tour-stats-overview" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">

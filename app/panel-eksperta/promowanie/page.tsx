@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -711,45 +712,42 @@ export default function LawFirmPromotionPage() {
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10"
+        className="relative z-10"
       >
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-            <Sparkle className="h-3 w-3 animate-pulse" />
-            KAMPANIE REKLAMOWE & MARKETING
+        <PageHeader
+          title="Zwiększ Widoczność Profilu"
+          subtitle="Wypromuj swój profil w kluczowych sekcjach serwisu. Wybierz odpowiedni format promowania, przyciągnij uwagę klientów poszukujących pomocy prawnej i zdobądź pozycję lidera w swojej lokalizacji."
+          titleClassName="text-white text-3xl sm:text-4xl"
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setHistoryDialogOpen(true)}
+              className="bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
+            >
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              Historia zakupów
+            </Button>
+            <Button
+              id="tour-promo-new"
+              onClick={() => {
+                const element = document.getElementById("tour-promo-types")
+                element?.scrollIntoView({ behavior: "smooth" })
+              }}
+              className="bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium px-6 h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 gap-2 text-sm border-t border-white/10"
+            >
+              <Plus className="h-4 w-4" />
+              Nowa promocja
+            </Button>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight font-playfair text-white">
-            Zwiększ Widoczność Profilu
-          </h1>
-          <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-            Wypromuj swój profil w kluczowych sekcjach serwisu. Wybierz odpowiedni format promowania, 
-            przyciągnij uwagę klientów poszukujących pomocy prawnej i zdobądź pozycję lidera w swojej lokalizacji.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button 
-            variant="outline" 
-            onClick={() => setHistoryDialogOpen(true)} 
-            className="bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
-          >
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            Historia zakupów
-          </Button>
-          <Button
-            id="tour-promo-new"
-            onClick={() => {
-              const element = document.getElementById("tour-promo-types")
-              element?.scrollIntoView({ behavior: "smooth" })
-            }}
-            className="bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium px-6 h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 gap-2 text-sm border-t border-white/10"
-          >
-            <Plus className="h-4 w-4" />
-            Nowa promocja
-          </Button>
+        </PageHeader>
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkle className="h-3 w-3 animate-pulse" />
+          KAMPANIE REKLAMOWE & MARKETING
         </div>
       </motion.div>
 
@@ -765,20 +763,20 @@ export default function LawFirmPromotionPage() {
       )}
 
       {/* Wallet & Advantages Grid */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
         className="grid gap-6 lg:grid-cols-3 items-stretch relative z-10"
       >
         {/* Points Wallet Card */}
-        <Card 
+        <Card
           id="tour-promo-balance"
           className="lg:col-span-1 overflow-hidden relative border-[#3e3e38] bg-gradient-to-br from-[#122824] via-[#1f1e1d] to-[#1a1915] rounded-2xl shadow-xl flex flex-col justify-between group"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#0da192]/5 rounded-full blur-2xl group-hover:bg-[#0da192]/10 transition-all duration-500" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#d7b56d]/5 rounded-full blur-2xl group-hover:bg-[#d7b56d]/8 transition-all duration-500" />
-          
+
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold tracking-widest text-[#d7b56d] uppercase">
@@ -789,7 +787,7 @@ export default function LawFirmPromotionPage() {
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-6 pt-2">
             <div className="space-y-1">
               <div className="flex items-baseline gap-1">
@@ -802,10 +800,10 @@ export default function LawFirmPromotionPage() {
                 Dostępne środki marketingowe na zakup i przedłużanie formatów promowania.
               </p>
             </div>
-            
+
             <div className="pt-2">
               <a href="/panel-eksperta/punkty" className="block w-full">
-                <Button 
+                <Button
                   className="w-full bg-[#363431] border border-[#3e3e38] hover:bg-[#3e3e38] text-white font-medium h-10 rounded-xl gap-2 transition-all duration-200 shadow-md"
                 >
                   Kup dodatkowe punkty
@@ -884,7 +882,7 @@ export default function LawFirmPromotionPage() {
               const Icon = getIconComponent(promo.icon)
               const isHighValue = promo.type === "WYROZNIENIE" || promo.type === "POLECANI_PRAWNICY"
               const isMainPage = promo.type === "STRONA_GLOWNA" || promo.type === "TOP_LISTA"
-              
+
               return (
                 <motion.div
                   key={promo.type}
@@ -893,7 +891,7 @@ export default function LawFirmPromotionPage() {
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
                   className="h-full"
                 >
-                  <Card 
+                  <Card
                     className={cn(
                       "h-full flex flex-col justify-between overflow-hidden relative border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431]/40 transition-all duration-300 rounded-2xl group shadow-md hover:shadow-lg hover:shadow-black/25",
                       isHighValue && "border-[#d7b56d]/30 shadow-[#d7b56d]/2 hover:border-[#d7b56d]/60",
@@ -904,7 +902,7 @@ export default function LawFirmPromotionPage() {
                     {isHighValue && (
                       <div className="absolute top-0 right-0 w-32 h-32 bg-[#d7b56d]/3 rounded-full blur-2xl group-hover:bg-[#d7b56d]/6 transition-all duration-300" />
                     )}
-                    
+
                     {/* Prestigous Badge */}
                     {isHighValue && (
                       <div className="absolute top-4 right-4 z-20">
@@ -920,13 +918,13 @@ export default function LawFirmPromotionPage() {
                         </span>
                       </div>
                     )}
-                    
+
                     <CardHeader className="p-6 pb-4">
                       <div className="flex items-start gap-4">
-                        <div 
+                        <div
                           className="p-3 rounded-xl flex-shrink-0 shadow-md border relative transition-all duration-300 group-hover:scale-105"
-                          style={{ 
-                            backgroundColor: `${promo.color || '#3b82f6'}15`, 
+                          style={{
+                            backgroundColor: `${promo.color || '#3b82f6'}15`,
                             borderColor: `${promo.color || '#3b82f6'}30`
                           }}
                         >
@@ -939,21 +937,21 @@ export default function LawFirmPromotionPage() {
                         </div>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent className="px-6 pb-6 pt-0 flex-grow flex flex-col justify-between space-y-6">
                       {/* Features List */}
                       <ul className="space-y-2.5 my-2">
                         {promo.features.map((feature: string, fIdx: number) => (
                           <li key={fIdx} className="flex items-start gap-2.5 text-xs text-[#b7b5a9] leading-relaxed">
-                            <CheckCircle2 
-                              className="h-4 w-4 mt-0.5 flex-shrink-0" 
-                              style={{ color: isHighValue ? '#d7b56d' : '#0da192' }} 
+                            <CheckCircle2
+                              className="h-4 w-4 mt-0.5 flex-shrink-0"
+                              style={{ color: isHighValue ? '#d7b56d' : '#0da192' }}
                             />
                             <span>{feature}</span>
                           </li>
                         ))}
                       </ul>
-                      
+
                       <div className="space-y-4 pt-4 border-t border-[#3e3e38]/40">
                         <div className="flex items-baseline justify-between">
                           <span className="text-xs text-muted-foreground">Koszt promocji</span>
@@ -971,12 +969,12 @@ export default function LawFirmPromotionPage() {
                             </span>
                           </div>
                         </div>
-                        
+
                         <Button
                           onClick={() => handleOpenDialog(promo.type)}
                           className={cn(
                             "w-full h-10 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-t border-white/5",
-                            isHighValue 
+                            isHighValue
                               ? "bg-gradient-to-r from-[#d7b56d] to-[#cba355] text-[#30302e] hover:from-[#dfbf7c] hover:to-[#d7b56d] hover:shadow-lg hover:shadow-[#d7b56d]/10"
                               : "bg-[#363431] hover:bg-[#3e3e38] text-white border border-[#3e3e38]"
                           )}
@@ -1010,19 +1008,19 @@ export default function LawFirmPromotionPage() {
 
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#20201d]/60 border border-[#3e3e38] rounded-xl p-1 max-w-md">
-            <TabsTrigger 
-              value="active" 
+            <TabsTrigger
+              value="active"
               className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
             >
               Aktywne ({activePromotions.length})
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="upcoming"
               className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
             >
               Zaplanowane ({upcomingPromotions.length})
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="past"
               className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
             >
@@ -1125,7 +1123,7 @@ export default function LawFirmPromotionPage() {
                         </div>
                         {getPromotionStatusBadge(promo)}
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                         <div>
                           <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
@@ -1142,7 +1140,7 @@ export default function LawFirmPromotionPage() {
                           <Coins className="h-3.5 w-3.5" />
                           {promo.kosztPunktow} pkt
                         </span>
-                        
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-8 px-2 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-xs font-medium gap-1 text-muted-foreground hover:text-white rounded-lg">
@@ -1272,7 +1270,7 @@ export default function LawFirmPromotionPage() {
                         </div>
                         {getPromotionStatusBadge(promo)}
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                         <div>
                           <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
@@ -1289,7 +1287,7 @@ export default function LawFirmPromotionPage() {
                           <Coins className="h-3.5 w-3.5" />
                           {promo.kosztPunktow} pkt
                         </span>
-                        
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-8 px-2 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-xs font-medium gap-1 text-muted-foreground hover:text-white rounded-lg">
@@ -1391,7 +1389,7 @@ export default function LawFirmPromotionPage() {
                         </div>
                         {getPromotionStatusBadge(promo)}
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                         <div>
                           <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
@@ -1430,7 +1428,7 @@ export default function LawFirmPromotionPage() {
               Wypełnij parametry, aby dopełnić zamówienie formatu w portalu
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-5 py-4">
             {/* Wybrany format info card */}
             {selectedType && (
@@ -1441,10 +1439,10 @@ export default function LawFirmPromotionPage() {
                   const Icon = getIconComponent(promo.icon)
                   return (
                     <div className="flex items-center gap-3.5">
-                      <div 
+                      <div
                         className="p-2.5 rounded-lg border shadow-inner"
-                        style={{ 
-                          backgroundColor: `${promo.color || '#3b82f6'}15`, 
+                        style={{
+                          backgroundColor: `${promo.color || '#3b82f6'}15`,
                           borderColor: `${promo.color || '#3b82f6'}30`
                         }}
                       >
@@ -1667,13 +1665,13 @@ export default function LawFirmPromotionPage() {
                 </div>
                 {availability && (
                   <div className="w-full bg-[#3e3e38] h-2 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className={cn(
                         "h-full rounded-full transition-all duration-500",
-                        availability.availableSlots === 0 
-                          ? "bg-red-500" 
-                          : availability.availableSlots === 1 
-                            ? "bg-amber-500" 
+                        availability.availableSlots === 0
+                          ? "bg-red-500"
+                          : availability.availableSlots === 1
+                            ? "bg-amber-500"
                             : "bg-[#0da192]"
                       )}
                       style={{ width: `${(availability.occupiedSlots / availability.totalSlots) * 100}%` }}
@@ -1709,12 +1707,12 @@ export default function LawFirmPromotionPage() {
                   {selectedType ? getPromotionTypeLabel(selectedType, promotionTypes) : "-"}
                 </span>
               </div>
-              
+
               <div className="border-t border-[#3e3e38]/60 pt-3 flex justify-between items-center">
                 <span className="text-sm font-semibold text-white">Koszt całkowity</span>
                 <span className="text-xl font-bold text-[#0da192]">{calculateCost()} pkt</span>
               </div>
-              
+
               <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1">
                 <span>Dostępne saldo: {lawFirm?.punktySaldo || 0} pkt</span>
                 {lawFirm && (
@@ -1740,7 +1738,7 @@ export default function LawFirmPromotionPage() {
               </div>
             )}
           </div>
-          
+
           <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
               Anuluj
@@ -1792,7 +1790,7 @@ export default function LawFirmPromotionPage() {
                     : startDate ? formatDate(new Date(startDate)) : '-'}
                 </span>
               </div>
-              
+
               {selectedCategory && selectedCategory !== "all" && (
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Kategoria:</span>
@@ -1845,8 +1843,8 @@ export default function LawFirmPromotionPage() {
             <Button variant="outline" onClick={() => setConfirmDialogOpen(false)} disabled={submitting} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
               Cofnij
             </Button>
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={submitting}
               className="bg-gradient-to-r from-[#d7b56d] to-[#cba355] hover:from-[#dfbf7c] hover:to-[#d7b56d] text-[#30302e] font-bold px-6 rounded-xl transition-all duration-200"
             >
@@ -1918,7 +1916,7 @@ export default function LawFirmPromotionPage() {
               </div>
             )}
           </div>
-          
+
           <DialogFooter className="border-t border-[#3e3e38]/60 pt-4">
             <Button onClick={() => setHistoryDialogOpen(false)} className="bg-[#363431] hover:bg-[#3e3e38] text-white rounded-xl px-5">
               Zamknij
@@ -1933,7 +1931,7 @@ export default function LawFirmPromotionPage() {
           <div className="relative p-6 sm:p-8 space-y-6">
             {/* Header backdrop effect */}
             <div className="absolute top-0 inset-x-0 h-44 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
-            
+
             <div className="text-center space-y-3 relative z-10">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-md shadow-emerald-500/10 animate-bounce">
                 <CheckCircle2 className="h-8 w-8" />
@@ -1953,7 +1951,7 @@ export default function LawFirmPromotionPage() {
                 {/* Visual Campaign Ticket */}
                 <div className="relative overflow-hidden rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/20 to-[#363431]/20 p-5 shadow-inner">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-8 -mt-8 blur-lg"></div>
-                  
+
                   <div className="flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-[#20201d] border border-emerald-500/20 flex-shrink-0 shadow-sm text-emerald-400">
                       {(() => {
@@ -1969,7 +1967,7 @@ export default function LawFirmPromotionPage() {
                       <div className="font-extrabold text-base text-white truncate mt-0.5">
                         {getPromotionTypeLabel(purchasedPromotion.typPromocji, promotionTypes)}
                       </div>
-                      
+
                       <div className="flex flex-wrap items-center gap-2 mt-2">
                         <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 px-2 py-0.5 text-[10px] font-bold gap-1 hover:bg-emerald-500/10">
                           <Coins className="h-3 w-3" />
@@ -1990,7 +1988,7 @@ export default function LawFirmPromotionPage() {
                 <div className="space-y-4 bg-[#363431]/20 border border-[#3e3e38] rounded-xl p-4">
                   {(() => {
                     const isMonthly = purchasedPromotion.typPromocji === "POLECANI_PRAWNICY" || purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE"
-                    
+
                     // Map category ID/code to user friendly name
                     let categoryText = null
                     if (purchasedPromotion.kategoriaPromocji) {
@@ -2080,7 +2078,7 @@ export default function LawFirmPromotionPage() {
           </div>
 
           <div className="bg-[#363431]/20 px-6 py-4 border-t border-[#3e3e38]/60 flex justify-end">
-            <Button 
+            <Button
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 shadow-lg shadow-emerald-950/20 transition-all rounded-xl border-t border-white/10"
               onClick={() => setSuccessDialogOpen(false)}
             >
@@ -2119,8 +2117,8 @@ export default function LawFirmPromotionPage() {
             <Button variant="outline" onClick={() => setCancelDialogOpen(false)} disabled={cancelling} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
               Cofnij
             </Button>
-            <Button 
-              onClick={handleCancelPromotion} 
+            <Button
+              onClick={handleCancelPromotion}
               disabled={cancelling}
               className="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 rounded-xl transition-all duration-200"
             >
@@ -2136,3 +2134,4 @@ export default function LawFirmPromotionPage() {
     </div>
   )
 }
+

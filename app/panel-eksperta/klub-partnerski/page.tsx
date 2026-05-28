@@ -33,6 +33,7 @@ import {
   ExternalLink
 } from "lucide-react"
 import { generateBannerHtml, generateBannerScript } from "@/lib/partner-program"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 // Format date helper
 const formatDate = (date: Date | string) => {
@@ -218,12 +219,10 @@ export default function KlubPartnerskiPage() {
   if (!partnerStatus?.enrolled) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Klub Partnerski</h1>
-          <p className="text-gray-600 mt-2">
-            Dołącz do programu partnerskiego i zarabiaj punkty za promowanie ProstaSprawa.pl
-          </p>
-        </div>
+        <PageHeader
+          title="Klub Partnerski"
+          subtitle="Dołącz do programu partnerskiego i zarabiaj punkty za promowanie ProstaSprawa.pl"
+        />
 
         <Card>
           <CardHeader>
@@ -320,12 +319,10 @@ export default function KlubPartnerskiPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Klub Partnerski</h1>
-        <p className="text-gray-600 mt-2">
-          Zarządzaj swoim udziałem w programie partnerskim
-        </p>
-      </div>
+      <PageHeader
+        title="Klub Partnerski"
+        subtitle="Zarządzaj swoim udziałem w programie partnerskim"
+      />
 
       {/* Status Card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

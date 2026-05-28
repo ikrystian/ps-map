@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -163,27 +164,25 @@ export default function LawFirmEditCertificatePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="mb-2"
-          >
-            <Link href="/panel-eksperta/certyfikaty">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Powrót do listy certyfikatów
-            </Link>
-          </Button>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">
-            <Award className="h-8 w-8 text-primary" />
-            Edytuj certyfikat
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Zaktualizuj dane certyfikatu lub uprawnienia
-          </p>
-        </div>
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          asChild
+          className="mb-4"
+        >
+          <Link href="/panel-eksperta/certyfikaty">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Powrót do listy certyfikatów
+          </Link>
+        </Button>
+        <PageHeader
+          title="Edytuj certyfikat"
+          subtitle="Zaktualizuj dane certyfikatu lub uprawnienia"
+          className="mb-0"
+        >
+          <Award className="h-8 w-8 text-primary" />
+        </PageHeader>
       </div>
 
       <Card>

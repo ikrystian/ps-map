@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -307,13 +308,10 @@ export default function LawFirmPointsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-medium tracking-tight font-playfair">Punkty</h1>
-        <p className="text-muted-foreground mt-1">
-          Zarządzaj swoim saldem i dokonuj zakupów pakietów punktów
-        </p>
-      </div>
+      <PageHeader
+        title="Punkty"
+        subtitle="Zarządzaj swoim saldem i dokonuj zakupów pakietów punktów"
+      />
 
       {error && (
         <Card className="border-destructive/50 bg-destructive/5">

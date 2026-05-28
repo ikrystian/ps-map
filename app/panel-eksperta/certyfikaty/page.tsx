@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Eye, FileText, Award, Download } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -128,22 +129,17 @@ export default function LawFirmCertificatesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">
-            Certyfikaty i uprawnienia
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj swoimi certyfikatami, uprawnieniami i osiągnięciami zawodowymi
-          </p>
-        </div>
+      <PageHeader
+        title="Certyfikaty i uprawnienia"
+        subtitle="Zarządzaj swoimi certyfikatami, uprawnieniami i osiągnięciami zawodowymi"
+      >
         <Button asChild>
           <Link href="/panel-eksperta/certyfikaty/dodaj">
             <Plus className="mr-2 h-4 w-4" />
             Dodaj certyfikat
           </Link>
         </Button>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>

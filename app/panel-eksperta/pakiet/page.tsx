@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -391,13 +392,12 @@ export default function LawFirmPackagePage() {
 
     if (feature.type === "boolean") {
       return value ? (
-        <CheckCircle2 className={`h-5 w-5 mx-auto ${
-          plan.typ === "PREMIUM"
+        <CheckCircle2 className={`h-5 w-5 mx-auto ${plan.typ === "PREMIUM"
             ? "text-teal-500"
             : plan.typ === "BIZNES"
-            ? "text-amber-500"
-            : "text-green-500"
-        }`} />
+              ? "text-amber-500"
+              : "text-green-500"
+          }`} />
       ) : (
         <Minus className="h-4 w-4 text-muted-foreground/20 mx-auto" />
       )
@@ -439,11 +439,10 @@ export default function LawFirmPackagePage() {
       if (!value || value === "Brak") return <Minus className="h-4 w-4 text-muted-foreground/20 mx-auto" />
       const isGold = value === "Rozszerzone"
       return (
-        <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full border ${
-          isGold
+        <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full border ${isGold
             ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/30"
             : "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/30"
-        }`}>
+          }`}>
           {value}
         </span>
       )
@@ -472,19 +471,16 @@ export default function LawFirmPackagePage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-1 py-4">
-      {/* Header Section */}
-      <div className="text-center md:text-left space-y-2">
-        <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
+      <PageHeader
+        title="Pakiety subskrypcji"
+        subtitle="Zwiększ widoczność w katalogu, zyskaj bezpośredni dostęp do nowych spraw od klientów oraz buduj status wiarygodnego eksperta na rynku."
+        titleClassName="text-3xl md:text-4xl"
+      >
+        <div className="hidden md:inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 self-start">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Wzmocnij pozycję swojej kancelarii</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight font-serif text-foreground">
-          Pakiety subskrypcji
-        </h1>
-        <p className="text-muted-foreground text-sm max-w-xl">
-          Zwiększ widoczność w katalogu, zyskaj bezpośredni dostęp do nowych spraw od klientów oraz buduj status wiarygodnego eksperta na rynku.
-        </p>
-      </div>
+      </PageHeader>
 
       {/* Current Status Dashboard */}
       <div id="tour-pakiet-current" className="grid gap-6 md:grid-cols-2">
@@ -566,22 +562,20 @@ export default function LawFirmPackagePage() {
             <button
               type="button"
               onClick={() => setSelectedPeriod("1")}
-              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 ${
-                selectedPeriod === "1"
+              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 ${selectedPeriod === "1"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Miesięcznie
             </button>
             <button
               type="button"
               onClick={() => setSelectedPeriod("6")}
-              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 flex items-center gap-1.5 ${
-                selectedPeriod === "6"
+              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 flex items-center gap-1.5 ${selectedPeriod === "6"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Półrocznie
               <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide">
@@ -591,11 +585,10 @@ export default function LawFirmPackagePage() {
             <button
               type="button"
               onClick={() => setSelectedPeriod("12")}
-              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 flex items-center gap-1.5 ${
-                selectedPeriod === "12"
+              className={`px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 flex items-center gap-1.5 ${selectedPeriod === "12"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Rocznie
               <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide">
@@ -611,14 +604,14 @@ export default function LawFirmPackagePage() {
             const cosmetic = planCosmetics[plan.typ.toUpperCase()] || planCosmetics.PODSTAWOWY
             const PlanIcon = cosmetic.icon
             const isCurrent = plan.typ === lawFirm.pakietSubskrypcji
-            
+
             const targetPlanRank = getPlanRank(plan.typ)
             const isDowngrade = targetPlanRank < currentPlanRank
 
             const priceVal = getPriceValue(plan, selectedPeriod)
             const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
             const canAfford = lawFirm.punktySaldo >= pointsCost
-            
+
             const periodMonths = parseInt(selectedPeriod)
             const monthlyEquivPoints = Math.round(pointsCost / periodMonths)
             const monthlyEquivPLN = Math.round(priceVal / periodMonths)
@@ -626,21 +619,19 @@ export default function LawFirmPackagePage() {
             return (
               <div
                 key={plan.id}
-                className={`relative rounded-2xl bg-card border p-6 flex flex-col justify-between transition-all duration-300 ${
-                  isDowngrade
+                className={`relative rounded-2xl bg-card border p-6 flex flex-col justify-between transition-all duration-300 ${isDowngrade
                     ? "border-muted-foreground/20 bg-muted/[0.02] dark:bg-muted/[0.01] opacity-75 grayscale-25"
                     : cosmetic.popular
-                    ? "border-teal-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-teal-500/[0.02] dark:to-teal-500/[0.04]"
-                    : cosmetic.bestValue
-                    ? "border-amber-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-amber-500/[0.02] dark:to-amber-500/[0.04]"
-                    : "border-border/70 hover:shadow-md hover:-translate-y-0.5"
-                }`}
+                      ? "border-teal-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-teal-500/[0.02] dark:to-teal-500/[0.04]"
+                      : cosmetic.bestValue
+                        ? "border-amber-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-amber-500/[0.02] dark:to-amber-500/[0.04]"
+                        : "border-border/70 hover:shadow-md hover:-translate-y-0.5"
+                  }`}
               >
                 {/* Popularity or Value Badges */}
                 {cosmetic.badgeText && !isDowngrade && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white shadow-md ${
-                    cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
-                  }`}>
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
+                    }`}>
                     {cosmetic.badgeText}
                   </div>
                 )}
@@ -660,15 +651,14 @@ export default function LawFirmPackagePage() {
                         {cosmetic.tagline}
                       </p>
                     </div>
-                    <div className={`p-2.5 rounded-xl shrink-0 ${
-                      isDowngrade
+                    <div className={`p-2.5 rounded-xl shrink-0 ${isDowngrade
                         ? "bg-muted/50 text-muted-foreground/60 border border-border/50"
                         : cosmetic.popular
-                        ? "bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"
-                        : cosmetic.bestValue
-                        ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                        : "bg-muted text-muted-foreground border border-border"
-                    }`}>
+                          ? "bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"
+                          : cosmetic.bestValue
+                            ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                            : "bg-muted text-muted-foreground border border-border"
+                      }`}>
                       {isDowngrade ? <Lock className="h-5.5 w-5.5" /> : <PlanIcon className="h-5.5 w-5.5" />}
                     </div>
                   </div>
@@ -689,7 +679,7 @@ export default function LawFirmPackagePage() {
                             / {selectedPeriod === "1" ? "mies." : selectedPeriod === "6" ? "6 mies." : "rok"}
                           </span>
                         </div>
-                        
+
                         <div className="text-xs text-muted-foreground flex flex-col gap-0.5 leading-relaxed bg-muted/30 p-2 rounded-lg border border-border/40">
                           {selectedPeriod !== "1" && (
                             <span>Średnio: <strong className="text-foreground font-semibold">{monthlyEquivPoints} pkt</strong> / mies.</span>
@@ -715,13 +705,12 @@ export default function LawFirmPackagePage() {
                   <ul className="space-y-3 my-5 text-xs md:text-sm">
                     {cosmetic.bulletPoints.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2.5 text-muted-foreground">
-                        <CheckCircle2 className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${
-                          cosmetic.popular
+                        <CheckCircle2 className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${cosmetic.popular
                             ? "text-teal-500"
                             : cosmetic.bestValue
-                            ? "text-amber-500"
-                            : "text-muted-foreground/60"
-                        }`} />
+                              ? "text-amber-500"
+                              : "text-muted-foreground/60"
+                          }`} />
                         <span
                           className="leading-snug"
                           dangerouslySetInnerHTML={{
@@ -744,7 +733,7 @@ export default function LawFirmPackagePage() {
                       <Button variant="outline" className="w-full bg-muted/40 text-muted-foreground border-border/85 cursor-not-allowed font-semibold flex items-center justify-center gap-1.5" disabled>
                         <Lock className="h-4 w-4" /> Plan niedostępny
                       </Button>
-                      
+
                       <div className="p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 text-left">
                         <p className="text-[10.5px] text-muted-foreground leading-normal flex items-start gap-1.5">
                           <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
@@ -762,13 +751,12 @@ export default function LawFirmPackagePage() {
                     <Button
                       onClick={() => handlePurchaseClick(plan)}
                       disabled={purchasing || !canAfford}
-                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] shrink-0 shadow-sm ${
-                        cosmetic.popular
+                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] shrink-0 shadow-sm ${cosmetic.popular
                           ? "bg-teal-600 hover:bg-teal-700 text-white hover:shadow-teal-500/10"
                           : cosmetic.bestValue
-                          ? "bg-amber-500 hover:bg-amber-600 text-white hover:shadow-amber-500/10"
-                          : "bg-primary hover:bg-primary/95 text-white"
-                      }`}
+                            ? "bg-amber-500 hover:bg-amber-600 text-white hover:shadow-amber-500/10"
+                            : "bg-primary hover:bg-primary/95 text-white"
+                        }`}
                       title={!canAfford ? "Masz za mało punktów na koncie" : ""}
                     >
                       {purchasing ? (
@@ -784,7 +772,7 @@ export default function LawFirmPackagePage() {
                       )}
                     </Button>
                   )}
-                  
+
                   {!canAfford && !isCurrent && !isDowngrade && plan.typ !== "FREE" && (
                     <p className="text-[10px] text-destructive text-center mt-2 flex items-center justify-center gap-1 font-semibold">
                       <AlertCircle className="h-3 w-3 shrink-0" />
@@ -844,13 +832,12 @@ export default function LawFirmPackagePage() {
                       return (
                         <th
                           key={plan.id}
-                          className={`border-b border-border/60 p-4 text-center font-bold text-base text-foreground w-[18.75%] ${
-                            isPopular
+                          className={`border-b border-border/60 p-4 text-center font-bold text-base text-foreground w-[18.75%] ${isPopular
                               ? "bg-teal-500/[0.02] dark:bg-teal-500/[0.05] border-x border-teal-500/10"
                               : isBestVal
-                              ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
-                              : ""
-                          }`}
+                                ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
+                                : ""
+                            }`}
                         >
                           <div className="flex flex-col items-center gap-1.5">
                             <span>{plan.nazwa}</span>
@@ -883,9 +870,8 @@ export default function LawFirmPackagePage() {
                             {group.features.map((feature, featureIdx) => (
                               <tr
                                 key={feature.key}
-                                className={`border-b border-border/30 hover:bg-muted/20 transition-colors duration-150 ${
-                                  featureIdx % 2 === 0 ? "bg-card" : "bg-muted/5"
-                                }`}
+                                className={`border-b border-border/30 hover:bg-muted/20 transition-colors duration-150 ${featureIdx % 2 === 0 ? "bg-card" : "bg-muted/5"
+                                  }`}
                               >
                                 <td className="p-4 font-medium text-sm text-foreground/80 w-1/4 pl-6">
                                   {feature.label}
@@ -896,13 +882,12 @@ export default function LawFirmPackagePage() {
                                   return (
                                     <td
                                       key={plan.id}
-                                      className={`p-4 text-center w-[18.75%] ${
-                                        isPopular
+                                      className={`p-4 text-center w-[18.75%] ${isPopular
                                           ? "bg-teal-500/[0.02] dark:bg-teal-500/[0.05] border-x border-teal-500/10"
                                           : isBestVal
-                                          ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
-                                          : ""
-                                      }`}
+                                            ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
+                                            : ""
+                                        }`}
                                     >
                                       {renderTableCell(plan, feature)}
                                     </td>
@@ -928,13 +913,12 @@ export default function LawFirmPackagePage() {
                       return (
                         <td
                           key={plan.id}
-                          className={`p-4 text-center font-bold w-[18.75%] ${
-                            isPopular
+                          className={`p-4 text-center font-bold w-[18.75%] ${isPopular
                               ? "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] border-x border-teal-500/10"
                               : isBestVal
-                              ? "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border-x border-amber-500/10"
-                              : ""
-                          }`}
+                                ? "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border-x border-amber-500/10"
+                                : ""
+                            }`}
                         >
                           {plan.typ === "FREE" ? (
                             <span className="text-sm font-bold text-muted-foreground">0 pkt (Darmowy)</span>

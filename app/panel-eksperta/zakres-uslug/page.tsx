@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { toast } from "@/components/ui/sonner"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import {
   DndContext,
   closestCenter,
@@ -585,13 +586,11 @@ export default function LawFirmServicesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b pb-4">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight font-playfair">Zakres i obszar usług</h1>
-          <p className="text-muted-foreground mt-1">
-            Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi.
-          </p>
-        </div>
+      <PageHeader
+        title="Zakres i obszar usług"
+        subtitle="Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi."
+        className="border-b pb-4"
+      >
         <div className="flex items-center gap-4">
           <Button onClick={handleSave} disabled={saving} size="lg" className="px-8 shadow-md hover:shadow-lg transition-all bg-primary hover:bg-primary/90 text-white font-semibold">
             {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -599,7 +598,7 @@ export default function LawFirmServicesPage() {
             Zapisz wszystkie zmiany
           </Button>
         </div>
-      </div>
+      </PageHeader>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Lewa kolumna: Konfiguracja */}

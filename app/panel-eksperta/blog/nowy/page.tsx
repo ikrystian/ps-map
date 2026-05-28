@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, Eye } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -132,20 +133,17 @@ export default function LawFirmNewBlogPostPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/panel-eksperta/blog">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold font-playfair">Nowy artykuł</h1>
-            <p className="text-muted-foreground">
-              Utwórz nowy wpis na blogu swojego profilu
-            </p>
-          </div>
-        </div>
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/panel-eksperta/blog">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+        <PageHeader
+          title="Nowy artykuł"
+          subtitle="Utwórz nowy wpis na blogu swojego profilu"
+          className="mb-0 flex-1"
+        />
       </div>
 
       <Form {...form}>

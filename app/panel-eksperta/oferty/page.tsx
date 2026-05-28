@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 interface Offer {
   id: string
@@ -271,23 +272,18 @@ export default function LawFirmOffersPage() {
 
   return (
     <div className="w-full">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border/40">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight font-serif text-foreground">Moje Oferty</h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Przeglądaj i zarządzaj złożonymi ofertami dla spraw klientów
-          </p>
-        </div>
-
-        {/* Subtle quick-stat dashboard indicator */}
+      <PageHeader
+        title="Moje Oferty"
+        subtitle="Przeglądaj i zarządzaj złożonymi ofertami dla spraw klientów"
+        className="pb-2 border-b border-border/40"
+      >
         <div className="flex items-center gap-2 text-xs text-muted-foreground px-3 py-2 rounded-xl border border-border/30 w-fit">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span>Wszystkie: <strong>{statusCounts.all}</strong></span>
           <span className="text-border mx-1">•</span>
           <span>Do decyzji: <strong className="text-amber-600 dark:text-amber-400">{statusCounts.ZLOZONA}</strong></span>
         </div>
-      </div>
+      </PageHeader>
 
       {/* Interactive Stats Dashboard Grid (Filters) */}
       <div

@@ -18,30 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Eye,
-  FileText,
-  TrendingUp,
-  Trophy,
-  Coins,
-  Package,
-  AlertCircle,
-  Loader2,
-  Briefcase,
-  CheckCircle2,
-  Clock,
-  Star,
-  Calendar,
-  ArrowRight,
-  Edit,
-  BarChart3,
-  Target,
-  Settings,
-  Zap,
-  Users,
-  Crown,
-  Sparkles,
-} from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 interface LawFirm {
   id: string
@@ -387,13 +364,10 @@ export default function LawFirmDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">Panel Eksperta</h1>
-        <p className="text-muted-foreground mt-2">
-          Witaj, {lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.
-        </p>
-      </div>
+      <PageHeader 
+        title="Panel Eksperta"
+        subtitle={`Witaj, ${lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.`}
+      />
 
       {/* Stats Grid */}
       <div id="tour-stats" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">

@@ -49,6 +49,7 @@ import {
   Edit2,
   Trash2
 } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 // Format date helper
 const formatDate = (date: Date | string) => {
@@ -405,27 +406,23 @@ export default function LawFirmReviewsPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      {/* Header z tłem gradientowym */}
-      <div className="relative overflow-hidden rounded-2xl bg-card border border-border/80 p-6 md:p-8 shadow-sm">
+      <PageHeader
+        title="Opinie Klientów"
+        subtitle="Śledź opinie o swoim profilu publicznym, analizuj wskaźniki satysfakcji i odpowiadaj profesjonalnie, aby budować zaufanie klientów."
+        className="relative overflow-hidden rounded-2xl bg-card border border-border/80 p-6 md:p-8 shadow-sm mb-0"
+        titleClassName="text-2xl md:text-3xl"
+      >
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary hover:bg-primary/10 transition-colors">
-                Panel reputacji
-              </Badge>
-              {stats && (
-                <span className="text-xs text-muted-foreground">
-                  Zaktualizowano przed chwilą
-                </span>
-              )}
-            </div>
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight font-playfair text-foreground">
-              Opinie Klientów
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-              Śledź opinie o swoim profilu publicznym, analizuj wskaźniki satysfakcji i odpowiadaj profesjonalnie, aby budować zaufanie klientów.
-            </p>
+        <div className="relative flex flex-col md:flex-row items-center gap-4">
+          <div className="flex flex-col items-start gap-2">
+            <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary hover:bg-primary/10 transition-colors">
+              Panel reputacji
+            </Badge>
+            {stats && (
+              <span className="text-xs text-muted-foreground">
+                Zaktualizowano przed chwilą
+              </span>
+            )}
           </div>
           {stats && (
             <div className="flex items-center gap-3 bg-zinc-900/50 border border-border/60 rounded-xl px-4 py-3 self-start md:self-auto shadow-inner">
@@ -439,7 +436,7 @@ export default function LawFirmReviewsPage() {
             </div>
           )}
         </div>
-      </div>
+      </PageHeader>
 
       {error && (
         <Card className="border-destructive/50 bg-destructive/5">

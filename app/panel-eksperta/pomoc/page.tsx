@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/sonner"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import {
   Accordion,
   AccordionContent,
@@ -144,13 +145,10 @@ export default function HelpCenterPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Centrum pomocy</h1>
-        <p className="text-muted-foreground mt-2">
-          Znajdź odpowiedzi na najczęściej zadawane pytania
-        </p>
-      </div>
+      <PageHeader
+        title="Centrum pomocy"
+        subtitle="Znajdź odpowiedzi na najczęściej zadawane pytania"
+      />
 
       {/* Search Bar */}
       <Card>

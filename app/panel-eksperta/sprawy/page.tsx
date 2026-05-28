@@ -26,6 +26,7 @@ import { Heart, Trash2, Eye, MapPin, Calendar, Loader2, Briefcase, Euro, CheckCi
 import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/sonner"
 import { BorderBeam } from "@/components/ui/border-beam"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 interface Case {
   id: string
@@ -328,12 +329,10 @@ const SprawyPage = () => {
 
   return (
     <div className="container">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold font-playfair">Wszystkie Sprawy</h1>
-        <p className="text-muted-foreground mt-2">
-          Przeglądaj wszystkie dostępne sprawy (sprawy zaakceptowane przez klienta są wyróżnione na górze)
-        </p>
-      </div>
+      <PageHeader 
+        title="Wszystkie Sprawy"
+        subtitle="Przeglądaj wszystkie dostępne sprawy (sprawy zaakceptowane przez klienta są wyróżnione na górze)"
+      />
 
       <div id="tour-sprawy-filters" className="flex flex-col sm:flex-row gap-4 flex-1 mb-6">
         <Input

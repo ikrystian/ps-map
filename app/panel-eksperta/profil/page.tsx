@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import dynamic from "next/dynamic"
 
 const RichTextEditor = dynamic(
@@ -558,10 +559,10 @@ function LawFirmProfilePageContent() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h1 className="text-xl font-medium text-white font-playfair">Profil Eksperta</h1>
-        <p className="text-muted-foreground">Zarządzaj informacjami o swoim profilu</p>
-      </div>
+      <PageHeader
+        title="Profil Eksperta"
+        subtitle="Zarządzaj informacjami o swoim profilu"
+      />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList id="tour-profil-tabs">

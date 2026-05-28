@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
@@ -146,6 +147,10 @@ export default function RankingBoostPage() {
 
   return (
     <div className="space-y-6">
+      <PageHeader
+        title="Pozycja w rankingu"
+        subtitle="Zwiększ swoją widoczność i przyciągnij więcej klientów dzięki wyższej pozycji w rankingu"
+      />
       <Card>
         <CardHeader>
           <CardTitle>Zwiększ swoją pozycję w rankingu</CardTitle>

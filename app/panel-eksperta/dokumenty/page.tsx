@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { Plus, Download, Trash2, FileText, Upload } from "lucide-react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -228,13 +229,10 @@ export default function DocumentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold font-playfair">Dokumenty</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj dokumentami swojego profilu
-          </p>
-        </div>
+      <PageHeader
+        title="Dokumenty"
+        subtitle="Zarządzaj dokumentami swojego profilu"
+      >
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -331,7 +329,7 @@ export default function DocumentsPage() {
             </Form>
           </DialogContent>
         </Dialog>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>
