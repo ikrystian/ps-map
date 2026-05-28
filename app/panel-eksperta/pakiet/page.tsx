@@ -29,6 +29,7 @@ import {
   MapPin,
   TrendingUp,
   MessageSquare,
+  Lock,
 } from "lucide-react"
 import {
   AlertDialog,
@@ -178,6 +179,24 @@ export default function LawFirmPackagePage() {
   const [purchasing, setPurchasing] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+
+  const isSubscriptionActive = lawFirm?.dataPakietuDo
+    ? new Date(lawFirm.dataPakietuDo) > new Date()
+    : false
+
+  const getPlanRank = (planTyp: string | null | undefined): number => {
+    if (!planTyp) return -1
+    const typUpper = planTyp.toUpperCase()
+    if (typUpper === "FREE") return 0
+    const idx = PACKAGE_ORDER.indexOf(typUpper)
+    return idx !== -1 ? idx + 1 : -1
+  }
+
+  const currentPlanRank = isSubscriptionActive ? getPlanRank(lawFirm?.pakietSubskrypcji) : -1
+
+  const isSelectedPlanDowngrade = selectedPlan
+    ? getPlanRank(selectedPlan.typ) < currentPlanRank
+    : false
 
   useEffect(() => {
     fetchData()
@@ -593,6 +612,9 @@ export default function LawFirmPackagePage() {
             const PlanIcon = cosmetic.icon
             const isCurrent = plan.typ === lawFirm.pakietSubskrypcji
             
+            const targetPlanRank = getPlanRank(plan.typ)
+            const isDowngrade = targetPlanRank < currentPlanRank
+
             const priceVal = getPriceValue(plan, selectedPeriod)
             const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
             const canAfford = lawFirm.punktySaldo >= pointsCost
@@ -605,7 +627,9 @@ export default function LawFirmPackagePage() {
               <div
                 key={plan.id}
                 className={`relative rounded-2xl bg-card border p-6 flex flex-col justify-between transition-all duration-300 ${
-                  cosmetic.popular
+                  isDowngrade
+                    ? "border-muted-foreground/20 bg-muted/[0.02] dark:bg-muted/[0.01] opacity-75 grayscale-25"
+                    : cosmetic.popular
                     ? "border-teal-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-teal-500/[0.02] dark:to-teal-500/[0.04]"
                     : cosmetic.bestValue
                     ? "border-amber-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-amber-500/[0.02] dark:to-amber-500/[0.04]"
@@ -613,11 +637,17 @@ export default function LawFirmPackagePage() {
                 }`}
               >
                 {/* Popularity or Value Badges */}
-                {cosmetic.badgeText && (
+                {cosmetic.badgeText && !isDowngrade && (
                   <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white shadow-md ${
                     cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
                   }`}>
                     {cosmetic.badgeText}
+                  </div>
+                )}
+
+                {isDowngrade && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border shadow-sm flex items-center gap-1.5">
+                    <Lock className="h-3 w-3" /> Zablokowany
                   </div>
                 )}
 
@@ -631,13 +661,15 @@ export default function LawFirmPackagePage() {
                       </p>
                     </div>
                     <div className={`p-2.5 rounded-xl shrink-0 ${
-                      cosmetic.popular
+                      isDowngrade
+                        ? "bg-muted/50 text-muted-foreground/60 border border-border/50"
+                        : cosmetic.popular
                         ? "bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"
                         : cosmetic.bestValue
                         ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
                         : "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      <PlanIcon className="h-5.5 w-5.5" />
+                      {isDowngrade ? <Lock className="h-5.5 w-5.5" /> : <PlanIcon className="h-5.5 w-5.5" />}
                     </div>
                   </div>
 
@@ -707,6 +739,21 @@ export default function LawFirmPackagePage() {
                     <Button variant="outline" className="w-full border-green-500/30 bg-green-500/5 text-green-600 dark:text-green-400 hover:bg-green-500/5 hover:text-green-600 font-semibold shadow-2xs" disabled>
                       <Check className="mr-2 h-4 w-4" /> Twój obecny pakiet
                     </Button>
+                  ) : isDowngrade ? (
+                    <div className="space-y-3">
+                      <Button variant="outline" className="w-full bg-muted/40 text-muted-foreground border-border/85 cursor-not-allowed font-semibold flex items-center justify-center gap-1.5" disabled>
+                        <Lock className="h-4 w-4" /> Plan niedostępny
+                      </Button>
+                      
+                      <div className="p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 text-left">
+                        <p className="text-[10.5px] text-muted-foreground leading-normal flex items-start gap-1.5">
+                          <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                          <span>
+                            Posiadasz obecnie wyższy aktywny plan <strong>{plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji}</strong> ważny do <strong>{formatDate(lawFirm.dataPakietuDo!)}</strong>. Zmiana na niższy pakiet będzie dostępna po wygaśnięciu obecnego okresu.
+                          </span>
+                        </p>
+                      </div>
+                    </div>
                   ) : plan.typ === "FREE" ? (
                     <Button variant="outline" className="w-full border-border/80 text-muted-foreground" disabled>
                       Pakiet Darmowy
@@ -738,7 +785,7 @@ export default function LawFirmPackagePage() {
                     </Button>
                   )}
                   
-                  {!canAfford && !isCurrent && plan.typ !== "FREE" && (
+                  {!canAfford && !isCurrent && !isDowngrade && plan.typ !== "FREE" && (
                     <p className="text-[10px] text-destructive text-center mt-2 flex items-center justify-center gap-1 font-semibold">
                       <AlertCircle className="h-3 w-3 shrink-0" />
                       Za mało punktów.
@@ -919,6 +966,17 @@ export default function LawFirmPackagePage() {
             <AlertDialogDescription asChild>
               <div className="space-y-4 pt-2">
                 {selectedPlan && (() => {
+                  if (isSelectedPlanDowngrade) {
+                    return (
+                      <div className="text-xs text-destructive p-3 bg-destructive/10 rounded-lg flex items-start gap-2 border border-destructive/20 leading-relaxed">
+                        <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                        <div>
+                          Nie możesz aktywować niższego pakietu. Posiadasz obecnie wyższą aktywną subskrypcję.
+                        </div>
+                      </div>
+                    )
+                  }
+
                   const price = getPriceValue(selectedPlan, selectedPeriod)
                   const pointsCost = Math.round(price * POINTS_PER_PLN)
                   const canAfford = lawFirm ? lawFirm.punktySaldo >= pointsCost : false
@@ -993,7 +1051,7 @@ export default function LawFirmPackagePage() {
             <AlertDialogCancel className="border-border">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
-              disabled={purchasing || !!(selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
+              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
               className="bg-primary hover:bg-primary/95 text-white font-semibold"
             >
               {purchasing ? (
