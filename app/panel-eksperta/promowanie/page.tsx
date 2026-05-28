@@ -54,6 +54,7 @@ import {
   MoreVertical,
   Star,
   Crown,
+  MapPin,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -219,6 +220,53 @@ const getPromotionStatusBadge = (promotion: Promotion) => {
   return <Badge variant="destructive">Nieaktywna</Badge>
 }
 
+const getPromotionSuccessDetails = (type: string, category: string | null, voivodeship: string | null) => {
+  switch (type) {
+    case "PODBICIE_OGLOSZENIA":
+      return {
+        gdzie: `Twój profil uzyska najwyższy możliwy priorytet i będzie pozycjonowany wyżej na liście wyników wyszukiwania ekspertów${category ? ` w kategorii "${category}"` : ''}${voivodeship ? ` dla województwa ${voivodeship}` : ''}.`,
+        jak: "Twój profil będzie pozycjonowany ponad profilami ze standardowym pozycjonowaniem. Dzięki wyższemu wskaźnikowi widoczności trafi do znacznie większego grona osób poszukujących pomocy prawnej.",
+        kiedy: "Promowanie rozpocznie się natychmiast po dacie startu i będzie trwało przez zdefiniowany okres. Saldo punktów zostało pomniejszone, a system automatycznie zadba o pozycjonowanie Twojej wizytówki w wybranym okresie."
+      }
+    case "WYROZNIENIE":
+      return {
+        gdzie: `Na liście wyszukiwania ekspertów w całym serwisie${category ? ` (szczególnie w kategorii "${category}")` : ''} oraz bezpośrednio na Twoim publicznym profilu eksperta.`,
+        jak: "Twój profil zostanie otoczony unikalną, elegancką, złotą ramką ze specjalną odznaką 'Wyróżniony' oraz otrzyma wyróżniony kolor tła karty. Dodatkowo na Twojej wizytówce i profilu pojawi się prestiżowy symbol wyróżnienia. Wyróżnienie wizualne zwiększa klikalność profilu średnio o 40%!",
+        kiedy: "Promowanie wizualne będzie aktywne bez przerwy w zdefiniowanym przedziale czasowym. Oznaczenie 'Wyróżniony' będzie widoczne dla wszystkich odwiedzających portal."
+      }
+    case "TOP_LISTA":
+      return {
+        gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Kancelarie'.",
+        jak: "Twoja kancelaria zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
+        kiedy: "Twój profil będzie stale wyświetlany w tej karuzeli/liście przez cały opłacony czas trwania promocji."
+      }
+    case "STRONA_GLOWNA":
+      return {
+        gdzie: "Główny baner (karuzela / slider) na samej górze strony głównej portalu - najbardziej widoczne miejsce w całym serwisie.",
+        jak: "Maksymalna ekspozycja i prestiż. Twój profil ze zdjęciem i chwytliwym nagłówkiem pojawi się jako jedna z pierwszych rzeczy, które zobaczy każdy użytkownik wchodzący na portal. Zapewnia to najwyższą konwersję i dotarcie do tysięcy użytkowników.",
+        kiedy: "Slider rotuje promowane kancelarie przez całą dobę. Twoja wizytówka będzie brała udział w tej prestiżowej rotacji przez cały okres trwania promocji."
+      }
+    case "POLECANI_PRAWNICY":
+      return {
+        gdzie: `Strona główna serwisu, w specjalnie dedykowanej sekcji 'Polecani prawnicy i adwokaci' dla wybranej przez Ciebie kategorii zawodowej: "${category || 'Wszystkie'}".`,
+        jak: "To ekskluzywne promowanie o najwyższej skuteczności. W danym miesiącu w wybranej kategorii obowiązuje rygorystyczny limit maksymalnie 4 miejsc dla kancelarii, co oznacza znikome rozproszenie uwagi użytkownika i gwarantuje ogromną liczbę zapytań.",
+        kiedy: "Promowanie trwa nieprzerwanie przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca)."
+      }
+    case "NAJCZESCIEJ_KONSULTOWANE":
+      return {
+        gdzie: `Strona główna serwisu, w boksie powiązanym z najpopularniejszą tematyką prawną: "${category || 'Wszystkie'}".`,
+        jak: "Bezpośrednie dotarcie do klientów z konkretnymi problemami prawnymi. Twój profil będzie promowany jako rekomendowany specjalista w danej dziedzinie. W tym module obowiązuje ścisły limit 5 miejsc na daną kategorię w miesiącu, co chroni Twoją pozycję lidera i zapewnia stały dopływ spraw.",
+        kiedy: "Promowanie trwa przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca)."
+      }
+    default:
+      return {
+        gdzie: "W wybranych sekcjach serwisu w zależności od wybranego pakietu.",
+        jak: "Zwiększając widoczność, zasięg oraz budując zaufanie klientów dzięki unikalnym oznaczeniom.",
+        kiedy: "W wybranym przedziale czasowym zgodnie z harmonogramem."
+      }
+  }
+}
+
 export default function LawFirmPromotionPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
@@ -298,6 +346,10 @@ export default function LawFirmPromotionPage() {
 
   // Dialog potwierdzenia utworzenia promocji
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+
+  // Dialog sukcesu zakupu promocji
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false)
+  const [purchasedPromotion, setPurchasedPromotion] = useState<Promotion | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -425,10 +477,15 @@ export default function LawFirmPromotionPage() {
         throw new Error(errorData.error || "Nie udało się utworzyć promocji")
       }
 
+      const newPromo = await response.json()
+      setPurchasedPromotion(newPromo)
+
       // Zamknij dialog i odśwież dane
       setDialogOpen(false)
       resetForm()
       await fetchData()
+
+      setSuccessDialogOpen(true)
 
       toast({
         title: "Sukces",
@@ -1417,6 +1474,162 @@ export default function LawFirmPromotionPage() {
           </div>
           <DialogFooter>
             <Button onClick={() => setHistoryDialogOpen(false)}>Zamknij</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog podsumowania zakupionej promocji */}
+      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <DialogContent className="sm:max-w-[620px] p-6 overflow-hidden rounded-xl border border-emerald-500/20 bg-background shadow-2xl">
+          <DialogHeader className="text-center space-y-3 relative pb-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 animate-bounce">
+              <CheckCircle2 className="h-8 w-8" />
+            </div>
+            <div>
+              <DialogTitle className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-playfair tracking-tight">
+                Promocja została pomyślnie zamówiona!
+              </DialogTitle>
+              <DialogDescription className="text-sm mt-2 text-muted-foreground max-w-md mx-auto">
+                Dziękujemy za skorzystanie z usługi promowania. Poniżej znajduje się szczegółowe podsumowanie Twojej kampanii.
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+
+          {purchasedPromotion && (
+            <div className="space-y-5 my-2">
+              {/* Główna karta z informacjami o promocji */}
+              <div className="relative overflow-hidden rounded-xl border bg-secondary/15 p-4 transition-all hover:bg-secondary/20">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-8 -mt-8 blur-lg"></div>
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-background border flex-shrink-0 shadow-sm">
+                    {(() => {
+                      const promoType = promotionTypes.find(p => p.type === purchasedPromotion.typPromocji)
+                      const Icon = getIconComponent(purchasedPromotion.typPromocji)
+                      return (
+                        <Icon className="h-7 w-7" style={{ color: promoType?.color || '#3b82f6' }} />
+                      )
+                    })()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Typ kampanii</div>
+                    <div className="font-bold text-lg text-foreground truncate">
+                      {getPromotionTypeLabel(purchasedPromotion.typPromocji, promotionTypes)}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                      <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary px-2 py-0.5 text-xs font-semibold gap-1">
+                        <Coins className="h-3 w-3" />
+                        Koszt: {purchasedPromotion.kosztPunktow} pkt
+                      </Badge>
+                      {purchasedPromotion.automatyczneOdnowienie && (
+                        <Badge variant="secondary" className="bg-sky-500/10 text-sky-600 border-sky-500/20 text-xs px-2 py-0.5">
+                          <RefreshCw className="h-2.5 w-2.5 mr-1 animate-spin" style={{ animationDuration: '4s' }} />
+                          Auto-odnowienie
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcje Gdzie, Jak, Kiedy */}
+              <div className="space-y-4">
+                {(() => {
+                  const isMonthly = purchasedPromotion.typPromocji === "POLECANI_PRAWNICY" || purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE"
+                  
+                  // Map category ID/code to user friendly name
+                  let categoryText = null
+                  if (purchasedPromotion.kategoriaPromocji) {
+                    if (purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE") {
+                      categoryText = MOST_CONSULTED_CATEGORIES.find(c => c.id === purchasedPromotion.kategoriaPromocji)?.name || purchasedPromotion.kategoriaPromocji
+                    } else if (purchasedPromotion.typPromocji === "POLECANI_PRAWNICY") {
+                      categoryText = purchasedPromotion.kategoriaPromocji
+                    } else {
+                      categoryText = categories.find(c => c.id === purchasedPromotion.kategoriaPromocji)?.nazwa || purchasedPromotion.kategoriaPromocji
+                    }
+                  }
+
+                  // Map voivodeship ID to name
+                  let voivodeshipText = null
+                  if (purchasedPromotion.wojewodztwoPromocji) {
+                    voivodeshipText = voivodeships.find(v => v.id === purchasedPromotion.wojewodztwoPromocji)?.nazwa || purchasedPromotion.wojewodztwoPromocji
+                  }
+
+                  const details = getPromotionSuccessDetails(purchasedPromotion.typPromocji, categoryText, voivodeshipText)
+
+                  return (
+                    <>
+                      {/* GDZIE BĘDZIE PROMOWANE */}
+                      <div className="flex gap-3 items-start group">
+                        <div className="mt-0.5 p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors">
+                          <MapPin className="h-4 w-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-foreground">GDZIE będzie promowane?</h4>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {details.gdzie}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* JAK BĘDZIE PROMOWANE */}
+                      <div className="flex gap-3 items-start group">
+                        <div className="mt-0.5 p-2 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20 flex-shrink-0 group-hover:bg-amber-500/20 transition-colors">
+                          <Sparkles className="h-4 w-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-foreground">JAK będzie promowane?</h4>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {details.jak}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* KIEDY BĘDZIE PROMOWANE */}
+                      <div className="flex gap-3 items-start group">
+                        <div className="mt-0.5 p-2 rounded-lg bg-sky-500/10 text-sky-500 border border-sky-500/20 flex-shrink-0 group-hover:bg-sky-500/20 transition-colors">
+                          <Calendar className="h-4 w-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-foreground">KIEDY będzie promowane?</h4>
+                          <div className="text-xs text-muted-foreground leading-relaxed space-y-1">
+                            <p>{details.kiedy}</p>
+                            <div className="mt-1.5 p-2 bg-secondary/30 rounded border border-border inline-block">
+                              <span className="font-semibold text-foreground">Okres ważności:</span>{" "}
+                              {isMonthly ? (
+                                <span className="text-primary font-medium">
+                                  {new Date(purchasedPromotion.startPromocji).toLocaleDateString("pl-PL", { month: "long", year: "numeric" })} (Miesiąc kalendarzowy)
+                                </span>
+                              ) : (
+                                <span className="text-primary font-medium">
+                                  {new Date(purchasedPromotion.startPromocji).toLocaleDateString("pl-PL", { day: "numeric", month: "numeric", year: "numeric" })} - {new Date(purchasedPromotion.koniecPromocji).toLocaleDateString("pl-PL", { day: "numeric", month: "numeric", year: "numeric" })} ({purchasedPromotion.czasTrwaniaDni} dni)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+
+              {/* Informacja pomocnicza */}
+              <div className="p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10 flex items-start gap-2.5 mt-2">
+                <Info className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <p className="text-[11px] text-muted-foreground leading-normal">
+                  Wszystkie swoje aktywne i zaplanowane promowania możesz wygodnie przeglądać oraz kontrolować (np. włączać/wyłączać automatyczne przedłużenia) w sekcji <strong>&quot;Twoje promocje&quot;</strong> na bieżącej stronie. Powiadomienie e-mail z potwierdzeniem zostało wysłane na Twój adres skrzynki.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="mt-4 pt-4 border-t flex justify-end">
+            <Button 
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2 shadow-lg hover:shadow-emerald-600/10 transition-all rounded-lg"
+              onClick={() => setSuccessDialogOpen(false)}
+            >
+              Rozumiem, dziękuję!
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
