@@ -92,6 +92,26 @@ export async function POST(request: NextRequest) {
     let upgradeNote = ""
 
     if (lawFirm.dataPakietuDo && new Date(lawFirm.dataPakietuDo) > new Date()) {
+      // Zablokuj przejście na niższy pakiet
+      const PACKAGE_ORDER = ["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]
+      const getPlanRank = (planTyp: string | null | undefined): number => {
+        if (!planTyp) return -1
+        const typUpper = planTyp.toUpperCase()
+        if (typUpper === "FREE") return 0
+        const idx = PACKAGE_ORDER.indexOf(typUpper)
+        return idx !== -1 ? idx + 1 : -1
+      }
+
+      const currentRank = getPlanRank(lawFirm.pakietSubskrypcji)
+      const targetRank = getPlanRank(plan.typ)
+
+      if (targetRank < currentRank) {
+        return Response.json(
+          { error: `Nie możesz przejść na niższy pakiet (${plan.nazwa}), ponieważ posiadasz obecnie wyższy aktywny pakiet.` },
+          { status: 400 }
+        )
+      }
+
       // Pakiet jeszcze aktywny - oblicz wartość niewykorzystanego czasu
       const now = new Date()
       const remainingDays = Math.ceil(
