@@ -8,6 +8,7 @@ import { featuresBlockHtml } from './features'
 import { ctaBlockHtml } from './cta'
 import { contactBlockHtml } from './contact'
 import { testimonialsBlockHtml } from './testimonials'
+import { teamBlockHtml } from './team'
 
 export const blocks = {
   hero: {
@@ -35,6 +36,12 @@ export const blocks = {
     description: 'Trzy opinie klientów z ocenami gwiazdkami',
     html: testimonialsBlockHtml,
   },
+  team: {
+    name: 'Team - Zespół ekspertów',
+    description: 'Sekcja z siatką członków zespołu, hover-reveal ikonami i przyciskiem CTA',
+    html: teamBlockHtml,
+  },
 }
 
 export type BlockKey = keyof typeof blocks
+
