@@ -22,6 +22,7 @@ interface AdBannerProps {
 export function AdBanner({ location, className }: AdBannerProps) {
   const [ad, setAd] = useState<Ad | null>(null)
   const [loading, setLoading] = useState(true)
+  const [hideBanner, setHideBanner] = useState(false)
   const [hasTrackedImpression, setHasTrackedImpression] = useState(false)
   const bannerRef = useRef<HTMLDivElement>(null)
 
@@ -31,7 +32,9 @@ export function AdBanner({ location, className }: AdBannerProps) {
         const response = await fetch(`/api/ads?location=${location}`)
         if (response.ok) {
           const data = await response.json()
-          if (data.ad) {
+          if (data.hideBanner) {
+            setHideBanner(true)
+          } else if (data.ad) {
             setAd(data.ad)
           }
         }
@@ -92,6 +95,10 @@ export function AdBanner({ location, className }: AdBannerProps) {
     } catch (err) {
       console.error("Failed to track ad click", err)
     }
+  }
+
+  if (hideBanner) {
+    return null
   }
 
   if (loading) {
