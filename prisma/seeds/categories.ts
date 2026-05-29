@@ -30,14 +30,18 @@ export async function seedCategories(prisma: PrismaClient) {
         nazwa: category.nazwa,
         typ: category.typ as any,
         kolejnosc: category.kolejnosc,
-        aktywna: true
+        aktywna: true,
+        wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
+        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe
       },
       create: {
         nazwa: category.nazwa,
         slug: slug,
         typ: category.typ as any,
         kolejnosc: category.kolejnosc,
-        aktywna: true
+        aktywna: true,
+        wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
+        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe
       },
     })
 
