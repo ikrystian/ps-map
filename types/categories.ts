@@ -27,6 +27,9 @@ export interface Category extends CategoryBase {
   ikonaUrl?: string | null
   backgroundImageUrl?: string | null
   parentId?: string | null
+  wyswietlajNaGlownejPrywatne?: boolean
+  wyswietlajNaGlownejFirmowe?: boolean
+  kolejnosc?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
