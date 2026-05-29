@@ -35,6 +35,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [devUsers, setDevUsers] = useState<DevUser[]>([])
   const [selectedUserId, setSelectedUserId] = useState("")
+  const [enableUserSelection, setEnableUserSelection] = useState(true)
 
   // Fetch dev users list
   useEffect(() => {
@@ -49,7 +50,21 @@ export default function LoginPage() {
         console.error("Error fetching dev users:", error)
       }
     }
+
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("/api/settings")
+        if (response.ok) {
+          const data = await response.json()
+          setEnableUserSelection(data.enableUserSelectionOnLogin !== "false")
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error)
+      }
+    }
+
     fetchDevUsers()
+    fetchSettings()
   }, [])
 
   useEffect(() => {
@@ -247,30 +262,46 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Wybierz użytkownika</Label>
-              <Select
-                value={selectedUserId}
-                onValueChange={handleUserSelect}
-                disabled={isLoading}
-              >
-                <SelectTrigger className="h-11">
-                  <SelectValue placeholder="Wybierz użytkownika testowego" />
-                </SelectTrigger>
-                <SelectContent>
-                  {devUsers.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      <div className="flex items-center gap-2">
-                        <span>{user.email}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ({user.role})
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {enableUserSelection ? (
+              <div className="space-y-2">
+                <Label htmlFor="email">Wybierz użytkownika</Label>
+                <Select
+                  value={selectedUserId}
+                  onValueChange={handleUserSelect}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Wybierz użytkownika testowego" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {devUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        <div className="flex items-center gap-2">
+                          <span>{user.email}</span>
+                          <span className="text-xs text-muted-foreground">
+                            ({user.role})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Wprowadź adres email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  className="h-11"
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -309,7 +340,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? "Logowanie..." : "Zaloguj się (lub wybierz użytkownika powyżej)"}
+              {isLoading ? "Logowanie..." : (enableUserSelection ? "Zaloguj się (lub wybierz użytkownika powyżej)" : "Zaloguj się")}
             </Button>
 
             <div className="relative">
