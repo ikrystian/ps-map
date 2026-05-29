@@ -381,6 +381,7 @@ export default function PublicHeader({
                 userImage={userImage}
                 punktySaldo={punktySaldo}
                 userId={userId}
+                showPoints={false}
               />
             ) : (
               <div className="hidden md:flex items-center gap-4">
