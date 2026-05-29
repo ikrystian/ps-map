@@ -421,6 +421,8 @@ model Category {
 
   aktywna     Boolean  @default(true)
   kolejnosc   Int      @default(0)
+  wyswietlajNaGlownejPrywatne Boolean @default(false)
+  wyswietlajNaGlownejFirmowe  Boolean @default(false)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
