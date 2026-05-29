@@ -3,6 +3,7 @@
     "nazwa": "Dane osobowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 10,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "RODO",
       "Ochrona danych osobowych"
@@ -12,6 +13,7 @@
     "nazwa": "Działalność gospodarcza",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 1,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zakładanie firmy",
       "Obsługa działalności"
@@ -30,6 +32,7 @@
     "nazwa": "Podatki",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 5,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Obowiązki podatkowe dla firm",
       "Ulgi i zwolnienia podatkowe"
@@ -39,6 +42,7 @@
     "nazwa": "Prawo pracy",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 4,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zatrudnienie i umowy",
       "Spory pracownicze",
@@ -60,6 +64,7 @@
     "nazwa": "Przestępstwa skarbowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 6,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Wykroczenia skarbowe",
       "Kontrole i spory z fiskusem"
@@ -69,6 +74,7 @@
     "nazwa": "Przetargi",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 8,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Postępowania przetargowe",
       "Skargi i odwołania",
@@ -79,6 +85,7 @@
     "nazwa": "Spółki",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 2,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zakładanie spółek",
       "Obsługa i zarządzanie"
@@ -88,6 +95,7 @@
     "nazwa": "Umowy",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 3,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Umowa o pracę",
       "Umowy cywilnoprawne (zlecenie, dzieło)"
@@ -97,6 +105,7 @@
     "nazwa": "Sprawy sądowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 7,
+    "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Windykacja i egzekucja",
       "Pozwy sądowe"
@@ -211,6 +220,7 @@
     "nazwa": "Zobowiązania finansowe",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 2,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Długi, windykacja, egzekucje",
       "Pożyczki i kredyty"
@@ -220,6 +230,7 @@
     "nazwa": "Rodzina",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 4,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Adopcje i opieka nad dziećmi",
       "Alimenty i rozwody",
@@ -230,6 +241,7 @@
     "nazwa": "Majątek osobisty",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 3,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Zarządzanie majątkiem",
       "Dziedziczenie, spadki, testamenty"
@@ -239,6 +251,7 @@
     "nazwa": "Mediacje",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 5,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Mediacje rodzinne",
       "Mediacje gospodarcze"
@@ -248,6 +261,7 @@
     "nazwa": "Nieruchomości",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 6,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Kupno/sprzedaż",
       "Wynajem"
@@ -275,6 +289,7 @@
     "nazwa": "Ubezpieczenia",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 7,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Ubezpieczenia majątkowe",
       "Ubezpieczenia na życie"
@@ -284,6 +299,7 @@
     "nazwa": "Prawo karne",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 1,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Wykroczenia",
       "Przestępstwa"
@@ -293,6 +309,7 @@
     "nazwa": "Zdrowie i wypadki",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 8,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Odszkodowania",
       "Rehabilitacja"
@@ -302,6 +319,7 @@
     "nazwa": "Prawo konsumenckie",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 12,
+    "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Reklamacje i zwroty",
       "Problemy z zakupami online",
