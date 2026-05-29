@@ -38,6 +38,8 @@ interface Category {
   metaDescription?: string | null
   aktywna: boolean
   kolejnosc: number
+  wyswietlajNaGlownejPrywatne?: boolean
+  wyswietlajNaGlownejFirmowe?: boolean
   createdAt: string
   updatedAt: string
   parent?: {
@@ -191,9 +193,21 @@ export default function AdminCategoriesPage() {
             {category.parent?.nazwa || "-"}
           </TableCell>
           <TableCell>
-            <Badge variant={category.aktywna ? "default" : "secondary"}>
-              {category.aktywna ? "Aktywna" : "Nieaktywna"}
-            </Badge>
+            <div className="flex flex-col gap-1.5 items-start">
+              <Badge variant={category.aktywna ? "default" : "secondary"}>
+                {category.aktywna ? "Aktywna" : "Nieaktywna"}
+              </Badge>
+              {category.wyswietlajNaGlownejPrywatne && (
+                <Badge variant="outline" className="border-teal-500 text-teal-500 bg-teal-500/10">
+                  Główna (prywatne)
+                </Badge>
+              )}
+              {category.wyswietlajNaGlownejFirmowe && (
+                <Badge variant="outline" className="border-yellow-500 text-yellow-500 bg-yellow-500/10">
+                  Główna (firmowe)
+                </Badge>
+              )}
+            </div>
           </TableCell>
           <TableCell className="text-right">
             <div className="flex items-center gap-2 justify-end">
