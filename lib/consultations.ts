@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
+import { prisma } from "@/lib/prisma"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
 

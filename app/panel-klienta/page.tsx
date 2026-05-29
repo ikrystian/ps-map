@@ -1,24 +1,23 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
-import {
-  User,
-  MessageSquare,
-  FileCheck,
-  BookOpen,
-  Star,
-  CheckCircle,
-  ArrowRight,
-  Mail,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import {
+  ArrowRight,
+  BookOpen,
+  CheckCircle,
+  FileCheck,
+  MessageSquare,
+  Star,
+  User
+} from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface ClientData {
   id: string

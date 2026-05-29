@@ -1,11 +1,10 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
-import bcrypt from "bcryptjs"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
-import { sendEmail, sendEmailWithTemplate, generateEmailVerificationEmail } from "@/lib/email"
 import { EmailType } from "@prisma/client"
+import bcrypt from "bcryptjs"
 import crypto from "crypto"
+import { NextRequest, NextResponse } from "next/server"
 
 // Helper function to generate slug from name and NIP
 function generateSlug(nazwa: string, nip: string): string {

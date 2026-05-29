@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
+import { NextResponse } from "next/server"
 
 // GET /api/blog/categories/[id] - Pobiera pojedynczą kategorię
 export async function GET(

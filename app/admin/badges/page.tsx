@@ -1,17 +1,17 @@
-import { db } from "@/lib/db"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Plus } from "lucide-react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { db } from "@/lib/db"
+import { Plus } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 export default async function BadgesPage() {
     const badges = await db.badge.findMany({

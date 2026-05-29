@@ -1,6 +1,6 @@
-import { PrismaClient, UserRole, OfferStatus, CaseType, ClientType } from '@prisma/client'
-import { createRandomOffer, createRandomUser } from './generators'
 import { faker } from '@faker-js/faker'
+import { CaseType, ClientType, OfferStatus, PrismaClient, UserRole } from '@prisma/client'
+import { createRandomOffer, createRandomUser } from './generators'
 
 const CASES_TO_CREATE = 120
 const OFFERS_PER_CASE_MIN = 1

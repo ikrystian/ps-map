@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { MessageCircle, X, Send, Scale, Loader2 } from "lucide-react"
-import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
+import { Loader2, MessageCircle, Scale, Send, X } from "lucide-react"
+import React, { useEffect, useRef, useState } from "react"
+import ReactMarkdown from "react-markdown"
 
 interface Message {
   role: "user" | "assistant"

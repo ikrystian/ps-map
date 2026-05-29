@@ -1,34 +1,34 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { MagicCard } from "@/components/magic-card"
+import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { NumberTicker } from "@/components/ui/number-ticker"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  Scale,
   Briefcase,
-  Search,
-  Loader2,
-  Users,
   Building2,
-  LayoutGrid,
+  ChevronRight,
+  CircleDollarSign,
   Gavel,
-  ShieldCheck,
+  Globe,
+  Hammer,
   HeartPulse,
   Home,
-  User,
-  Zap,
-  Hammer,
-  CircleDollarSign,
-  Globe,
+  LayoutGrid,
+  Loader2,
   Lock,
   MessageSquare,
-  ChevronRight
+  Scale,
+  Search,
+  ShieldCheck,
+  User,
+  Users,
+  Zap
 } from "lucide-react"
 import Link from "next/link"
-import { MagicCard } from "@/components/magic-card"
-import { NumberTicker } from "@/components/ui/number-ticker"
-import ParticlesBackground from "@/components/ParticlesBackground"
+import { useEffect, useMemo, useState } from "react"
 
 interface Category {
   id: string

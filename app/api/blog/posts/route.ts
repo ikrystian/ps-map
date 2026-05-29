@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/blog/posts - Pobiera wszystkie opublikowane wpisy (publiczne)
 export async function GET(request: NextRequest) {

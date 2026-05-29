@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
+import { NextResponse } from "next/server"
 
 // GET /api/admin/newsletter - List all newsletter subscribers
 export async function GET() {

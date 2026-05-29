@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // POST /api/ads/[id]/track - Śledzenie wyświetleń (impression) lub kliknięć (click)
 export async function POST(

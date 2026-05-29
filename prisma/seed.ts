@@ -1,23 +1,23 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import { seedVoivodeships } from './seeds/voivodeships'
+import { seedPackages } from './seed-packages'; // Importuj istniejący seeder pakietów
+import { seedAccountManagers } from './seeds/account-managers'; // Importuj seeder opiekunów
+import { seedBlogCategories } from './seeds/blog-categories'; // Importuj nowy seeder kategorii bloga
+import { seedBlogPosts } from './seeds/blog-posts'; // Importuj seeder postów bloga
+import { seedCases } from './seeds/cases'; // Importuj seeder spraw z ofertami
 import { seedCategories } from './seeds/categories'
-import { seedPromotionConfigs } from './seeds/promotions'
-import { seedPackages } from './seed-packages' // Importuj istniejący seeder pakietów
-import { seedTestData } from './seeds/test-data' // Importuj nowy seeder danych testowych
-import { seedHelpCenter } from './seeds/help-center' // Importuj nowy seeder centrum pomocy
-import { seedBlogCategories } from './seeds/blog-categories' // Importuj nowy seeder kategorii bloga
-import { seedEmailTemplates } from './seeds/email-templates' // Importuj seeder szablonów emaili
-import { seedReviews } from './seeds/reviews' // Importuj seeder opinii
-import { seedReviewReports } from './seeds/review-reports' // Importuj seeder zgłoszeń opinii
-import { seedAccountManagers } from './seeds/account-managers' // Importuj seeder opiekunów
-import { seedTransactions } from './seeds/transactions' // Importuj seeder transakcji
-import { seedBlogPosts } from './seeds/blog-posts' // Importuj seeder postów bloga
-import { seedCases } from './seeds/cases' // Importuj seeder spraw z ofertami
-import { seedTestUser } from './seeds/test-user'
-import { seedStaticPages } from './seeds/static-pages'
+import { seedEmailTemplates } from './seeds/email-templates'; // Importuj seeder szablonów emaili
+import { seedHelpCenter } from './seeds/help-center'; // Importuj nowy seeder centrum pomocy
 import { seedHomepagePromotions } from './seeds/homepage-promotions'
 import { seedHomepageTestimonials } from './seeds/homepage-testimonials'
+import { seedPromotionConfigs } from './seeds/promotions'
+import { seedReviewReports } from './seeds/review-reports'; // Importuj seeder zgłoszeń opinii
+import { seedReviews } from './seeds/reviews'; // Importuj seeder opinii
+import { seedStaticPages } from './seeds/static-pages'
+import { seedTestData } from './seeds/test-data'; // Importuj nowy seeder danych testowych
+import { seedTestUser } from './seeds/test-user'
+import { seedTransactions } from './seeds/transactions'; // Importuj seeder transakcji
+import { seedVoivodeships } from './seeds/voivodeships'
 
 const prisma = new PrismaClient()
 

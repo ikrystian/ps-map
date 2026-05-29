@@ -1,25 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { FeatureLockedCard } from "@/components/permissions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DateTimePicker } from "@/components/ui/date-time-picker"
-import { usePermissions } from "@/hooks/usePermissions"
-import { FeatureLockedCard } from "@/components/permissions"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -29,6 +16,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import {
   Table,
   TableBody,
   TableCell,
@@ -36,41 +39,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useToast } from "@/components/ui/use-toast"
+import { usePermissions } from "@/hooks/usePermissions"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 import {
-  TrendingUp,
-  Sparkles,
-  Award,
-  Home,
-  Loader2,
   AlertCircle,
-  Coins,
+  ArrowUpRight,
+  Award,
   Calendar,
   CheckCircle2,
-  Clock,
-  XCircle,
-  Plus,
-  Info,
-  Trash2,
-  RefreshCw,
-  MoreVertical,
-  Star,
-  Crown,
-  MapPin,
   ChevronRight,
-  ArrowUpRight,
-  ChevronLeft,
+  Clock,
+  Coins,
+  Crown,
+  Home,
+  Info,
+  Loader2,
+  MapPin,
+  MoreVertical,
+  Plus,
+  RefreshCw,
   Sparkle,
+  Sparkles,
+  Star,
+  Trash2,
+  TrendingUp,
+  XCircle
 } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useToast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
 
 interface LawFirm {
   id: string

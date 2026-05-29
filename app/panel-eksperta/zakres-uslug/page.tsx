@@ -1,26 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, GripVertical, Loader2, Save, Info, Star, Globe, MapPin } from "lucide-react"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
 import { toast } from "@/components/ui/sonner"
-import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { Switch } from "@/components/ui/switch"
+import { cn } from "@/lib/utils"
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core"
 import {
   arrayMove,
@@ -30,6 +25,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Star } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface Category {
   id: string

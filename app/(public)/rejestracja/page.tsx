@@ -1,8 +1,8 @@
+import { AuthLayout } from "@/components/auth"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Metadata } from "next"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { AuthLayout } from "@/components/auth"
 
 export const metadata: Metadata = {
   title: "Załóż bezpłatne konto | Prosta Sprawa",

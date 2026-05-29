@@ -4,7 +4,6 @@
  */
 
 import type { CategoryReference } from "./categories"
-import type { LawFirmReference } from "./lawfirms"
 
 /**
  * Case status enum

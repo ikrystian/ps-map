@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { LogOut, Home, Search, LogIn, ArrowRight, Clock } from "lucide-react"
 import ParticlesBackground from "@/components/ParticlesBackground"
+import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
+import { ArrowRight, Clock, Home, LogIn, LogOut, Search } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function LogoutSuccessPage() {
   const router = useRouter()

@@ -1,15 +1,15 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { EnhancedConversationList } from "./EnhancedConversationList"
-import { EnhancedChatArea } from "./EnhancedChatArea"
-import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { Wifi, WifiOff } from "lucide-react"
+import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import type { Conversation } from "@/types/conversations"
+import { Wifi } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useCallback, useEffect, useState } from "react"
+import { EnhancedChatArea } from "./EnhancedChatArea"
+import { EnhancedConversationList } from "./EnhancedConversationList"
 
 export function EnhancedMessengerLayout() {
   const { data: session } = useSession()

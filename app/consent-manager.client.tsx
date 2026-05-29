@@ -1,7 +1,7 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import { ClientSideOptionsProvider } from '@c15t/nextjs/client';
+import type { ReactNode } from 'react';
 
 /**
  * Client-side consent manager wrapper for handling scripts and callbacks

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { processScheduledEmails } from "@/lib/scheduled-emails"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
   // Protect this route with a secret

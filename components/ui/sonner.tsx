@@ -1,9 +1,9 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { GooeyToaster as GooeyToasterPrimitive, gooeyToast as toast } from "goey-toast"
 import type { GooeyToasterProps } from "goey-toast"
+import { GooeyToaster as GooeyToasterPrimitive, gooeyToast as toast } from "goey-toast"
 import "goey-toast/styles.css"
+import { useTheme } from "next-themes"
 
 const Toaster = ({ ...props }: GooeyToasterProps) => {
   const { theme = "system" } = useTheme()
@@ -20,4 +20,4 @@ const Toaster = ({ ...props }: GooeyToasterProps) => {
   )
 }
 
-export { Toaster, toast }
+export { toast, Toaster }

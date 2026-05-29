@@ -2,9 +2,9 @@
  * Eksport wszystkich komponentów związanych z uprawnieniami
  */
 
-export { UpgradeAlert } from "./UpgradeAlert";
+export { ExpiredPackageModal } from "./ExpiredPackageModal";
 export { FeatureLockedCard } from "./FeatureLockedCard";
 export { LimitIndicator } from "./LimitIndicator";
-export { ExpiredPackageModal } from "./ExpiredPackageModal";
 export { PackageBadge } from "./PackageBadge";
 export type { PackageType } from "./PackageBadge";
+export { UpgradeAlert } from "./UpgradeAlert";

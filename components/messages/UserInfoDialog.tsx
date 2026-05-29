@@ -1,5 +1,8 @@
 "use client"
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -7,13 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Ban, CheckCircle2, Mail, Calendar, UserCircle } from "lucide-react"
-import { formatLastSeen } from "@/lib/time-utils"
-import { useState } from "react"
 import { toast } from "@/components/ui/sonner"
+import { formatLastSeen } from "@/lib/time-utils"
+import { Ban, Calendar, CheckCircle2, Mail, UserCircle } from "lucide-react"
+import { useState } from "react"
 
 interface UserInfo {
   id: string

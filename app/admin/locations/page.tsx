@@ -1,18 +1,8 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, MapPin, Search, ChevronRight, Loader2 } from "lucide-react"
+import { CITIES } from "@/components/homepage/cities-list"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -21,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -29,7 +20,16 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
-import { CITIES } from "@/components/homepage/cities-list"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { ChevronRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface Voivodeship {
   id: string

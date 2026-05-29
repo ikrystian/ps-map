@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server"
-import { Server as SocketIOServer } from "socket.io"
-import { Server as HTTPServer } from "http"
 import { prisma } from "@/lib/prisma"
 import { getIO, setIO } from "@/lib/socket"
+import { Server as HTTPServer } from "http"
+import { NextRequest } from "next/server"
+import { Server as SocketIOServer } from "socket.io"
 
 export async function GET(req: NextRequest) {
   let io = getIO()

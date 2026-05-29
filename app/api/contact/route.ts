@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { generateContactFormEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
-import { sendEmail, generateContactFormEmail } from "@/lib/email"
+import { prisma } from "@/lib/prisma"
 import { ContactSubject } from "@prisma/client"
+import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {

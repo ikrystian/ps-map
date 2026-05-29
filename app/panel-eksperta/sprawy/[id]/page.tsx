@@ -1,38 +1,35 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useParams, useRouter } from "next/navigation"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import {
   AlertCircle,
-  Loader2,
-  FileText,
   Calendar,
-  MapPin,
-  Euro,
-  Clock,
-  User,
-  Mail,
-  Phone,
-  Briefcase,
-  Send,
   CheckCircle2,
-  Paperclip,
   Download,
   ExternalLink,
+  FileText,
+  Loader2,
+  Mail,
+  MapPin,
+  Paperclip,
+  Phone,
+  Send,
+  User
 } from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface Case {
   id: string

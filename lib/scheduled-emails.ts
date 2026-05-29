@@ -1,5 +1,5 @@
+import { sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
-import { sendEmailWithTemplate, sendEmail } from "@/lib/email"
 import { ScheduledEmailStatus } from "@prisma/client"
 
 interface ProcessEmailsResult {

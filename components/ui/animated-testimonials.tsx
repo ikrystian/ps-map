@@ -1,10 +1,10 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { cn } from "@/lib/utils"
 
 type Testimonial = {
   quote: string

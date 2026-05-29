@@ -1,7 +1,7 @@
 "use client";
-import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useMotionTemplate, useMotionValue, motion } from "motion/react";
+import { motion, useMotionTemplate, useMotionValue } from "motion/react";
+import * as React from "react";
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,

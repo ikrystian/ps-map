@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server"
+import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
-import { sendEmail, sendEmailWithTemplate, generateEmailVerificationEmail } from "@/lib/email"
 import { EmailType } from "@prisma/client"
 import crypto from "crypto"
+import { NextRequest, NextResponse } from "next/server"
 
 /**
  * POST /api/auth/resend-verification

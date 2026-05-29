@@ -1,27 +1,27 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { PackageBadge, PackageType } from "@/components/permissions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  MapPin,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  ArrowUpRight,
-  LucideIcon,
-} from "lucide-react";
-import { cn, stripHtmlTags } from "@/lib/utils";
-import { PackageBadge, PackageType } from "@/components/permissions";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn, stripHtmlTags } from "@/lib/utils";
+import {
+  ArrowUpRight,
+  Globe,
+  LucideIcon,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+} from "lucide-react";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 
 // Helper function to check if law firm is open (copied from pages)
 const isLawFirmOpen = (

@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -15,29 +13,28 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
+import { AnimatePresence, motion } from "framer-motion"
 import {
-  ArrowUpDown,
+  AlertTriangle,
+  Award,
+  CheckCircle2,
+  Coins,
+  Eye,
+  FileSpreadsheet,
+  Info,
+  Layers,
+  Minus,
+  Plus,
+  RotateCcw,
   Search,
   Sliders,
   Sparkles,
-  HelpCircle,
-  TrendingUp,
-  Award,
   Star,
-  Eye,
-  Coins,
-  CheckCircle2,
-  AlertTriangle,
-  RotateCcw,
-  Plus,
-  Minus,
   Trash2,
-  ChevronRight,
-  Info,
-  Layers,
-  FileSpreadsheet,
-  XCircle,
+  TrendingUp,
+  XCircle
 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface ActivePromotion {
   id: string

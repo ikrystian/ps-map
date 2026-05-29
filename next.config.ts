@@ -1,6 +1,6 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 import os from "node:os";
-import withBundleAnalyzer from "@next/bundle-analyzer";
 
 // Determine optimal build cpus/workers based on system memory to prevent SIGKILL/OOM on low-resource environments
 const getOptimalBuildCPUs = () => {

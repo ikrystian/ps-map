@@ -1,10 +1,9 @@
+import { DynamicPageContent } from "@/components/DynamicPageContent"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { renderModule } from "@/lib/module-parser"
+import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { renderModule } from "@/lib/module-parser"
-import Link from "next/link"
-import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
-import { DynamicPageContent } from "@/components/DynamicPageContent"
 
 interface PageProps {
   params: Promise<{

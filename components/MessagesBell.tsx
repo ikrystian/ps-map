@@ -1,11 +1,11 @@
 "use client"
 
-import { MessageSquare } from "lucide-react"
-import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { MessageSquare } from "lucide-react"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export function MessagesBell() {

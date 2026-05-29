@@ -1,12 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { CropIcon, RotateCcwIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import * as Slot from '@radix-ui/react-slot';
+import { CropIcon, RotateCcwIcon } from 'lucide-react';
 import {
   type ComponentProps,
-  type CSSProperties,
   createContext,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
   type RefObject,
@@ -24,7 +25,6 @@ import ReactCrop, {
   type PixelCrop,
   type ReactCropProps,
 } from 'react-image-crop';
-import { cn } from '@/lib/utils';
 
 import 'react-image-crop/dist/ReactCrop.css';
 

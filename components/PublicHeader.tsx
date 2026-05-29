@@ -1,10 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,16 +13,18 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Search, ChevronDown, ChevronRight, Check, MapPin, IdCard, List, X, Menu } from "lucide-react"
-import UserMenu from "@/components/UserMenu"
-import type { CategoryWithChildren } from "@/types/categories"
-import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import UserMenu from "@/components/UserMenu"
+import { cn } from "@/lib/utils"
+import type { CategoryWithChildren } from "@/types/categories"
+import { AnimatePresence, motion } from "framer-motion"
+import { Check, ChevronDown, ChevronRight, IdCard, List, MapPin, Menu, Search, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 
 
 interface PublicHeaderProps {

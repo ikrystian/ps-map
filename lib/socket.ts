@@ -1,5 +1,5 @@
-import { Server as SocketIOServer } from "socket.io"
 import { prisma } from "@/lib/prisma"
+import { Server as SocketIOServer } from "socket.io"
 
 const globalForSocket = globalThis as unknown as {
   io: SocketIOServer | null

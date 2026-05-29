@@ -1,10 +1,10 @@
 "use client"
 
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Home, Building2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
+import { Building2, Home } from "lucide-react"
+import Link from "next/link"
 
 export function HowItWorksPlatform() {
   return (

@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-import { createRandomBlogPost } from './generators'
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
+import { PrismaClient } from '@prisma/client';
+import { createRandomBlogPost } from './generators';
 
 const POSTS_TO_CREATE = 30
 

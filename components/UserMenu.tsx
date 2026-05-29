@@ -1,25 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { signOut } from "next-auth/react"
-import { useTheme } from "next-themes"
-import {
-  LayoutDashboard,
-  Briefcase,
-  User,
-  MessageSquare,
-  Heart,
-  LogOut,
-  HelpCircle,
-  FileStack,
-  Receipt,
-  Settings,
-  Users,
-  FileText,
-  Coins,
-  Moon,
-  Sun,
-} from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,9 +10,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { cn, getSubscriptionBorderColor } from "@/lib/utils"
+import {
+  Briefcase,
+  Coins,
+  FileStack,
+  FileText,
+  HelpCircle,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  Receipt,
+  Settings,
+  Sun,
+  User,
+  Users
+} from "lucide-react"
+import { signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
+import Link from "next/link"
 
 interface UserMenuProps {
   userRole: "CLIENT" | "LAW_FIRM" | "ADMIN"

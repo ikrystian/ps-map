@@ -1,6 +1,6 @@
+import { faker } from '@faker-js/faker'
 import { PrismaClient, UserRole } from '@prisma/client'
 import { createRandomReview, createRandomUser } from './generators'
-import { faker } from '@faker-js/faker'
 
 const REVIEWS_TO_CREATE = 150
 

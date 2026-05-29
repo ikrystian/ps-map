@@ -1,30 +1,30 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import {
   AlertCircle,
   ArrowLeft,
+  Briefcase,
   Calendar,
+  CheckCircle2,
+  Clock,
   DollarSign,
+  Download,
   FileText,
   Mail,
   MapPin,
+  MessageSquare,
+  Paperclip,
   Phone,
   User,
-  Clock,
-  Briefcase,
-  MessageSquare,
-  CheckCircle2,
   XCircle,
-  Download,
-  Paperclip,
 } from "lucide-react"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface Case {
   id: string

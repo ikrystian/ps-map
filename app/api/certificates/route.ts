@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/certificates - Get all certificates for the authenticated law firm
 export async function GET(request: NextRequest) {

@@ -1,10 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Star, CheckCircle2 } from "lucide-react"
-import { PromotionBadge } from "./PromotionBadge"
-import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
+import { CheckCircle2, MapPin, Star } from "lucide-react"
+import Link from "next/link"
+import { PromotionBadge } from "./PromotionBadge"
 
 interface PromotedLawFirmCardProps {
   lawFirm: {

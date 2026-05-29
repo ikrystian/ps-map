@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import Image from "next/image"
-import { Megaphone, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ExternalLink, Megaphone } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 interface Ad {
   id: string

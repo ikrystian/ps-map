@@ -4,13 +4,12 @@
  * Funkcje pomocnicze do zarządzania i sprawdzania aktywnych promocji kancelarii
  */
 
-import { prisma } from "@/lib/prisma"
-import { PromotionType } from "@prisma/client"
 import {
-  sendEmail,
-  generatePromotionRenewedEmail,
   generatePromotionRenewalFailedEmail,
+  generatePromotionRenewedEmail,
+  sendEmail,
 } from "@/lib/email"
+import { prisma } from "@/lib/prisma"
 
 // ============================================================================
 // TYPY

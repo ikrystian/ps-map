@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
-import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa"
 import { Eye, EyeOff } from "lucide-react"
-import { AuthLayout } from "@/components/auth"
+import { signIn } from "next-auth/react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { FaApple, FaFacebook, FaGoogle } from "react-icons/fa"
 
 interface DevUser {
   id: string

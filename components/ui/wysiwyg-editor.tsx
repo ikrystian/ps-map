@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useRef, useEffect, useState } from "react"
-import { Bold, Italic, List, ListOrdered, Link as LinkIcon, Heading2, Quote, Code, Undo, Redo } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Bold, Code, Heading2, Italic, Link as LinkIcon, List, ListOrdered, Quote, Redo, Undo } from "lucide-react"
+import React, { useEffect, useRef, useState } from "react"
 
 interface WysiwygEditorProps {
   value: string

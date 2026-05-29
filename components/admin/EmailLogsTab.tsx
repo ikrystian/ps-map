@@ -1,11 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { toast } from "@/components/ui/sonner"
 import {
   Table,
   TableBody,
@@ -14,18 +21,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "@/components/ui/sonner"
-import { Mail, Loader2, Search, ChevronLeft, ChevronRight, Filter, AlertCircle, CheckCircle2, Eye, Terminal } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"
+import { AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Eye, Filter, Loader2, Mail, Search, Terminal } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface EmailLog {
   id: string

@@ -1,22 +1,21 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  Check, 
-  X, 
-  Eye, 
-  EyeOff, 
-  ChevronUp, 
-  ChevronDown, 
+import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  ChevronDown,
+  ChevronUp,
+  Edit2,
+  Eye,
+  EyeOff,
   Image as ImageIcon,
   MessageSquare,
-  Sparkles
+  Plus,
+  Sparkles,
+  Trash2,
+  X
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import React, { useEffect, useState } from "react"
 
 type Testimonial = {
   id: string

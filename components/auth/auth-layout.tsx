@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { ReactNode } from "react";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { motion } from "motion/react";
-import { ArrowLeft } from "lucide-react";
+import { ReactNode } from "react";
 
 interface HeroStat {
   value: number;

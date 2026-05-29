@@ -1,32 +1,30 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
 import {
-  CheckCircle2,
-  Clock,
-  FileText,
-  XCircle,
-  Loader2,
   AlertCircle,
-  Calendar,
-  DollarSign,
   Briefcase,
-  ExternalLink,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
-  User,
+  Clock,
+  DollarSign,
+  ExternalLink,
+  FileText,
+  Loader2,
+  Search,
   Sparkles,
-  Search
+  User,
+  XCircle
 } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "@/lib/utils"
-import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface Offer {
   id: string

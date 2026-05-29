@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
-import { getFeaturedLawFirms, getTopLawFirms } from "@/lib/promotions"
 import { prisma } from "@/lib/prisma"
+import { getFeaturedLawFirms, getTopLawFirms } from "@/lib/promotions"
+import { NextRequest, NextResponse } from "next/server"
 
 /**
  * GET /api/law-firms/featured

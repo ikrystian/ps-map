@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server'
 
 // GET /api/admin/account-managers - Lista wszystkich opiekunów
 export async function GET(request: NextRequest) {

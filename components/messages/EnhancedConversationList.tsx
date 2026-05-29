@@ -2,15 +2,15 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search, Archive, Trash2, RotateCcw, MessageCircle } from "lucide-react"
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 import type { Conversation } from "@/types/conversations"
+import { AnimatePresence, motion } from "framer-motion"
+import { Archive, MessageCircle, RotateCcw, Search, Trash2 } from "lucide-react"
+import { useState } from "react"
 
 interface EnhancedConversationListProps {
   conversations: Conversation[]

@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
-import { verifyBannerPlacement, updateBannerVerification } from "@/lib/partner-program"
+import { updateBannerVerification, verifyBannerPlacement } from "@/lib/partner-program"
+import { prisma } from "@/lib/prisma"
+import { NextRequest } from "next/server"
 
 /**
  * POST /api/partner-program/verify

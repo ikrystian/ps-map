@@ -1,6 +1,6 @@
 
 import { faker } from '@faker-js/faker/locale/pl';
-import { PrismaClient, UserRole, UserStatus, LawFirmType, OfferType, SubscriptionPackage, CaseType, CaseStatus, PreferredContact, PaymentMethod, PaymentStatus, OrderType, PaymentTerms, OfferStatus, ClientType } from '@prisma/client';
+import { CaseStatus, CaseType, ClientType, LawFirmType, OfferStatus, OfferType, OrderType, PaymentMethod, PaymentStatus, PaymentTerms, PreferredContact, PrismaClient, SubscriptionPackage, UserRole, UserStatus } from '@prisma/client';
 
 export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     const firstName = faker.person.firstName();

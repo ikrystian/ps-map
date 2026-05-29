@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/users/[id]/notification-settings - Fetch notification settings for a specific user (ADMIN only)
 export async function GET(

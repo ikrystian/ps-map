@@ -1,24 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/sonner"
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Star,
-  Heart,
-  CheckCircle2,
-  Briefcase,
-  Trash2,
-} from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +11,25 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "@/components/ui/sonner"
+import {
+  Briefcase,
+  CheckCircle2,
+  Globe,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+  Trash2,
+} from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface FavoriteLawFirm {
   id: string

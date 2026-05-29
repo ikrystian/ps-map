@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/pages/[slug] - Get a published page by slug (PUBLIC)
 export async function GET(

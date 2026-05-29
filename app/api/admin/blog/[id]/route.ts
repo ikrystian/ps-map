@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // DELETE /api/admin/blog/[id] - Usuwa wpis (tylko ADMIN)
 export async function DELETE(

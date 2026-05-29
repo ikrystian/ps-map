@@ -1,9 +1,7 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { Bell, CreditCard, Coins, CheckCircle, Clock, AlertTriangle, RefreshCw, Trash2 } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { pl } from "date-fns/locale"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
+import { formatDistanceToNow } from "date-fns"
+import { pl } from "date-fns/locale"
+import { AlertTriangle, Bell, CheckCircle, Clock, Coins, CreditCard, RefreshCw, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
 
 interface LawFirm {
   id: string

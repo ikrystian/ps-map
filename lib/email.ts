@@ -9,10 +9,10 @@
  * EMAIL_FROM=noreply@prostaspawa.pl
  */
 
-import { EmailType, EmailLogStatus } from '@prisma/client'
-import { sendSMTPEmail } from './smtp'
+import { EmailLogStatus, EmailType } from '@prisma/client'
 import fs from 'fs'
 import path from 'path'
+import { sendSMTPEmail } from './smtp'
 
 interface SendEmailParams {
   to: string

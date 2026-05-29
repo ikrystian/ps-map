@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { sendEmailWithTemplate } from "@/lib/email"
+import { prisma } from "@/lib/prisma"
 import { EmailType } from "@prisma/client"
+import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest) {
   try {

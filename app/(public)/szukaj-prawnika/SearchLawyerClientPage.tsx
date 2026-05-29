@@ -1,14 +1,19 @@
 "use client"
 
-import { useState, useEffect, Fragment } from "react"
-import Link from "next/link"
-import Image from "next/image"
 import { AdBanner } from "@/components/ad-banner"
-import { useRouter, useSearchParams } from "next/navigation"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
+import { LawFirmListItem } from "@/components/law-firm-list-item"
+import { PackageBadge } from "@/components/permissions"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import {
   Select,
   SelectContent,
@@ -16,20 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Filter, Grid3x3, List, Map as MapIcon, Sparkles, Clock, ChevronDown, ChevronUp, Check, X } from "lucide-react"
-import { MagicCard } from "@/components/magic-card"
-import { LawFirmListItem } from "@/components/law-firm-list-item"
-import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
-import { PackageBadge } from "@/components/permissions"
-import { motion, AnimatePresence } from "framer-motion"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn, stripHtmlTags } from "@/lib/utils"
-import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { AnimatePresence, motion } from "framer-motion"
+import { Check, CheckCircle2, ChevronDown, ChevronUp, Clock, Filter, Grid3x3, List, Map as MapIcon, MapPin, Search, Star, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { Fragment, useEffect, useState } from "react"
 
 
 interface LawFirm {

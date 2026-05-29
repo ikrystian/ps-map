@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { sendConsultationReminders } from "@/lib/consultations"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
   // Protect this route with a secret

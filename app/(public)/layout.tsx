@@ -1,5 +1,5 @@
-import PublicHeader from "@/components/PublicHeader"
 import PublicFooter from "@/components/PublicFooter"
+import PublicHeader from "@/components/PublicHeader"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 

@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { ChevronDown, Info, Phone, Mail } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { ChevronDown, Info, Mail, Phone } from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
 
 // Custom high-fidelity SVG Icons to perfectly match the premium dark theme design
 const SparkIcon = () => (

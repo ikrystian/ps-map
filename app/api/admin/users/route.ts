@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/users - Fetch all users with pagination and filters (ADMIN only)
 export async function GET(request: NextRequest) {

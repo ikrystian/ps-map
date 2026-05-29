@@ -1,4 +1,4 @@
-import { PrismaClient, ModuleType } from '@prisma/client'
+import { ModuleType, PrismaClient } from '@prisma/client'
 
 export async function seedStaticPages(prisma: PrismaClient) {
   console.log('Seeding static pages and modules...')

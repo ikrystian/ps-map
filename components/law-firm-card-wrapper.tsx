@@ -1,8 +1,7 @@
 "use client"
 
-import React from "react"
 import { MagicCard } from "@/components/magic-card"
-import { Card } from "@/components/ui/card"
+import React from "react"
 
 interface LawFirmCardWrapperProps {
   children: React.ReactNode

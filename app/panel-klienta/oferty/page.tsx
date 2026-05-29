@@ -1,14 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -17,23 +11,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
+import type { OfferWithCase, OffersResponse } from "@/types/offers"
 import {
-  FileText,
-  Building2,
-  MapPin,
+  AlertCircle,
+  CheckCircle2,
   Clock,
   Euro,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Loader2,
   Eye,
-  ThumbsUp,
+  FileText,
+  Loader2,
+  MapPin,
   ThumbsDown,
+  ThumbsUp,
+  XCircle
 } from "lucide-react"
-import type { OfferWithCase, OffersResponse } from "@/types/offers"
+import { useSession } from "next-auth/react"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 type Offer = OfferWithCase
 

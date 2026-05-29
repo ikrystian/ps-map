@@ -1,14 +1,19 @@
 "use client"
 
-import { useState, useEffect, Fragment } from "react"
-import { useParams } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
 import { AdBanner } from "@/components/ad-banner"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
+import { LawFirmListItem } from "@/components/law-firm-list-item"
+import { PackageBadge } from "@/components/permissions"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import {
   Select,
   SelectContent,
@@ -16,18 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, CheckCircle2, Search, Briefcase, Grid3x3, List, Sparkles, Clock, ChevronDown, Check, X, Filter } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
-import { LawFirmListItem } from "@/components/law-firm-list-item"
-import { PackageBadge } from "@/components/permissions"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { cn, stripHtmlTags } from "@/lib/utils"
-import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { Briefcase, Check, CheckCircle2, ChevronDown, Clock, Filter, Grid3x3, List, MapPin, Search, Star, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 
 interface Category {

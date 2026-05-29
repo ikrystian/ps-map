@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { ConversationList } from "./ConversationList"
-import { ChatArea } from "./ChatArea"
 import { Card } from "@/components/ui/card"
 import type { Conversation } from "@/types/conversations"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
+import { ChatArea } from "./ChatArea"
+import { ConversationList } from "./ConversationList"
 
 export function MessengerLayout() {
   const { data: session } = useSession()

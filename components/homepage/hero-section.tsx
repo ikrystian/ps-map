@@ -1,11 +1,11 @@
 "use client"
 
-import Link from "next/link"
 import ParticlesBackground from "@/components/ParticlesBackground"
-import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, ShieldCheck, Users, Briefcase, ChevronDown } from "lucide-react"
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import { motion } from "framer-motion"
+import { ArrowRight, Briefcase, ChevronDown, ShieldCheck, Users } from "lucide-react"
+import Link from "next/link"
 
 export function HeroSection() {
   return (

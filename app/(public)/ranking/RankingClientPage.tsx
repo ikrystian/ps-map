@@ -1,15 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Trophy, Medal, Award, MapPin, Star, CheckCircle2, TrendingUp, Coins, Sparkles } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
-import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
+import { CheckCircle2, Coins, MapPin, Medal, Sparkles, Star, TrendingUp, Trophy } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface LawFirm {
   id: string

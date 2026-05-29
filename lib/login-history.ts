@@ -1,5 +1,5 @@
-import { headers } from "next/headers"
 import { prisma } from "@/lib/prisma"
+import { headers } from "next/headers"
 
 // Funkcja pomocnicza do pobierania lokalizacji z IP
 async function getLocation(ip: string): Promise<string | null> {

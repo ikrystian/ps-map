@@ -3,12 +3,12 @@
  * Każdy blok to gotowy HTML string kompatybilny z Tailwind CSS
  */
 
-import { heroBlockHtml } from './hero'
-import { featuresBlockHtml } from './features'
-import { ctaBlockHtml } from './cta'
 import { contactBlockHtml } from './contact'
-import { testimonialsBlockHtml } from './testimonials'
+import { ctaBlockHtml } from './cta'
+import { featuresBlockHtml } from './features'
+import { heroBlockHtml } from './hero'
 import { teamBlockHtml } from './team'
+import { testimonialsBlockHtml } from './testimonials'
 
 export const blocks = {
   hero: {

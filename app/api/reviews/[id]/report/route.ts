@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { sendSystemNotification } from "@/lib/notifications"
+import { prisma } from "@/lib/prisma"
 import { emitNewNotification } from "@/lib/socket"
+import { NextRequest } from "next/server"
 
 export async function POST(
   request: NextRequest,

@@ -1,8 +1,8 @@
 "use client"
 
-import Link from "next/link"
+import { Facebook, Instagram, Linkedin, Mail, Phone, Twitter, Youtube } from "lucide-react"
 import Image from "next/image"
-import { Facebook, Twitter, Linkedin, Instagram, Youtube, Mail, Phone } from "lucide-react"
+import Link from "next/link"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (

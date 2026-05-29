@@ -1,13 +1,13 @@
+import { auth } from "@/auth";
+import { ChatAssistant } from "@/components/ChatAssistant";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import { Poppins, Geist_Mono, Playfair_Display } from "next/font/google";
+import { Geist_Mono, Playfair_Display, Poppins } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
+import { ConsentManager } from "./consent-manager";
 import "./globals.css";
 import { Providers } from "./providers";
-import { auth } from "@/auth";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { ConsentManager } from "./consent-manager";
-import { ChatAssistant } from "@/components/ChatAssistant";
-import NextTopLoader from "nextjs-toploader";
 
 
 const poppins = Poppins({

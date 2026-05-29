@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
+import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 import { prisma } from "@/lib/prisma"
 import { p24Client } from "@/lib/przelewy24"
-import { generateInvoiceForOrder } from "@/lib/invoice-generator"
+import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {

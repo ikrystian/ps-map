@@ -1,5 +1,5 @@
+import { deactivateExpiredPromotions, renewExpiredPromotions } from "@/lib/promotions"
 import { NextRequest, NextResponse } from "next/server"
-import { renewExpiredPromotions, deactivateExpiredPromotions } from "@/lib/promotions"
 
 /**
  * Cron Job: Automatyczne odnowienie promocji

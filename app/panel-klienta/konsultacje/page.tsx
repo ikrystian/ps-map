@@ -1,15 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Loader2, Trash2, Calendar, Clock, FileText, CreditCard, Video } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "@/components/ui/sonner"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
-import { toast } from "@/components/ui/sonner"
+import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
 
 export default function ClientConsultationsPage() {
   const { data: session } = useSession()

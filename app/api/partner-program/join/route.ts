@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { generateBannerCode } from "@/lib/partner-program"
+import { prisma } from "@/lib/prisma"
+import { NextRequest } from "next/server"
 
 /**
  * POST /api/partner-program/join

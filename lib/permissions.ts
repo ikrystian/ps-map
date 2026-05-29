@@ -563,5 +563,5 @@ export async function canViewStatistics(
 // ============================================================================
 
 export {
-  PACKAGE_PERMISSIONS,
+  PACKAGE_PERMISSIONS
 };

@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 // GET /api/conversations/unread-count - Pobierz liczbę nieprzeczytanych wiadomości
 export async function GET() {

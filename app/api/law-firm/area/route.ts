@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
 import { hasActivePackage } from "@/lib/permissions"
+import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server"
 
 async function getLimits(userId: string) {
   const lawFirm = await prisma.lawFirm.findUnique({

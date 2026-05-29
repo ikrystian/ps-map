@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { EmailLogStatus } from "@prisma/client"
+import { NextResponse } from "next/server"
 
 export async function GET(req: Request) {
   try {

@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server"
 import { allocateMonthlyPoints } from "@/lib/partner-program"
+import { NextRequest } from "next/server"
 
 /**
  * POST /api/partner-program/allocate-points

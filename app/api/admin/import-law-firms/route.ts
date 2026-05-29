@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
+import { NextRequest, NextResponse } from "next/server"
 
 // Helper function to generate slug
 function generateSlug(text: string): string {

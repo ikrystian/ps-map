@@ -1,8 +1,8 @@
-import { renewExpiredPromotions, deactivateExpiredPromotions } from "./promotions"
-import { checkExpiredSubscriptions } from "./subscriptions"
 import { sendConsultationReminders } from "./consultations"
-import { processScheduledEmails } from "./scheduled-emails"
+import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { calculateRankings } from "./rankings"
+import { processScheduledEmails } from "./scheduled-emails"
+import { checkExpiredSubscriptions } from "./subscriptions"
 
 // Zabezpieczenia (flagi locków) przed nałożeniem się wywołań w tle
 let isPromotionsJobRunning = false

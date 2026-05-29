@@ -1,8 +1,8 @@
 "use client"
 
-import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa"
+import { signIn } from "next-auth/react"
+import { FaApple, FaFacebook, FaGoogle } from "react-icons/fa"
 
 interface SocialRegistrationButtonsProps {
     role: "CLIENT" | "LAW_FIRM"

@@ -9,8 +9,8 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ArrowUpRight, Lock, Zap } from "lucide-react";
+import Link from "next/link";
 
 interface UpgradeAlertProps {
   feature?: string;

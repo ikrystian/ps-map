@@ -1,34 +1,34 @@
 "use client"
 import Image from "next/image"
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { signOut, useSession } from "next-auth/react";
-import {
-  LayoutDashboard,
-  Briefcase,
-  UserCircle,
-  MessageSquare,
-  Heart,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  CalendarCheck,
-  Instagram,
-  Facebook,
-  Linkedin,
-  Menu,
-} from "lucide-react"
+import { MessagesBell } from "@/components/MessagesBell"
+import { NotificationBell } from "@/components/NotificationBell"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { NotificationBell } from "@/components/NotificationBell"
-import { MessagesBell } from "@/components/MessagesBell"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  Briefcase,
+  CalendarCheck,
+  ChevronLeft,
+  ChevronRight,
+  Facebook,
+  Heart,
+  Instagram,
+  LayoutDashboard,
+  Linkedin,
+  LogOut,
+  Menu,
+  MessageSquare,
+  UserCircle,
+} from "lucide-react"
+import { signOut, useSession } from "next-auth/react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },

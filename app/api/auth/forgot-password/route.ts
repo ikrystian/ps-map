@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
+import { generatePasswordResetEmail, sendEmail } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
-import { sendEmail, generatePasswordResetEmail } from "@/lib/email"
 import crypto from "crypto"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {

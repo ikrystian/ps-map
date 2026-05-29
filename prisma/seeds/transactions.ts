@@ -1,6 +1,6 @@
-import { PrismaClient, OrderType, PaymentMethod, PaymentStatus, SubscriptionPackage } from '@prisma/client'
-import { createRandomTransaction } from './generators'
 import { faker } from '@faker-js/faker'
+import { OrderType, PaymentMethod, PaymentStatus, PrismaClient } from '@prisma/client'
+import { createRandomTransaction } from './generators'
 
 const TRANSACTIONS_TO_CREATE = 100
 

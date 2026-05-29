@@ -1,27 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { FeatureLockedCard } from "@/components/permissions"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePermissions } from "@/hooks/usePermissions"
-import { FeatureLockedCard } from "@/components/permissions"
 import {
+  AlertCircle,
+  BarChart3,
   Eye,
   FileText,
+  Loader2,
+  Star,
+  Target,
   TrendingUp,
   Trophy,
-  Star,
-  Calendar,
-  Users,
-  Target,
-  BarChart3,
-  Clock,
-  CheckCircle2,
-  Loader2,
-  AlertCircle,
+  Users
 } from "lucide-react"
-import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
 
 interface StatsData {
   lawFirm: {

@@ -1,25 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { toast } from "@/components/ui/sonner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { LimitIndicator, PackageBadge } from "@/components/permissions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "@/components/ui/sonner"
 import { usePermissions } from "@/hooks/usePermissions"
-import { LimitIndicator, PackageBadge } from "@/components/permissions"
 import { cn } from "@/lib/utils"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { AlertCircle, ArrowRight, Briefcase, CheckCircle2, Clock, Coins, Crown, Edit, Eye, FileText, Loader2, Package, Settings, Sparkles, Star, Target, TrendingUp, Trophy, Users, Zap } from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface LawFirm {
   id: string

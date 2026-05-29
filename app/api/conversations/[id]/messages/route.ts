@@ -1,9 +1,9 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { sendSystemNotification } from "@/lib/notifications"
 import { auth } from "@/auth"
 import { decryptMessage } from "@/lib/encryption"
+import { sendSystemNotification } from "@/lib/notifications"
+import { prisma } from "@/lib/prisma"
 import { emitNewMessage } from "@/lib/socket"
+import { NextRequest } from "next/server"
 
 interface RouteParams {
   params: Promise<{

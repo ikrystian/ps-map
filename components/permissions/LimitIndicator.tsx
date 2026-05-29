@@ -7,12 +7,12 @@
 
 "use client";
 
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { AlertCircle, ArrowUpRight, Check, Infinity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { AlertCircle, ArrowUpRight, Check, Infinity } from "lucide-react";
+import Link from "next/link";
 
 interface LimitIndicatorProps {
   current: number;

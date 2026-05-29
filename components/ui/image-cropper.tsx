@@ -1,10 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from "@/components/ui/shadcn-io/image-crop"
 import { Crop, RotateCcw } from "lucide-react"
-import { ImageCrop, ImageCropContent, ImageCropApply, ImageCropReset } from "@/components/ui/shadcn-io/image-crop"
 
 interface ImageCropperProps {
   image: File

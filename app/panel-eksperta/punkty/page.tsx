@@ -1,22 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -25,6 +12,16 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import {
   Table,
   TableBody,
@@ -33,28 +30,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 import {
-  Coins,
-  ShoppingCart,
-  History,
   AlertCircle,
-  Loader2,
+  Check,
   CheckCircle2,
-  Clock,
-  XCircle,
-  RefreshCw,
-  Zap,
-  TrendingDown,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
-  Star,
-  Info,
+  Clock,
+  Coins,
   Copy,
-  Check
+  History,
+  Info,
+  Loader2,
+  RefreshCw,
+  ShoppingCart,
+  Sparkles,
+  Star,
+  TrendingDown,
+  XCircle,
+  Zap
 } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 // Format date helper
 const formatDate = (date: Date | string) => {

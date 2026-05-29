@@ -1,9 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Bell, Trash2 } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { pl } from "date-fns/locale"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
-import { useRouter } from "next/navigation"
 import { useSocket } from "@/hooks/useSocket"
+import { formatDistanceToNow } from "date-fns"
+import { pl } from "date-fns/locale"
+import { Bell, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface Notification {
   id: string

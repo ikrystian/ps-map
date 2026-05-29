@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { motion } from "motion/react"
 import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
-import { Mail, ArrowRight, Inbox, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react"
+import { AlertCircle, ArrowRight, Inbox, Mail, RefreshCw } from "lucide-react"
+import { motion } from "motion/react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { useState } from "react"
 
 export default function RegistrationSuccessPage() {
   const searchParams = useSearchParams()

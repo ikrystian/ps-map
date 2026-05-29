@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 /**
  * Hook for playing notification sounds

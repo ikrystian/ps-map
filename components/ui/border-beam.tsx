@@ -1,7 +1,7 @@
 "use client"
 
-import React, { CSSProperties, useEffect, useRef } from "react"
 import { motion } from "motion/react"
+import { CSSProperties, useEffect, useRef } from "react"
 
 import { cn } from "@/lib/utils"
 

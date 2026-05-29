@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { CheckCircle2, Check, User, Briefcase, Search } from "lucide-react"
-import Link from "next/link"
-import { motion } from "framer-motion"
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
+import { motion } from "framer-motion"
+import { Check, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { useState } from "react"
 
 export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")

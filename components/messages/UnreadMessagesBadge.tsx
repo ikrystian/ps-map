@@ -1,9 +1,9 @@
 "use client"
 
-import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { Badge } from "@/components/ui/badge"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { AnimatePresence, motion } from "framer-motion"
 import { MessageCircle } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
 
 export function UnreadMessagesBadge() {
   const { unreadCount } = useRealtimeMessages({

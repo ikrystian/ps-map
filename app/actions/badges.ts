@@ -1,7 +1,7 @@
 "use server"
 
-import { checkAndAwardBadges } from "@/lib/badges"
 import { getCurrentUser } from "@/lib/auth"
+import { checkAndAwardBadges } from "@/lib/badges"
 import { db } from "@/lib/db"
 
 export async function triggerBadgeCheck() {

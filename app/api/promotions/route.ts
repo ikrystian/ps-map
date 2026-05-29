@@ -1,9 +1,9 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { sendSystemNotification } from "@/lib/notifications"
-import { PromotionType } from "@prisma/client"
 import { auth } from "@/lib/auth"
-import { sendEmail, generatePromotionActivatedEmail } from "@/lib/email"
+import { generatePromotionActivatedEmail } from "@/lib/email"
+import { sendSystemNotification } from "@/lib/notifications"
+import { prisma } from "@/lib/prisma"
+import { PromotionType } from "@prisma/client"
+import { NextRequest } from "next/server"
 
 // Koszty punktów za typy promocji
 const PROMOTION_COSTS = {

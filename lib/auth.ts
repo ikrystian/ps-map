@@ -1,4 +1,4 @@
-export { handlers, signIn, signOut, auth, authOptions } from "@/auth"
+export { auth, authOptions, handlers, signIn, signOut } from "@/auth"
 
 import { auth } from "@/auth"
 

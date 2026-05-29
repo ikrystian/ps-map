@@ -3,8 +3,8 @@
  * No external dependencies required
  */
 
-import * as tls from 'tls'
 import * as net from 'net'
+import * as tls from 'tls'
 
 interface SMTPConfig {
   host: string

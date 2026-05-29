@@ -1,9 +1,9 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { sendSystemNotification } from "@/lib/notifications"
+import { prisma } from "@/lib/prisma"
 import { emitNewNotification } from "@/lib/socket"
 import { Prisma } from "@prisma/client"
+import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma"
 import { sendEmailWithTemplate } from "@/lib/email"
+import { prisma } from "@/lib/prisma"
 import { EmailType } from "@prisma/client"
 import { format } from "date-fns"
 

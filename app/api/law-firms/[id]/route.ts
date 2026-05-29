@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
 import { hasActivePackage } from "@/lib/permissions"
+import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(
   _request: NextRequest,

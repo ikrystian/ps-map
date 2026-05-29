@@ -5,20 +5,20 @@
  * na podstawie pakietu subskrypcji kancelarii.
  */
 
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import {
   canAccessFeature,
   checkLimit,
-  isPackageExpired,
   getLawFirmPermissions,
-  getRequiredPackageForFeature,
   getPackageDisplayName,
+  getRequiredPackageForFeature,
+  isPackageExpired,
   type Feature,
-  type LimitType,
   type LawFirmPermissionData,
+  type LimitType,
 } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 // ============================================================================
 // TYPY
@@ -370,4 +370,4 @@ export async function canSubmitOffer(lawFirmId: string): Promise<{
 // EKSPORT
 // ============================================================================
 
-export type { PermissionError, LimitError };
+export type { LimitError, PermissionError };

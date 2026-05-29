@@ -1,30 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Calendar,
-  Eye,
-  User,
-  Search,
-  X,
-  Clock,
-  ChevronRight,
-  BookOpen,
-  ArrowRight,
-  HelpCircle,
-} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconArticle,
-  IconScale,
-  IconGavel,
   IconFileText,
+  IconGavel,
+  IconScale,
 } from "@tabler/icons-react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Calendar,
+  ChevronRight,
+  Clock,
+  Eye,
+  HelpCircle,
+  Search,
+  User,
+  X
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface BlogPost {
   id: string;

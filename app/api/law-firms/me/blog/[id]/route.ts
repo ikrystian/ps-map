@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/law-firms/me/blog/[id] - Pobiera konkretny wpis do edycji
 export async function GET(

@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Award, RefreshCw, Search, CheckCircle, XCircle, AlertCircle, TrendingUp, Users, Gift } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/sonner"
 import {
   Table,
   TableBody,
@@ -13,8 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/sonner"
+import { Award, CheckCircle, Gift, RefreshCw, Search, TrendingUp, Users, XCircle } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface PartnerProgram {
   id: string

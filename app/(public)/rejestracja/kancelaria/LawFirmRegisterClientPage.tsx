@@ -1,33 +1,34 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { motion, AnimatePresence } from "motion/react"
 import {
+  AlertCircle,
   Briefcase,
   Building2,
-  User,
-  MapPin,
-  Globe,
-  Scale,
-  Zap,
-  Lock,
-  ChevronRight,
-  ChevronLeft,
-  CheckCircle2,
-  AlertCircle,
-  ChevronDown,
   Check,
-  X
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  Lock,
+  MapPin,
+  Scale,
+  User,
+  Zap
 } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
+import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -35,10 +36,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { AuthLayout } from "@/components/auth"
 import { cn } from "@/lib/utils"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 import { z } from "zod"
 

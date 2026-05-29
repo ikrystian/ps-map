@@ -1,6 +1,5 @@
 "use client"
 
-import { HelpCircle, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -9,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { HelpCircle } from "lucide-react"
 
 interface ExpertTourButtonProps {
   onStart: () => void

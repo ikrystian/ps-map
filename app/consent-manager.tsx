@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
 import {
-	ConsentManagerDialog,
-	ConsentManagerProvider,
-	CookieBanner,
+  ConsentManagerDialog,
+  ConsentManagerProvider,
+  CookieBanner,
 } from '@c15t/nextjs';
+import type { ReactNode } from 'react';
 // For client-only apps (non-SSR), you can use:
 // import { ConsentManagerProvider } from '@c15t/nextjs/client';
 import { ConsentManagerClient } from './consent-manager.client';

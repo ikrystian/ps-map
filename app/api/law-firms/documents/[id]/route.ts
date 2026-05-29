@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
-import { unlink } from "fs/promises"
-import { join } from "path"
 import { existsSync } from "fs"
+import { unlink } from "fs/promises"
+import { NextRequest, NextResponse } from "next/server"
+import { join } from "path"
 
 // DELETE /api/law-firms/documents/[id] - Delete document
 export async function DELETE(

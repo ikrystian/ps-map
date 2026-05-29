@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { BlockKey, blocks } from '@/blocks'
 import { auth } from '@/lib/auth'
-import { blocks, BlockKey } from '@/blocks'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * POST /api/admin/blocks/[key]/render

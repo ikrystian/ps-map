@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // PUT /api/admin/help/questions/[id] - Update question
 export async function PUT(

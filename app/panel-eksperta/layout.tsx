@@ -1,52 +1,52 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { usePermissions } from "@/hooks/usePermissions"
-import { ExpiredPackageModal, PackageBadge } from "@/components/permissions"
-import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
-import {
-  LayoutDashboard,
-  Briefcase,
-  FileText,
-  User,
-  Wrench,
-  BookOpen,
-  Star,
-  Award,
-  Coins,
-  Package,
-  TrendingUp,
-  Trophy,
-  BarChart3,
-  MessageSquare,
-  Settings,
-  FileStack,
-  LogOut,
-  ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  Instagram,
-  Facebook,
-  Linkedin,
-} from "lucide-react"
-import UserMenu from "@/components/UserMenu"
-import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
-import { NotificationBell } from "@/components/NotificationBell"
-import { MessagesBell } from "@/components/MessagesBell"
 import { triggerBadgeCheck } from "@/app/actions/badges"
 import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
+import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
+import { MessagesBell } from "@/components/MessagesBell"
+import { NotificationBell } from "@/components/NotificationBell"
+import { ExpiredPackageModal } from "@/components/permissions"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import UserMenu from "@/components/UserMenu"
+import { usePermissions } from "@/hooks/usePermissions"
+import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import {
+  Award,
+  BarChart3,
+  BookOpen,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  Coins,
+  ExternalLink,
+  Facebook,
+  FileStack,
+  FileText,
+  Instagram,
+  LayoutDashboard,
+  Linkedin,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Package,
+  Settings,
+  Star,
+  TrendingUp,
+  Trophy,
+  User,
+  Wrench,
+} from "lucide-react"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-eksperta", icon: LayoutDashboard },

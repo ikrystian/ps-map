@@ -1,5 +1,5 @@
-import { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
+import { Metadata } from "next"
 import CategoryClientPage from "./CategoryClientPage"
 
 interface PageProps {

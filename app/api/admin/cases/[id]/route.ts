@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/cases/[id] - Pobiera szczegóły sprawy (tylko ADMIN)
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

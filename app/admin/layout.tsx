@@ -1,43 +1,43 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
+import { useState } from "react"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import AdminNotificationBell from "@/components/AdminNotificationBell"
+import { Button } from "@/components/ui/button"
+import UserMenu from "@/components/UserMenu"
 import { cn } from "@/lib/utils"
 import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  Briefcase,
-  Star,
-  FolderTree,
+  ArrowUpDown,
+  Bell,
   BookOpen,
-  Mail,
-  Settings,
-  Shield,
+  Briefcase,
+  Building2,
   ChevronLeft,
   ChevronRight,
-  Tags,
+  Coins,
   CreditCard,
-  TrendingUp,
-  HelpCircle,
-  LayoutTemplate,
   FileCode,
-  UserCog,
-  Upload,
-  Bell,
+  FolderTree,
+  HelpCircle,
+  LayoutDashboard,
+  LayoutTemplate,
+  Mail,
   MapPin,
   Megaphone,
   MessageSquare,
-  ArrowUpDown,
-  Coins,
+  Settings,
+  Shield,
+  Star,
+  Tags,
+  TrendingUp,
+  Upload,
+  UserCog,
+  Users,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import UserMenu from "@/components/UserMenu"
-import AdminNotificationBell from "@/components/AdminNotificationBell"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },

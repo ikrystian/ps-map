@@ -4,10 +4,10 @@
  * Zwraca dane o uprawnieniach zalogowanej kancelarii
  */
 
-import { NextResponse } from "next/server";
 import { getAuthenticatedLawFirm } from "@/lib/api-permissions";
 import { getLawFirmPermissions } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 /**
  * GET /api/law-firms/me/permissions

@@ -7,7 +7,6 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -17,10 +16,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
-import { Bell, Mail, MessageSquare, ShieldAlert, Loader2, Save, Sparkles, Smartphone, Check } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Bell, Check, Loader2, Mail, ShieldAlert, Smartphone } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface NotificationSettings {
   emailNoweOferty: boolean;

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 import { blocks } from '@/blocks'
+import { auth } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * GET /api/admin/blocks

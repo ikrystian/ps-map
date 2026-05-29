@@ -1,25 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { useSession } from "next-auth/react"
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
+import { ReviewsSection } from "@/components/ekspert/ReviewsSection"
+import { BadgesSection } from "@/components/law-firm/BadgesSection"
+import { PackageBadge } from "@/components/permissions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { PackageBadge } from "@/components/permissions"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { cn } from "@/lib/utils"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -29,39 +17,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { toast } from "@/components/ui/sonner"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Star,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { toast } from "@/components/ui/sonner"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
+import {
   Award,
-  Clock,
-  Facebook,
-  Linkedin,
-  Instagram,
-  Twitter,
-  CheckCircle2,
-  Heart,
-  Share2,
-  MessageSquare,
-  Briefcase,
-  GraduationCap,
-  Send,
-  Eye,
   Calendar,
-  ZoomIn,
-  Flag,
+  CheckCircle2,
+  Clock,
+  Eye,
+  Facebook,
+  Globe,
+  GraduationCap,
+  Heart,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Send,
+  Share2,
+  Star,
+  Twitter,
+  ZoomIn
 } from "lucide-react"
+import { useSession } from "next-auth/react"
+import Image from "next/image"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
-import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
-import { BadgesSection } from "@/components/law-firm/BadgesSection"
-import { ReviewsSection } from "@/components/ekspert/ReviewsSection"
 
 interface LawFirm {
   id: string

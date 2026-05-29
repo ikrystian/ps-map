@@ -1,11 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import { toast } from "@/components/ui/sonner"
-import { Button } from "../ui/button"
-import { InteractiveHoverButton } from "../ui/interactive-hover-button"
+import { useState } from "react"
 import { Input } from "../ui/input"
-import Link from "next/link"
+import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("")

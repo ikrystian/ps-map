@@ -7,20 +7,20 @@
 
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { useSession } from "next-auth/react";
 import {
-  getLawFirmPermissions,
   canAccessFeature,
   checkLimit,
-  isPackageExpired,
   daysUntilExpiry,
+  getLawFirmPermissions,
   getPackageDisplayName,
+  isPackageExpired,
   type Feature,
+  type LawFirmPermissionData,
   type LimitType,
   type PermissionsSet,
-  type LawFirmPermissionData,
 } from "@/lib/permissions";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // ============================================================================
 // TYPY

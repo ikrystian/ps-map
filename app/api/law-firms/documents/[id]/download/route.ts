@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { readFile } from "fs/promises"
-import { join } from "path"
 import { existsSync } from "fs"
+import { readFile } from "fs/promises"
+import { NextRequest, NextResponse } from "next/server"
+import { join } from "path"
 
 // GET /api/law-firms/documents/[id]/download - Download document
 export async function GET(

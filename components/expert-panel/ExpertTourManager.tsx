@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useCallback, useState } from "react"
+import { TourStep, useExpertTour } from "@/hooks/useExpertTour"
 import { usePathname } from "next/navigation"
 import Script from "next/script"
-import { useExpertTour, TourStep } from "@/hooks/useExpertTour"
+import { useCallback, useEffect, useState } from "react"
 import { ExpertTourButton } from "./ExpertTourButton"
 
 // ─────────────────────────────────────────────────────────────────────────────

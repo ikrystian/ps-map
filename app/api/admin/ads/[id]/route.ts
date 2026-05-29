@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // PUT /api/admin/ads/[id] - Aktualizuj reklamę (ADMIN only)
 export async function PUT(

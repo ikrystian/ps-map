@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/promotion-configs - Fetch all promotion configs (ADMIN only)
 export async function GET(request: NextRequest) {

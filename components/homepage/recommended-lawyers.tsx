@@ -1,26 +1,26 @@
 "use client"
 
-import React, { useState, useRef } from "react"
-import Link from "next/link"
-import { useSession } from "next-auth/react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  MapPin,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react"
-import type { LawFirm } from "@/types/lawfirms"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import type { LawFirm } from "@/types/lawfirms"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Star
+} from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useRef, useState } from "react"
 
 interface RecommendedLawyersProps {
   recommendedData?: Record<string, LawFirm[]>

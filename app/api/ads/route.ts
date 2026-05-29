@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { getAuthenticatedLawFirm } from "@/lib/api-permissions"
+import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/ads - Pobierz aktywną reklamę dla podanego umiejscowienia (lokalizacji)
 export async function GET(request: NextRequest) {

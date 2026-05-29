@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 /**
  * Track promotion events (profile views, clicks, etc.)

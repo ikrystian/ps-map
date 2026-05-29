@@ -1,14 +1,14 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import type { NextAuthConfig, Session, User } from "next-auth"
+import NextAuth from "next-auth"
 import type { JWT } from "next-auth/jwt"
-import Google from "next-auth/providers/google"
-import Facebook from "next-auth/providers/facebook"
 import Apple from "next-auth/providers/apple"
-import { logLoginAttempt } from "@/lib/login-history"
+import CredentialsProvider from "next-auth/providers/credentials"
+import Facebook from "next-auth/providers/facebook"
+import Google from "next-auth/providers/google"
 
 export const authOptions: NextAuthConfig = {
   // @ts-ignore - version mismatch between @auth/prisma-adapter and next-auth

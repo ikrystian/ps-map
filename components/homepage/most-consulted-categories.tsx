@@ -1,27 +1,27 @@
 "use client"
 
-import React, { useState } from "react"
-import Link from "next/link"
-import { useSession } from "next-auth/react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  MapPin,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react"
-import type { LawFirm } from "@/types/lawfirms"
-import type { Category } from "@/types/categories"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import type { Category } from "@/types/categories"
+import type { LawFirm } from "@/types/lawfirms"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Star
+} from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useState } from "react"
 
 interface MostConsultedCategoriesProps {
   consultedData?: Record<string, LawFirm[]>

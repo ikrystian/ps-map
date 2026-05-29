@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { MapPin, Plus, Star } from "lucide-react"
 import Link from "next/link"
-import { MapPin, Star, Plus } from "lucide-react"
 
 export function LawyerBenefitsSection() {
     return (

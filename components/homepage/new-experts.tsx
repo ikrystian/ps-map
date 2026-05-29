@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useRef } from "react"
-import Link from "next/link"
-import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react"
 import type { LawFirm } from "@/types/lawfirms"
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { useRef } from "react"
 
 interface NewExpertsProps {
   newLawFirms: LawFirm[]

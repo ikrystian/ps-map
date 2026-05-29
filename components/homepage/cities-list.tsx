@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { MapPin, ChevronDown, ChevronUp, Loader2 } from "lucide-react"
+import { ChevronDown, ChevronUp, Loader2, MapPin } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 export const CITIES = [
   { nazwa: "Augustów", wojewodztwo: "Podlaskie" },

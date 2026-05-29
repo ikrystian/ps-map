@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { NextRequest } from "next/server"
 
 // GET /api/notification-settings - Pobierz ustawienia powiadomień
 export async function GET(request: NextRequest) {

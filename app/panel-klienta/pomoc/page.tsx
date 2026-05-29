@@ -1,28 +1,28 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { toast } from "@/components/ui/sonner"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/sonner"
 import {
-  Search,
-  Link as LinkIcon,
-  HelpCircle,
-  Loader2,
   AlertCircle,
+  HelpCircle,
+  Link as LinkIcon,
+  Loader2,
   Mail,
-  Phone,
   MessageSquare,
+  Phone,
+  Search,
 } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 interface HelpCategory {
   id: string

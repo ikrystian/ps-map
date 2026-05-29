@@ -1,7 +1,7 @@
-import { PrismaClient, UserRole, LawFirmType, OfferType, SubscriptionPackage, ClientType } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import { createRandomLawFirm, createRandomUser, createRandomClientB2B } from './generators'
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
+import { ClientType, PrismaClient, UserRole } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { createRandomClientB2B, createRandomLawFirm, createRandomUser } from './generators';
 
 const USERS_TO_CREATE = 80;
 

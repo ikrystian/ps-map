@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useSession } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Send, Paperclip, ArrowLeft } from "lucide-react"
 import { toast } from "@/components/ui/sonner"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import type { ChatMessage, ConversationDetails } from "@/types/conversations"
+import { ArrowLeft, Send } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useEffect, useRef, useState } from "react"
 
 interface ChatAreaProps {
   conversationId: string

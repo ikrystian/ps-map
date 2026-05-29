@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { ScheduledEmailStatus } from "@prisma/client"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function DELETE(
   req: NextRequest,

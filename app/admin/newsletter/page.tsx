@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Mail, Calendar, CheckCircle, XCircle, Download, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "@/components/ui/sonner"
 import {
   Table,
   TableBody,
@@ -13,7 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "@/components/ui/sonner"
+import { AlertCircle, Calendar, CheckCircle, Download, Mail, XCircle } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface NewsletterSubscriber {
   id: string

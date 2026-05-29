@@ -1,30 +1,30 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { useSocket } from "@/hooks/useSocket"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Send,
-  Paperclip,
-  ArrowLeft,
-  Smile,
-  Download,
-  X,
-  MoreVertical,
-  Archive,
-  Trash2,
-  Ban,
-  Info,
-  CheckCheck,
-  Check,
-} from "lucide-react"
 import { toast } from "@/components/ui/sonner"
+import { Textarea } from "@/components/ui/textarea"
+import { useSocket } from "@/hooks/useSocket"
 import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  Archive,
+  ArrowLeft,
+  Ban,
+  Check,
+  CheckCheck,
+  Download,
+  Info,
+  MoreVertical,
+  Paperclip,
+  Send,
+  Smile,
+  Trash2,
+  X,
+} from "lucide-react"
+import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
@@ -36,27 +36,26 @@ const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
 })
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
+import type {
+  ConversationDetails,
+  EnhancedChatMessage,
+  MessageAttachment
+} from "@/types/conversations"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
-import type {
-  EnhancedChatMessage,
-  ConversationDetails,
-  MessageAttachment,
-  MessageStatus,
-} from "@/types/conversations"
 
 interface ChatAreaProps {
   conversationId: string

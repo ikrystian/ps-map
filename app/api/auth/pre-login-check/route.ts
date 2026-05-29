@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
+import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
-import { logLoginAttempt } from "@/lib/login-history"
+import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { NextResponse } from "next/server"
 
 // GET /api/admin/users/[id] - Fetch single user details (ADMIN only)
 export async function GET(

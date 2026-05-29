@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { generateInvoiceForOrder } from "@/lib/invoice-generator"
+import { prisma } from "@/lib/prisma"
+import { NextRequest } from "next/server"
 
 // GET - Pobierz historię zamówień punktów dla kancelarii
 export async function GET(request: NextRequest) {

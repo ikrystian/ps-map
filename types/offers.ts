@@ -3,8 +3,8 @@
  * Used across the application for offer management
  */
 
-import type { LawFirmReference } from "./lawfirms"
 import type { CategoryReference } from "./categories"
+import type { LawFirmReference } from "./lawfirms"
 
 /**
  * Base offer type

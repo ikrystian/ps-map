@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Award, Home, TrendingUp } from "lucide-react"
+import { Award, Home, Sparkles, TrendingUp } from "lucide-react"
 
 interface PromotionBadgeProps {
   highlightType: "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | null

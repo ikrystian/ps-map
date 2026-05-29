@@ -1,6 +1,6 @@
+import { sendEmail } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { NotificationType } from "@prisma/client"
-import { sendEmail } from "@/lib/email"
 
 export interface SendNotificationOptions {
   userId: string

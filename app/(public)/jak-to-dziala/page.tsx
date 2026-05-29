@@ -1,11 +1,21 @@
-import { Metadata } from "next"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-  FileText, Send, Users, MessageSquare, CheckCircle, Star,
-  ArrowRight, Clock, Shield, TrendingUp, Lightbulb, HelpCircle
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  FileText,
+  HelpCircle,
+  Lightbulb,
+  MessageSquare,
+  Send,
+  Shield,
+  Star,
+  TrendingUp,
+  Users
 } from "lucide-react"
+import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Jak to działa? Przewodnik po Platformie | Prosta Sprawa",

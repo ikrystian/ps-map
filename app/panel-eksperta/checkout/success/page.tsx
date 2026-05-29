@@ -1,24 +1,23 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { motion, AnimatePresence } from "framer-motion"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import confetti from "canvas-confetti"
+import { AnimatePresence, motion } from "framer-motion"
 import {
-  CheckCircle2,
+  ArrowRight,
   Coins,
+  Crown,
   Home,
   Loader2,
-  Receipt,
-  XCircle,
-  Sparkles,
-  ArrowRight,
-  Sparkle,
   PartyPopper,
-  Crown
+  Receipt,
+  Sparkle,
+  Sparkles,
+  XCircle
 } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 // Format currency
 const formatCurrency = (amount: number) => {

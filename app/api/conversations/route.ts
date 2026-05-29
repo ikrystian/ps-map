@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { decryptMessage } from "@/lib/encryption"
+import { prisma } from "@/lib/prisma"
+import { NextRequest } from "next/server"
 
 // GET /api/conversations - Pobierz wszystkie konwersacje użytkownika
 export async function GET(request: NextRequest) {

@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useState } from "react"
-import { GripVertical, Trash2, ChevronDown, ChevronUp, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -11,12 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { parseModuleCode, renderModule } from "@/lib/module-parser"
 import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
+import { parseModuleCode, renderModule } from "@/lib/module-parser"
 import type { ModuleForBuilder, PageModuleForBuilder } from "@/types/cms"
+import { ChevronDown, ChevronUp, GripVertical, Trash2 } from "lucide-react"
+import { useState } from "react"
 
 interface PageBuilderProps {
   modules: ModuleForBuilder[]

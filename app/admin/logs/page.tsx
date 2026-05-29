@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { toast } from "@/components/ui/sonner"
 import {
   Table,
   TableBody,
@@ -14,10 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "@/components/ui/sonner"
-import { FileText, Loader2, Search, ChevronLeft, ChevronRight, Filter, AlertCircle, Info, AlertTriangle, XCircle, Bug } from "lucide-react"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"
+import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface SystemLog {
   id: string

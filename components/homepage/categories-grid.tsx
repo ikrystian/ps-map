@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, memo } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, icons } from "lucide-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types/categories";
+import { motion } from "framer-motion";
+import { ArrowRight, icons } from "lucide-react";
+import Link from "next/link";
+import { memo, useState } from "react";
 
 interface CategoriesGridProps {
   categories: Category[];

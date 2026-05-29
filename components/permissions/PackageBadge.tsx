@@ -7,8 +7,8 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Zap, Star, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Crown, Sparkles, Star, Zap } from "lucide-react";
 
 export type PackageType = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null;
 
