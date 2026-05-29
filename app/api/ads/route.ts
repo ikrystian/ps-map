@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getAuthenticatedLawFirm } from "@/lib/api-permissions"
 
 // GET /api/ads - Pobierz aktywną reklamę dla podanego umiejscowienia (lokalizacji)
 export async function GET(request: NextRequest) {
@@ -9,6 +10,12 @@ export async function GET(request: NextRequest) {
 
     if (!location) {
       return NextResponse.json({ error: "Location parameter is required" }, { status: 400 })
+    }
+
+    // Jeśli zalogowany użytkownik to kancelaria z pakietem BIZNES, ukrywamy reklamy
+    const lawFirm = await getAuthenticatedLawFirm()
+    if (lawFirm?.pakietSubskrypcji === "BIZNES") {
+      return NextResponse.json({ ad: null, hideBanner: true })
     }
 
     const now = new Date()
