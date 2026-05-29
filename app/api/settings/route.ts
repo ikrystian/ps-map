@@ -50,6 +50,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.enablePaymentPrzelew) {
       settingsObject.enablePaymentPrzelew = "true"
     }
+    if (!settingsObject.enableUserSelectionOnLogin) {
+      settingsObject.enableUserSelectionOnLogin = "true"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -69,6 +72,7 @@ export async function GET(request: NextRequest) {
         enablePaymentPrzelewy24: "true",
         enablePaymentPayU: "true",
         enablePaymentPrzelew: "true",
+        enableUserSelectionOnLogin: "true",
       },
       { status: 200 }
     )
