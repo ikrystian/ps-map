@@ -38,6 +38,8 @@ const categorySchema = z.object({
   metaDescription: z.string().nullable().optional(),
   aktywna: z.boolean(),
   kolejnosc: z.number(),
+  wyswietlajNaGlownejPrywatne: z.boolean(),
+  wyswietlajNaGlownejFirmowe: z.boolean(),
 })
 
 export type CategoryFormValues = z.infer<typeof categorySchema>
@@ -57,6 +59,8 @@ interface Category {
   metaDescription?: string | null
   aktywna: boolean
   kolejnosc: number
+  wyswietlajNaGlownejPrywatne?: boolean
+  wyswietlajNaGlownejFirmowe?: boolean
 }
 
 interface CategoryFormProps {
@@ -92,6 +96,8 @@ export function CategoryForm({
       metaDescription: initialData.metaDescription || "",
       aktywna: initialData.aktywna,
       kolejnosc: initialData.kolejnosc,
+      wyswietlajNaGlownejPrywatne: !!initialData.wyswietlajNaGlownejPrywatne,
+      wyswietlajNaGlownejFirmowe: !!initialData.wyswietlajNaGlownejFirmowe,
     } : {
       nazwa: "",
       slug: "",
@@ -106,6 +112,8 @@ export function CategoryForm({
       metaDescription: null,
       aktywna: true,
       kolejnosc: 0,
+      wyswietlajNaGlownejPrywatne: false,
+      wyswietlajNaGlownejFirmowe: false,
     },
   })
 
@@ -371,6 +379,49 @@ export function CategoryForm({
                       </FormItem>
                     )}
                   />
+                  {form.watch("typ") === "SPRAWY_PRYWATNE" ? (
+                    <FormField
+                      control={form.control}
+                      name="wyswietlajNaGlownejPrywatne"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Na głównej (prywatne)</FormLabel>
+                            <FormDescription>
+                              Wyświetlaj w sekcji spraw prywatnych na stronie głównej
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name="wyswietlajNaGlownejFirmowe"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Na głównej (firmowe)</FormLabel>
+                            <FormDescription>
+                              Wyświetlaj w sekcji spraw firmowych na stronie głównej
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </CardContent>
               </Card>
 
