@@ -111,7 +111,10 @@ export default function AdminLayout({
               const isActive = pathname === item.href ||
                 (item.href !== "/admin" &&
                  item.href !== "/admin/transakcje" &&
-                 pathname.startsWith(item.href))
+                 pathname.startsWith(item.href)) ||
+                (item.href === "/admin/transakcje" &&
+                 pathname.startsWith("/admin/transakcje") &&
+                 !pathname.startsWith("/admin/transakcje/punkty"))
 
               return (
                 <Link
