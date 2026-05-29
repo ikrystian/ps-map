@@ -23,6 +23,8 @@ export async function GET() {
             metaDescription: true,
             aktywna: true,
             kolejnosc: true,
+            wyswietlajNaGlownejPrywatne: true,
+            wyswietlajNaGlownejFirmowe: true,
             createdAt: true,
             updatedAt: true,
             parent: {
@@ -73,7 +75,23 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nazwa, slug, opis, opisDodatkowy, ikona, ikonaUrl, backgroundImageUrl, typ, parentId, metaTitle, metaDescription, aktywna, kolejnosc } = body
+    const {
+      nazwa,
+      slug,
+      opis,
+      opisDodatkowy,
+      ikona,
+      ikonaUrl,
+      backgroundImageUrl,
+      typ,
+      parentId,
+      metaTitle,
+      metaDescription,
+      aktywna,
+      kolejnosc,
+      wyswietlajNaGlownejPrywatne,
+      wyswietlajNaGlownejFirmowe,
+    } = body
 
     // Walidacja podstawowych pól
     if (!nazwa || !slug) {
@@ -124,6 +142,8 @@ export async function POST(request: Request) {
         metaDescription,
         aktywna: aktywna !== undefined ? aktywna : true,
         kolejnosc: kolejnosc || 0,
+        wyswietlajNaGlownejPrywatne: !!wyswietlajNaGlownejPrywatne,
+        wyswietlajNaGlownejFirmowe: !!wyswietlajNaGlownejFirmowe,
       },
       include: {
         parent: {
