@@ -82,6 +82,11 @@ CategoryCard.displayName = "CategoryCard";
 export function CategoriesGrid({ categories }: CategoriesGridProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
+  const activeCategories = categories
+    .filter((cat) => cat.wyswietlajNaGlownejPrywatne)
+    .sort((a, b) => (a.kolejnosc ?? 0) - (b.kolejnosc ?? 0))
+    .slice(0, 9);
+
   const desktopImages = [
     "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
     "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
@@ -155,7 +160,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
                 '"first third fourth seventh eighth tenth"',
             }}
           >
-            {categories.slice(0, 9).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
                 category={category}
@@ -175,7 +180,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
 
           {/* Tablet Grid Layout (3 columns) */}
           <div className="hidden md:grid lg:hidden grid-cols-3 gap-4 mb-8">
-            {categories.slice(0, 9).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
                 category={category}
@@ -190,7 +195,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
 
           {/* Mobile Grid Layout (1 column) */}
           <div className="grid md:hidden grid-cols-1 gap-4 mb-8">
-            {categories.slice(0, 9).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
                 category={category}
