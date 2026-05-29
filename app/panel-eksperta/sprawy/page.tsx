@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/sonner"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface Case {
   id: string
@@ -214,13 +215,14 @@ const SprawyPage = () => {
       rejected.add(caseToReject)
       localStorage.setItem("rejectedCases", JSON.stringify(Array.from(rejected)))
 
-      // Usuń sprawę z listy
-      setCases(cases.filter((c) => c.id !== caseToReject))
-
-      toast.success("Sprawa została ukryta z listy")
-
       setRejectModalOpen(false)
-      setCaseToReject(null)
+
+      // Poczekaj na zamknięcie modala, aby użytkownik widział animację znikania karty
+      setTimeout(() => {
+        setCases(cases.filter((c) => c.id !== caseToReject))
+        toast.success("Sprawa została ukryta z listy")
+        setCaseToReject(null)
+      }, 250)
     } catch (error) {
       console.error("Error rejecting case:", error)
       toast.error("Nie udało się odrzucić sprawy")
@@ -424,126 +426,142 @@ const SprawyPage = () => {
           </p>
         </div>
       ) : (
-        <div id="tour-sprawy-list" className="space-y-6">
-          {filteredCases.map((sprawa) => {
-            const myOffer = sprawa.offers?.[0]
-            const isAccepted = myOffer?.status === "ZAAKCEPTOWANA"
-            const hasOffer = !!myOffer
+        <motion.div id="tour-sprawy-list" layout className="space-y-6">
+          <AnimatePresence mode="popLayout">
+            {filteredCases.map((sprawa) => {
+              const myOffer = sprawa.offers?.[0]
+              const isAccepted = myOffer?.status === "ZAAKCEPTOWANA"
+              const hasOffer = !!myOffer
 
-            return (
-              <Card
-                key={sprawa.id}
-                className={cn(
-                  "overflow-hidden relative border-0",
-                )}
-              >
-                {isAccepted && <BorderBeam lightColor="var(--primary)" lightWidth={500} duration={4} />}
+              return (
+                <motion.div
+                  key={sprawa.id}
+                  layout
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{
+                    opacity: 0,
+                    x: -120,
+                    scale: 0.96,
+                    filter: "blur(3px)",
+                    transition: { duration: 0.35, ease: "easeOut" }
+                  }}
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                >
+                  <Card
+                    className={cn(
+                      "overflow-hidden relative border-0",
+                    )}
+                  >
+                    {isAccepted && <BorderBeam lightColor="var(--primary)" lightWidth={500} duration={4} />}
 
-                <CardHeader className={cn(
-                  "flex flex-row items-start justify-between px-6 py-3 relative z-15 pt-6",
-                )}>
+                    <CardHeader className={cn(
+                      "flex flex-row items-start justify-between px-6 py-3 relative z-15 pt-6",
+                    )}>
 
-                  <div className="flex flex-wrap items-center gap-2 relative z-15">
-                    {isAccepted && (
-                      <Badge className="bg-green-600 hover:bg-green-700 gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        Zaakceptowana
-                      </Badge>
-                    )}
-                    {hasOffer && !isAccepted && (
-                      <Badge variant="secondary" className="gap-1">
-                        Złożono ofertę
-                      </Badge>
-                    )}
-                    <Badge variant="outline">{sprawa.category.nazwa}</Badge>
-                    <Badge variant="secondary">{getTypeLabel(sprawa.typSprawy)}</Badge>
-                    {sprawa.trybPilny && (
-                      <Badge variant="destructive" className="animate-pulse">
-                        Pilne
-                      </Badge>
-                    )}
-                    <Badge>{getStatusLabel(sprawa.status)}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Eye className="h-4 w-4" />
-                      <span title="osób przegląda tą sprawę ">{(Math.random() * 10 + 1).toFixed(0)} </span>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => toggleFavorite(sprawa.id)}
-                    >
-                      <Heart
-                        className={cn(
-                          "h-5 w-5",
-                          favorites.has(sprawa.id) && "fill-current text-red-500"
+                      <div className="flex flex-wrap items-center gap-2 relative z-15">
+                        {isAccepted && (
+                          <Badge className="bg-green-600 hover:bg-green-700 gap-1">
+                            <CheckCircle className="h-3 w-3" />
+                            Zaakceptowana
+                          </Badge>
                         )}
-                      />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-600"
-                      onClick={() => openRejectModal(sprawa.id)}
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6 pt-0 relative z-10">
-                  <h3 className="text-2xl font-bold mb-4">{sprawa.nazwaSprawy}</h3>
-
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-
-                    <div className="flex-grow">
-                      <p className="hidden text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {sprawa.opisSprawy}
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-center ">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>
-                            {sprawa.city ? `${sprawa.city.nazwa}, ${sprawa.voivodeship.nazwa}` : sprawa.voivodeship.nazwa}
-                          </span>
+                        {hasOffer && !isAccepted && (
+                          <Badge variant="secondary" className="gap-1">
+                            Złożono ofertę
+                          </Badge>
+                        )}
+                        <Badge variant="outline">{sprawa.category.nazwa}</Badge>
+                        <Badge variant="secondary">{getTypeLabel(sprawa.typSprawy)}</Badge>
+                        {sprawa.trybPilny && (
+                          <Badge variant="destructive" className="animate-pulse">
+                            Pilne
+                          </Badge>
+                        )}
+                        <Badge>{getStatusLabel(sprawa.status)}</Badge>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Eye className="h-4 w-4" />
+                          <span title="osób przegląda tą sprawę ">{(Math.random() * 10 + 1).toFixed(0)} </span>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleFavorite(sprawa.id)}
+                        >
+                          <Heart
+                            className={cn(
+                              "h-5 w-5",
+                              favorites.has(sprawa.id) && "fill-current text-red-500"
+                            )}
+                          />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => openRejectModal(sprawa.id)}
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-0 relative z-10">
+                      <h3 className="text-2xl font-bold mb-4">{sprawa.nazwaSprawy}</h3>
 
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>
-                            {sprawa.oczekiwanyTerminRealizacji
-                              ? formatDate(sprawa.oczekiwanyTerminRealizacji)
-                              : "Brak terminu"}
-                          </span>
+                      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+
+                        <div className="flex-grow">
+                          <p className="hidden text-sm text-muted-foreground mb-4 line-clamp-2">
+                            {sprawa.opisSprawy}
+                          </p>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 items-center ">
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                              <span>
+                                {sprawa.city ? `${sprawa.city.nazwa}, ${sprawa.voivodeship.nazwa}` : sprawa.voivodeship.nazwa}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                              <span>
+                                {sprawa.oczekiwanyTerminRealizacji
+                                  ? formatDate(sprawa.oczekiwanyTerminRealizacji)
+                                  : "Brak terminu"}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Euro className="h-4 w-4 mr-2 flex-shrink-0" />
+                              <span>
+                                {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <span className="font-medium">Klient:</span>
+                              <span className="ml-2">
+                                {sprawa.client.imie} {sprawa.client.nazwisko}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Euro className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>
-                            {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <span className="font-medium">Klient:</span>
-                          <span className="ml-2">
-                            {sprawa.client.imie} {sprawa.client.nazwisko}
-                          </span>
+                        <div className="flex-shrink-0 flex items-end sm:ml-6">
+                          <Button onClick={() => router.push(`/panel-eksperta/sprawy/${sprawa.id}`)}>
+                            Zobacz szczegóły
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex-shrink-0 flex items-end sm:ml-6">
-                      <Button onClick={() => router.push(`/panel-eksperta/sprawy/${sprawa.id}`)}>
-                        Zobacz szczegóły
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
+        </motion.div>
       )}
 
       {/* Reject Modal */}
