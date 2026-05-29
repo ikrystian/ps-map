@@ -24,8 +24,23 @@ import {
   ListOrdered,
   Activity,
   User,
-  Info
+  Info,
+  ChevronsUpDown
 } from "lucide-react"
+import { cn } from "@/lib/utils"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
 
 // Types
 type NotificationType =
@@ -71,6 +86,7 @@ export default function NotificationsAdminPage() {
   const [history, setHistory] = useState<NotificationHistory[]>([])
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [activeTab, setActiveTab] = useState("test")
   const [formData, setFormData] = useState<TestFormData>({
     userId: "",
     type: "SYSTEM",
@@ -80,9 +96,55 @@ export default function NotificationsAdminPage() {
     force: false,
   })
 
+  const [userSearchOpen, setUserSearchOpen] = useState(false)
+  const [userSearchQuery, setUserSearchQuery] = useState("")
+  const [users, setUsers] = useState<any[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any | null>(null)
+
   useEffect(() => {
     fetchHistory()
   }, [])
+
+  useEffect(() => {
+    if (!userSearchOpen) return
+
+    const controller = new AbortController()
+    const fetchUsers = async () => {
+      try {
+        setLoadingUsers(true)
+        const res = await fetch(`/api/admin/users?limit=20&search=${encodeURIComponent(userSearchQuery)}`, {
+          signal: controller.signal
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setUsers(data.users || [])
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error("Błąd pobierania użytkowników:", err)
+        }
+      } finally {
+        setLoadingUsers(false)
+      }
+    }
+
+    const timer = setTimeout(() => {
+      fetchUsers()
+    }, 300)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [userSearchQuery, userSearchOpen])
+
+  const handleSelectUserFromHistory = (user: { id: string; name: string | null; email: string; role: string }) => {
+    setSelectedUser(user)
+    setFormData(prev => ({ ...prev, userId: user.id }))
+    setActiveTab("test")
+    toast.success(`Wybrano użytkownika: ${user.name || user.email}`)
+  }
 
   const fetchHistory = async () => {
     try {
@@ -160,7 +222,7 @@ export default function NotificationsAdminPage() {
         <Bell className="h-10 w-10 text-muted-foreground opacity-20" />
       </div>
 
-      <Tabs defaultValue="test" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-[600px]">
           <TabsTrigger value="test"><Activity className="w-4 h-4 mr-2" /> Testowanie</TabsTrigger>
           <TabsTrigger value="history"><ListOrdered className="w-4 h-4 mr-2" /> Historia</TabsTrigger>
@@ -180,13 +242,78 @@ export default function NotificationsAdminPage() {
               <form onSubmit={handleTestSubmit} className="space-y-4 max-w-2xl">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="userId">ID Użytkownika *</Label>
-                    <Input
-                      id="userId"
-                      placeholder="Wprowadź UUID użytkownika"
-                      value={formData.userId}
-                      onChange={e => setFormData(p => ({ ...p, userId: e.target.value }))}
-                    />
+                    <Label htmlFor="userId" className="mb-1 block">Użytkownik *</Label>
+                    <Popover open={userSearchOpen} onOpenChange={setUserSearchOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="userId"
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={userSearchOpen}
+                          className={cn(
+                            "w-full justify-between font-normal text-left h-auto py-2 min-h-[40px] border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                            !formData.userId && "text-muted-foreground"
+                          )}
+                        >
+                          {selectedUser ? (
+                            <div className="flex flex-col items-start leading-tight">
+                              <span className="font-semibold text-foreground text-sm flex items-center gap-2">
+                                {selectedUser.name || "Nieznany"}
+                                <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-normal uppercase">
+                                  {selectedUser.role}
+                                </Badge>
+                              </span>
+                              <span className="text-xs text-muted-foreground mt-0.5">{selectedUser.email}</span>
+                            </div>
+                          ) : (
+                            <span className="truncate">Wybierz użytkownika...</span>
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                        <Command shouldFilter={false}>
+                          <CommandInput
+                            placeholder="Szukaj po imieniu, nazwisku lub emailu..."
+                            value={userSearchQuery}
+                            onValueChange={setUserSearchQuery}
+                          />
+                          <CommandList>
+                            {loadingUsers && (
+                              <div className="flex items-center justify-center py-6">
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mr-2" />
+                                <span className="text-sm text-muted-foreground">Wyszukiwanie...</span>
+                              </div>
+                            )}
+                            {!loadingUsers && users.length === 0 && (
+                              <CommandEmpty>Nie znaleziono użytkownika.</CommandEmpty>
+                            )}
+                            <CommandGroup className="max-h-[250px] overflow-auto">
+                              {users.map((user) => (
+                                <CommandItem
+                                  key={user.id}
+                                  value={user.id}
+                                  onSelect={() => {
+                                    setSelectedUser(user)
+                                    setFormData(p => ({ ...p, userId: user.id }))
+                                    setUserSearchOpen(false)
+                                  }}
+                                  className="flex flex-col items-start gap-1 p-2 cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                                >
+                                  <div className="font-medium flex items-center gap-2">
+                                    {user.name || "Nieznany"}
+                                    <Badge variant="outline" className="text-[10px] py-0 px-1 font-normal uppercase">
+                                      {user.role}
+                                    </Badge>
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">{user.email}</div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="type">Typ powiadomienia *</Label>
@@ -298,14 +425,29 @@ export default function NotificationsAdminPage() {
                     </thead>
                     <tbody className="divide-y">
                       {history.map((item) => (
-                        <tr key={item.id} className="bg-card hover:bg-muted/50 transition-colors">
+                        <tr key={item.id} className="group bg-card hover:bg-muted/50 transition-colors">
                           <td className="px-4 py-3 font-medium">
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <div className="text-sm">{item.user.name || "Nieznany"}</div>
-                                <div className="text-xs text-muted-foreground">{item.user.email}</div>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                                <div>
+                                  <div className="text-sm font-semibold">{item.user.name || "Nieznany"}</div>
+                                  <div className="text-xs text-muted-foreground">{item.user.email}</div>
+                                </div>
                               </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs px-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                                onClick={() => handleSelectUserFromHistory({
+                                  id: item.userId,
+                                  name: item.user.name,
+                                  email: item.user.email,
+                                  role: item.user.role
+                                })}
+                              >
+                                Wybierz
+                              </Button>
                             </div>
                           </td>
                           <td className="px-4 py-3">
