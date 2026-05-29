@@ -93,6 +93,12 @@ export async function GET(request: NextRequest) {
         description: "Czy płatność przelewem tradycyjnym ma być dostępna jako metoda płatności",
       }
     }
+    if (!settingsObject.enableUserSelectionOnLogin) {
+      settingsObject.enableUserSelectionOnLogin = {
+        value: "true",
+        description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
