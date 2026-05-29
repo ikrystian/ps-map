@@ -39,6 +39,7 @@ interface UserMenuProps {
   punktySaldo?: number
   userId?: string
   subscriptionType?: string | null
+  showPoints?: boolean
 }
 
 export default function UserMenu({
@@ -48,6 +49,7 @@ export default function UserMenu({
   punktySaldo = 0,
   userId,
   subscriptionType,
+  showPoints = true,
 }: UserMenuProps) {
   const { theme, setTheme } = useTheme()
 
@@ -145,13 +147,15 @@ export default function UserMenu({
     return (
       <div className="flex items-center gap-4">
         {/* Points Counter */}
-        <Link href="/panel-eksperta/punkty">
-          <Badge variant="outline" className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer">
-            <Coins className="h-4 w-4 text-primary" />
-            <span className="font-semibold">{punktySaldo}</span>
-            <span className="text-muted-foreground">punktów</span>
-          </Badge>
-        </Link>
+        {showPoints && (
+          <Link href="/panel-eksperta/punkty">
+            <Badge variant="outline" className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer">
+              <Coins className="h-4 w-4 text-primary" />
+              <span className="font-semibold">{punktySaldo}</span>
+              <span className="text-muted-foreground">punktów</span>
+            </Badge>
+          </Link>
+        )}
 
         {/* User menu */}
         <DropdownMenu>
