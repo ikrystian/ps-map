@@ -72,6 +72,11 @@ BusinessCategoryCard.displayName = "BusinessCategoryCard"
 export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridProps) {
   const [hovered, setHovered] = useState<number | null>(null)
 
+  const activeCategories = categories
+    .filter((cat) => cat.wyswietlajNaGlownejFirmowe)
+    .sort((a, b) => (a.kolejnosc ?? 0) - (b.kolejnosc ?? 0))
+    .slice(0, 9);
+
   const desktopImages = [
     'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80',
     'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80',
@@ -118,7 +123,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
                 '"first third fourth seventh eighth tenth"',
             }}
           >
-            {categories.slice(9, 18).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <BusinessCategoryCard
                 key={category.id}
                 category={category}
@@ -134,7 +139,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
 
           {/* Tablet Grid Layout (3 columns) */}
           <div className="hidden md:grid lg:hidden grid-cols-3 gap-4 mb-8">
-            {categories.slice(9, 18).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <BusinessCategoryCard
                 key={category.id}
                 category={category}
@@ -149,7 +154,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
 
           {/* Mobile Grid Layout (1 column) */}
           <div className="grid md:hidden grid-cols-1 gap-4 mb-8">
-            {categories.slice(9, 18).map((category, index) => (
+            {activeCategories.map((category, index) => (
               <BusinessCategoryCard
                 key={category.id}
                 category={category}
