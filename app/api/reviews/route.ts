@@ -218,6 +218,7 @@ export async function POST(request: NextRequest) {
         trescOpinii,
         polecam: polecam !== undefined ? polecam : true,
         anonimowa: anonimowa !== undefined ? anonimowa : false,
+        zweryfikowana: true,
       },
       include: {
         client: {
