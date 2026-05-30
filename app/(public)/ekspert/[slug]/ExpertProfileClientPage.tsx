@@ -4,6 +4,9 @@ import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
 import { ReviewsSection } from "@/components/ekspert/ReviewsSection"
 import { BadgesSection } from "@/components/law-firm/BadgesSection"
 import { PackageBadge } from "@/components/permissions"
+import { AboutTab } from "@/components/ekspert/AboutTab"
+import { ServicesTab } from "@/components/ekspert/ServicesTab"
+import { BlogTab } from "@/components/ekspert/BlogTab"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -799,226 +802,17 @@ export default function LawFirmProfilePage() {
 
               {/* About Tab */}
               <TabsContent value="about" className="space-y-6">
-                {/* Description */}
-                {lawFirm.opis && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Opis kancelarii</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className="about-description prose prose-sm max-w-none dark:prose-invert"
-                        dangerouslySetInnerHTML={{ __html: lawFirm.opis }}
-                      />
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Badges */}
-                <BadgesSection badges={lawFirm.badges} />
-
-                {/* Scope of Services & Specializations */}
-                {(lawFirm.unikatowyOpisUslugi || lawFirm.categories.length > 0 || (lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0)) && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Zakres usług</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {lawFirm.unikatowyOpisUslugi && (
-                        <p className="whitespace-pre-wrap">{lawFirm.unikatowyOpisUslugi}</p>
-                      )}
-
-                      {lawFirm.categories.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {lawFirm.categories.map((cat) => (
-                            <Badge key={cat.category.slug} variant="secondary">
-                              {cat.category.nazwa}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-
-                      {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2 border-t mt-2">
-                          {lawFirm.slowaKluczowe.map((keyword, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-
-
-                {/* Education */}
-                {lawFirm.edukacja && lawFirm.edukacja.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <GraduationCap className="h-5 w-5" />
-                        Wykształcenie
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {lawFirm.edukacja.map((edu, index) => (
-                          <div key={index} className="border-l-2 border-primary pl-4">
-                            <p className="font-semibold">{edu.uczelnia}</p>
-                            <p className="text-muted-foreground">{edu.wydzial}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {edu.rokOd} - {edu.rokDo}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Certificates */}
-                {lawFirm.certificates.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Award className="h-5 w-5" />
-                        Certyfikaty
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {lawFirm.certificates.map((cert) => (
-                          <div key={cert.id} className="flex items-start gap-4 p-4 border rounded-lg">
-                            <Award className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
-                            <div className="flex-1">
-                              <p className="font-semibold">{cert.nazwaCertyfikatu}</p>
-                              <p className="text-sm text-muted-foreground">
-                                Wydawca: {cert.wydawca}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Data uzyskania: {formatDate(cert.dataUzyskania)}
-                              </p>
-                              {cert.numerCertyfikatu && (
-                                <p className="text-sm text-muted-foreground">
-                                  Nr: {cert.numerCertyfikatu}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Gallery */}
-                {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Galeria</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4" id="expert-gallery">
-                        {lawFirm.galeriaZdjec.map((img, index) => (
-                          <div
-                            key={index}
-                            className="relative h-48 rounded-lg overflow-hidden cursor-pointer group"
-                            onClick={() => {
-                              setLightboxIndex(index)
-                              setLightboxOpen(true)
-                            }}
-                          >
-                            <Image
-                              src={img}
-                              alt={`Galeria ${index + 1}`}
-                              fill
-                              className="object-cover group-hover:scale-110 transition-transform duration-300 ease-in-out"
-                            />
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                              <ZoomIn className="h-8 w-8 text-white" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                <AboutTab
+                  lawFirm={lawFirm}
+                  formatDate={formatDate}
+                  setLightboxIndex={setLightboxIndex}
+                  setLightboxOpen={setLightboxOpen}
+                />
               </TabsContent>
 
               {/* Services Tab */}
               <TabsContent value="services" className="space-y-4">
-                {lawFirm.categories && lawFirm.categories.length > 0 ? (
-                  <>
-                    {/* Sprawy firmowe */}
-                    {lawFirm.categories.filter(c => c.category.typ === "SPRAWY_FIRMOWE").length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-xl font-semibold">Sprawy firmowe</h3>
-                        <div className="grid gap-3">
-                          {lawFirm.categories
-                            .filter(c => c.category.typ === "SPRAWY_FIRMOWE")
-                            .map((lawFirmCategory) => (
-                              <Card key={lawFirmCategory.id}>
-                                <CardHeader>
-                                  <CardTitle className="text-lg flex items-center gap-2">
-                                    {lawFirmCategory.category.nazwa}
-                                    <Badge variant="default">Firmowe</Badge>
-                                  </CardTitle>
-                                  {lawFirmCategory.category.opis && (
-                                    <CardDescription>{lawFirmCategory.category.opis}</CardDescription>
-                                  )}
-                                </CardHeader>
-                                {lawFirmCategory.category.opisDodatkowy && (
-                                  <CardContent>
-                                    <p className="text-sm text-muted-foreground">
-                                      {lawFirmCategory.category.opisDodatkowy}
-                                    </p>
-                                  </CardContent>
-                                )}
-                              </Card>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Sprawy prywatne */}
-                    {lawFirm.categories.filter(c => c.category.typ === "SPRAWY_PRYWATNE").length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-xl font-semibold">Sprawy prywatne</h3>
-                        <div className="grid gap-3">
-                          {lawFirm.categories
-                            .filter(c => c.category.typ === "SPRAWY_PRYWATNE")
-                            .map((lawFirmCategory) => (
-                              <Card key={lawFirmCategory.id}>
-                                <CardHeader>
-                                  <CardTitle className="text-lg flex items-center gap-2">
-                                    {lawFirmCategory.category.nazwa}
-                                    <Badge variant="secondary">Prywatne</Badge>
-                                  </CardTitle>
-                                  {lawFirmCategory.category.opis && (
-                                    <CardDescription>{lawFirmCategory.category.opis}</CardDescription>
-                                  )}
-                                </CardHeader>
-                                {lawFirmCategory.category.opisDodatkowy && (
-                                  <CardContent>
-                                    <p className="text-sm text-muted-foreground">
-                                      {lawFirmCategory.category.opisDodatkowy}
-                                    </p>
-                                  </CardContent>
-                                )}
-                              </Card>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Card>
-                    <CardContent className="py-12 text-center text-muted-foreground">
-                      Brak zdefiniowanych usług
-                    </CardContent>
-                  </Card>
-                )}
+                <ServicesTab lawFirm={lawFirm} />
               </TabsContent>
 
               {/* Consultations Tab */}
@@ -1028,7 +822,6 @@ export default function LawFirmProfilePage() {
                 </TabsContent>
               )}
 
-              {/* Reviews Tab */}
               {/* Reviews Tab */}
               <TabsContent value="reviews" className="space-y-4">
                 <ReviewsSection
@@ -1048,65 +841,8 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Blog Tab */}
-              <TabsContent value="blog" className="space-y-4 grid grid-cols-2 gap-4">
-                {lawFirm.blogPosts.length > 0 ? (
-                  <>
-                    {lawFirm.blogPosts.map((post) => (
-                      <Card key={post.id} className="hover:shadow-lg transition-shadow">
-                        {post.obrazekWyrozniajacy && (
-                          <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                            <Image
-                              src={post.obrazekWyrozniajacy}
-                              alt={post.tytul}
-                              width={600}
-                              height={338}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                        <CardHeader>
-                          <CardTitle className="text-lg hover:text-primary transition-colors">
-                            <a href={`/blog/${post.slug}`}>
-                              {post.tytul}
-                            </a>
-                          </CardTitle>
-                          <CardDescription className="flex items-center gap-2">
-                            <Calendar className="h-3 w-3" />
-                            {post.dataPublikacji && formatDate(post.dataPublikacji)}
-                            {post.wyswietlenia > 0 && (
-                              <>
-                                <span className="mx-1">•</span>
-                                <Eye className="h-3 w-3" />
-                                {post.wyswietlenia} wyświetleń
-                              </>
-                            )}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="line-clamp-3 mb-3">{stripHtmlTags(post.tresc)}</p>
-                          <Button variant="link" className="p-0" asChild>
-                            <a href={`/blog/${post.slug}`}>
-                              Czytaj więcej →
-                            </a>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    <div className="text-center pt-4">
-                      <Button variant="outline" asChild>
-                        <a href={`/blog?lawFirmId=${lawFirm.id}`}>
-                          Zobacz wszystkie artykuły kancelarii
-                        </a>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <Card>
-                    <CardContent className="py-12 text-center text-muted-foreground">
-                      Ta kancelaria nie opublikowała jeszcze żadnych artykułów
-                    </CardContent>
-                  </Card>
-                )}
+              <TabsContent value="blog" className="space-y-4">
+                <BlogTab lawFirm={lawFirm} formatDate={formatDate} />
               </TabsContent>
             </Tabs>
           </div>
