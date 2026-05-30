@@ -5,31 +5,12 @@ import { FeatureLockedCard } from "@/components/permissions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { DateTimePicker } from "@/components/ui/date-time-picker"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import {
   Table,
@@ -71,207 +52,24 @@ import {
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
-interface LawFirm {
-  id: string
-  nazwa: string
-  punktySaldo: number
-}
+import { LawFirm, Promotion, Category, Voivodeship } from "./types"
+import {
+  ICON_MAP,
+  RECOMMENDED_LAWYERS_CATEGORIES,
+  MOST_CONSULTED_CATEGORIES,
+  getFutureMonths,
+  getIconComponent,
+  formatDate,
+  getPromotionTypeLabel,
+  getPromotionStatusBadge,
+  getPromotionSuccessDetails,
+} from "./utils"
 
-interface Promotion {
-  id: string
-  typPromocji: string
-  czasTrwaniaDni: number
-  kategoriaPromocji: string | null
-  wojewodztwoPromocji: string | null
-  startPromocji: Date
-  koniecPromocji: Date
-  kosztPunktow: number
-  automatyczneOdnowienie: boolean
-  aktywna: boolean
-  createdAt: Date
-  isVirtualUpcoming?: boolean
-}
-
-interface Category {
-  id: string
-  nazwa: string
-}
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
-
-// Icon mapping for dynamic icon rendering
-const ICON_MAP: Record<string, any> = {
-  TrendingUp,
-  Sparkles,
-  Award,
-  Home,
-  Star,
-  Crown,
-}
-
-const RECOMMENDED_LAWYERS_CATEGORIES = [
-  "Adwokat", "Radca prawny", "Rzeczoznawca", "Notariusz", "Doradca podatkowy",
-  "Doradca finansowy", "Mediator", "Komornik", "Rzecznik patentowy", "Aplikant",
-  "BHP i PPOŻ", "Doradca prawny"
-]
-
-const MOST_CONSULTED_CATEGORIES = [
-  { id: "alimenty-i-rozwody", name: "Alimenty i rozwody" },
-  { id: "dlugi-windykacja-egzekucje", name: "Długi, windykacja, egzekucje" },
-  { id: "dziedziczenie-spadki-testamenty", name: "Dziedziczenie, spadki, testamenty" },
-  { id: "pozyczki-i-kredyty", name: "Pożyczki i kredyty" },
-  { id: "zatrudnienie-i-umowy", name: "Zatrudnienie i umowy" },
-  { id: "dotacje-unijne", name: "Dotacje unijne" }
-]
-
-const getFutureMonths = () => {
-  const months = []
-  const now = new Date()
-  const currentYear = now.getFullYear()
-  const currentMonth = now.getMonth() // 0-11
-
-  const polishMonths = [
-    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
-  ]
-
-  for (let i = 1; i <= 12; i++) {
-    const targetDate = new Date(currentYear, currentMonth + i, 1)
-    const monthIndex = targetDate.getMonth()
-    const year = targetDate.getFullYear()
-    months.push({
-      value: targetDate.toISOString(),
-      label: `${polishMonths[monthIndex]} ${year}`,
-      year,
-      month: monthIndex
-    })
-  }
-  return months
-}
-
-// Helper to get icon component
-const getIconComponent = (iconName: string | null) => {
-  if (!iconName) return TrendingUp
-  return ICON_MAP[iconName] || TrendingUp
-}
-
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
-
-const getPromotionTypeLabel = (type: string, promotionTypes: any[]) => {
-  const promo = promotionTypes.find((p) => p.type === type)
-  return promo?.label || type
-}
-
-const getPromotionStatusBadge = (promotion: Promotion) => {
-  const now = new Date()
-  const start = new Date(promotion.startPromocji)
-  const end = new Date(promotion.koniecPromocji)
-
-  if (promotion.isVirtualUpcoming) {
-    return (
-      <Badge variant="secondary" className="gap-1 bg-sky-500/10 text-sky-400 border-sky-500/20 hover:bg-sky-500/10">
-        <RefreshCw className="h-3 w-3 animate-spin" style={{ animationDuration: '4s' }} />
-        Autoprzedłużenie
-      </Badge>
-    )
-  }
-
-  if (start > now) {
-    return (
-      <Badge variant="secondary" className="gap-1 bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/10">
-        <Clock className="h-3 w-3" />
-        Zaplanowana
-      </Badge>
-    )
-  }
-
-  if (end < now) {
-    return (
-      <Badge variant="outline" className="gap-1 text-muted-foreground border-white/10">
-        <XCircle className="h-3 w-3" />
-        Zakończona
-      </Badge>
-    )
-  }
-
-  if (promotion.aktywna) {
-    if (promotion.automatyczneOdnowienie) {
-      return (
-        <Badge variant="default" className="gap-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium hover:bg-emerald-500/15">
-          <CheckCircle2 className="h-3 w-3 animate-pulse" />
-          Aktywna (Auto)
-        </Badge>
-      )
-    }
-    return (
-      <Badge variant="default" className="gap-1 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] font-medium hover:bg-[#0da192]/15">
-        <CheckCircle2 className="h-3 w-3" />
-        Aktywna
-      </Badge>
-    )
-  }
-
-  return <Badge variant="destructive" className="bg-red-500/10 text-red-400 border-red-500/20">Nieaktywna</Badge>
-}
-
-const getPromotionSuccessDetails = (type: string, category: string | null, voivodeship: string | null) => {
-  switch (type) {
-    case "PODBICIE_OGLOSZENIA":
-      return {
-        gdzie: `Twój profil uzyska najwyższy możliwy priorytet i będzie pozycjonowany wyżej na liście wyników wyszukiwania ekspertów${category ? ` w kategorii "${category}"` : ''}${voivodeship ? ` dla województwa ${voivodeship}` : ''}.`,
-        jak: "Twój profil będzie pozycjonowany ponad profilami ze standardowym pozycjonowaniem. Dzięki wyższemu wskaźnikowi widoczności trafi do znacznie większego grona osób poszukujących pomocy prawnej.",
-        kiedy: "Promowanie rozpocznie się natychmiast po dacie startu i będzie trwało przez zdefiniowany okres. Saldo punktów zostało pomniejszone, a system automatycznie zadba o pozycjonowanie Twojej wizytówki w wybranym okresie."
-      }
-    case "WYROZNIENIE":
-      return {
-        gdzie: `Na liście wyszukiwania ekspertów w całym serwisie${category ? ` (szczelynie w kategorii "${category}")` : ''} oraz bezpośrednio na Twoim publicznym profilu eksperta.`,
-        jak: "Twój profil zostanie otoczony unikalną, elegancką, złotą ramką ze specjalną odznaką 'Wyróżniony' oraz otrzyma wyróżniony kolor tła karty. Dodatkowo na Twojej wizytówce i profilu pojawi się prestiżowy symbol wyróżnienia. Wyróżnienie wizualne zwiększa klikalność profilu średnio o 40%!",
-        kiedy: "Promowanie wizualne będzie aktywne bez przerwy w zdefiniowanym przedziale czasowym. Oznaczenie 'Wyróżniony' będzie widoczne dla wszystkich odwiedzających portal."
-      }
-    case "TOP_LISTA":
-      return {
-        gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Kancelarie'.",
-        jak: "Twoja kancelaria zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
-        kiedy: "Twój profil będzie stale wyświetlany w tej karuzeli/liście przez cały opłacony czas trwania promocji."
-      }
-    case "STRONA_GLOWNA":
-      return {
-        gdzie: "Główny baner (karuzela / slider) na samej górze strony głównej portalu - najbardziej widoczne miejsce w całym serwisie.",
-        jak: "Maksymalna ekspozycja i prestiż. Twój profil ze zdjęciem i chwytliwym nagłówkiem pojawi się jako jedna z pierwszych rzeczy, które zobaczy każdy użytkownik wchodzący na portal. Zapewnia to najwyższą konwersję i dotarcie do tysięcy użytkowników.",
-        kiedy: "Slider rotuje promowane kancelarie przez całą dobę. Twoja wizytówka będzie brała udział w tej prestiżowej rotacji przez cały okres trwania promocji."
-      }
-    case "POLECANI_PRAWNICY":
-      return {
-        gdzie: `Strona główna serwisu, w specjalnie dedykowanej sekcji 'Polecani prawnicy i adwokaci' dla wybranej przez Ciebie kategorii zawodowej: "${category || 'Wszystkie'}".`,
-        jak: "To ekskluzywne promowanie o najwyższej skuteczności. W danym miesiącu w wybranej kategorii obowiązuje rygorystyczny limit maksymalnie 4 miejsc dla kancelarii, co oznacza znikome rozproszenie uwagi użytkownika i gwarantuje ogromną liczbę zapytań.",
-        kiedy: "Promowanie trwa nieprzerwanie przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca)."
-      }
-    case "NAJCZESCIEJ_KONSULTOWANE":
-      return {
-        gdzie: `Strona główna serwisu, w boksie powiązanym z najpopularniejszą tematyką prawną: "${category || 'Wszystkie'}".`,
-        jak: "Bezpośrednie dotarcie do klientów z konkretnymi problemami prawnymi. Twój profil będzie promowany jako rekomendowany specjalista w danej dziedzinie. W tym module obowiązuje ścisły limit 5 miejsc na daną kategorię w miesiącu, co chroni Twoją pozycję lidera i zapewnia stały dopływ spraw.",
-        kiedy: "Promowanie trwa przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca)."
-      }
-    default:
-      return {
-        gdzie: "W wybranych sekcjach serwisu w zależności od wybranego pakietu.",
-        jak: "Zwiększając widoczność, zasięg oraz budując zaufanie klientów dzięki unikalnym oznaczeniom.",
-        kiedy: "W wybranym przedziale czasowym zgodnie z harmonogramem."
-      }
-  }
-}
+import { CancelPromotionDialog } from "./components/CancelPromotionDialog"
+import { PromotionHistoryDialog } from "./components/PromotionHistoryDialog"
+import { PromotionSuccessDialog } from "./components/PromotionSuccessDialog"
+import { ConfirmPromotionDialog } from "./components/ConfirmPromotionDialog"
+import { NewPromotionDialog } from "./components/NewPromotionDialog"
 
 export default function LawFirmPromotionPage() {
   const { data: session } = useSession()
@@ -1415,721 +1213,78 @@ export default function LawFirmPromotionPage() {
         </Tabs>
       </div>
 
-      {/* Dialog nowej promocji (Buy promotion configuration form) */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[620px] bg-[#20201d] border-[#3e3e38] text-white rounded-2xl overflow-y-auto max-h-[90vh]">
-          <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-            <DialogTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              <Plus className="h-5 w-5 text-[#0da192]" />
-              Konfiguracja Promowania
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1">
-              Wypełnij parametry, aby dopełnić zamówienie formatu w portalu
-            </DialogDescription>
-          </DialogHeader>
+      {/* Dialog nowej promocji */}
+      <NewPromotionDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        selectedType={selectedType}
+        promotionTypes={promotionTypes}
+        duration={duration}
+        setDuration={setDuration}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+        selectedVoivodeship={selectedVoivodeship}
+        setSelectedVoivodeship={setSelectedVoivodeship}
+        voivodeships={voivodeships}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        autoRenewal={autoRenewal}
+        setAutoRenewal={setAutoRenewal}
+        availability={availability}
+        checkingAvailability={checkingAvailability}
+        calculateCost={calculateCost}
+        lawFirm={lawFirm}
+        submitting={submitting}
+        isFormInvalid={isFormInvalid}
+        onOpenConfirmation={handleOpenConfirmation}
+      />
 
-          <div className="space-y-5 py-4">
-            {/* Wybrany format info card */}
-            {selectedType && (
-              <div className="relative overflow-hidden rounded-xl border border-[#3e3e38] bg-[#363431]/30 p-4">
-                {(() => {
-                  const promo = promotionTypes.find((p) => p.type === selectedType)
-                  if (!promo) return null
-                  const Icon = getIconComponent(promo.icon)
-                  return (
-                    <div className="flex items-center gap-3.5">
-                      <div
-                        className="p-2.5 rounded-lg border shadow-inner"
-                        style={{
-                          backgroundColor: `${promo.color || '#3b82f6'}15`,
-                          borderColor: `${promo.color || '#3b82f6'}30`
-                        }}
-                      >
-                        <Icon className="h-5 w-5" style={{ color: promo.color || '#3b82f6' }} />
-                      </div>
-                      <div className="space-y-0.5">
-                        <div className="text-sm font-bold text-white">{promo.label}</div>
-                        <div className="text-xs text-muted-foreground leading-relaxed line-clamp-1">{promo.description}</div>
-                      </div>
-                    </div>
-                  )
-                })()}
-              </div>
-            )}
+      {/* Confirmation Dialog */}
+      <ConfirmPromotionDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        selectedType={selectedType}
+        promotionTypes={promotionTypes}
+        duration={duration}
+        startDate={startDate}
+        selectedCategory={selectedCategory}
+        categories={categories}
+        selectedVoivodeship={selectedVoivodeship}
+        voivodeships={voivodeships}
+        autoRenewal={autoRenewal}
+        calculateCost={calculateCost}
+        lawFirm={lawFirm}
+        submitting={submitting}
+        onSubmit={handleSubmit}
+      />
 
-            {/* Czas trwania */}
-            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Czas trwania</Label>
-                <div className="p-3 bg-[#363431]/20 border border-[#3e3e38] rounded-xl text-xs font-medium text-[#d7b56d] flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  Gwarantowane 1 pełny miesiąc kalendarzowy (automatycznie od 1. do końca miesiąca)
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="duration" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Czas trwania (dni) *
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="duration"
-                    type="number"
-                    min="1"
-                    max="90"
-                    value={duration}
-                    onChange={(e) => setDuration(parseInt(e.target.value) || 1)}
-                    className="bg-[#363431]/30 border-[#3e3e38] text-white rounded-xl h-10 px-3 text-sm focus-visible:ring-[#0da192]"
-                  />
-                  {/* Presets */}
-                  <div className="flex gap-1">
-                    {[7, 14, 30, 90].map((d) => (
-                      <Button
-                        key={d}
-                        type="button"
-                        variant="outline"
-                        onClick={() => setDuration(d)}
-                        className={cn(
-                          "px-3 h-10 rounded-xl text-xs font-medium border-[#3e3e38] bg-[#363431]/30",
-                          duration === d ? "bg-[#0da192] border-[#0da192] text-white" : "text-muted-foreground hover:bg-[#363431] hover:text-white"
-                        )}
-                      >
-                        {d}d
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Dialog historii zakupów */}
+      <PromotionHistoryDialog
+        open={historyDialogOpen}
+        onOpenChange={setHistoryDialogOpen}
+        promotions={promotions}
+        promotionTypes={promotionTypes}
+      />
 
-            {/* Kategoria dla Polecani Prawnicy */}
-            {selectedType === "POLECANI_PRAWNICY" && (
-              <div className="space-y-2">
-                <Label htmlFor="category-monthly-rec" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Wybierz kategorię prawnika *
-                </Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger id="category-monthly-rec" className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-[#0da192]">
-                    <SelectValue placeholder="Wybierz kategorię zawodową" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                    {RECOMMENDED_LAWYERS_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat} className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Kategoria dla najczęściej konsultowanych */}
-            {selectedType === "NAJCZESCIEJ_KONSULTOWANE" && (
-              <div className="space-y-2">
-                <Label htmlFor="category-monthly-cons" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Wybierz kategorię spraw *
-                </Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger id="category-monthly-cons" className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-[#0da192]">
-                    <SelectValue placeholder="Wybierz kategorię spraw" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                    {MOST_CONSULTED_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id} className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Kategoria (opcjonalna dla standardowych promocji) */}
-            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Kategoria (opcjonalna)
-                </Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger id="category" className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-[#0da192]">
-                    <SelectValue placeholder="Wszystkie kategorie" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                    <SelectItem value="all" className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">Wszystkie kategorie</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id} className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">
-                        {category.nazwa}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Województwo (opcjonalne) */}
-            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
-              <div className="space-y-2">
-                <Label htmlFor="voivodeship" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Województwo (opcjonalne)
-                </Label>
-                <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
-                  <SelectTrigger id="voivodeship" className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-[#0da192]">
-                    <SelectValue placeholder="Wszystkie województwa" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                    <SelectItem value="all" className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">Wszystkie województwa</SelectItem>
-                    {voivodeships.map((voivodeship) => (
-                      <SelectItem key={voivodeship.id} value={voivodeship.id} className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">
-                        {voivodeship.nazwa}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Data startu / Wybór miesiąca */}
-            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
-              <div className="space-y-2">
-                <Label htmlFor="target-month" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Wybierz miesiąc promocji *
-                </Label>
-                <Select value={startDate} onValueChange={setStartDate}>
-                  <SelectTrigger id="target-month" className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-[#0da192]">
-                    <SelectValue placeholder="Wybierz miesiąc kalendarzowy" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                    {getFutureMonths().map((m) => (
-                      <SelectItem key={m.value} value={m.value} className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs">
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="start-date" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Data i godzina rozpoczęcia *
-                </Label>
-                <DateTimePicker
-                  id="start-date"
-                  value={startDate}
-                  onChange={setStartDate}
-                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl text-xs h-10 text-white focus:ring-[#0da192]"
-                />
-              </div>
-            )}
-
-            {/* Automatyczne odnowienie */}
-            {selectedType && selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
-              <div className="p-3.5 bg-[#363431]/20 border border-[#3e3e38] rounded-xl flex items-start space-x-3.5">
-                <Checkbox
-                  id="auto-renewal"
-                  checked={autoRenewal}
-                  onCheckedChange={(checked) => setAutoRenewal(checked as boolean)}
-                  className="mt-0.5 border-[#3e3e38] data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
-                />
-                <div className="space-y-0.5 cursor-pointer" onClick={() => setAutoRenewal(!autoRenewal)}>
-                  <Label htmlFor="auto-renewal" className="text-xs font-bold text-white cursor-pointer">
-                    Automatyczne odnowienie po zakończeniu
-                  </Label>
-                  <p className="text-[10px] text-muted-foreground leading-normal">
-                    Po zakończeniu kampanii system automatycznie pobierze punkty i przedłuży promocję na kolejny taki sam okres, gwarantując stałą obecność.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Sprawdzanie dostępności miejsc (Monthly capacity visualizer) */}
-            {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") && startDate && selectedCategory && selectedCategory !== "all" && (
-              <div className="bg-[#20201d]/60 border border-[#3e3e38] p-4 rounded-xl space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#b7b5a9] flex items-center gap-1.5 font-medium">
-                    <Info className="h-4 w-4 text-[#0da192]" />
-                    Dostępność limitowanych miejsc w tym miesiącu:
-                  </span>
-                  {checkingAvailability ? (
-                    <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
-                  ) : availability ? (
-                    <span className={cn(
-                      "font-bold",
-                      availability.availableSlots > 0 ? "text-emerald-400" : "text-red-400"
-                    )}>
-                      {availability.availableSlots} / {availability.totalSlots} wolnych
-                    </span>
-                  ) : (
-                    <span className="text-red-400 font-medium">Brak danych</span>
-                  )}
-                </div>
-                {availability && (
-                  <div className="w-full bg-[#3e3e38] h-2 rounded-full overflow-hidden">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all duration-500",
-                        availability.availableSlots === 0
-                          ? "bg-red-500"
-                          : availability.availableSlots === 1
-                            ? "bg-amber-500"
-                            : "bg-[#0da192]"
-                      )}
-                      style={{ width: `${(availability.occupiedSlots / availability.totalSlots) * 100}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Ostrzeżenie o braku wolnych miejsc */}
-            {availability && availability.availableSlots === 0 && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl flex items-center gap-2 text-xs animate-pulse">
-                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span>Brak wolnych miejsc w tym miesiącu dla wybranej kategorii! Wybierz inny miesiąc lub kategorię.</span>
-              </div>
-            )}
-
-            <Separator className="bg-[#3e3e38]/50" />
-
-            {/* Podsumowanie kosztów (Invoice summary) */}
-            <div className="bg-[#363431]/20 border border-[#3e3e38] rounded-xl p-4 space-y-3">
-              <div className="flex justify-between items-center text-xs text-[#b7b5a9]">
-                <span>Czas trwania promowania</span>
-                <span className="text-white font-medium">
-                  {selectedType && (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE")
-                    ? "1 miesiąc kalendarzowy"
-                    : `${duration} dni`}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs text-[#b7b5a9]">
-                <span>Format kampanii</span>
-                <span className="text-white font-medium">
-                  {selectedType ? getPromotionTypeLabel(selectedType, promotionTypes) : "-"}
-                </span>
-              </div>
-
-              <div className="border-t border-[#3e3e38]/60 pt-3 flex justify-between items-center">
-                <span className="text-sm font-semibold text-white">Koszt całkowity</span>
-                <span className="text-xl font-bold text-[#0da192]">{calculateCost()} pkt</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1">
-                <span>Dostępne saldo: {lawFirm?.punktySaldo || 0} pkt</span>
-                {lawFirm && (
-                  <span className={cn(
-                    "font-bold",
-                    lawFirm.punktySaldo >= calculateCost() ? "text-emerald-400" : "text-red-400"
-                  )}>
-                    Saldo po zakupie: {lawFirm.punktySaldo - calculateCost()} pkt
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {lawFirm && lawFirm.punktySaldo < calculateCost() && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3.5 rounded-xl flex items-start gap-2.5 text-xs">
-                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <div className="space-y-1">
-                  <p className="font-bold">Niewystarczająca ilość punktów na koncie.</p>
-                  <p className="text-[10px] text-red-400/80 leading-normal">
-                    Zasilono konto mniejszą liczbą punktów niż wymagana dla tej kampanii. Kliknij anuluj i zakup dodatkowe punkty w panelu.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
-              Anuluj
-            </Button>
-            <Button
-              onClick={handleOpenConfirmation}
-              disabled={submitting || isFormInvalid()}
-              className="bg-[#0da192] hover:bg-[#0a8276] text-white font-medium px-5 rounded-xl transition-all duration-200"
-            >
-              Podsumowanie i zakup
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Confirmation Dialog (Pre-Checkout summary check) */}
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent className="bg-[#20201d] border-[#3e3e38] text-white rounded-2xl sm:max-w-[480px]">
-          <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-            <DialogTitle className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-              <Coins className="h-5 w-5 text-[#d7b56d]" />
-              Potwierdź Aktywację
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1">
-              Sprawdź szczegóły przed ostateczną transakcją w systemie
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-4">
-            {/* Confirmation details receipt card */}
-            <div className="bg-[#363431]/30 border border-[#3e3e38] rounded-xl p-4 space-y-3 text-xs leading-relaxed">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Format kampanii:</span>
-                <span className="font-semibold text-white">{getPromotionTypeLabel(selectedType, promotionTypes)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Okres ważności:</span>
-                <span className="font-semibold text-white">
-                  {selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
-                    ? "1 miesiąc kalendarzowy"
-                    : `${duration} dni`}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Rozpoczęcie:</span>
-                <span className="font-semibold text-white">
-                  {selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
-                    ? startDate ? new Date(startDate).toLocaleDateString("pl-PL", { month: "long", year: "numeric" }) : '-'
-                    : startDate ? formatDate(new Date(startDate)) : '-'}
-                </span>
-              </div>
-
-              {selectedCategory && selectedCategory !== "all" && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Kategoria:</span>
-                  <span className="font-semibold text-white">
-                    {selectedType === "POLECANI_PRAWNICY"
-                      ? selectedCategory
-                      : selectedType === "NAJCZESCIEJ_KONSULTOWANE"
-                        ? MOST_CONSULTED_CATEGORIES.find(c => c.id === selectedCategory)?.name || selectedCategory
-                        : categories.find(c => c.id === selectedCategory)?.nazwa || selectedCategory}
-                  </span>
-                </div>
-              )}
-              {selectedVoivodeship && selectedVoivodeship !== "all" && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Województwo:</span>
-                  <span className="font-semibold text-white">
-                    {voivodeships.find(v => v.id === selectedVoivodeship)?.nazwa || selectedVoivodeship}
-                  </span>
-                </div>
-              )}
-              {selectedType !== "POLECANI_PRAWNICY" && selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Auto-przedłużenie:</span>
-                  <span className="font-semibold text-white">{autoRenewal ? "Aktywne" : "Nieaktywne"}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Price block */}
-            <div className="bg-[#20201d]/60 border border-[#3e3e38] p-4 rounded-xl space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">Pobierane punkty:</span>
-                <span className="font-extrabold text-lg text-[#0da192]">{calculateCost()} pkt</span>
-              </div>
-              <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1 border-t border-[#3e3e38]/40">
-                <span>Twoje saldo po transakcji:</span>
-                <span className="font-semibold text-white">{lawFirm ? lawFirm.punktySaldo - calculateCost() : 0} pkt</span>
-              </div>
-            </div>
-
-            <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-3.5 flex gap-2.5">
-              <AlertCircle className="h-4.5 w-4.5 text-[#d7b56d] flex-shrink-0 mt-0.5" />
-              <div className="text-[11px] text-[#b7b5a9] leading-relaxed">
-                <strong>Uwaga transakcji:</strong> Punkty zostaną bezzwrotnie pobrane z Twojego salda natychmiast po zatwierdzeniu. Aktywacja formatu nastąpi automatycznie zgodnie z podaną datą rozpoczęcia.
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
-            <Button variant="outline" onClick={() => setConfirmDialogOpen(false)} disabled={submitting} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
-              Cofnij
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="bg-gradient-to-r from-[#d7b56d] to-[#cba355] hover:from-[#dfbf7c] hover:to-[#d7b56d] text-[#30302e] font-bold px-6 rounded-xl transition-all duration-200"
-            >
-              {submitting ? (
-                <Loader2 className="h-4.5 w-4.5 animate-spin" />
-              ) : (
-                "Potwierdzam i kupuję"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog historii zakupów (Full purchases log overlay) */}
-      <Dialog open={historyDialogOpen} onOpenChange={setHistoryDialogOpen}>
-        <DialogContent className="max-w-[768px] max-h-[85vh] overflow-y-auto bg-[#20201d] border-[#3e3e38] text-white rounded-2xl">
-          <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-            <DialogTitle className="flex items-center gap-2 text-white font-bold">
-              <Clock className="h-5 w-5 text-[#0da192]" />
-              Historia Zamówień Promowań
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1">
-              Pełny wykaz zakupionych przez Ciebie promowań, kosztów punktowych i statusów
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="py-4">
-            {promotions.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground text-sm">
-                Brak zarejestrowanych operacji marketingowych na tym koncie.
-              </div>
-            ) : (
-              <div className="border border-[#3e3e38] bg-[#363431]/10 rounded-xl overflow-hidden">
-                <Table>
-                  <TableHeader className="bg-[#20201d]/60 border-b border-[#3e3e38]/60">
-                    <TableRow className="hover:bg-transparent">
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">Format promowania</TableHead>
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">Zasięg / Kategoria</TableHead>
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">Data zakupu</TableHead>
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">Okres ważności</TableHead>
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase text-right py-3">Koszt</TableHead>
-                      <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {promotions.map((promo) => (
-                      <TableRow key={promo.id} className="hover:bg-[#363431]/40 border-b border-[#3e3e38]/30 transition-colors">
-                        <TableCell className="font-bold text-xs text-white py-3">
-                          {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
-                        </TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">
-                          {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Cały serwis"}
-                        </TableCell>
-                        <TableCell className="text-[11px] text-[#b7b5a9]">
-                          {formatDate(promo.createdAt)}
-                        </TableCell>
-                        <TableCell className="text-[11px] text-[#b7b5a9] space-y-0.5">
-                          <div>Od: {new Date(promo.startPromocji).toLocaleDateString("pl-PL")}</div>
-                          <div>Do: {new Date(promo.koniecPromocji).toLocaleDateString("pl-PL")}</div>
-                        </TableCell>
-                        <TableCell className="text-right font-semibold text-xs text-[#d7b56d] py-3">
-                          {promo.kosztPunktow} pkt
-                        </TableCell>
-                        <TableCell className="py-3">{getPromotionStatusBadge(promo)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter className="border-t border-[#3e3e38]/60 pt-4">
-            <Button onClick={() => setHistoryDialogOpen(false)} className="bg-[#363431] hover:bg-[#3e3e38] text-white rounded-xl px-5">
-              Zamknij
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog podsumowania zakupionej promocji (Majestic Order Receipt Ticket) */}
-      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <DialogContent className="sm:max-w-[620px] p-0 overflow-hidden rounded-2xl border border-emerald-500/30 bg-[#20201d] shadow-2xl">
-          <div className="relative p-6 sm:p-8 space-y-6">
-            {/* Header backdrop effect */}
-            <div className="absolute top-0 inset-x-0 h-44 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
-
-            <div className="text-center space-y-3 relative z-10">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-md shadow-emerald-500/10 animate-bounce">
-                <CheckCircle2 className="h-8 w-8" />
-              </div>
-              <div className="space-y-1">
-                <DialogTitle className="text-2xl font-bold text-emerald-400 font-playfair tracking-tight">
-                  Promocja Zamówiona Pomyślnie!
-                </DialogTitle>
-                <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                  Dziękujemy za zaufanie. Twój pakiet promowania został zarejestrowany. Oto szczegóły Twojej kampanii.
-                </p>
-              </div>
-            </div>
-
-            {purchasedPromotion && (
-              <div className="space-y-6 relative z-10">
-                {/* Visual Campaign Ticket */}
-                <div className="relative overflow-hidden rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/20 to-[#363431]/20 p-5 shadow-inner">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-8 -mt-8 blur-lg"></div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-[#20201d] border border-emerald-500/20 flex-shrink-0 shadow-sm text-emerald-400">
-                      {(() => {
-                        const promoType = promotionTypes.find(p => p.type === purchasedPromotion.typPromocji)
-                        const Icon = getIconComponent(purchasedPromotion.typPromocji)
-                        return (
-                          <Icon className="h-6 w-6" style={{ color: promoType?.color || '#3b82f6' }} />
-                        )
-                      })()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Format kampanii</div>
-                      <div className="font-extrabold text-base text-white truncate mt-0.5">
-                        {getPromotionTypeLabel(purchasedPromotion.typPromocji, promotionTypes)}
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 mt-2">
-                        <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 px-2 py-0.5 text-[10px] font-bold gap-1 hover:bg-emerald-500/10">
-                          <Coins className="h-3 w-3" />
-                          Koszt: {purchasedPromotion.kosztPunktow} pkt
-                        </Badge>
-                        {purchasedPromotion.automatyczneOdnowienie && (
-                          <Badge variant="secondary" className="bg-sky-500/10 text-sky-400 border-sky-500/20 text-[10px] px-2 py-0.5 hover:bg-sky-500/10">
-                            <RefreshCw className="h-2.5 w-2.5 mr-1 animate-spin" style={{ animationDuration: '4s' }} />
-                            Autoprzedłużenie
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Campaign Roadmap (Gdzie, Jak, Kiedy) */}
-                <div className="space-y-4 bg-[#363431]/20 border border-[#3e3e38] rounded-xl p-4">
-                  {(() => {
-                    const isMonthly = purchasedPromotion.typPromocji === "POLECANI_PRAWNICY" || purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE"
-
-                    // Map category ID/code to user friendly name
-                    let categoryText = null
-                    if (purchasedPromotion.kategoriaPromocji) {
-                      if (purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE") {
-                        categoryText = MOST_CONSULTED_CATEGORIES.find(c => c.id === purchasedPromotion.kategoriaPromocji)?.name || purchasedPromotion.kategoriaPromocji
-                      } else if (purchasedPromotion.typPromocji === "POLECANI_PRAWNICY") {
-                        categoryText = purchasedPromotion.kategoriaPromocji
-                      } else {
-                        categoryText = categories.find(c => c.id === purchasedPromotion.kategoriaPromocji)?.nazwa || purchasedPromotion.kategoriaPromocji
-                      }
-                    }
-
-                    // Map voivodeship ID to name
-                    let voivodeshipText = null
-                    if (purchasedPromotion.wojewodztwoPromocji) {
-                      voivodeshipText = voivodeships.find(v => v.id === purchasedPromotion.wojewodztwoPromocji)?.nazwa || purchasedPromotion.wojewodztwoPromocji
-                    }
-
-                    const details = getPromotionSuccessDetails(purchasedPromotion.typPromocji, categoryText, voivodeshipText)
-
-                    return (
-                      <div className="space-y-4">
-                        {/* GDZIE BĘDZIE PROMOWANE */}
-                        <div className="flex gap-3 items-start group">
-                          <div className="mt-0.5 p-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors">
-                            <MapPin className="h-4 w-4" />
-                          </div>
-                          <div className="space-y-1">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">GDZIE będzie promowane?</h4>
-                            <p className="text-xs text-muted-foreground leading-relaxed">
-                              {details.gdzie}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* JAK BĘDZIE PROMOWANE */}
-                        <div className="flex gap-3 items-start group">
-                          <div className="mt-0.5 p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex-shrink-0 group-hover:bg-amber-500/20 transition-colors">
-                            <Sparkles className="h-4 w-4" />
-                          </div>
-                          <div className="space-y-1">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">JAK będzie promowane?</h4>
-                            <p className="text-xs text-muted-foreground leading-relaxed">
-                              {details.jak}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* KIEDY BĘDZIE PROMOWANE */}
-                        <div className="flex gap-3 items-start group">
-                          <div className="mt-0.5 p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 flex-shrink-0 group-hover:bg-sky-500/20 transition-colors">
-                            <Calendar className="h-4 w-4" />
-                          </div>
-                          <div className="space-y-1">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">KIEDY będzie promowane?</h4>
-                            <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
-                              <p>{details.kiedy}</p>
-                              <div className="mt-1 px-3 py-2 bg-[#20201d]/60 border border-[#3e3e38] rounded-lg inline-flex items-center gap-1.5">
-                                <span className="font-semibold text-white">Okres ważności:</span>
-                                {isMonthly ? (
-                                  <span className="text-[#0da192] font-semibold">
-                                    {new Date(purchasedPromotion.startPromocji).toLocaleDateString("pl-PL", { month: "long", year: "numeric" })}
-                                  </span>
-                                ) : (
-                                  <span className="text-[#0da192] font-semibold">
-                                    {new Date(purchasedPromotion.startPromocji).toLocaleDateString("pl-PL")} - {new Date(purchasedPromotion.koniecPromocji).toLocaleDateString("pl-PL")} ({purchasedPromotion.czasTrwaniaDni} dni)
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })()}
-                </div>
-
-                {/* Helpful footer alert */}
-                <div className="p-3.5 bg-emerald-500/5 rounded-xl border border-emerald-500/10 flex items-start gap-2.5">
-                  <Info className="h-4 w-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-muted-foreground leading-normal">
-                    Wszystkie swoje aktywne i zaplanowane promowania możesz wygodnie kontrolować w sekcji <strong>&quot;Panel Kontrolny Kampanii&quot;</strong>. Szczegółowe potwierdzenie z instrukcjami zostało wysłane również na adres e-mail kancelarii.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-[#363431]/20 px-6 py-4 border-t border-[#3e3e38]/60 flex justify-end">
-            <Button
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 shadow-lg shadow-emerald-950/20 transition-all rounded-xl border-t border-white/10"
-              onClick={() => setSuccessDialogOpen(false)}
-            >
-              Rozumiem, dziękuję!
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Dialog podsumowania zakupionej promocji */}
+      <PromotionSuccessDialog
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+        purchasedPromotion={purchasedPromotion}
+        promotionTypes={promotionTypes}
+        categories={categories}
+        voivodeships={voivodeships}
+      />
 
       {/* Confirmation of deletion / Cancel dialog */}
-      <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <DialogContent className="bg-[#20201d] border-[#3e3e38] text-white rounded-2xl sm:max-w-[420px]">
-          <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-            <DialogTitle className="text-lg font-bold text-white flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-red-400" />
-              Anuluj Promocję
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-1">
-              Czy na pewno chcesz wyłączyć i usunąć wybrane promowanie?
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="py-4 space-y-3">
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Anulowanie aktywnej promocji spowoduje jej <strong>natychmiastowe zatrzymanie</strong> w portalu. Wyświetlanie profilu w sekcji promowanej zostanie wyłączone.
-            </p>
-            <div className="bg-red-500/5 border border-red-500/10 p-3 rounded-xl flex items-start gap-2 text-xs">
-              <AlertCircle className="h-4.5 w-4.5 text-red-400 flex-shrink-0 mt-0.5" />
-              <span className="text-[11px] text-red-400/80 leading-normal">
-                <strong>Ważne:</strong> Punkty wykorzystane na zakup tego promowania nie zostaną zwrócone na Twoje saldo. Czy chcesz kontynuować?
-              </span>
-            </div>
-          </div>
-
-          <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
-            <Button variant="outline" onClick={() => setCancelDialogOpen(false)} disabled={cancelling} className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl">
-              Cofnij
-            </Button>
-            <Button
-              onClick={handleCancelPromotion}
-              disabled={cancelling}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 rounded-xl transition-all duration-200"
-            >
-              {cancelling ? (
-                <Loader2 className="h-4.5 w-4.5 animate-spin" />
-              ) : (
-                "Tak, anuluj bez zwrotu"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CancelPromotionDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        promotion={promotionToCancel}
+        cancelling={cancelling}
+        onCancel={handleCancelPromotion}
+      />
     </div>
   )
 }
