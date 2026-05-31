@@ -32,7 +32,8 @@ import {
   DollarSign,
   ShieldCheck,
   Clock,
-  Briefcase
+  Briefcase,
+  Euro
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
@@ -270,7 +271,7 @@ export default function LawFirmCaseDetailsPage() {
           <AlertCircle className="h-12 w-12 text-rose-500 mx-auto" />
           <h3 className="text-xl font-bold text-white font-playfair">Wystąpił błąd</h3>
           <p className="text-sm text-muted-foreground">{error || "Nie znaleziono sprawy o podanym identyfikatorze."}</p>
-          <Button 
+          <Button
             className="bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl border border-zinc-700/50"
             onClick={() => router.push("/panel-eksperta/sprawy")}
           >
@@ -337,7 +338,7 @@ export default function LawFirmCaseDetailsPage() {
               <CardTitle className="text-lg font-bold font-playfair text-white">Opis sprawy</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="whitespace-pre-wrap text-sm text-zinc-300 leading-relaxed font-light">{caseData.opisSprawy}</p>
+              <p className="whitespace-pre-wrap text-base text-zinc-300 leading-relaxed font-light">{caseData.opisSprawy}</p>
             </CardContent>
           </Card>
 
@@ -434,7 +435,7 @@ export default function LawFirmCaseDetailsPage() {
                     </div>
 
                     {/* Email */}
-                    <a 
+                    <a
                       href={`mailto:${caseData.emailKontakt}`}
                       className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-[#0da192]/30 transition-colors group"
                     >
@@ -448,7 +449,7 @@ export default function LawFirmCaseDetailsPage() {
                     </a>
 
                     {/* Telefon */}
-                    <a 
+                    <a
                       href={`tel:${caseData.telefonKontakt}`}
                       className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-[#0da192]/30 transition-colors group"
                     >
@@ -523,8 +524,8 @@ export default function LawFirmCaseDetailsPage() {
               </CardHeader>
               <CardContent className="p-6">
                 {!showOfferForm ? (
-                  <Button 
-                    onClick={() => setShowOfferForm(true)} 
+                  <Button
+                    onClick={() => setShowOfferForm(true)}
                     size="lg"
                     className="w-full sm:w-auto h-12 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 flex items-center justify-center gap-2"
                   >
@@ -710,8 +711,8 @@ export default function LawFirmCaseDetailsPage() {
                       >
                         Anuluj
                       </Button>
-                      <Button 
-                        type="submit" 
+                      <Button
+                        type="submit"
                         disabled={submitting}
                         className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md border-t border-white/10 flex items-center gap-2"
                       >
