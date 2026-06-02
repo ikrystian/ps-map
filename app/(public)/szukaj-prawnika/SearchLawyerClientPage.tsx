@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select"
 import { cn, stripHtmlTags } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check, CheckCircle2, ChevronDown, ChevronUp, Clock, Filter, Grid3x3, List, Map as MapIcon, MapPin, Search, Star, X } from "lucide-react"
+import { Check, CheckCircle2, ChevronDown, ChevronUp, Clock, Filter, Grid3x3, List, MapPin, Search, Star, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -559,12 +559,7 @@ export default function SearchLawyerPage() {
                   <List className="h-4 w-4" />
                 </Button>
               </div>
-              <Link href="/mapa" className="flex-1 sm:flex-initial">
-                <Button variant="outline" size="sm" className="w-full gap-2 h-9 px-3">
-                  <MapIcon className="h-4 w-4" />
-                  <span>Mapa</span>
-                </Button>
-              </Link>
+
             </div>
           </div>
 

@@ -728,8 +728,6 @@ export default function ForLawyersPage() {
                       </div>
                       <div className="flex gap-1.5">
                         <span>Szukaj</span>
-                        <span>Eksperci</span>
-                        <span>Mapa</span>
                       </div>
                     </div>
                     {/* Hero Section inside mockup */}

@@ -97,8 +97,6 @@ export default function PublicHeader({
   const firmoweCat = categories.filter(c => c.typ === 'SPRAWY_FIRMOWE')
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
 
-  const isEksperciActive = pathname === "/szukaj-prawnika" || pathname?.startsWith("/szukaj-prawnika/")
-
   const isFirmoweActive = firmoweCat.some(
     (category) =>
       pathname === `/kategorie/${category.slug}` ||
@@ -111,7 +109,6 @@ export default function PublicHeader({
       (category.children && category.children.some((child) => pathname === `/kategorie/${category.slug}/${child.slug}`))
   )
 
-  const isMapaActive = pathname === "/mapa"
   const isDlaPrawnikaActive = pathname === "/dla-prawnika"
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -181,20 +178,7 @@ export default function PublicHeader({
                 </AnimatePresence>
               </NavigationMenuItem>
 
-              <NavigationMenuItem className="hidden md:flex">
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/szukaj-prawnika"
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-[#121212]",
-                      isEksperciActive && "text-primary font-semibold"
-                    )}
-                  >
-                    Eksperci
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+
 
               {/* Sprawy Firmowe - Mega Menu */}
               <NavigationMenuItem>
@@ -337,21 +321,7 @@ export default function PublicHeader({
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              {/* Mapa */}
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/mapa"
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-[#121212]",
-                      isMapaActive && "text-primary font-semibold"
-                    )}
-                  >
-                    Mapa
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+
 
               {/* Dla prawnika */}
               <NavigationMenuItem>
@@ -438,16 +408,7 @@ export default function PublicHeader({
 
                     {/* Links & Accordions */}
                     <div className="space-y-4">
-                      <Link
-                        href="/szukaj-prawnika"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isEksperciActive ? "text-primary font-semibold" : "text-neutral-200"
-                        )}
-                      >
-                        Eksperci
-                      </Link>
+
 
                       <Accordion type="single" collapsible className="w-full">
                         {/* Sprawy Firmowe Accordion */}
@@ -571,16 +532,7 @@ export default function PublicHeader({
                         </AccordionItem>
                       </Accordion>
 
-                      <Link
-                        href="/mapa"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isMapaActive ? "text-primary font-semibold" : "text-neutral-200"
-                        )}
-                      >
-                        Mapa
-                      </Link>
+
 
                       <Link
                         href="/dla-prawnika"
