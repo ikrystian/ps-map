@@ -290,6 +290,7 @@ export default function LawFirmPointsPage() {
     switch (method) {
       case "PAYU": return "PayU"
       case "PRZELEWY24": return "Przelewy24"
+      case "TPAY": return "Tpay"
       case "PRZELEW": return "Przelew tradycyjny"
       case "PAYPAL": return "PayPal"
       case "BACS": return "BACS"

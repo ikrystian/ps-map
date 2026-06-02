@@ -88,6 +88,7 @@ const statusLabels: Record<string, { label: string; variant: "default" | "second
 const paymentMethodLabels: Record<string, string> = {
   PAYU: "PayU",
   PRZELEWY24: "Przelewy24",
+  TPAY: "Tpay",
   PRZELEW: "Przelew",
   PAYPAL: "PayPal",
   BACS: "BACS",
@@ -546,6 +547,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
                 <SelectContent>
                   <SelectItem value="PAYU">PayU</SelectItem>
                   <SelectItem value="PRZELEWY24">Przelewy24</SelectItem>
+                  <SelectItem value="TPAY">Tpay</SelectItem>
                   <SelectItem value="PRZELEW">Przelew</SelectItem>
                   <SelectItem value="PAYPAL">PayPal</SelectItem>
                   <SelectItem value="BACS">BACS</SelectItem>

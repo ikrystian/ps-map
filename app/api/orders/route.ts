@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Walidacja metody płatności
-    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "PAYPAL", "BACS", "TEST"]
+    const validPaymentMethods = ["PAYU", "PRZELEWY24", "TPAY", "PRZELEW", "PAYPAL", "BACS", "TEST"]
     if (!validPaymentMethods.includes(metodaPlatnosci)) {
       return Response.json(
         { error: "Nieprawidłowa metoda płatności" },
@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
       TEST: "enablePaymentTest",
       PRZELEWY24: "enablePaymentPrzelewy24",
       PAYU: "enablePaymentPayU",
+      TPAY: "enablePaymentTpay",
       PRZELEW: "enablePaymentPrzelew",
     }
     

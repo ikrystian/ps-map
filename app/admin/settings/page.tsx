@@ -63,6 +63,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  enablePaymentTpay?: {
+    value: string
+    description: string | null
+  }
   enablePaymentPrzelew?: {
     value: string
     description: string | null
@@ -102,6 +106,7 @@ export default function AdminSettingsPage() {
   const [enablePaymentTest, setEnablePaymentTest] = useState("true")
   const [enablePaymentPrzelewy24, setEnablePaymentPrzelewy24] = useState("true")
   const [enablePaymentPayU, setEnablePaymentPayU] = useState("true")
+  const [enablePaymentTpay, setEnablePaymentTpay] = useState("true")
   const [enablePaymentPrzelew, setEnablePaymentPrzelew] = useState("true")
   const [deleteCost1, setDeleteCost1] = useState("500")
   const [deleteCost2, setDeleteCost2] = useState("300")
@@ -131,6 +136,7 @@ export default function AdminSettingsPage() {
         setEnablePaymentTest(data.enablePaymentTest?.value || "true")
         setEnablePaymentPrzelewy24(data.enablePaymentPrzelewy24?.value || "true")
         setEnablePaymentPayU(data.enablePaymentPayU?.value || "true")
+        setEnablePaymentTpay(data.enablePaymentTpay?.value || "true")
         setEnablePaymentPrzelew(data.enablePaymentPrzelew?.value || "true")
         setDeleteCost1(data.deleteReviewCostRating1?.value || "500")
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
@@ -250,6 +256,10 @@ export default function AdminSettingsPage() {
             enablePaymentPayU: {
               value: enablePaymentPayU,
               description: "Czy płatność przez PayU ma być dostępna jako metoda płatności",
+            },
+            enablePaymentTpay: {
+              value: enablePaymentTpay,
+              description: "Czy płatność przez Tpay ma być dostępna jako metoda płatności",
             },
             enablePaymentPrzelew: {
               value: enablePaymentPrzelew,
@@ -629,6 +639,23 @@ export default function AdminSettingsPage() {
               id="enablePaymentPayU"
               checked={enablePaymentPayU === "true"}
               onCheckedChange={(checked) => setEnablePaymentPayU(checked ? "true" : "false")}
+            />
+          </div>
+
+          {/* Tpay */}
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="enablePaymentTpay" className="text-base font-semibold">
+                Tpay
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Tpay.
+              </p>
+            </div>
+            <Switch
+              id="enablePaymentTpay"
+              checked={enablePaymentTpay === "true"}
+              onCheckedChange={(checked) => setEnablePaymentTpay(checked ? "true" : "false")}
             />
           </div>
 

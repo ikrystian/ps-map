@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     const finalPrice = Math.max(price - proRataCredit, 0)
 
     // Walidacja metody płatności
-    const validPaymentMethods = ["PAYU", "PRZELEWY24", "PRZELEW", "POINTS", "TEST"]
+    const validPaymentMethods = ["PAYU", "PRZELEWY24", "TPAY", "PRZELEW", "POINTS", "TEST"]
     if (!validPaymentMethods.includes(metodaPlatnosci)) {
       return Response.json(
         { error: "Nieprawidłowa metoda płatności" },
@@ -152,6 +152,7 @@ export async function POST(request: NextRequest) {
         TEST: "enablePaymentTest",
         PRZELEWY24: "enablePaymentPrzelewy24",
         PAYU: "enablePaymentPayU",
+        TPAY: "enablePaymentTpay",
         PRZELEW: "enablePaymentPrzelew",
       }
       

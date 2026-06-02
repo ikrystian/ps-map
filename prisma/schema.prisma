@@ -1033,6 +1033,7 @@ enum PaymentMethod {
   BACS
   POINTS
   TEST
+  TPAY
 }
 
 enum PaymentStatus {

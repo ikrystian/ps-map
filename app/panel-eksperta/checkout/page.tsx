@@ -69,6 +69,7 @@ export default function CheckoutPage() {
     enablePaymentTest: "true",
     enablePaymentPrzelewy24: "true",
     enablePaymentPayU: "true",
+    enablePaymentTpay: "true",
     enablePaymentPrzelew: "true",
   })
   const [loading, setLoading] = useState(true)
@@ -98,16 +99,19 @@ export default function CheckoutPage() {
         const isTestEnabled = data.enablePaymentTest !== "false"
         const isP24Enabled = data.enablePaymentPrzelewy24 !== "false"
         const isPayUEnabled = data.enablePaymentPayU !== "false"
+        const isTpayEnabled = data.enablePaymentTpay !== "false"
         const isPrzelewEnabled = data.enablePaymentPrzelew !== "false"
 
         const isCurrentMethodEnabled =
           (defaultMethod === "TEST" && isTestEnabled) ||
           (defaultMethod === "PRZELEWY24" && isP24Enabled) ||
           (defaultMethod === "PAYU" && isPayUEnabled) ||
+          (defaultMethod === "TPAY" && isTpayEnabled) ||
           (defaultMethod === "PRZELEW" && isPrzelewEnabled)
 
         if (!isCurrentMethodEnabled) {
           if (isP24Enabled) setPaymentMethod("PRZELEWY24")
+          else if (isTpayEnabled) setPaymentMethod("TPAY")
           else if (isPayUEnabled) setPaymentMethod("PAYU")
           else if (isPrzelewEnabled) setPaymentMethod("PRZELEW")
           else if (isTestEnabled) setPaymentMethod("TEST")
@@ -185,7 +189,7 @@ export default function CheckoutPage() {
 
         const data = await response.json()
 
-        if (paymentMethod === "PAYU" || paymentMethod === "PRZELEWY24") {
+        if (paymentMethod === "PAYU" || paymentMethod === "PRZELEWY24" || paymentMethod === "TPAY") {
           const orderId = data.order.id
 
           if (paymentMethod === "PAYU") {
@@ -226,6 +230,25 @@ export default function CheckoutPage() {
               return
             } else {
               throw new Error("Brak adresu przekierowania do Przelewy24")
+            }
+          } else if (paymentMethod === "TPAY") {
+            const paymentResponse = await fetch("/api/payments/tpay/init", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId })
+            })
+
+            if (!paymentResponse.ok) {
+              const errorData = await paymentResponse.json()
+              throw new Error(errorData.error || "Nie udało się zainicjować płatności Tpay")
+            }
+
+            const paymentData = await paymentResponse.json()
+            if (paymentData.redirectUrl) {
+              window.location.href = paymentData.redirectUrl
+              return
+            } else {
+              throw new Error("Brak adresu przekierowania do Tpay")
             }
           }
         }
@@ -297,6 +320,31 @@ export default function CheckoutPage() {
           } else {
             throw new Error("Brak adresu przekierowania do płatności")
           }
+        } else if (paymentMethod === "TPAY") {
+          const paymentResponse = await fetch("/api/payments/tpay/init", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: order.id,
+            }),
+          })
+
+          if (!paymentResponse.ok) {
+            const errorData = await paymentResponse.json()
+            throw new Error(errorData.error || "Nie udało się zainicjować płatności Tpay")
+          }
+
+          const paymentData = await paymentResponse.json()
+
+          // Przekieruj do Tpay
+          if (paymentData.redirectUrl) {
+            window.location.href = paymentData.redirectUrl
+            return
+          } else {
+            throw new Error("Brak adresu przekierowania do płatności")
+          }
         } else {
           // Dla innych metod płatności przekieruj do potwierdzenia
           sessionStorage.removeItem("pendingOrder")
@@ -324,8 +372,9 @@ export default function CheckoutPage() {
   const isTestEnabled = settings.enablePaymentTest !== "false"
   const isP24Enabled = settings.enablePaymentPrzelewy24 !== "false"
   const isPayUEnabled = settings.enablePaymentPayU !== "false"
+  const isTpayEnabled = settings.enablePaymentTpay !== "false"
   const isPrzelewEnabled = settings.enablePaymentPrzelew !== "false"
-  const anyPaymentMethodEnabled = isTestEnabled || isP24Enabled || isPayUEnabled || isPrzelewEnabled
+  const anyPaymentMethodEnabled = isTestEnabled || isP24Enabled || isPayUEnabled || isTpayEnabled || isPrzelewEnabled
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -401,6 +450,18 @@ export default function CheckoutPage() {
                           <div className="font-medium">Przelewy24</div>
                           <div className="text-sm text-muted-foreground">
                             Szybka płatność online (przelew, BLIK, karty)
+                          </div>
+                        </Label>
+                      </div>
+                    )}
+
+                    {isTpayEnabled && (
+                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
+                        <RadioGroupItem value="TPAY" id="tpay" />
+                        <Label htmlFor="tpay" className="flex-1 cursor-pointer">
+                          <div className="font-medium">Tpay</div>
+                          <div className="text-sm text-muted-foreground">
+                            Szybka płatność online przez Tpay
                           </div>
                         </Label>
                       </div>
