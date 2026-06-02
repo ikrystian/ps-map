@@ -137,7 +137,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       <div className="container mx-auto px-4 max-w-8xl mb-12">
         <div className="mb-12">
           <div className="flex items-center gap-6 mb-12">
-            <h2 className="text-xl md:text-3xl font-serif font-light text-zinc-100 whitespace-nowrap">
+            <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap">
               Polecani prawnicy i adwokaci
             </h2>
             <div className="flex-grow border-t border-zinc-800/80" />

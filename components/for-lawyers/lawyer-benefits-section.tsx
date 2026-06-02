@@ -12,7 +12,7 @@ export function LawyerBenefitsSection() {
                     <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-4 font-medium">
                         Zyskaj klientów
                     </p>
-                    <h2 className="text-4xl md:text-5xl font-serif">
+                    <h2 className="text-4xl md:text-5xl ">
                         Wypróbuj <span className="font-bold">ProstaSprawa.pl</span> od 0 zł
                     </h2>
                 </div>
@@ -20,8 +20,8 @@ export function LawyerBenefitsSection() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
                     {/* Card 1 */}
                     <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
-                        <h3 className="text-2xl font-serif mb-2">Zwiększ</h3>
-                        <h3 className="text-2xl font-serif mb-12">zasięg</h3>
+                        <h3 className="text-2xl  mb-2">Zwiększ</h3>
+                        <h3 className="text-2xl  mb-12">zasięg</h3>
 
                         <div className="relative w-16 h-16 text-[#008080]">
                             {/* Simplified map outline using SVG */}
@@ -33,8 +33,8 @@ export function LawyerBenefitsSection() {
 
                     {/* Card 2 */}
                     <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
-                        <h3 className="text-2xl font-serif mb-2">Buduj</h3>
-                        <h3 className="text-2xl font-serif mb-12">markę</h3>
+                        <h3 className="text-2xl  mb-2">Buduj</h3>
+                        <h3 className="text-2xl  mb-12">markę</h3>
 
                         <div className="relative w-16 h-16 text-[#008080]">
                             <MapPin className="w-10 h-10 absolute bottom-0 left-0" />
@@ -46,8 +46,8 @@ export function LawyerBenefitsSection() {
 
                     {/* Card 3 */}
                     <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
-                        <h3 className="text-2xl font-serif mb-2">Zdobywaj</h3>
-                        <h3 className="text-2xl font-serif mb-12">więcej spraw</h3>
+                        <h3 className="text-2xl  mb-2">Zdobywaj</h3>
+                        <h3 className="text-2xl  mb-12">więcej spraw</h3>
 
                         <div className="relative w-16 h-16 text-[#008080]">
                             <div className="flex flex-col gap-2">

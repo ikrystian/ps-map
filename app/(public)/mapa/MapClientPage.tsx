@@ -200,8 +200,8 @@ export default function MapPage() {
         {/* Page Title */}
         <div className="mb-6 flex items-center justify-between ">
           <div>
-            <h1 className="text-4xl font-bold mb-2 font-serif">Mapa kancelarii</h1>
-            <p className="text-muted-foreground font-serif">
+            <h1 className="text-4xl font-bold mb-2 ">Mapa kancelarii</h1>
+            <p className="text-muted-foreground ">
               Znajdź kancelarię prawną w swojej okolicy
             </p>
           </div>
