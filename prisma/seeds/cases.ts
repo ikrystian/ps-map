@@ -1,88 +1,11 @@
 import { faker } from '@faker-js/faker'
 import { CaseType, ClientType, OfferStatus, PrismaClient, UserRole } from '@prisma/client'
 import { createRandomOffer, createRandomUser } from './generators'
+import { REALISTIC_CASES } from './data/realistic-cases'
 
 const CASES_TO_CREATE = 120
 const OFFERS_PER_CASE_MIN = 1
 const OFFERS_PER_CASE_MAX = 5
-
-const BUSINESS_CASES = [
-  {
-    nazwa: 'Przygotowanie umowy inwestycyjnej i NDA',
-    opis: 'Poszukujemy doświadczonego radcy prawnego do opracowania kompleksowej umowy inwestycyjnej (Investment Agreement) oraz umowy o zachowaniu poufności (NDA) dla naszej spółki technologicznej pozyskującej finansowanie rundy Seed od funduszu VC. Zależy nam na zabezpieczeniu praw autorskich (IP transfer) oraz precyzyjnych zapisach dot. kar umownych i praw pierwszeństwa.',
-  },
-  {
-    nazwa: 'Obsługa wdrożenia RODO w sklepie e-commerce',
-    opis: 'Zlecimy audyt prawny oraz pełne wdrożenie procedur RODO dla nowego, międzynarodowego sklepu internetowego. W zakres zlecenia wchodzi przygotowanie polityki prywatności, regulaminu sklepu, umów powierzenia przetwarzania danych oraz klauzul informacyjnych i zgód marketingowych.',
-  },
-  {
-    nazwa: 'Spór z kontrahentem o niewykonanie umowy dostawy',
-    opis: 'Reprezentacja spółki z o.o. w sporze sądowym z podwykonawcą, który nie wywiązał się z umowy dostawy komponentów elektronicznych, co doprowadziło do opóźnień produkcyjnych i strat finansowych. Wymagane wezwanie do zapłaty kary umownej oraz sporządzenie pozwu o odszkodowanie.',
-  },
-  {
-    nazwa: 'Przekształcenie jednoosobowej działalności w spółkę z o.o.',
-    opis: 'Planujemy przekształcenie prężnie działającej jednoosobowej działalności gospodarczej (branża budowlana, roczne obroty ok. 5 mln zł) w spółkę z ograniczoną odpowiedzialnością. Szukamy kancelarii do kompleksowej obsługi tego procesu - od planu przekształcenia, przez sporządzenie aktu założycielskiego, po wpis do KRS.',
-  },
-  {
-    nazwa: 'Spór z urzędem skarbowym o zwrot podatku VAT',
-    opis: 'Potrzebujemy wsparcia w sporze z urzędem skarbowym, który wstrzymał zwrot podatku VAT z transakcji wewnątrzwspólnotowych (WDT). Kancelaria przeprowadziła kontrolę celno-skarbową, po której wydała negatywną decyzję. Chcemy złożyć odwołanie do Izby Administracji Skarbowej, a w razie potrzeby skargę do WSA.',
-  },
-  {
-    nazwa: 'Zabezpieczenie praw autorskich do oprogramowania (SaaS)',
-    opis: 'Szukamy specjalisty od własności intelektualnej do sporządzenia wzorców umów licencyjnych B2B na korzystanie z naszej platformy SaaS oraz umów przeniesienia autorskich praw majątkowych z programistami (zarówno na UoP, jak i B2B).',
-  },
-  {
-    nazwa: 'Analiza prawna warunków przetargu publicznego',
-    opis: 'Zlecimy analizę Specyfikacji Warunków Zamówienia (SWZ) w przetargu nieograniczonym na dostawę systemów IT dla instytucji publicznej. Zależy nam na identyfikacji ryzykownych zapisów w projekcie umowy oraz przygotowaniu ewentualnych pytań do zamawiającego lub odwołania do KIO.',
-  },
-  {
-    nazwa: 'Ochrona znaku towarowego i marki',
-    opis: 'Planujemy rejestrację znaku towarowego w Urzędzie Patentowym RP oraz EUIPO. Szukamy rzecznika patentowego lub radcy prawnego z doświadczeniem w IP do przeprowadzenia badania zdolności rejestrowej oraz złożenia wniosków.',
-  },
-  {
-    nazwa: 'Windykacja należności od dłużnika krajowego',
-    opis: 'Zlecimy windykację przeterminowanych faktur (łączna kwota 85 000 PLN) od nierzetelnego klienta. Sprawa wymaga etapu przedsądowego (ostateczne wezwania do zapłaty) oraz ewentualnego przygotowania pozwu w postępowaniu upominawczym.',
-  },
-]
-
-const PRIVATE_CASES = [
-  {
-    nazwa: 'Sprawa o podział majątku po rozwodzie',
-    opis: 'Szukam adwokata do reprezentowania mnie w sprawie o podział majątku wspólnego. W skład majątku wchodzi nieruchomość (dom jednorodzinny obciążony kredytem hipotecznym), samochód oraz oszczędności. Zależy mi na polubownym, ale sprawiedliwym podziale lub spłacie ze strony byłego małżonka.',
-  },
-  {
-    nazwa: 'Stwierdzenie nabycia spadku i dział spadku',
-    opis: 'Potrzebuję pomocy prawnej w przeprowadzeniu sprawy spadkowej po zmarłym ojcu. Spadek obejmuje mieszkanie oraz udziały w działce rekreacyjnej. Spadkobierców jest trzech, nie ma między nami pełnej zgody co do sposobu podziału nieruchomości. Konieczne jest założenie sprawy w sądzie.',
-  },
-  {
-    nazwa: 'Odszkodowanie za wypadek komunikacyjny',
-    opis: 'Zlecę sprawę o uzyskanie zadośćuczynienia i odszkodowania od ubezpieczyciela po poważnym wypadku drogowym, w którym byłem pasażerem. Doznałem złamania nogi i urazu kręgosłupa, przeszedłem kosztowną operację i rehabilitację. Ubezpieczyciel wypłacił znikomą kwotę bezsporną, szukam pełnego pokrycia kosztów.',
-  },
-  {
-    nazwa: 'Odwołanie od decyzji ZUS w sprawie renty',
-    opis: 'ZUS odmówił mi przedłużenia prawa do renty z tytułu niezdolności do pracy, mimo braku poprawy stanu zdrowia i licznych opinii lekarskich. Szukam prawnika do sporządzenia profesjonalnego odwołania od decyzji ZUS do Sądu Pracy i Ubezpieczeń Społecznych.',
-  },
-  {
-    nazwa: 'Pomoc w walce z nieuczciwym deweloperem',
-    opis: 'Kupiłem mieszkanie w stanie deweloperskim, w którym podczas odbioru technicznego ujawniono szereg poważnych wad (wilgoć w piwnicy, krzywe ściany, nieszczelne okna). Deweloper unika usunięcia usterek w ramach rękojmi. Szukam pomocy w sformułowaniu wezwania do usunięcia wad oraz ewentualnego pozwu.',
-  },
-  {
-    nazwa: 'Reklamacja wadliwego samochodu używanego',
-    opis: 'Zakupiłem od komisu samochód używany, w którym po tygodniu ujawiła się poważna usterka silnika ukryta przez sprzedawcę (pęknięty blok silnika). Sprzedawca odmawia zwrotu gotówki lub pokrycia kosztów naprawy, twierdząc, że to wada eksploatacyjna. Potrzebuję wsparcia w dochodzeniu praw z tytułu rękojmi.',
-  },
-  {
-    nazwa: 'Rozwód bez orzekania o winie z alimentami',
-    opis: 'Szukam pełnomocnika do poprowadzenia sprawy rozwodowej. Z mężem jesteśmy zgodni co do rozwodu bez orzekania o winie, jednak musimy uregulować kwestię opieki nad małoletnim dzieckiem oraz wysokość alimentów. Chciałabym przygotować profesjonalny pozew rozwodowy wraz z wnioskiem zabezpieczającym.',
-  },
-  {
-    nazwa: 'Naruszenie praw lokatora przez właściciela mieszkania',
-    opis: 'Właściciel mieszkania, które wynajmuję, bezprawnie wszedł do lokalu pod moją nieobecność i grozi mi natychmiastowym wyrzuceniem ze względu na opóźnienie z czynszem o 5 dni. Szukam porady prawnej i interwencji adwokackiej w celu ochrony moich praw lokatorskich.',
-  },
-  {
-    nazwa: 'Sąsiedzki spór o granicę działki',
-    opis: 'Sąsiad wybudował ogrodzenie wkraczające o pół metra w głąb mojej działki ewidencyjnej i odmawia jego przesunięcia, powołując się na zasiedzenie pasa gruntu. Szukam geodety i adwokata do przeprowadzenia sprawy o rozgraniczenie nieruchomości oraz ochronę własności.',
-  },
-]
 
 export async function seedCases(prisma: PrismaClient) {
   console.log(`Seeding ${CASES_TO_CREATE} test cases...`)
@@ -155,18 +78,17 @@ export async function seedCases(prisma: PrismaClient) {
 
       // Filter categories depending on client type
       const isBusiness = randomClient.clientType === ClientType.BUSINESS
-      const filteredCategories = allCategories.filter((cat) =>
-        isBusiness ? cat.typ === 'SPRAWY_FIRMOWE' : cat.typ === 'SPRAWY_PRYWATNE'
-      )
       
-      const randomCategory = faker.helpers.arrayElement(
-        filteredCategories.length > 0 ? filteredCategories : allCategories
-      )
-      const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships)
+      // Pick template
+      const possibleTemplates = REALISTIC_CASES.filter(c => {
+          const cat = allCategories.find(ac => ac.nazwa === c.category);
+          return cat && (isBusiness ? cat.typ === 'SPRAWY_FIRMOWE' : cat.typ === 'SPRAWY_PRYWATNE');
+      });
 
-      // Pick template and detail fields
-      const caseTemplates = isBusiness ? BUSINESS_CASES : PRIVATE_CASES
-      const template = faker.helpers.arrayElement(caseTemplates)
+      const template = faker.helpers.arrayElement(possibleTemplates.length > 0 ? possibleTemplates : REALISTIC_CASES);
+      const randomCategory = allCategories.find(ac => ac.nazwa === template.category) || faker.helpers.arrayElement(allCategories);
+      
+      const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships)
 
       const alignedCaseType = isBusiness
         ? faker.helpers.arrayElement([CaseType.FIRMA, CaseType.ORGANIZACJA])

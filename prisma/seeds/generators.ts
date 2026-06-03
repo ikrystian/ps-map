@@ -1,6 +1,8 @@
 
 import { faker } from '@faker-js/faker/locale/pl';
 import { CaseStatus, CaseType, ClientType, LawFirmType, OfferStatus, OfferType, OrderType, PaymentMethod, PaymentStatus, PaymentTerms, PreferredContact, PrismaClient, SubscriptionPackage, UserRole, UserStatus } from '@prisma/client';
+import { REALISTIC_LAW_FIRMS } from './data/realistic-law-firms';
+import { REALISTIC_REVIEWS } from './data/realistic-reviews';
 
 export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     const firstName = faker.person.firstName();
@@ -38,16 +40,15 @@ export function createRandomClientB2B() {
 }
 
 export function createRandomLawFirm(prisma: PrismaClient) {
-    const companyName = faker.company.name();
+    const realisticFirm = faker.helpers.arrayElement(REALISTIC_LAW_FIRMS);
+    const companyName = realisticFirm.nazwa;
     const contactFirstName = faker.person.firstName();
     const contactLastName = faker.person.lastName();
     const hasOirp = faker.datatype.boolean();
     const hasOra = faker.datatype.boolean();
 
-
-    const paragraphCount = faker.number.int({ min: 3, max: 7 }); // Losowa liczba akapitów (3 do 5)
-    const descriptionHtml = faker.lorem.paragraphs(paragraphCount, '\n\n')
-        // Zamień podwójne nowej linie ('\n\n') na znaczniki akapitu
+    const descriptionHtml = `<p><strong>${realisticFirm.tagline}</strong></p><p>${realisticFirm.opis}</p>` + 
+        faker.lorem.paragraphs(2, '\n\n')
         .split('\n\n')
         .map(p => `<p>${p}</p>`)
         .join('');
@@ -101,7 +102,7 @@ export function createRandomLawFirm(prisma: PrismaClient) {
         oraMiasto: hasOra ? faker.location.city() : undefined,
         oraWpis: hasOra ? `WAW/${faker.string.numeric(5)}` : undefined,
         oraStatus: hasOra,
-        unikatowyOpisUslugi: faker.lorem.sentences(2),
+        unikatowyOpisUslugi: realisticFirm.tagline,
         slowaKluczowe: JSON.stringify(faker.lorem.words(3).split(' ')),
         onlineOnly: faker.datatype.boolean(),
         typOferty: faker.helpers.arrayElement(Object.values(OfferType)),
@@ -115,15 +116,16 @@ export function createRandomLawFirm(prisma: PrismaClient) {
 
 
 export function createRandomReview() {
+    const realisticReview = faker.helpers.arrayElement(REALISTIC_REVIEWS);
     return {
-        ocenaOgolna: faker.number.int({ min: 1, max: 5 }),
-        profesjonalizm: faker.number.int({ min: 1, max: 5 }),
-        komunikacja: faker.number.int({ min: 1, max: 5 }),
-        terminowosc: faker.number.int({ min: 1, max: 5 }),
-        stosunekJakosci: faker.number.int({ min: 1, max: 5 }),
-        tytulOpinii: faker.lorem.sentence(),
-        trescOpinii: faker.lorem.paragraph(),
-        polecam: faker.datatype.boolean(),
+        ocenaOgolna: realisticReview.ocena,
+        profesjonalizm: realisticReview.ocena,
+        komunikacja: faker.number.int({ min: 3, max: 5 }),
+        terminowosc: faker.number.int({ min: 3, max: 5 }),
+        stosunekJakosci: faker.number.int({ min: 3, max: 5 }),
+        tytulOpinii: realisticReview.tytul,
+        trescOpinii: realisticReview.tresc,
+        polecam: realisticReview.ocena >= 4,
         anonimowa: faker.datatype.boolean(),
         zweryfikowana: true,
         aktywna: true,
@@ -164,13 +166,21 @@ export function createRandomOffer(prisma: PrismaClient) {
     const vat = 23;
     const brutto = netto * (1 + vat / 100);
 
+    const descriptions = [
+        "Szanowni Państwo, chętnie podejmiemy się prowadzenia tej sprawy. Mamy duże doświadczenie w podobnych tematach. Proponujemy kompleksową obsługę prawną wraz z reprezentacją przed sądem.",
+        "Dzień dobry, analizując Państwa zapytanie, jesteśmy w stanie zaoferować bardzo korzystne warunki współpracy. Nasza kancelaria specjalizuje się w tym obszarze prawa.",
+        "W odpowiedzi na zgłoszenie, przedstawiam ofertę prowadzenia sprawy. Cena obejmuje analizę dokumentacji, przygotowanie pism procesowych oraz udział w jednej rozprawie.",
+        "Zapraszamy do współpracy. Gwarantujemy profesjonalizm i indywidualne podejście do zgłoszonego problemu. Możemy umówić się na spotkanie w celu omówienia szczegółów.",
+        "Nasza kancelaria posiada zespół ekspertów, którzy od lat zajmują się takimi sprawami. Oferujemy pełne wsparcie i doradztwo na każdym etapie postępowania."
+    ];
+
     return {
         kwotaNetto: netto,
         vat: vat,
         kwotaBrutto: brutto,
         terminRealizacjiDni: faker.number.int({ min: 1, max: 30 }),
-        opisOferty: faker.lorem.paragraphs(2),
-        zakresUslug: faker.lorem.sentence(),
+        opisOferty: faker.helpers.arrayElement(descriptions) + " " + faker.lorem.paragraph(),
+        zakresUslug: "Pełna obsługa prawna, doradztwo, reprezentacja.",
         warunkiPlatnosci: faker.helpers.arrayElement(Object.values(PaymentTerms)),
         wyroznienie: faker.datatype.boolean(),
         status: faker.helpers.arrayElement(Object.values(OfferStatus)),
@@ -178,7 +188,19 @@ export function createRandomOffer(prisma: PrismaClient) {
 }
 
 export function createRandomBlogPost() {
-    const title = faker.lorem.sentence();
+    const titles = [
+        "Jak przygotować się do rozwodu?",
+        "Zasiedzenie nieruchomości - co warto wiedzieć?",
+        "Zmiany w prawie pracy w 2024 roku",
+        "Rodo w małej firmie - najważniejsze kroki",
+        "Odszkodowanie za wypadek komunikacyjny - jak walczyć?",
+        "Jak założyć spółkę z o.o. przez internet?",
+        "Alimenty na dziecko - od czego zależy ich wysokość?",
+        "Podział majątku po rozwodzie - najczęstsze błędy",
+        "Ochrona znaków towarowych dla przedsiębiorców",
+        "Czym jest upadłość konsumencka?"
+    ];
+    const title = faker.helpers.arrayElement(titles) + " " + faker.lorem.words(2);
     return {
         tytul: title,
         slug: faker.helpers.slugify(title).toLowerCase(),
@@ -201,3 +223,4 @@ export function createRandomAccountManager() {
         aktywny: faker.datatype.boolean(),
     }
 }
+
