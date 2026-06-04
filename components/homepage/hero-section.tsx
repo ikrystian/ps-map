@@ -94,7 +94,7 @@ export function HeroSection() {
               </div>
               <div className="text-left">
                 <p className="text-white font-bold leading-none">1000+</p>
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Ekspertów</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Ekspertów</p>
               </div>
             </div>
 
@@ -104,7 +104,7 @@ export function HeroSection() {
               </div>
               <div className="text-left">
                 <p className="text-white font-bold leading-none">100%</p>
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Bezpieczeństwa</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Bezpieczeństwa</p>
               </div>
             </div>
 
@@ -114,7 +114,7 @@ export function HeroSection() {
               </div>
               <div className="text-left">
                 <p className="text-white font-bold leading-none">98%</p>
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Skuteczności</p>
+                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Skuteczności</p>
               </div>
             </div>
           </motion.div>

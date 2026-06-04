@@ -16,17 +16,17 @@ import { CalendarScheduler } from "@/components/calendar/calendar"
 import { slotToUtc } from "@/components/calendar/helpers"
 import type { BookedSlot } from "@/components/calendar/types"
 import { motion, AnimatePresence } from "framer-motion"
-import { 
-  Clock, 
-  Calendar, 
-  ChevronLeft, 
-  Video, 
-  Sparkles, 
-  User, 
-  Mail, 
-  Phone, 
-  Info, 
-  CheckCircle2, 
+import {
+  Clock,
+  Calendar,
+  ChevronLeft,
+  Video,
+  Sparkles,
+  User,
+  Mail,
+  Phone,
+  Info,
+  CheckCircle2,
   ArrowRight,
   HelpCircle,
   Loader2
@@ -35,7 +35,7 @@ import {
 export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
   const { data: session } = useSession()
   const router = useRouter()
-  
+
   const [duration, setDuration] = useState<15 | 30 | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
@@ -232,7 +232,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
+                    <span className="text-sm text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
                     <span className="text-2xl font-bold font-playfair text-white">
                       {price15} <span className="text-sm font-medium">PLN</span>
                     </span>
@@ -284,7 +284,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
+                    <span className="text-sm text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
                     <span className="text-2xl font-bold font-playfair text-[#d7b56d]">
                       {price30} <span className="text-sm font-medium">PLN</span>
                     </span>
@@ -367,21 +367,21 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             {/* Appointment Summary Box */}
             <div className="grid grid-cols-2 gap-3.5 bg-zinc-800/40 border border-border/40 p-4 rounded-xl text-xs">
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[9px]">DATA KONSULTACJI</span>
+                <span className="text-zinc-400 block uppercase tracking-wider text-sm">DATA KONSULTACJI</span>
                 <span className="font-semibold text-white flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-[#0da192]" />
                   {selectedDate ? format(selectedDate, "PPP", { locale: pl }) : ""}
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[9px]">GODZINA I TRWANIE</span>
+                <span className="text-zinc-400 block uppercase tracking-wider text-sm">GODZINA I TRWANIE</span>
                 <span className="font-semibold text-white flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-[#d7b56d]" />
                   {selectedSlot} ({duration} min)
                 </span>
               </div>
               <div className="space-y-1 col-span-2 pt-2 border-t border-zinc-800">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[9px]">SZACUNKOWY KOSZT</span>
+                <span className="text-zinc-400 block uppercase tracking-wider text-sm">SZACUNKOWY KOSZT</span>
                 <span className="text-sm font-bold text-[#d7b56d]">
                   {price} PLN
                 </span>
@@ -392,10 +392,10 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             <div className="space-y-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="topic" className="text-xs text-zinc-300 font-medium">Temat rozmowy i opis sprawy</Label>
-                <Textarea 
-                  id="topic" 
-                  value={topic} 
-                  onChange={(e) => setTopic(e.target.value)} 
+                <Textarea
+                  id="topic"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
                   placeholder="Opisz krótko z jakim problemem się zwracasz oraz co chcesz osiągnąć podczas konsultacji..."
                   className="min-h-[100px] bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
                 />
@@ -403,11 +403,11 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
               <div className="grid gap-1.5">
                 <Label htmlFor="contact" className="text-xs text-zinc-300 font-medium">Twoje dane kontaktowe</Label>
-                <Input 
-                  id="contact" 
-                  value={contact} 
-                  onChange={(e) => setContact(e.target.value)} 
-                  placeholder="Imię, nazwisko, adres e-mail, numer telefonu" 
+                <Input
+                  id="contact"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  placeholder="Imię, nazwisko, adres e-mail, numer telefonu"
                   className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
                 />
               </div>

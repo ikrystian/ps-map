@@ -66,14 +66,14 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
                   {/* Prestigous Badge */}
                   {isHighValue && (
                     <div className="absolute top-4 right-4 z-20">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-[10px] font-bold uppercase tracking-wider">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-sm font-bold uppercase tracking-wider">
                         Rekomendowane
                       </span>
                     </div>
                   )}
                   {isMainPage && !isHighValue && (
                     <div className="absolute top-4 right-4 z-20">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-[10px] font-bold uppercase tracking-wider">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-sm font-bold uppercase tracking-wider">
                         Maksymalny Zasięg
                       </span>
                     </div>

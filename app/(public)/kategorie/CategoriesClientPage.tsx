@@ -337,7 +337,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 {/* Visual Accent Badge */}
                 <div className="flex flex-col items-end gap-1">
                   <Badge
-                    className={`rounded-md px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold gap-1 border transition-colors ${isBusiness
+                    className={`rounded-md px-2.5 py-1 text-sm uppercase tracking-wider font-bold gap-1 border transition-colors ${isBusiness
                       ? "bg-[#0da192]/10 text-[#0da192] border-[#0da192]/20 hover:bg-[#0da192]/20"
                       : "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/20 hover:bg-[#d7b56d]/20"
                       }`}
@@ -392,7 +392,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                       />
                       <span>{child.nazwa}</span>
                       {child._count?.lawFirms !== undefined && (
-                        <span className={`text-[10px] transition-colors ml-0.5 font-semibold ${isBusiness
+                        <span className={`text-sm transition-colors ml-0.5 font-semibold ${isBusiness
                           ? "text-muted-foreground/60 group-hover:text-[#0da192]/80"
                           : "text-muted-foreground/60 group-hover:text-[#d7b56d]/80"
                           }`}>
@@ -404,7 +404,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                   {category.children.length > 6 && (
                     <Link
                       href={`/kategorie/${category.slug}`}
-                      className={`inline-flex items-center px-2 py-1 text-[10px] text-muted-foreground transition-colors font-medium ${isBusiness ? "hover:text-[#0da192]" : "hover:text-[#d7b56d]"
+                      className={`inline-flex items-center px-2 py-1 text-sm text-muted-foreground transition-colors font-medium ${isBusiness ? "hover:text-[#0da192]" : "hover:text-[#d7b56d]"
                         }`}
                     >
                       +{category.children.length - 6} więcej...
@@ -417,11 +417,11 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
               <div className="mt-auto pt-6 border-t border-border/40 flex items-center justify-between">
                 <div className="flex gap-6">
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
+                    <span className="text-sm text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
                     <span className="text-sm font-semibold">{category._count?.lawFirms || 0}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
+                    <span className="text-sm text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
                     <span className="text-sm font-semibold">{category._count?.cases || 0}</span>
                   </div>
                 </div>

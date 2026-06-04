@@ -432,7 +432,7 @@ export default function CheckoutPage() {
                         <Label htmlFor="test" className="flex-1 cursor-pointer">
                           <div className="font-medium flex items-center gap-2">
                             Płatność Testowa
-                            <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
+                            <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
                               Auto-akceptacja
                             </span>
                           </div>

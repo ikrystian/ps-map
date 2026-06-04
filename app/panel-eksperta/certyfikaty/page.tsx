@@ -322,7 +322,7 @@ export default function LawFirmCertificatesPage() {
                                 <Award className="h-4 w-4 text-[#d7b56d] shrink-0" />
                                 {certificate.nazwaCertyfikatu}
                               </h4>
-                              <p className="text-[10px] text-zinc-500 font-light mt-0.5">{certificate.wydawca}</p>
+                              <p className="text-sm text-zinc-500 font-light mt-0.5">{certificate.wydawca}</p>
                             </div>
                             {certificate.dataWaznosci && expired ? (
                               <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 shrink-0">Wygasł</Badge>
@@ -331,7 +331,7 @@ export default function LawFirmCertificatesPage() {
                             )}
                           </div>
 
-                          <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
+                          <div className="flex justify-between items-center border-t border-border/5 pt-2 text-sm">
                             <div>
                               <span className="text-zinc-500 block font-light">Uzyskanie</span>
                               <span className="text-zinc-300 font-medium">{formatDate(certificate.dataUzyskania)}</span>
@@ -349,7 +349,7 @@ export default function LawFirmCertificatesPage() {
                               variant="outline"
                               size="sm"
                               asChild
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-blue-400 hover:bg-blue-500/5 hover:border-blue-500/30 gap-1.5 text-[10px]"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-blue-400 hover:bg-blue-500/5 hover:border-blue-500/30 gap-1.5 text-sm"
                             >
                               <a href={certificate.skanCertyfikatu} target="_blank" rel="noopener noreferrer">
                                 <Download className="h-3.5 w-3.5" />
@@ -360,7 +360,7 @@ export default function LawFirmCertificatesPage() {
                               variant="outline"
                               size="sm"
                               asChild
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-[10px]"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-sm"
                             >
                               <Link href={`/panel-eksperta/certyfikaty/${certificate.id}`}>
                                 <Edit className="h-3.5 w-3.5" />

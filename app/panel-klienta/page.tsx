@@ -271,7 +271,7 @@ export default function ClientDashboardPage() {
           <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair flex items-baseline gap-2">
             <span>{totalOffersCount}</span>
             {totalOffersCount > 0 && activeCasesCount > 0 && (
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#d7b56d] text-zinc-950">Nowe</span>
+              <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-[#d7b56d] text-zinc-950">Nowe</span>
             )}
           </div>
         </motion.div>
@@ -344,11 +344,11 @@ export default function ClientDashboardPage() {
                             <h4 className="font-semibold text-white group-hover:text-[#0da192] transition-colors truncate text-sm">
                               {caseItem.nazwaSprawy}
                             </h4>
-                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700/50">
+                            <span className="text-sm px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700/50">
                               {caseItem.category.nazwa}
                             </span>
                             {caseItem.trybPilny && (
-                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse">
+                              <span className="text-sm px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse">
                                 Pilne
                               </span>
                             )}
@@ -359,13 +359,13 @@ export default function ClientDashboardPage() {
                         </div>
                         <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                           {caseItem.offers.length > 0 && (
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20">
+                            <span className="text-sm font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20">
                               {caseItem.offers.length} {caseItem.offers.length === 1 ? "oferta" : "oferty"}
                             </span>
                           )}
                           <span
                             className={cn(
-                              "text-[10px] px-2 py-0.5 rounded-md border font-medium",
+                              "text-sm px-2 py-0.5 rounded-md border font-medium",
                               caseItem.status === "NOWA" && "bg-teal-500/10 text-teal-400 border-teal-500/20",
                               caseItem.status === "OFERTY_OTRZYMANE" && "bg-[#d7b56d]/15 text-[#d7b56d] border-[#d7b56d]/20",
                               caseItem.status === "W_TRAKCIE" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
@@ -439,7 +439,7 @@ export default function ClientDashboardPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         {post.category && (
-                          <span className="absolute bottom-2 left-2 text-[9px] font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d] text-zinc-950">
+                          <span className="absolute bottom-2 left-2 text-sm font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d] text-zinc-950">
                             {post.category.nazwa}
                           </span>
                         )}
@@ -448,7 +448,7 @@ export default function ClientDashboardPage() {
                         <h4 className="text-xs font-semibold text-white group-hover:text-[#d7b56d] transition-colors line-clamp-2 leading-relaxed">
                           {post.tytul}
                         </h4>
-                        <div className="flex items-center justify-between text-[9px] text-muted-foreground pt-2">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
                           <span className="truncate max-w-[90px]">{post.lawFirm.nazwa}</span>
                           <span>{new Date(post.dataPublikacji || post.createdAt || "").toLocaleDateString("pl-PL")}</span>
                         </div>
@@ -544,7 +544,7 @@ export default function ClientDashboardPage() {
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Zarządzaj sprawami</h5>
-                    <p className="text-[10px] text-muted-foreground font-light mt-0.5">Dodawaj nowe i sprawdzaj statusy</p>
+                    <p className="text-sm text-muted-foreground font-light mt-0.5">Dodawaj nowe i sprawdzaj statusy</p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
@@ -561,7 +561,7 @@ export default function ClientDashboardPage() {
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Wiadomości i czat</h5>
-                    <p className="text-[10px] text-muted-foreground font-light mt-0.5">Rozmawiaj z ekspertami</p>
+                    <p className="text-sm text-muted-foreground font-light mt-0.5">Rozmawiaj z ekspertami</p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
@@ -578,7 +578,7 @@ export default function ClientDashboardPage() {
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Wybrani eksperci</h5>
-                    <p className="text-[10px] text-muted-foreground font-light mt-0.5">Lista obserwowanych ekspertów</p>
+                    <p className="text-sm text-muted-foreground font-light mt-0.5">Lista obserwowanych ekspertów</p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
@@ -596,15 +596,15 @@ export default function ClientDashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3.5 text-xs text-muted-foreground font-light">
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-[10px] font-bold">1</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">1</span>
                 <p>Opisujesz swój problem prawny za pomocą prostego formularza online.</p>
               </div>
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-[10px] font-bold">2</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">2</span>
                 <p>Sprawa trafia do kancelarii spełniających Twoje kryteria lokalizacyjne i tematyczne.</p>
               </div>
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-[10px] font-bold">3</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">3</span>
                 <p>Otrzymujesz wyceny, porównujesz warunki i bezpiecznie wybierasz najlepszego eksperta.</p>
               </div>
             </CardContent>

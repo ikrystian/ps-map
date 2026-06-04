@@ -262,7 +262,7 @@ export default function ForLawyersPage() {
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!newsletterConsent) {
       toast({
         title: "Błąd zapisu",
@@ -733,7 +733,7 @@ export default function ForLawyersPage() {
                     {/* Hero Section inside mockup */}
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-1 md:p-2">
                       <span className="text-[4.5px] md:text-[5px] uppercase tracking-wider text-neutral-500 font-semibold mb-0.5">PROSTA SPRAWA</span>
-                      <h4 className="text-[8px] sm:text-[10px] md:text-[11px] font-bold text-white tracking-tight leading-tight max-w-[160px] md:max-w-[200px]">
+                      <h4 className="text-[8px] sm:text-sm md:text-[11px] font-bold text-white tracking-tight leading-tight max-w-[160px] md:max-w-[200px]">
                         Rozwiązujemy Twoje problemy prawne
                       </h4>
                       <div className="flex gap-1 mt-1.5 md:mt-2">
@@ -956,7 +956,7 @@ export default function ForLawyersPage() {
 
           {/* Two Column Section Grid */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-12 items-start relative">
-            
+
             {/* Left Column: Masz pytania? */}
             <div className="flex flex-col space-y-6 md:pr-16 md:border-r md:border-neutral-800/60 h-full">
               <h2 className="text-4xl md:text-[44px] font-normal text-white font-playfair tracking-wide leading-tight">
@@ -970,8 +970,8 @@ export default function ForLawyersPage() {
               {/* Contact Icons Row */}
               <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-6">
                 {/* Phone Link */}
-                <a 
-                  href="tel:+48534888555" 
+                <a
+                  href="tel:+48534888555"
                   className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
                 >
                   <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
@@ -981,8 +981,8 @@ export default function ForLawyersPage() {
                 </a>
 
                 {/* Email Link */}
-                <a 
-                  href="mailto:kontakt@prostasprawa.pl" 
+                <a
+                  href="mailto:kontakt@prostasprawa.pl"
                   className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
                 >
                   <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
@@ -1036,16 +1036,16 @@ export default function ForLawyersPage() {
                     />
                   </div>
                   <div className="flex flex-col space-y-2">
-                    <label 
-                      htmlFor="newsletter-consent" 
-                      className="text-[10px] md:text-xs text-neutral-500 font-light leading-relaxed select-none cursor-pointer"
+                    <label
+                      htmlFor="newsletter-consent"
+                      className="text-sm md:text-xs text-neutral-500 font-light leading-relaxed select-none cursor-pointer"
                     >
                       Wyrażam zgodę na otrzymywanie maili marketingowo-handlowych od Grupy Pracuj S.A.
                     </label>
-                    <a 
-                      href="/polityka-prywatnosci" 
+                    <a
+                      href="/polityka-prywatnosci"
                       target="_blank"
-                      className="text-[10px] md:text-xs text-[#0da192] hover:underline hover:text-[#00897b] transition-colors duration-150 inline-block w-fit font-medium"
+                      className="text-sm md:text-xs text-[#0da192] hover:underline hover:text-[#00897b] transition-colors duration-150 inline-block w-fit font-medium"
                     >
                       Polityka prywatności
                     </a>

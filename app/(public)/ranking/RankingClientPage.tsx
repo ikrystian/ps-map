@@ -187,7 +187,7 @@ export default function RankingClientPage() {
                               >
                                 {getRankIcon(firm.rank) || `#${firm.rank}`}
                               </div>
-                              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-950/40 border border-border/15 text-[10px] text-zinc-400 font-light mt-1">
+                              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-950/40 border border-border/15 text-sm text-zinc-400 font-light mt-1">
                                 <Coins className="h-3 w-3 text-[#d7b56d]" />
                                 <span>{firm.punktySaldo}</span>
                               </div>
@@ -227,13 +227,13 @@ export default function RankingClientPage() {
                                       {firm.nazwa}
                                     </Link>
                                     {firm.zweryfikowana && (
-                                      <Badge className="bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-semibold py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                                      <Badge className="bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-semibold py-0.5 rounded-full flex items-center gap-1 shrink-0">
                                         <CheckCircle2 className="h-3 w-3" />
                                         Zweryfikowana
                                       </Badge>
                                     )}
                                     {firm.subscriptionType === "BIZNES" && (
-                                      <Badge className="text-[10px] bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                                      <Badge className="text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-0.5 rounded-full flex items-center gap-1 shrink-0">
                                         <Sparkles className="w-3 h-3" />
                                         Biznes
                                       </Badge>
@@ -274,12 +274,12 @@ export default function RankingClientPage() {
                               {firm.categories.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-3">
                                   {firm.categories.slice(0, 3).map((category, index) => (
-                                    <Badge key={index} className="bg-zinc-950/40 border-border/10 text-zinc-300 text-[10px] font-normal px-2.5 py-0.5 rounded-lg">
+                                    <Badge key={index} className="bg-zinc-950/40 border-border/10 text-zinc-300 text-sm font-normal px-2.5 py-0.5 rounded-lg">
                                       {category.nazwa}
                                     </Badge>
                                   ))}
                                   {firm.categories.length > 3 && (
-                                    <Badge className="bg-zinc-950/40 border-border/10 text-zinc-300 text-[10px] font-normal px-2.5 py-0.5 rounded-lg">
+                                    <Badge className="bg-zinc-950/40 border-border/10 text-zinc-300 text-sm font-normal px-2.5 py-0.5 rounded-lg">
                                       +{firm.categories.length - 3}
                                     </Badge>
                                   )}

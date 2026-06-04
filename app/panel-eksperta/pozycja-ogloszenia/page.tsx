@@ -401,7 +401,7 @@ export default function RankingBoostPage() {
                               </div>
                             </TableCell>
                             <TableCell className="py-3.5 px-6 font-medium">
-                              {firm.nazwa} {isMe && <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#0da192]/20 border border-[#0da192]/30 text-[#0da192] ml-2">Ty</span>}
+                              {firm.nazwa} {isMe && <span className="text-sm uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#0da192]/20 border border-[#0da192]/30 text-[#0da192] ml-2">Ty</span>}
                             </TableCell>
                             <TableCell className="py-3.5 px-6 text-right font-mono font-semibold">
                               {firm.pozycjaRanking ?? 0}

@@ -269,7 +269,7 @@ export default function LawFirmStatsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Wyświetlenia profilu</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.wyswietleniaProfilu}</h3>
-                <p className="text-[10px] text-emerald-400 font-medium">+{stats.viewsThisMonth} w tym miesiącu</p>
+                <p className="text-sm text-emerald-400 font-medium">+{stats.viewsThisMonth} w tym miesiącu</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 transition-transform duration-300">
                 <Eye className="h-6 w-6" />
@@ -285,7 +285,7 @@ export default function LawFirmStatsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Złożone oferty</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.zlozoneOferty}</h3>
-                <p className="text-[10px] text-zinc-500 font-light">+{stats.offersThisMonth} w tym miesiącu</p>
+                <p className="text-sm text-zinc-500 font-light">+{stats.offersThisMonth} w tym miesiącu</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-6 w-6" />
@@ -301,7 +301,7 @@ export default function LawFirmStatsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Skuteczność (Konwersja)</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.konwersja.toFixed(1)}%</h3>
-                <p className="text-[10px] text-zinc-500 font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
+                <p className="text-sm text-zinc-500 font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-6 w-6" />
@@ -321,7 +321,7 @@ export default function LawFirmStatsPage() {
                 </h3>
                 <div className="flex items-center gap-1 mt-1">
                   {renderStars(Math.round(stats.averageRating))}
-                  <span className="text-[10px] text-zinc-500 ml-1">({stats.reviewsCount} opinii)</span>
+                  <span className="text-sm text-zinc-500 ml-1">({stats.reviewsCount} opinii)</span>
                 </div>
               </div>
               <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform duration-300">
@@ -398,7 +398,7 @@ export default function LawFirmStatsPage() {
                     <div className="text-2xl font-bold text-[#0da192]">
                       {monthlyViews.reduce((sum, m) => sum + m.views, 0)}
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Suma wyświetleń
                     </div>
                   </div>
@@ -408,7 +408,7 @@ export default function LawFirmStatsPage() {
                         ? Math.round(monthlyViews.reduce((sum, m) => sum + m.views, 0) / monthlyViews.length)
                         : 0}
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Średnia miesięczna
                     </div>
                   </div>
@@ -416,7 +416,7 @@ export default function LawFirmStatsPage() {
                     <div className="text-2xl font-bold text-[#0da192]">
                       {maxViews}
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Najlepszy miesiąc
                     </div>
                   </div>
@@ -452,7 +452,7 @@ export default function LawFirmStatsPage() {
                         </div>
                         <div className="space-y-2">
                           <div className="space-y-1">
-                            <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Złożone oferty</span>
+                            <span className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Złożone oferty</span>
                             <div className="h-6 bg-zinc-900/60 border border-zinc-800/40 rounded-lg overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
@@ -460,14 +460,14 @@ export default function LawFirmStatsPage() {
                                 transition={{ duration: 0.8, ease: "easeOut" }}
                                 className="h-full bg-blue-500/80 flex items-center px-3"
                               >
-                                <span className="text-[10px] text-white font-semibold">
+                                <span className="text-sm text-white font-semibold">
                                   {item.total}
                                 </span>
                               </motion.div>
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Wygrane i zaakceptowane</span>
+                            <span className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Wygrane i zaakceptowane</span>
                             <div className="h-6 bg-zinc-900/60 border border-zinc-800/40 rounded-lg overflow-hidden">
                               {acceptedPercentage > 0 ? (
                                 <motion.div
@@ -476,12 +476,12 @@ export default function LawFirmStatsPage() {
                                   transition={{ duration: 0.8, ease: "easeOut" }}
                                   className="h-full bg-emerald-500/80 flex items-center px-3"
                                 >
-                                  <span className="text-[10px] text-white font-semibold">
+                                  <span className="text-sm text-white font-semibold">
                                     {item.accepted} ({acceptedPercentage.toFixed(0)}%)
                                   </span>
                                 </motion.div>
                               ) : (
-                                <div className="h-full flex items-center px-3 text-zinc-500 text-[10px] font-light">
+                                <div className="h-full flex items-center px-3 text-zinc-500 text-sm font-light">
                                   0 wygranych
                                 </div>
                               )}
@@ -498,7 +498,7 @@ export default function LawFirmStatsPage() {
                     <div className="text-2xl font-bold text-blue-400">
                       {monthlyOffers.reduce((sum, m) => sum + m.total, 0)}
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Złożone oferty
                     </div>
                   </div>
@@ -506,7 +506,7 @@ export default function LawFirmStatsPage() {
                     <div className="text-2xl font-bold text-emerald-400">
                       {monthlyOffers.reduce((sum, m) => sum + m.accepted, 0)}
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Wygrane oferty
                     </div>
                   </div>
@@ -518,7 +518,7 @@ export default function LawFirmStatsPage() {
                         return totalOffers > 0 ? ((acceptedOffers / totalOffers) * 100).toFixed(1) : '0.0'
                       })()}%
                     </div>
-                    <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
                       Skuteczność
                     </div>
                   </div>
@@ -605,7 +605,7 @@ export default function LawFirmStatsPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-xs text-white truncate">{item.category}</div>
-                              <div className="text-[10px] text-zinc-500 font-light mt-0.5">
+                              <div className="text-sm text-zinc-500 font-light mt-0.5">
                                 {rate.toFixed(0)}% skuteczności
                               </div>
                             </div>

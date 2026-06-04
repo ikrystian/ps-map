@@ -339,7 +339,7 @@ export default function ScheduledEmailsTab() {
                         </TableCell>
                         <TableCell>
                           {email.templateType ? (
-                            <Badge variant="outline" className="text-[10px] uppercase font-mono tracking-wider border-border bg-muted text-muted-foreground px-2 py-0.5">
+                            <Badge variant="outline" className="text-sm uppercase font-mono tracking-wider border-border bg-muted text-muted-foreground px-2 py-0.5">
                               {email.templateType}
                             </Badge>
                           ) : (
@@ -348,8 +348,8 @@ export default function ScheduledEmailsTab() {
                         </TableCell>
                         <TableCell className="text-right pr-6">
                           <div className="flex justify-end gap-1">
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="icon"
                               onClick={() => handleShowDetails(email)}
                               title="Szczegóły"
@@ -359,8 +359,8 @@ export default function ScheduledEmailsTab() {
                             </Button>
 
                             {email.status === "PENDING" ? (
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 onClick={() => openConfirmDialog(email, "cancel")}
                                 title="Anuluj wysyłkę"
@@ -374,8 +374,8 @@ export default function ScheduledEmailsTab() {
                                 )}
                               </Button>
                             ) : (
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 onClick={() => openConfirmDialog(email, "delete")}
                                 title="Usuń z historii"

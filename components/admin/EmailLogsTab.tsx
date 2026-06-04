@@ -232,7 +232,7 @@ export default function EmailLogsTab() {
                         </TableCell>
                         <TableCell>
                           {log.templateType ? (
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-sm">
                               {log.templateType}
                             </Badge>
                           ) : (
@@ -240,8 +240,8 @@ export default function EmailLogsTab() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleShowDetails(log)}
                           >

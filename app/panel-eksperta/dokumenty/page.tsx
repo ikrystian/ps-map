@@ -426,7 +426,7 @@ export default function DocumentsPage() {
                                 <div className="text-center">
                                   <p className="text-sm font-semibold text-white max-w-[280px] truncate">{fileSelected.name}</p>
                                   <p className="text-[11px] text-zinc-400 mt-1">{formatFileSize(fileSelected.size)}</p>
-                                  <span className="inline-flex text-[10px] text-[#0da192] font-semibold bg-[#0da192]/10 px-2.5 py-0.5 rounded-full mt-2.5 border border-[#0da192]/20">
+                                  <span className="inline-flex text-sm text-[#0da192] font-semibold bg-[#0da192]/10 px-2.5 py-0.5 rounded-full mt-2.5 border border-[#0da192]/20">
                                     Wybrano plik
                                   </span>
                                 </div>
@@ -442,7 +442,7 @@ export default function DocumentsPage() {
                               )}
                             </label>
                           </FormControl>
-                          <FormDescription className="text-[10px] text-zinc-500">
+                          <FormDescription className="text-sm text-zinc-500">
                             Obsługiwane formaty: PDF, DOC, DOCX, TXT, RTF, ODT (max 10MB)
                           </FormDescription>
                           <FormMessage />
@@ -543,7 +543,7 @@ export default function DocumentsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Wszystkie dokumenty</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{totalDocsCount}</h3>
-                <p className="text-[10px] text-zinc-500">Suma rozmiarów: {totalSizeFormatted}</p>
+                <p className="text-sm text-zinc-500">Suma rozmiarów: {totalSizeFormatted}</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-6 w-6" />
@@ -559,7 +559,7 @@ export default function DocumentsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Moje dokumenty</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{expertDocsCount}</h3>
-                <p className="text-[10px] text-zinc-500">Przesłane wzory i umowy</p>
+                <p className="text-sm text-zinc-500">Przesłane wzory i umowy</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
                 <Sparkles className="h-6 w-6" />
@@ -575,7 +575,7 @@ export default function DocumentsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-zinc-400 font-light tracking-wide">Od klientów</p>
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{clientDocsCount}</h3>
-                <p className="text-[10px] text-zinc-500">Dokumenty spraw i załączniki</p>
+                <p className="text-sm text-zinc-500">Dokumenty spraw i załączniki</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform duration-300">
                 <Users className="h-6 w-6" />
@@ -591,7 +591,7 @@ export default function DocumentsPage() {
               <div className="flex items-center justify-between w-full mb-1">
                 <div>
                   <p className="text-xs text-zinc-400 font-light tracking-wide">Użycie dysku</p>
-                  <h3 className="text-xl font-semibold text-white tracking-tight mt-1">{totalSizeFormatted} <span className="text-[10px] text-zinc-500 font-light">/ 100 MB</span></h3>
+                  <h3 className="text-xl font-semibold text-white tracking-tight mt-1">{totalSizeFormatted} <span className="text-sm text-zinc-500 font-light">/ 100 MB</span></h3>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192]">
                   <HardDrive className="h-5 w-5" />
@@ -604,7 +604,7 @@ export default function DocumentsPage() {
                     style={{ width: `${diskPercentage}%` }}
                   />
                 </div>
-                <p className="text-[9px] text-zinc-500 text-right mt-1 font-mono">{diskPercentage}% wykorzystane</p>
+                <p className="text-sm text-zinc-500 text-right mt-1 font-mono">{diskPercentage}% wykorzystane</p>
               </div>
             </CardContent>
           </Card>
@@ -750,13 +750,13 @@ export default function DocumentsPage() {
                           >
                             <TableCell className="font-semibold py-4 px-6 text-white">
                               <div className="flex items-center gap-3">
-                                <div className={cn("h-9 w-9 rounded-lg border flex flex-col items-center justify-center font-bold text-[10px] tracking-wider shadow-md shrink-0 transition-transform duration-300 group-hover:scale-105", extStyle.bg)}>
+                                <div className={cn("h-9 w-9 rounded-lg border flex flex-col items-center justify-center font-bold text-sm tracking-wider shadow-md shrink-0 transition-transform duration-300 group-hover:scale-105", extStyle.bg)}>
                                   <FileText className="h-4 w-4 mb-0.5" />
                                   <span className="text-[8px] font-mono leading-none">{extStyle.label}</span>
                                 </div>
                                 <div className="flex flex-col min-w-0">
                                   <span className="truncate max-w-xs sm:max-w-md text-zinc-100 group-hover:text-white transition-colors duration-200">{document.nazwa}</span>
-                                  <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-semibold mt-0.5">.{document.rozszerzenie}</span>
+                                  <span className="text-sm text-zinc-500 uppercase tracking-widest font-semibold mt-0.5">.{document.rozszerzenie}</span>
                                 </div>
                               </div>
                             </TableCell>
@@ -774,17 +774,17 @@ export default function DocumentsPage() {
                             <TableCell className="py-4 px-4">
                               {document.zrodlo === "KLIENT" ? (
                                 <div className="flex flex-col gap-0.5">
-                                  <span className="inline-flex max-w-fit text-[9px] font-semibold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wide">
+                                  <span className="inline-flex max-w-fit text-sm font-semibold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wide">
                                     Od klienta
                                   </span>
                                   {clientName && (
-                                    <span className="text-[10px] text-zinc-400 font-light truncate max-w-[120px] block mt-0.5" title={clientName}>
+                                    <span className="text-sm text-zinc-400 font-light truncate max-w-[120px] block mt-0.5" title={clientName}>
                                       {clientName}
                                     </span>
                                   )}
                                 </div>
                               ) : (
-                                <span className="inline-flex text-[9px] font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
+                                <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
                                   Ekspert (Ty)
                                 </span>
                               )}
@@ -858,13 +858,13 @@ export default function DocumentsPage() {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className={cn("h-9 w-9 rounded-lg border flex flex-col items-center justify-center font-bold text-[10px] tracking-wider shadow-md shrink-0", extStyle.bg)}>
+                              <div className={cn("h-9 w-9 rounded-lg border flex flex-col items-center justify-center font-bold text-sm tracking-wider shadow-md shrink-0", extStyle.bg)}>
                                 <FileText className="h-4 w-4 mb-0.5" />
                                 <span className="text-[8px] font-mono leading-none">{extStyle.label}</span>
                               </div>
                               <div className="flex flex-col min-w-0">
                                 <h4 className="text-sm font-semibold text-white truncate max-w-[180px]">{document.nazwa}</h4>
-                                <p className="text-[10px] text-zinc-500 mt-0.5">.{document.rozszerzenie} • {formatFileSize(document.rozmiar)}</p>
+                                <p className="text-sm text-zinc-500 mt-0.5">.{document.rozszerzenie} • {formatFileSize(document.rozmiar)}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
@@ -888,19 +888,19 @@ export default function DocumentsPage() {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border/10">
-                            <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700/50 capitalize font-medium">
+                            <span className="text-sm px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700/50 capitalize font-medium">
                               {getDocumentTypeLabel(document.typDokumentu)}
                             </span>
                             {document.zrodlo === "KLIENT" ? (
-                              <span className="inline-flex text-[9px] font-semibold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wide">
+                              <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wide">
                                 Od: {clientName || "Klient"}
                               </span>
                             ) : (
-                              <span className="inline-flex text-[9px] font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
+                              <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
                                 Moje (Ekspert)
                               </span>
                             )}
-                            <span className="text-[9px] text-zinc-500 ml-auto flex items-center gap-1 font-light">
+                            <span className="text-sm text-zinc-500 ml-auto flex items-center gap-1 font-light">
                               <Clock className="h-3 w-3 text-zinc-600" />
                               {formatDate(document.createdAt)}
                             </span>

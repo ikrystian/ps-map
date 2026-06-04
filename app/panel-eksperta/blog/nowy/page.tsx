@@ -219,7 +219,7 @@ export default function LawFirmNewBlogPostPage() {
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Atrakcyjny tytuł przyciągnie czytelników do zapoznania się z wpisem
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -251,7 +251,7 @@ export default function LawFirmNewBlogPostPage() {
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Kategoria pomaga uporządkować wpisy i ułatwia ich wyszukiwanie
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -275,7 +275,7 @@ export default function LawFirmNewBlogPostPage() {
                             />
                           </div>
                         </FormControl>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Wymagane minimum 100 znaków. Użyj edytora do formatowania akapitów i list.
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -381,7 +381,7 @@ export default function LawFirmNewBlogPostPage() {
                             )}
                           </div>
                         </FormControl>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Naciśnij Enter lub kliknij przycisk &quot;Dodaj&quot;, aby zapisać tag
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -402,7 +402,7 @@ export default function LawFirmNewBlogPostPage() {
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Jeśli pole pozostanie puste, wyszukiwarka użyje domyślnego tytułu artykułu (maksymalnie 70 znaków)
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -424,7 +424,7 @@ export default function LawFirmNewBlogPostPage() {
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="text-[10px] text-zinc-500">
+                        <FormDescription className="text-sm text-zinc-500">
                           Krótki fragment podsumowujący artykuł pod linkiem w wynikach wyszukiwania (maksymalnie 160 znaków)
                         </FormDescription>
                         <FormMessage className="text-rose-400 text-xs" />
@@ -452,7 +452,7 @@ export default function LawFirmNewBlogPostPage() {
                       <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/20 p-4 bg-zinc-950/20">
                         <div className="space-y-0.5">
                           <FormLabel className="text-sm font-semibold text-white">Opublikuj od razu</FormLabel>
-                          <FormDescription className="text-[10px] text-zinc-500 max-w-sm">
+                          <FormDescription className="text-sm text-zinc-500 max-w-sm">
                             Po zaznaczeniu artykuł natychmiast ukaże się na Twoim profilu publicznym.
                           </FormDescription>
                         </div>

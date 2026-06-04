@@ -631,7 +631,7 @@ export function EnhancedChatArea({
             <p className="font-semibold text-sm text-white truncate cursor-pointer hover:underline" onClick={() => setShowUserInfo(true)}>
               {otherUserName}
             </p>
-            <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+            <p className="text-sm text-zinc-500 font-light mt-0.5">
               {isOnline
                 ? "Dostępny"
                 : lastSeen
@@ -697,7 +697,7 @@ export function EnhancedChatArea({
               <div key={dateKey} className="space-y-4">
                 {/* Separator daty */}
                 <div className="flex items-center justify-center my-4">
-                  <span className="bg-zinc-800/60 border border-zinc-700/50 px-3 py-0.5 rounded-full text-[9px] uppercase tracking-wider text-zinc-400 font-semibold shadow-sm">
+                  <span className="bg-zinc-800/60 border border-zinc-700/50 px-3 py-0.5 rounded-full text-sm uppercase tracking-wider text-zinc-400 font-semibold shadow-sm">
                     {formatMessageDate(dateMessages[0].createdAt)}
                   </span>
                 </div>
@@ -727,7 +727,7 @@ export function EnhancedChatArea({
                                 alt={message.sender?.name || ""}
                               />
                             )}
-                            <AvatarFallback className="bg-zinc-800 text-[10px] text-zinc-300">
+                            <AvatarFallback className="bg-zinc-800 text-sm text-zinc-300">
                               {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                             </AvatarFallback>
                           </Avatar>
@@ -776,7 +776,7 @@ export function EnhancedChatArea({
                           <div className="flex items-center gap-1 mt-1.5 justify-end">
                             <span
                               className={cn(
-                                "text-[9px] font-mono",
+                                "text-sm font-mono",
                                 isMyMessage
                                   ? "text-white/60"
                                   : "text-zinc-500 font-light"
@@ -808,7 +808,7 @@ export function EnhancedChatArea({
                     {otherUserImage && (
                       <AvatarImage src={otherUserImage} alt={otherUserName} />
                     )}
-                    <AvatarFallback className="bg-zinc-800 text-[9px]">
+                    <AvatarFallback className="bg-zinc-800 text-sm">
                       {otherUserName.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -848,7 +848,7 @@ export function EnhancedChatArea({
                 className="flex items-center gap-2 p-2 bg-[#0da192]/10 border border-[#0da192]/20 rounded-xl text-xs text-zinc-300"
               >
                 <Paperclip className="h-3.5 w-3.5 text-[#0da192]" />
-                <span className="flex-1 truncate font-mono text-[10px]">{attachment.filename}</span>
+                <span className="flex-1 truncate font-mono text-sm">{attachment.filename}</span>
                 <Button
                   type="button"
                   variant="ghost"
@@ -972,7 +972,7 @@ export function EnhancedChatArea({
               </Avatar>
               <h3 className="text-lg font-bold text-white mt-3 text-center">{otherUserName}</h3>
               <span className={cn(
-                "inline-flex text-[9px] font-semibold px-2 py-0.5 rounded-full mt-1.5 uppercase tracking-wide",
+                "inline-flex text-sm font-semibold px-2 py-0.5 rounded-full mt-1.5 uppercase tracking-wide",
                 isClient
                   ? "bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20"
                   : "bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20"

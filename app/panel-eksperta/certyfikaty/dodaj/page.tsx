@@ -234,7 +234,7 @@ export default function LawFirmAddCertificatePage() {
                         onChange={(e) => handleInputChange("dataWaznosci", e.target.value)}
                         className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
                       />
-                      <p className="text-[10px] text-zinc-500 mt-1.5 leading-relaxed">
+                      <p className="text-sm text-zinc-500 mt-1.5 leading-relaxed">
                         Pozostaw to pole puste, jeśli certyfikat jest wydany bezterminowo.
                       </p>
                     </div>
@@ -283,7 +283,7 @@ export default function LawFirmAddCertificatePage() {
                               <p className="text-xs font-medium text-zinc-300 group-hover:text-white transition-colors duration-300">
                                 {isUploading ? "Przesyłanie skanu..." : "Kliknij, aby wybrać plik certyfikatu"}
                               </p>
-                              <p className="text-[10px] text-zinc-500 mt-1">
+                              <p className="text-sm text-zinc-500 mt-1">
                                 lub przeciągnij go tutaj
                               </p>
                             </div>
@@ -310,7 +310,7 @@ export default function LawFirmAddCertificatePage() {
                           </Button>
                         </div>
                       )}
-                      <p className="text-[10px] text-zinc-500 font-light">
+                      <p className="text-sm text-zinc-500 font-light">
                         Dozwolone formaty: PDF, JPEG, PNG, WEBP (maksymalnie 10MB)
                       </p>
                     </div>

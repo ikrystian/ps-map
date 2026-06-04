@@ -383,7 +383,7 @@ export default function CategoryPage() {
                       <Badge variant="outline" className="hover:bg-accent cursor-pointer gap-1.5">
                         <span>{child.nazwa}</span>
                         {child._count?.lawFirms !== undefined && (
-                          <span className="text-[10px] text-muted-foreground/80 font-medium">
+                          <span className="text-sm text-muted-foreground/80 font-medium">
                             ({child._count.lawFirms})
                           </span>
                         )}

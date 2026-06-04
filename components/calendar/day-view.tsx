@@ -132,13 +132,13 @@ export function DayView({
                           <Clock className={"size-4"} />
                           <div className="text-left">
                             {isPast && (
-                              <span className="block text-[10px] text-muted-foreground">
+                              <span className="block text-sm text-muted-foreground">
                                 {locale === "pl" ? "Minęło" : "Past"}
                               </span>
                             )}
                             <span className="block">{slot.displayTime}</span>
                             {adminTZ !== viewerTZ && (
-                              <span className="block text-[10px] text-muted-foreground">
+                              <span className="block text-sm text-muted-foreground">
                                 {slot.adminDisplayTime} {locale === "pl" ? "(ekspert)" : "(host)"}
                               </span>
                             )}

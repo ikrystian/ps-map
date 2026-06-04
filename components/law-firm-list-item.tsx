@@ -406,7 +406,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                       />
                     ))}
                   </div>
-                  <span className="text-[10px] text-neutral-200 font-sans leading-none font-light">
+                  <span className="text-sm text-neutral-200 font-sans leading-none font-light">
                     {lawFirm.reviewCount || 11}{" "}
                     {getOpinieText(lawFirm.reviewCount || 11)}
                   </span>

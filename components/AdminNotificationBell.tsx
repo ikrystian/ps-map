@@ -60,7 +60,7 @@ export default function AdminNotificationBell() {
       if (response.ok) {
         const data = await response.json()
         const fetchedOrders: Order[] = data.orders || []
-        
+
         setTransactions(fetchedOrders)
 
         // Read seen transaction IDs from localStorage
@@ -158,7 +158,7 @@ export default function AdminNotificationBell() {
         <Button variant="ghost" size="icon" className="relative hover:bg-accent hover:text-accent-foreground rounded-full transition-all duration-200">
           <Bell className={`h-[22px] w-[22px] ${unreadCount > 0 ? "animate-pulse text-amber-500" : "text-muted-foreground"}`} />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-background">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-sm font-bold text-white shadow-sm ring-2 ring-background">
               {unreadCount}
             </span>
           )}
@@ -219,7 +219,7 @@ export default function AdminNotificationBell() {
                       <p className="text-xs font-semibold text-foreground truncate max-w-[150px]">
                         {lawFirmName}
                       </p>
-                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">
                         {formatDistanceToNow(new Date(order.createdAt), {
                           addSuffix: true,
                           locale: pl,
@@ -227,16 +227,16 @@ export default function AdminNotificationBell() {
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground font-medium">
-                      {isPoints ? `Punkty: ${order.liczbaPunktow || 0} pkt` : "Zakup subskrypcji"} 
+                      {isPoints ? `Punkty: ${order.liczbaPunktow || 0} pkt` : "Zakup subskrypcji"}
                       <span className="text-foreground ml-1 font-semibold">{order.kwota} PLN</span>
                     </p>
                     <div className="flex items-center gap-1.5 pt-1">
-                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border ${status.className}`}>
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-sm font-medium border ${status.className}`}>
                         <StatusIcon className="h-2.5 w-2.5" />
                         {status.label}
                       </span>
                       {order.orderNumber && (
-                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                        <span className="text-sm text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                           #{order.orderNumber}
                         </span>
                       )}

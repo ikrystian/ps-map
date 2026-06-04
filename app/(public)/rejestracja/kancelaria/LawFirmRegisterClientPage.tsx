@@ -802,8 +802,8 @@ export default function LawFirmRegistrationPage() {
                               value={city.nazwa}
                               onSelect={(currentValue) => {
                                 const matchedCity = cities.find(c => c.nazwa.toLowerCase() === currentValue.toLowerCase()) || city
-                                setFormData({ 
-                                  ...formData, 
+                                setFormData({
+                                  ...formData,
                                   miasto: matchedCity.nazwa,
                                   voivodeshipId: matchedCity.voivodeshipId
                                 })
@@ -920,7 +920,7 @@ export default function LawFirmRegistrationPage() {
                 <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Zaznacz główną dziedzinę prawa, w której Twoja kancelaria się specjalizuje. 
+                Zaznacz główną dziedzinę prawa, w której Twoja kancelaria się specjalizuje.
                 Pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
               <div className={cn("grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
@@ -965,7 +965,7 @@ export default function LawFirmRegistrationPage() {
                           </span>
                         </div>
                         {isSelected && (
-                          <div className="flex items-center text-[10px] font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
+                          <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
                             Wybrano
                           </div>
                         )}
@@ -1094,11 +1094,11 @@ export default function LawFirmRegistrationPage() {
             )}
 
             <div className="space-y-4 pt-4 border-t border-border/50">
-              <div 
+              <div
                 className={cn(
                   "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
-                  formData.zgodaRegulamin 
-                    ? "bg-primary/5 border-primary shadow-sm" 
+                  formData.zgodaRegulamin
+                    ? "bg-primary/5 border-primary shadow-sm"
                     : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                   fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
                 )}
@@ -1126,11 +1126,11 @@ export default function LawFirmRegistrationPage() {
                 </div>
               </div>
 
-              <div 
+              <div
                 className={cn(
                   "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
-                  formData.zgodaPrzetwarzanie 
-                    ? "bg-primary/5 border-primary shadow-sm" 
+                  formData.zgodaPrzetwarzanie
+                    ? "bg-primary/5 border-primary shadow-sm"
                     : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                   fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
                 )}
@@ -1221,7 +1221,7 @@ export default function LawFirmRegistrationPage() {
                     <Icon className="w-5 h-5" />
                   </motion.div>
                   <span className={cn(
-                    "absolute -bottom-8 text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap transition-all duration-300 hidden md:block",
+                    "absolute -bottom-8 text-sm font-bold uppercase tracking-tighter whitespace-nowrap transition-all duration-300 hidden md:block",
                     isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-60",
                     isCurrent ? "scale-110" : "scale-100"
                   )}>

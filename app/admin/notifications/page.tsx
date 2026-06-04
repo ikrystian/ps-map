@@ -259,7 +259,7 @@ export default function NotificationsAdminPage() {
                             <div className="flex flex-col items-start leading-tight">
                               <span className="font-semibold text-foreground text-sm flex items-center gap-2">
                                 {selectedUser.name || "Nieznany"}
-                                <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-normal uppercase">
+                                <Badge variant="outline" className="text-sm py-0 px-1.5 font-normal uppercase">
                                   {selectedUser.role}
                                 </Badge>
                               </span>
@@ -302,7 +302,7 @@ export default function NotificationsAdminPage() {
                                 >
                                   <div className="font-medium flex items-center gap-2">
                                     {user.name || "Nieznany"}
-                                    <Badge variant="outline" className="text-[10px] py-0 px-1 font-normal uppercase">
+                                    <Badge variant="outline" className="text-sm py-0 px-1 font-normal uppercase">
                                       {user.role}
                                     </Badge>
                                   </div>
@@ -543,8 +543,8 @@ export default function NotificationsAdminPage() {
                   <h4 className="font-semibold mb-2 text-sm">Jak działa system?</h4>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Każde powiadomienie tworzone w kodzie przez funkcję <code>sendSystemNotification()</code> przechodzi przez analizę profilu <code>NotificationSettings</code>.
-                    1. System zawsze tworzy powiadomienie "in-app" (dostępne pod dzwoneczkiem w aplikacji).<br/>
-                    2. Jeśli użytkownik pozwala na maile dla danego typu – system wysyła dodatkowo email z taką samą treścią (lub z użyciem specjalnego szablonu HTML e-mail).<br/>
+                    1. System zawsze tworzy powiadomienie "in-app" (dostępne pod dzwoneczkiem w aplikacji).<br />
+                    2. Jeśli użytkownik pozwala na maile dla danego typu – system wysyła dodatkowo email z taką samą treścią (lub z użyciem specjalnego szablonu HTML e-mail).<br />
                     3. Jeśli admin użyje flagi <code>force: true</code> wysyłając powiadomienie z kodu – email wyjdzie zawsze, omijając restrykcje (np. do resetu hasła).
                   </p>
                 </div>

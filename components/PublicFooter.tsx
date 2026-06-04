@@ -164,7 +164,7 @@ export default function PublicFooter() {
 
         {/* Horizontal Category Tag Ribbon ("Artykuły branżowe") */}
         <div className="mt-12 pt-6 border-t border-neutral-900">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[10px] md:text-xs text-neutral-500 justify-start items-center">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-xs text-neutral-500 justify-start items-center">
             <span className="font-medium text-neutral-400 mr-1">Artykuły branżowe:</span>
             <Link href="/blog?category=dofinansowania" className="hover:text-[#d7b56d] transition-colors">Dofinansowania</Link>
             <span className="text-neutral-700 select-none">·</span>

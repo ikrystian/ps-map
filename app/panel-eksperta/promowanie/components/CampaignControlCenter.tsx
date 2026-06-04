@@ -182,11 +182,11 @@ export function CampaignControlCenter({
 
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Koniec</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
                       </div>
                     </div>
@@ -329,11 +329,11 @@ export function CampaignControlCenter({
 
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Koniec</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
                       </div>
                     </div>
@@ -448,11 +448,11 @@ export function CampaignControlCenter({
 
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Start</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground block text-[9px] uppercase font-semibold">Koniec</span>
+                        <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
                       </div>
                     </div>

@@ -429,7 +429,7 @@ export default function LawFirmReviewsPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground leading-none">{stats.avgRating.toFixed(1)}</p>
-                <p className="text-[10px] uppercase font-semibold text-zinc-500 tracking-wider mt-1">Średnia ocena</p>
+                <p className="text-sm uppercase font-semibold text-zinc-500 tracking-wider mt-1">Średnia ocena</p>
               </div>
             </div>
           )}
@@ -719,12 +719,12 @@ export default function LawFirmReviewsPage() {
 
                                 {/* Polecam / Nie polecam */}
                                 {review.polecam ? (
-                                  <Badge className="bg-emerald-500/10 hover:bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium py-0.5 px-2 gap-1 rounded-full text-[10px]">
+                                  <Badge className="bg-emerald-500/10 hover:bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
                                     <ThumbsUp className="h-2.5 w-2.5" />
                                     Polecam
                                   </Badge>
                                 ) : (
-                                  <Badge className="bg-red-500/10 hover:bg-red-500/10 text-red-400 border border-red-500/20 font-medium py-0.5 px-2 gap-1 rounded-full text-[10px]">
+                                  <Badge className="bg-red-500/10 hover:bg-red-500/10 text-red-400 border border-red-500/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
                                     <ThumbsDown className="h-2.5 w-2.5" />
                                     Nie polecam
                                   </Badge>
@@ -732,14 +732,14 @@ export default function LawFirmReviewsPage() {
 
                                 {/* Zweryfikowana badge */}
                                 {review.zweryfikowana && (
-                                  <Badge className="bg-primary/10 hover:bg-primary/10 text-primary border border-primary/20 font-medium py-0.5 px-2 gap-1 rounded-full text-[10px]">
+                                  <Badge className="bg-primary/10 hover:bg-primary/10 text-primary border border-primary/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
                                     Zweryfikowana
                                   </Badge>
                                 )}
 
                                 {/* Nieaktywna */}
                                 {!review.aktywna && (
-                                  <Badge variant="secondary" className="font-medium py-0.5 px-2 rounded-full text-[10px]">
+                                  <Badge variant="secondary" className="font-medium py-0.5 px-2 rounded-full text-sm">
                                     Nieaktywna
                                   </Badge>
                                 )}
@@ -799,7 +799,7 @@ export default function LawFirmReviewsPage() {
                                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-900/60 border border-border/40 rounded-xl">
                                     {review.profesjonalizm && (
                                       <div className="space-y-1">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
                                           Profesjonalizm
                                         </p>
                                         <p className="text-xs font-bold text-foreground mb-1">{review.profesjonalizm}.0 / 5.0</p>
@@ -808,7 +808,7 @@ export default function LawFirmReviewsPage() {
                                     )}
                                     {review.komunikacja && (
                                       <div className="space-y-1">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
                                           Komunikacja
                                         </p>
                                         <p className="text-xs font-bold text-foreground mb-1">{review.komunikacja}.0 / 5.0</p>
@@ -817,7 +817,7 @@ export default function LawFirmReviewsPage() {
                                     )}
                                     {review.terminowosc && (
                                       <div className="space-y-1">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
                                           Terminowość
                                         </p>
                                         <p className="text-xs font-bold text-foreground mb-1">{review.terminowosc}.0 / 5.0</p>
@@ -826,7 +826,7 @@ export default function LawFirmReviewsPage() {
                                     )}
                                     {review.stosunekJakosci && (
                                       <div className="space-y-1">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
                                           Jakość/Cena
                                         </p>
                                         <p className="text-xs font-bold text-foreground mb-1">{review.stosunekJakosci}.0 / 5.0</p>
@@ -865,7 +865,7 @@ export default function LawFirmReviewsPage() {
                                       <p className="text-xs font-bold text-foreground">Odpowiedź eksperta ({lawFirm.nazwa})</p>
                                     </div>
                                     {review.dataOdpowiedzi && (
-                                      <span className="text-[10px] font-semibold text-muted-foreground">
+                                      <span className="text-sm font-semibold text-muted-foreground">
                                         Napisano {formatDate(review.dataOdpowiedzi)}
                                       </span>
                                     )}
@@ -1012,7 +1012,7 @@ export default function LawFirmReviewsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="reply" className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Treść Twojej odpowiedzi</Label>
-                <span className={`text-[10px] font-bold uppercase tracking-wider ${replyText.length < 10 ? "text-amber-500" : "text-emerald-500"}`}>
+                <span className={`text-sm font-bold uppercase tracking-wider ${replyText.length < 10 ? "text-amber-500" : "text-emerald-500"}`}>
                   Znaki: {replyText.length}
                 </span>
               </div>

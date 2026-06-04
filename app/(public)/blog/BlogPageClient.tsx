@@ -264,11 +264,10 @@ export default function BlogPage() {
         <div className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto">
           <button
             onClick={() => handleCategoryChange(null)}
-            className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${
-              selectedCategory === null
+            className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${selectedCategory === null
                 ? "text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             {selectedCategory === null && (
               <motion.div
@@ -283,11 +282,10 @@ export default function BlogPage() {
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${
-                selectedCategory === category.id
+              className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${selectedCategory === category.id
                   ? "text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {selectedCategory === category.id && (
                 <motion.div
@@ -540,7 +538,7 @@ export default function BlogPage() {
                               {post.category && (
                                 <Badge
                                   variant="secondary"
-                                  className="flex items-center gap-1.5 px-2.5 py-0.5 bg-secondary/80 text-secondary-foreground text-[10px] font-semibold tracking-wider rounded-full border-transparent"
+                                  className="flex items-center gap-1.5 px-2.5 py-0.5 bg-secondary/80 text-secondary-foreground text-sm font-semibold tracking-wider rounded-full border-transparent"
                                 >
                                   {getCategoryIcon(
                                     post.category.nazwa,

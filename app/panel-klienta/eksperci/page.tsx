@@ -270,7 +270,7 @@ export default function ClientFavoritesPage() {
                               </Link>
                             </h3>
                             {lawFirm.zweryfikowana && (
-                              <Badge className="bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-[10px] font-semibold tracking-wider uppercase py-0.5 rounded-full flex items-center gap-1">
+                              <Badge className="bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-sm font-semibold tracking-wider uppercase py-0.5 rounded-full flex items-center gap-1">
                                 <CheckCircle2 className="h-3 w-3" />
                                 Zweryfikowana
                               </Badge>
@@ -357,12 +357,12 @@ export default function ClientFavoritesPage() {
                     {lawFirm.categories.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-4">
                         {lawFirm.categories.slice(0, 4).map((cat) => (
-                          <Badge key={cat.category.slug} className="bg-zinc-950/40 border-border/10 text-zinc-300 text-[10px] font-normal px-2.5 py-0.5 rounded-lg">
+                          <Badge key={cat.category.slug} className="bg-zinc-950/40 border-border/10 text-zinc-300 text-sm font-normal px-2.5 py-0.5 rounded-lg">
                             {cat.category.nazwa}
                           </Badge>
                         ))}
                         {lawFirm.categories.length > 4 && (
-                          <Badge className="bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-[10px] font-normal px-2.5 py-0.5 rounded-lg">
+                          <Badge className="bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-sm font-normal px-2.5 py-0.5 rounded-lg">
                             +{lawFirm.categories.length - 4} więcej
                           </Badge>
                         )}
@@ -401,7 +401,7 @@ export default function ClientFavoritesPage() {
                         </div>
                       )}
 
-                      <div className="ml-auto text-[10px] text-zinc-500 font-light">
+                      <div className="ml-auto text-sm text-zinc-500 font-light">
                         Dodano: {formatDate(favorite.addedAt)}
                       </div>
                     </div>

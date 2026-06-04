@@ -539,7 +539,7 @@ export default function LawFirmSettingsPage() {
                               <p className="mb-1 text-xs text-zinc-300">
                                 <span className="font-semibold text-[#0da192]">Prześlij</span> avatar
                               </p>
-                              <p className="text-[10px] text-zinc-500">
+                              <p className="text-sm text-zinc-500">
                                 PNG, JPG, WEBP (max 5MB)
                               </p>
                             </>
@@ -575,7 +575,7 @@ export default function LawFirmSettingsPage() {
                 <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
                   <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
+                    <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
                     <span className="text-sm font-semibold text-white truncate block">{userData.email}</span>
                   </div>
                   <div title="Edycja adresu e-mail jest zablokowana" className="ml-auto shrink-0 flex items-center justify-center">
@@ -661,7 +661,7 @@ export default function LawFirmSettingsPage() {
               <div className="space-y-2.5">
                 <Label className="text-xs font-semibold text-zinc-300">Status konta</Label>
                 <div className="flex items-center gap-2.5">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 flex items-center gap-1 text-[10px] font-semibold tracking-wide">
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
                     <CheckCircle2 className="h-3 w-3" />
                     W pełni aktywne
                   </Badge>
@@ -785,7 +785,7 @@ export default function LawFirmSettingsPage() {
                           Kontakt z klientami
                           <span className="text-rose-500 ml-1">*</span>
                         </Label>
-                        <p className="text-[10px] text-zinc-500 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-500 mt-1 font-light leading-relaxed">
                           Ta opcja jest obowiązkowa i niezbędna do obsługi Twoich klientów i ich zgłoszeń.
                         </p>
                       </div>
@@ -809,7 +809,7 @@ export default function LawFirmSettingsPage() {
                           Kluczowe informacje
                           <span className="text-rose-500 ml-1">*</span>
                         </Label>
-                        <p className="text-[10px] text-zinc-500 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-500 mt-1 font-light leading-relaxed">
                           Powiadomienia o Twoich ofertach, ważnych zmianach w cenniku oraz regulaminach.
                         </p>
                       </div>
@@ -830,7 +830,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Wskazówki, porady
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Artykuły i porady jak podnieść jakość ofert oraz zwiększyć zasięgi.
                         </p>
                       </div>
@@ -852,7 +852,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Ciekawe oferty i promocje
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Oferty promocyjne i pakiety punktów stworzone dla Twojej kancelarii.
                         </p>
                       </div>
@@ -874,7 +874,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Przypomnienie o nowych wiadomościach
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Powiadomienia na skrzynkę e-mail, kiedy klient wyśle nową wiadomość.
                         </p>
                       </div>
@@ -896,7 +896,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Powiadomienie o nowych funkcjach
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Aktualizacje systemu, nowo wdrożone moduły i integracje.
                         </p>
                       </div>
@@ -918,7 +918,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Powiadomienia o zmianach cenników
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Informacje o zmianach w cennikach lub taryfach punktów.
                         </p>
                       </div>
@@ -940,7 +940,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Powiadomienia o zmianach regulaminu
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Zmiany w regulaminie i polityce prywatności serwisu.
                         </p>
                       </div>
@@ -969,7 +969,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Kontakt z doradcą
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Ważne alerty i spersonalizowane oferty wsparcia telefonicznego dla Twojej kancelarii.
                         </p>
                       </div>
@@ -999,7 +999,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Wyświetlanie awatara w katalogu
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Zgoda na pokazywanie zdjęcia profilowego/loga kancelarii w katalogu.
                         </p>
                       </div>
@@ -1021,7 +1021,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Automatyczne prośby o opinie
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Wysyła zapytanie o opinię do klienta po zakończeniu realizacji sprawy.
                         </p>
                       </div>
@@ -1043,7 +1043,7 @@ export default function LawFirmSettingsPage() {
                         >
                           Dźwięk powiadomień na czacie
                         </Label>
-                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                           Odtwórz dźwięk ostrzegawczy po otrzymaniu nowej wiadomości.
                         </p>
                       </div>
@@ -1093,7 +1093,7 @@ export default function LawFirmSettingsPage() {
                     >
                       Ustawienia widoczności
                     </Label>
-                    <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                    <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                       Zezwalaj na składanie ofert bezpośrednich na profilu kancelarii.
                     </p>
                   </div>
@@ -1119,7 +1119,7 @@ export default function LawFirmSettingsPage() {
                       >
                         Powiadomienia o nowych wiadomościach (SMS)
                       </Label>
-                      <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                         Wyślij SMS na numer komórkowy po otrzymaniu nowej wiadomości.
                       </p>
                     </div>
@@ -1146,7 +1146,7 @@ export default function LawFirmSettingsPage() {
                       >
                         Otrzymywanie raportów zbiorczych
                       </Label>
-                      <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
                         Grupuj e-maile z powiadomieniami w jeden dobowy raport.
                       </p>
                     </div>
@@ -1173,7 +1173,7 @@ export default function LawFirmSettingsPage() {
                       >
                         Tryb urlopowy (Status zawieszony)
                       </Label>
-                      <p className="text-[10px] text-[#d7b56d]/80 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-[#d7b56d]/80 mt-1 font-light leading-relaxed">
                         Wyłącz widoczność w katalogu na czas nieobecności i zablokuj powiadomienia e-mail/SMS.
                       </p>
                     </div>

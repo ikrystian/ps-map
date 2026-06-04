@@ -48,7 +48,7 @@ export function TimezoneSelect({
         <SelectContent className="max-h-72">
           {TIMEZONE_GROUPS.map((group) => (
             <div key={group.region}>
-              <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted/40 sticky top-0">
+              <div className="px-2 py-1.5 text-sm font-semibold uppercase tracking-wider text-muted-foreground bg-muted/40 sticky top-0">
                 {group.region}
               </div>
               {group.zones.map((z) => (

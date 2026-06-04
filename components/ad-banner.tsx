@@ -102,7 +102,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
 
   if (loading) {
     return (
-      <div 
+      <div
         className={cn(
           "w-full bg-neutral-900/20 border border-neutral-800/40 rounded-lg animate-pulse",
           location === "category_sidebar" ? "h-[250px]" : "h-[90px]",
@@ -155,10 +155,10 @@ export function AdBanner({ location, className }: AdBannerProps) {
       >
         {/* Subtle grid pattern background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
-        
+
         {/* Decorative ambient light */}
         <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-all duration-300" />
-        
+
         <div className="flex items-center gap-4 relative z-10">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-colors duration-300">
             <Megaphone className="h-5 w-5" />
@@ -166,7 +166,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
           <div>
             <div className="flex items-center gap-2">
               <h4 className="font-semibold text-sm text-neutral-200">{placeholderConfig.title}</h4>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-neutral-800/80 text-neutral-400 border border-neutral-700/50">
+              <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-neutral-800/80 text-neutral-400 border border-neutral-700/50">
                 {placeholderConfig.dimensions}
               </span>
             </div>
@@ -197,7 +197,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
     >
       {ad.htmlContent ? (
         // Opcja 1: Wklejony kod HTML (np. skrypt Google AdSense)
-        <div 
+        <div
           className="w-full h-full flex items-center justify-center"
           onClick={handleAdClick}
           dangerouslySetInnerHTML={{ __html: ad.htmlContent }}
@@ -217,7 +217,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
             alt={ad.name}
             className="w-full h-full object-cover max-h-[400px] rounded-xl"
           />
-          <span className="absolute bottom-2 right-2 z-20 text-[9px] bg-black/60 backdrop-blur-xs text-neutral-400 px-1.5 py-0.5 rounded font-medium border border-neutral-800">
+          <span className="absolute bottom-2 right-2 z-20 text-sm bg-black/60 backdrop-blur-xs text-neutral-400 px-1.5 py-0.5 rounded font-medium border border-neutral-800">
             Reklama
           </span>
         </a>

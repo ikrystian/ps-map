@@ -273,7 +273,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                               <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
                             ))}
                           </div>
-                          <span className="text-[10px] text-zinc-300 font-semibold mt-1">
+                          <span className="text-sm text-zinc-300 font-semibold mt-1">
                             {firm.reviewCount || 11} opinii
                           </span>
                         </div>

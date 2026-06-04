@@ -144,7 +144,7 @@ export function EnhancedMessengerLayout() {
       <div className="mb-2 flex items-center justify-between text-xs text-zinc-400 font-light">
 
         {unreadCount > 0 && (
-          <Badge className={cn("h-5 text-[10px] font-bold text-white px-2 rounded-full border-t border-white/10 shadow-md", isClient ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352]" : "bg-gradient-to-r from-[#0da192] to-[#0a8276]")}>
+          <Badge className={cn("h-5 text-sm font-bold text-white px-2 rounded-full border-t border-white/10 shadow-md", isClient ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352]" : "bg-gradient-to-r from-[#0da192] to-[#0a8276]")}>
             {unreadCount} nieprzeczytanych
           </Badge>
         )}

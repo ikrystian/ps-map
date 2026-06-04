@@ -48,18 +48,18 @@ export function SlotBtn({
       )}
     >
       {isPast && (
-        <span className="block mb-1 text-[9px] text-muted-foreground leading-tight mt-0.5">
+        <span className="block mb-1 text-sm text-muted-foreground leading-tight mt-0.5">
           Past
         </span>
       )}
       {/*{slot.booked && (
-        <span className="block mb-1 text-[9px] text-muted-foreground leading-tight mt-0.5">
+        <span className="block mb-1 text-sm text-muted-foreground leading-tight mt-0.5">
           Booked
         </span>
       )}*/}
       <span className="block">{slot.displayTime}</span>
       {adminTZ !== viewerTZ && (
-        <span className="block text-[9px] text-muted-foreground leading-tight mt-0.5">
+        <span className="block text-sm text-muted-foreground leading-tight mt-0.5">
           {slot.adminDisplayTime} host
         </span>
       )}

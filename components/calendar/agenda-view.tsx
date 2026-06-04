@@ -88,7 +88,7 @@ export function AgendaView({
                 className="flex flex-col items-center w-14 shrink-0 cursor-pointer"
                 onClick={() => onDateSelect(day)}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   {locale === "pl"
                     ? format(day, "EEEEEE", { locale: pl }).toUpperCase()
                     : format(day, "EEE")}
@@ -103,7 +103,7 @@ export function AgendaView({
                 >
                   {format(day, "d")}
                 </span>
-                <span className="text-[10px] text-muted-foreground mt-0.5">
+                <span className="text-sm text-muted-foreground mt-0.5">
                   {locale === "pl"
                     ? format(day, "LLL", { locale: pl })
                     : format(day, "MMM")}
@@ -134,7 +134,7 @@ export function AgendaView({
                                 className="rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 hover:text-primary px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 text-left"
                               >
                                 {isPast && (
-                                  <span className="block text-[9px] text-muted-foreground">
+                                  <span className="block text-sm text-muted-foreground">
                                     {locale === "pl" ? "Minęło" : "Past"}
                                   </span>
                                 )}
@@ -142,7 +142,7 @@ export function AgendaView({
                                   {slot.displayTime}
                                 </span>
                                 {adminTZ !== viewerTZ && (
-                                  <span className="block text-[9px] text-muted-foreground">
+                                  <span className="block text-sm text-muted-foreground">
                                     {slot.adminDisplayTime} {locale === "pl" ? "ekspert" : "host"}
                                   </span>
                                 )}
@@ -163,7 +163,7 @@ export function AgendaView({
                   )}
                 </div>
                 {slots.some((s) => s.booked) && (
-                  <p className="text-[10px] text-muted-foreground mt-1.5">
+                  <p className="text-sm text-muted-foreground mt-1.5">
                     {locale === "pl" ? (
                       `${slots.filter((s) => s.booked).length} już zarezerwowane`
                     ) : (

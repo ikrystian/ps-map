@@ -552,7 +552,7 @@ export default function LawFirmPointsPage() {
                           </div>
                           {(order.transactionId || order.externalOrderId) && (
                             <div className="flex items-center gap-1.5 group">
-                              <span className="text-[10px] text-muted-foreground/60 cursor-help select-all" title={`Pełne ID Transakcji Płatniczej: ${order.transactionId || order.externalOrderId}`}>
+                              <span className="text-sm text-muted-foreground/60 cursor-help select-all" title={`Pełne ID Transakcji Płatniczej: ${order.transactionId || order.externalOrderId}`}>
                                 TID: {(order.transactionId || order.externalOrderId)?.slice(0, 8)}...
                               </span>
                               <button

@@ -737,7 +737,7 @@ export default function AdminSettingsPage() {
             <div className="space-y-0.5">
               <Label htmlFor="enablePaymentTest" className="text-base font-semibold flex items-center gap-2">
                 Płatność testowa
-                <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
               </Label>
               <p className="text-sm text-muted-foreground max-w-xl">
                 Włącza/wyłącza możliwość korzystania z płatności testowej (TEST) w systemie (symulacja płatności).
@@ -756,7 +756,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-0.5">
                 <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
                   Automatyczna akceptacja płatności testowych
-                  <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                  <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
                 </Label>
                 <p className="text-sm text-muted-foreground max-w-xl">
                   Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
@@ -779,7 +779,7 @@ export default function AdminSettingsPage() {
             <div>
               <CardTitle className="text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
                 Integracja KSeF 2.0
-                <span className="text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">MF Polska</span>
+                <span className="text-sm bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">MF Polska</span>
               </CardTitle>
               <CardDescription>
                 Konfiguracja automatycznego przesyłania faktur do Krajowego Systemu e-Faktur (KSeF) w standardzie FA(3).

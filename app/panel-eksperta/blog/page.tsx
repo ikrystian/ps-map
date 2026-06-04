@@ -365,11 +365,11 @@ export default function LawFirmBlogPage() {
                           </h4>
                           <div className="flex items-center gap-1.5 mt-1">
                             {post.category ? (
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-[9px] px-1.5 py-0">
+                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-sm px-1.5 py-0">
                                 {post.category.nazwa}
                               </Badge>
                             ) : (
-                              <span className="text-zinc-500 text-[10px] italic">Brak kategorii</span>
+                              <span className="text-zinc-500 text-sm italic">Brak kategorii</span>
                             )}
                           </div>
                         </div>
@@ -380,7 +380,7 @@ export default function LawFirmBlogPage() {
                         )}
                       </div>
 
-                      <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
+                      <div className="flex justify-between items-center border-t border-border/5 pt-2 text-sm">
                         <div>
                           <span className="text-zinc-500 block font-light">Utworzono</span>
                           <span className="text-zinc-300 font-medium">{formatDate(post.createdAt)}</span>
@@ -399,7 +399,7 @@ export default function LawFirmBlogPage() {
                           variant="outline"
                           size="sm"
                           asChild
-                          className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-[10px]"
+                          className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-sm"
                         >
                           <Link href={`/panel-eksperta/blog/${post.id}`}>
                             <Edit className="h-3.5 w-3.5" />

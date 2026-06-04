@@ -130,7 +130,7 @@ export default function AdminDashboardPage() {
       ADMIN: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
       LAW_FIRM: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20',
       CLIENT: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20',
-      
+
       // Cases & Common Statuses
       ACTIVE: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
       PENDING: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
@@ -433,7 +433,7 @@ export default function AdminDashboardPage() {
               return (
                 <div key={item.date} className="flex-1 flex flex-col justify-end items-center h-full group relative">
                   {/* Floating Tooltip */}
-                  <div className="absolute -top-6 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded shadow-md opacity-0 pointer-events-none transition-all duration-200 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 z-10 whitespace-nowrap">
+                  <div className="absolute -top-6 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm sm:text-xs font-bold px-2 py-0.5 rounded shadow-md opacity-0 pointer-events-none transition-all duration-200 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 z-10 whitespace-nowrap">
                     {Number(item.count)} uż.
                   </div>
 
@@ -446,7 +446,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Label without year */}
-                  <div className="text-[10px] sm:text-xs text-slate-500 mt-2 font-medium truncate w-full text-center">
+                  <div className="text-sm sm:text-xs text-slate-500 mt-2 font-medium truncate w-full text-center">
                     {formatDate(item.date).replace(/ 202\d$/, '')}
                   </div>
                 </div>
@@ -485,10 +485,10 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <Badge className={`${getStatusBadge(user.role)} font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
+                    <Badge className={`${getStatusBadge(user.role)} font-semibold text-sm px-2 py-0.5 rounded-full shadow-none`}>
                       {formatRole(user.role)}
                     </Badge>
-                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                    <div className="text-sm text-muted-foreground font-medium flex items-center gap-1">
                       <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(user.createdAt)}
                     </div>
@@ -526,10 +526,10 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <Badge className={`${getStatusBadge(caseItem.status)} font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
+                    <Badge className={`${getStatusBadge(caseItem.status)} font-semibold text-sm px-2 py-0.5 rounded-full shadow-none`}>
                       {getStatusName(caseItem.status)}
                     </Badge>
-                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                    <div className="text-sm text-muted-foreground font-medium flex items-center gap-1">
                       <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(caseItem.createdAt)}
                     </div>
@@ -574,10 +574,10 @@ export default function AdminDashboardPage() {
                       {formatCurrency(order.kwota)}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge className={`${getStatusBadge(order.statusPlatnosci)} font-semibold text-[9px] px-1.5 py-0.5 rounded-full shadow-none`}>
+                      <Badge className={`${getStatusBadge(order.statusPlatnosci)} font-semibold text-sm px-1.5 py-0.5 rounded-full shadow-none`}>
                         {formatPaymentStatus(order.statusPlatnosci)}
                       </Badge>
-                      <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-0.5">
+                      <div className="text-sm text-muted-foreground font-medium flex items-center gap-0.5">
                         {formatDate(order.createdAt)}
                       </div>
                     </div>
@@ -615,14 +615,13 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <Badge className={`${
-                      post.opublikowany 
-                        ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20' 
-                        : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
-                    } font-semibold text-[10px] px-2 py-0.5 rounded-full shadow-none`}>
+                    <Badge className={`${post.opublikowany
+                      ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20'
+                      : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+                      } font-semibold text-sm px-2 py-0.5 rounded-full shadow-none`}>
                       {post.opublikowany ? 'Opublikowany' : 'Szkic'}
                     </Badge>
-                    <div className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                    <div className="text-sm text-muted-foreground font-medium flex items-center gap-1">
                       <Clock className="h-3 w-3 opacity-60" />
                       {formatDate(post.createdAt)}
                     </div>

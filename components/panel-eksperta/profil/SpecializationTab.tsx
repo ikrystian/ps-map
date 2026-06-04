@@ -258,7 +258,7 @@ export function SpecializationTab({
                       formData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground"
                     )}
                   >
-                    <div className="h-5 w-5 flex items-center justify-center font-bold text-[10px]">WEB</div>
+                    <div className="h-5 w-5 flex items-center justify-center font-bold text-sm">WEB</div>
                   </div>
                   <div>
                     <p className="font-semibold text-sm">Tylko online</p>
@@ -344,7 +344,7 @@ export function SpecializationTab({
 
                         return (
                           <div key={vId} className="mb-4 last:mb-0">
-                            <div className="text-[10px] font-bold text-muted-foreground mb-2 flex items-center gap-2">
+                            <div className="text-sm font-bold text-muted-foreground mb-2 flex items-center gap-2">
                               <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                               {vName}
                             </div>
@@ -355,7 +355,7 @@ export function SpecializationTab({
                                   Ładowanie miast...
                                 </div>
                               ) : cities.length === 0 ? (
-                                <div className="py-2 text-[10px] italic text-muted-foreground">Brak miast w bazie.</div>
+                                <div className="py-2 text-sm italic text-muted-foreground">Brak miast w bazie.</div>
                               ) : (
                                 cities.map((city) => (
                                   <div

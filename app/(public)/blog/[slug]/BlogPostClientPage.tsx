@@ -182,7 +182,7 @@ export default function BlogPostPage() {
                 {post.category && (
                   <Badge
                     variant="secondary"
-                    className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
+                    className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
                   >
                     {post.category.nazwa}
                   </Badge>
@@ -269,7 +269,7 @@ export default function BlogPostPage() {
                 {post.category && (
                   <Badge
                     variant="secondary"
-                    className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
+                    className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
                   >
                     {post.category.nazwa}
                   </Badge>
@@ -431,7 +431,7 @@ export default function BlogPostPage() {
                   )}
 
                   <div>
-                    <Badge className="bg-primary/10 text-primary border border-primary/20 text-[10px] uppercase tracking-wider mb-1.5 font-semibold">
+                    <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
                       Ekspert prawny
                     </Badge>
                     <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">

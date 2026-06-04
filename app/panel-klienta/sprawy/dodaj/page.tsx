@@ -512,7 +512,7 @@ export default function ClientAddCasePage() {
                       <FolderOpen className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Wybrana kategoria</p>
+                      <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Wybrana kategoria</p>
                       <h4 className="text-sm font-bold text-white mt-0.5">{selectedPath}</h4>
                     </div>
                   </div>
@@ -596,7 +596,7 @@ export default function ClientAddCasePage() {
                             {cat.nazwa}
                           </span>
                           {cat.parentName && (
-                            <span className="text-[10px] text-zinc-500 font-light mt-0.5">
+                            <span className="text-sm text-zinc-500 font-light mt-0.5">
                               Dziedzina nadrzędna: {cat.parentName}
                             </span>
                           )}
@@ -613,7 +613,7 @@ export default function ClientAddCasePage() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[320px] my-2">
                   {/* Lewa kolumna: Kategorie główne (2/5) */}
                   <div className="md:col-span-2 border border-border/10 rounded-xl p-2 overflow-y-auto bg-zinc-950/30 space-y-1">
-                    <div className="text-[9px] font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider mb-1">
+                    <div className="text-sm font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider mb-1">
                       Działy prawa
                     </div>
                     {isLoadingCategories ? (
@@ -644,7 +644,7 @@ export default function ClientAddCasePage() {
                   <div className="md:col-span-3 border border-border/10 rounded-xl p-2 overflow-y-auto space-y-2">
                     {activeParent ? (
                       <>
-                        <div className="text-[9px] font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider">
+                        <div className="text-sm font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider">
                           Specjalizacje: {activeParent.nazwa}
                         </div>
 
@@ -667,7 +667,7 @@ export default function ClientAddCasePage() {
                               <span className="font-semibold text-xs text-white">
                                 Ogólny zakres: {activeParent.nazwa}
                               </span>
-                              <span className="text-[9px] text-zinc-500 font-light mt-0.5 leading-normal">
+                              <span className="text-sm text-zinc-500 font-light mt-0.5 leading-normal">
                                 Wybierz, jeśli sprawa dotyczy całego zakresu tej dziedziny
                               </span>
                             </div>
@@ -793,7 +793,7 @@ export default function ClientAddCasePage() {
           className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 resize-none"
         />
         <div className="flex justify-between items-center mt-2.5">
-          <span className="text-[10px] text-zinc-500 font-light">Opisz problem prawny jak najdokładniej.</span>
+          <span className="text-sm text-zinc-500 font-light">Opisz problem prawny jak najdokładniej.</span>
           <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-md", formData.opisSprawy.length >= 50 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-500/10 text-zinc-500')}>
             Znaki: {formData.opisSprawy.length} / 50
           </span>
@@ -843,13 +843,13 @@ export default function ClientAddCasePage() {
                 )}>
                   {isUploading ? "Przesyłanie plików..." : "Wybierz dokumenty do dodania"}
                 </span>
-                <span className="text-[10px] text-zinc-500 mt-1 block font-light">
+                <span className="text-sm text-zinc-500 mt-1 block font-light">
                   Kliknij, aby wybrać pliki z dysku
                 </span>
               </div>
             </div>
           )}
-          <p className="text-[10px] text-zinc-500 font-light">
+          <p className="text-sm text-zinc-500 font-light">
             Obsługiwane pliki: PDF, DOC, DOCX, XLS, XLSX, TXT oraz grafiki (maksymalnie 10MB na plik).
           </p>
           {uploadedFiles.map((file, index) => (
@@ -1016,7 +1016,7 @@ export default function ClientAddCasePage() {
         <Label htmlFor="akceptujeKlauzule" className="cursor-pointer text-xs text-zinc-300 leading-relaxed font-light">
           Oświadczam, że zapoznałem się i akceptuję klauzulę informacyjną oraz regulamin portalu odnośnie przetwarzania danych osobowych w celu realizacji zlecenia. *
           <br />
-          <span className="text-zinc-500 text-[10px] block mt-1 font-light">
+          <span className="text-zinc-500 text-sm block mt-1 font-light">
             Podane dane kontaktowe zostaną udostępnione wyłącznie wybranym ekspertom po złożeniu przez nich ofert.
           </span>
         </Label>

@@ -444,7 +444,7 @@ export default function LawFirmDashboardPage() {
             </CardHeader>
             <CardContent className="pt-2">
               <div className="text-3xl font-bold tracking-tight text-white">{lawFirm.wyswietleniaProfilu}</div>
-              <p className="text-[10px] text-zinc-500 mt-1 font-light flex items-center gap-1">
+              <p className="text-sm text-zinc-500 mt-1 font-light flex items-center gap-1">
                 {stats.viewsThisMonth > 0 ? (
                   <>
                     <span className="text-emerald-400 font-medium">+{stats.viewsThisMonth}</span>
@@ -471,7 +471,7 @@ export default function LawFirmDashboardPage() {
             </CardHeader>
             <CardContent className="pt-2">
               <div className="text-3xl font-bold tracking-tight text-white">{lawFirm.zlozoneOferty}</div>
-              <p className="text-[10px] text-zinc-500 mt-1 font-light flex items-center gap-1">
+              <p className="text-sm text-zinc-500 mt-1 font-light flex items-center gap-1">
                 {stats.offersThisMonth > 0 ? (
                   <>
                     <span className="text-emerald-400 font-medium">+{stats.offersThisMonth}</span>
@@ -498,7 +498,7 @@ export default function LawFirmDashboardPage() {
             </CardHeader>
             <CardContent className="pt-2">
               <div className="text-3xl font-bold tracking-tight text-white">{lawFirm.konwersja.toFixed(1)}%</div>
-              <p className="text-[10px] text-zinc-500 mt-1 font-light">
+              <p className="text-sm text-zinc-500 mt-1 font-light">
                 <span className="text-white font-medium">{lawFirm.wygraneOferty}</span> wygranych z <span className="text-white font-medium">{lawFirm.zlozoneOferty}</span> ofert
               </p>
             </CardContent>
@@ -522,7 +522,7 @@ export default function LawFirmDashboardPage() {
               </div>
               <div className="mt-1">
                 <Link href="/panel-eksperta/pozycja-ogloszenia">
-                  <Button variant="link" className="p-0 h-auto text-[10px] text-[#0da192] hover:text-[#0fbaa8] font-medium">
+                  <Button variant="link" className="p-0 h-auto text-sm text-[#0da192] hover:text-[#0fbaa8] font-medium">
                     Szczegóły rankingu &rarr;
                   </Button>
                 </Link>
@@ -564,7 +564,7 @@ export default function LawFirmDashboardPage() {
                   {bannerStyle.desc}
                 </p>
                 {expiryDate && (
-                  <p className="text-[10px] md:text-xs text-zinc-400 mt-1">
+                  <p className="text-sm md:text-xs text-zinc-400 mt-1">
                     Ważność pakietu: <span className="text-white font-semibold">{formatDate(expiryDate)}</span>
                     {daysUntilExpiry !== null && (
                       <span className={cn("ml-2 font-semibold", daysUntilExpiry <= 5 ? "text-rose-400" : daysUntilExpiry <= 14 ? "text-amber-400" : "text-emerald-400")}>
@@ -643,7 +643,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Edycja profilu</h3>
-                  <p className="text-[10px] text-zinc-500 leading-normal font-light">
+                  <p className="text-sm text-zinc-500 leading-normal font-light">
                     Zaktualizuj swoje dane i opis w wizytówce
                   </p>
                 </div>
@@ -661,7 +661,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-white group-hover:text-[#d7b56d] transition-colors">Dostępne sprawy</h3>
-                  <p className="text-[10px] text-zinc-500 leading-normal font-light">
+                  <p className="text-sm text-zinc-500 leading-normal font-light">
                     Przeglądaj zlecenia klientów i składaj oferty
                   </p>
                 </div>
@@ -679,7 +679,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Pozycja rankingu</h3>
-                  <p className="text-[10px] text-zinc-500 leading-normal font-light">
+                  <p className="text-sm text-zinc-500 leading-normal font-light">
                     Monitoruj widoczność swojej kancelarii
                   </p>
                 </div>
@@ -697,7 +697,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-white group-hover:text-[#d7b56d] transition-colors">Zakres usług</h3>
-                  <p className="text-[10px] text-zinc-500 leading-normal font-light">
+                  <p className="text-sm text-zinc-500 leading-normal font-light">
                     Skonfiguruj dziedziny prawa i obszar działania
                   </p>
                 </div>
@@ -724,12 +724,12 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <CardTitle className="text-base text-white">Statystyki wyświetleń</CardTitle>
-                  <CardDescription className="text-[10px] text-zinc-400">Ostatnie 7 dni</CardDescription>
+                  <CardDescription className="text-sm text-zinc-400">Ostatnie 7 dni</CardDescription>
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-white tracking-tight">{stats.viewsThisMonth}</div>
-                <div className="text-[10px] text-zinc-500">ten miesiąc</div>
+                <div className="text-sm text-zinc-500">ten miesiąc</div>
               </div>
             </div>
           </CardHeader>
@@ -777,7 +777,7 @@ export default function LawFirmDashboardPage() {
                         <span className="text-xs font-semibold text-white">{item.views}</span>
                         {item.views > 0 && (
                           <span className={cn(
-                            "text-[9px] font-medium px-1.5 py-0.5 rounded-md",
+                            "text-sm font-medium px-1.5 py-0.5 rounded-md",
                             item.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                           )}>
                             {item.trend}
@@ -798,7 +798,7 @@ export default function LawFirmDashboardPage() {
                     {Math.max(1, Math.floor(stats.viewsThisMonth / 30))} wyświetleń
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-zinc-500 font-light">
+                <div className="flex items-center justify-between text-sm text-zinc-500 font-light">
                   <span>W tym miesiącu łącznie</span>
                   <span className="font-medium text-zinc-300">{stats.viewsThisMonth} wyświetleń</span>
                 </div>
@@ -817,12 +817,12 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <CardTitle className="text-base text-white">Statystyki ofert</CardTitle>
-                  <CardDescription className="text-[10px] text-zinc-400">Ostatni miesiąc</CardDescription>
+                  <CardDescription className="text-sm text-zinc-400">Ostatni miesiąc</CardDescription>
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-white tracking-tight">{lawFirm.zlozoneOferty}</div>
-                <div className="text-[10px] text-zinc-500">złożone oferty</div>
+                <div className="text-sm text-zinc-500">złożone oferty</div>
               </div>
             </div>
           </CardHeader>
@@ -857,7 +857,7 @@ export default function LawFirmDashboardPage() {
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center flex-col">
                     <span className="text-3xl font-bold text-[#0da192] tracking-tight">{lawFirm.konwersja.toFixed(0)}%</span>
-                    <span className="text-[9px] text-zinc-500 font-medium uppercase tracking-wider mt-0.5">sukces</span>
+                    <span className="text-sm text-zinc-500 font-medium uppercase tracking-wider mt-0.5">sukces</span>
                   </div>
                 </div>
               </div>
@@ -868,7 +868,7 @@ export default function LawFirmDashboardPage() {
                     <div className="w-2.5 h-2.5 rounded-full bg-[#0da192]"></div>
                     <div>
                       <span className="text-xs font-semibold text-white">Zaakceptowane</span>
-                      <p className="text-[9px] text-zinc-400 font-light">Oferty wybrane przez klientów</p>
+                      <p className="text-sm text-zinc-400 font-light">Oferty wybrane przez klientów</p>
                     </div>
                   </div>
                   <span className="text-base font-bold text-[#0da192]">{lawFirm.wygraneOferty}</span>
@@ -878,7 +878,7 @@ export default function LawFirmDashboardPage() {
                     <div className="w-2.5 h-2.5 rounded-full bg-zinc-600"></div>
                     <div>
                       <span className="text-xs font-semibold text-zinc-300">Pozostałe</span>
-                      <p className="text-[9px] text-zinc-500 font-light">W toku, negocjacje lub odrzucone</p>
+                      <p className="text-sm text-zinc-500 font-light">W toku, negocjacje lub odrzucone</p>
                     </div>
                   </div>
                   <span className="text-base font-bold text-zinc-300">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>
@@ -906,7 +906,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <CardTitle className="text-base text-white">Ostatnie artykuły na blogu</CardTitle>
-                  <CardDescription className="text-[10px] text-zinc-400">Twoje wpisy widoczne na profilu</CardDescription>
+                  <CardDescription className="text-sm text-zinc-400">Twoje wpisy widoczne na profilu</CardDescription>
                 </div>
               </div>
               <Link href="/panel-eksperta/blog">
@@ -952,7 +952,7 @@ export default function LawFirmDashboardPage() {
                         <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-light leading-relaxed">
                           {post.tresc ? post.tresc.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : ''}
                         </p>
-                        <div className="flex items-center gap-4 text-[10px] mt-2 font-medium">
+                        <div className="flex items-center gap-4 text-sm mt-2 font-medium">
                           {post.category?.nazwa ? (
                             <span className="text-[#0da192]">
                               {post.category.nazwa}
@@ -1025,7 +1025,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Wyróżnienie profilu</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Twoja kancelaria będzie wyświetlana nad innymi bezpłatnymi kontami.
                   </p>
                 </div>
@@ -1036,7 +1036,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Top pozycja w specjalizacji</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Bądź pierwszym wyborem w swojej głównej dziedzinie prawnej.
                   </p>
                 </div>
@@ -1047,7 +1047,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Nawet do 3x więcej wejść</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Statystycznie promowane profile notują potrójny wzrost ruchu na stronie.
                   </p>
                 </div>
@@ -1098,7 +1098,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Złoty certyfikowany status</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Zdobądź specjalną ikonę "Partner Premium" przy swojej wizytówce w wyszukiwarce.
                   </p>
                 </div>
@@ -1109,7 +1109,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Dedykowane wsparcie</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Pomoc osobistego konsultanta w konfiguracji profilu i kampanii punktowych.
                   </p>
                 </div>
@@ -1120,7 +1120,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Priorytet w poleceniach</p>
-                  <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                  <p className="text-sm text-zinc-500 font-light mt-0.5">
                     Kancelaria będzie rekomendowana w automatycznych powiadomieniach dla klientów.
                   </p>
                 </div>
@@ -1129,10 +1129,10 @@ export default function LawFirmDashboardPage() {
 
             <div className="pt-4 border-t border-border/10">
               <div className="mb-4 p-3 bg-zinc-950/40 border border-border/10 rounded-xl flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Koszt aktywacji</span>
+                <span className="text-sm text-zinc-500 font-medium uppercase tracking-wider">Koszt aktywacji</span>
                 <div className="flex items-baseline gap-1">
                   <span className="text-xl font-bold text-[#d7b56d]">299 punktów</span>
-                  <span className="text-[10px] text-zinc-400 font-light">/miesiąc</span>
+                  <span className="text-sm text-zinc-400 font-light">/miesiąc</span>
                 </div>
               </div>
               <Link href="/panel-eksperta/pakiet">
@@ -1271,7 +1271,7 @@ export default function LawFirmDashboardPage() {
                 {getSubscriptionBadge(lawFirm.pakietSubskrypcji)}
               </div>
               {lawFirm.dataPakietuDo && (
-                <p className="text-[10px] text-zinc-500 font-light">
+                <p className="text-sm text-zinc-500 font-light">
                   Ważność do: <span className="text-zinc-300 font-medium">{formatDate(lawFirm.dataPakietuDo)}</span>
                 </p>
               )}
@@ -1362,7 +1362,7 @@ export default function LawFirmDashboardPage() {
                       <p className="font-semibold text-sm text-white">
                         {promo.typPromocji.replace("_", " ")}
                       </p>
-                      <p className="text-[10px] text-zinc-500 font-light mt-0.5">
+                      <p className="text-sm text-zinc-500 font-light mt-0.5">
                         Czas trwania: {formatDate(promo.startPromocji)} - {formatDate(promo.koniecPromocji)}
                       </p>
                     </div>
@@ -1425,7 +1425,7 @@ export default function LawFirmDashboardPage() {
                         <p className="font-semibold text-sm text-white truncate" title={caseItem.nazwaSprawy}>
                           {caseItem.nazwaSprawy}
                         </p>
-                        <p className="text-[10px] text-zinc-400 font-light mt-1 flex items-center gap-1.5">
+                        <p className="text-sm text-zinc-400 font-light mt-1 flex items-center gap-1.5">
                           <span>{caseItem.category.nazwa}</span>
                           <span className="text-zinc-600">•</span>
                           <span>{caseItem._count.offers} złożonych ofert</span>

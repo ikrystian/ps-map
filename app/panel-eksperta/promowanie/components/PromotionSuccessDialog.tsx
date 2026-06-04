@@ -79,7 +79,7 @@ export function PromotionSuccessDialog({
                   })()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                  <div className="text-sm text-muted-foreground uppercase font-bold tracking-wider">
                     Format kampanii
                   </div>
                   <div className="font-extrabold text-base text-white truncate mt-0.5">
@@ -89,7 +89,7 @@ export function PromotionSuccessDialog({
                   <div className="flex flex-wrap items-center gap-2 mt-2">
                     <Badge
                       variant="outline"
-                      className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 px-2 py-0.5 text-[10px] font-bold gap-1 hover:bg-emerald-500/10"
+                      className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 px-2 py-0.5 text-sm font-bold gap-1 hover:bg-emerald-500/10"
                     >
                       <Coins className="h-3 w-3" />
                       Koszt: {purchasedPromotion.kosztPunktow} pkt
@@ -97,7 +97,7 @@ export function PromotionSuccessDialog({
                     {purchasedPromotion.automatyczneOdnowienie && (
                       <Badge
                         variant="secondary"
-                        className="bg-sky-500/10 text-sky-400 border-sky-500/20 text-[10px] px-2 py-0.5 hover:bg-sky-500/10"
+                        className="bg-sky-500/10 text-sky-400 border-sky-500/20 text-sm px-2 py-0.5 hover:bg-sky-500/10"
                       >
                         <RefreshCw
                           className="h-2.5 w-2.5 mr-1 animate-spin"
@@ -225,7 +225,7 @@ export function PromotionSuccessDialog({
             {/* Helpful footer alert */}
             <div className="p-3.5 bg-emerald-500/5 rounded-xl border border-emerald-500/10 flex items-start gap-2.5">
               <Info className="h-4 w-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <p className="text-[10px] text-muted-foreground leading-normal">
+              <p className="text-sm text-muted-foreground leading-normal">
                 Wszystkie swoje aktywne i zaplanowane promowania możesz wygodnie kontrolować w
                 sekcji <strong>&quot;Panel Kontrolny Kampanii&quot;</strong>. Szczegółowe
                 potwierdzenie z instrukcjami zostało wysłane również na adres e-mail kancelarii.

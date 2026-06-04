@@ -115,12 +115,12 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
             <div className="flex items-center gap-2">
               <p className="font-medium">{item.category.nazwa}</p>
               {isMainCategory && (
-                <Badge variant="default" className="text-[10px]">
+                <Badge variant="default" className="text-sm">
                   Główna
                 </Badge>
               )}
             </div>
-            <Badge variant="outline" className="text-[10px] mt-1">
+            <Badge variant="outline" className="text-sm mt-1">
               {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
             </Badge>
           </div>
@@ -528,7 +528,7 @@ export default function LawFirmServicesPage() {
               >
                 {category.nazwa}
                 {isMain ? (
-                  <Badge variant="default" className="text-[10px] bg-primary text-white">
+                  <Badge variant="default" className="text-sm bg-primary text-white">
                     Główna
                   </Badge>
                 ) : (
@@ -536,7 +536,7 @@ export default function LawFirmServicesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-5 text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded transition-all ml-1"
+                      className="h-5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded transition-all ml-1"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
@@ -682,7 +682,7 @@ export default function LawFirmServicesPage() {
                   )} onClick={() => setAreaData(prev => ({ ...prev, onlineOnly: !prev.onlineOnly }))}>
                     <div className="flex items-center gap-3">
                       <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
-                        <div className="h-5 w-5 flex items-center justify-center font-bold text-[10px]">WEB</div>
+                        <div className="h-5 w-5 flex items-center justify-center font-bold text-sm">WEB</div>
                       </div>
                       <div>
                         <p className="font-semibold text-sm">Tylko online</p>
@@ -738,7 +738,7 @@ export default function LawFirmServicesPage() {
 
                             return (
                               <div key={vId} className="mb-4 last:mb-0">
-                                <div className="text-[10px] font-bold text-muted-foreground mb-2 flex items-center gap-2">
+                                <div className="text-sm font-bold text-muted-foreground mb-2 flex items-center gap-2">
                                   <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                                   {vName}
                                 </div>
@@ -749,7 +749,7 @@ export default function LawFirmServicesPage() {
                                       Ładowanie miast...
                                     </div>
                                   ) : cities.length === 0 ? (
-                                    <div className="py-2 text-[10px] italic text-muted-foreground">Brak miast w bazie.</div>
+                                    <div className="py-2 text-sm italic text-muted-foreground">Brak miast w bazie.</div>
                                   ) : (
                                     cities.map(city => (
                                       <div key={city.id} className={cn(
@@ -791,7 +791,7 @@ export default function LawFirmServicesPage() {
             <CardContent className="space-y-5">
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-medium">
+                  <div className="flex justify-between text-base font-medium">
                     <span className="text-muted-foreground flex items-center gap-1.5">
                       <Star className="h-3.5 w-3.5 text-primary fill-primary" /> Specjalizacje
                     </span>
@@ -816,7 +816,7 @@ export default function LawFirmServicesPage() {
                 ) : (
                   <>
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-medium">
+                      <div className="flex justify-between text-base font-medium">
                         <span className="text-muted-foreground flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-primary" /> Województwa
                         </span>
@@ -834,7 +834,7 @@ export default function LawFirmServicesPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-medium">
+                      <div className="flex justify-between text-base font-medium">
                         <span className="text-muted-foreground flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-primary" /> Miasta
                         </span>
@@ -866,11 +866,11 @@ export default function LawFirmServicesPage() {
                   <Star className="h-4 w-4 text-primary" />
                   Kolejność
                 </CardTitle>
-                <Badge variant="secondary" className="text-[10px]">
+                <Badge variant="secondary" className="text-base">
                   {selectedCategories.length} / {maxCategories}
                 </Badge>
               </div>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-sm">
                 Przeciągnij elementy, aby ustalić ich kolejność. Główna specjalizacja (oznaczona gwiazdką) musi pozostać na pierwszym miejscu.
               </CardDescription>
             </CardHeader>
@@ -879,7 +879,7 @@ export default function LawFirmServicesPage() {
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl bg-muted/20">
                   <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-primary" />
                   <p className="font-semibold text-xs">Brak specjalizacji</p>
-                  <p className="text-[10px] text-center px-4 mt-1">Wybierz je z listy po lewej stronie</p>
+                  <p className="text-sm text-center px-4 mt-1">Wybierz je z listy po lewej stronie</p>
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

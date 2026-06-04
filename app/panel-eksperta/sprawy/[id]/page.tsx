@@ -368,7 +368,7 @@ export default function LawFirmCaseDetailsPage() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold text-white truncate" title={fileName}>{fileName}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase mt-0.5">
+                            <p className="text-sm text-muted-foreground uppercase mt-0.5">
                               {fileExtension}
                             </p>
                           </div>
@@ -427,7 +427,7 @@ export default function LawFirmCaseDetailsPage() {
                     <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30">
                       <User className="h-4.5 w-4.5 mr-3 text-[#d7b56d] flex-shrink-0" />
                       <div className="flex flex-col min-w-0">
-                        <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
+                        <span className="text-sm text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
                         <span className="font-semibold text-white text-xs leading-none truncate">
                           {caseData.imieNazwisko}
                         </span>
@@ -441,7 +441,7 @@ export default function LawFirmCaseDetailsPage() {
                     >
                       <Mail className="h-4.5 w-4.5 mr-3 text-[#0da192] flex-shrink-0 group-hover:scale-105 transition-transform" />
                       <div className="flex flex-col min-w-0">
-                        <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Adres email</span>
+                        <span className="text-sm text-muted-foreground/75 leading-none mb-1">Adres email</span>
                         <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-[#0da192] transition-colors">
                           {caseData.emailKontakt}
                         </span>
@@ -455,7 +455,7 @@ export default function LawFirmCaseDetailsPage() {
                     >
                       <Phone className="h-4.5 w-4.5 mr-3 text-[#0da192] flex-shrink-0 group-hover:scale-105 transition-transform" />
                       <div className="flex flex-col min-w-0">
-                        <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
+                        <span className="text-sm text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
                         <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-[#0da192] transition-colors">
                           {caseData.telefonKontakt}
                         </span>
@@ -480,7 +480,7 @@ export default function LawFirmCaseDetailsPage() {
                   <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/10 px-3.5 py-3 rounded-xl border border-border/20">
                     <User className="h-4.5 w-4.5 mr-3 text-zinc-500 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
+                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
                       <span className="font-semibold text-white text-xs leading-none truncate">
                         {caseData.imieNazwisko}
                       </span>
@@ -491,7 +491,7 @@ export default function LawFirmCaseDetailsPage() {
                   <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/10 px-3.5 py-3 rounded-xl border border-border/20">
                     <Mail className="h-4.5 w-4.5 mr-3 text-zinc-500 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Adres email</span>
+                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Adres email</span>
                       <span className="font-semibold text-white text-xs leading-none truncate">
                         {caseData.emailKontakt}
                       </span>
@@ -502,7 +502,7 @@ export default function LawFirmCaseDetailsPage() {
                   <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/10 px-3.5 py-3 rounded-xl border border-border/20">
                     <Phone className="h-4.5 w-4.5 mr-3 text-zinc-500 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[10px] text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
+                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
                       <span className="font-semibold text-white text-xs leading-none truncate">
                         {caseData.telefonKontakt}
                       </span>
@@ -574,7 +574,7 @@ export default function LawFirmCaseDetailsPage() {
                         </div>
                       </div>
                       <div className="p-4 bg-[#0da192]/10 border border-[#0da192]/20 rounded-xl flex flex-col justify-between">
-                        <span className="text-[10px] text-[#0da192] uppercase font-bold tracking-wider">Szacowana kwota brutto</span>
+                        <span className="text-sm text-[#0da192] uppercase font-bold tracking-wider">Szacowana kwota brutto</span>
                         <span className="text-2xl font-black text-white mt-1">
                           {formatCurrency(calculateBrutto())}
                         </span>
@@ -633,7 +633,7 @@ export default function LawFirmCaseDetailsPage() {
                         placeholder="Opisz szczegółowo swoją ofertę, swoje doświadczenie w tego typu sprawach, proponowane podejście oraz to, jak możesz pomóc klientowi..."
                         required
                       />
-                      <div className="flex justify-between items-center text-[10px] text-muted-foreground/75 px-1">
+                      <div className="flex justify-between items-center text-sm text-muted-foreground/75 px-1">
                         <span>Min. 200 znaków</span>
                         <span className={cn(offerForm.opisOferty.length >= 200 ? "text-emerald-400 font-semibold" : "text-amber-500")}>
                           {offerForm.opisOferty.length} znaków

@@ -157,19 +157,19 @@ export default function ClientConsultationsPage() {
                             <span className="font-semibold text-base text-white truncate">{booking.lawFirm.nazwa}</span>
 
                             <div className="flex flex-wrap gap-2">
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-[10px]">
+                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                                 <Calendar className="h-3 w-3" />
                                 {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
                               </Badge>
-                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-[10px]">
+                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                                 <Clock className="h-3 w-3" />
                                 {booking.duration} min
                               </Badge>
-                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-[10px] max-w-[200px] truncate" title={booking.topic}>
+                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm max-w-[200px] truncate" title={booking.topic}>
                                 <FileText className="h-3 w-3" />
                                 {booking.topic}
                               </Badge>
-                              <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-[10px]">
+                              <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
                                 <CreditCard className="h-3 w-3" />
                                 {booking.price.toFixed(2)} zł
                               </Badge>
@@ -177,17 +177,17 @@ export default function ClientConsultationsPage() {
 
                             <div className="flex flex-wrap gap-2">
                               {booking.status === 'ACCEPTED' ? (
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] py-0 px-2 rounded-md">Zaakceptowana</Badge>
+                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zaakceptowana</Badge>
                               ) : booking.status === 'REJECTED' ? (
-                                <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[9px] py-0 px-2 rounded-md">Odrzucona</Badge>
+                                <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-sm py-0 px-2 rounded-md">Odrzucona</Badge>
                               ) : (
-                                <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[9px] py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
+                                <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-sm py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
                               )}
 
                               {booking.paymentStatus === 'ZAPLACONE' ? (
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] py-0 px-2 rounded-md">Zapłacona</Badge>
+                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
                               ) : (
-                                <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[9px] py-0 px-2 rounded-md">Nieopłacona</Badge>
+                                <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
                               )}
                             </div>
 
@@ -200,7 +200,7 @@ export default function ClientConsultationsPage() {
                                 </a>
                               </div>
                             ) : (
-                              <p className="text-[10px] text-zinc-500 italic font-light mt-1">Link do wirtualnego pokoju spotkania (Google Meet) pojawi się tutaj po zaakceptowaniu rezerwacji.</p>
+                              <p className="text-sm text-zinc-500 italic font-light mt-1">Link do wirtualnego pokoju spotkania (Google Meet) pojawi się tutaj po zaakceptowaniu rezerwacji.</p>
                             )}
                           </div>
                         </div>

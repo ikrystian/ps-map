@@ -259,14 +259,14 @@ export default function InvoicesPage() {
                                     <div className="font-semibold text-zinc-200">
                                       {invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}
                                     </div>
-                                    <div className="text-[10px] text-zinc-500 font-light">
+                                    <div className="text-sm text-zinc-500 font-light">
                                       Zamówienie: {invoice.order.orderNumber}
                                     </div>
                                   </div>
                                 ) : (
                                   <div>
                                     <div className="font-semibold text-zinc-200">Pakiet punktów</div>
-                                    <div className="text-[10px] text-zinc-500 font-light">
+                                    <div className="text-sm text-zinc-500 font-light">
                                       Zamówienie: {invoice.order.orderNumber}
                                     </div>
                                   </div>
@@ -275,7 +275,7 @@ export default function InvoicesPage() {
                               <TableCell className="py-4 px-6 font-light">{formatCurrency(invoice.netAmount)}</TableCell>
                               <TableCell className="py-4 px-6 font-light text-xs text-zinc-400">
                                 {formatCurrency(invoice.vatAmount)}
-                                <span className="text-[10px] text-zinc-500 ml-1">
+                                <span className="text-sm text-zinc-500 ml-1">
                                   ({invoice.vatRate}%)
                                 </span>
                               </TableCell>
@@ -296,7 +296,7 @@ export default function InvoicesPage() {
                                       Zaakceptowano
                                     </Badge>
                                     {invoice.ksefNumber && (
-                                      <div className="text-[9px] font-mono text-zinc-500 break-all max-w-[140px]" title={invoice.ksefNumber}>
+                                      <div className="text-sm font-mono text-zinc-500 break-all max-w-[140px]" title={invoice.ksefNumber}>
                                         {invoice.ksefNumber}
                                       </div>
                                     )}
@@ -325,7 +325,7 @@ export default function InvoicesPage() {
                                       Błąd wysyłki
                                     </Badge>
                                     {invoice.ksefDiagnostics && (
-                                      <div className="text-[9px] text-rose-400 max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
+                                      <div className="text-sm text-rose-400 max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
                                         {invoice.ksefDiagnostics}
                                       </div>
                                     )}
@@ -383,26 +383,26 @@ export default function InvoicesPage() {
                               <h4 className="font-semibold text-white text-sm">
                                 {invoice.invoiceNumber}
                               </h4>
-                              <p className="text-[10px] text-zinc-500 font-light mt-0.5">{formatDate(invoice.issueDate)}</p>
+                              <p className="text-sm text-zinc-500 font-light mt-0.5">{formatDate(invoice.issueDate)}</p>
                             </div>
-                            <Badge className={cn("gap-1 py-0.5 rounded-md font-medium text-[10px]", statusInfo.className)}>
+                            <Badge className={cn("gap-1 py-0.5 rounded-md font-medium text-sm", statusInfo.className)}>
                               <StatusIcon className="h-3 w-3" />
                               {statusInfo.label}
                             </Badge>
                           </div>
 
                           <div className="border-t border-border/5 pt-2">
-                            <span className="text-[10px] text-zinc-500 block font-light">Przedmiot</span>
+                            <span className="text-sm text-zinc-500 block font-light">Przedmiot</span>
                             <span className="text-zinc-200 font-semibold text-xs">
                               {invoice.order.orderType === "SUBSCRIPTION"
                                 ? (invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji")
                                 : "Pakiet punktów"
                               }
                             </span>
-                            <p className="text-[9px] text-zinc-500">Zamówienie: {invoice.order.orderNumber}</p>
+                            <p className="text-sm text-zinc-500">Zamówienie: {invoice.order.orderNumber}</p>
                           </div>
 
-                          <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
+                          <div className="flex justify-between items-center border-t border-border/5 pt-2 text-sm">
                             <div>
                               <span className="text-zinc-500 block font-light">Kwota netto</span>
                               <span className="text-zinc-300 font-medium">{formatCurrency(invoice.netAmount)}</span>
@@ -416,28 +416,28 @@ export default function InvoicesPage() {
                           {/* KSeF Status on Mobile */}
                           <div className="flex items-center justify-between border-t border-border/5 pt-2.5">
                             <div>
-                              <span className="text-zinc-500 block font-light text-[9px]">Status KSeF</span>
+                              <span className="text-zinc-500 block font-light text-sm">Status KSeF</span>
                               <div className="mt-1">
                                 {invoice.ksefStatus === "ACCEPTED" && (
-                                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 px-2 text-sm">
                                     <CheckCircle2 className="h-3 w-3" />
                                     Zaakceptowano
                                   </Badge>
                                 )}
                                 {invoice.ksefStatus === "SENT" && (
-                                  <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                  <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 px-2 text-sm">
                                     <Clock className="h-3 w-3 animate-pulse" />
                                     Wysłano
                                   </Badge>
                                 )}
                                 {invoice.ksefStatus === "PENDING" && (
-                                  <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                  <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 px-2 text-sm">
                                     <Loader2 className="h-3 w-3 animate-spin" />
                                     Przetwarzanie
                                   </Badge>
                                 )}
                                 {invoice.ksefStatus === "FAILED" && (
-                                  <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 px-2 text-[9px]">
+                                  <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 px-2 text-sm">
                                     <XCircle className="h-3 w-3" />
                                     Błąd wysyłki
                                   </Badge>
@@ -446,7 +446,7 @@ export default function InvoicesPage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-[10px] text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-md p-1 h-auto flex items-center gap-1"
+                                    className="text-sm text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-md p-1 h-auto flex items-center gap-1"
                                     onClick={() => handleSendToKsef(invoice.id)}
                                     disabled={syncingId === invoice.id}
                                   >
@@ -465,7 +465,7 @@ export default function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleDownload(invoice)}
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1 text-[10px]"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1 text-sm"
                             >
                               <Download className="h-3.5 w-3.5" />
                               Pobierz PDF
@@ -492,7 +492,7 @@ export default function InvoicesPage() {
                         <FileText className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Liczba dokumentów</div>
+                        <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Liczba dokumentów</div>
                         <div className="text-2xl font-bold text-white tracking-tight">{invoices.length}</div>
                       </div>
                     </div>
@@ -502,7 +502,7 @@ export default function InvoicesPage() {
                         <ShieldCheck className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Opłacone faktury</div>
+                        <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Opłacone faktury</div>
                         <div className="text-2xl font-bold text-emerald-400 tracking-tight">
                           {invoices.filter((inv) => inv.status === "PAID").length}
                         </div>
@@ -514,7 +514,7 @@ export default function InvoicesPage() {
                         <Coins className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Łączna kwota brutto</div>
+                        <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Łączna kwota brutto</div>
                         <div className="text-2xl font-bold text-white tracking-tight">
                           {formatCurrency(
                             invoices.reduce((sum, inv) => sum + inv.grossAmount, 0)

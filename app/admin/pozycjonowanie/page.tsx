@@ -348,22 +348,20 @@ export default function AdminPozycjonowaniePage() {
           <button
             key={c.value}
             onClick={() => setContext(c.value)}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-              context === c.value
-                ? "bg-primary text-primary-foreground shadow"
-                : "text-muted-foreground hover:text-foreground hover:bg-zinc-800/40"
-            }`}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${context === c.value
+              ? "bg-primary text-primary-foreground shadow"
+              : "text-muted-foreground hover:text-foreground hover:bg-zinc-800/40"
+              }`}
           >
             {c.label}
           </button>
         ))}
         <button
           onClick={() => setContext("OVERVIEW")}
-          className={`px-4 py-2 text-sm font-bold rounded-md transition-all duration-200 flex items-center gap-1.5 ${
-            context === "OVERVIEW"
-              ? "bg-amber-600 text-white shadow"
-              : "text-amber-500 hover:text-amber-400 hover:bg-zinc-800/40"
-          }`}
+          className={`px-4 py-2 text-sm font-bold rounded-md transition-all duration-200 flex items-center gap-1.5 ${context === "OVERVIEW"
+            ? "bg-amber-600 text-white shadow"
+            : "text-amber-500 hover:text-amber-400 hover:bg-zinc-800/40"
+            }`}
         >
           <Layers className="h-4 w-4" />
           Centralny Rejestr Interwencji
@@ -441,7 +439,7 @@ export default function AdminPozycjonowaniePage() {
                   <p className="text-sm text-muted-foreground mt-2">
                     Ta sekcja na stronie głównej wyświetla wyłącznie kancelarie z aktywną promocją typu{" "}
                     <strong>Polecani Prawnicy (POLECANI_PRAWNICY)</strong> lub <strong>Najczęściej Konsultowane
-                    (NAJCZESCIEJ_KONSULTOWANE)</strong>. Domyślnie sortowane są one według **daty zakupu usługi** (najnowsze
+                      (NAJCZESCIEJ_KONSULTOWANE)</strong>. Domyślnie sortowane są one według **daty zakupu usługi** (najnowsze
                     zakupy u góry).
                   </p>
                 )}
@@ -690,11 +688,10 @@ export default function AdminPozycjonowaniePage() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                          className={`p-6 flex flex-col xl:flex-row gap-6 items-start xl:items-center justify-between transition-colors ${
-                            hasOverride
-                              ? "bg-amber-600/5 hover:bg-amber-600/10 border-l-[4px] border-amber-500"
-                              : "hover:bg-zinc-800/20"
-                          }`}
+                          className={`p-6 flex flex-col xl:flex-row gap-6 items-start xl:items-center justify-between transition-colors ${hasOverride
+                            ? "bg-amber-600/5 hover:bg-amber-600/10 border-l-[4px] border-amber-500"
+                            : "hover:bg-zinc-800/20"
+                            }`}
                         >
                           {/* Left: Position Indicator & Avatar */}
                           <div className="flex items-center gap-4 flex-shrink-0">
@@ -709,7 +706,7 @@ export default function AdminPozycjonowaniePage() {
                                   className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-amber-600 flex items-center justify-center border border-background shadow"
                                   title={`Pozycja algorytmiczna: #${firm.originalPosition}`}
                                 >
-                                  <span className="text-[10px] font-bold text-white font-mono">
+                                  <span className="text-sm font-bold text-white font-mono">
                                     {firm.originalPosition}
                                   </span>
                                 </div>
@@ -733,7 +730,7 @@ export default function AdminPozycjonowaniePage() {
                                   <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
                                 )}
                                 {firm.pakietSubskrypcji && (
-                                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${getSubBadgeColor(firm.pakietSubskrypcji)}`}>
+                                  <Badge variant="outline" className={`text-sm px-1.5 py-0 ${getSubBadgeColor(firm.pakietSubskrypcji)}`}>
                                     {firm.pakietSubskrypcji}
                                   </Badge>
                                 )}
@@ -743,12 +740,12 @@ export default function AdminPozycjonowaniePage() {
                               </p>
                               <div className="flex flex-wrap gap-1 pt-1">
                                 {firm.categories.slice(0, 3).map((c) => (
-                                  <span key={c} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-mono">
+                                  <span key={c} className="text-sm px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-mono">
                                     {c}
                                   </span>
                                 ))}
                                 {firm.categories.length > 3 && (
-                                  <span className="text-[10px] text-muted-foreground px-1">+{firm.categories.length - 3}</span>
+                                  <span className="text-sm text-muted-foreground px-1">+{firm.categories.length - 3}</span>
                                 )}
                               </div>
                             </div>
@@ -760,29 +757,29 @@ export default function AdminPozycjonowaniePage() {
                             {context === "SEARCH" && (
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1.5 border-r border-border/40 pr-6 w-full sm:w-auto">
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Award className="h-3 w-3 text-emerald-500" /> Weryfikacja
                                   </span>
                                   <span className="text-sm font-mono text-foreground font-semibold">{firm.baseScore}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Eye className="h-3 w-3 text-sky-500" /> Wyświetlenia
                                   </span>
                                   <span className="text-sm font-mono text-foreground font-semibold">
-                                    {firm.viewScore} <span className="text-[10px] text-muted-foreground/60">({firm.wyswietleniaProfilu})</span>
+                                    {firm.viewScore} <span className="text-sm text-muted-foreground/60">({firm.wyswietleniaProfilu})</span>
                                   </span>
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Star className="h-3 w-3 text-amber-500" /> Ocena
                                   </span>
                                   <span className="text-sm font-mono text-foreground font-semibold">
-                                    {firm.ratingScore} <span className="text-[10px] text-muted-foreground/60">({firm.avgRating})</span>
+                                    {firm.ratingScore} <span className="text-sm text-muted-foreground/60">({firm.avgRating})</span>
                                   </span>
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Sparkles className="h-3 w-3 text-purple-500" /> Mnożnik
                                   </span>
                                   <span className="text-sm font-mono text-purple-400 font-bold">x{firm.boostMultiplier}</span>
@@ -794,7 +791,7 @@ export default function AdminPozycjonowaniePage() {
                             <div className="flex flex-row sm:flex-col gap-6 sm:gap-2.5 w-full sm:w-auto xl:min-w-[150px] justify-between sm:justify-start">
                               {context === "SEARCH" && (
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Wynik (Score)</span>
+                                  <span className="text-sm text-muted-foreground uppercase font-semibold">Wynik (Score)</span>
                                   <span className="text-lg font-black text-primary font-mono leading-none mt-0.5">
                                     {firm.finalScore}
                                   </span>
@@ -802,20 +799,20 @@ export default function AdminPozycjonowaniePage() {
                               )}
                               <div className="flex items-center gap-6 sm:gap-4">
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Coins className="h-3 w-3 text-yellow-500" /> Portfel
                                   </span>
                                   <span className="text-xs font-bold text-foreground font-mono leading-none mt-0.5">
-                                    {firm.punktySaldo} <span className="text-[9px] font-normal text-muted-foreground">pkt</span>
+                                    {firm.punktySaldo} <span className="text-sm font-normal text-muted-foreground">pkt</span>
                                   </span>
                                 </div>
 
                                 <div className="flex flex-col">
-                                  <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-0.5">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <TrendingUp className="h-3 w-3 text-rose-500" /> Wydano na prom.
                                   </span>
                                   <span className="text-xs font-black text-rose-400 font-mono leading-none mt-0.5">
-                                    {firm.totalSpentPoints} <span className="text-[9px] font-normal text-muted-foreground">pkt</span>
+                                    {firm.totalSpentPoints} <span className="text-sm font-normal text-muted-foreground">pkt</span>
                                   </span>
                                 </div>
                               </div>
@@ -823,7 +820,7 @@ export default function AdminPozycjonowaniePage() {
 
                             {/* Active Promotions Details */}
                             <div className="flex flex-col gap-1 w-full sm:w-auto sm:min-w-[200px]">
-                              <span className="text-[10px] text-muted-foreground uppercase">Aktywne usługi promowania</span>
+                              <span className="text-sm text-muted-foreground uppercase">Aktywne usługi promowania</span>
                               {firm.activePromotions.length === 0 ? (
                                 <span className="text-xs text-muted-foreground/60 italic font-medium">Brak aktywnego promowania</span>
                               ) : (
@@ -832,13 +829,13 @@ export default function AdminPozycjonowaniePage() {
                                     <Badge
                                       key={p.id}
                                       variant="outline"
-                                      className={`text-[10px] px-1.5 py-0.5 flex items-center gap-1 ${getPromoBadgeColor(
+                                      className={`text-sm px-1.5 py-0.5 flex items-center gap-1 ${getPromoBadgeColor(
                                         p.typPromocji
                                       )}`}
                                       title={`Koszt: ${p.kosztPunktow} pkt | Do: ${new Date(p.koniecPromocji).toLocaleDateString()}`}
                                     >
                                       {getPromoLabel(p.typPromocji)}
-                                      <span className="opacity-60 text-[9px]">({p.kosztPunktow}p)</span>
+                                      <span className="opacity-60 text-sm">({p.kosztPunktow}p)</span>
                                     </Badge>
                                   ))}
                                 </div>
@@ -851,7 +848,7 @@ export default function AdminPozycjonowaniePage() {
                             {/* Position input override */}
                             <div className="flex items-center gap-2">
                               <div className="flex flex-col">
-                                <Label className="text-[10px] text-muted-foreground uppercase mb-1">Ręczny rank</Label>
+                                <Label className="text-sm text-muted-foreground uppercase mb-1">Ręczny rank</Label>
                                 <div className="flex items-center">
                                   <Button
                                     variant="outline"
@@ -890,7 +887,7 @@ export default function AdminPozycjonowaniePage() {
                               </div>
 
                               <div className="flex flex-col flex-1 min-w-[120px] md:min-w-[160px]">
-                                <Label className="text-[10px] text-muted-foreground uppercase mb-1">Notatka interwencji</Label>
+                                <Label className="text-sm text-muted-foreground uppercase mb-1">Notatka interwencji</Label>
                                 <Input
                                   placeholder="Notatka (np. VIP)..."
                                   className="h-8 text-xs"

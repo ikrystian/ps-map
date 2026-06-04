@@ -214,9 +214,8 @@ export default function AdminReviewsPage() {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`h-3 w-3 ${
-              i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-            }`}
+            className={`h-3 w-3 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+              }`}
           />
         ))}
         <span className="ml-1 text-sm font-medium">{rating}</span>
@@ -351,7 +350,7 @@ export default function AdminReviewsPage() {
                       <div className="flex items-center gap-2">
                         <div className="truncate">{review.tytulOpinii}</div>
                         {review.reports && review.reports.length > 0 && (
-                          <Badge variant="destructive" className="h-5 px-1.5 text-[10px] shrink-0">
+                          <Badge variant="destructive" className="h-5 px-1.5 text-sm shrink-0">
                             Zgłoszona ({review.reports.length})
                           </Badge>
                         )}
@@ -371,7 +370,7 @@ export default function AdminReviewsPage() {
                                   &quot;{report.description}&quot;
                                 </div>
                               )}
-                              <div className="text-[9px] text-muted-foreground/85 mt-1">
+                              <div className="text-sm text-muted-foreground/85 mt-1">
                                 Przez: {report.user.email} • {formatDate(report.createdAt)}
                               </div>
                             </div>

@@ -428,7 +428,7 @@ export default function ClientProfilePage() {
                               <p className="mb-1 text-xs text-zinc-300">
                                 <span className="font-semibold text-[#0da192]">Prześlij</span> avatar
                               </p>
-                              <p className="text-[10px] text-muted-foreground">
+                              <p className="text-sm text-muted-foreground">
                                 PNG, JPG, WEBP (max 5MB)
                               </p>
                             </>
@@ -516,7 +516,7 @@ export default function ClientProfilePage() {
                       <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/30 bg-background/20 p-3 gap-3">
                         <div className="space-y-0.5">
                           <FormLabel className="text-xs text-white">Newsletter</FormLabel>
-                          <FormDescription className="text-[10px] text-zinc-400">
+                          <FormDescription className="text-sm text-zinc-400">
                             Porady prawne i nowości.
                           </FormDescription>
                         </div>
@@ -538,7 +538,7 @@ export default function ClientProfilePage() {
                       <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/30 bg-background/20 p-3 gap-3">
                         <div className="space-y-0.5">
                           <FormLabel className="text-xs text-white">Komunikacja marketingowa</FormLabel>
-                          <FormDescription className="text-[10px] text-zinc-400">
+                          <FormDescription className="text-sm text-zinc-400">
                             Promocje i oferty specjalne.
                           </FormDescription>
                         </div>
@@ -725,7 +725,7 @@ export default function ClientProfilePage() {
                   <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
                     <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail konta</span>
+                      <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail konta</span>
                       <span className="text-sm font-semibold text-white truncate block">{clientData?.user.email}</span>
                     </div>
                     <div title="Zablokowane edytowanie" className="ml-auto shrink-0 flex items-center justify-center">

@@ -281,7 +281,7 @@ export default function HelpCenterPage() {
                           <div className="min-w-0">
                             <span className="leading-snug">{question.pytanie}</span>
                             <div className="mt-1">
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-[9px] font-medium py-0 px-2 rounded-md">
+                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-sm font-medium py-0 px-2 rounded-md">
                                 {question.categoryName}
                               </Badge>
                             </div>

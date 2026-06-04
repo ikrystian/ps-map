@@ -172,7 +172,7 @@ export function EnhancedConversationList({
               {conversation.otherUser.name}
             </p>
             {conversation.lastMessage && (
-              <span className="text-[10px] text-zinc-500 font-light flex-shrink-0 ml-2">
+              <span className="text-sm text-zinc-500 font-light flex-shrink-0 ml-2">
                 {formatTime(conversation.lastMessage.createdAt)}
               </span>
             )}
@@ -201,7 +201,7 @@ export function EnhancedConversationList({
             {conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe && (
               <Badge
                 className={cn(
-                  "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-[10px] font-bold text-white shadow-md border-t border-white/10 animate-pulse shrink-0",
+                  "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-sm font-bold text-white shadow-md border-t border-white/10 animate-pulse shrink-0",
                   isClient ? "bg-[#0da192]" : "bg-[#0da192]"
                 )}
               >
@@ -329,13 +329,13 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="active"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "active" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
             )}
           >
             Czaty
             {conversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {conversations.length}
               </Badge>
             )}
@@ -343,13 +343,13 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="archived"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "archived" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
             )}
           >
             Archiwum
             {archivedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {archivedConversations.length}
               </Badge>
             )}
@@ -357,13 +357,13 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="deleted"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "deleted" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
             )}
           >
             Kosz
             {deletedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {deletedConversations.length}
               </Badge>
             )}

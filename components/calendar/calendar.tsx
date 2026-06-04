@@ -215,7 +215,7 @@ export function CalendarScheduler({
         {view === "agenda" && <AgendaView {...sharedProps} />}
       </div>
 
-      <div className="flex items-center gap-4 px-4 py-2 border-t bg-muted/20 w-full text-[10px] text-muted-foreground flex-wrap">
+      <div className="flex items-center gap-4 px-4 py-2 border-t bg-muted/20 w-full text-sm text-muted-foreground flex-wrap">
         {/*<span className="flex items-center gap-1.5">
 					<span className="h-2 w-2 rounded-sm bg-emerald-400/70" /> Available
 				</span>

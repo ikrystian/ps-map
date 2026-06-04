@@ -1091,7 +1091,7 @@ export default function LawFirmProfilePage() {
                       {/* Voivodeships */}
                       {lawFirm.voivodeships.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
+                          <p className="text-sm font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.voivodeships.map((v, index) => (
                               <Badge key={index} variant="outline" className="bg-background/50">
@@ -1105,7 +1105,7 @@ export default function LawFirmProfilePage() {
                       {/* Cities */}
                       {lawFirm.cities.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
+                          <p className="text-sm font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.cities.map((c, index) => (
                               <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10">

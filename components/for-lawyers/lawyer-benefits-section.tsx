@@ -9,7 +9,7 @@ export function LawyerBenefitsSection() {
         <section className="bg-[#222222] text-white py-24">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-4 font-medium">
+                    <p className="text-sm uppercase tracking-widest text-gray-400 mb-4 font-medium">
                         Zyskaj klientów
                     </p>
                     <h2 className="text-4xl md:text-5xl ">

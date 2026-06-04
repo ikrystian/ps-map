@@ -280,7 +280,7 @@ export default function AdminModulesPage() {
     setSelectedModule(module)
     setPreviewMode("visual")
     setViewportDevice("desktop")
-    
+
     // Parse fields and initialize live values
     const parsed = parseModuleCode(module.code)
     const initialValues: Record<string, any> = {}
@@ -635,11 +635,10 @@ export default function AdminModulesPage() {
                     <button
                       type="button"
                       onClick={() => setViewportDevice("desktop")}
-                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
-                        viewportDevice === "desktop"
+                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewportDevice === "desktop"
                           ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                           : "text-slate-400 hover:text-slate-200"
-                      }`}
+                        }`}
                     >
                       <Monitor className="h-3.5 w-3.5" />
                       <span>Desktop</span>
@@ -647,11 +646,10 @@ export default function AdminModulesPage() {
                     <button
                       type="button"
                       onClick={() => setViewportDevice("tablet")}
-                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
-                        viewportDevice === "tablet"
+                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewportDevice === "tablet"
                           ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                           : "text-slate-400 hover:text-slate-200"
-                      }`}
+                        }`}
                     >
                       <Tablet className="h-3.5 w-3.5" />
                       <span>Tablet</span>
@@ -659,11 +657,10 @@ export default function AdminModulesPage() {
                     <button
                       type="button"
                       onClick={() => setViewportDevice("mobile")}
-                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
-                        viewportDevice === "mobile"
+                      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewportDevice === "mobile"
                           ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                           : "text-slate-400 hover:text-slate-200"
-                      }`}
+                        }`}
                     >
                       <Smartphone className="h-3.5 w-3.5" />
                       <span>Mobilny</span>
@@ -707,8 +704,8 @@ export default function AdminModulesPage() {
                             viewportDevice === "desktop"
                               ? "100%"
                               : viewportDevice === "tablet"
-                              ? "768px"
-                              : "375px",
+                                ? "768px"
+                                : "375px",
                           height: viewportDevice === "desktop" ? "100%" : "667px",
                           maxHeight: "100%",
                         }}
@@ -722,7 +719,7 @@ export default function AdminModulesPage() {
                             <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
                           </div>
                           {/* Address Bar mock */}
-                          <div className="mx-auto max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-md py-0.5 px-3 text-[10px] text-slate-500 text-center truncate">
+                          <div className="mx-auto max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-md py-0.5 px-3 text-sm text-slate-500 text-center truncate">
                             https://prosta-sprawa.pl/modules/{selectedModule.name.toLowerCase().replace(/\s+/g, '-')}
                           </div>
                         </div>

@@ -134,7 +134,7 @@ export function NewPromotionDialog({
 
           {/* Czas trwania */}
           {selectedType &&
-          (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
+            (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Czas trwania
@@ -327,7 +327,7 @@ export function NewPromotionDialog({
 
           {/* Data startu / Wybór miesiąca */}
           {selectedType &&
-          (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
+            (selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE") ? (
             <div className="space-y-2">
               <Label
                 htmlFor="target-month"
@@ -393,7 +393,7 @@ export function NewPromotionDialog({
                   >
                     Automatyczne odnowienie po zakończeniu
                   </Label>
-                  <p className="text-[10px] text-muted-foreground leading-normal">
+                  <p className="text-sm text-muted-foreground leading-normal">
                     Po zakończeniu kampanii system automatycznie pobierze punkty i przedłuży
                     promocję na kolejny taki sam okres, gwarantując stałą obecność.
                   </p>
@@ -468,8 +468,8 @@ export function NewPromotionDialog({
               <span>Czas trwania promowania</span>
               <span className="text-white font-medium">
                 {selectedType &&
-                (selectedType === "POLECANI_PRAWNICY" ||
-                  selectedType === "NAJCZESCIEJ_KONSULTOWANE")
+                  (selectedType === "POLECANI_PRAWNICY" ||
+                    selectedType === "NAJCZESCIEJ_KONSULTOWANE")
                   ? "1 miesiąc kalendarzowy"
                   : `${duration} dni`}
               </span>
@@ -486,7 +486,7 @@ export function NewPromotionDialog({
               <span className="text-xl font-bold text-[#0da192]">{cost} pkt</span>
             </div>
 
-            <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1">
+            <div className="flex justify-between items-center text-sm text-muted-foreground pt-1">
               <span>Dostępne saldo: {lawFirm?.punktySaldo || 0} pkt</span>
               {lawFirm && (
                 <span
@@ -506,7 +506,7 @@ export function NewPromotionDialog({
               <AlertCircle className="h-4.5 w-4.5 mt-0.5 flex-shrink-0" />
               <div className="space-y-1">
                 <p className="font-bold">Niewystarczająca ilość punktów na koncie.</p>
-                <p className="text-[10px] text-red-400/80 leading-normal">
+                <p className="text-sm text-red-400/80 leading-normal">
                   Zasilono konto mniejszą liczbą punktów niż wymagana dla tej kampanii. Kliknij
                   anuluj i zakup dodatkowe punkty w panelu.
                 </p>

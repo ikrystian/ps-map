@@ -75,7 +75,7 @@ export function ConfirmPromotionDialog({
               <span className="text-muted-foreground">Okres ważności:</span>
               <span className="font-semibold text-white">
                 {selectedType === "POLECANI_PRAWNICY" ||
-                selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+                  selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                   ? "1 miesiąc kalendarzowy"
                   : `${duration} dni`}
               </span>
@@ -84,12 +84,12 @@ export function ConfirmPromotionDialog({
               <span className="text-muted-foreground">Rozpoczęcie:</span>
               <span className="font-semibold text-white">
                 {selectedType === "POLECANI_PRAWNICY" ||
-                selectedType === "NAJCZESCIEJ_KONSULTOWANE"
+                  selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                   ? startDate
                     ? new Date(startDate).toLocaleDateString("pl-PL", {
-                        month: "long",
-                        year: "numeric",
-                      })
+                      month: "long",
+                      year: "numeric",
+                    })
                     : "-"
                   : startDate
                     ? formatDate(new Date(startDate))
@@ -105,9 +105,9 @@ export function ConfirmPromotionDialog({
                     ? selectedCategory
                     : selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                       ? MOST_CONSULTED_CATEGORIES.find((c) => c.id === selectedCategory)?.name ||
-                        selectedCategory
+                      selectedCategory
                       : categories.find((c) => c.id === selectedCategory)?.nazwa ||
-                        selectedCategory}
+                      selectedCategory}
                 </span>
               </div>
             )}
@@ -137,7 +137,7 @@ export function ConfirmPromotionDialog({
               <span className="text-xs text-muted-foreground">Pobierane punkty:</span>
               <span className="font-extrabold text-lg text-[#0da192]">{cost} pkt</span>
             </div>
-            <div className="flex justify-between items-center text-[10px] text-muted-foreground pt-1 border-t border-[#3e3e38]/40">
+            <div className="flex justify-between items-center text-sm text-muted-foreground pt-1 border-t border-[#3e3e38]/40">
               <span>Twoje saldo po transakcji:</span>
               <span className="font-semibold text-white">
                 {lawFirm ? lawFirm.punktySaldo - cost : 0} pkt

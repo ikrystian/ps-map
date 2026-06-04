@@ -204,11 +204,10 @@ export function ReviewsSection({
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`${sizeClass} ${
-              star <= roundedRating
+            className={`${sizeClass} ${star <= roundedRating
                 ? "fill-amber-500/80 text-amber-500/80"
                 : "fill-muted text-muted-foreground/30"
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -335,7 +334,7 @@ export function ReviewsSection({
     <div className="space-y-8">
       {/* 1. Header Rating Statistics Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         {/* Card A: Overall Rating Summary */}
         <Card className="relative overflow-hidden bg-gradient-to-b from-card to-card/50 border border-muted shadow-md group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary/3 blur-3xl rounded-full transition-all group-hover:bg-primary/5" />
@@ -384,7 +383,7 @@ export function ReviewsSection({
                       Podziel się swoimi doświadczeniami z pracy z kancelarią <strong>{lawFirmName}</strong>. Twoja opinia pomaga innym użytkownikom podjąć właściwą decyzję.
                     </DialogDescription>
                   </DialogHeader>
-                  
+
                   <form onSubmit={handleReviewSubmit} className="space-y-6 pt-2">
                     {/* Ocena ogólna */}
                     <div className="space-y-2 bg-secondary/30 p-4 rounded-xl border">
@@ -399,11 +398,10 @@ export function ReviewsSection({
                             className="p-1 hover:scale-110 transition-transform focus:outline-none"
                           >
                             <Star
-                              className={`h-8 w-8 ${
-                                star <= reviewForm.ocenaOgolna
+                              className={`h-8 w-8 ${star <= reviewForm.ocenaOgolna
                                   ? "fill-amber-500/80 text-amber-500/80"
                                   : "fill-muted text-muted-foreground/30"
-                              }`}
+                                }`}
                             />
                           </button>
                         ))}
@@ -414,7 +412,7 @@ export function ReviewsSection({
                     <div className="space-y-4">
                       <Label className="text-base font-semibold">Oceny szczegółowe</Label>
                       <p className="text-xs text-muted-foreground -mt-3">Oceń poszczególne aspekty współpracy (skala 1-5):</p>
-                      
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
                           { key: "profesjonalizm", label: "Profesjonalizm", icon: Briefcase },
@@ -443,11 +441,10 @@ export function ReviewsSection({
                                     className="focus:outline-none hover:scale-110 transition-transform"
                                   >
                                     <Star
-                                      className={`h-6 w-6 ${
-                                        star <= val
+                                      className={`h-6 w-6 ${star <= val
                                           ? "fill-amber-500/80 text-amber-500/80"
                                           : "fill-muted text-muted-foreground/30"
-                                      }`}
+                                        }`}
                                     />
                                   </button>
                                 ))}
@@ -560,9 +557,8 @@ export function ReviewsSection({
                 <div
                   key={stars}
                   onClick={() => setRatingFilter(isActive ? null : stars)}
-                  className={`flex items-center gap-3 text-sm cursor-pointer p-1.5 rounded-lg hover:bg-secondary/40 transition-colors ${
-                    isActive ? "bg-primary/5 border border-primary/10" : "border border-transparent"
-                  }`}
+                  className={`flex items-center gap-3 text-sm cursor-pointer p-1.5 rounded-lg hover:bg-secondary/40 transition-colors ${isActive ? "bg-primary/5 border border-primary/10" : "border border-transparent"
+                    }`}
                   title={`Filtruj oceny: ${stars} gwiazdek`}
                 >
                   <button className="flex items-center gap-1 font-medium w-8 text-left hover:text-primary transition-colors">
@@ -582,7 +578,7 @@ export function ReviewsSection({
                 </div>
               )
             })}
-            
+
             {ratingFilter !== null && (
               <div className="pt-2">
                 <Button
@@ -635,7 +631,7 @@ export function ReviewsSection({
 
       {/* 2. Advanced Search, Filter & Sort Controls */}
       <div className="bg-card border rounded-xl p-4 shadow-sm flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        
+
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -649,7 +645,7 @@ export function ReviewsSection({
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3">
-          
+
           {/* Filter by recommendation status */}
           <Select
             value={recommendFilter}
@@ -658,7 +654,7 @@ export function ReviewsSection({
             <SelectTrigger className="w-[170px] bg-background">
               <span className="flex items-center gap-1.5 text-xs font-medium">
                 <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-                Polecane: 
+                Polecane:
                 <span className="text-foreground">
                   {recommendFilter === "ALL" ? "Wszystkie" : recommendFilter === "RECOMMENDED" ? "Tak" : "Nie"}
                 </span>
@@ -724,11 +720,11 @@ export function ReviewsSection({
                 transition={{ duration: 0.3 }}
                 className="bg-card border border-muted hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden"
               >
-                
+
                 {/* Header */}
                 <div className="p-6 border-b border-muted">
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4 justify-between">
-                    
+
                     {/* User Profile */}
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12 border-2 border-border shadow-sm flex-shrink-0">
@@ -748,14 +744,14 @@ export function ReviewsSection({
                               ? "Klient Anonimowy"
                               : `${review.client.imie} ${review.client.nazwisko}`}
                           </span>
-                          
+
                           {/* Verified customer badge */}
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full border border-border">
+                          <span className="inline-flex items-center gap-1 text-sm font-semibold bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full border border-border">
                             <UserCheck className="h-3 w-3" />
                             Zweryfikowana opinia
                           </span>
                         </div>
-                        
+
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Napisano {formatDate(review.createdAt)}
                         </p>
@@ -770,7 +766,7 @@ export function ReviewsSection({
                           {review.ocenaOgolna.toFixed(1)}
                         </span>
                       </div>
-                      
+
                       {/* Thumbs up/down recommendation */}
                       <div className="flex items-center justify-end">
                         {review.polecam ? (
@@ -842,7 +838,7 @@ export function ReviewsSection({
                           <div className="flex items-center justify-between">
                             <p className="text-sm font-bold text-foreground">Odpowiedź kancelarii <strong>{lawFirmName}</strong></p>
                             {review.dataOdpowiedzi && (
-                              <p className="text-[10px] text-muted-foreground">
+                              <p className="text-sm text-muted-foreground">
                                 {formatDate(review.dataOdpowiedzi)}
                               </p>
                             )}

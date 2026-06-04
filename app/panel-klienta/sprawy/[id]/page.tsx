@@ -347,12 +347,12 @@ export default function ClientCaseDetailsPage() {
                 </div>
                 <div className="flex items-center gap-4 bg-zinc-800/30 p-4 rounded-xl border border-border/30">
                   <div className="text-right">
-                    <span className="text-[10px] text-zinc-400 block uppercase font-medium">Ustalony Budżet</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">Ustalony Budżet</span>
                     <span className="text-lg font-bold text-[#d7b56d]">{formatCurrency(acceptedOffer.kwotaBrutto)}</span>
                   </div>
                   <Separator orientation="vertical" className="h-8" />
                   <div>
-                    <span className="text-[10px] text-zinc-400 block uppercase font-medium">Czas realizacji</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">Czas realizacji</span>
                     <span className="text-lg font-bold text-white">{acceptedOffer.terminRealizacjiDni} dni</span>
                   </div>
                 </div>
@@ -364,12 +364,12 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
                   <User className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Osoba kontaktowa</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">Osoba kontaktowa</span>
                     <span className="font-semibold text-white truncate block">
                       {acceptedOffer.lawFirm.imieKontakt} {acceptedOffer.lawFirm.nazwiskoKontakt}
                     </span>
                     {acceptedOffer.lawFirm.stanowisko && (
-                      <span className="text-[10px] text-zinc-500 block truncate">{acceptedOffer.lawFirm.stanowisko}</span>
+                      <span className="text-sm text-zinc-500 block truncate">{acceptedOffer.lawFirm.stanowisko}</span>
                     )}
                   </div>
                 </div>
@@ -377,7 +377,7 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
                   <Mail className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">E-mail</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">E-mail</span>
                     <a
                       href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
                       className="font-semibold text-[#0da192] hover:underline truncate block"
@@ -390,7 +390,7 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
                   <Phone className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Telefon</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">Telefon</span>
                     <a
                       href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
                       className="font-semibold text-[#0da192] hover:underline truncate block"
@@ -411,7 +411,7 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
                   <MapPin className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Adres</span>
+                    <span className="text-sm text-zinc-400 block uppercase font-medium">Adres</span>
                     <span className="font-semibold text-white block">
                       {acceptedOffer.lawFirm.adres}
                     </span>
@@ -488,11 +488,11 @@ export default function ClientCaseDetailsPage() {
                         <CardContent className="p-6 space-y-4">
                           <div className="grid grid-cols-2 gap-4 p-4 bg-zinc-800/20 rounded-xl border border-border/30">
                             <div>
-                              <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Kwota brutto</span>
+                              <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Kwota brutto</span>
                               <span className="text-2xl font-bold text-white">{formatCurrency(offer.kwotaBrutto)}</span>
                             </div>
                             <div>
-                              <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Termin realizacji</span>
+                              <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Termin realizacji</span>
                               <span className="text-2xl font-bold text-white">{offer.terminRealizacjiDni} dni</span>
                             </div>
                           </div>
@@ -562,12 +562,12 @@ export default function ClientCaseDetailsPage() {
                       <CardHeader className="py-3 px-5 border-b border-border/20 flex flex-row items-center justify-between">
                         <div>
                           <CardTitle className="text-sm font-semibold text-white">{message.temat}</CardTitle>
-                          <CardDescription className="text-[10px] text-zinc-400 mt-0.5">
+                          <CardDescription className="text-sm text-zinc-400 mt-0.5">
                             Nadawca: {message.sender.name || message.sender.email} • {formatDate(message.createdAt)}
                           </CardDescription>
                         </div>
                         {!message.przeczytana && (
-                          <Badge className="bg-indigo-500 text-white text-[9px] px-2 py-0.5 animate-pulse">Nowa</Badge>
+                          <Badge className="bg-indigo-500 text-white text-sm px-2 py-0.5 animate-pulse">Nowa</Badge>
                         )}
                       </CardHeader>
                       <CardContent className="p-5">
@@ -592,7 +592,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Briefcase className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Typ klienta</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Typ klienta</span>
                   <span className="font-medium text-white">{caseTypeLabels[caseData.typSprawy] || caseData.typSprawy}</span>
                 </div>
               </div>
@@ -600,7 +600,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Kategoria główna</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Kategoria główna</span>
                   <span className="font-medium text-white">{caseData.category.nazwa}</span>
                 </div>
               </div>
@@ -609,7 +609,7 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex gap-3">
                   <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Dziedzina prawa</span>
+                    <span className="text-sm text-zinc-500 block uppercase font-semibold">Dziedzina prawa</span>
                     <span className="font-medium text-white">{caseData.wybranadziedzinaPrawa}</span>
                   </div>
                 </div>
@@ -619,7 +619,7 @@ export default function ClientCaseDetailsPage() {
                 <div className="flex gap-3">
                   <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Zakres / Specyfikacja</span>
+                    <span className="text-sm text-zinc-500 block uppercase font-semibold">Zakres / Specyfikacja</span>
                     <span className="font-medium text-white">{caseData.wybranaSpecyfikacja}</span>
                   </div>
                 </div>
@@ -628,7 +628,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <MapPin className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Lokalizacja</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Lokalizacja</span>
                   <span className="font-medium text-white">
                     {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
                   </span>
@@ -638,7 +638,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Clock className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Dodano dnia</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Dodano dnia</span>
                   <span className="font-medium text-white">{formatDate(caseData.createdAt)}</span>
                 </div>
               </div>
@@ -654,7 +654,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Calendar className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Oczekiwany termin</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Oczekiwany termin</span>
                   <span className="font-medium text-white">
                     {caseData.oczekiwanyTerminRealizacji
                       ? new Date(caseData.oczekiwanyTerminRealizacji).toLocaleDateString("pl-PL")
@@ -666,7 +666,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Euro className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Szacowany budżet</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Szacowany budżet</span>
                   <span className="font-medium text-white">
                     {caseData.budzetOd || caseData.budzetDo
                       ? `${caseData.budzetOd ? `Od ${formatCurrency(caseData.budzetOd)}` : ""} ${caseData.budzetDo ? `Do ${formatCurrency(caseData.budzetDo)}` : ""}`
@@ -687,7 +687,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <User className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Osoba kontaktowa</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Osoba kontaktowa</span>
                   <span className="font-medium text-white">{caseData.imieNazwisko}</span>
                 </div>
               </div>
@@ -695,7 +695,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Mail className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Email</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Email</span>
                   <span className="font-medium text-white truncate block">{caseData.emailKontakt}</span>
                 </div>
               </div>
@@ -703,7 +703,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <Phone className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Telefon</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Telefon</span>
                   <span className="font-medium text-white">{caseData.telefonKontakt}</span>
                 </div>
               </div>
@@ -711,7 +711,7 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <MessageSquare className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Preferowany kontakt</span>
+                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Preferowany kontakt</span>
                   <span className="font-medium text-white">
                     {contactTypeLabels[caseData.preferowanyKontakt] || caseData.preferowanyKontakt}
                   </span>
@@ -741,7 +741,7 @@ export default function ClientCaseDetailsPage() {
                         <div className="min-w-0">
                           <span className="text-xs font-medium text-white truncate block max-w-[120px] sm:max-w-[150px]">{filename}</span>
                           {extension && (
-                            <span className="text-[9px] text-zinc-500 uppercase font-semibold block">{extension}</span>
+                            <span className="text-sm text-zinc-500 uppercase font-semibold block">{extension}</span>
                           )}
                         </div>
                       </div>

@@ -99,7 +99,7 @@ export function ChatAssistant() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 leading-none">Asystent Prosta Sprawa</h3>
-                  <span className="text-[10px] text-neutral-500 dark:text-neutral-400">Model Gemini 2.5 Flash-lite</span>
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Model Gemini 2.5 Flash-lite</span>
                 </div>
               </div>
               <button
@@ -180,7 +180,7 @@ export function ChatAssistant() {
                   <Send className="h-4 w-4" />
                 </button>
               </div>
-              <p className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-2 text-center leading-normal">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 text-center leading-normal">
                 Rozmowa ma charakter wyłącznie informacyjny i nie zastępuje porady prawnej.
               </p>
             </form>

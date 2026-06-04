@@ -401,7 +401,7 @@ export default function KlubPartnerskiPage() {
         <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#0da192]/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Status programu</p>
+              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Status programu</p>
               <div className="flex items-center gap-2 mt-1.5">
                 {partnerStatus.active ? (
                   <>
@@ -428,7 +428,7 @@ export default function KlubPartnerskiPage() {
         <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#d7b56d]/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Miesięczna nagroda</p>
+              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Miesięczna nagroda</p>
               <div className="flex items-baseline gap-1 mt-1.5">
                 <span className="text-2xl font-bold text-white">{partnerStatus.monthlyPoints}</span>
                 <span className="text-xs text-zinc-400 font-light">pkt</span>
@@ -443,7 +443,7 @@ export default function KlubPartnerskiPage() {
         <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#0da192]/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Łącznie zdobyte</p>
+              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Łącznie zdobyte</p>
               <div className="flex items-baseline gap-1 mt-1.5">
                 <span className="text-2xl font-bold text-white">{partnerStatus.totalPointsEarned}</span>
                 <span className="text-xs text-zinc-400 font-light">pkt</span>
@@ -696,12 +696,12 @@ export default function KlubPartnerskiPage() {
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-zinc-500 font-light">Status:</span>
                       {history.verificationStatus ? (
-                        <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-medium py-0.5 rounded-lg flex items-center gap-1">
+                        <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium py-0.5 rounded-lg flex items-center gap-1">
                           <CheckCircle2 className="h-3 w-3" />
                           Zweryfikowano
                         </Badge>
                       ) : (
-                        <Badge className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-medium py-0.5 rounded-lg flex items-center gap-1">
+                        <Badge className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium py-0.5 rounded-lg flex items-center gap-1">
                           <XCircle className="h-3 w-3" />
                           Błąd weryfikacji
                         </Badge>

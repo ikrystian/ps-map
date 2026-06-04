@@ -695,7 +695,7 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <MapPin className="h-4 w-4 mr-2.5 text-[#0da192] flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-[9px] text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
+                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
                                 <span className="font-medium text-white text-xs leading-none truncate">
                                   {sprawa.city ? `${sprawa.city.nazwa}` : sprawa.voivodeship.nazwa}
                                 </span>
@@ -706,7 +706,7 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Calendar className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-[9px] text-muted-foreground/75 leading-none mb-0.5">Termin</span>
+                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Termin</span>
                                 <span className="font-medium text-white text-xs leading-none">
                                   {sprawa.oczekiwanyTerminRealizacji
                                     ? formatDate(sprawa.oczekiwanyTerminRealizacji)
@@ -719,7 +719,7 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-emerald-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-[9px] text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
+                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
                                 <span className="font-medium text-white text-xs leading-none">
                                   {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
                                 </span>
@@ -732,7 +732,7 @@ const SprawyPage = () => {
                                 {sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}
                               </div>
                               <div className="flex flex-col min-w-0">
-                                <span className="text-[9px] text-muted-foreground/75 leading-none mb-0.5">Klient</span>
+                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Klient</span>
                                 <span className="font-medium text-white text-xs leading-none truncate">
                                   {sprawa.client.imie} {sprawa.client.nazwisko}
                                 </span>

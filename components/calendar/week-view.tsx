@@ -88,8 +88,8 @@ export function WeekView({
             {adminTZ !== viewerTZ ? (
               locale === "pl" ? (
                 <>
-                  <span className="block text-center text-[10px] whitespace-nowrap">Twój czas</span>
-                  <span className="block text-center text-[9px] opacity-60 whitespace-nowrap">Ekspert</span>
+                  <span className="block text-center text-sm whitespace-nowrap">Twój czas</span>
+                  <span className="block text-center text-sm opacity-60 whitespace-nowrap">Ekspert</span>
                 </>
               ) : (
                 <>
@@ -115,7 +115,7 @@ export function WeekView({
                   !isPast && isSelected && "bg-primary/5",
                 )}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   {locale === "pl"
                     ? format(day, "EEEEEE", { locale: pl }).toUpperCase()
                     : format(day, "EEE")}
@@ -125,9 +125,9 @@ export function WeekView({
                     "flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold",
                     isToday(day) && "bg-primary text-primary-foreground",
                     !isPast &&
-                      isSelected &&
-                      !isToday(day) &&
-                      "ring-2 ring-primary text-primary",
+                    isSelected &&
+                    !isToday(day) &&
+                    "ring-2 ring-primary text-primary",
                   )}
                 >
                   {format(day, "d")}
@@ -151,11 +151,11 @@ export function WeekView({
                   style={{ gridTemplateColumns: "80px repeat(7, 1fr)" }}
                 >
                   <div className="py-2 px-2 text-right pr-3 leading-none pt-2">
-                    <span className="text-[10px] text-foreground font-mono block">
+                    <span className="text-sm text-foreground font-mono block">
                       {formatInViewer(repUtc, viewerTZ, locale)}
                     </span>
                     {adminTZ !== viewerTZ && (
-                      <span className="text-[9px] text-muted-foreground font-mono block mt-0.5">
+                      <span className="text-sm text-muted-foreground font-mono block mt-0.5">
                         {formatInAdmin(repUtc, adminTZ, locale)}
                       </span>
                     )}
@@ -164,10 +164,10 @@ export function WeekView({
                     const avail = getAvailForDate(day, availability, adminTZ);
                     const exists = avail
                       ? generateTimeSlots(
-                          avail.startTime,
-                          avail.endTime,
-                          slotDuration,
-                        ).includes(adminTime)
+                        avail.startTime,
+                        avail.endTime,
+                        slotDuration,
+                      ).includes(adminTime)
                       : false;
                     const booked = isBooked(day, adminTime, bookedSlots);
                     const slotUtc = slotToUtc(day, adminTime, adminTZ);
@@ -191,7 +191,7 @@ export function WeekView({
                             onSlotSelect(day, adminTime);
                           }}
                           className={cn(
-                            "w-full rounded px-1 py-1.5 text-[10px] font-medium transition-all duration-150",
+                            "w-full rounded px-1 py-1.5 text-sm font-medium transition-all duration-150",
                             isPast
                               ? "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-40"
                               : booked

@@ -343,13 +343,13 @@ export default function LawFirmOffersPage() {
               <div className="w-full">
                 <p
                   className={cn(
-                    "text-[10px] sm:text-xs font-bold leading-none uppercase tracking-wider",
+                    "text-sm sm:text-xs font-bold leading-none uppercase tracking-wider",
                     isSelected ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
                   {card.label}
                 </p>
-                <p className="text-[9px] sm:text-[10px] text-muted-foreground/60 mt-1 truncate">
+                <p className="text-sm sm:text-sm text-muted-foreground/60 mt-1 truncate">
                   {card.id === "all" && "Suma wszystkich ofert"}
                   {card.id === "ZLOZONA" && "Oczekujące na decyzję"}
                   {card.id === "ZAAKCEPTOWANA" && "Zaakceptowane przez klienta"}
@@ -459,13 +459,13 @@ export default function LawFirmOffersPage() {
                       {/* Price Box */}
                       <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 relative overflow-hidden group">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary/60" />
-                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-primary/75 font-bold">
+                        <p className="text-sm sm:text-sm uppercase tracking-wider text-primary/75 font-bold">
                           Kwota brutto
                         </p>
                         <p className="text-base sm:text-lg font-extrabold text-foreground mt-0.5">
                           {formatCurrency(offer.kwotaBrutto)}
                         </p>
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                        <p className="text-[8px] sm:text-sm text-muted-foreground mt-0.5 leading-tight">
                           Netto: {formatCurrency(offer.kwotaNetto)} + {offer.vat}% VAT
                         </p>
                       </div>
@@ -473,13 +473,13 @@ export default function LawFirmOffersPage() {
                       {/* Timeline Box */}
                       <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
-                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                        <p className="text-sm sm:text-sm uppercase tracking-wider text-muted-foreground font-bold">
                           Termin realizacji
                         </p>
                         <p className="text-base sm:text-lg font-extrabold text-foreground mt-0.5">
                           {offer.terminRealizacjiDni} dni
                         </p>
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                        <p className="text-[8px] sm:text-sm text-muted-foreground mt-0.5 leading-tight">
                           Dni robocze
                         </p>
                       </div>
@@ -487,13 +487,13 @@ export default function LawFirmOffersPage() {
                       {/* Date Box */}
                       <div className="bg-secondary/20 border border-border/30 rounded-xl p-3 relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-foreground/10" />
-                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                        <p className="text-sm sm:text-sm uppercase tracking-wider text-muted-foreground font-bold">
                           Status czasowy
                         </p>
                         <p className="text-[11px] sm:text-xs font-bold text-foreground mt-1.5 truncate">
                           Złożono: {new Date(offer.createdAt).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}
                         </p>
-                        <p className="text-[8px] sm:text-[10px] text-muted-foreground mt-0.5 truncate">
+                        <p className="text-[8px] sm:text-sm text-muted-foreground mt-0.5 truncate">
                           {offer.zaakceptowanaData && `Zaakceptowano: ${new Date(offer.zaakceptowanaData).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}`}
                           {offer.odrzuconaData && `Odrzucono: ${new Date(offer.odrzuconaData).toLocaleDateString("pl-PL", { day: "numeric", month: "short" })}`}
                           {!offer.zaakceptowanaData && !offer.odrzuconaData && "Oczekuje na klienta"}
@@ -550,7 +550,7 @@ export default function LawFirmOffersPage() {
                                 <DollarSign className="h-4.5 w-4.5 text-primary" />
                               </div>
                               <div>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground block font-bold leading-none">
+                                <span className="text-sm uppercase tracking-wider text-muted-foreground block font-bold leading-none">
                                   Warunki płatności
                                 </span>
                                 <span className="text-xs font-bold text-foreground mt-0.5 block">

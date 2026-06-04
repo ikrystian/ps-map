@@ -576,7 +576,7 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Półrocznie
-              <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide">
+              <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
                 Zniżka do 72%
               </span>
             </button>
@@ -589,7 +589,7 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Rocznie
-              <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide">
+              <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
                 Zaoszczędź 12%
               </span>
             </button>
@@ -628,14 +628,14 @@ export default function LawFirmPackagePage() {
               >
                 {/* Popularity or Value Badges */}
                 {cosmetic.badgeText && !isDowngrade && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
                     }`}>
                     {cosmetic.badgeText}
                   </div>
                 )}
 
                 {isDowngrade && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border shadow-sm flex items-center gap-1.5">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border shadow-sm flex items-center gap-1.5">
                     <Lock className="h-3 w-3" /> Zablokowany
                   </div>
                 )}
@@ -689,7 +689,7 @@ export default function LawFirmPackagePage() {
 
                     {/* Gratis points */}
                     {plan.punktyGratis > 0 && (
-                      <div className="mt-3.5 inline-flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-amber-500/20 shadow-2xs">
+                      <div className="mt-3.5 inline-flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2.5 py-0.5 rounded-full text-sm font-bold border border-amber-500/20 shadow-2xs">
                         <Gift className="h-3 w-3 shrink-0" />
                         <span>+{plan.punktyGratis} pkt GRATIS!</span>
                       </div>
@@ -772,7 +772,7 @@ export default function LawFirmPackagePage() {
                   )}
 
                   {!canAfford && !isCurrent && !isDowngrade && plan.typ !== "FREE" && (
-                    <p className="text-[10px] text-destructive text-center mt-2 flex items-center justify-center gap-1 font-semibold">
+                    <p className="text-sm text-destructive text-center mt-2 flex items-center justify-center gap-1 font-semibold">
                       <AlertCircle className="h-3 w-3 shrink-0" />
                       Za mało punktów.
                       <Link href="/panel-eksperta/punkty" className="underline hover:text-destructive/80 font-bold ml-0.5">
@@ -840,7 +840,7 @@ export default function LawFirmPackagePage() {
                           <div className="flex flex-col items-center gap-1.5">
                             <span>{plan.nazwa}</span>
                             {plan.typ === lawFirm.pakietSubskrypcji && (
-                              <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-[10px] py-0 px-2 leading-relaxed">
+                              <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-sm py-0 px-2 leading-relaxed">
                                 Obecny
                               </Badge>
                             )}
@@ -923,7 +923,7 @@ export default function LawFirmPackagePage() {
                           ) : (
                             <div className="flex flex-col gap-0.5">
                               <span className="text-base text-foreground font-extrabold">{pointsCost} pkt</span>
-                              <span className="text-[10px] text-muted-foreground font-normal">({priceVal} PLN)</span>
+                              <span className="text-sm text-muted-foreground font-normal">({priceVal} PLN)</span>
                             </div>
                           )}
                         </td>
