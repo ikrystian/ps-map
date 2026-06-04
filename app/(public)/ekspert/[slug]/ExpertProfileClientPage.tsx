@@ -608,7 +608,7 @@ export default function LawFirmProfilePage() {
   return (
     <div className="min-h-screen bg-background-sec pb-16">
       {/* Header Image / Video Banner */}
-      <div className="relative h-[280px] md:h-[380px] lg:h-[440px] w-full flex items-end overflow-hidden" id="kancelaria-header">
+      <div className="relative h-[280px] md:h-[380px] lg:h-[640px] w-full flex items-end overflow-hidden" id="kancelaria-header">
         {youtubeVideoId ? (
           <>
             <iframe
@@ -743,7 +743,7 @@ export default function LawFirmProfilePage() {
                             className={`h-3.5 w-3.5 ${star <= Math.round(lawFirm.avgRating)
                               ? "fill-yellow-400 text-yellow-400"
                               : "fill-muted text-muted"
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>
