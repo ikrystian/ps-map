@@ -1298,9 +1298,21 @@ model City {
   // Relacje
   lawFirms        LawFirmCity[]
   cases           Case[]
+  postalCodes     PostalCode[]
 
   @@index([voivodeshipId])
   @@index([nazwa])
+}
+
+model PostalCode {
+  id              String   @id @default(uuid())
+  code            String
+  cityId          String
+  city            City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  @@unique([code, cityId])
+  @@index([code])
+  @@index([cityId])
 }
 
 // ============================================================================

@@ -15,6 +15,9 @@ async function main() {
   if (cities.length > 0) {
     console.log('Sample city:', cities[0])
   }
+
+  const postalCodes = await prisma.postalCode.findMany({ take: 5, include: { city: true } })
+  console.log('Sample Postal Codes with cities:', postalCodes)
 }
 
 main()
