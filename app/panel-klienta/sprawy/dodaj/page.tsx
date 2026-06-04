@@ -14,13 +14,18 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Textarea } from "@/components/ui/textarea"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { Check, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X, Sparkles, Loader2, User, Building2, Landmark } from "lucide-react"
+import { Check, ChevronDown, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X, Sparkles, Loader2, User, Building2, Landmark } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
 
 type CaseType = "OSOBA_PRYWATNA" | "FIRMA" | "ORGANIZACJA"
 type PreferredContact = "EMAIL" | "TELEFON" | "OBA"
@@ -96,6 +101,9 @@ export default function ClientAddCasePage() {
   const [isLoadingVoivodeships, setIsLoadingVoivodeships] = useState(true)
   const [cities, setCities] = useState<any[]>([])
   const [isLoadingCities, setIsLoadingCities] = useState(false)
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [selectedCityName, setSelectedCityName] = useState("")
 
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
@@ -155,30 +163,57 @@ export default function ClientAddCasePage() {
     fetchVoivodeships()
   }, [])
 
+  // Dynamic fetch and caching for cities
   useEffect(() => {
-    if (!formData.voivodeshipId) {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
       setCities([])
+      setIsLoadingCities(false)
       return
     }
-    const selectedVoivodeship = voivodeships.find(v => v.slug === formData.voivodeshipId)
-    if (!selectedVoivodeship) return
 
-    const fetchCities = async () => {
-      setIsLoadingCities(true)
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/cities?voivodeshipId=${selectedVoivodeship.id}`)
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
         if (response.ok) {
           const data = await response.json()
-          setCities(data)
+          if (Array.isArray(data)) {
+            clientCitiesCache[query] = data
+            setCities(data)
+          }
         }
-      } catch (error) {
-        console.error("Error fetching cities:", error)
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
       } finally {
         setIsLoadingCities(false)
       }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
     }
-    fetchCities()
-  }, [formData.voivodeshipId, voivodeships])
+  }, [locationSearch])
+
+  // Reset location search when popover closes
+  useEffect(() => {
+    if (!locationOpen) {
+      setLocationSearch("")
+      setCities([])
+    }
+  }, [locationOpen])
 
   const getFilteredCategories = () => {
     const isPrivate = formData.typSprawy === "OSOBA_PRYWATNA"
@@ -713,57 +748,83 @@ export default function ClientAddCasePage() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="voivodeshipId" className="text-zinc-300 text-xs font-semibold">Województwo *</Label>
-            <Select
-              value={formData.voivodeshipId}
-              onValueChange={(value) => {
-                setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
-              }}
-            >
-              <SelectTrigger id="voivodeshipId" className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm mt-1.5">
-                <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                {voivodeships.map((voivodeship: any) => (
-                  <SelectItem key={voivodeship.id} value={voivodeship.slug} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
-                    {voivodeship.nazwa}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="cityId" className="text-zinc-300 text-xs font-semibold">Miasto *</Label>
+          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="h-11 w-full bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-zinc-300 text-sm font-normal text-left justify-between mt-1.5"
+              >
+                <span className="truncate">{selectedCityName || "Wybierz miasto..."}</span>
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0 bg-card border-neutral-800 text-white" align="start">
+              <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                <CommandInput
+                  placeholder="Wyszukaj miasto..."
+                  value={locationSearch}
+                  onValueChange={setLocationSearch}
+                  className="text-white bg-transparent border-neutral-800"
+                />
+                <CommandList className="max-h-60 overflow-y-auto">
+                  {isLoadingCities && (
+                    <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                  )}
+                  {!isLoadingCities && locationSearch.trim().length < 2 && (
+                    <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                      Wpisz co najmniej 2 znaki...
+                    </div>
+                  )}
+                  {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                    <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                  )}
+                  <CommandGroup>
+                    {cities.map((city: any) => {
+                      const matchedPostal = city.postalCodes?.find((p: any) =>
+                        p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                      )
+                      const displayValue = matchedPostal
+                        ? `${city.nazwa} (${matchedPostal.code})`
+                        : city.nazwa
 
-          <div>
-            <Label htmlFor="cityId" className="text-zinc-300 text-xs font-semibold">Miasto *</Label>
-            <Select
-              value={formData.cityId}
-              onValueChange={(value) => updateFormData("cityId", value)}
-              disabled={!formData.voivodeshipId || isLoadingCities}
-            >
-              <SelectTrigger id="cityId" className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm mt-1.5">
-                <SelectValue placeholder={
-                  !formData.voivodeshipId
-                    ? "Wybierz najpierw województwo"
-                    : isLoadingCities
-                      ? "Ładowanie miast..."
-                      : "Wybierz miasto"
-                } />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                {cities.length === 0 ? (
-                  <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
-                ) : (
-                  cities.map((city: any) => (
-                    <SelectItem key={city.id} value={city.id} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
-                      {city.nazwa}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+                      return (
+                        <CommandItem
+                          key={city.id}
+                          value={city.nazwa}
+                          onSelect={() => {
+                            setFormData((prev: any) => ({
+                              ...prev,
+                              cityId: city.id,
+                              voivodeshipId: city.voivodeship?.slug || "",
+                            }))
+                            setSelectedCityName(city.nazwa)
+                            setLocationOpen(false)
+                          }}
+                          className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Check
+                              className={cn(
+                                "h-4 w-4 text-teal-400",
+                                formData.cityId === city.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <span>{displayValue}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground ml-2 text-right">
+                            {city.voivodeship?.nazwa}
+                          </span>
+                        </CommandItem>
+                      )
+                    })}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     )
