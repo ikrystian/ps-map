@@ -166,6 +166,7 @@ export default function LawFirmServicesPage() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [maxCategories, setMaxCategories] = useState(10)
   const [searchQuery, setSearchQuery] = useState("")
+  const [citySearch, setCitySearch] = useState("")
 
   // Area state
   const [allVoivodeships, setAllVoivodeships] = useState<Voivodeship[]>([])
@@ -815,7 +816,17 @@ export default function LawFirmServicesPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Miasta w wybranych województwach</h5>
+                      <div className="flex flex-col gap-2">
+                        <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Miasta w wybranych województwach</h5>
+                        {areaData.selectedVoivodeships.length > 0 && (
+                          <Input
+                            placeholder="Wyszukaj miasto..."
+                            value={citySearch}
+                            onChange={(e) => setCitySearch(e.target.value)}
+                            className="h-9 w-full bg-[#1b1b18] border-border/30 rounded-xl text-zinc-300 text-xs focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-[#20201d]/60 transition-all placeholder:text-zinc-500"
+                          />
+                        )}
+                      </div>
                       <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
                         {areaData.selectedVoivodeships.length === 0 ? (
                           <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-muted-foreground py-10 opacity-60">
@@ -827,6 +838,9 @@ export default function LawFirmServicesPage() {
                             const vName = allVoivodeships.find(v => v.id === vId)?.nazwa
                             const cities = citiesByVoivodeship[vId] || []
                             const isLoading = loadingCities[vId]
+                            const filteredCities = cities.filter(city =>
+                              city.nazwa.toLowerCase().includes(citySearch.toLowerCase().trim())
+                            )
 
                             return (
                               <div key={vId} className="mb-4 last:mb-0">
@@ -842,8 +856,10 @@ export default function LawFirmServicesPage() {
                                     </div>
                                   ) : cities.length === 0 ? (
                                     <div className="py-2 text-sm italic text-muted-foreground">Brak miast w bazie.</div>
+                                  ) : filteredCities.length === 0 ? (
+                                    <div className="py-2 text-xs italic text-muted-foreground">Brak pasujących miast.</div>
                                   ) : (
-                                    cities.map(city => (
+                                    filteredCities.map(city => (
                                       <div key={city.id} className={cn(
                                         "flex items-center gap-2 p-1.5 rounded-md transition-all cursor-pointer",
                                         areaData.selectedCities.includes(city.id)
