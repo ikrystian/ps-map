@@ -13,6 +13,7 @@
  */
 
 import { addDays, format, isBefore, isToday, startOfDay } from "date-fns";
+import { pl } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,6 +37,7 @@ export function AgendaView({
   slotDuration,
   adminTZ,
   viewerTZ,
+  locale = "en",
   onDateSelect,
   onSlotSelect,
 }: {
@@ -45,6 +47,7 @@ export function AgendaView({
   slotDuration: number;
   adminTZ: string;
   viewerTZ: string;
+  locale?: string;
   onDateSelect: (d: Date) => void;
   onSlotSelect: (d: Date, t: string) => void;
 }) {
@@ -62,7 +65,9 @@ export function AgendaView({
           <div className="flex flex-col items-center justify-center h-40 gap-2 text-muted-foreground">
             <Calendar className="h-8 w-8 opacity-30" />
             <p className="text-sm">
-              No upcoming availability in the next 30 days
+              {locale === "pl"
+                ? "Brak wolnych terminów w ciągu najbliższych 30 dni"
+                : "No upcoming availability in the next 30 days"}
             </p>
           </div>
         )}
@@ -74,6 +79,7 @@ export function AgendaView({
             slotDuration,
             adminTZ,
             viewerTZ,
+            locale,
           );
           const available = slots.filter((s) => !s.booked);
           return (
@@ -83,7 +89,9 @@ export function AgendaView({
                 onClick={() => onDateSelect(day)}
               >
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {format(day, "EEE")}
+                  {locale === "pl"
+                    ? format(day, "EEEEEE", { locale: pl }).toUpperCase()
+                    : format(day, "EEE")}
                 </span>
                 <span
                   className={cn(
@@ -96,14 +104,16 @@ export function AgendaView({
                   {format(day, "d")}
                 </span>
                 <span className="text-[10px] text-muted-foreground mt-0.5">
-                  {format(day, "MMM")}
+                  {locale === "pl"
+                    ? format(day, "LLL", { locale: pl })
+                    : format(day, "MMM")}
                 </span>
               </div>
               <div className="flex-1 pt-1">
                 <div className="flex flex-wrap gap-2">
                   {available.length === 0 ? (
                     <span className="text-xs text-muted-foreground italic">
-                      All slots booked
+                      {locale === "pl" ? "Wszystkie terminy zajęte" : "All slots booked"}
                     </span>
                   ) : (
                     available.map((slot) => {
@@ -125,7 +135,7 @@ export function AgendaView({
                               >
                                 {isPast && (
                                   <span className="block text-[9px] text-muted-foreground">
-                                    Past
+                                    {locale === "pl" ? "Minęło" : "Past"}
                                   </span>
                                 )}
                                 <span className="block">
@@ -133,7 +143,7 @@ export function AgendaView({
                                 </span>
                                 {adminTZ !== viewerTZ && (
                                   <span className="block text-[9px] text-muted-foreground">
-                                    {slot.adminDisplayTime} host
+                                    {slot.adminDisplayTime} {locale === "pl" ? "ekspert" : "host"}
                                   </span>
                                 )}
                               </button>
@@ -143,6 +153,7 @@ export function AgendaView({
                                 slot={slot}
                                 adminTZ={adminTZ}
                                 viewerTZ={viewerTZ}
+                                locale={locale}
                               />
                             </TooltipContent>
                           </Tooltip>
@@ -153,9 +164,11 @@ export function AgendaView({
                 </div>
                 {slots.some((s) => s.booked) && (
                   <p className="text-[10px] text-muted-foreground mt-1.5">
-                    {slots.filter((s) => s.booked).length} slot
-                    {slots.filter((s) => s.booked).length !== 1 ? "s" : ""}{" "}
-                    already booked
+                    {locale === "pl" ? (
+                      `${slots.filter((s) => s.booked).length} już zarezerwowane`
+                    ) : (
+                      `${slots.filter((s) => s.booked).length} slot${slots.filter((s) => s.booked).length !== 1 ? "s" : ""} already booked`
+                    )}
                   </p>
                 )}
               </div>
