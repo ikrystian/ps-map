@@ -2,7 +2,7 @@
 
 import { CITIES } from "@/components/homepage/cities-list"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ChevronRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 
 interface Voivodeship {
@@ -47,8 +47,11 @@ interface City {
 export default function AdminLocationsPage() {
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [cities, setCities] = useState<City[]>([])
+  const [totalCities, setTotalCities] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
   const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>("all")
 
   // Form states
@@ -61,29 +64,64 @@ export default function AdminLocationsPage() {
   const [cityVoivodeshipId, setCityVoivodeshipId] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
+  // Fetch voivodeships on mount
   useEffect(() => {
-    fetchData()
+    const fetchVoivodeships = async () => {
+      try {
+        const res = await fetch("/api/voivodeships")
+        const data = await res.json()
+        setVoivodeships(data)
+      } catch (error) {
+        toast.error("Błąd podczas pobierania województw")
+      }
+    }
+    fetchVoivodeships()
   }, [])
 
-  const fetchData = async () => {
+  const fetchCities = async (page: number, searchVal: string, voivodeshipVal: string) => {
     setLoading(true)
     try {
-      const [vRes, cRes] = await Promise.all([
-        fetch("/api/voivodeships"),
-        fetch("/api/cities")
-      ])
+      const params = new URLSearchParams()
+      params.append("page", page.toString())
+      params.append("limit", "50")
+      if (voivodeshipVal !== "all") {
+        params.append("voivodeshipId", voivodeshipVal)
+      }
+      if (searchVal) {
+        params.append("search", searchVal)
+      }
+
+      const res = await fetch(`/api/admin/cities?${params.toString()}`)
+      if (!res.ok) throw new Error()
+      const data = await res.json()
       
-      const vData = await vRes.json()
-      const cData = await cRes.json()
-      
-      setVoivodeships(vData)
-      setCities(cData)
+      setCities(data.cities || [])
+      setTotalCities(data.total || 0)
     } catch (error) {
-      toast.error("Błąd podczas pobierania danych")
+      toast.error("Błąd podczas pobierania miast")
     } finally {
       setLoading(false)
     }
   }
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search)
+      setCurrentPage(1)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  // Reset page when voivodeship filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedVoivodeship])
+
+  // Fetch cities when dependencies change
+  useEffect(() => {
+    fetchCities(currentPage, debouncedSearch, selectedVoivodeship)
+  }, [currentPage, debouncedSearch, selectedVoivodeship])
 
   const handleOpenAddDialog = () => {
     setEditingCity(null)
@@ -130,7 +168,7 @@ export default function AdminLocationsPage() {
 
       toast.success(editingCity ? "Miasto zaktualizowane" : "Miasto dodane")
       setIsCityDialogOpen(false)
-      fetchData()
+      fetchCities(currentPage, debouncedSearch, selectedVoivodeship)
     } catch (error) {
       toast.error("Błąd podczas zapisywania")
     } finally {
@@ -151,7 +189,12 @@ export default function AdminLocationsPage() {
 
       toast.success("Miasto usunięte")
       setIsDeleteDialogOpen(false)
-      fetchData()
+      
+      const nextTotal = totalCities - 1
+      const maxPages = Math.ceil(nextTotal / 50) || 1
+      const targetPage = currentPage > maxPages ? maxPages : currentPage
+      setCurrentPage(targetPage)
+      fetchCities(targetPage, debouncedSearch, selectedVoivodeship)
     } catch (error) {
       toast.error("Błąd podczas usuwania")
     } finally {
@@ -179,7 +222,8 @@ export default function AdminLocationsPage() {
       const data = await res.json()
       toast.success(`Zaimportowano ${data.count} miast`)
       setIsSeedDialogOpen(false)
-      fetchData()
+      setCurrentPage(1)
+      fetchCities(1, debouncedSearch, selectedVoivodeship)
     } catch (error) {
       toast.error("Błąd podczas importu")
     } finally {
@@ -187,11 +231,32 @@ export default function AdminLocationsPage() {
     }
   }
 
-  const filteredCities = cities.filter(city => {
-    const matchesSearch = city.nazwa.toLowerCase().includes(search.toLowerCase())
-    const matchesVoivodeship = selectedVoivodeship === "all" || city.voivodeshipId === selectedVoivodeship
-    return matchesSearch && matchesVoivodeship
-  })
+  const totalPages = Math.ceil(totalCities / 50)
+
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisible = 5
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      let start = Math.max(1, currentPage - 2)
+      let end = Math.min(totalPages, currentPage + 2)
+      
+      if (start === 1) {
+        end = maxVisible
+      } else if (end === totalPages) {
+        start = totalPages - maxVisible + 1
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+    }
+    return pages
+  }
 
   return (
     <div className="space-y-6">
@@ -272,53 +337,121 @@ export default function AdminLocationsPage() {
               <div className="flex justify-center items-center py-10">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ) : filteredCities.length === 0 ? (
+            ) : cities.length === 0 ? (
               <div className="text-center py-10 text-muted-foreground border-2 border-dashed rounded-lg">
                 Nie znaleziono miast spełniających kryteria.
               </div>
             ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nazwa</TableHead>
-                      <TableHead>Województwo</TableHead>
-                      <TableHead className="text-right">Akcje</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredCities.map((city) => (
-                      <TableRow key={city.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-primary" />
-                            {city.nazwa}
-                          </div>
-                        </TableCell>
-                        <TableCell>{city.voivodeship.nazwa}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => handleOpenEditDialog(city)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => handleOpenDeleteDialog(city)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+              <div className="space-y-4">
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nazwa</TableHead>
+                        <TableHead>Województwo</TableHead>
+                        <TableHead className="text-right">Akcje</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {cities.map((city) => (
+                        <TableRow key={city.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4 text-primary" />
+                              {city.nazwa}
+                            </div>
+                          </TableCell>
+                          <TableCell>{city.voivodeship.nazwa}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleOpenEditDialog(city)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => handleOpenDeleteDialog(city)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-muted">
+                    <div className="text-sm text-muted-foreground">
+                      Pokazywanie <span className="font-semibold">{((currentPage - 1) * 50) + 1}</span> -{" "}
+                      <span className="font-semibold">{Math.min(currentPage * 50, totalCities)}</span> z{" "}
+                      <span className="font-semibold">{totalCities}</span> miast
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        className="h-8 w-8 transition-transform hover:scale-105 active:scale-95"
+                      >
+                        <ChevronsLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="h-8 w-8 transition-transform hover:scale-105 active:scale-95"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      
+                      {getPageNumbers().map((pageNumber) => (
+                        <Button
+                          key={pageNumber}
+                          variant={currentPage === pageNumber ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNumber)}
+                          className={`h-8 min-w-[32px] px-2 transition-all hover:scale-105 active:scale-95 ${
+                            currentPage === pageNumber 
+                              ? "shadow-md bg-primary text-primary-foreground font-semibold" 
+                              : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {pageNumber}
+                        </Button>
+                      ))}
+
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="h-8 w-8 transition-transform hover:scale-105 active:scale-95"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        className="h-8 w-8 transition-transform hover:scale-105 active:scale-95"
+                      >
+                        <ChevronsRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
