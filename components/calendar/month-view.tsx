@@ -23,6 +23,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { pl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { getAvailForDate, getSlotsForDate, isPastDate } from "./helpers";
 import { SlotBtn } from "./slot-btn";
@@ -39,6 +40,7 @@ export function MonthView({
   slotDuration,
   adminTZ,
   viewerTZ,
+  locale = "en",
   onDateSelect,
   onSlotSelect,
 }: {
@@ -49,12 +51,14 @@ export function MonthView({
   slotDuration: number;
   adminTZ: string;
   viewerTZ: string;
+  locale?: string;
   onDateSelect: (d: Date) => void;
   onSlotSelect: (d: Date, t: string) => void;
 }) {
+  const weekStartsOn = locale === "pl" ? 1 : 0;
   const days = eachDayOfInterval({
-    start: startOfWeek(startOfMonth(current), { weekStartsOn: 0 }),
-    end: endOfWeek(endOfMonth(current), { weekStartsOn: 0 }),
+    start: startOfWeek(startOfMonth(current), { weekStartsOn }),
+    end: endOfWeek(endOfMonth(current), { weekStartsOn }),
   });
 
   const selectedSlots =
@@ -66,6 +70,7 @@ export function MonthView({
       slotDuration,
       adminTZ,
       viewerTZ,
+      locale,
     );
 
   const shouldShowPanel =
@@ -78,7 +83,10 @@ export function MonthView({
     <div className="w-full flex flex-col sm:flex-row gap-4">
       <div className="flex-1 pt-3 px-3 sm:px-0">
         <div className="grid grid-cols-7 mb-2 px-1">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          {(locale === "pl"
+            ? ["Pon", "Wt", "Śr", "Cz", "Pt", "Sob", "Nie"]
+            : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+          ).map((d) => (
             <div
               key={d}
               className="text-center text-[11px] font-medium text-muted-foreground"
@@ -98,6 +106,7 @@ export function MonthView({
               slotDuration,
               adminTZ,
               viewerTZ,
+              locale,
             );
 
             const hasOpen = slots.some((s) => !s.booked);
@@ -115,7 +124,7 @@ export function MonthView({
                   "border border-transparent",
                   "hover:bg-muted/60",
                   isSelected &&
-                    "bg-primary hover:bg-primary/80 hover:text-primary-foreground text-primary-foreground",
+                  "bg-primary hover:bg-primary/80 hover:text-primary-foreground text-primary-foreground",
                   !inMonth && "opacity-30",
                   isPast && "opacity-20 cursor-not-allowed",
                 )}
@@ -135,13 +144,19 @@ export function MonthView({
       </div>
 
       {shouldShowPanel && (
-        <div className="max-h-103.5 overflow-y-scroll no-scrollbar w-full sm:w-[320px] border-t sm:border-l sm:border-t-0 shrink-0 py-4 px-3 bg-background">
+        <div className="w-full sm:w-[320px] border-t sm:border-l sm:border-t-0 shrink-0 py-4 px-3 bg-background">
           <div className="mb-4">
             <p className="text-sm font-semibold">
-              {format(selectedDate, "EEEE")}
+              {(() => {
+                const formatted = format(selectedDate, "EEEE", { locale: locale === "pl" ? pl : undefined });
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+              })()}
             </p>
             <p className="text-xs text-muted-foreground">
-              {format(selectedDate, "MMMM d")}
+              {(() => {
+                const formatted = format(selectedDate, locale === "pl" ? "d MMMM" : "MMMM d", { locale: locale === "pl" ? pl : undefined });
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+              })()}
             </p>
           </div>
 
@@ -163,14 +178,20 @@ export function MonthView({
         <div className="max-h-103.5 overflow-y-scroll no-scrollbar w-full sm:w-[320px] border-t sm:border-l sm:border-t-0 shrink-0 py-4 px-3 bg-background">
           <div className="mb-4">
             <p className="text-sm font-semibold">
-              {format(selectedDate ?? new Date(), "EEEE")}
+              {(() => {
+                const formatted = format(selectedDate ?? new Date(), "EEEE", { locale: locale === "pl" ? pl : undefined });
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+              })()}
             </p>
             <p className="text-xs text-muted-foreground">
-              {format(selectedDate ?? new Date(), "MMMM d")}
+              {(() => {
+                const formatted = format(selectedDate ?? new Date(), locale === "pl" ? "d MMMM" : "MMMM d", { locale: locale === "pl" ? pl : undefined });
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+              })()}
             </p>
           </div>
           <div className="text-sm h-30 flex items-center justify-center border rounded-xl border-dashed font-medium text-muted-foreground">
-            No slots available
+            {locale === "pl" ? "Brak wolnych terminów" : "No slots available"}
           </div>
         </div>
       )}
