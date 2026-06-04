@@ -39,6 +39,7 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Globe } from "lucide-react";
 import { useState } from "react";
+import { pl } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { AgendaView } from "./agenda-view";
 import { DayView } from "./day-view";
@@ -63,6 +64,7 @@ export function CalendarScheduler({
   adminTimeZone = "UTC",
   defaultViewerTimeZone,
   slotDuration,
+  locale = "en",
 }: CalendarSchedulerProps) {
   // Current view mode (defaults to month view)
   const [view, setView] = useState<ViewType>("month");
@@ -98,13 +100,30 @@ export function CalendarScheduler({
 
   /** Generates the title text for the header based on current view and date */
   function getTitle() {
-    if (view === "month") return format(current, "MMMM yyyy");
+    const fLocale = locale === "pl" ? pl : undefined;
+    if (view === "month") {
+      const formatted = format(current, "LLLL yyyy", { locale: fLocale });
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
     if (view === "week") {
-      const ws = startOfWeek(current, { weekStartsOn: 0 });
-      const we = endOfWeek(current, { weekStartsOn: 0 });
+      const ws = startOfWeek(current, { weekStartsOn: locale === "pl" ? 1 : 0 });
+      const we = endOfWeek(current, { weekStartsOn: locale === "pl" ? 1 : 0 });
+      if (locale === "pl") {
+        return `${format(ws, "d MMM", { locale: fLocale })} – ${format(we, "d MMM yyyy", { locale: fLocale })}`;
+      }
       return `${format(ws, "MMM d")} – ${format(we, "MMM d, yyyy")}`;
     }
-    if (view === "day") return format(current, "EEEE, MMMM d, yyyy");
+    if (view === "day") {
+      if (locale === "pl") {
+        const formatted = format(current, "EEEE, d MMMM yyyy", { locale: fLocale });
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      }
+      return format(current, "EEEE, MMMM d, yyyy");
+    }
+    if (locale === "pl") {
+      const formatted = format(current, "LLLL yyyy", { locale: fLocale });
+      return `Terminarz – ${formatted.charAt(0).toUpperCase() + formatted.slice(1)}`;
+    }
     return `Agenda – ${format(current, "MMMM yyyy")}`;
   }
 
@@ -123,6 +142,7 @@ export function CalendarScheduler({
     slotDuration,
     adminTZ: adminTimeZone,
     viewerTZ: vTz,
+    locale,
     onDateSelect: (d: Date) => {
       setCurrent(d);
       onDateSelect(d);
@@ -131,8 +151,8 @@ export function CalendarScheduler({
   };
 
   return (
-    <div className="flex flex-col rounded-2xl border overflow-scroll no-scrollbar bg-background w-full">
-      <div className="flex items-center justify-between gap-3 px-4 overflow-scroll no-scrollbar py-3 border-b bg-muted/30 flex-wrap gap-y-2">
+    <div className="flex flex-col rounded-2xl border  bg-background w-full">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b bg-muted/30 flex-wrap gap-y-2">
         <div className="flex items-center gap-2">
           <Button
             variant="secondary"
@@ -174,28 +194,15 @@ export function CalendarScheduler({
           </Button>*/}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <TimezoneSelect
-            value={vTz}
-            onChange={handleZoneChange}
-            label="Your timezone"
-          />
-          <ViewSwitcher view={view} onChange={setView} />
+          <ViewSwitcher view={view} onChange={setView} locale={locale} />
         </div>
       </div>
 
-      {/*<div className="sm:hidden px-4 pt-2 pb-0">
+      <div className="sm:hidden px-4 pt-2 pb-0">
         <p className="text-sm font-semibold text-foreground">{getTitle()}</p>
-      </div>*/}
+      </div>
 
-      {/*{adminTimeZone !== viewerTZ && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50/70 dark:bg-blue-950/20 border-b text-xs text-blue-700 dark:text-blue-300">
-          <Globe className="h-3.5 w-3.5 shrink-0" />
-          <span>
-            Times shown in <strong>{viewerLabel}</strong>. Host is in{" "}
-            <strong>{adminLabel}</strong>. Hover any slot to see both times.
-          </span>
-        </div>
-      )}*/}
+
 
       <div className="flex-1">
         {view === "month" && (
@@ -219,10 +226,13 @@ export function CalendarScheduler({
 					<span className="h-2 w-2 bg-primary/70 rounded-full" /> Today
 				</span>*/}
         <span className="flex items-center gap-3">
-          <span>{slotDuration}min slots</span>
+          <span>
+            {locale === "pl" ? `Sesje ${slotDuration} min` : `${slotDuration}min slots`}
+          </span>
           {adminTimeZone !== viewerTZ && (
             <span className="flex items-center gap-1">
-              <Globe className="h-3 w-3" /> Host: {adminLabel}
+              <Globe className="h-3 w-3" />{" "}
+              {locale === "pl" ? `Ekspert: ${adminLabel}` : `Host: ${adminLabel}`}
             </span>
           )}
         </span>
