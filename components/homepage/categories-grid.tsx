@@ -112,7 +112,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
   ];
 
   return (
-    <section className="py-16 bg-[#121212]">
+    <section className="py-8 bg-[#121212]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -120,6 +120,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
+
           <div className="mb-16 flex flex-col-reverse lg:flex-row lg:items-stretch lg:justify-between gap-8 lg:gap-12">
             {/* Left side: Paragraph */}
             <div className="flex-1 flex items-center lg:pr-8">
@@ -147,7 +148,14 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
               </h2>
             </div>
           </div>
-
+          <div className="mb-12">
+            <div className="flex items-center gap-6 mb-12">
+              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap">
+                Popularne sprawy prywatne
+              </h2>
+              <div className="flex-grow border-t border-zinc-800/80" />
+            </div>
+          </div>
           {/* Desktop Grid Layout */}
           <div
             className="hidden lg:grid grid-cols-6 grid-rows-2 gap-4 max-w-full mx-auto mb-8 min-h-[500px]"
