@@ -149,6 +149,7 @@ export default function CategoryClientPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sortBy, setSortBy] = useState("ranking")
   const [isLoading, setIsLoading] = useState(true)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
   const [total, setTotal] = useState(0)
 
@@ -578,7 +579,7 @@ export default function CategoryClientPage() {
                 {/* Min Rating */}
                 <div className="space-y-2">
                   <Label>Minimalna ocena</Label>
-                  <Select value={minRating} onValueChange={setMinRating}>
+                  <Select value={minRating ?? "all"} onValueChange={(val) => setMinRating(val === "all" ? null : val)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Dowolna" />
                     </SelectTrigger>
