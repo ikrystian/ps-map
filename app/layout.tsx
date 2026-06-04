@@ -41,7 +41,7 @@ export default async function RootLayout({
   return (
     <html lang="pl" suppressHydrationWarning className="dark">
       <body
-        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
+        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased`}
         suppressHydrationWarning
       >
         <ConsentManager>
