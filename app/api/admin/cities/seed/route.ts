@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { serverCache } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -50,6 +51,11 @@ export async function POST(request: NextRequest) {
         })
         createdCities.push(newCity)
       }
+    }
+
+    // Invalidate cached cities
+    if (createdCities.length > 0) {
+      serverCache.invalidatePattern("cities")
     }
 
     return NextResponse.json({ count: createdCities.length })
