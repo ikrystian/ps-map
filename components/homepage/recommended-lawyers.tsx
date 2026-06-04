@@ -247,7 +247,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="w-[290px] sm:w-[330px] md:w-[368px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                    className="w-[290px] sm:w-[330px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
                     <div className="relative h-90 w-full overflow-hidden aspect-[4/3] bg-zinc-900">
@@ -258,7 +258,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                       />
 
                       {/* Bottom-fade black gradient to blend image into card background */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-[#1c1c1e]/10 to-transparent to-50%" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
 
                       {/* Rating Badge Overlay - exact visual layout from mockup */}
                       <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/5">

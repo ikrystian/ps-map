@@ -435,7 +435,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
+                  <h3 className="text-xl md:text-2xl font-fairplay font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
                     <span className="truncate">{lawFirm.nazwa}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge

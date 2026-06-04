@@ -308,8 +308,6 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
-                      {/* Bottom-fade black gradient to blend image into card background */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-[#1c1c1e]/10 to-transparent to-50%" />
 
                       {/* Rating Badge Overlay */}
                       <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/5">
