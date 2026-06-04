@@ -647,71 +647,109 @@ export default function LawFirmProfilePage() {
       <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
 
         {/* Floating Profile Info Card */}
-        <div className="profile-card bg-card border border-border/50 shadow-2xl rounded-2xl md:rounded-3xl p-6 md:p-8 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95 transition-all duration-300">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-between">
+        <div className={cn(
+          "profile-card bg-[#282825]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl md:rounded-3xl p-6 md:p-8 transition-all duration-500 relative overflow-hidden",
+          lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-500/40 shadow-[0_0_40px_-5px_rgba(245,158,11,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-amber-950/10",
+          lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-500/40 shadow-[0_0_40px_-5px_rgba(168,85,247,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-purple-950/10",
+          lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-500/40 shadow-[0_0_40px_-5px_rgba(59,130,246,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-blue-950/10"
+        )}>
+          {/* Decorative background glows */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-primary/20 blur-3xl pointer-events-none opacity-60 dark:opacity-40" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-primary/10 blur-3xl pointer-events-none opacity-50 dark:opacity-30" />
+
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start justify-between relative z-10">
 
             {/* Logo and Metadata */}
-            <div className="flex flex-col md:flex-row gap-6 items-start flex-1 w-full">
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start flex-1 w-full text-center md:text-left">
               {/* Logo */}
               {lawFirm.logo && (
-                <div className={cn(
-                  "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-card flex-shrink-0 border-2 shadow-md transition-all duration-300 hover:scale-105",
-                  lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 dark:border-amber-400 shadow-amber-500/10",
-                  lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-500 dark:border-purple-400 shadow-purple-500/10",
-                  lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-500 dark:border-blue-400 shadow-blue-500/10",
-                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-border"
-                )}>
-                  {lawFirm.pakietSubskrypcji === "BIZNES" && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
-                  )}
-                  <div className="relative h-full w-full rounded-2xl bg-card overflow-hidden">
-                    <Image
-                      src={lawFirm.logo}
-                      alt={lawFirm.nazwa}
-                      id="logo-photo"
-                      fill
-                      className="object-contain p-3"
-                    />
+                <div className="relative group flex-shrink-0 self-center md:self-start">
+                  <div className={cn(
+                    "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-[#20201d]/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
+                    lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 shadow-amber-500/20",
+                    lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-400 shadow-purple-500/20",
+                    lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-400 shadow-blue-500/20",
+                    (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-white/10"
+                  )}>
+                    {lawFirm.pakietSubskrypcji === "BIZNES" && (
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient opacity-60" />
+                    )}
+                    {lawFirm.pakietSubskrypcji === "PREMIUM" && (
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-[length:200%_100%] animate-gradient opacity-60" />
+                    )}
+                    <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
+                      <Image
+                        src={lawFirm.logo}
+                        alt={lawFirm.nazwa}
+                        id="logo-photo"
+                        fill
+                        className="object-contain p-4 transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </div>
                   </div>
+                  {/* Subtle pulsing background glow on hover for premium profiles */}
+                  {(lawFirm.pakietSubskrypcji === "BIZNES" || lawFirm.pakietSubskrypcji === "PREMIUM") && (
+                    <span className="absolute -inset-1.5 rounded-3xl bg-primary/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                  )}
                 </div>
               )}
 
               {/* Text Info */}
-              <div className="space-y-3 flex-1">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">{lawFirm.nazwa}</h1>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {lawFirm.zweryfikowana && (
-                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold rounded-full flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3 fill-emerald-500/10" />
-                        Zweryfikowana
-                      </Badge>
-                    )}
-                    {lawFirm.pakietSubskrypcji && (
-                      <PackageBadge
-                        packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
-                        size="md"
-                        className="shadow-sm"
-                      />
-                    )}
+              <div className="space-y-4 flex-1 w-full">
+                <div className="space-y-2">
+                  <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start flex-wrap">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
+                      {lawFirm.nazwa}
+                    </h1>
+                    <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
+                      {lawFirm.zweryfikowana && (
+                        <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-sm">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          Zweryfikowany ekspert
+                        </Badge>
+                      )}
+                      {lawFirm.pakietSubskrypcji && (
+                        <PackageBadge
+                          packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
+                          size="md"
+                          className="shadow-sm border-white/10"
+                        />
+                      )}
+                    </div>
                   </div>
+                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm.nazwaFirmy}</p>
                 </div>
 
-                <p className="text-base md:text-lg text-muted-foreground font-medium">{lawFirm.nazwaFirmy}</p>
-
-                {/* Rating & Dynamic opening badge & City */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground pt-1">
+                {/* Rating, Opening Status, and Location details in clean pills */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm pt-1">
+                  {/* Review Pill */}
                   {lawFirm.reviewCount > 0 ? (
-                    <div className="flex items-center gap-2 bg-yellow-500/5 dark:bg-yellow-500/10 border border-yellow-500/25 px-2.5 py-1 rounded-xl">
-                      {renderStars(Math.round(lawFirm.avgRating))}
-                      <span className="font-bold text-yellow-600 dark:text-yellow-400">{lawFirm.avgRating.toFixed(1)}</span>
-                      <span className="text-muted-foreground">({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : "opinii"})</span>
+                    <div className="flex items-center gap-2 bg-yellow-500/10 dark:bg-yellow-500/15 border border-yellow-500/30 px-3.5 py-1.5 rounded-full shadow-sm">
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`h-3.5 w-3.5 ${star <= Math.round(lawFirm.avgRating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "fill-muted text-muted"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-bold text-yellow-500 text-xs">
+                        {lawFirm.avgRating.toFixed(1)}
+                      </span>
+                      <span className="text-xs text-yellow-500/80 font-medium">
+                        ({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : lawFirm.reviewCount < 5 ? "opinie" : "opinii"})
+                      </span>
                     </div>
                   ) : (
-                    <span className="text-muted-foreground text-xs italic">Brak opinii</span>
+                    <span className="text-xs text-muted-foreground font-medium bg-white/5 border border-white/10 px-3 py-1.5 rounded-full italic">
+                      Brak opinii
+                    </span>
                   )}
 
-                  {/* Open / Closed Badge */}
+                  {/* Open / Closed status indicator with pulse animation */}
                   {(() => {
                     if (!lawFirm.statusGodzinyOtwarcia || !lawFirm.godzinyOtwarcia) return null
 
@@ -734,8 +772,8 @@ export default function LawFirmProfilePage() {
 
                     if (!todayHours || todayHours.toLowerCase() === "zamknięte" || todayHours.trim() === "") {
                       return (
-                        <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
-                          <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                        <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
                           Zamknięte
                         </div>
                       )
@@ -753,30 +791,35 @@ export default function LawFirmProfilePage() {
                     const isOpen = currentTime >= fromTime && currentTime <= toTime
 
                     return isOpen ? (
-                      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         Otwarte
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
-                        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                      <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold">
+                        <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
                         Zamknięte
                       </div>
                     )
                   })()}
 
-                  <span className="flex items-center gap-1.5 text-sm font-medium">
-                    <MapPin className="h-4 w-4 text-primary/80" />
+                  {/* Location pill */}
+                  <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
+                    <MapPin className="h-3.5 w-3.5 text-teal-400 animate-bounce" style={{ animationDuration: '3s' }} />
                     {lawFirm.miasto}
-                  </span>
+                  </div>
                 </div>
 
-                {/* Słowa kluczowe */}
+                {/* Słowa kluczowe (tags) */}
                 {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-1.5">
+                  <div className="flex flex-wrap gap-1.5 pt-1 justify-center md:justify-start">
                     {lawFirm.slowaKluczowe.map((keyword, index) => (
-                      <Badge key={index} variant="outline" className="text-xs bg-muted/20 border-border/60 hover:bg-muted/40 transition-colors">
-                        {keyword}
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="text-xs bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 transition-colors px-2.5 py-0.5 rounded-md text-muted-foreground hover:text-foreground font-medium"
+                      >
+                        #{keyword}
                       </Badge>
                     ))}
                   </div>
@@ -785,23 +828,23 @@ export default function LawFirmProfilePage() {
             </div>
 
             {/* Actions Section */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-end self-stretch lg:self-auto border-t lg:border-t-0 pt-4 lg:pt-0 mt-4 lg:mt-0 border-border/40">
-              <div className="flex items-center gap-2 justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-center lg:justify-end self-stretch lg:self-auto border-t lg:border-t-0 pt-6 lg:pt-0 mt-2 lg:mt-0 border-white/10">
+              <div className="flex items-center gap-2 justify-center lg:justify-end">
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-xl border-border/50 hover:bg-muted/40 transition-all hover:scale-105 active:scale-95"
+                  className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:text-red-400 text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
                   title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
                   onClick={handleToggleFavorite}
                   disabled={isFavoriteLoading}
                 >
-                  <Heart className={`h-5 w-5 transition-transform duration-300 ${isFavorite ? "fill-red-500 text-red-500 scale-110" : "text-muted-foreground"}`} />
+                  <Heart className={`h-5 w-5 transition-transform duration-300 ${isFavorite ? "fill-red-500 text-red-500 scale-110" : ""}`} />
                 </Button>
 
                 <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-muted/40 transition-all hover:scale-105 active:scale-95">
-                      <Share2 className="h-5 w-5 text-muted-foreground" />
+                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 shadow-sm">
+                      <Share2 className="h-5 w-5" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
@@ -836,18 +879,18 @@ export default function LawFirmProfilePage() {
                 <Button
                   onClick={handleStartChat}
                   disabled={isStartingChat}
-                  className="rounded-xl bg-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20"
                 >
-                  <MessageSquare className="mr-2 h-4 w-4" />
+                  <MessageSquare className="h-4 w-4" />
                   {isStartingChat ? "Łączenie..." : "Rozpocznij czat"}
                 </Button>
               ) : (
                 <Button
                   asChild
-                  className="rounded-xl bg-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20"
                 >
                   <a href="#contact-form">
-                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <MessageSquare className="h-4 w-4" />
                     Skontaktuj się
                   </a>
                 </Button>
