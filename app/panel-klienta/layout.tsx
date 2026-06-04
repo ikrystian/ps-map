@@ -364,6 +364,13 @@ export default function ClientPanelLayout({
                       4<span className="font-semibold text-zinc-300">Connection</span>
                     </span>
                   </a>
+                  <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />
+
+                  <a href="https://bpcoders.pl" target="_blank" rel="noopener noreferrer">
+                    <span className="text-md font-bold text-white tracking-tight">
+                      BP<span className="font-semibold text-zinc-300">Coders</span>
+                    </span>
+                  </a>
                 </div>
               </div>
 
