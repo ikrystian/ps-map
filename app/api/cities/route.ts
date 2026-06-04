@@ -6,10 +6,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const voivodeshipId = searchParams.get("voivodeshipId")
+    const voivodeship = searchParams.get("voivodeship")
     const search = searchParams.get("search")
 
     // Dynamic cache key based on query parameters
-    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:s_${search ?? "none"}`
+    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:vs_${voivodeship ?? "all"}:s_${search ?? "none"}`
 
     const cities = await getOrSetCached(
       cacheKey,
@@ -17,6 +18,10 @@ export async function GET(request: NextRequest) {
         const where: any = {}
         if (voivodeshipId) {
           where.voivodeshipId = voivodeshipId
+        } else if (voivodeship) {
+          where.voivodeship = {
+            slug: voivodeship
+          }
         }
         if (search) {
           where.OR = [
