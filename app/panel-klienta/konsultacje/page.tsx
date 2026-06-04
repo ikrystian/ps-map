@@ -123,13 +123,6 @@ export default function ClientConsultationsPage() {
       >
         <motion.div variants={itemVariants}>
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
-            <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white">Historia konsultacji</CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">
-                Lista wszystkich umówionych konsultacji prawnych, zarówno tych nadchodzących, jak i zakończonych.
-              </CardDescription>
-            </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
                 {bookings.length === 0 ? (
@@ -138,8 +131,8 @@ export default function ClientConsultationsPage() {
                       <Calendar className="h-6 w-6 text-zinc-500 animate-pulse" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-white">Brak rezerwacji</h4>
-                      <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-light">
+                      <h4 className="text-base font-semibold text-white">Brak rezerwacji</h4>
+                      <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed font-light">
                         Nie masz obecnie żadnych umówionych konsultacji prawnych. Możesz umówić się na rozmowę bezpośrednio na profilu wybranego eksperta.
                       </p>
                     </div>

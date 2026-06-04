@@ -309,6 +309,7 @@ export default function ClientPanelLayout({
             <UserMenu
               userRole="CLIENT"
               userName={session?.user?.name}
+              userEmail={session?.user?.email}
               userImage={session?.user?.image}
               userId={session?.user?.id}
             />

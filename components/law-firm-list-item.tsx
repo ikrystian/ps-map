@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PackageBadge, PackageType } from "@/components/permissions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -294,11 +294,17 @@ const OraIcon = () => (
 
 export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
   const { status } = useSession();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const isLoggedIn = status === "authenticated";
-  const isOpen = isLawFirmOpen(
+  const isOpen = isMounted ? isLawFirmOpen(
     lawFirm.godzinyOtwarcia,
     lawFirm.statusGodzinyOtwarcia,
-  );
+  ) : null;
   const pkg = lawFirm.pakietSubskrypcji;
 
   const cardBorderAndGlow =

@@ -460,6 +460,7 @@ export default function LawFirmPanelLayout({
             <UserMenu
               userRole="LAW_FIRM"
               userName={session?.user?.name}
+              userEmail={session?.user?.email}
               userImage={session?.user?.image}
               punktySaldo={punktySaldo}
               userId={session?.user?.id}
