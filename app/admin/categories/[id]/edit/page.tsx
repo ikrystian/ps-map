@@ -3,7 +3,7 @@
 import { CategoryForm, CategoryFormValues } from "@/components/admin/category-form"
 import { toast } from "@/components/ui/sonner"
 import { useRouter } from "next/navigation"
-import { use, useEffect, useState } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 
 interface Category {
   id: string
@@ -33,32 +33,33 @@ export default function EditCategoryPage({ params }: EditCategoryPageProps) {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, allCatsRes] = await Promise.all([
-          fetch(`/api/categories/${id}`),
-          fetch("/api/categories")
-        ])
+  const fetchData = useCallback(async () => {
+    try {
+      const [catRes, allCatsRes] = await Promise.all([
+        fetch(`/api/categories/${id}`),
+        fetch("/api/categories")
+      ])
 
-        if (catRes.ok && allCatsRes.ok) {
-          const catData = await catRes.json()
-          const allCatsData = await allCatsRes.json()
-          setCategory(catData)
-          setCategories(allCatsData)
-        } else {
-          toast.error("Nie udało się pobrać danych")
-          router.push("/admin/categories")
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error)
-        toast.error("Wystąpił błąd podczas pobierania danych")
-      } finally {
-        setLoading(false)
+      if (catRes.ok && allCatsRes.ok) {
+        const catData = await catRes.json()
+        const allCatsData = await allCatsRes.json()
+        setCategory(catData)
+        setCategories(allCatsData)
+      } else {
+        toast.error("Nie udało się pobrać danych")
+        router.push("/admin/categories")
       }
+    } catch (error) {
+      console.error("Error fetching data:", error)
+      toast.error("Wystąpił błąd podczas pobierania danych")
+    } finally {
+      setLoading(false)
     }
-    fetchData()
   }, [id, router])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleEditCategory = async (values: CategoryFormValues) => {
     setSaving(true)
@@ -79,8 +80,8 @@ export default function EditCategoryPage({ params }: EditCategoryPageProps) {
 
       if (response.ok) {
         toast.success("Kategoria została zaktualizowana")
-        router.push("/admin/categories")
         router.refresh()
+        await fetchData()
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd aktualizacji kategorii")
