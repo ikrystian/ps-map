@@ -1,0 +1,11 @@
+{
+  "name": "ps-landing",
+  "version": "1.0.0",
+  "description": "ProstaSpawa landing page",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "dependencies": {}
+}
