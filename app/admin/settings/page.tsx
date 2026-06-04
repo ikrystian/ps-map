@@ -87,7 +87,24 @@ interface Settings {
     value: string
     description: string | null
   }
+  ksefEnabled?: {
+    value: string
+    description: string | null
+  }
+  ksefNip?: {
+    value: string
+    description: string | null
+  }
+  ksefToken?: {
+    value: string
+    description: string | null
+  }
+  ksefEnv?: {
+    value: string
+    description: string | null
+  }
 }
+
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null)
@@ -112,6 +129,11 @@ export default function AdminSettingsPage() {
   const [deleteCost2, setDeleteCost2] = useState("300")
   const [deleteCost3, setDeleteCost3] = useState("100")
   const [enableUserSelectionOnLogin, setEnableUserSelectionOnLogin] = useState("true")
+  const [ksefEnabled, setKsefEnabled] = useState("false")
+  const [ksefNip, setKsefNip] = useState("1234567890")
+  const [ksefToken, setKsefToken] = useState("")
+  const [ksefEnv, setKsefEnv] = useState("test")
+
 
   useEffect(() => {
     fetchSettings()
@@ -142,6 +164,10 @@ export default function AdminSettingsPage() {
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
         setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
         setEnableUserSelectionOnLogin(data.enableUserSelectionOnLogin?.value || "true")
+        setKsefEnabled(data.ksefEnabled?.value || "false")
+        setKsefNip(data.ksefNip?.value || "1234567890")
+        setKsefToken(data.ksefToken?.value || "")
+        setKsefEnv(data.ksefEnv?.value || "test")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -194,6 +220,18 @@ export default function AdminSettingsPage() {
     if (isNaN(deleteCost1Num) || deleteCost1Num < 0 || isNaN(deleteCost2Num) || deleteCost2Num < 0 || isNaN(deleteCost3Num) || deleteCost3Num < 0) {
       toast.error("Koszty usunięcia opinii muszą być liczbami większymi lub równymi 0")
       return
+    }
+
+    if (ksefEnabled === "true") {
+      const cleanNip = ksefNip.replace(/\D/g, "")
+      if (cleanNip.length !== 10) {
+        toast.error("NIP w konfiguracji KSeF musi mieć dokładnie 10 cyfr")
+        return
+      }
+      if (!ksefToken) {
+        toast.error("Token autoryzacyjny KSeF jest wymagany przy włączonej integracji")
+        return
+      }
     }
 
     setSaving(true)
@@ -280,6 +318,22 @@ export default function AdminSettingsPage() {
             enableUserSelectionOnLogin: {
               value: enableUserSelectionOnLogin,
               description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
+            },
+            ksefEnabled: {
+              value: ksefEnabled,
+              description: "Czy włączyć automatyczne wystawianie faktur przez KSeF 2.0",
+            },
+            ksefNip: {
+              value: ksefNip,
+              description: "NIP sprzedawcy (platformy) dla systemu KSeF",
+            },
+            ksefToken: {
+              value: ksefToken,
+              description: "Token autoryzacyjny KSeF wygenerowany w Aplikacji Podatnika",
+            },
+            ksefEnv: {
+              value: ksefEnv,
+              description: "Środowisko KSeF: test (testowe/sandbox) lub prod (produkcyjne)",
             },
           },
         }),
@@ -715,6 +769,94 @@ export default function AdminSettingsPage() {
               />
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Ustawienia Krajowego Systemu e-Faktur (KSeF) */}
+      <Card className="border-indigo-500/20 bg-indigo-500/[0.01]">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                Integracja KSeF 2.0
+                <span className="text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">MF Polska</span>
+              </CardTitle>
+              <CardDescription>
+                Konfiguracja automatycznego przesyłania faktur do Krajowego Systemu e-Faktur (KSeF) w standardzie FA(3).
+              </CardDescription>
+            </div>
+            <Switch
+              id="ksefEnabled"
+              checked={ksefEnabled === "true"}
+              onCheckedChange={(checked) => setKsefEnabled(checked ? "true" : "false")}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {ksefEnabled === "false" && (
+            <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/[0.03] p-4 text-sm text-yellow-800 dark:text-yellow-400">
+              <span className="font-semibold">Tryb Symulacji:</span> System KSeF jest wyłączony. Faktury będą generowane w formacie FA(3) XML lokalnie i automatycznie oznaczane jako przesłane w celach demonstracyjnych i deweloperskich.
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="ksefNip" className="font-semibold text-foreground">NIP Sprzedawcy (Platformy)</Label>
+              <Input
+                id="ksefNip"
+                type="text"
+                value={ksefNip}
+                onChange={(e) => setKsefNip(e.target.value)}
+                placeholder="np. 1234567890"
+                disabled={ksefEnabled === "false"}
+              />
+              <p className="text-xs text-muted-foreground">
+                10-cyfrowy NIP podmiotu wystawiającego faktury (sprzedawcy).
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="font-semibold text-foreground">Środowisko KSeF 2.0</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={ksefEnv === "test" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setKsefEnv("test")}
+                  disabled={ksefEnabled === "false"}
+                >
+                  TEST (Sandbox)
+                </Button>
+                <Button
+                  type="button"
+                  variant={ksefEnv === "prod" ? "default" : "outline"}
+                  className="flex-1 text-red-600 hover:text-red-700 dark:text-red-400"
+                  onClick={() => setKsefEnv("prod")}
+                  disabled={ksefEnabled === "false"}
+                >
+                  PRODUKCJA
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Zalecane testowanie integracji na środowisku testowym (Sandbox MF).
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="ksefToken" className="font-semibold text-foreground">Token Autoryzacyjny (Token KSeF)</Label>
+            <Input
+              id="ksefToken"
+              type="password"
+              value={ksefToken}
+              onChange={(e) => setKsefToken(e.target.value)}
+              placeholder="Wklej 40-znakowy token autoryzacyjny..."
+              disabled={ksefEnabled === "false"}
+            />
+            <p className="text-xs text-muted-foreground">
+              Token wygenerowany w Aplikacji Podatnika KSeF w sekcji &quot;Certyfikaty i Uprawnienia&quot;. Posiadający uprawnienie do wystawiania faktur.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
