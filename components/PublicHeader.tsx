@@ -22,7 +22,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Check, ChevronDown, ChevronRight, IdCard, List, MapPin, Menu, Search, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 
@@ -48,11 +48,13 @@ export default function PublicHeader({
   userId
 }: PublicHeaderProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
   const [searchFormOpen, setSearchFormOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCity, setSelectedCity] = useState("")
+  const [selectedVoivodeship, setSelectedVoivodeship] = useState("")
   const [selectedType, setSelectedType] = useState("all")
   const [locationOpen, setLocationOpen] = useState(false)
   const [typeOpen, setTypeOpen] = useState(false)
@@ -86,8 +88,11 @@ export default function PublicHeader({
       return
     }
 
-    if (clientCitiesCache[query]) {
-      setCities(clientCitiesCache[query])
+    const currentVoivodeship = searchParams.get("voivodeship") || ""
+    const cacheKey = `${currentVoivodeship}:${query}`
+
+    if (clientCitiesCache[cacheKey]) {
+      setCities(clientCitiesCache[cacheKey])
       setIsLoadingCities(false)
       return
     }
@@ -96,13 +101,18 @@ export default function PublicHeader({
     const controller = new AbortController()
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+        let url = `/api/cities?search=${encodeURIComponent(query)}`
+        if (currentVoivodeship) {
+          url += `&voivodeship=${encodeURIComponent(currentVoivodeship)}`
+        }
+
+        const response = await fetch(url, {
           signal: controller.signal,
         })
         if (response.ok) {
           const data = await response.json()
           if (Array.isArray(data)) {
-            clientCitiesCache[query] = data
+            clientCitiesCache[cacheKey] = data
             setCities(data)
           }
         }
@@ -119,7 +129,7 @@ export default function PublicHeader({
       clearTimeout(timeoutId)
       controller.abort()
     }
-  }, [locationSearch])
+  }, [locationSearch, searchParams])
 
   // Reset location search when popover closes
   useEffect(() => {
@@ -161,6 +171,7 @@ export default function PublicHeader({
     const params = new URLSearchParams()
     if (searchQuery.trim()) params.set("search", searchQuery.trim())
     if (selectedCity) params.set("city", selectedCity)
+    if (selectedVoivodeship) params.set("voivodeship", selectedVoivodeship)
     if (selectedType && selectedType !== "all") params.set("type", selectedType)
 
     window.location.href = `/szukaj-prawnika?${params.toString()}`
@@ -688,6 +699,7 @@ export default function PublicHeader({
                           onClick={(e) => {
                             e.stopPropagation()
                             setSelectedCity("")
+                            setSelectedVoivodeship("")
                           }}
                           className="hover:text-red-400 text-neutral-400 p-0.5"
                         >
@@ -718,7 +730,7 @@ export default function PublicHeader({
                         )}
                         <CommandGroup>
                           {cities.map((city) => {
-                            const matchedPostal = city.postalCodes?.find((p: any) =>
+                             const matchedPostal = city.postalCodes?.find((p: any) =>
                               p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
                             )
                             const displayValue = matchedPostal
@@ -730,7 +742,13 @@ export default function PublicHeader({
                                 key={city.id}
                                 value={city.nazwa}
                                 onSelect={() => {
-                                  setSelectedCity(city.nazwa === selectedCity ? "" : city.nazwa)
+                                  if (city.nazwa === selectedCity) {
+                                    setSelectedCity("")
+                                    setSelectedVoivodeship("")
+                                  } else {
+                                    setSelectedCity(city.nazwa)
+                                    setSelectedVoivodeship(city.voivodeship?.slug || "")
+                                  }
                                   setLocationOpen(false)
                                 }}
                                 className="text-white hover:bg-neutral-800 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
