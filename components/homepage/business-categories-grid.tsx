@@ -54,7 +54,7 @@ const BusinessCategoryCard = memo(({
       )} />
       <div className="relative h-full flex flex-col items-center justify-center p-6 gap-3">
         {category.ikonaUrl ? (
-          <img src={category.ikonaUrl} alt="" className="h-10 w-10 object-contain" />
+          <img src={category.ikonaUrl} alt="" className="h-10 w-10 object-contain brightness-0 invert" />
         ) : category.ikona ? (
           (() => {
             const Icon = icons[category.ikona as keyof typeof icons]
