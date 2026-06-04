@@ -13,6 +13,7 @@
  */
 
 import { format, isBefore } from "date-fns";
+import { pl } from "date-fns/locale";
 import { Calendar1, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ export function DayView({
   slotDuration,
   adminTZ,
   viewerTZ,
+  locale = "en",
   onSlotSelect,
 }: {
   current: Date;
@@ -46,6 +48,7 @@ export function DayView({
   slotDuration: number;
   adminTZ: string;
   viewerTZ: string;
+  locale?: string;
   onDateSelect: (d: Date) => void;
   onSlotSelect: (d: Date, t: string) => void;
 }) {
@@ -57,6 +60,7 @@ export function DayView({
     slotDuration,
     adminTZ,
     viewerTZ,
+    locale,
   );
   const bookedCount = slots.filter((s) => s.booked).length;
   const isPast = isPastDate(current);
@@ -66,42 +70,30 @@ export function DayView({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="md:text-lg text-base font-medium">
-            {format(current, "EEEE")}
+            {(() => {
+              const formatted = format(current, "EEEE", { locale: locale === "pl" ? pl : undefined });
+              return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            })()}
           </h3>
           <p className="text-xs md:text-sm text-muted-foreground">
-            {format(current, "MMMM d, yyyy")}
+            {format(current, locale === "pl" ? "d MMMM yyyy" : "MMMM d, yyyy", { locale: locale === "pl" ? pl : undefined })}
           </p>
         </div>
         {isPast ? (
           <Badge variant="outline" className="text-muted-foreground">
-            Past date
+            {locale === "pl" ? "Miniony termin" : "Past date"}
           </Badge>
         ) : avail ? (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {/*<Clock className="h-3.5 w-3.5" />*/}
-            {/*<span>*/}
-            {/*{formatInViewer(
-                slotToUtc(current, avail.startTime, adminTZ),
-                viewerTZ,
-              )}
-              {" – "}
-              {formatInViewer(
-                slotToUtc(current, avail.endTime, adminTZ),
-                viewerTZ,
-              )}*/}
-            {/*{adminTZ !== viewerTZ && (
-                <span className="ml-1 text-[10px]">(your time)</span>
-              )}*/}
-            {/*</span>*/}
             {bookedCount > 0 && (
               <Badge variant="secondary" className="text-xs">
-                {bookedCount} booked
+                {bookedCount} {locale === "pl" ? "zajęte" : "booked"}
               </Badge>
             )}
           </div>
         ) : (
           <Badge variant="outline" className="text-muted-foreground">
-            Unavailable
+            {locale === "pl" ? "Niedostępne" : "Unavailable"}
           </Badge>
         )}
       </div>
@@ -109,12 +101,12 @@ export function DayView({
       {isPast ? (
         <div className="flex flex-col items-center justify-center h-40 gap-2 text-muted-foreground border-2 border-dashed rounded-xl">
           <Calendar className="h-8 w-8 opacity-30" />
-          <p className="text-sm">This date is in the past</p>
+          <p className="text-sm">{locale === "pl" ? "Ta data już minęła" : "This date is in the past"}</p>
         </div>
       ) : slots.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-40 gap-2 text-muted-foreground border-2 border-dashed rounded-xl">
           <Calendar1 className="h-8 w-8 opacity-30" />
-          <p className="text-sm">No available slots for this day</p>
+          <p className="text-sm">{locale === "pl" ? "Brak wolnych terminów na ten dzień" : "No available slots for this day"}</p>
         </div>
       ) : (
         <ScrollArea className="h-[360px] pr-2">
@@ -141,13 +133,13 @@ export function DayView({
                           <div className="text-left">
                             {isPast && (
                               <span className="block text-[10px] text-muted-foreground">
-                                Past
+                                {locale === "pl" ? "Minęło" : "Past"}
                               </span>
                             )}
                             <span className="block">{slot.displayTime}</span>
                             {adminTZ !== viewerTZ && (
                               <span className="block text-[10px] text-muted-foreground">
-                                {slot.adminDisplayTime} (host)
+                                {slot.adminDisplayTime} {locale === "pl" ? "(ekspert)" : "(host)"}
                               </span>
                             )}
                           </div>
@@ -159,6 +151,7 @@ export function DayView({
                         slot={slot}
                         adminTZ={adminTZ}
                         viewerTZ={viewerTZ}
+                        locale={locale}
                       />
                     </TooltipContent>
                   </Tooltip>
