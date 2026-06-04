@@ -149,22 +149,9 @@ export default function AdminLayout({
                     )}
                   </AnimatePresence>
 
-                  {/* Icon with interactive spring movement */}
-                  <motion.div
-                    animate={{
-                      scale: hoveredIndex === index || isActive ? 1.1 : 1,
-                      x: hoveredIndex === index && !isActive && !isCollapsed ? 2 : 0,
-                      rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
-                    }}
-                    transition={{
-                      scale: { type: "spring", stiffness: 400, damping: 20 },
-                      x: { type: "spring", stiffness: 400, damping: 20 },
-                      rotate: { duration: 0.4, ease: "easeInOut" }
-                    }}
-                    className="flex items-center justify-center flex-shrink-0"
-                  >
+                  <div className="flex items-center justify-center flex-shrink-0">
                     <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
-                  </motion.div>
+                  </div>
 
                   {/* Text label with elegant fade-slide */}
                   {!isCollapsed && (

@@ -186,7 +186,6 @@ export default function LawFirmPanelLayout({
     <nav
       className="flex-1 space-y-1 overflow-y-auto p-4 relative"
       id="left-nav"
-      onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => {
         if (inSheet) {
           setIsMobileOpen(false)
@@ -218,7 +217,6 @@ export default function LawFirmPanelLayout({
           <Link
             key={item.name}
             href={item.href}
-            onMouseEnter={() => setHoveredIndex(index)}
             className={cn(
               "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
               isActive
@@ -228,40 +226,11 @@ export default function LawFirmPanelLayout({
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            {/* Sliding/Fading Hover Background Pill */}
-            <AnimatePresence>
-              {hoveredIndex === index && !isActive && (
-                <motion.span
-                  layoutId="expert-sidebar-hover-pill"
-                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 380,
-                    damping: 30,
-                  }}
-                />
-              )}
-            </AnimatePresence>
 
-            {/* Icon with interactive spring movement */}
-            <motion.div
-              animate={{
-                scale: hoveredIndex === index || isActive ? 1.1 : 1,
-                x: hoveredIndex === index && !isActive && (!inSheet && !isCollapsed) ? 2 : 0,
-                rotate: hoveredIndex === index && !isActive ? [0, -5, 5, 0] : 0,
-              }}
-              transition={{
-                scale: { type: "spring", stiffness: 400, damping: 20 },
-                x: { type: "spring", stiffness: 400, damping: 20 },
-                rotate: { duration: 0.4, ease: "easeInOut" }
-              }}
-              className="flex items-center justify-center flex-shrink-0"
-            >
+
+            <div className="flex items-center justify-center flex-shrink-0">
               <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
-            </motion.div>
+            </div>
 
             {/* Text label with elegant fade-slide */}
             {
@@ -289,16 +258,7 @@ export default function LawFirmPanelLayout({
               )
             }
 
-            {/* Active accent dot for extra polish */}
-            {
-              isActive && (inSheet || !isCollapsed) && (
-                <motion.span
-                  layoutId="expert-sidebar-active-indicator"
-                  className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
-              )
-            }
+
           </Link>
         )
       })}
