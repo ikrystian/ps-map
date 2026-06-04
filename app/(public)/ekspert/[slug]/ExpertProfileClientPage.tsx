@@ -600,10 +600,9 @@ export default function LawFirmProfilePage() {
   const youtubeVideoId = lawFirm?.filmYouTube ? getYouTubeVideoId(lawFirm.filmYouTube) : null
 
   return (
-    <div className="min-h-screen bg-background-sec">
-      {/* Header Image */}
-
-      <div className="relative h-64 md:h-96 lg:h-128 w-full flex items-end overflow-hidden" id="kancelaria-header">
+    <div className="min-h-screen bg-background-sec pb-16">
+      {/* Header Image / Video Banner */}
+      <div className="relative h-[280px] md:h-[380px] lg:h-[440px] w-full flex items-end overflow-hidden" id="kancelaria-header">
         {youtubeVideoId ? (
           <>
             <iframe
@@ -622,7 +621,7 @@ export default function LawFirmProfilePage() {
               allow="autoplay; encrypted-media"
               frameBorder="0"
             />
-            <div className="absolute inset-0 bg-black/40 z-[-1]" />
+            <div className="absolute inset-0 bg-black/40 z-[1]" />
           </>
         ) : lawFirm.zdjecieGlowne ? (
           <Image
@@ -641,224 +640,242 @@ export default function LawFirmProfilePage() {
             (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10"
           )} />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/50 to-background/90 z-[5]" />
-        <div className="container mx-auto px-4 py-8 pb-3 max-w-7xl">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-background-sec/60 to-background-sec z-[3]" />
+      </div>
 
-          {/* Header Section */}
-          <div className="relative z-[40]">
+      {/* Overlapping Hero Card Container */}
+      <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
 
-            <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* Floating Profile Info Card */}
+        <div className="bg-card border border-border/50 shadow-2xl rounded-2xl md:rounded-3xl p-6 md:p-8 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95 transition-all duration-300">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-between">
+
+            {/* Logo and Metadata */}
+            <div className="flex flex-col md:flex-row gap-6 items-start flex-1 w-full">
               {/* Logo */}
               {lawFirm.logo && (
                 <div className={cn(
-                  "relative h-32 w-32 rounded-lg overflow-hidden bg-card flex-shrink-0",
-                  lawFirm.pakietSubskrypcji === "BIZNES" && "p-[3px] animate-gradient-border",
-                  lawFirm.pakietSubskrypcji === "PREMIUM" && "border-2 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]",
-                  lawFirm.pakietSubskrypcji === "STANDARD" && "border-2 border-blue-500",
-                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-2 border-border"
+                  "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-card flex-shrink-0 border-2 shadow-md transition-all duration-300 hover:scale-105",
+                  lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 dark:border-amber-400 shadow-amber-500/10",
+                  lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-500 dark:border-purple-400 shadow-purple-500/10",
+                  lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-500 dark:border-blue-400 shadow-blue-500/10",
+                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-border"
                 )}>
                   {lawFirm.pakietSubskrypcji === "BIZNES" && (
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient" />
                   )}
-                  <div className="relative h-full w-full rounded-lg bg-card overflow-hidden">
+                  <div className="relative h-full w-full rounded-2xl bg-card overflow-hidden">
                     <Image
                       src={lawFirm.logo}
                       alt={lawFirm.nazwa}
                       id="logo-photo"
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-3"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Header Info */}
-              <div className="flex-1">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                      <h1 className="text-xl md:text-2xl font-bold">{lawFirm.nazwa}</h1>
-                      {lawFirm.zweryfikowana && (
-                        <Badge variant="secondary" className="flex items-center gap-1">
-                          <CheckCircle2 className="h-3 w-3" />
-                          Zweryfikowana
-                        </Badge>
-                      )}
-                      {lawFirm.pakietSubskrypcji && (
-                        <PackageBadge
-                          packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
-                          size="lg"
-                          className="shadow-md"
-                        />
-                      )}
-                    </div>
-
-                    <p className="text-lg text-muted-foreground">{lawFirm.nazwaFirmy}</p>
-
-
-                    {/* Rating */}
-                    {lawFirm.reviewCount > 0 && (
-                      <div className="flex items-center gap-3">
-                        {renderStars(Math.round(lawFirm.avgRating))}
-                        <span className="font-semibold">{lawFirm.avgRating.toFixed(1)}</span>
-                        <span className="text-muted-foreground">
-                          ({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : "opinii"})
-                        </span>
-                      </div>
+              {/* Text Info */}
+              <div className="space-y-3 flex-1">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">{lawFirm.nazwa}</h1>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {lawFirm.zweryfikowana && (
+                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold rounded-full flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3 fill-emerald-500/10" />
+                        Zweryfikowana
+                      </Badge>
                     )}
-
-                    {/* Open/Closed Status */}
-                    {(() => {
-                      if (!lawFirm.statusGodzinyOtwarcia || !lawFirm.godzinyOtwarcia) return null
-
-                      const now = new Date()
-                      const currentDay = now.getDay()
-                      const currentTime = now.getHours() * 60 + now.getMinutes()
-
-                      const dayMap: Record<number, string> = {
-                        0: "niedziela",
-                        1: "poniedzialek",
-                        2: "wtorek",
-                        3: "sroda",
-                        4: "czwartek",
-                        5: "piatek",
-                        6: "sobota",
-                      }
-
-                      const todayKey = dayMap[currentDay]
-                      const todayHours = lawFirm.godzinyOtwarcia[todayKey]
-
-                      if (!todayHours || todayHours.toLowerCase() === "zamknięte" || todayHours.trim() === "") {
-                        return (
-                          <Badge variant="outline" className="bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
-                            <Clock className="w-3 h-3 mr-1" />
-                            Zamknięte
-                          </Badge>
-                        )
-                      }
-
-                      const [from, to] = todayHours.split("-").map(t => t.trim())
-                      if (!from || !to) return null
-
-                      const [fromHour, fromMin] = from.split(":").map(Number)
-                      const [toHour, toMin] = to.split(":").map(Number)
-
-                      const fromTime = fromHour * 60 + fromMin
-                      const toTime = toHour * 60 + toMin
-
-                      const isOpen = currentTime >= fromTime && currentTime <= toTime
-
-                      return isOpen ? (
-                        <Badge variant="outline" className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
-                          <Clock className="w-3 h-3 mr-1" />
-                          Otwarte
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20">
-                          <Clock className="w-3 h-3 mr-1" />
-                          Zamknięte
-                        </Badge>
-                      )
-                    })()}
-
-
-
-                    {/* Słowa kluczowe */}
-                    {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-                      <div className="mt-2">
-                        <div className="flex flex-wrap gap-2">
-                          {lawFirm.slowaKluczowe.map((keyword, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2 relative z-[199]" >
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="add-to-favorites"
-                      title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
-                      onClick={handleToggleFavorite}
-                      disabled={isFavoriteLoading}
-                    >
-                      <Heart className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
-                    </Button>
-                    <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="icon">
-                          <Share2 className="h-5 w-5" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Udostępnij profil kancelarii</DialogTitle>
-                          <DialogDescription>
-                            Skopiuj link do profilu kancelarii
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="flex gap-2">
-                            <Input
-                              value={typeof window !== 'undefined' ? window.location.href : ''}
-                              readOnly
-                              className="flex-1"
-                            />
-                            <Button onClick={handleCopyUrl}>
-                              Kopiuj
-                            </Button>
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
-                            Zamknij
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-
-                    {session?.user?.role === "CLIENT" ? (
-                      <Button onClick={handleStartChat} disabled={isStartingChat}>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        {isStartingChat ? "Przechodzę..." : "Rozpocznij czat"}
-                      </Button>
-                    ) : (
-                      <Button>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Kontakt
-                      </Button>
+                    {lawFirm.pakietSubskrypcji && (
+                      <PackageBadge
+                        packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
+                        size="md"
+                        className="shadow-sm"
+                      />
                     )}
                   </div>
                 </div>
+
+                <p className="text-base md:text-lg text-muted-foreground font-medium">{lawFirm.nazwaFirmy}</p>
+
+                {/* Rating & Dynamic opening badge & City */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground pt-1">
+                  {lawFirm.reviewCount > 0 ? (
+                    <div className="flex items-center gap-2 bg-yellow-500/5 dark:bg-yellow-500/10 border border-yellow-500/25 px-2.5 py-1 rounded-xl">
+                      {renderStars(Math.round(lawFirm.avgRating))}
+                      <span className="font-bold text-yellow-600 dark:text-yellow-400">{lawFirm.avgRating.toFixed(1)}</span>
+                      <span className="text-muted-foreground">({lawFirm.reviewCount} {lawFirm.reviewCount === 1 ? "opinia" : "opinii"})</span>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground text-xs italic">Brak opinii</span>
+                  )}
+
+                  {/* Open / Closed Badge */}
+                  {(() => {
+                    if (!lawFirm.statusGodzinyOtwarcia || !lawFirm.godzinyOtwarcia) return null
+
+                    const now = new Date()
+                    const currentDay = now.getDay()
+                    const currentTime = now.getHours() * 60 + now.getMinutes()
+
+                    const dayMap: Record<number, string> = {
+                      0: "niedziela",
+                      1: "poniedzialek",
+                      2: "wtorek",
+                      3: "sroda",
+                      4: "czwartek",
+                      5: "piatek",
+                      6: "sobota",
+                    }
+
+                    const todayKey = dayMap[currentDay]
+                    const todayHours = lawFirm.godzinyOtwarcia[todayKey]
+
+                    if (!todayHours || todayHours.toLowerCase() === "zamknięte" || todayHours.trim() === "") {
+                      return (
+                        <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                          Zamknięte
+                        </div>
+                      )
+                    }
+
+                    const [from, to] = todayHours.split("-").map(t => t.trim())
+                    if (!from || !to) return null
+
+                    const [fromHour, fromMin] = from.split(":").map(Number)
+                    const [toHour, toMin] = to.split(":").map(Number)
+
+                    const fromTime = fromHour * 60 + fromMin
+                    const toTime = toHour * 60 + toMin
+
+                    const isOpen = currentTime >= fromTime && currentTime <= toTime
+
+                    return isOpen ? (
+                      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Otwarte
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-xl text-xs font-bold">
+                        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                        Zamknięte
+                      </div>
+                    )
+                  })()}
+
+                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                    <MapPin className="h-4 w-4 text-primary/80" />
+                    {lawFirm.miasto}
+                  </span>
+                </div>
+
+                {/* Słowa kluczowe */}
+                {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1.5">
+                    {lawFirm.slowaKluczowe.map((keyword, index) => (
+                      <Badge key={index} variant="outline" className="text-xs bg-muted/20 border-border/60 hover:bg-muted/40 transition-colors">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Actions Section */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-end self-stretch lg:self-auto border-t lg:border-t-0 pt-4 lg:pt-0 mt-4 lg:mt-0 border-border/40">
+              <div className="flex items-center gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-xl border-border/50 hover:bg-muted/40 transition-all hover:scale-105 active:scale-95"
+                  title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                  onClick={handleToggleFavorite}
+                  disabled={isFavoriteLoading}
+                >
+                  <Heart className={`h-5 w-5 transition-transform duration-300 ${isFavorite ? "fill-red-500 text-red-500 scale-110" : "text-muted-foreground"}`} />
+                </Button>
+
+                <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-muted/40 transition-all hover:scale-105 active:scale-95">
+                      <Share2 className="h-5 w-5 text-muted-foreground" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Udostępnij profil</DialogTitle>
+                      <DialogDescription>
+                        Skopiuj link do profilu tej kancelarii.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2 pt-2">
+                      <div className="grid flex-1 gap-2">
+                        <Input
+                          value={typeof window !== 'undefined' ? window.location.href : ''}
+                          readOnly
+                          className="w-full text-xs font-mono select-all bg-muted/30 border-border/60"
+                        />
+                      </div>
+                      <Button onClick={handleCopyUrl} type="button" size="sm" className="px-3">
+                        Kopiuj
+                      </Button>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
+                        Zamknij
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {session?.user?.role === "CLIENT" ? (
+                <Button
+                  onClick={handleStartChat}
+                  disabled={isStartingChat}
+                  className="rounded-xl bg-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  {isStartingChat ? "Łączenie..." : "Rozpocznij czat"}
+                </Button>
+              ) : (
+                <Button
+                  asChild
+                  className="rounded-xl bg-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                >
+                  <a href="#contact-form">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Skontaktuj się
+                  </a>
+                </Button>
+              )}
+            </div>
+
           </div>
         </div>
-      </div>
 
+        {/* Content Layout Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
+          {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-6">
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className={cn("grid w-full", isOwnProfile ? "grid-cols-4" : "grid-cols-5")}>
-                <TabsTrigger value="about">O nas</TabsTrigger>
-                <TabsTrigger value="services">Usługi</TabsTrigger>
-                {!isOwnProfile && <TabsTrigger value="consultations">Konsultacje</TabsTrigger>}
-                <TabsTrigger value="reviews">Opinie</TabsTrigger>
-                <TabsTrigger value="blog">Blog</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full space-y-6">
+              <TabsList className={cn(
+                "p-1 bg-muted/30 border border-border/40 rounded-xl grid w-full gap-1",
+                isOwnProfile ? "grid-cols-4" : "grid-cols-5"
+              )}>
+                <TabsTrigger value="about" className="py-2.5 rounded-lg text-sm transition-all data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">O nas</TabsTrigger>
+                <TabsTrigger value="services" className="py-2.5 rounded-lg text-sm transition-all data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">Usługi</TabsTrigger>
+                {!isOwnProfile && <TabsTrigger value="consultations" className="py-2.5 rounded-lg text-sm transition-all data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">Konsultacje</TabsTrigger>}
+                <TabsTrigger value="reviews" className="py-2.5 rounded-lg text-sm transition-all data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">Opinie</TabsTrigger>
+                <TabsTrigger value="blog" className="py-2.5 rounded-lg text-sm transition-all data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">Blog</TabsTrigger>
               </TabsList>
 
               {/* About Tab */}
-              <TabsContent value="about" className="space-y-6">
+              <TabsContent value="about" className="space-y-6 animate-in fade-in-50 duration-300">
                 <AboutTab
                   lawFirm={lawFirm}
                   formatDate={formatDate}
@@ -868,19 +885,19 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Services Tab */}
-              <TabsContent value="services" className="space-y-4">
+              <TabsContent value="services" className="space-y-4 animate-in fade-in-50 duration-300">
                 <ServicesTab lawFirm={lawFirm} />
               </TabsContent>
 
               {/* Consultations Tab */}
               {!isOwnProfile && (
-                <TabsContent value="consultations">
+                <TabsContent value="consultations" className="animate-in fade-in-50 duration-300">
                   <ConsultationBooking lawFirm={lawFirm} />
                 </TabsContent>
               )}
 
               {/* Reviews Tab */}
-              <TabsContent value="reviews" className="space-y-4">
+              <TabsContent value="reviews" className="space-y-4 animate-in fade-in-50 duration-300">
                 <ReviewsSection
                   reviews={lawFirm.reviews}
                   lawFirmId={lawFirm.id}
@@ -898,101 +915,114 @@ export default function LawFirmProfilePage() {
               </TabsContent>
 
               {/* Blog Tab */}
-              <TabsContent value="blog" className="space-y-4">
+              <TabsContent value="blog" className="space-y-4 animate-in fade-in-50 duration-300">
                 <BlogTab lawFirm={lawFirm} formatDate={formatDate} />
               </TabsContent>
             </Tabs>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Column */}
           <div className="space-y-6">
-            {/* Contact Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Dane kontaktowe</CardTitle>
+
+            {/* Contact Details Card */}
+            <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+              <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Mail className="h-5 w-5 text-primary/80" />
+                  Dane kontaktowe
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Adres</p>
-                    <p className="text-sm text-muted-foreground">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex gap-4">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</p>
+                    <div className="text-sm text-foreground">
                       {session?.user ? (
-                        <>
+                        <p className="leading-relaxed">
                           {lawFirm.adres}<br />
                           {lawFirm.kodPocztowy} {lawFirm.miasto}
+                        </p>
+                      ) : (
+                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 border-t border-border/30 pt-4">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Telefon</p>
+                    <div className="text-sm text-foreground">
+                      {session?.user ? (
+                        <>
+                          <a href={`tel:${lawFirm.numerTelefonu}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.numerTelefonu}</a>
+                          {lawFirm.numerTelefonu2 && (
+                            <p><a href={`tel:${lawFirm.numerTelefonu2}`} className="hover:text-primary transition-colors">{lawFirm.numerTelefonu2}</a></p>
+                          )}
                         </>
                       ) : (
-                        "[dane ukryte]"
+                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
                       )}
-                    </p>
+                    </div>
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="flex items-start gap-3">
-                  <Phone className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Telefon</p>
-                    {session?.user ? (
-                      <>
-                        <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu}</p>
-                        {lawFirm.numerTelefonu2 && (
-                          <p className="text-sm text-muted-foreground">{lawFirm.numerTelefonu2}</p>
-                        )}
-                      </>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">[dane ukryte]</p>
-                    )}
+                <div className="flex gap-4 border-t border-border/30 pt-4">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                    <Mail className="h-5 w-5" />
                   </div>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-start gap-3">
-                  <Mail className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">
-                      {session?.user ? lawFirm.emailKontakt : "[dane ukryte]"}
-                    </p>
+                  <div className="space-y-1 flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
+                    <div className="text-sm text-foreground break-all">
+                      {session?.user ? (
+                        <a href={`mailto:${lawFirm.emailKontakt}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.emailKontakt}</a>
+                      ) : (
+                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {lawFirm.stronaWww && (
-                  <>
-                    <Separator />
-                    <div className="flex items-start gap-3">
-                      <Globe className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium">Strona WWW</p>
+                  <div className="flex gap-4 border-t border-border/30 pt-4">
+                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                      <Globe className="h-5 w-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
+                      <div className="text-sm text-foreground">
                         <a
                           href={lawFirm.stronaWww}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-primary hover:underline"
+                          className="text-primary hover:underline hover:text-primary/80 transition-colors font-medium break-all"
                         >
                           {lawFirm.stronaWww}
                         </a>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Opening Hours */}
+            {/* Opening Hours Card */}
             {lawFirm.statusGodzinyOtwarcia && lawFirm.godzinyOtwarcia && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
+              <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+                <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-primary/80" />
                     Godziny otwarcia
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
+                <CardContent className="p-6">
+                  <div className="space-y-2.5">
                     {Object.entries(lawFirm.godzinyOtwarcia).map(([day, hours]) => {
                       const dayMap: Record<string, string> = {
                         poniedzialek: "Poniedziałek",
@@ -1020,13 +1050,14 @@ export default function LawFirmProfilePage() {
                         <div
                           key={day}
                           className={cn(
-                            "flex justify-between text-sm py-1 px-2 rounded",
-                            isToday && "bg-primary/10 font-medium"
+                            "flex justify-between items-center text-sm py-1.5 px-3 rounded-lg transition-all",
+                            isToday ? "bg-primary/10 text-primary font-bold shadow-sm" : "text-muted-foreground hover:bg-muted/10"
                           )}
                         >
                           <span className="capitalize">{dayMap[day] || day}</span>
                           <span className={cn(
-                            isClosed ? "text-muted-foreground italic" : "font-medium"
+                            isClosed ? "text-muted-foreground italic font-normal" : "font-semibold text-foreground",
+                            isToday && !isClosed && "text-primary"
                           )}>
                             {isClosed ? "Zamknięte" : hours}
                           </span>
@@ -1038,37 +1069,40 @@ export default function LawFirmProfilePage() {
               </Card>
             )}
 
-            {/* Social Media */}
+            {/* Social Media Card */}
             {(lawFirm.linkLinkedIn || lawFirm.linkFacebook || lawFirm.linkInstagram || lawFirm.linkTwitter) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Social media</CardTitle>
+              <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+                <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <Share2 className="h-5 w-5 text-primary/80" />
+                    Media społecznościowe
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
+                <CardContent className="p-6">
+                  <div className="flex gap-3 justify-center md:justify-start">
                     {lawFirm.linkLinkedIn && (
-                      <Button variant="outline" size="icon" asChild>
+                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] transition-all hover:scale-110" asChild>
                         <a href={lawFirm.linkLinkedIn} target="_blank" rel="noopener noreferrer">
                           <Linkedin className="h-5 w-5" />
                         </a>
                       </Button>
                     )}
                     {lawFirm.linkFacebook && (
-                      <Button variant="outline" size="icon" asChild>
+                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all hover:scale-110" asChild>
                         <a href={lawFirm.linkFacebook} target="_blank" rel="noopener noreferrer">
                           <Facebook className="h-5 w-5" />
                         </a>
                       </Button>
                     )}
                     {lawFirm.linkInstagram && (
-                      <Button variant="outline" size="icon" asChild>
+                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:text-white hover:border-transparent transition-all hover:scale-110" asChild>
                         <a href={lawFirm.linkInstagram} target="_blank" rel="noopener noreferrer">
                           <Instagram className="h-5 w-5" />
                         </a>
                       </Button>
                     )}
                     {lawFirm.linkTwitter && (
-                      <Button variant="outline" size="icon" asChild>
+                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black transition-all hover:scale-110" asChild>
                         <a href={lawFirm.linkTwitter} target="_blank" rel="noopener noreferrer">
                           <Twitter className="h-5 w-5" />
                         </a>
@@ -1079,26 +1113,26 @@ export default function LawFirmProfilePage() {
               </Card>
             )}
 
-            {/* Package Badge */}
+            {/* Subscription Package Card */}
             {lawFirm.pakietSubskrypcji && (() => {
               const pkg = lawFirm.pakietSubskrypcji;
               const cardClass =
-                pkg === "BIZNES" ? "border-2 border-amber-500 bg-gradient-to-br from-[#1c1917] via-card to-amber-950/20 shadow-[0_0_20px_rgba(245,158,11,0.15)]" :
-                  pkg === "PREMIUM" ? "border-2 border-purple-500 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-[0_0_20px_rgba(168,85,247,0.12)]" :
-                    pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" :
+                pkg === "BIZNES" ? "border-2 border-amber-500/80 bg-gradient-to-br from-[#1c1917] via-card to-amber-950/20 shadow-lg shadow-amber-500/10" :
+                  pkg === "PREMIUM" ? "border-2 border-purple-500/80 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-lg shadow-purple-500/10" :
+                    pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-lg shadow-blue-500/5" :
                       "border border-neutral-850 bg-card";
 
               return (
-                <Card className={cn("transition-all duration-300", cardClass)}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base text-center">Plan subskrypcji</CardTitle>
+                <Card className={cn("transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.01] hover:shadow-md", cardClass)}>
+                  <CardHeader className="pb-2 border-b border-border/30 bg-muted/10">
+                    <CardTitle className="text-sm text-center uppercase tracking-wider text-muted-foreground font-semibold">Plan subskrypcji</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-center py-2">
                       <PackageBadge
                         packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
                         size="lg"
-                        className="shadow-lg border-white/10"
+                        className="shadow-md border-white/10"
                       />
                     </div>
                     {pkg === "BIZNES" && (
@@ -1126,20 +1160,20 @@ export default function LawFirmProfilePage() {
               );
             })()}
 
-            {/* Service Area */}
+            {/* Service Area Card */}
             {(lawFirm.voivodeships.length > 0 || lawFirm.cities.length > 0 || lawFirm.callaPolska) && (
-              <Card className="overflow-hidden border-none shadow-sm bg-card">
-                <CardHeader className="bg-card pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" />
+              <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+                <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary/80" />
                     Obszar działania
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-4 space-y-4">
+                <CardContent className="p-6 space-y-4">
                   {lawFirm.callaPolska ? (
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                        <Globe className="h-3 w-3 mr-1" />
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-lg py-1 px-2.5">
+                        <Globe className="h-3.5 w-3.5 mr-1.5" />
                         Cała Polska
                       </Badge>
                     </div>
@@ -1148,10 +1182,10 @@ export default function LawFirmProfilePage() {
                       {/* Voivodeships */}
                       {lawFirm.voivodeships.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-sm font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
+                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.voivodeships.map((v, index) => (
-                              <Badge key={index} variant="outline" className="bg-background/50">
+                              <Badge key={index} variant="outline" className="bg-background/50 border-border/60 font-medium px-2 py-0.5 rounded-lg">
                                 {v.voivodeship.nazwa}
                               </Badge>
                             ))}
@@ -1162,10 +1196,10 @@ export default function LawFirmProfilePage() {
                       {/* Cities */}
                       {lawFirm.cities.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-sm font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
+                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.cities.map((c, index) => (
-                              <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10">
+                              <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10 font-medium px-2 py-0.5 rounded-lg">
                                 {c.city.nazwa}
                               </Badge>
                             ))}
@@ -1175,9 +1209,9 @@ export default function LawFirmProfilePage() {
                     </div>
                   )}
                   {lawFirm.onlineOnly && (
-                    <div className="pt-2 border-t border-border/50">
-                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5">
-                        <Globe className="h-3 w-3 mr-1" />
+                    <div className="pt-3 border-t border-border/30">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 rounded-lg py-1 px-2.5 font-semibold">
+                        <Globe className="h-3.5 w-3.5 mr-1.5" />
                         Obsługa online
                       </Badge>
                     </div>
@@ -1186,31 +1220,39 @@ export default function LawFirmProfilePage() {
               </Card>
             )}
 
-            {/* Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Statystyki</CardTitle>
+            {/* Portal Stats Card */}
+            <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+              <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Award className="h-5 w-5 text-primary/80" />
+                  Statystyki na portalu
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Wyświetlenia profilu</span>
-                  <span className="font-medium">{lawFirm.wyswietleniaProfilu}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Złożone oferty</span>
-                  <span className="font-medium">{lawFirm.zlozoneOferty}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Wygrane oferty</span>
-                  <span className="font-medium">{lawFirm.wygraneOferty}</span>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
+                    <p className="text-sm font-bold text-foreground">{lawFirm.wyswietleniaProfilu}</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wyświetlenia</p>
+                  </div>
+                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
+                    <p className="text-sm font-bold text-foreground">{lawFirm.zlozoneOferty}</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Złożone oferty</p>
+                  </div>
+                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
+                    <p className="text-sm font-bold text-foreground">{lawFirm.wygraneOferty}</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wygrane</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Contact Form */}
-            <Card id="contact-form">
-              <CardHeader>
-                <CardTitle>Skontaktuj się z kancelarią</CardTitle>
+            {/* Contact Form Card */}
+            <Card id="contact-form" className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+              <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Send className="h-5 w-5 text-primary/80" />
+                  Skontaktuj się z kancelarią
+                </CardTitle>
                 <CardDescription>
                   {session?.user
                     ? "Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe"
@@ -1218,15 +1260,15 @@ export default function LawFirmProfilePage() {
                   }
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {!showContactForm ? (
-                  <Button onClick={() => setShowContactForm(true)} className="w-full">
+                  <Button onClick={() => setShowContactForm(true)} className="w-full rounded-xl bg-primary hover:bg-primary/95 transition-all text-white font-semibold">
                     Pokaż formularz kontaktowy
                   </Button>
                 ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-4 animate-in fade-in-50 duration-200">
-                    <div>
-                      <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
+                  <form onSubmit={handleContactSubmit} className="space-y-4 animate-in fade-in duration-300">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="imieNazwisko" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Imię i nazwisko *</Label>
                       <Input
                         id="imieNazwisko"
                         value={contactForm.imieNazwisko}
@@ -1234,18 +1276,19 @@ export default function LawFirmProfilePage() {
                           setContactForm({ ...contactForm, imieNazwisko: e.target.value })
                         }
                         placeholder="Jan Kowalski"
+                        className="rounded-xl border-border/60 bg-background/50 focus-visible:ring-primary focus-visible:border-primary"
                         required
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="miasto">Miasto *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="miasto" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Miasto *</Label>
                       <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             role="combobox"
-                            className="w-full text-left justify-between font-normal text-sm"
+                            className="w-full text-left justify-between font-normal text-sm rounded-xl border-border/60 bg-background/50 hover:bg-background/80 transition-colors"
                           >
                             <span className="truncate">{contactForm.miasto || "Wybierz miasto..."}</span>
                             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1315,8 +1358,8 @@ export default function LawFirmProfilePage() {
                       </Popover>
                     </div>
 
-                    <div>
-                      <Label htmlFor="email">Email *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email *</Label>
                       <Input
                         id="email"
                         type="email"
@@ -1325,12 +1368,13 @@ export default function LawFirmProfilePage() {
                           setContactForm({ ...contactForm, email: e.target.value })
                         }
                         placeholder="jan@example.com"
+                        className="rounded-xl border-border/60 bg-background/50 focus-visible:ring-primary focus-visible:border-primary"
                         required
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="telefon">Telefon</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="telefon" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Telefon</Label>
                       <Input
                         id="telefon"
                         type="tel"
@@ -1339,18 +1383,19 @@ export default function LawFirmProfilePage() {
                           setContactForm({ ...contactForm, telefon: e.target.value })
                         }
                         placeholder="+48 123 456 789"
+                        className="rounded-xl border-border/60 bg-background/50 focus-visible:ring-primary focus-visible:border-primary"
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="typSprawy">Typ sprawy *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="typSprawy" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Typ sprawy *</Label>
                       <Select
                         value={contactForm.typSprawy}
                         onValueChange={(value) =>
                           setContactForm({ ...contactForm, typSprawy: value })
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-border/60 bg-background/50">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1360,8 +1405,8 @@ export default function LawFirmProfilePage() {
                       </Select>
                     </div>
 
-                    <div>
-                      <Label htmlFor="tresc">Treść wiadomości *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="tresc" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Treść wiadomości *</Label>
                       <Textarea
                         id="tresc"
                         value={contactForm.tresc}
@@ -1369,12 +1414,13 @@ export default function LawFirmProfilePage() {
                           setContactForm({ ...contactForm, tresc: e.target.value })
                         }
                         placeholder="Opisz swoją sprawę..."
+                        className="rounded-xl border-border/60 bg-background/50 focus-visible:ring-primary focus-visible:border-primary"
                         rows={5}
                         required
                       />
                     </div>
 
-                    <div className="flex items-start space-x-2">
+                    <div className="flex items-start space-x-2 pt-1">
                       <Checkbox
                         id="politykaPrivacy"
                         checked={contactForm.politykaPrivacy}
@@ -1382,23 +1428,24 @@ export default function LawFirmProfilePage() {
                           setContactForm({ ...contactForm, politykaPrivacy: !!checked })
                         }
                         disabled={!session?.user}
+                        className="rounded-md border-border/70"
                       />
-                      <Label htmlFor="politykaPrivacy" className="text-xs cursor-pointer">
+                      <Label htmlFor="politykaPrivacy" className="text-[11px] text-muted-foreground leading-normal cursor-pointer select-none">
                         Akceptuję politykę prywatności i wyrażam zgodę na przetwarzanie moich danych osobowych *
                       </Label>
                     </div>
 
                     {session?.user ? (
-                      <Button type="submit" className="w-full" disabled={sendingContact}>
-                        <Send className="mr-2 h-4 w-4" />
+                      <Button type="submit" className="w-full rounded-xl bg-primary hover:bg-primary/95 text-white shadow-md shadow-primary/10 transition-all font-semibold flex items-center justify-center gap-2" disabled={sendingContact}>
+                        <Send className="h-4 w-4" />
                         {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
                       </Button>
                     ) : (
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground mb-3">
+                      <div className="p-4 bg-muted/30 border border-border/40 rounded-xl text-center">
+                        <p className="text-xs text-muted-foreground mb-3 font-medium">
                           Wysłanie wiadomości będzie możliwe po zalogowaniu
                         </p>
-                        <Button type="button" onClick={() => router.push("/logowanie")} className="w-full">
+                        <Button type="button" onClick={() => router.push("/logowanie")} className="w-full rounded-xl" variant="outline">
                           Zaloguj się
                         </Button>
                       </div>
@@ -1407,9 +1454,12 @@ export default function LawFirmProfilePage() {
                 )}
               </CardContent>
             </Card>
+
           </div>
         </div>
       </div>
+
+      {/* Photo Lightbox */}
       {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
         <Lightbox
           open={lightboxOpen}
