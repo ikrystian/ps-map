@@ -85,6 +85,12 @@ export default function PublicFooter() {
             </h3>
             <ul className="space-y-2 text-xs md:text-sm font-light">
               <li>
+                <Link href="/ranking" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                  <GoldCheck />
+                  <span>Ranking kancelarii</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/dodaj-sprawe" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
                   <GoldCheck />
                   <span>Dodaj sprawę</span>

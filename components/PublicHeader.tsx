@@ -353,17 +353,7 @@ export default function PublicHeader({
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/kontakt" className={cn(
-                    navigationMenuTriggerStyle(),
-                    "bg-transparent hover:bg-[#121212]",
-                    isKontaktActive && "text-primary font-semibold"
-                  )}>
-                    Kontakt
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+
               <NavigationMenuIndicator />
             </NavigationMenuList>
           </NavigationMenu>
