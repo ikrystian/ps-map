@@ -24,19 +24,36 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
-import { Calendar, CheckCircle2, Image as ImageIcon, Info, Loader2, LogOut, Save, Trash2, Upload, X } from "lucide-react"
+import { motion } from "framer-motion"
+import {
+  Calendar,
+  CheckCircle2,
+  Image as ImageIcon,
+  Info,
+  Loader2,
+  Lock,
+  LogOut,
+  Mail,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+  Upload,
+  User,
+  X,
+} from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
 const formatDateTime = (dateString: string): string => {
   const date = new Date(dateString)
-  return date.toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  return date.toLocaleDateString("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   })
 }
 
@@ -50,12 +67,10 @@ interface UserData {
 interface NotificationSettings {
   id?: string
   userId?: string
-  // Stare pola
   emailNoweOferty: boolean
   emailWiadomosci: boolean
   emailStatusy: boolean
   smsPilne: boolean
-  // Powiadomienia e-mail
   kontaktKlienci: boolean
   kluczowe: boolean
   wskazowkiPorady: boolean
@@ -64,13 +79,10 @@ interface NotificationSettings {
   noweFunkcje: boolean
   zmianyCenniki: boolean
   zmianyRegulamin: boolean
-  // Kontakt telefoniczny
   kontaktDoradca: boolean
-  // Dodatkowe
   wyswietlanieAwatara: boolean
   autoProsbOpinie: boolean
   powiadomienieDzwiekowe: boolean
-  // Ustawienia ogłoszenia
   ustawieniaOgloszenia: boolean
   powiadomieniaSmNowa: boolean
   wiadomosciZbiorcze: boolean
@@ -87,6 +99,16 @@ interface AccountInfo {
     date: string
     ipAddress: string | null
   } | null
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
 }
 
 export default function LawFirmSettingsPage() {
@@ -265,7 +287,7 @@ export default function LawFirmSettingsPage() {
 
       // Zaktualizuj sesję NextAuth z triggerem "update"
       await update({
-        image: uploadUrl
+        image: uploadUrl,
       })
 
       toast.success("Avatar został zaktualizowany")
@@ -304,7 +326,7 @@ export default function LawFirmSettingsPage() {
 
       // Zaktualizuj sesję NextAuth z triggerem "update"
       await update({
-        image: null
+        image: null,
       })
 
       toast.success("Avatar został usunięty")
@@ -337,7 +359,7 @@ export default function LawFirmSettingsPage() {
       // Zaktualizuj sesję NextAuth z triggerem "update"
       await update({
         name: userData.name,
-        image: userData.image
+        image: userData.image,
       })
 
       toast.success("Dane osobowe zostały zaktualizowane")
@@ -375,14 +397,6 @@ export default function LawFirmSettingsPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
-
   const handleDeleteAccount = async () => {
     try {
       const response = await fetch("/api/auth/me", {
@@ -405,34 +419,65 @@ export default function LawFirmSettingsPage() {
     await signOut({ callbackUrl: "/" })
   }
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Ustawienia"
-        subtitle="Zarządzaj swoim kontem i preferencjami powiadomień"
-      />
+  if (isLoading) {
+    return (
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie ustawień...</p>
+        </div>
+      </div>
+    )
+  }
 
-      <div className="grid xl:grid-cols-2 gap-6">
-        {/* Lewa kolumna - Dane osobowe i Konto */}
+  return (
+    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <PageHeader
+          title="Ustawienia"
+          subtitle="Zarządzaj swoim kontem eksperta, preferencjami komunikacji oraz bezpieczeństwem sesji."
+          titleClassName="text-white text-3xl sm:text-4xl"
+        />
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkles className="h-3 w-3 animate-pulse" />
+          USTAWIENIA KONTA EKSPERTA
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 relative z-10">
+        {/* Left Column: Personal info & Account Details */}
         <div className="space-y-6">
           {/* Dane osobowe */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dane osobowe</CardTitle>
-              <CardDescription>Edytuj swoje podstawowe informacje</CardDescription>
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                <User className="h-5 w-5 text-[#0da192]" />
+                Dane administratora konta
+              </CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">Uaktualnij podstawowe informacje o swojej tożsamości.</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSaveUserData} className="space-y-4">
+            <CardContent className="p-6">
+              <form onSubmit={handleSaveUserData} className="space-y-6">
                 {/* Avatar Upload */}
                 <div className="space-y-3">
-                  <Label>Zdjęcie profilowe (Avatar)</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Avatar będzie wyświetlany w górnym menu i przy Twoich komentarzach. Zalecany rozmiar: 200x200px.
+                  <Label className="text-xs font-semibold text-zinc-300">Zdjęcie profilowe (Avatar)</Label>
+                  <p className="text-xs text-muted-foreground font-light leading-relaxed">
+                    Avatar będzie wyświetlany w menu bocznym oraz w korespondencji z klientami. Zalecany rozmiar: 200x200px.
                   </p>
 
                   {userData.image ? (
-                    <div className="flex items-start gap-4">
-                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border bg-card">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-[#0da192]/10 shrink-0">
                         <Image
                           src={userData.image}
                           alt="Avatar"
@@ -440,40 +485,33 @@ export default function LawFirmSettingsPage() {
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 w-full sm:w-auto">
                         <label
                           htmlFor="avatar-upload"
                           className={cn(
-                            "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background h-10 px-4 py-2",
-                            isUploadingAvatar
-                              ? "opacity-50 cursor-not-allowed"
-                              : "hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                            "inline-flex items-center justify-center rounded-xl text-sm font-semibold h-10 px-4 py-2 transition-all border border-border/50 text-white bg-background/50 hover:bg-zinc-800/30 cursor-pointer"
                           )}
-                          onClick={(e) => {
-                            if (isUploadingAvatar) {
-                              e.preventDefault()
-                            }
-                          }}
                         >
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
                               Przesyłanie...
                             </>
                           ) : (
                             <>
-                              <Upload className="mr-2 h-4 w-4" />
+                              <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
                               Zmień avatar
                             </>
                           )}
                         </label>
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="ghost"
+                          className="w-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl h-10"
                           onClick={handleRemoveAvatar}
                           disabled={isUploadingAvatar}
                         >
-                          <X className="mr-2 h-4 w-4" />
+                          <Trash2 className="mr-2 h-4.5 w-4.5" />
                           Usuń avatar
                         </Button>
                       </div>
@@ -487,24 +525,24 @@ export default function LawFirmSettingsPage() {
                       />
                     </div>
                   ) : (
-                    <div>
+                    <div className="w-full">
                       <label
                         htmlFor="avatar-upload"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border/40 rounded-xl cursor-pointer hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
                       >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
-                              <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                              <Loader2 className="h-9 w-9 mb-2 text-[#0da192] animate-spin" />
+                              <p className="text-xs text-muted-foreground">Przesyłanie...</p>
                             </>
                           ) : (
                             <>
-                              <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
-                              <p className="mb-2 text-sm text-muted-foreground">
-                                <span className="font-semibold">Kliknij aby przesłać</span> avatar
+                              <ImageIcon className="h-9 w-9 mb-2 text-[#0da192]" />
+                              <p className="mb-1 text-xs text-zinc-300">
+                                <span className="font-semibold text-[#0da192]">Prześlij</span> avatar
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-[10px] text-zinc-500">
                                 PNG, JPG, WEBP (max 5MB)
                               </p>
                             </>
@@ -523,32 +561,42 @@ export default function LawFirmSettingsPage() {
                   )}
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Imię i nazwisko</Label>
+                  <Label htmlFor="name" className="text-xs font-semibold text-zinc-300">Imię i nazwisko</Label>
                   <Input
                     id="name"
                     value={userData.name || ""}
                     onChange={(e) => handleUserDataChange("name", e.target.value)}
                     placeholder="Wpisz swoje imię i nazwisko"
+                    className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
                   />
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={userData.email} disabled />
-                  <p className="text-xs text-muted-foreground">
-                    Email nie może być zmieniony z poziomu ustawień
-                  </p>
+                {/* E-mail (Zablokowana edycja) */}
+                <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
+                  <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
+                    <span className="text-sm font-semibold text-white truncate block">{userData.email}</span>
+                  </div>
+                  <div title="Edycja adresu e-mail jest zablokowana" className="ml-auto shrink-0 flex items-center justify-center">
+                    <Lock className="h-4 w-4 text-zinc-500" />
+                  </div>
                 </div>
 
-                <Separator />
-
-                <div className="flex justify-end">
-                  <Button type="submit" disabled={isSavingUser}>
-                    {isSavingUser && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    <Save className="mr-2 h-4 w-4" />
+                <div className="flex justify-end pt-2">
+                  <Button
+                    type="submit"
+                    disabled={isSavingUser}
+                    className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
+                  >
+                    {isSavingUser ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
                     Zapisz dane osobowe
                   </Button>
                 </div>
@@ -557,131 +605,131 @@ export default function LawFirmSettingsPage() {
           </Card>
 
           {/* Zarządzanie kontem */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Zarządzanie kontem</CardTitle>
-              <CardDescription>Zarządzaj swoim kontem i bezpieczeństwem</CardDescription>
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-[#0da192]" />
+                Zarządzanie kontem
+              </CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">Informacje o bezpieczeństwie i akcje systemowe.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="p-6 space-y-6">
               {/* Informacje o koncie */}
               {accountInfo && (
-                <>
-                  <div className="space-y-3">
-                    <Label className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      Informacje o koncie
-                    </Label>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between py-2 px-3 bg-muted/50 rounded-md">
-                        <span className="text-muted-foreground">Data założenia:</span>
-                        <span className="font-medium">{formatDateTime(accountInfo.createdAt)}</span>
-                      </div>
-
-                      {accountInfo.lastLogin && (
-                        <div className="flex items-center justify-between py-2 px-3 bg-muted/50 rounded-md">
-                          <span className="text-muted-foreground">Ostatnie logowanie:</span>
-                          <span className="font-medium">
-                            {formatDateTime(accountInfo.lastLogin.date)}
-                            {accountInfo.lastLogin.ipAddress && (
-                              <span className="text-muted-foreground ml-2">
-                                (IP: {accountInfo.lastLogin.ipAddress})
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      )}
-
-                      {accountInfo.lastFailedLogin && (
-                        <div className="flex items-center justify-between py-2 px-3 bg-destructive/10 rounded-md">
-                          <span className="text-muted-foreground">Ostatnie błędne logowanie:</span>
-                          <span className="font-medium text-destructive">
-                            {formatDateTime(accountInfo.lastFailedLogin.date)}
-                            {accountInfo.lastFailedLogin.ipAddress && (
-                              <span className="text-muted-foreground ml-2">
-                                (IP: {accountInfo.lastFailedLogin.ipAddress})
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      )}
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
+                    <Calendar className="h-4 w-4 text-[#0da192]" />
+                    Bezpieczeństwo logowania
+                  </Label>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between py-2.5 px-3.5 bg-background/25 border border-border/30 rounded-xl">
+                      <span className="text-zinc-400">Data założenia konta:</span>
+                      <span className="font-semibold text-white">{formatDateTime(accountInfo.createdAt)}</span>
                     </div>
-                  </div>
 
-                  <Separator />
-                </>
+                    {accountInfo.lastLogin && (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2.5 px-3.5 bg-background/25 border border-border/30 rounded-xl">
+                        <span className="text-zinc-400">Ostatnie logowanie:</span>
+                        <span className="font-semibold text-white text-right">
+                          {formatDateTime(accountInfo.lastLogin.date)}
+                          {accountInfo.lastLogin.ipAddress && (
+                            <span className="text-zinc-500 font-light block sm:inline sm:ml-2">
+                              (IP: {accountInfo.lastLogin.ipAddress})
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+
+                    {accountInfo.lastFailedLogin && (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2.5 px-3.5 bg-rose-500/5 border border-rose-500/20 rounded-xl text-rose-400">
+                        <span className="text-rose-400/80">Ostatnie błędne logowanie:</span>
+                        <span className="font-bold text-right">
+                          {formatDateTime(accountInfo.lastFailedLogin.date)}
+                          {accountInfo.lastFailedLogin.ipAddress && (
+                            <span className="text-rose-500/70 font-light block sm:inline sm:ml-2">
+                              (IP: {accountInfo.lastFailedLogin.ipAddress})
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
 
+              <Separator className="bg-border/20" />
+
               {/* Status konta */}
-              <div className="space-y-2">
-                <Label>Status konta</Label>
-                <div className="flex items-center gap-2">
-                  <Badge variant="default" className="flex items-center gap-1">
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold text-zinc-300">Status konta</Label>
+                <div className="flex items-center gap-2.5">
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 flex items-center gap-1 text-[10px] font-semibold tracking-wide">
                     <CheckCircle2 className="h-3 w-3" />
-                    Aktywny
+                    W pełni aktywne
                   </Badge>
-                  <p className="text-sm text-muted-foreground">
-                    Twoje konto jest w pełni aktywne
+                  <p className="text-xs text-muted-foreground font-light">
+                    Kancelaria jest zweryfikowana i widoczna w katalogu.
                   </p>
                 </div>
               </div>
 
-              <Separator />
+              <Separator className="bg-border/20" />
 
               {/* Akcje konta */}
               <div className="space-y-4">
-                <Label>Akcje konta</Label>
+                <Label className="text-xs font-semibold text-zinc-300">Akcje systemowe</Label>
 
                 <div className="space-y-3">
                   {/* Wyloguj */}
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <h4 className="font-medium">Wyloguj się</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Zakończ bieżącą sesję i wyloguj się z konta
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-border/30 bg-background/20 group hover:border-[#0da192]/30 transition-all duration-200">
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-white text-sm">Wyloguj się</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-0.5">
+                        Zakończ bieżącą sesję administratora.
                       </p>
                     </div>
                     <Button
                       variant="outline"
                       onClick={handleLogout}
-                      className="ml-4"
+                      className="shrink-0 h-10 px-5 rounded-xl border-border/50 hover:bg-muted text-white gap-2 transition-all"
                     >
-                      <LogOut className="h-4 w-4 mr-2" />
+                      <LogOut className="h-4 w-4 text-zinc-400" />
                       Wyloguj
                     </Button>
                   </div>
 
                   {/* Usuń konto */}
-                  <div className="flex items-center justify-between p-4 border border-destructive/30 rounded-lg bg-destructive/5">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-destructive">Usuń konto</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Trwale usuń swoje konto i wszystkie powiązane dane. Tej akcji nie można cofnąć.
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-rose-500/20 bg-rose-500/5 group hover:border-rose-500/40 transition-all duration-200">
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-rose-400 text-sm">Usuń konto</h4>
+                      <p className="text-xs text-muted-foreground/80 font-light mt-0.5">
+                        Bezpowrotnie usuń dane i zlikwiduj profil kancelarii.
                       </p>
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
-                          variant="destructive"
-                          className="ml-4"
+                          variant="ghost"
+                          className="shrink-0 h-10 px-5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl gap-2 transition-all"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
+                          <Trash2 className="h-4.5 w-4.5" />
                           Usuń konto
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="bg-card border border-border/40 max-w-md rounded-2xl">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Ta akcja jest nieodwracalna. Wszystkie Twoje dane, w tym profil eksperta,
-                            oferty, wiadomości i historia zostaną trwale usunięte. Nie będziesz mógł
-                            odzyskać tych danych.
+                          <AlertDialogTitle className="text-xl font-bold font-playfair text-white">Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-muted-foreground text-sm pt-2 leading-relaxed">
+                            Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil kancelarii w katalogu,
+                            złożone oferty, wiadomości oraz historia zostaną trwale usunięte z bazy danych.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                        <AlertDialogFooter className="gap-2 sm:gap-0 pt-4">
+                          <AlertDialogCancel className="border-border/50 hover:bg-muted text-white rounded-xl">Anuluj</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={handleDeleteAccount}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10"
                           >
                             Tak, usuń moje konto
                           </AlertDialogAction>
@@ -692,305 +740,338 @@ export default function LawFirmSettingsPage() {
                 </div>
               </div>
 
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                  Jeśli masz aktywne ogłoszenia lub subskrypcję, upewnij się, że je zakończyłeś
-                  przed usunięciem konta.
+              <Alert className="bg-[#d7b56d]/5 border-[#d7b56d]/20 text-[#d7b56d] rounded-xl flex items-start gap-2.5">
+                <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                <AlertDescription className="text-xs leading-relaxed font-light">
+                  Przed trwałym usunięciem konta upewnij się, że zrealizowałeś wszystkie opłacone punkty w portalu.
                 </AlertDescription>
               </Alert>
             </CardContent>
           </Card>
 
-          <LoginHistory />
+          {/* Login history wrapped in glass card */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-[#0da192]" />
+                Historia logowania
+              </CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">Historia sesji oraz prób autoryzacji na tym koncie.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <LoginHistory noCard />
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Prawa kolumna - Ustawienia powiadomień */}
+        {/* Right Column: Powiadomienia & Ustawienia ogłoszenia */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Ustawienia ogólne</CardTitle>
-              <CardDescription>Dostosuj preferencje powiadomień</CardDescription>
+          {/* Ustawienia powiadomień */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white">Preferencje powiadomień</CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">Dostosuj formy powiadomień e-mail, SMS oraz dźwiękowych.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <form onSubmit={handleSaveSettings} className="space-y-6">
                 {/* Powiadomienia e-mail */}
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-semibold mb-3">Powiadomienia e-mail</h3>
-                    <div className="space-y-3">
-                      {/* Kontakt z klientami - obowiązkowe */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg bg-muted/50">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="kontaktKlienci"
-                            className="cursor-pointer font-medium"
-                          >
-                            Kontakt z klientami
-                            <span className="text-red-500 ml-1">*</span>
-                          </Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Ta opcja musi być włączona, ponieważ jest kluczowa do działania Twojego konta.
-                          </p>
-                        </div>
-                        <Switch
-                          id="kontaktKlienci"
-                          checked={notificationSettings.kontaktKlienci}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("kontaktKlienci", checked)
-                          }
-                          disabled={true}
-                        />
+                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Powiadomienia e-mail</h3>
+                  <div className="space-y-3">
+                    {/* Kontakt z klientami - obowiązkowe */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/25">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="kontaktKlienci"
+                          className="font-semibold text-zinc-300 text-xs"
+                        >
+                          Kontakt z klientami
+                          <span className="text-rose-500 ml-1">*</span>
+                        </Label>
+                        <p className="text-[10px] text-zinc-500 mt-1 font-light leading-relaxed">
+                          Ta opcja jest obowiązkowa i niezbędna do obsługi Twoich klientów i ich zgłoszeń.
+                        </p>
                       </div>
-
-                      {/* Kluczowe informacje - obowiązkowe */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg bg-muted/50">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="kluczowe"
-                            className="cursor-pointer font-medium"
-                          >
-                            Kluczowe informacje
-                            <span className="text-red-500 ml-1">*</span>
-                          </Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Dotyczą informacji o Twojej ofercie, zasadach działania portalu, a także
-                            modyfikacjach wynikających ze zmiany cennika, regulaminu i polityki
-                            prywatności serwisu.
-                          </p>
-                        </div>
-                        <Switch
-                          id="kluczowe"
-                          checked={notificationSettings.kluczowe}
-                          onCheckedChange={(checked) => handleSettingChange("kluczowe", checked)}
-                          disabled={true}
-                        />
-                      </div>
-
-                      {/* Wskazówki, porady */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="wskazowkiPorady"
-                            className="cursor-pointer font-medium"
-                          >
-                            Wskazówki, porady
-                          </Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Dotyczą wskazówek i porad, jak ulepszyć i zwiększyć widoczność Twojej oferty.
-                          </p>
-                        </div>
-                        <Switch
-                          id="wskazowkiPorady"
-                          checked={notificationSettings.wskazowkiPorady}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("wskazowkiPorady", checked)
-                          }
-                        />
-                      </div>
-
-                      {/* Ciekawe oferty i promocje */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="ofertPromocje"
-                            className="cursor-pointer font-medium"
-                          >
-                            Ciekawe oferty i promocje
-                          </Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Dotyczą ofert i promocji przygotowanych specjalnie dla Twojej oferty.
-                          </p>
-                        </div>
-                        <Switch
-                          id="ofertPromocje"
-                          checked={notificationSettings.ofertPromocje}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("ofertPromocje", checked)
-                          }
-                        />
-                      </div>
-
-                      {/* Przypomnienie o nowych wiadomościach */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="przypomnienieWiadomosci"
-                            className="cursor-pointer font-medium"
-                          >
-                            Przypomnienie o nowych wiadomościach
-                          </Label>
-                        </div>
-                        <Switch
-                          id="przypomnienieWiadomosci"
-                          checked={notificationSettings.przypomnienieWiadomosci}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("przypomnienieWiadomosci", checked)
-                          }
-                        />
-                      </div>
-
-                      {/* Powiadomienie o nowych funkcjach */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="noweFunkcje"
-                            className="cursor-pointer font-medium"
-                          >
-                            Powiadomienie o nowych funkcjach
-                          </Label>
-                        </div>
-                        <Switch
-                          id="noweFunkcje"
-                          checked={notificationSettings.noweFunkcje}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("noweFunkcje", checked)
-                          }
-                        />
-                      </div>
-
-                      {/* Powiadomienia o zmianach cenników */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="zmianyCenniki"
-                            className="cursor-pointer font-medium"
-                          >
-                            Powiadomienia o zmianach cenników
-                          </Label>
-                        </div>
-                        <Switch
-                          id="zmianyCenniki"
-                          checked={notificationSettings.zmianyCenniki}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("zmianyCenniki", checked)
-                          }
-                        />
-                      </div>
-
-                      {/* Powiadomienia o zmianach regulaminu */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="zmianyRegulamin"
-                            className="cursor-pointer font-medium"
-                          >
-                            Powiadomienia o zmianach regulaminu
-                          </Label>
-                        </div>
-                        <Switch
-                          id="zmianyRegulamin"
-                          checked={notificationSettings.zmianyRegulamin}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("zmianyRegulamin", checked)
-                          }
-                        />
-                      </div>
+                      <Switch
+                        id="kontaktKlienci"
+                        checked={notificationSettings.kontaktKlienci}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("kontaktKlienci", checked)
+                        }
+                        disabled={true}
+                      />
                     </div>
-                  </div>
 
-                  <Separator />
-
-                  {/* Kontakt telefoniczny */}
-                  <div>
-                    <h3 className="text-sm font-semibold mb-3">Kontakt telefoniczny</h3>
-                    <div className="space-y-3">
-                      {/* Kontakt z doradcą */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="kontaktDoradca"
-                            className="cursor-pointer font-medium"
-                          >
-                            Kontakt z doradcą
-                          </Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Dotyczy ważnych informacji i zmian w Twoich ogłoszeniach w serwisie.
-                          </p>
-                        </div>
-                        <Switch
-                          id="kontaktDoradca"
-                          checked={notificationSettings.kontaktDoradca}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("kontaktDoradca", checked)
-                          }
-                        />
+                    {/* Kluczowe informacje - obowiązkowe */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/25">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="kluczowe"
+                          className="font-semibold text-zinc-300 text-xs"
+                        >
+                          Kluczowe informacje
+                          <span className="text-rose-500 ml-1">*</span>
+                        </Label>
+                        <p className="text-[10px] text-zinc-500 mt-1 font-light leading-relaxed">
+                          Powiadomienia o Twoich ofertach, ważnych zmianach w cenniku oraz regulaminach.
+                        </p>
                       </div>
+                      <Switch
+                        id="kluczowe"
+                        checked={notificationSettings.kluczowe}
+                        onCheckedChange={(checked) => handleSettingChange("kluczowe", checked)}
+                        disabled={true}
+                      />
                     </div>
-                  </div>
 
-                  <Separator />
-
-                  {/* Dodatkowe */}
-                  <div>
-                    <h3 className="text-sm font-semibold mb-3">Dodatkowe</h3>
-                    <div className="space-y-3">
-                      {/* Zgoda na wyświetlanie awatara */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="wyswietlanieAwatara"
-                            className="cursor-pointer font-medium"
-                          >
-                            Zgoda na wyświetlanie awatara (wizerunek)
-                          </Label>
-                        </div>
-                        <Switch
-                          id="wyswietlanieAwatara"
-                          checked={notificationSettings.wyswietlanieAwatara}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("wyswietlanieAwatara", checked)
-                          }
-                        />
+                    {/* Wskazówki, porady */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="wskazowkiPorady"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Wskazówki, porady
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Artykuły i porady jak podnieść jakość ofert oraz zwiększyć zasięgi.
+                        </p>
                       </div>
+                      <Switch
+                        id="wskazowkiPorady"
+                        checked={notificationSettings.wskazowkiPorady}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("wskazowkiPorady", checked)
+                        }
+                      />
+                    </div>
 
-                      {/* Zgoda na automatyczne wysłanie prośby o dodanie opinii */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="autoProsbOpinie"
-                            className="cursor-pointer font-medium"
-                          >
-                            Zgoda na automatyczne wysłanie prośby o dodanie opinii
-                          </Label>
-                        </div>
-                        <Switch
-                          id="autoProsbOpinie"
-                          checked={notificationSettings.autoProsbOpinie}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("autoProsbOpinie", checked)
-                          }
-                        />
+                    {/* Ciekawe oferty i promocje */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="ofertPromocje"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Ciekawe oferty i promocje
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Oferty promocyjne i pakiety punktów stworzone dla Twojej kancelarii.
+                        </p>
                       </div>
+                      <Switch
+                        id="ofertPromocje"
+                        checked={notificationSettings.ofertPromocje}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("ofertPromocje", checked)
+                        }
+                      />
+                    </div>
 
-                      {/* Powiadomienie dźwiękowe o nowej wiadomości */}
-                      <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor="powiadomienieDzwiekowe"
-                            className="cursor-pointer font-medium"
-                          >
-                            Powiadomienie dźwiękowe o nowej wiadomości
-                          </Label>
-                        </div>
-                        <Switch
-                          id="powiadomienieDzwiekowe"
-                          checked={notificationSettings.powiadomienieDzwiekowe}
-                          onCheckedChange={(checked) =>
-                            handleSettingChange("powiadomienieDzwiekowe", checked)
-                          }
-                        />
+                    {/* Przypomnienie o nowych wiadomościach */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="przypomnienieWiadomosci"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Przypomnienie o nowych wiadomościach
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Powiadomienia na skrzynkę e-mail, kiedy klient wyśle nową wiadomość.
+                        </p>
                       </div>
+                      <Switch
+                        id="przypomnienieWiadomosci"
+                        checked={notificationSettings.przypomnienieWiadomosci}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("przypomnienieWiadomosci", checked)
+                        }
+                      />
+                    </div>
+
+                    {/* Powiadomienie o nowych funkcjach */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="noweFunkcje"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Powiadomienie o nowych funkcjach
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Aktualizacje systemu, nowo wdrożone moduły i integracje.
+                        </p>
+                      </div>
+                      <Switch
+                        id="noweFunkcje"
+                        checked={notificationSettings.noweFunkcje}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("noweFunkcje", checked)
+                        }
+                      />
+                    </div>
+
+                    {/* Powiadomienia o zmianach cenników */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="zmianyCenniki"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Powiadomienia o zmianach cenników
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Informacje o zmianach w cennikach lub taryfach punktów.
+                        </p>
+                      </div>
+                      <Switch
+                        id="zmianyCenniki"
+                        checked={notificationSettings.zmianyCenniki}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("zmianyCenniki", checked)
+                        }
+                      />
+                    </div>
+
+                    {/* Powiadomienia o zmianach regulaminu */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="zmianyRegulamin"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Powiadomienia o zmianach regulaminu
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Zmiany w regulaminie i polityce prywatności serwisu.
+                        </p>
+                      </div>
+                      <Switch
+                        id="zmianyRegulamin"
+                        checked={notificationSettings.zmianyRegulamin}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("zmianyRegulamin", checked)
+                        }
+                      />
                     </div>
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
-                <div className="flex justify-end">
-                  <Button type="submit" disabled={isSavingSettings}>
-                    {isSavingSettings && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    <Save className="mr-2 h-4 w-4" />
+                {/* Kontakt telefoniczny */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Kontakt telefoniczny</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="kontaktDoradca"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Kontakt z doradcą
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Ważne alerty i spersonalizowane oferty wsparcia telefonicznego dla Twojej kancelarii.
+                        </p>
+                      </div>
+                      <Switch
+                        id="kontaktDoradca"
+                        checked={notificationSettings.kontaktDoradca}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("kontaktDoradca", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <Separator className="bg-border/20" />
+
+                {/* Dodatkowe */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ustawienia dodatkowe</h3>
+                  <div className="space-y-3">
+                    {/* Awatar */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="wyswietlanieAwatara"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Wyświetlanie awatara w katalogu
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Zgoda na pokazywanie zdjęcia profilowego/loga kancelarii w katalogu.
+                        </p>
+                      </div>
+                      <Switch
+                        id="wyswietlanieAwatara"
+                        checked={notificationSettings.wyswietlanieAwatara}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("wyswietlanieAwatara", checked)
+                        }
+                      />
+                    </div>
+
+                    {/* Automatyczne opinie */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="autoProsbOpinie"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Automatyczne prośby o opinie
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Wysyła zapytanie o opinię do klienta po zakończeniu realizacji sprawy.
+                        </p>
+                      </div>
+                      <Switch
+                        id="autoProsbOpinie"
+                        checked={notificationSettings.autoProsbOpinie}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("autoProsbOpinie", checked)
+                        }
+                      />
+                    </div>
+
+                    {/* Dźwięk powiadomienia */}
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="powiadomienieDzwiekowe"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Dźwięk powiadomień na czacie
+                        </Label>
+                        <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                          Odtwórz dźwięk ostrzegawczy po otrzymaniu nowej wiadomości.
+                        </p>
+                      </div>
+                      <Switch
+                        id="powiadomienieDzwiekowe"
+                        checked={notificationSettings.powiadomienieDzwiekowe}
+                        onCheckedChange={(checked) =>
+                          handleSettingChange("powiadomienieDzwiekowe", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <Button
+                    type="submit"
+                    disabled={isSavingSettings}
+                    className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
+                  >
+                    {isSavingSettings ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
                     Zapisz ustawienia
                   </Button>
                 </div>
@@ -999,23 +1080,24 @@ export default function LawFirmSettingsPage() {
           </Card>
 
           {/* Box ustawienia ogłoszenia */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ustawienia ogłoszenia</CardTitle>
-              <CardDescription>Zarządzaj ustawieniami dotyczącymi ogłoszeń</CardDescription>
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white">Ustawienia ogłoszeń & URLOP</CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">Skonfiguruj statusy wyświetlania ofert i powiadomień SMS.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="space-y-3">
-                <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                {/* Statusy ogłoszenia */}
+                <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                   <div className="flex-1">
                     <Label
                       htmlFor="ustawieniaOgloszenia"
-                      className="cursor-pointer font-medium"
+                      className="cursor-pointer font-semibold text-white text-xs"
                     >
-                      Ustawienia ogłoszenia
+                      Ustawienia widoczności
                     </Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Włącz lub wyłącz dodatkowe opcje związane z ogłoszeniami
+                    <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                      Zezwalaj na składanie ofert bezpośrednich na profilu kancelarii.
                     </p>
                   </div>
                   <Switch
@@ -1027,21 +1109,21 @@ export default function LawFirmSettingsPage() {
                   />
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
                 {/* Powiadomienia SMS */}
-                <div>
-                  <h4 className="text-sm font-semibold mb-3">Powiadomienia SMS</h4>
-                  <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Powiadomienia SMS</h4>
+                  <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="powiadomieniaSmNowa"
-                        className="cursor-pointer font-medium"
+                        className="cursor-pointer font-semibold text-white text-xs"
                       >
-                        Nowa wiadomość
+                        Powiadomienia o nowych wiadomościach (SMS)
                       </Label>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Otrzymuj powiadomienia SMS o nowych wiadomościach
+                      <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        Wyślij SMS na numer komórkowy po otrzymaniu nowej wiadomości.
                       </p>
                     </div>
                     <Switch
@@ -1054,21 +1136,21 @@ export default function LawFirmSettingsPage() {
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
-                {/* Powiadomienia e-mail */}
-                <div>
-                  <h4 className="text-sm font-semibold mb-3">Powiadomienia e-mail</h4>
-                  <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                {/* Wiadomości zbiorcze */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Wiadomości zbiorcze</h4>
+                  <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="wiadomosciZbiorcze"
-                        className="cursor-pointer font-medium"
+                        className="cursor-pointer font-semibold text-white text-xs"
                       >
-                        Otrzymywanie wiadomości zbiorczych
+                        Otrzymywanie raportów zbiorczych
                       </Label>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Otrzymuj zbiorcze powiadomienia e-mail zamiast pojedynczych
+                      <p className="text-[10px] text-zinc-400 mt-1 font-light leading-relaxed">
+                        Grupuj e-maile z powiadomieniami w jeden dobowy raport.
                       </p>
                     </div>
                     <Switch
@@ -1081,21 +1163,21 @@ export default function LawFirmSettingsPage() {
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
-                {/* Urlop */}
-                <div>
-                  <h4 className="text-sm font-semibold mb-3">Tryb urlopowy</h4>
-                  <div className="flex items-start justify-between space-x-2 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                {/* Tryb urlopowy */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Tryb urlopowy</h4>
+                  <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-[#d7b56d]/30 bg-[#d7b56d]/5 hover:bg-[#d7b56d]/10 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="urlop"
-                        className="cursor-pointer font-medium"
+                        className="cursor-pointer font-semibold text-[#d7b56d] text-xs"
                       >
-                        Urlop
+                        Tryb urlopowy (Status zawieszony)
                       </Label>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Włącz tryb urlopowy - ogranicza powiadomienia podczas Twojej nieobecności
+                      <p className="text-[10px] text-[#d7b56d]/80 mt-1 font-light leading-relaxed">
+                        Wyłącz widoczność w katalogu na czas nieobecności i zablokuj powiadomienia e-mail/SMS.
                       </p>
                     </div>
                     <Switch
@@ -1108,13 +1190,6 @@ export default function LawFirmSettingsPage() {
                   </div>
                 </div>
               </div>
-
-              <Alert className="mt-4">
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                  Dostosuj powiadomienia zgodnie ze swoimi potrzebami
-                </AlertDescription>
-              </Alert>
             </CardContent>
           </Card>
         </div>

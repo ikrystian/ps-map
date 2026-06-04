@@ -123,7 +123,7 @@ export default function LawFirmReviewsPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedRating, setSelectedRating] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
-  
+
   // Custom states for advanced client side filtering & search
   const [searchQuery, setSearchQuery] = useState("")
   const [replyFilter, setReplyFilter] = useState("all") // all, replied, unreplied
@@ -383,11 +383,10 @@ export default function LawFirmReviewsPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`${sizeClass} ${
-              star <= rating
-                ? "fill-amber-500 text-amber-500 filter drop-shadow-[0_0_2px_rgba(245,158,11,0.3)]"
-                : "fill-zinc-800 text-zinc-800"
-            }`}
+            className={`${sizeClass} ${star <= rating
+              ? "fill-amber-500 text-amber-500 filter drop-shadow-[0_0_2px_rgba(245,158,11,0.3)]"
+              : "fill-zinc-800 text-zinc-800"
+              }`}
           />
         ))}
       </div>
@@ -411,7 +410,7 @@ export default function LawFirmReviewsPage() {
         className="relative overflow-hidden rounded-2xl bg-card border border-border/80 p-6 md:p-8 shadow-sm mb-0"
         titleClassName="text-2xl md:text-3xl"
       >
-        <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute top-4 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
         <div className="relative flex flex-col md:flex-row items-center gap-4">
           <div className="flex flex-col items-start gap-2">
             <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary hover:bg-primary/10 transition-colors">
@@ -453,7 +452,7 @@ export default function LawFirmReviewsPage() {
 
       {/* Modern Dashboard Statystyk */}
       {stats && (
-        <div className="grid gap-6 md:grid-cols-5">
+        <div className="grid gap-6 md:grid-cols-5 mt-4">
           {/* Główna ocena i statystyka */}
           <Card className="md:col-span-2 bg-gradient-to-br from-card to-zinc-900/40 border border-border/80 flex flex-col justify-between overflow-hidden relative group">
             <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10" />
