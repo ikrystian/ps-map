@@ -193,7 +193,7 @@ export function ChatAssistant() {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500 dark:bg-amber-600 text-white shadow-lg hover:shadow-amber-500/20 dark:hover:shadow-amber-600/20 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-shadow border border-amber-600 dark:border-amber-700 cursor-pointer"
+        className="ai-bubble-button flex h-14 w-14 items-center justify-center rounded-full bg-amber-500 dark:bg-amber-600 text-white shadow-lg hover:shadow-amber-500/20 dark:hover:shadow-amber-600/20 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-shadow border border-amber-600 dark:border-amber-700 cursor-pointer"
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
