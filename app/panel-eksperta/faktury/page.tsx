@@ -19,9 +19,11 @@ import {
   Download,
   FileText,
   Loader2,
+  Send,
   XCircle
 } from "lucide-react"
 import { useEffect, useState } from "react"
+
 
 interface Invoice {
   id: string
@@ -37,6 +39,10 @@ interface Invoice {
   buyerName: string
   buyerNIP: string
   pdfUrl: string | null
+  ksefStatus?: string | null
+  ksefNumber?: string | null
+  ksefReferenceNumber?: string | null
+  ksefDiagnostics?: string | null
   order: {
     orderNumber: string
     orderType: string
@@ -57,6 +63,8 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
+  const [syncingId, setSyncingId] = useState<string | null>(null)
+
 
   useEffect(() => {
     fetchInvoices()
@@ -74,6 +82,27 @@ export default function InvoicesPage() {
       setLoading(false)
     }
   }
+
+  const handleSendToKsef = async (id: string) => {
+    setSyncingId(id)
+    try {
+      const response = await fetch(`/api/invoices/${id}/ksef`, {
+        method: "POST"
+      })
+      const result = await response.json()
+      if (response.ok && result.success) {
+        toast.success("Pomyślnie wysłano fakturę do KSeF")
+      } else {
+        toast.error(result.invoice?.ksefDiagnostics || result.error || "Błąd podczas wysyłania do KSeF")
+      }
+      fetchInvoices()
+    } catch (error) {
+      toast.error("Wystąpił błąd podczas wysyłania do KSeF")
+    } finally {
+      setSyncingId(null)
+    }
+  }
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
@@ -141,6 +170,7 @@ export default function InvoicesPage() {
                   <TableHead>VAT</TableHead>
                   <TableHead>Kwota brutto</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Status KSeF</TableHead>
                   <TableHead>Akcje</TableHead>
                 </TableRow>
               </TableHeader>
@@ -189,6 +219,68 @@ export default function InvoicesPage() {
                           <StatusIcon className="h-3 w-3" />
                           {statusInfo.label}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {invoice.ksefStatus === "ACCEPTED" && (
+                          <div className="space-y-1">
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1 py-0.5">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                              Zaakceptowano
+                            </Badge>
+                            {invoice.ksefNumber && (
+                              <div className="text-[10px] font-mono text-muted-foreground break-all max-w-[140px]" title={invoice.ksefNumber}>
+                                {invoice.ksefNumber}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {invoice.ksefStatus === "SENT" && (
+                          <div className="space-y-1">
+                            <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 gap-1 py-0.5">
+                              <Clock className="h-3 w-3 animate-pulse text-blue-500" />
+                              Wysłano
+                            </Badge>
+                          </div>
+                        )}
+                        {invoice.ksefStatus === "PENDING" && (
+                          <div className="space-y-1">
+                            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 gap-1 py-0.5">
+                              <Loader2 className="h-3 w-3 animate-spin text-amber-500" />
+                              Przetwarzanie
+                            </Badge>
+                          </div>
+                        )}
+                        {invoice.ksefStatus === "FAILED" && (
+                          <div className="space-y-1">
+                            <Badge variant="destructive" className="gap-1 py-0.5" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
+                              <XCircle className="h-3 w-3" />
+                              Błąd wysyłki
+                            </Badge>
+                            {invoice.ksefDiagnostics && (
+                              <div className="text-[10px] text-destructive max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
+                                {invoice.ksefDiagnostics}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
+                          <div className="mt-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950/30 p-1 h-auto flex items-center"
+                              onClick={() => handleSendToKsef(invoice.id)}
+                              disabled={syncingId === invoice.id}
+                            >
+                              {syncingId === invoice.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                              ) : (
+                                <Send className="h-3 w-3 mr-1" />
+                              )}
+                              {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                            </Button>
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
