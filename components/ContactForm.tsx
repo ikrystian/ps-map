@@ -164,7 +164,7 @@ export function ContactForm() {
               onCheckedChange={(checked) =>
                 setFormData((prev) => ({ ...prev, politykaPrivacy: !!checked }))
               }
-              className="border-neutral-700 data-[state=checked]:bg-[#E2B13C] data-[state=checked]:text-black mt-1"
+              className="border-neutral-700 data-[state=checked]:bg-[#E2B13C] mt-1"
             />
             <div className="grid gap-1.5 leading-none">
               <Label
@@ -186,7 +186,7 @@ export function ContactForm() {
 
           <Button
             type="submit"
-            className="w-full bg-[#E2B13C] hover:bg-[#cfa130] text-black font-semibold mt-4 transition-colors"
+            className="w-full bg-[#E2B13C] hover:bg-[#cfa130] font-semibold mt-4 transition-colors"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Wysyłanie..." : "Wyślij wiadomość"}
