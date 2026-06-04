@@ -131,7 +131,7 @@ export default function LawFirmAddCertificatePage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -271,7 +271,7 @@ export default function LawFirmAddCertificatePage() {
                             disabled={isUploading || isSubmitting}
                             accept=".pdf,.jpg,.jpeg,.png,.webp"
                           />
-                          <label 
+                          <label
                             htmlFor="certificate-upload"
                             className="flex flex-col items-center justify-center border-2 border-dashed border-border/50 hover:border-[#0da192]/50 hover:bg-[#0da192]/5 bg-background/30 rounded-xl p-6 cursor-pointer transition-all duration-300 group"
                           >

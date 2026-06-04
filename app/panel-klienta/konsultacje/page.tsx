@@ -95,7 +95,7 @@ export default function ClientConsultationsPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -165,7 +165,7 @@ export default function ClientConsultationsPage() {
                           </Avatar>
                           <div className="flex flex-col gap-2.5 min-w-0">
                             <span className="font-semibold text-base text-white truncate">{booking.lawFirm.nazwa}</span>
-                            
+
                             <div className="flex flex-wrap gap-2">
                               <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-[10px]">
                                 <Calendar className="h-3 w-3" />

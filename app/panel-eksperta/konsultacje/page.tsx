@@ -141,7 +141,7 @@ export default function ConsultationsPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8 pb-12 overflow-hidden">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -153,7 +153,7 @@ export default function ConsultationsPage() {
         transition={{ duration: 0.4 }}
         className="relative z-10"
       >
-        <PageHeader 
+        <PageHeader
           title="Zarządzanie konsultacjami"
           subtitle="Przeglądaj i zarządzaj prośbami o konsultacje od klientów."
           titleClassName="text-white text-3xl sm:text-4xl"

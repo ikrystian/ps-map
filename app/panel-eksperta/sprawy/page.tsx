@@ -24,15 +24,15 @@ import {
 import { toast } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { 
-  Briefcase, 
-  Calendar, 
-  CheckCircle, 
-  Euro, 
-  Eye, 
-  Heart, 
-  Loader2, 
-  MapPin, 
+import {
+  Briefcase,
+  Calendar,
+  CheckCircle,
+  Euro,
+  Eye,
+  Heart,
+  Loader2,
+  MapPin,
   Trash2,
   ArrowRight,
   Sparkles,
@@ -106,9 +106,9 @@ const containerVariants = {
 
 const cardVariants = {
   hidden: { opacity: 0, y: 15, scale: 0.98 },
-  show: { 
-    opacity: 1, 
-    y: 0, 
+  show: {
+    opacity: 1,
+    y: 0,
     scale: 1,
     transition: {
       type: "spring" as const,
@@ -373,7 +373,7 @@ const SprawyPage = () => {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows consistent with system style */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -385,7 +385,7 @@ const SprawyPage = () => {
         transition={{ duration: 0.4 }}
         className="relative z-10"
       >
-        <PageHeader 
+        <PageHeader
           title="Wszystkie Sprawy"
           subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta są wyróżnione na górze listy."
           titleClassName="text-white text-3xl sm:text-4xl"
@@ -399,7 +399,7 @@ const SprawyPage = () => {
       {/* Grid Stats Redesigned for Premium Look */}
       <div id="tour-sprawy-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
         {/* Stat card: Nowe */}
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           className="rounded-2xl bg-gradient-to-br from-[#0da192]/15 to-transparent border border-[#0da192]/20 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-lg shadow-[#0da192]/5 group overflow-hidden"
         >
@@ -416,7 +416,7 @@ const SprawyPage = () => {
         </motion.div>
 
         {/* Stat card: Obserwowane */}
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
@@ -433,7 +433,7 @@ const SprawyPage = () => {
         </motion.div>
 
         {/* Stat card: Oczekujące */}
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
@@ -450,7 +450,7 @@ const SprawyPage = () => {
         </motion.div>
 
         {/* Stat card: Zamknięte */}
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
@@ -468,8 +468,8 @@ const SprawyPage = () => {
       </div>
 
       {/* Redesigned Glassmorphic Filters Component */}
-      <div 
-        id="tour-sprawy-filters" 
+      <div
+        id="tour-sprawy-filters"
         className="p-5 rounded-2xl bg-card/20 backdrop-blur-md border border-border/30 space-y-4 relative z-10"
       >
         <div className="flex items-center justify-between border-b border-border/20 pb-3">
@@ -562,8 +562,8 @@ const SprawyPage = () => {
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             Nie znaleźliśmy żadnych zleceń spełniających Twoje kryteria filtrowania.
           </p>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => {
               setSearchQuery("")
               setSelectedCity("")
@@ -576,8 +576,8 @@ const SprawyPage = () => {
           </Button>
         </div>
       ) : (
-        <motion.div 
-          id="tour-sprawy-list" 
+        <motion.div
+          id="tour-sprawy-list"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -746,7 +746,7 @@ const SprawyPage = () => {
 
                         {/* CTA button */}
                         <div className="flex-shrink-0 w-full lg:w-auto pt-4 lg:pt-0">
-                          <Button 
+                          <Button
                             onClick={() => router.push(`/panel-eksperta/sprawy/${sprawa.id}`)}
                             className="w-full lg:w-auto h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 group/btn gap-2"
                           >
@@ -774,15 +774,15 @@ const SprawyPage = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0 pt-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setRejectModalOpen(false)}
               className="border-border/50 hover:bg-muted text-white rounded-xl"
             >
               Anuluj
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={handleReject}
               className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10"
             >

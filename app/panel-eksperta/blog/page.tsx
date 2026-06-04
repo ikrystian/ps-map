@@ -178,7 +178,7 @@ export default function LawFirmBlogPage() {
       <div className="relative space-y-6 pb-12 min-h-screen">
         <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
-        
+
         <div className="relative z-10">
           <h1 className="text-2xl font-bold font-playfair text-white">Blog eksperta</h1>
           <p className="text-zinc-400 text-sm mt-1">
@@ -207,7 +207,7 @@ export default function LawFirmBlogPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -382,7 +382,7 @@ export default function LawFirmBlogPage() {
                           <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 shrink-0">Szkic</Badge>
                         )}
                       </div>
-                      
+
                       <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
                         <div>
                           <span className="text-zinc-500 block font-light">Utworzono</span>

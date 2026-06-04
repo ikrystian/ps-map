@@ -227,7 +227,7 @@ export default function ClientCasesPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -521,8 +521,8 @@ export default function ClientCasesPage() {
                               ? "oferta"
                               : [2, 3, 4].includes(caseItem.offers.length % 10) &&
                                 ![12, 13, 14].includes(caseItem.offers.length)
-                              ? "oferty"
-                              : "ofert"}
+                                ? "oferty"
+                                : "ofert"}
                           </span>
                         </div>
                       )}

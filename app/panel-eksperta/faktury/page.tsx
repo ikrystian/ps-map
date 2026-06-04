@@ -165,7 +165,7 @@ export default function InvoicesPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -499,7 +499,7 @@ export default function InvoicesPage() {
                         <div className="text-2xl font-bold text-white tracking-tight">{invoices.length}</div>
                       </div>
                     </div>
-                    
+
                     <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
                       <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                         <ShieldCheck className="h-5 w-5" />

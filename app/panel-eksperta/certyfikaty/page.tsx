@@ -154,7 +154,7 @@ export default function LawFirmCertificatesPage() {
   }
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -333,7 +333,7 @@ export default function LawFirmCertificatesPage() {
                               <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">Aktywny</Badge>
                             )}
                           </div>
-                          
+
                           <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
                             <div>
                               <span className="text-zinc-500 block font-light">Uzyskanie</span>

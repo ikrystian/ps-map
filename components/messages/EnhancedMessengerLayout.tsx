@@ -139,25 +139,10 @@ export function EnhancedMessengerLayout() {
   const themeColor = isClient ? "#d7b56d" : "#0da192"
 
   return (
-    <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-14rem)] min-h-[500px]">
+    <div className="h-[calc(100vh)] min-h-[500px]">
       {/* Connection status indicator */}
       <div className="mb-2 flex items-center justify-between text-xs text-zinc-400 font-light">
-        <div className="flex items-center gap-2">
-          {isConnected ? (
-            <>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span>Połączono (w czasie rzeczywistym)</span>
-            </>
-          ) : (
-            <>
-              <Wifi className="h-3 w-3 text-amber-500 animate-pulse" />
-              <span className="text-amber-500">Brak połączenia realtime</span>
-            </>
-          )}
-        </div>
+
         {unreadCount > 0 && (
           <Badge className={cn("h-5 text-[10px] font-bold text-white px-2 rounded-full border-t border-white/10 shadow-md", isClient ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352]" : "bg-gradient-to-r from-[#0da192] to-[#0a8276]")}>
             {unreadCount} nieprzeczytanych

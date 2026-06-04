@@ -189,7 +189,7 @@ export default function ClientDashboardPage() {
   const recentCases = cases.slice(0, 3)
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -379,12 +379,12 @@ export default function ClientDashboardPage() {
                             {caseItem.status === "NOWA"
                               ? "Nowa"
                               : caseItem.status === "OFERTY_OTRZYMANE"
-                              ? "Oferty"
-                              : caseItem.status === "W_TRAKCIE"
-                              ? "W toku"
-                              : caseItem.status === "ZAKONCZONA"
-                              ? "Zakończona"
-                              : "Anulowana"}
+                                ? "Oferty"
+                                : caseItem.status === "W_TRAKCIE"
+                                  ? "W toku"
+                                  : caseItem.status === "ZAKONCZONA"
+                                    ? "Zakończona"
+                                    : "Anulowana"}
                           </span>
                           <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5 duration-200" />
                         </div>

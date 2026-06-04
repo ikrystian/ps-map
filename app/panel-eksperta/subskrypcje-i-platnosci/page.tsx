@@ -118,7 +118,7 @@ const itemVariants = {
 export default function SubscriptionsAndPaymentsPage() {
   const { data: session } = useSession()
   const router = useRouter()
-  
+
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -226,7 +226,7 @@ export default function SubscriptionsAndPaymentsPage() {
     )
   }
 
-  const subscriptionActive = lawFirm?.dataPakietuDo 
+  const subscriptionActive = lawFirm?.dataPakietuDo
     ? new Date(lawFirm.dataPakietuDo) > new Date()
     : false
 
@@ -292,7 +292,7 @@ export default function SubscriptionsAndPaymentsPage() {
   const PlanIcon = planDetails.icon
 
   return (
-    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+    <div className="relative space-y-8">
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
@@ -346,11 +346,11 @@ export default function SubscriptionsAndPaymentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <Button 
-                onClick={() => router.push("/panel-eksperta/pakiet")} 
+              <Button
+                onClick={() => router.push("/panel-eksperta/pakiet")}
                 className="w-full h-10 px-5 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 group transition-all"
               >
-                Zmień pakiet 
+                Zmień pakiet
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </CardContent>
@@ -375,9 +375,9 @@ export default function SubscriptionsAndPaymentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <Button 
-                onClick={() => router.push("/panel-eksperta/punkty")} 
-                variant="outline" 
+              <Button
+                onClick={() => router.push("/panel-eksperta/punkty")}
+                variant="outline"
                 className="w-full h-10 px-5 border-[#d7b56d]/30 hover:border-[#d7b56d]/60 text-[#d7b56d] hover:text-[#d7b56d] bg-[#d7b56d]/5 hover:bg-[#d7b56d]/10 font-semibold rounded-xl flex items-center justify-center gap-2 group transition-all"
               >
                 Doładuj punkty
@@ -402,8 +402,8 @@ export default function SubscriptionsAndPaymentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <Button 
-                onClick={() => router.push("/panel-eksperta/faktury")} 
+              <Button
+                onClick={() => router.push("/panel-eksperta/faktury")}
                 variant="secondary"
                 className="w-full h-10 px-5 border border-border/40 hover:bg-muted text-white font-semibold rounded-xl flex items-center justify-center gap-2 group transition-all"
               >
