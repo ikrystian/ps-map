@@ -455,8 +455,7 @@ export default function LawFirmPanelLayout({
 
           </div>
 
-          <div className="flex items-center gap-2">
-            <MessagesBell />
+          <div className="flex items-center gap-3">
             <NotificationBell />
             <UserMenu
               userRole="LAW_FIRM"

@@ -233,9 +233,8 @@ export function NotificationBell() {
               <DropdownMenuItem
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`cursor-pointer flex flex-col items-start p-4 ${
-                  !notification.przeczytane ? "bg-primary/10" : ""
-                }`}
+                className={`cursor-pointer flex flex-col items-start p-4 ${!notification.przeczytane ? "bg-primary/10" : ""
+                  }`}
               >
                 <div className="flex items-start justify-between w-full mb-1">
                   <span

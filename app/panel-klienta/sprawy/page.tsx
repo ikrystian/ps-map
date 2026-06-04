@@ -1,6 +1,8 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AvatarGroup } from "@/components/ui/avatar-group"
 import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -62,6 +64,13 @@ interface Case {
   offers: Array<{
     id: string
     status: string
+    lawFirm: {
+      id: string
+      nazwa: string
+      slug: string
+      logo: string | null
+      zdjecieGlowne: string | null
+    } | null
   }>
 }
 
@@ -510,9 +519,9 @@ export default function ClientCasesPage() {
 
                       {/* Offers count pill */}
                       {caseItem.offers.length > 0 && (
-                        <div className="flex items-center gap-1.5 text-xs text-[#d7b56d] bg-[#d7b56d]/10 px-2.5 py-1 rounded-lg border border-[#d7b56d]/20 font-semibold animate-pulse">
-                          <MessageSquare className="h-3.5 w-3.5 text-[#d7b56d]" />
-                          <span>
+                        <div className="offers-count flex items-center gap-2 text-xs text-[#d7b56d] bg-[#d7b56d]/10 px-2.5 py-1 rounded-lg border border-[#d7b56d]/20 font-semibold animate-pulse">
+                          <MessageSquare className="h-3.5 w-3.5 text-[#d7b56d] shrink-0" />
+                          <span className="shrink-0">
                             {caseItem.offers.length}{" "}
                             {caseItem.offers.length === 1
                               ? "oferta"
@@ -521,6 +530,19 @@ export default function ClientCasesPage() {
                                 ? "oferty"
                                 : "ofert"}
                           </span>
+                          <AvatarGroup max={4} size={20} className="shrink-0">
+                            {caseItem.offers.map((offer) => (
+                              <Avatar key={offer.id} className="h-5 w-5 border border-[#d7b56d]/40 bg-zinc-800">
+                                <AvatarImage
+                                  src={offer.lawFirm?.logo || offer.lawFirm?.zdjecieGlowne || undefined}
+                                  alt={offer.lawFirm?.nazwa || "Kancelaria"}
+                                />
+                                <AvatarFallback className="text-[8px] font-bold text-[#d7b56d] bg-[#d7b56d]/10">
+                                  {(offer.lawFirm?.nazwa ?? "K").slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                            ))}
+                          </AvatarGroup>
                         </div>
                       )}
                     </CardHeader>

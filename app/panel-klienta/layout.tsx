@@ -297,8 +297,7 @@ export default function ClientPanelLayout({
           </div>
 
           {/* Notifications and User menu */}
-          <div className="flex items-center gap-2">
-            <MessagesBell />
+          <div className="flex items-center gap-3">
             <NotificationBell />
             <UserMenu
               userRole="CLIENT"

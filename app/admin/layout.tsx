@@ -191,7 +191,7 @@ export default function AdminLayout({
           </div>
 
           {/* User menu */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <AdminNotificationBell />
             <UserMenu userRole="ADMIN" />
           </div>
