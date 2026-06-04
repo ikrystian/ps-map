@@ -378,6 +378,86 @@ export default function WinWithUsClientPage() {
 
         </div>
       </section>
+
+      {/* New Section: Ranking */}
+      <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+        {/* Subtle background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-amber-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto w-full relative z-10">
+          
+          {/* Top Banner Image */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative rounded-2xl overflow-hidden shadow-2xl border border-neutral-800/80 aspect-[730/296] w-full mb-12"
+          >
+            <Image
+              src="/images/lawyers_meeting.png"
+              alt="Spotkanie prawników"
+              fill
+              sizes="(max-w-1024px) 100vw, 896px"
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+
+          {/* Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-playfair text-3xl sm:text-4xl text-white font-normal mb-8 text-left"
+          >
+            Ranking
+          </motion.h2>
+
+          {/* Paragraphs */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex flex-col gap-6 text-neutral-400 font-sans text-sm sm:text-base leading-relaxed text-left mb-16"
+          >
+            <p>
+              <span className="font-bold text-white">ProstaSprawa.pl</span> stawia na najlepszych! Jako serwis chcemy promować naszych najbardziej aktywnych użytkowników. W tym celu prowadzimy ranking ekspertów, uwzględniający ich działania w serwisie ProstaSprawa.pl.
+            </p>
+            <p>
+              Chcesz abyśmy promowali właśnie Ciebie? Wszystko jest w Twoich rękach. Twoje zaangażowanie i rzetelność pozwoli Ci na dotarcie do szerszego grona potencjalnych klientów. Wyższa pozycja w naszym rankingu to więcej wyświetleń Twojej wizytówki przez użytkowników serwisu i za pośrednictwem przeglądarek. Naszych najlepszych prawników promujemy również na stronach zewnętrznych zaprzyjaźnionych serwisów za pośrednictwem dynamicznych widgetów.
+            </p>
+            <p>
+              Pamiętaj - im bardziej aktywny jesteś, tym bardziej jesteś widoczny. Zacznij działać już dziś i nie zmarnuj swojej szansy.
+            </p>
+          </motion.div>
+
+          {/* Bottom Bar: Text + CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pt-8 border-t border-neutral-800/40"
+          >
+            <p className="font-sans text-sm sm:text-base font-semibold text-white max-w-md text-left">
+              Twoja widoczność w serwisie prostasprawa.pl zależy więc tylko od Ciebie.
+            </p>
+            <Link href="/ranking">
+              <motion.button
+                whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-[#1e6b4f] text-white font-medium px-8 py-3.5 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-base tracking-wide whitespace-nowrap"
+              >
+                Zobacz naszych najlepszych ekspertów
+              </motion.button>
+            </Link>
+          </motion.div>
+
+        </div>
+      </section>
     </>
   )
 }
