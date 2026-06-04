@@ -647,7 +647,7 @@ export default function LawFirmProfilePage() {
       <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
 
         {/* Floating Profile Info Card */}
-        <div className="bg-card border border-border/50 shadow-2xl rounded-2xl md:rounded-3xl p-6 md:p-8 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95 transition-all duration-300">
+        <div className="profile-card bg-card border border-border/50 shadow-2xl rounded-2xl md:rounded-3xl p-6 md:p-8 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95 transition-all duration-300">
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-between">
 
             {/* Logo and Metadata */}
