@@ -413,29 +413,6 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 </div>
               )}
 
-              {/* Footer section */}
-              <div className="mt-auto pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex gap-6">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground uppercase font-bold tracking-tighter">Prawnicy</span>
-                    <span className="text-sm font-semibold">{category._count?.lawFirms || 0}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground uppercase font-bold tracking-tighter">Zlecenia</span>
-                    <span className="text-sm font-semibold">{category._count?.cases || 0}</span>
-                  </div>
-                </div>
-                <Link
-                  href={`/kategorie/${category.slug}`}
-                  className={`flex items-center gap-1 text-xs font-bold opacity-60 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 ${isBusiness
-                    ? "text-[#0da192] group-hover:text-[#0da192]"
-                    : "text-[#d7b56d] group-hover:text-[#d7b56d]"
-                    }`}
-                >
-                  <span>SZCZEGÓŁY</span>
-                  <ChevronRight className="h-3 w-3" />
-                </Link>
-              </div>
             </div>
           </MagicCard>
         )
