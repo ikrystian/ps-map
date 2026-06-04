@@ -42,6 +42,7 @@ interface City {
   nazwa: string
   voivodeshipId: string
   voivodeship: Voivodeship
+  postalCodes?: Array<{ id: string; code: string }>
 }
 
 export default function AdminLocationsPage() {
@@ -62,6 +63,7 @@ export default function AdminLocationsPage() {
   const [cityToDelete, setCityToDelete] = useState<City | null>(null)
   const [cityName, setCityName] = useState("")
   const [cityVoivodeshipId, setCityVoivodeshipId] = useState("")
+  const [cityPostalCodes, setCityPostalCodes] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
   // Fetch voivodeships on mount
@@ -127,6 +129,7 @@ export default function AdminLocationsPage() {
     setEditingCity(null)
     setCityName("")
     setCityVoivodeshipId(selectedVoivodeship !== "all" ? selectedVoivodeship : "")
+    setCityPostalCodes("")
     setIsCityDialogOpen(true)
   }
 
@@ -134,6 +137,10 @@ export default function AdminLocationsPage() {
     setEditingCity(city)
     setCityName(city.nazwa)
     setCityVoivodeshipId(city.voivodeshipId)
+    const codesStr = city.postalCodes 
+      ? city.postalCodes.map(pc => pc.code).join(", ") 
+      : ""
+    setCityPostalCodes(codesStr)
     setIsCityDialogOpen(true)
   }
 
@@ -160,7 +167,8 @@ export default function AdminLocationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nazwa: cityName,
-          voivodeshipId: cityVoivodeshipId
+          voivodeshipId: cityVoivodeshipId,
+          postalCodes: cityPostalCodes,
         })
       })
 
@@ -356,9 +364,14 @@ export default function AdminLocationsPage() {
                       {cities.map((city) => (
                         <TableRow key={city.id}>
                           <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-primary" />
-                              {city.nazwa}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <MapPin className="h-4 w-4 text-primary shrink-0" />
+                              <span>{city.nazwa}</span>
+                              {city.postalCodes && city.postalCodes.length > 0 && (
+                                <span className="text-xs text-muted-foreground bg-muted/80 px-2 py-0.5 rounded font-normal select-all">
+                                  {city.postalCodes.map(pc => pc.code).join(", ")}
+                                </span>
+                              )}
                             </div>
                           </TableCell>
                           <TableCell>{city.voivodeship.nazwa}</TableCell>
@@ -464,7 +477,7 @@ export default function AdminLocationsPage() {
           <DialogHeader>
             <DialogTitle>{editingCity ? "Edytuj miasto" : "Dodaj nowe miasto"}</DialogTitle>
             <DialogDescription>
-              Wprowadź nazwę miasta i wybierz województwo.
+              Wprowadź nazwę miasta, kody pocztowe i wybierz województwo.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -474,6 +487,14 @@ export default function AdminLocationsPage() {
                 placeholder="np. Warszawa" 
                 value={cityName}
                 onChange={(e) => setCityName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Kody pocztowe (rozdzielone przecinkami)</label>
+              <Input 
+                placeholder="np. 00-001, 00-002" 
+                value={cityPostalCodes}
+                onChange={(e) => setCityPostalCodes(e.target.value)}
               />
             </div>
             <div className="space-y-2">
