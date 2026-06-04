@@ -103,6 +103,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  showChatAssistant?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -133,6 +137,7 @@ export default function AdminSettingsPage() {
   const [ksefNip, setKsefNip] = useState("1234567890")
   const [ksefToken, setKsefToken] = useState("")
   const [ksefEnv, setKsefEnv] = useState("test")
+  const [showChatAssistant, setShowChatAssistant] = useState("true")
 
 
   useEffect(() => {
@@ -168,6 +173,7 @@ export default function AdminSettingsPage() {
         setKsefNip(data.ksefNip?.value || "1234567890")
         setKsefToken(data.ksefToken?.value || "")
         setKsefEnv(data.ksefEnv?.value || "test")
+        setShowChatAssistant(data.showChatAssistant?.value || "true")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -334,6 +340,10 @@ export default function AdminSettingsPage() {
             ksefEnv: {
               value: ksefEnv,
               description: "Środowisko KSeF: test (testowe/sandbox) lub prod (produkcyjne)",
+            },
+            showChatAssistant: {
+              value: showChatAssistant,
+              description: "Czy wyświetlać asystenta czatu (ChatAssistant) na stronie",
             },
           },
         }),
@@ -621,6 +631,22 @@ export default function AdminSettingsPage() {
               id="showExpertTutorial"
               checked={showExpertTutorial === "true"}
               onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
+            />
+          </div>
+
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="showChatAssistant" className="text-base font-semibold">
+                Asystent czatu (AI Chat Assistant)
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Włącza/wyłącza wyświetlanie pływającego okna asystenta czatu (ChatAssistant) w prawym dolnym rogu na stronach publicznych.
+              </p>
+            </div>
+            <Switch
+              id="showChatAssistant"
+              checked={showChatAssistant === "true"}
+              onCheckedChange={(checked) => setShowChatAssistant(checked ? "true" : "false")}
             />
           </div>
         </CardContent>
