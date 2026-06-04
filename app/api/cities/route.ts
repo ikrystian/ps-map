@@ -8,9 +8,10 @@ export async function GET(request: NextRequest) {
     const voivodeshipId = searchParams.get("voivodeshipId")
     const voivodeship = searchParams.get("voivodeship")
     const search = searchParams.get("search")
+    const hasExperts = searchParams.get("hasExperts") === "true"
 
     // Dynamic cache key based on query parameters
-    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:vs_${voivodeship ?? "all"}:s_${search ?? "none"}`
+    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:vs_${voivodeship ?? "all"}:s_${search ?? "none"}:he_${hasExperts}`
 
     const cities = await getOrSetCached(
       cacheKey,
@@ -41,6 +42,15 @@ export async function GET(request: NextRequest) {
             }
           ]
         }
+        if (hasExperts) {
+          where.lawFirms = {
+            some: {
+              lawFirm: {
+                aktywna: true
+              }
+            }
+          }
+        }
 
         return await prisma.city.findMany({
           where,
@@ -56,7 +66,11 @@ export async function GET(request: NextRequest) {
       3600 // Cache for 1 hour
     )
 
-    return NextResponse.json(cities)
+    const response = NextResponse.json(cities)
+    if (hasExperts) {
+      response.headers.set("Cache-Control", "public, max-age=3600, s-maxage=3600, stale-while-revalidate=600")
+    }
+    return response
   } catch (error) {
     console.error("Error fetching cities:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
