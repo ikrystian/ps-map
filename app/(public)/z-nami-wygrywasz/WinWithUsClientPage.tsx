@@ -3,10 +3,28 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 export default function WinWithUsClientPage() {
   return (
     <>
+      {/* Breadcrumbs Banner */}
+      <div
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container mx-auto px-4 relative z-10">
+          <ResponsiveBreadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Z nami wygrywasz" },
+            ]}
+          />
+        </div>
+      </div>
+
       <section className="min-h-[calc(100vh-65px)] bg-[#121212] flex items-center justify-center py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Background glow effects to match the premium theme */}
         <div className="absolute top-1/4 left-1/10 w-[400px] h-[400px] bg-emerald-950/20 rounded-full blur-[120px] pointer-events-none" />
