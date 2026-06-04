@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import type { Conversation } from "@/types/conversations"
 import { AnimatePresence, motion } from "framer-motion"
 import { Archive, MessageCircle, RotateCcw, Search, Trash2 } from "lucide-react"
+import { useSession } from "next-auth/react"
 import { useState } from "react"
 
 interface EnhancedConversationListProps {
@@ -29,8 +30,12 @@ export function EnhancedConversationList({
   onConversationSelect,
   onConversationUpdate,
 }: EnhancedConversationListProps) {
+  const { data: session } = useSession()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState<"active" | "archived" | "deleted">("active")
+
+  const isClient = session?.user?.role === "CLIENT"
+  const themeColor = isClient ? "#d7b56d" : "#0da192"
 
   const filterConversations = (convs: Conversation[]) =>
     convs.filter((conv) =>
@@ -117,7 +122,7 @@ export function EnhancedConversationList({
     }
   }
 
-  const truncateMessage = (message: string, maxLength: number = 50) => {
+  const truncateMessage = (message: string, maxLength: number = 40) => {
     if (message.length <= maxLength) return message
     return message.substring(0, maxLength) + "..."
   }
@@ -128,28 +133,33 @@ export function EnhancedConversationList({
   ) => (
     <motion.div
       key={conversation.id}
-      initial={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className="relative group"
+      exit={{ opacity: 0, x: 10 }}
+      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+      className="relative group/item"
     >
       <button
         onClick={() => onConversationSelect(conversation.id)}
         className={cn(
-          "w-full p-4 flex items-start gap-3 hover:bg-muted/50 transition-colors border-b",
-          selectedConversationId === conversation.id && "bg-muted"
+          "w-full p-4 flex items-start gap-3 border-b border-border/10 text-left transition-all duration-300 relative",
+          selectedConversationId === conversation.id
+            ? isClient
+              ? "bg-gradient-to-r from-[#d7b56d]/10 via-[#d7b56d]/5 to-transparent border-l-4 border-l-[#d7b56d]"
+              : "bg-gradient-to-r from-[#0da192]/10 via-[#0da192]/5 to-transparent border-l-4 border-l-[#0da192]"
+            : "hover:bg-white/[0.02]"
         )}
       >
         {/* Avatar */}
-        <div className="relative">
-          <Avatar className="h-12 w-12 flex-shrink-0">
+        <div className="relative shrink-0">
+          <Avatar className="h-11 w-11 border border-border/40 group-hover/item:scale-105 transition-transform duration-300">
             {conversation.otherUser.image && (
               <AvatarImage
                 src={conversation.otherUser.image}
                 alt={conversation.otherUser.name}
               />
             )}
-            <AvatarFallback className="bg-primary text-primary-foreground">
+            <AvatarFallback className="bg-zinc-800 text-white text-xs font-semibold">
               {conversation.otherUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -158,40 +168,42 @@ export function EnhancedConversationList({
         {/* Informacje o konwersacji */}
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center justify-between mb-1">
-            <p className="font-semibold text-sm truncate">
+            <p className="font-semibold text-sm truncate text-white">
               {conversation.otherUser.name}
             </p>
             {conversation.lastMessage && (
-              <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
+              <span className="text-[10px] text-zinc-500 font-light flex-shrink-0 ml-2">
                 {formatTime(conversation.lastMessage.createdAt)}
               </span>
             )}
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-1">
             <p
               className={cn(
-                "text-sm truncate",
+                "text-xs truncate max-w-[80%]",
                 conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe
-                  ? "font-semibold text-foreground"
-                  : "text-muted-foreground"
+                  ? "font-semibold text-white font-medium"
+                  : "text-zinc-400 font-light"
               )}
             >
               {conversation.lastMessage ? (
                 <>
                   {conversation.lastMessage.isFromMe && (
-                    <span className="mr-1">Ty: </span>
+                    <span className="text-zinc-500 font-normal">Ty: </span>
                   )}
                   {truncateMessage(conversation.lastMessage.content)}
                 </>
               ) : (
-                "Rozpocznij konwersację"
+                <span className="text-[#0da192]/70 italic text-[11px]">Rozpocznij konwersację</span>
               )}
             </p>
             {conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe && (
               <Badge
-                variant="default"
-                className="ml-2 h-5 min-w-5 rounded-full flex items-center justify-center px-1.5"
+                className={cn(
+                  "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-[10px] font-bold text-white shadow-md border-t border-white/10 animate-pulse shrink-0",
+                  isClient ? "bg-[#d7b56d]" : "bg-[#0da192]"
+                )}
               >
                 {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
               </Badge>
@@ -201,30 +213,32 @@ export function EnhancedConversationList({
       </button>
 
       {/* Action buttons */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 flex gap-1 bg-zinc-950/80 backdrop-blur-sm p-1 rounded-lg border border-border/40 shadow-lg z-10">
         {showActions === "archive" && (
           <>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-7 w-7 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md"
               onClick={(e) => {
                 e.stopPropagation()
                 handleArchive(conversation.id)
               }}
+              title="Archiwizuj"
             >
-              <Archive className="h-4 w-4" />
+              <Archive className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-7 w-7 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-md"
               onClick={(e) => {
                 e.stopPropagation()
                 handleDelete(conversation.id)
               }}
+              title="Usuń"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </>
         )}
@@ -232,26 +246,28 @@ export function EnhancedConversationList({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-7 w-7 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 rounded-md"
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, true)
             }}
+            title="Przywróć"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-3.5 w-3.5" />
           </Button>
         )}
         {showActions === "restore-deleted" && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-7 w-7 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 rounded-md"
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, false)
             }}
+            title="Przywróć"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-3.5 w-3.5" />
           </Button>
         )}
       </div>
@@ -267,36 +283,38 @@ export function EnhancedConversationList({
 
     if (filtered.length === 0) {
       return (
-        <div className="p-8 text-center text-muted-foreground">
-          <MessageCircle className="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p className="font-medium">{emptyMessage}</p>
+        <div className="p-8 text-center text-zinc-500">
+          <MessageCircle className="h-10 w-10 mx-auto mb-3 opacity-30 text-zinc-600" />
+          <p className="text-xs font-semibold text-zinc-400">{emptyMessage}</p>
           {searchQuery && (
-            <p className="text-sm mt-1">Spróbuj użyć innej frazy wyszukiwania</p>
+            <p className="text-[11px] mt-1 font-light text-zinc-500">Spróbuj wpisać inną frazę.</p>
           )}
         </div>
       )
     }
 
     return (
-      <AnimatePresence mode="popLayout">
-        {filtered.map((conversation) =>
-          renderConversationItem(conversation, showActions)
-        )}
-      </AnimatePresence>
+      <div className="divide-y divide-border/5">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((conversation) =>
+            renderConversationItem(conversation, showActions)
+          )}
+        </AnimatePresence>
+      </div>
     )
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-zinc-950/10">
       {/* Nagłówek z wyszukiwaniem */}
-      <div className="p-4 border-b space-y-3">
+      <div className="p-4 border-b border-border/20 space-y-3 bg-zinc-950/20">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <Input
             placeholder="Szukaj konwersacji..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-10 h-10 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] text-xs transition-all"
           />
         </div>
       </div>
@@ -307,58 +325,76 @@ export function EnhancedConversationList({
         onValueChange={(value) => setActiveTab(value as typeof activeTab)}
         className="flex-1 flex flex-col"
       >
-        <TabsList className="grid w-full grid-cols-3 rounded-none border-b">
-          <TabsTrigger value="active" className="relative">
-            Konwersacje
+        <TabsList className="grid w-full grid-cols-3 rounded-none border-b border-border/20 bg-zinc-950/30 p-0 h-11">
+          <TabsTrigger
+            value="active"
+            className={cn(
+              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              activeTab === "active" && (isClient ? "border-b-[#d7b56d] !text-[#d7b56d]" : "border-b-[#0da192] !text-[#0da192]")
+            )}
+          >
+            Czaty
             {conversations.length > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5">
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#d7b56d]/20 text-[#d7b56d] border-[#d7b56d]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {conversations.length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="archived" className="relative">
+          <TabsTrigger
+            value="archived"
+            className={cn(
+              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              activeTab === "archived" && (isClient ? "border-b-[#d7b56d] !text-[#d7b56d]" : "border-b-[#0da192] !text-[#0da192]")
+            )}
+          >
             Archiwum
             {archivedConversations.length > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5">
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#d7b56d]/20 text-[#d7b56d] border-[#d7b56d]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {archivedConversations.length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="deleted" className="relative">
-            Usunięte
+          <TabsTrigger
+            value="deleted"
+            className={cn(
+              "relative rounded-none border-b-2 border-transparent py-3 text-[10px] tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              activeTab === "deleted" && (isClient ? "border-b-[#d7b56d] !text-[#d7b56d]" : "border-b-[#0da192] !text-[#0da192]")
+            )}
+          >
+            Kosz
             {deletedConversations.length > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 min-w-5 px-1.5">
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-[9px] font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#d7b56d]/20 text-[#d7b56d] border-[#d7b56d]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
                 {deletedConversations.length}
               </Badge>
             )}
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="active" className="flex-1 overflow-y-auto mt-0">
+        <TabsContent value="active" className="flex-1 overflow-y-auto mt-0 scrollbar-thin">
           {renderConversationList(
             conversations,
             "archive",
-            searchQuery ? "Nie znaleziono konwersacji" : "Brak aktywnych konwersacji"
+            searchQuery ? "Brak wyników wyszukiwania" : "Brak aktywnych konwersacji"
           )}
         </TabsContent>
 
-        <TabsContent value="archived" className="flex-1 overflow-y-auto mt-0">
+        <TabsContent value="archived" className="flex-1 overflow-y-auto mt-0 scrollbar-thin">
           {renderConversationList(
             archivedConversations,
             "restore-archived",
             searchQuery
               ? "Nie znaleziono zarchiwizowanych konwersacji"
-              : "Brak zarchiwizowanych konwersacji"
+              : "Archiwum jest puste"
           )}
         </TabsContent>
 
-        <TabsContent value="deleted" className="flex-1 overflow-y-auto mt-0">
+        <TabsContent value="deleted" className="flex-1 overflow-y-auto mt-0 scrollbar-thin">
           {renderConversationList(
             deletedConversations,
             "restore-deleted",
             searchQuery
               ? "Nie znaleziono usuniętych konwersacji"
-              : "Brak usuniętych konwersacji"
+              : "Kosz jest pusty"
           )}
         </TabsContent>
       </Tabs>
