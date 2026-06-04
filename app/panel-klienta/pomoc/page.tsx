@@ -1,5 +1,6 @@
 "use client"
 
+import { BorderBeam } from "@/components/ui/border-beam"
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 import {
   AlertCircle,
   HelpCircle,
@@ -20,6 +23,8 @@ import {
   MessageSquare,
   Phone,
   Search,
+  Sparkles,
+  Check,
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -46,6 +51,29 @@ interface HelpQuestion {
   wyswietlenia: number
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 300,
+      damping: 24,
+    },
+  },
+}
+
 export default function HelpCenterPage() {
   const [categories, setCategories] = useState<HelpCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -58,7 +86,7 @@ export default function HelpCenterPage() {
     fetchHelpData()
   }, [])
 
-  // Handle hash navigation
+  // Obsługa nawigacji po kotwicach (hash)
   useEffect(() => {
     if (window.location.hash) {
       const hash = window.location.hash.substring(1)
@@ -99,7 +127,7 @@ export default function HelpCenterPage() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  // Filter questions based on search and category
+  // Filtrowanie pytań w oparciu o zapytanie i kategorię
   const filteredQuestions = categories.flatMap(cat =>
     cat.questions
       .filter(q => q.aktywna)
@@ -115,7 +143,7 @@ export default function HelpCenterPage() {
       .map(q => ({ ...q, categoryName: cat.nazwa, categorySlug: cat.slug }))
   )
 
-  // Get unique categories that have questions
+  // Pobranie unikalnych kategorii, które posiadają aktywne pytania
   const availableCategories = [
     { id: "all", nazwa: "Wszystkie", slug: "all" },
     ...categories.filter(cat => cat.questions.some(q => q.aktywna))
@@ -123,180 +151,249 @@ export default function HelpCenterPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie centrum pomocy...</p>
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <Card className="border-destructive">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" />
-            <p>{error}</p>
+      <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl p-6">
+        <div className="flex items-center gap-3 text-rose-400">
+          <AlertCircle className="h-6 w-6 shrink-0" />
+          <div>
+            <h4 className="font-semibold">Błąd ładowania</h4>
+            <p className="text-xs text-rose-400/80 mt-0.5">{error}</p>
           </div>
-        </CardContent>
+        </div>
       </Card>
     )
   }
 
   return (
-    <div className="w-full space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold font-playfair tracking-tight">Centrum Pomocy</h1>
-        <p className="text-sm text-muted-foreground mt-1.5">
-          Znajdź odpowiedzi na najczęściej zadawane pytania
-        </p>
-      </div>
+    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Search Bar */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Centrum pomocy</h1>
+        <p className="text-sm text-zinc-400 mt-1.5 font-light">
+          Znajdź odpowiedzi na najczęściej zadawane pytania dotyczące funkcjonowania platformy dla klientów.
+        </p>
+        <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkles className="h-3 w-3 animate-pulse" />
+          CENTRUM WSPARCIA I WIEDZY KLIENTA
+        </div>
+      </motion.div>
+
+      {/* Search Bar & Filters */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="space-y-6 relative z-10"
+      >
+        {/* Search Bar */}
+        <motion.div variants={itemVariants}>
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-500 group-focus-within:text-[#0da192] transition-colors h-5 w-5" />
             <Input
-              placeholder="Czego szukasz?"
-              className="pl-10"
+              placeholder="Czego potrzebujesz? Wpisz słowo kluczowe..."
+              className="pl-12 h-14 bg-zinc-950/40 border-border/30 rounded-2xl text-white placeholder:text-zinc-500 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-zinc-950/60 transition-all text-base shadow-lg shadow-black/10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-        </CardContent>
-      </Card>
+        </motion.div>
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-2">
-        {availableCategories.map((category) => (
-          <Button
-            key={category.id}
-            variant={selectedCategory === category.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category.id)}
-            size="sm"
-          >
-            {category.nazwa}
-          </Button>
-        ))}
-      </div>
-
-      {/* FAQ Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pytania i odpowiedzi</CardTitle>
-          <CardDescription>
-            {selectedCategory === "all"
-              ? "Wszystkie pytania"
-              : categories.find(c => c.id === selectedCategory)?.nazwa
-            }
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {filteredQuestions.length === 0 ? (
-            <div className="text-center py-12">
-              <HelpCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Brak wyników</h3>
-              <p className="text-muted-foreground">
-                {searchQuery
-                  ? "Nie znaleziono pytań pasujących do Twojego wyszukiwania"
-                  : "W tej kategorii nie ma jeszcze pytań"}
-              </p>
-            </div>
-          ) : (
-            <Accordion type="single" collapsible className="w-full">
-              {filteredQuestions.map((question) => (
-                <AccordionItem key={question.id} value={question.id} id={question.slug}>
-                  <AccordionTrigger className="hover:no-underline">
-                    <div className="flex items-start gap-3 text-left">
-                      <HelpCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                      <div>
-                        <div className="font-medium">{question.pytanie}</div>
-                        <Badge variant="outline" className="mt-1">
-                          {question.categoryName}
-                        </Badge>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="pl-8 space-y-4">
-                      <div
-                        className="text-muted-foreground prose prose-sm dark:prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: question.odpowiedz }}
-                      />
-                      <div className="flex items-center gap-2 pt-2 border-t">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCopyLink(question.id, question.slug)}
-                        >
-                          {copiedId === question.id ? (
-                            <>
-                              <span className="text-green-600">Skopiowano!</span>
-                            </>
-                          ) : (
-                            <>
-                              <LinkIcon className="h-4 w-4 mr-2" />
-                              Kopiuj link
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Contact Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Potrzebujesz dodatkowej pomocy?</CardTitle>
-          <CardDescription>
-            Skontaktuj się z naszym zespołem wsparcia
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            <Link href="/panel-klienta/wiadomosci">
-              <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                <MessageSquare className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-semibold">Wiadomość</div>
-                  <div className="text-xs text-muted-foreground">
-                    Napisz do nas
-                  </div>
-                </div>
+        {/* Category Filters */}
+        <motion.div variants={itemVariants} className="flex flex-wrap gap-2">
+          {availableCategories.map((category) => {
+            const isActive = selectedCategory === category.id
+            return (
+              <Button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                size="sm"
+                className={cn(
+                  "h-9 px-4 rounded-full font-medium text-xs transition-all duration-300 border",
+                  isActive
+                    ? "bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white border-transparent shadow-md"
+                    : "bg-zinc-900/40 border-border/30 text-zinc-400 hover:text-white hover:bg-white/5"
+                )}
+              >
+                {category.nazwa}
               </Button>
-            </Link>
-            <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4" asChild>
-              <a href="mailto:pomoc@prosta-sprawa.pl">
-                <Mail className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-semibold">E-mail</div>
-                  <div className="text-xs text-muted-foreground">
-                    pomoc@prosta-sprawa.pl
+            )
+          })}
+        </motion.div>
+
+        {/* FAQ Accordion Section */}
+        <motion.div variants={itemVariants}>
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+            <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+            <CardHeader className="border-b border-border/20 py-5 px-6">
+              <CardTitle className="text-lg font-playfair text-white">Najczęstsze pytania i odpowiedzi</CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">
+                {selectedCategory === "all"
+                  ? "Przeglądaj wszystkie tematy pomocy"
+                  : `Pytania z kategorii: ${categories.find(c => c.id === selectedCategory)?.nazwa}`
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {filteredQuestions.length === 0 ? (
+                <div className="text-center py-16 flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
+                  <div className="h-14 w-14 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
+                    <HelpCircle className="h-6 w-6 text-zinc-500 animate-pulse" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white">Brak wyników</h4>
+                    <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-light">
+                      {searchQuery
+                        ? "Nie znaleźliśmy pytań spełniających Twoje kryteria wyszukiwania. Spróbuj użyć innych słów kluczowych."
+                        : "W wybranej kategorii nie ma obecnie żadnych opublikowanych pytań."}
+                    </p>
                   </div>
                 </div>
-              </a>
-            </Button>
-            <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4" asChild>
-              <a href="tel:+48123456789">
-                <Phone className="h-6 w-6" />
-                <div className="text-center">
-                  <div className="font-semibold">Telefon</div>
-                  <div className="text-xs text-muted-foreground">
-                    +48 123 456 789
+              ) : (
+                <Accordion type="single" collapsible className="w-full space-y-1">
+                  {filteredQuestions.map((question) => (
+                    <AccordionItem
+                      key={question.id}
+                      value={question.id}
+                      id={question.slug}
+                      className="border border-border/10 bg-zinc-950/15 rounded-xl px-4 overflow-hidden transition-all hover:border-[#0da192]/20"
+                    >
+                      <AccordionTrigger className="hover:no-underline py-4 text-sm font-medium text-zinc-200 hover:text-white transition-colors">
+                        <div className="flex items-start gap-3.5 text-left">
+                          <HelpCircle className="h-5 w-5 text-[#d7b56d] shrink-0 mt-0.5 transition-transform duration-300" />
+                          <div className="min-w-0">
+                            <span className="leading-snug">{question.pytanie}</span>
+                            <div className="mt-1">
+                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-[9px] font-medium py-0 px-2 rounded-md">
+                                {question.categoryName}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="border-t border-border/5 pt-4 pb-4">
+                        <div className="pl-8 space-y-4">
+                          <div
+                            className="text-zinc-300 text-sm leading-relaxed font-light prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-a:text-[#0da192] prose-strong:text-white prose-strong:font-semibold"
+                            dangerouslySetInnerHTML={{ __html: question.odpowiedz }}
+                          />
+                          <div className="flex items-center gap-2 pt-3 border-t border-border/5">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopyLink(question.id, question.slug)}
+                              className="h-8 px-3 rounded-lg border border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 hover:border-border/80 transition-all text-xs gap-1.5"
+                            >
+                              {copiedId === question.id ? (
+                                <>
+                                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                                  <span className="text-emerald-400">Skopiowano link</span>
+                                </>
+                              ) : (
+                                <>
+                                  <LinkIcon className="h-3.5 w-3.5" />
+                                  <span>Skopiuj bezpośredni link</span>
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Contact Support Section */}
+        <motion.div variants={itemVariants}>
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+            <CardHeader className="py-5 px-6 border-b border-border/20">
+              <CardTitle className="text-lg font-playfair text-white">Nadal potrzebujesz pomocy?</CardTitle>
+              <CardDescription className="text-zinc-400 text-xs">
+                Skontaktuj się z naszym zespołem wsparcia. Pomagamy klientom w rozwiązywaniu spraw.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Wiadomość */}
+                <Link href="/panel-klienta/wiadomosci" className="group">
+                  <div className="flex flex-col items-center text-center p-5 rounded-2xl border border-border/30 bg-zinc-950/20 hover:bg-[#0da192]/5 hover:border-[#0da192]/40 transition-all duration-300 h-full justify-between">
+                    <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 group-hover:bg-[#0da192]/20 transition-all mb-4">
+                      <MessageSquare className="h-6 w-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-white text-sm group-hover:text-[#0da192] transition-colors">Wewnętrzny czat</h4>
+                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                        Napisz do nas bezpośrednio z panelu klienta/eksperta.
+                      </p>
+                    </div>
+                    <Button variant="link" className="text-[#0da192] hover:text-[#0fbaa8] text-xs font-semibold gap-1 mt-4 p-0">
+                      Otwórz wiadomości &rarr;
+                    </Button>
                   </div>
-                </div>
-              </a>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+                </Link>
+
+                {/* Email */}
+                <a href="mailto:pomoc@prosta-sprawa.pl" className="group">
+                  <div className="flex flex-col items-center text-center p-5 rounded-2xl border border-border/30 bg-zinc-950/20 hover:bg-[#d7b56d]/5 hover:border-[#d7b56d]/40 transition-all duration-300 h-full justify-between">
+                    <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 group-hover:bg-[#d7b56d]/20 transition-all mb-4">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-white text-sm group-hover:text-[#d7b56d] transition-colors">Wyślij e-mail</h4>
+                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                        Napisz wiadomość e-mail. Pomożemy w ciągu kilku godzin.
+                      </p>
+                    </div>
+                    <Button variant="link" className="text-[#d7b56d] hover:text-[#e5c47f] text-xs font-semibold gap-1 mt-4 p-0">
+                      pomoc@prosta-sprawa.pl
+                    </Button>
+                  </div>
+                </a>
+
+                {/* Telefon */}
+                <a href="tel:+48123456789" className="group">
+                  <div className="flex flex-col items-center text-center p-5 rounded-2xl border border-border/30 bg-zinc-950/20 hover:bg-[#0da192]/5 hover:border-[#0da192]/40 transition-all duration-300 h-full justify-between">
+                    <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 group-hover:bg-[#0da192]/20 transition-all mb-4">
+                      <Phone className="h-6 w-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-white text-sm group-hover:text-[#0da192] transition-colors">Zadzwoń do nas</h4>
+                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                        Infolinia czynna od poniedziałku do piątku w godz. 9:00 - 17:00.
+                      </p>
+                    </div>
+                    <Button variant="link" className="text-[#0da192] hover:text-[#0fbaa8] text-xs font-semibold gap-1 mt-4 p-0">
+                      +48 123 456 789
+                    </Button>
+                  </div>
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
     </div>
   )
 }
