@@ -21,6 +21,10 @@ import {
   Smile,
   Trash2,
   X,
+  Loader2,
+  User,
+  ShieldAlert,
+  MessageCircle,
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
@@ -29,7 +33,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
   loading: () => (
-    <div className="h-[350px] w-[350px] flex items-center justify-center bg-background border border-border rounded-lg text-sm text-muted-foreground shadow-lg">
+    <div className="h-[350px] w-[350px] flex items-center justify-center bg-zinc-900 border border-border/40 rounded-xl text-xs text-zinc-400 shadow-2xl">
       Ładowanie emoji...
     </div>
   )
@@ -546,15 +550,15 @@ export function EnhancedChatArea({
 
     switch (message.status) {
       case "SENDING":
-        return <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+        return <Loader2 className="h-3 w-3 animate-spin text-zinc-500" />
       case "SENT":
-        return <Check className="h-3 w-3" />
+        return <Check className="h-3 w-3 text-zinc-500" />
       case "DELIVERED":
-        return <CheckCheck className="h-3 w-3" />
+        return <CheckCheck className="h-3 w-3 text-zinc-400" />
       case "READ":
-        return <CheckCheck className="h-3 w-3 text-blue-500" />
+        return <CheckCheck className="h-3 w-3 text-[#0da192]" />
       case "ERROR":
-        return <X className="h-3 w-3 text-red-500" />
+        return <X className="h-3 w-3 text-rose-500" />
       default:
         return null
     }
@@ -562,14 +566,10 @@ export function EnhancedChatArea({
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"
-          />
-          <p className="mt-4 text-muted-foreground">Ładowanie konwersacji...</p>
+      <div className="flex-1 flex items-center justify-center bg-zinc-950/10">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie rozmowy...</p>
         </div>
       </div>
     )
@@ -577,13 +577,14 @@ export function EnhancedChatArea({
 
   if (!conversation) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">Nie znaleziono konwersacji</p>
+      <div className="flex-1 flex items-center justify-center bg-zinc-950/10">
+        <p className="text-muted-foreground text-sm font-light">Nie znaleziono konwersacji</p>
       </div>
     )
   }
 
   const isClient = session?.user?.role === "CLIENT"
+  const themeColor = isClient ? "#d7b56d" : "#0da192"
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
     ? conversation.lawFirmUser.lawFirm.nazwa
@@ -595,70 +596,75 @@ export function EnhancedChatArea({
   const messageGroups = groupMessagesByDate()
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-zinc-950/10">
       {/* Nagłówek */}
-      <div className="p-4 border-b flex items-center gap-3">
+      <div className="p-4 border-b border-border/20 flex items-center gap-3 bg-zinc-950/20 backdrop-blur-sm z-10">
         {onBack && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="md:hidden -ml-2"
+            className="md:hidden -ml-2 text-zinc-400 hover:text-white"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
 
         <div className="flex items-center gap-3 flex-1">
-          <div className="relative">
-            <Avatar className="h-10 w-10 cursor-pointer" onClick={() => setShowUserInfo(true)}>
+          <div className="relative cursor-pointer group" onClick={() => setShowUserInfo(true)}>
+            <Avatar className="h-10 w-10 border border-border/40 group-hover:scale-105 transition-transform duration-300">
               {otherUserImage && (
                 <AvatarImage src={otherUserImage} alt={otherUserName} />
               )}
-              <AvatarFallback className="bg-primary text-primary-foreground">
+              <AvatarFallback className="bg-zinc-800 text-zinc-300 font-semibold text-sm">
                 {otherUserName.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             {isOnline && (
-              <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-background rounded-full" />
+              <span className="absolute bottom-0 right-0 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-background"></span>
+              </span>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold truncate">{otherUserName}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="font-semibold text-sm text-white truncate cursor-pointer hover:underline" onClick={() => setShowUserInfo(true)}>
+              {otherUserName}
+            </p>
+            <p className="text-[10px] text-zinc-500 font-light mt-0.5">
               {isOnline
-                ? "Online"
+                ? "Dostępny"
                 : lastSeen
                   ? `Ostatnio widziany ${formatDistanceToNow(new Date(lastSeen), {
                     addSuffix: true,
                     locale: pl,
                   })}`
-                  : "Offline"}
+                  : "Niedostępny"}
             </p>
           </div>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg">
               <MoreVertical className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setShowUserInfo(true)}>
+          <DropdownMenuContent align="end" className="bg-zinc-900 border-border/40 text-zinc-300">
+            <DropdownMenuItem onClick={() => setShowUserInfo(true)} className="hover:bg-zinc-800 focus:bg-zinc-800 text-zinc-200 cursor-pointer">
               <Info className="h-4 w-4 mr-2" />
               Informacje
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleArchive}>
+            <DropdownMenuItem onClick={handleArchive} className="hover:bg-zinc-800 focus:bg-zinc-800 text-zinc-200 cursor-pointer">
               <Archive className="h-4 w-4 mr-2" />
               Archiwizuj
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete}>
+            <DropdownMenuItem onClick={handleDelete} className="hover:bg-zinc-800 focus:bg-zinc-800 text-rose-400 focus:text-rose-400 cursor-pointer">
               <Trash2 className="h-4 w-4 mr-2" />
-              Usuń
+              Usuń konwersację
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleBlock} className="text-red-600">
+            <DropdownMenuSeparator className="bg-border/20" />
+            <DropdownMenuItem onClick={handleBlock} className="text-rose-500 hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer">
               <Ban className="h-4 w-4 mr-2" />
               Zablokuj użytkownika
             </DropdownMenuItem>
@@ -670,32 +676,31 @@ export function EnhancedChatArea({
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin bg-zinc-950/20"
       >
         {isLoadingMore && (
           <div className="flex justify-center py-2">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+            <Loader2 className="h-5 w-5 animate-spin text-[#0da192]" />
           </div>
         )}
 
         {Object.keys(messageGroups).length === 0 ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            <p>Brak wiadomości. Rozpocznij konwersację!</p>
+          <div className="flex flex-col items-center justify-center h-full text-zinc-500 space-y-3">
+            <div className="h-12 w-12 rounded-full bg-zinc-800/30 border border-border/30 flex items-center justify-center">
+              <MessageCircle className="h-5 w-5 text-zinc-500" />
+            </div>
+            <p className="text-xs font-light">Brak wiadomości. Rozpocznij konwersację wpisując tekst poniżej!</p>
           </div>
         ) : (
           <>
             {Object.entries(messageGroups).map(([dateKey, dateMessages]) => (
-              <div key={dateKey}>
+              <div key={dateKey} className="space-y-4">
                 {/* Separator daty */}
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-center my-4"
-                >
-                  <div className="bg-muted px-3 py-1 rounded-full text-xs text-muted-foreground">
+                <div className="flex items-center justify-center my-4">
+                  <span className="bg-zinc-800/60 border border-zinc-700/50 px-3 py-0.5 rounded-full text-[9px] uppercase tracking-wider text-zinc-400 font-semibold shadow-sm">
                     {formatMessageDate(dateMessages[0].createdAt)}
-                  </div>
-                </motion.div>
+                  </span>
+                </div>
 
                 {/* Wiadomości */}
                 <AnimatePresence>
@@ -705,23 +710,24 @@ export function EnhancedChatArea({
                     return (
                       <motion.div
                         key={message.id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         className={cn(
-                          "flex gap-2 mb-2",
+                          "flex gap-3 mb-2 max-w-full items-end",
                           isMyMessage ? "justify-end" : "justify-start"
                         )}
                       >
                         {!isMyMessage && (
-                          <Avatar className="h-8 w-8 flex-shrink-0">
+                          <Avatar className="h-7 w-7 border border-border/40 shrink-0 mb-1">
                             {message.sender?.image && (
                               <AvatarImage
                                 src={message.sender?.image}
                                 alt={message.sender?.name || ""}
                               />
                             )}
-                            <AvatarFallback className="bg-muted text-xs">
+                            <AvatarFallback className="bg-zinc-800 text-[10px] text-zinc-300">
                               {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                             </AvatarFallback>
                           </Avatar>
@@ -729,19 +735,21 @@ export function EnhancedChatArea({
 
                         <div
                           className={cn(
-                            "max-w-[70%] rounded-2xl px-4 py-2",
+                            "max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 shadow-sm text-sm relative group",
                             isMyMessage
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted"
+                              ? isClient
+                                ? "bg-gradient-to-br from-[#d7b56d] to-[#b39352] text-white rounded-br-none border-t border-white/10"
+                                : "bg-gradient-to-br from-[#0da192] to-[#0a8276] text-white rounded-br-none border-t border-white/10"
+                              : "bg-zinc-850 border border-zinc-750 text-zinc-100 rounded-bl-none"
                           )}
                         >
-                          <p className="text-sm whitespace-pre-wrap break-words">
+                          <p className="whitespace-pre-wrap break-words leading-relaxed text-xs sm:text-sm">
                             {message.content}
                           </p>
 
                           {/* Attachments */}
                           {message.attachments && message.attachments.length > 0 && (
-                            <div className="mt-2 space-y-1">
+                            <div className="mt-3 space-y-1.5 border-t border-white/10 pt-2">
                               {message.attachments.map((attachment, idx) => (
                                 <a
                                   key={idx}
@@ -749,51 +757,36 @@ export function EnhancedChatArea({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className={cn(
-                                    "flex items-center gap-2 p-2 rounded border text-xs",
+                                    "flex items-center gap-2 p-2 rounded-lg border text-[11px] transition-colors duration-200",
                                     isMyMessage
-                                      ? "border-primary-foreground/20 hover:bg-primary-foreground/10"
-                                      : "border-muted-foreground/20 hover:bg-muted-foreground/10"
+                                      ? "bg-black/10 border-white/10 hover:bg-black/20 text-white"
+                                      : "bg-zinc-900/50 border-border/40 hover:bg-zinc-900 text-zinc-300 hover:text-white"
                                   )}
                                 >
-                                  <Paperclip className="h-3 w-3" />
+                                  <Paperclip className="h-3.5 w-3.5 shrink-0" />
                                   <span className="flex-1 truncate">
                                     {attachment.filename}
                                   </span>
-                                  <Download className="h-3 w-3" />
+                                  <Download className="h-3.5 w-3.5 shrink-0 opacity-70 hover:opacity-100 transition-opacity" />
                                 </a>
                               ))}
                             </div>
                           )}
 
-                          <div className="flex items-center gap-1 mt-1">
-                            <p
+                          <div className="flex items-center gap-1 mt-1.5 justify-end">
+                            <span
                               className={cn(
-                                "text-xs",
+                                "text-[9px] font-mono",
                                 isMyMessage
-                                  ? "text-primary-foreground/70"
-                                  : "text-muted-foreground"
+                                  ? "text-white/60"
+                                  : "text-zinc-500 font-light"
                               )}
                             >
                               {formatMessageTime(message.createdAt)}
-                            </p>
+                            </span>
                             {getStatusIcon(message)}
                           </div>
                         </div>
-
-                        {isMyMessage && (
-                          <Avatar className="h-8 w-8 flex-shrink-0">
-                            {session?.user?.image && (
-                              <AvatarImage
-                                src={session?.user?.image}
-                                alt={session?.user?.name || ""}
-                              />
-                            )}
-                            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                              {session?.user?.name?.substring(0, 2).toUpperCase() ||
-                                "TY"}
-                            </AvatarFallback>
-                          </Avatar>
-                        )}
                       </motion.div>
                     )
                   })}
@@ -809,32 +802,32 @@ export function EnhancedChatArea({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex gap-2 items-center text-muted-foreground text-sm"
+                  className="flex gap-2 items-center text-zinc-500 text-xs font-light py-1"
                 >
-                  <Avatar className="h-6 w-6">
+                  <Avatar className="h-6 w-6 border border-border/40">
                     {otherUserImage && (
                       <AvatarImage src={otherUserImage} alt={otherUserName} />
                     )}
-                    <AvatarFallback className="bg-muted text-xs">
+                    <AvatarFallback className="bg-zinc-800 text-[9px]">
                       {otherUserName.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span>{otherUserName} pisze...</span>
-                  <div className="flex gap-1">
-                    <motion.div
-                      animate={{ y: [0, -5, 0] }}
+                  <span>{otherUserName} pisze</span>
+                  <div className="flex gap-1 items-center ml-1">
+                    <motion.span
+                      animate={{ y: [0, -3, 0] }}
                       transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
-                      className="h-2 w-2 bg-muted-foreground rounded-full"
+                      className="h-1.5 w-1.5 bg-zinc-500 rounded-full"
                     />
-                    <motion.div
-                      animate={{ y: [0, -5, 0] }}
+                    <motion.span
+                      animate={{ y: [0, -3, 0] }}
                       transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
-                      className="h-2 w-2 bg-muted-foreground rounded-full"
+                      className="h-1.5 w-1.5 bg-zinc-500 rounded-full"
                     />
-                    <motion.div
-                      animate={{ y: [0, -5, 0] }}
+                    <motion.span
+                      animate={{ y: [0, -3, 0] }}
                       transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
-                      className="h-2 w-2 bg-muted-foreground rounded-full"
+                      className="h-1.5 w-1.5 bg-zinc-500 rounded-full"
                     />
                   </div>
                 </motion.div>
@@ -845,32 +838,32 @@ export function EnhancedChatArea({
       </div>
 
       {/* Pole wprowadzania */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-border/20 bg-zinc-950/20 backdrop-blur-sm relative z-10">
         {/* Attachments preview */}
         {attachments.length > 0 && (
-          <div className="mb-2 space-y-1">
+          <div className="mb-3 space-y-1.5">
             {attachments.map((attachment, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 p-2 bg-muted rounded text-sm"
+                className="flex items-center gap-2 p-2 bg-[#0da192]/10 border border-[#0da192]/20 rounded-xl text-xs text-zinc-300"
               >
-                <Paperclip className="h-4 w-4" />
-                <span className="flex-1 truncate">{attachment.filename}</span>
+                <Paperclip className="h-3.5 w-3.5 text-[#0da192]" />
+                <span className="flex-1 truncate font-mono text-[10px]">{attachment.filename}</span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md shrink-0"
                   onClick={() => handleRemoveAttachment(idx)}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
             ))}
           </div>
         )}
 
-        <form onSubmit={handleSendMessage} className="flex gap-2">
+        <form onSubmit={handleSendMessage} className="flex gap-2 items-end">
           <input
             ref={fileInputRef}
             type="file"
@@ -885,10 +878,11 @@ export function EnhancedChatArea({
             size="icon"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="flex-shrink-0"
+            className="flex-shrink-0 h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850"
+            title="Dodaj plik PDF"
           >
             {isUploading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+              <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
             ) : (
               <Paperclip className="h-4 w-4" />
             )}
@@ -899,13 +893,15 @@ export function EnhancedChatArea({
               type="button"
               variant="ghost"
               size="icon"
+              className="h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              title="Wybierz Emoji"
             >
               <Smile className="h-4 w-4" />
             </Button>
 
             {showEmojiPicker && (
-              <div className="absolute bottom-12 left-0 z-50">
+              <div className="absolute bottom-14 left-0 z-50">
                 <EmojiPicker onEmojiClick={handleEmojiClick} />
               </div>
             )}
@@ -918,7 +914,7 @@ export function EnhancedChatArea({
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            className="min-h-[44px] max-h-32 resize-none"
+            className="min-h-[44px] max-h-32 resize-none bg-background/40 border-border/30 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] text-white placeholder-zinc-500 text-sm py-3 px-4 transition-all"
             disabled={isSending}
           />
 
@@ -928,10 +924,17 @@ export function EnhancedChatArea({
             disabled={
               (!messageText.trim() && attachments.length === 0) || isSending
             }
-            className="flex-shrink-0"
+            className={cn(
+              "flex-shrink-0 h-11 w-11 rounded-xl border-t border-white/10 shadow-md text-white font-semibold transition-all duration-300",
+              isSending
+                ? "bg-zinc-800"
+                : isClient
+                  ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352] hover:from-[#e3c27b] hover:to-[#d7b56d]"
+                  : "bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192]"
+            )}
           >
             {isSending ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+              <Loader2 className="h-4 w-4 animate-spin text-white" />
             ) : (
               <Send className="h-4 w-4" />
             )}
@@ -941,61 +944,70 @@ export function EnhancedChatArea({
 
       {/* User Info Dialog */}
       <Dialog open={showUserInfo} onOpenChange={setShowUserInfo}>
-        <DialogContent>
+        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div
+            className={cn(
+              "absolute top-0 right-0 w-[120px] h-[120px] blur-[60px] rounded-full pointer-events-none",
+              isClient ? "bg-[#d7b56d]/5" : "bg-[#0da192]/5"
+            )}
+          />
           <DialogHeader>
-            <DialogTitle>Informacje o użytkowniku</DialogTitle>
-            <DialogDescription>
-              Szczegóły profilu użytkownika
+            <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+              <User className={cn("h-5 w-5", isClient ? "text-[#d7b56d]" : "text-[#0da192]")} />
+              Profil rozmówcy
+            </DialogTitle>
+            <DialogDescription className="text-zinc-400 text-xs">
+              Szczegółowe informacje o Twoim rozmówcy.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex justify-center">
-              <Avatar className="h-24 w-24">
+          <div className="space-y-6 pt-4">
+            <div className="flex flex-col items-center justify-center">
+              <Avatar className="h-20 w-20 border-2 border-border/30">
                 {otherUserImage && (
                   <AvatarImage src={otherUserImage} alt={otherUserName} />
                 )}
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                <AvatarFallback className="bg-zinc-800 text-zinc-300 text-2xl font-bold font-playfair">
                   {otherUserName.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
+              <h3 className="text-lg font-bold text-white mt-3 text-center">{otherUserName}</h3>
+              <span className={cn(
+                "inline-flex text-[9px] font-semibold px-2 py-0.5 rounded-full mt-1.5 uppercase tracking-wide",
+                isClient
+                  ? "bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20"
+                  : "bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20"
+              )}>
+                {isClient ? "Kancelaria prawna" : "Klient"}
+              </span>
             </div>
-            <div className="space-y-2 text-sm">
-              <div>
-                <p className="font-semibold">Nazwa:</p>
-                <p className="text-muted-foreground">{otherUserName}</p>
+
+            <div className="space-y-3.5 text-xs bg-zinc-950/40 p-4 rounded-xl border border-border/10">
+              <div className="grid grid-cols-3 gap-2">
+                <span className="text-zinc-500 font-light">E-mail:</span>
+                <span className="text-zinc-300 font-mono col-span-2 break-all">{otherUser.email}</span>
               </div>
-              <div>
-                <p className="font-semibold">Email:</p>
-                <p className="text-muted-foreground">{otherUser.email}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <span className="text-zinc-500 font-light">Rejestracja:</span>
+                <span className="text-zinc-300 col-span-2">
+                  {otherUser.createdAt ? new Date(otherUser.createdAt).toLocaleDateString("pl-PL", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }) : "Nieznana"}
+                </span>
               </div>
-              <div>
-                <p className="font-semibold">Data rejestracji:</p>
-                <p className="text-muted-foreground">
-                  {otherUser.createdAt ? new Date(otherUser.createdAt).toLocaleDateString("pl-PL") : "Brak danych"}
-                </p>
-              </div>
-              {!isClient && conversation.clientUser.client.opis && (
-                <div>
-                  <p className="font-semibold">Opis:</p>
-                  <p className="text-muted-foreground">
-                    {conversation.clientUser.client.opis}
-                  </p>
+              {(!isClient && conversation.clientUser.client.opis) && (
+                <div className="space-y-1 pt-1.5 border-t border-border/5">
+                  <p className="text-zinc-500 font-light">Opis klienta:</p>
+                  <p className="text-zinc-400 font-light leading-relaxed whitespace-pre-wrap">{conversation.clientUser.client.opis}</p>
                 </div>
               )}
-              {isClient && conversation.lawFirmUser.lawFirm.opis && (
-                <div>
-                  <p className="font-semibold">Opis:</p>
-                  <p className="text-muted-foreground">
-                    {conversation.lawFirmUser.lawFirm.opis}
-                  </p>
+              {(isClient && conversation.lawFirmUser.lawFirm.opis) && (
+                <div className="space-y-1 pt-1.5 border-t border-border/5">
+                  <p className="text-zinc-500 font-light">O kancelarii:</p>
+                  <p className="text-zinc-400 font-light leading-relaxed whitespace-pre-wrap">{conversation.lawFirmUser.lawFirm.opis}</p>
                 </div>
               )}
-              <div>
-                <p className="font-semibold">Rola:</p>
-                <p className="text-muted-foreground">
-                  {isClient ? "Kancelaria prawna" : "Klient"}
-                </p>
-              </div>
             </div>
           </div>
         </DialogContent>
