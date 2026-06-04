@@ -105,6 +105,30 @@ export async function GET(request: NextRequest) {
         description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
       }
     }
+    if (!settingsObject.ksefEnabled) {
+      settingsObject.ksefEnabled = {
+        value: "false",
+        description: "Czy włączyć automatyczne wystawianie faktur przez KSeF 2.0",
+      }
+    }
+    if (!settingsObject.ksefNip) {
+      settingsObject.ksefNip = {
+        value: "1234567890",
+        description: "NIP sprzedawcy (platformy) dla systemu KSeF",
+      }
+    }
+    if (!settingsObject.ksefToken) {
+      settingsObject.ksefToken = {
+        value: "",
+        description: "Token autoryzacyjny KSeF wygenerowany w Aplikacji Podatnika",
+      }
+    }
+    if (!settingsObject.ksefEnv) {
+      settingsObject.ksefEnv = {
+        value: "test",
+        description: "Środowisko KSeF: test (testowe/sandbox) lub prod (produkcyjne)",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
