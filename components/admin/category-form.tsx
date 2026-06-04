@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { IconPicker } from "@/components/admin/icon-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -436,14 +437,13 @@ export function CategoryForm({
                       <FormItem>
                         <FormLabel>Ikona (Lucide)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="np. Briefcase, Scale..."
-                            {...field}
+                          <IconPicker
                             value={field.value || ""}
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
-                          Nazwa ikony z Lucide React
+                          Wybierz ikonę z biblioteki Lucide React
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
