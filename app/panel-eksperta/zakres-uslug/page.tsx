@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
@@ -25,7 +26,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Star } from "lucide-react"
+import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Search, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 
 interface Category {
@@ -164,6 +165,7 @@ export default function LawFirmServicesPage() {
   const [saving, setSaving] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [maxCategories, setMaxCategories] = useState(10)
+  const [searchQuery, setSearchQuery] = useState("")
 
   // Area state
   const [allVoivodeships, setAllVoivodeships] = useState<Voivodeship[]>([])
@@ -363,6 +365,33 @@ export default function LawFirmServicesPage() {
     setExpandedCategories(newExpanded)
   }
 
+  const matchesSearch = (category: Category, query: string): boolean => {
+    if (!query) return true
+    const normalizedQuery = query.toLowerCase().trim()
+    const matchesSelf = category.nazwa.toLowerCase().includes(normalizedQuery)
+    if (matchesSelf) return true
+    if (category.children) {
+      return category.children.some(child => matchesSearch(child, query))
+    }
+    return false
+  }
+
+  const expandAll = () => {
+    const allIds = new Set<string>()
+    const addIds = (cat: Category) => {
+      if (cat.children && cat.children.length > 0) {
+        allIds.add(cat.id)
+        cat.children.forEach(addIds)
+      }
+    }
+    allCategories.forEach(addIds)
+    setExpandedCategories(allIds)
+  }
+
+  const collapseAll = () => {
+    setExpandedCategories(new Set())
+  }
+
   const handleSetMainCategory = (category: Category) => {
     setMainCategoryId(category.id)
 
@@ -491,11 +520,24 @@ export default function LawFirmServicesPage() {
   const firmoweCategories = allCategories.filter(c => c.typ === "SPRAWY_FIRMOWE")
   const prywatneCategories = allCategories.filter(c => c.typ === "SPRAWY_PRYWATNE")
 
-  const renderCategoryTree = (category: Category, level = 0) => {
+  const filteredFirmowe = firmoweCategories.filter(cat => matchesSearch(cat, searchQuery))
+  const filteredPrywatne = prywatneCategories.filter(cat => matchesSearch(cat, searchQuery))
+
+  const renderCategoryTree = (category: Category, level = 0, parentMatched = false) => {
+    const query = searchQuery.toLowerCase().trim()
+    const matchesSelf = query ? category.nazwa.toLowerCase().includes(query) : false
+    const matchesDescendant = query ? category.children?.some(child => matchesSearch(child, searchQuery)) : false
+
+    if (query && !matchesSelf && !matchesDescendant && !parentMatched) {
+      return null
+    }
+
     const hasChildren = category.children && category.children.length > 0
-    const isExpanded = expandedCategories.has(category.id)
+    const isExpanded = expandedCategories.has(category.id) || (query && (matchesSelf || matchesDescendant))
     const selected = isSelected(category.id)
     const isMain = category.id === mainCategoryId
+
+    const currentOrAncestorMatched = parentMatched || matchesSelf
 
     return (
       <div key={category.id} className="mb-1">
@@ -559,7 +601,7 @@ export default function LawFirmServicesPage() {
 
         {hasChildren && isExpanded && (
           <div className="mt-1">
-            {category.children?.map(child => renderCategoryTree(child as Category, level + 1))}
+            {category.children?.map(child => renderCategoryTree(child as Category, level + 1, currentOrAncestorMatched))}
           </div>
         )}
       </div>
@@ -617,6 +659,48 @@ export default function LawFirmServicesPage() {
               </div>
             </CardHeader>
             <CardContent>
+              {/* Search & Collapse/Expand Toolbar */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b border-muted">
+                <div className="relative flex-1 group">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    type="text"
+                    placeholder="Wyszukaj specjalizację..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 h-10 border border-muted/60 bg-background focus-visible:ring-primary focus-visible:border-primary"
+                  />
+                  {searchQuery && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                    >
+                      ✕
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={expandAll}
+                    className="h-10 text-xs px-3 font-medium flex items-center gap-1.5 hover:bg-primary/5 hover:text-primary transition-colors"
+                  >
+                    Rozwiń wszystkie
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={collapseAll}
+                    className="h-10 text-xs px-3 font-medium flex items-center gap-1.5 hover:bg-destructive/5 hover:text-destructive transition-colors"
+                  >
+                    Zwiń wszystkie
+                  </Button>
+                </div>
+              </div>
+
               <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 <div className="space-y-4">
                   <h3 className="font-semibold flex items-center text-primary border-b pb-2">
@@ -624,7 +708,11 @@ export default function LawFirmServicesPage() {
                     Sprawy Firmowe
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
-                    {firmoweCategories.map(cat => renderCategoryTree(cat))}
+                    {filteredFirmowe.length > 0 ? (
+                      filteredFirmowe.map(cat => renderCategoryTree(cat))
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
+                    )}
                   </div>
                 </div>
 
@@ -634,7 +722,11 @@ export default function LawFirmServicesPage() {
                     Sprawy Prywatne
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
-                    {prywatneCategories.map(cat => renderCategoryTree(cat))}
+                    {filteredPrywatne.length > 0 ? (
+                      filteredPrywatne.map(cat => renderCategoryTree(cat))
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
+                    )}
                   </div>
                 </div>
               </div>
