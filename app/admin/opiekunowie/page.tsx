@@ -35,6 +35,13 @@ interface AccountManager {
   avatar: string | null
   aktywny: boolean
   createdAt: string
+  lawFirms: {
+    id: string
+    nazwa: string
+    emailKontakt: string
+    numerTelefonu: string
+    miasto: string
+  }[]
   _count: {
     lawFirms: number
   }
@@ -45,6 +52,7 @@ export default function AccountManagersPage() {
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingManager, setEditingManager] = useState<AccountManager | null>(null)
+  const [viewingFirmsFor, setViewingFirmsFor] = useState<AccountManager | null>(null)
   const [uploading, setUploading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -332,6 +340,49 @@ export default function AccountManagersPage() {
             </form>
           </DialogContent>
         </Dialog>
+
+        {/* Dialog for viewing assigned experts (law firms) */}
+        <Dialog open={!!viewingFirmsFor} onOpenChange={(open) => !open && setViewingFirmsFor(null)}>
+          <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Eksperci przypisani do opiekuna</DialogTitle>
+              <DialogDescription>
+                {viewingFirmsFor?.imie} {viewingFirmsFor?.nazwisko} ({viewingFirmsFor?.email})
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex-1 overflow-y-auto mt-4">
+              {viewingFirmsFor?.lawFirms && viewingFirmsFor.lawFirms.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nazwa</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Telefon</TableHead>
+                      <TableHead>Miasto</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {viewingFirmsFor.lawFirms.map((firm) => (
+                      <TableRow key={firm.id}>
+                        <TableCell className="font-medium">{firm.nazwa}</TableCell>
+                        <TableCell>{firm.emailKontakt}</TableCell>
+                        <TableCell>{firm.numerTelefonu}</TableCell>
+                        <TableCell>{firm.miasto}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Brak przypisanych ekspertów
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end pt-4">
+              <Button onClick={() => setViewingFirmsFor(null)}>Zamknij</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
@@ -396,6 +447,14 @@ export default function AccountManagersPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          title="Zobacz przypisanych ekspertów"
+                          onClick={() => setViewingFirmsFor(manager)}
+                        >
+                          <Users className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
