@@ -17,17 +17,38 @@ export async function PATCH(
 
     const { id } = await params
     const body = await request.json()
-    const { nazwa, voivodeshipId } = body
+    const { nazwa, voivodeshipId, postalCodes } = body
 
-    const city = await prisma.city.update({
-      where: { id },
-      data: {
-        nazwa,
-        voivodeshipId,
-      },
-      include: {
-        voivodeship: true,
+    const codes = postalCodes
+      ? postalCodes
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter((c: string) => c !== "")
+      : []
+    const uniqueCodes = Array.from(new Set(codes))
+
+    const city = await prisma.$transaction(async (tx) => {
+      if (postalCodes !== undefined) {
+        await tx.postalCode.deleteMany({
+          where: { cityId: id }
+        })
       }
+      return await tx.city.update({
+        where: { id },
+        data: {
+          nazwa,
+          voivodeshipId,
+          ...(postalCodes !== undefined ? {
+            postalCodes: {
+              create: uniqueCodes.map(code => ({ code }))
+            }
+          } : {})
+        },
+        include: {
+          voivodeship: true,
+          postalCodes: true,
+        }
+      })
     })
 
     // Invalidate cached cities
