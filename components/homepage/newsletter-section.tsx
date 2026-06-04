@@ -7,9 +7,15 @@ import { InteractiveHoverButton } from "../ui/interactive-hover-button"
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("")
+  const [consent, setConsent] = useState(false)
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!consent) {
+      toast.error("Musisz wyrazić zgodę RODO, aby zapisać się do newslettera.")
+      return
+    }
 
     try {
       const response = await fetch("/api/newsletter/subscribe", {
@@ -28,6 +34,7 @@ export function NewsletterSection() {
 
       toast.success(data.message || "Dziękujemy za zapis do newslettera!")
       setEmail("")
+      setConsent(false)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Wystąpił błąd")
     }
@@ -51,16 +58,39 @@ export function NewsletterSection() {
             Otrzymuj porady prawne, nowości i przydatne informacje od prostasprawa.pl – bez spamu, tylko wartościowe treści.
           </p>
 
-          <form onSubmit={handleNewsletterSubmit} className="flex max-w-md mx-auto items-stretch shadow-2xl relative z-30">
-            <Input
-              type="email"
-              placeholder="Wpisz swój adres e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <div className="w-36 min-w-36 flex mr-1">
-              <InteractiveHoverButton type="submit" className="no-wrap white-space-nowrap">Zapisz isę</InteractiveHoverButton>
+          <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto flex flex-col gap-4 relative z-30">
+            <div className="flex items-stretch shadow-2xl">
+              <Input
+                type="email"
+                placeholder="Wpisz swój adres e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <div className="w-36 min-w-36 flex mr-1">
+                <InteractiveHoverButton type="submit" className="no-wrap white-space-nowrap">Zapisz isę</InteractiveHoverButton>
+              </div>
+            </div>
+
+            {/* RODO Consent */}
+            <div className="flex items-start gap-2.5 text-left pt-1 px-1">
+              <input
+                id="homepage-newsletter-consent"
+                type="checkbox"
+                required
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-neutral-800 bg-[#1c1c1c] text-primary focus:ring-primary accent-primary cursor-pointer flex-shrink-0"
+              />
+              <label
+                htmlFor="homepage-newsletter-consent"
+                className="text-xs text-neutral-400 font-light leading-relaxed select-none cursor-pointer"
+              >
+                Wyrażam zgodę na otrzymywanie informacji handlowych i marketingowych za pośrednictwem newslettera od ProstaSprawa.pl. Szczegóły dotyczące przetwarzania danych osobowych znajdują się w{" "}
+                <a href="/polityka-prywatnosci" target="_blank" className="text-primary hover:underline font-medium">
+                  Polityce Prywatności
+                </a>.
+              </label>
             </div>
           </form>
         </div>
