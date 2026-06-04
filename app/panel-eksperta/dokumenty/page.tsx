@@ -373,7 +373,7 @@ export default function DocumentsPage() {
                 Dodaj dokument
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-900 border border-border/40 max-w-lg rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+            <DialogContent className="bg-zinc-900 border border-border/40 max-w-lg rounded-2xl p-6 shadow-2xl overflow-hidden">
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
@@ -526,10 +526,7 @@ export default function DocumentsPage() {
             </DialogContent>
           </Dialog>
         </PageHeader>
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Sparkles className="h-3 w-3 animate-pulse" />
-          BIBLIOTEKA DOKUMENTÓW KANCELARII
-        </div>
+
       </motion.div>
 
       {/* Stats Grid */}
@@ -921,7 +918,7 @@ export default function DocumentsPage() {
 
       {/* Dialog usuwania */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
           <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-rose-500/5 blur-[50px] rounded-full pointer-events-none" />
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">

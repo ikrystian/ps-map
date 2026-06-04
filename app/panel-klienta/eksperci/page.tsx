@@ -331,7 +331,7 @@ export default function ClientFavoritesPage() {
                               Usuń
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl relative overflow-hidden max-w-md w-[calc(100%-2rem)] mx-auto">
+                          <AlertDialogContent className="bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl overflow-hidden max-w-md w-[calc(100%-2rem)] mx-auto">
                             <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-rose-500/5 blur-[80px] rounded-full pointer-events-none" />
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-lg font-bold text-white">Usunąć z ulubionych?</AlertDialogTitle>

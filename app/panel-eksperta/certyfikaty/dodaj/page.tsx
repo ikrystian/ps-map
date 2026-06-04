@@ -155,10 +155,7 @@ export default function LawFirmAddCertificatePage() {
             </Link>
           </Button>
         </PageHeader>
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Sparkles className="h-3 w-3 animate-pulse" />
-          ROZBUDOWA PROFILU ZAWODOWEGO
-        </div>
+
       </motion.div>
 
       {/* Form Content */}

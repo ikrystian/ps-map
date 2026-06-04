@@ -172,10 +172,7 @@ export default function LawFirmStatsPage() {
             subtitle="Zaawansowane statystyki i analityka wydajności dla Twojego profilu."
             titleClassName="text-white text-3xl sm:text-4xl"
           />
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-            <Sparkles className="h-3 w-3 animate-pulse" />
-            ANALITYKA I RAPORTOWANIE
-          </div>
+
         </motion.div>
 
         <motion.div
@@ -254,10 +251,7 @@ export default function LawFirmStatsPage() {
           subtitle="Pełna analiza i wgląd w skuteczność Twojego profilu w platformie."
           titleClassName="text-white text-3xl sm:text-4xl"
         />
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Sparkles className="h-3 w-3 animate-pulse" />
-          ANALIZA WYDAJNOŚCI KANCELARII
-        </div>
+
       </motion.div>
 
       {/* Overview Stats */}

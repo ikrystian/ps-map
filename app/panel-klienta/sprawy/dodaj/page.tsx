@@ -538,7 +538,7 @@ export default function ClientAddCasePage() {
               </DialogTrigger>
             )}
 
-            <DialogContent className="sm:max-w-3xl w-full bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+            <DialogContent className="sm:max-w-3xl w-full bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl overflow-hidden">
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[70px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white">Wybierz kategorię sprawy</DialogTitle>

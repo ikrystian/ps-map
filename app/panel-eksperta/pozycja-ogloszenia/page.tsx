@@ -202,10 +202,7 @@ export default function RankingBoostPage() {
           subtitle="Zwiększ swoją widoczność, zyskaj wyższą pozycję w wynikach wyszukiwania i przyciągnij nowych klientów."
           titleClassName="text-white text-3xl sm:text-4xl"
         />
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Sparkles className="h-3 w-3 animate-pulse" />
-          ZWIĘKSZANIE WIDOCZNOŚCI PROFILU
-        </div>
+
       </motion.div>
 
       {/* Main Boost Console */}
@@ -324,7 +321,7 @@ export default function RankingBoostPage() {
                       Zwiększ pozycję za {points} punktów
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                  <AlertDialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
                     <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-[#0da192]/5 blur-[50px] rounded-full pointer-events-none" />
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">

@@ -944,7 +944,7 @@ export function EnhancedChatArea({
 
       {/* User Info Dialog */}
       <Dialog open={showUserInfo} onOpenChange={setShowUserInfo}>
-        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
           <div
             className={cn(
               "absolute top-0 right-0 w-[120px] h-[120px] blur-[60px] rounded-full pointer-events-none",

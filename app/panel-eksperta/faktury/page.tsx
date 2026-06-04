@@ -182,10 +182,7 @@ export default function InvoicesPage() {
           subtitle="Zarządzaj swoimi fakturami, sprawdzaj status płatności oraz wysyłaj dokumenty do KSeF."
           titleClassName="text-white text-3xl sm:text-4xl"
         />
-        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Sparkles className="h-3 w-3 animate-pulse" />
-          ROZLICZENIA I KRAJOWY SYSTEM E-FAKTUR
-        </div>
+
       </motion.div>
 
       {/* Main Container */}
