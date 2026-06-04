@@ -1,10 +1,19 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Check, ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
 
 interface Voivodeship {
   id: string
@@ -37,6 +46,55 @@ export function ContactTab({
   handleInputChange,
   voivodeships,
 }: ContactTabProps) {
+  const [cities, setCities] = useState<any[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
+
+  // Dynamic fetch and caching for cities and postal codes
+  useEffect(() => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
+
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            clientCitiesCache[query] = data
+            setCities(data)
+          }
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [locationSearch])
+
   return (
     <Card>
       <CardHeader>
@@ -123,19 +181,86 @@ export function ContactTab({
               <Input
                 id="kodPocztowy"
                 value={formData.kodPocztowy}
-                onChange={(e) => handleInputChange("kodPocztowy", e.target.value)}
+                readOnly
+                className="bg-neutral-50 dark:bg-neutral-900 cursor-not-allowed"
                 required
               />
             </div>
 
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="miasto">Miasto *</Label>
-              <Input
-                id="miasto"
-                value={formData.miasto}
-                onChange={(e) => handleInputChange("miasto", e.target.value)}
-                required
-              />
+              <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full text-left justify-between font-normal"
+                  >
+                    <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[300px] p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Wyszukaj miasto..."
+                      value={locationSearch}
+                      onValueChange={setLocationSearch}
+                    />
+                    <CommandList className="max-h-60 overflow-y-auto">
+                      {isLoadingCities && (
+                        <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                      )}
+                      {!isLoadingCities && locationSearch.trim().length < 2 && (
+                        <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                          Wpisz co najmniej 2 znaki...
+                        </div>
+                      )}
+                      {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                        <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                      )}
+                      <CommandGroup>
+                        {cities.map((city) => {
+                          const matchedPostal = city.postalCodes?.find((p: any) =>
+                            p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                          )
+                          const displayValue = matchedPostal
+                            ? `${city.nazwa} (${matchedPostal.code})`
+                            : city.nazwa
+
+                          return (
+                            <CommandItem
+                              key={city.id}
+                              value={city.nazwa}
+                              onSelect={() => {
+                                handleInputChange("miasto", city.nazwa)
+                                const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || ""
+                                handleInputChange("kodPocztowy", selectedPostalCode)
+                                handleInputChange("voivodeshipId", city.voivodeshipId)
+                                setLocationOpen(false)
+                              }}
+                              className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Check
+                                  className={cn(
+                                    "h-4 w-4 text-teal-500",
+                                    formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <span>{displayValue}</span>
+                              </div>
+                              <span className="text-xs text-muted-foreground ml-2 text-right">
+                                {city.voivodeship?.nazwa}
+                              </span>
+                            </CommandItem>
+                          )
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
@@ -144,8 +269,9 @@ export function ContactTab({
             <Select
               value={formData.voivodeshipId}
               onValueChange={(value) => handleInputChange("voivodeshipId", value)}
+              disabled
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-neutral-50 dark:bg-neutral-900 cursor-not-allowed">
                 <SelectValue placeholder="Wybierz województwo" />
               </SelectTrigger>
               <SelectContent>
