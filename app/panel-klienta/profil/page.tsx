@@ -827,30 +827,13 @@ export default function ClientProfilePage() {
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="kodPocztowy"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Kod pocztowy</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="00-000"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
-                              readOnly
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
 
                     <FormField
                       control={form.control}
                       name="miasto"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col justify-end">
+                        <FormItem className="flex flex-col">
                           <FormLabel className="text-xs font-semibold text-zinc-300">Miasto</FormLabel>
                           <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                             <PopoverTrigger asChild>
@@ -931,6 +914,26 @@ export default function ClientProfilePage() {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="kodPocztowy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-semibold text-zinc-300">Kod pocztowy</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="00-000"
+                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              readOnly
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
 
                     <FormField
                       control={form.control}
