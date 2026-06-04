@@ -67,9 +67,9 @@ const step3Schema = z.object({
 
 const step4Schema = z.object({
   adres: z.string().min(3, "Adres jest wymagany"),
-  kodPocztowy: z.string().regex(/^\d{2}-\d{3}$/, "Podaj poprawny kod pocztowy (XX-XXX)"),
   miasto: z.string().min(2, "Miasto jest wymagane"),
-  voivodeshipId: z.string().min(1, "Wybierz województwo"),
+  kodPocztowy: z.string().optional().or(z.literal("")),
+  voivodeshipId: z.string().optional().or(z.literal("")),
 })
 
 const step5Schema = z.object({
@@ -117,6 +117,9 @@ const steps = [
   { id: 8, title: "Konto", icon: Lock },
 ]
 
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
+
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
   const { data: session } = useSession()
@@ -131,6 +134,8 @@ export default function LawFirmRegistrationPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
   const [formData, setFormData] = useState({
     // Krok 1: Typ działalności
     typ: "",
@@ -265,14 +270,6 @@ export default function LawFirmRegistrationPage() {
           const catData = await catRes.json()
           setCategories(catData)
         }
-
-        const cityRes = await fetch("/api/cities")
-        if (cityRes.ok) {
-          const cityData = await cityRes.json()
-          if (Array.isArray(cityData)) {
-            setCities(cityData)
-          }
-        }
       } catch (error) {
         console.error("Error fetching data:", error)
       }
@@ -280,6 +277,58 @@ export default function LawFirmRegistrationPage() {
 
     fetchData()
   }, [])
+
+  // Dynamic fetch and caching for cities and postal codes
+  useEffect(() => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
+
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            clientCitiesCache[query] = data
+            setCities(data)
+          }
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [locationSearch])
+
+  // Reset location search when popover closes
+  useEffect(() => {
+    if (!locationOpen) {
+      setLocationSearch("")
+      setCities([])
+    }
+  }, [locationOpen])
 
   const validateStep = () => {
     setError("")
@@ -755,57 +804,61 @@ export default function LawFirmRegistrationPage() {
               />
               {fieldErrors.adres && <p className="text-xs text-destructive">{fieldErrors.adres}</p>}
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="kodPocztowy" className={cn(fieldErrors.kodPocztowy && "text-destructive")}>Kod pocztowy *</Label>
-                <Input
-                  id="kodPocztowy"
-                  type="text"
-                  placeholder="00-000"
-                  value={formData.kodPocztowy}
-                  onChange={(e) => {
-                    setFormData({ ...formData, kodPocztowy: e.target.value })
-                    if (fieldErrors.kodPocztowy) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.kodPocztowy
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.kodPocztowy && "border-destructive")}
-                />
-                {fieldErrors.kodPocztowy && <p className="text-xs text-destructive">{fieldErrors.kodPocztowy}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
-                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={locationOpen}
-                      className={cn("w-full justify-between h-11 font-normal", fieldErrors.miasto && "border-destructive")}
-                      disabled={isLoading}
-                    >
-                      {formData.miasto || "Wybierz miasto..."}
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Szukaj miasta..." />
-                      <CommandList>
-                        <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
-                        <CommandGroup>
-                          {cities.map((city) => (
+
+            <div className="space-y-2">
+              <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
+              <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={locationOpen}
+                    className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
+                    disabled={isLoading}
+                  >
+                    <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[300px] p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Szukaj miasta..."
+                      value={locationSearch}
+                      onValueChange={setLocationSearch}
+                    />
+                    <CommandList>
+                      {isLoadingCities && (
+                        <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                      )}
+                      {!isLoadingCities && locationSearch.trim().length < 2 && (
+                        <div className="text-neutral-500 py-3 text-center text-xs px-3">
+                          Wpisz co najmniej 2 znaki...
+                        </div>
+                      )}
+                      {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                        <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                      )}
+                      <CommandGroup>
+                        {cities.map((city) => {
+                          const matchedPostal = city.postalCodes?.find((p: any) =>
+                            p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                          )
+                          const displayValue = matchedPostal
+                            ? `${city.nazwa} (${matchedPostal.code})`
+                            : city.nazwa
+
+                          return (
                             <CommandItem
                               key={city.id}
                               value={city.nazwa}
-                              onSelect={(currentValue) => {
-                                const matchedCity = cities.find(c => c.nazwa.toLowerCase() === currentValue.toLowerCase()) || city
+                              onSelect={() => {
+                                const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || "00-000"
                                 setFormData({
                                   ...formData,
-                                  miasto: matchedCity.nazwa,
-                                  voivodeshipId: matchedCity.voivodeshipId
+                                  miasto: city.nazwa,
+                                  voivodeshipId: city.voivodeshipId,
+                                  kodPocztowy: selectedPostalCode,
                                 })
                                 if (fieldErrors.miasto) {
                                   const newErrors = { ...fieldErrors }
@@ -814,49 +867,29 @@ export default function LawFirmRegistrationPage() {
                                 }
                                 setLocationOpen(false)
                               }}
+                              className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
                             >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {city.nazwa}
+                              <div className="flex items-center gap-2">
+                                <Check
+                                  className={cn(
+                                    "h-4 w-4 text-primary",
+                                    formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <span>{displayValue}</span>
+                              </div>
+                              <span className="text-xs text-muted-foreground ml-2 text-right">
+                                {city.voivodeship?.nazwa}
+                              </span>
                             </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="voivodeshipId" className={cn(fieldErrors.voivodeshipId && "text-destructive")}>Województwo siedziby *</Label>
-              <Select
-                value={formData.voivodeshipId}
-                onValueChange={(value) => {
-                  setFormData({ ...formData, voivodeshipId: value })
-                  if (fieldErrors.voivodeshipId) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.voivodeshipId
-                    setFieldErrors(newErrors)
-                  }
-                }}
-              >
-                <SelectTrigger className={cn("h-11", fieldErrors.voivodeshipId && "border-destructive")}>
-                  <SelectValue placeholder="Wybierz województwo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {voivodeships.map((v) => (
-                    <SelectItem key={v.id} value={v.id}>
-                      {v.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldErrors.voivodeshipId && <p className="text-xs text-destructive">{fieldErrors.voivodeshipId}</p>}
+                          )
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
             </div>
           </div>
         )
