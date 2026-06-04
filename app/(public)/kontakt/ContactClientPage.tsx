@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/components/ui/sonner"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 export default function ContactClientPage() {
   const [formData, setFormData] = useState({
@@ -113,12 +114,29 @@ export default function ContactClientPage() {
 
   return (
     <div className="bg-[#121212] min-h-[calc(100vh-65px)] text-white pb-20 relative overflow-hidden font-sans">
+      {/* Breadcrumbs Banner */}
+      <div
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container mx-auto px-4 relative z-10">
+          <ResponsiveBreadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Kontakt" },
+            ]}
+          />
+        </div>
+      </div>
+
       {/* Background ambient glows */}
       <div className="absolute top-1/4 left-1/10 w-[400px] h-[400px] bg-emerald-950/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/10 w-[500px] h-[500px] bg-neutral-900/40 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Main Grid Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
           {/* Left Column: Form & Title */}
