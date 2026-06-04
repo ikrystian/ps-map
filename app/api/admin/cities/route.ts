@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
           where,
           include: {
             voivodeship: true,
+            postalCodes: true,
           },
           orderBy: {
             nazwa: "asc",
@@ -56,6 +57,7 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           voivodeship: true,
+          postalCodes: true,
         },
         orderBy: {
           nazwa: "asc",
@@ -79,19 +81,31 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { nazwa, voivodeshipId } = body
+    const { nazwa, voivodeshipId, postalCodes } = body
 
     if (!nazwa || !voivodeshipId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    const codes = postalCodes
+      ? postalCodes
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter((c: string) => c !== "")
+      : []
+    const uniqueCodes = Array.from(new Set(codes))
+
     const city = await prisma.city.create({
       data: {
         nazwa,
         voivodeshipId,
+        postalCodes: {
+          create: uniqueCodes.map(code => ({ code }))
+        }
       },
       include: {
         voivodeship: true,
+        postalCodes: true,
       }
     })
 
