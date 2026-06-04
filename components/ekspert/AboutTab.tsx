@@ -165,25 +165,34 @@ export function AboutTab({
             <CardTitle>Galeria</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4" id="expert-gallery">
-              {lawFirm.galeriaZdjec.map((img, index) => (
-                <div
-                  key={index}
-                  className="relative h-48 rounded-lg overflow-hidden cursor-pointer group"
-                  onClick={() => {
-                    setLightboxIndex(index)
-                    setLightboxOpen(true)
-                  }}
-                >
-                  <Image
-                    src={img}
-                    alt={`Galeria ${index + 1}`}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300 ease-in-out"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <ZoomIn className="h-8 w-8 text-white" />
-                  </div>
+            <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6" id="expert-gallery">
+              {[0, 1, 2, 3].map((colIdx) => (
+                <div key={colIdx} className="grid gap-4 h-fit">
+                  {lawFirm.galeriaZdjec!
+                    .map((img, i) => ({ img, i }))
+                    .filter(({ i }) => i % 4 === colIdx)
+                    .map(({ img, i }) => (
+                      <div
+                        key={i}
+                        className={`relative rounded-xl overflow-hidden cursor-pointer group bg-muted ${
+                          i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-square" : "aspect-[4/3]"
+                        }`}
+                        onClick={() => {
+                          setLightboxIndex(i)
+                          setLightboxOpen(true)
+                        }}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Galeria ${i + 1}`}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300 ease-in-out"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <ZoomIn className="h-8 w-8 text-white" />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               ))}
             </div>
