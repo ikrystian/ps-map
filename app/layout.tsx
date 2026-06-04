@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { ChatAssistant } from "@/components/ChatAssistant";
+import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
@@ -38,6 +39,18 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
 
+  let showChat = true;
+  try {
+    const chatSetting = await prisma.settings.findUnique({
+      where: { key: "showChatAssistant" },
+    });
+    if (chatSetting) {
+      showChat = chatSetting.value === "true";
+    }
+  } catch (error) {
+    console.error("Error reading showChatAssistant setting:", error);
+  }
+
   return (
     <html lang="pl" suppressHydrationWarning className="dark">
       <body
@@ -61,7 +74,7 @@ export default async function RootLayout({
             {children}
             <Toaster />
             <Sonner />
-            <ChatAssistant />
+            {showChat && <ChatAssistant />}
           </Providers>
 
         </ConsentManager>
