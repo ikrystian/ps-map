@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { sendInvoiceToKsef } from "@/lib/ksef"
 
 /**
  * Generates an invoice for a paid order
@@ -104,6 +105,11 @@ export async function generateInvoiceForOrder(orderId: string) {
     })
 
     console.log(`Invoice ${invoiceNumber} generated for order ${orderId}`)
+
+    // Send the invoice to KSeF 2.0 in the background
+    sendInvoiceToKsef(invoice.id).catch((err) => {
+      console.error(`Failed to send invoice ${invoice.id} to KSeF:`, err)
+    })
 
     return invoice
   } catch (error) {
