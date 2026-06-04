@@ -12,6 +12,7 @@
 
 import { format, isBefore, startOfDay } from "date-fns";
 import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
+import { pl } from "date-fns/locale";
 import type { Availability, BookedSlot, Slot } from "./types";
 
 /**
@@ -84,19 +85,24 @@ export function slotToUtc(
  * @param tz - Viewer's IANA timezone (falls back to UTC if invalid)
  * @returns Formatted time string (e.g., "2:30 PM")
  */
-export function formatInViewer(utc: Date, tz: string) {
+export function formatInViewer(utc: Date, tz: string, locale?: string) {
   try {
     if (!utc || isNaN(new Date(utc).getTime())) {
       return "";
     }
 
+    const formatStr = locale === "pl" ? "HH:mm" : "h:mm aa";
+    const options = locale === "pl" ? { locale: pl } : undefined;
+
     if (!tz || typeof tz !== "string") {
-      return formatInTimeZone(utc, "UTC", "h:mm aa");
+      return formatInTimeZone(utc, "UTC", formatStr, options);
     }
 
-    return formatInTimeZone(utc, tz, "h:mm aa");
+    return formatInTimeZone(utc, tz, formatStr, options);
   } catch {
-    return formatInTimeZone(utc, "UTC", "h:mm aa");
+    const formatStr = locale === "pl" ? "HH:mm" : "h:mm aa";
+    const options = locale === "pl" ? { locale: pl } : undefined;
+    return formatInTimeZone(utc, "UTC", formatStr, options);
   }
 }
 
@@ -108,8 +114,10 @@ export function formatInViewer(utc: Date, tz: string) {
  * @param tz - Admin's IANA timezone
  * @returns Formatted time string (e.g., "11:00 AM")
  */
-export function formatInAdmin(utc: Date, tz: string) {
-  return formatInTimeZone(utc, tz, "h:mm aa");
+export function formatInAdmin(utc: Date, tz: string, locale?: string) {
+  const formatStr = locale === "pl" ? "HH:mm" : "h:mm aa";
+  const options = locale === "pl" ? { locale: pl } : undefined;
+  return formatInTimeZone(utc, tz, formatStr, options);
 }
 
 /**
@@ -185,6 +193,7 @@ export function getSlotsForDate(
   duration: number,
   adminTZ: string,
   viewerTZ: string,
+  locale?: string,
 ): Slot[] {
   const avail = getAvailForDate(date, availability, adminTZ);
   if (!avail) return [];
@@ -194,8 +203,8 @@ export function getSlotsForDate(
       return {
         adminTime,
         utc,
-        displayTime: formatInViewer(utc, viewerTZ),
-        adminDisplayTime: formatInAdmin(utc, adminTZ),
+        displayTime: formatInViewer(utc, viewerTZ, locale),
+        adminDisplayTime: formatInAdmin(utc, adminTZ, locale),
         booked: isBooked(date, adminTime, bookedSlots),
       };
     },
