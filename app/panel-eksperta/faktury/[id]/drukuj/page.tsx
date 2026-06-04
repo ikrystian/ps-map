@@ -22,6 +22,8 @@ interface Invoice {
   buyerPostalCode: string
   buyerCity: string
   buyerCountry: string
+  ksefNumber?: string | null
+  ksefStatus?: string | null
   order: {
     orderNumber: string
     orderType: string
@@ -283,6 +285,14 @@ export default function InvoicePrintPage() {
           <div>
             <div className="invoice-title">FAKTURA VAT</div>
             <div className="invoice-number">{invoice.invoiceNumber}</div>
+            {invoice.ksefNumber && (
+              <div style={{ marginTop: "0.5rem", fontSize: "11px", color: "#4f46e5", fontWeight: "bold" }}>
+                Faktura ustrukturyzowana (KSeF)
+                <div style={{ fontSize: "10px", fontFamily: "monospace", color: "#000", marginTop: "2px", fontWeight: "normal" }}>
+                  Numer KSeF: {invoice.ksefNumber}
+                </div>
+              </div>
+            )}
           </div>
           <div className="company-info">
             <div className="company-name">Prosta Sprawa</div>
