@@ -1,10 +1,14 @@
 "use client"
 
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
+import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
 import {
   AlertCircle,
   ArrowLeft,
@@ -12,14 +16,16 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  DollarSign,
   Download,
+  Euro,
   FileText,
+  Loader2,
   Mail,
   MapPin,
   MessageSquare,
   Paperclip,
   Phone,
+  Sparkles,
   User,
   XCircle,
 } from "lucide-react"
@@ -96,12 +102,12 @@ interface Case {
   }>
 }
 
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  NOWA: { label: "Nowa", variant: "default" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "secondary" },
-  W_TRAKCIE: { label: "W toku", variant: "default" },
-  ZAKONCZONA: { label: "Zakończona", variant: "outline" },
-  ANULOWANA: { label: "Anulowana", variant: "destructive" },
+const statusLabels: Record<string, { label: string; className: string }> = {
+  NOWA: { label: "Nowa", className: "bg-teal-500/10 text-teal-400 border border-teal-500/30" },
+  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-[#d7b56d]/15 text-[#d7b56d] border border-[#d7b56d]/30" },
+  W_TRAKCIE: { label: "W toku", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
+  ZAKONCZONA: { label: "Zakończona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" },
+  ANULOWANA: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/30" },
 }
 
 const caseTypeLabels: Record<string, string> = {
@@ -122,6 +128,16 @@ const offerStatusLabels: Record<string, { label: string; variant: "default" | "s
   ODRZUCONA: { label: "Odrzucona", variant: "destructive" },
   NEGOCJACJE: { label: "Negocjacje", variant: "outline" },
   WYGASLA: { label: "Wygasła", variant: "outline" },
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
 }
 
 export default function ClientCaseDetailsPage() {
@@ -170,7 +186,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się zaakceptować oferty")
       }
 
-      toast.success("Oferta została pomyślnie zaakceptowana. Ekspert został powiadomiony.")
+      toast.success("Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -200,7 +216,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się odrzucić oferty")
       }
 
-      toast.success("Oferta została odrzucona. Ekspert został powiadomiony.")
+      toast.success("Oferta została odrzucona. Kancelaria została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -217,10 +233,10 @@ export default function ClientCaseDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Ładowanie danych sprawy...</p>
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie szczegółów sprawy...</p>
         </div>
       </div>
     )
@@ -228,19 +244,19 @@ export default function ClientCaseDetailsPage() {
 
   if (error || !caseData) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md">
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <Card className="max-w-md border-rose-500/30 bg-card/25 backdrop-blur-md">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-rose-400 font-playfair">
+              <AlertCircle className="h-5 w-5 text-rose-500" />
               Błąd
             </CardTitle>
-            <CardDescription>{error || "Nie znaleziono sprawy"}</CardDescription>
+            <CardDescription className="text-muted-foreground">{error || "Nie znaleziono sprawy"}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button onClick={() => router.push("/panel-klienta/sprawy")} variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Powrót do listy spraw
+          <CardContent className="pt-2">
+            <Button onClick={() => router.push("/panel-klienta/sprawy")} className="w-full rounded-xl bg-muted border border-border/50 text-white hover:bg-muted/80 gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Powrót do spraw
             </Button>
           </CardContent>
         </Card>
@@ -266,312 +282,125 @@ export default function ClientCaseDetailsPage() {
   }
 
   return (
-    <div className="w-full space-y-6">
-      {/* Header */}
-      <div className="space-y-3">
+    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+
+      {/* Header & Back Action */}
+      <div className="relative z-10 space-y-3">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="-ml-2 text-muted-foreground hover:text-foreground"
+          className="-ml-2 text-muted-foreground hover:text-white hover:bg-zinc-800/30 rounded-lg gap-1.5"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           Powrót do listy spraw
         </Button>
-        <div>
-          <h1 className="text-2xl font-bold font-playfair tracking-tight">{caseData.nazwaSprawy}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <Badge variant={statusLabels[caseData.status]?.variant || "default"}>
+        <PageHeader
+          title={caseData.nazwaSprawy}
+          titleClassName="text-white text-2xl sm:text-3xl lg:text-4xl"
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className={cn(
+                "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide border",
+                statusLabels[caseData.status]?.className || "bg-zinc-800/40 text-zinc-400 border-zinc-700/30"
+              )}
+            >
               {statusLabels[caseData.status]?.label || caseData.status}
-            </Badge>
+            </span>
             {caseData.trybPilny && (
-              <Badge variant="destructive" className="flex items-center gap-1">
-                <AlertCircle className="h-3 w-3" />
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-bold uppercase tracking-wider animate-pulse">
                 Pilne
-              </Badge>
+              </span>
             )}
           </div>
-        </div>
+        </PageHeader>
       </div>
 
-      {/* Podstawowe informacje */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Szczegóły sprawy</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3">
-              <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Typ sprawy</p>
-                <p className="text-sm text-muted-foreground">
-                  {caseTypeLabels[caseData.typSprawy] || caseData.typSprawy}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Kategoria</p>
-                <p className="text-sm text-muted-foreground">{caseData.category.nazwa}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Lokalizacja</p>
-                <p className="text-sm text-muted-foreground">
-                  {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Data utworzenia</p>
-                <p className="text-sm text-muted-foreground">{formatDate(caseData.createdAt)}</p>
-              </div>
-            </div>
-
-            {caseData.wybranadziedzinaPrawa && (
-              <div className="flex items-start gap-3 col-span-2">
-                <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">Dziedzina prawa</p>
-                  <p className="text-sm text-muted-foreground">{caseData.wybranadziedzinaPrawa}</p>
-                </div>
-              </div>
-            )}
-
-            {caseData.wybranaSpecyfikacja && (
-              <div className="flex items-start gap-3 col-span-2">
-                <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">Specyfikacja</p>
-                  <p className="text-sm text-muted-foreground">{caseData.wybranaSpecyfikacja}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Opis sprawy */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Opis sprawy</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm whitespace-pre-wrap">{caseData.opisSprawy}</p>
-        </CardContent>
-      </Card>
-
-      {/* Załączniki */}
-      {caseData.zalaczniki && caseData.zalaczniki.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Paperclip className="h-5 w-5" />
-              Załączniki ({caseData.zalaczniki.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {caseData.zalaczniki.map((fileUrl, index) => {
-                // Extract filename from URL
-                const filename = fileUrl.split('/').pop() || fileUrl
-                // Get file extension for icon
-                const extension = filename.split('.').pop()?.toLowerCase()
-
-                return (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium truncate max-w-md">{filename}</span>
-                        {extension && (
-                          <span className="text-xs text-muted-foreground uppercase">{extension}</span>
-                        )}
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                    >
-                      <a href={fileUrl} download target="_blank" rel="noopener noreferrer">
-                        <Download className="mr-2 h-4 w-4" />
-                        Pobierz
-                      </a>
-                    </Button>
-                  </div>
-                )
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Termin i budżet */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Termin i budżet</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {caseData.oczekiwanyTerminRealizacji && (
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">Oczekiwany termin</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(caseData.oczekiwanyTerminRealizacji).toLocaleDateString("pl-PL")}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {(caseData.budzetOd || caseData.budzetDo) && (
-              <div className="flex items-start gap-3">
-                <DollarSign className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">Budżet</p>
-                  <p className="text-sm text-muted-foreground">
-                    {caseData.budzetOd && caseData.budzetDo
-                      ? `${formatCurrency(caseData.budzetOd)} - ${formatCurrency(caseData.budzetDo)}`
-                      : caseData.budzetOd
-                        ? `Od ${formatCurrency(caseData.budzetOd)}`
-                        : `Do ${formatCurrency(caseData.budzetDo!)}`}
-                    {caseData.doNegocjacji && " (do negocjacji)"}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {!caseData.oczekiwanyTerminRealizacji && !caseData.budzetOd && !caseData.budzetDo && (
-            <p className="text-sm text-muted-foreground">Brak określonego terminu i budżetu</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Dane kontaktowe */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Dane kontaktowe</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3">
-              <User className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Imię i nazwisko</p>
-                <p className="text-sm text-muted-foreground">{caseData.imieNazwisko}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Email</p>
-                <p className="text-sm text-muted-foreground">{caseData.emailKontakt}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Telefon</p>
-                <p className="text-sm text-muted-foreground">{caseData.telefonKontakt}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <MessageSquare className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">Preferowany kontakt</p>
-                <p className="text-sm text-muted-foreground">
-                  {contactTypeLabels[caseData.preferowanyKontakt] || caseData.preferowanyKontakt}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Dane kancelarii (gdy oferta zaakceptowana) */}
+      {/* Wybrana Kancelaria (Zaakceptowana oferta) */}
       {(() => {
-        const acceptedOffer = caseData.offers?.find(offer => offer.status === "ZAAKCEPTOWANA")
+        const acceptedOffer = caseData.offers?.find((offer) => offer.status === "ZAAKCEPTOWANA")
         if (!acceptedOffer) return null
 
         return (
-          <Card className="border-primary">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
-                Dane eksperta
+          <Card className="border-[#0da192] bg-gradient-to-br from-[#0da192]/10 via-transparent to-transparent shadow-lg shadow-[#0da192]/5 relative overflow-hidden rounded-2xl z-10 animate-in fade-in duration-300">
+            <BorderBeam lightColor="#0da192" duration={4.5} borderWidth={1.5} />
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                Twój wybrany ekspert prawny
               </CardTitle>
-              <CardDescription>
-                Twoja oferta została zaakceptowana. Możesz skontaktować się z ekspertem używając poniższych danych.
+              <CardDescription className="text-zinc-400 text-xs">
+                Oferta tej kancelarii została przez Ciebie zaakceptowana. Skontaktuj się z ekspertem, aby rozpocząć realizację.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Podstawowe informacje */}
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">{acceptedOffer.lawFirm.nazwa}</h3>
-                {acceptedOffer.lawFirm.nazwaFirmy && (
-                  <p className="text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmy}</p>
-                )}
+            <CardContent className="p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold font-playfair text-white">{acceptedOffer.lawFirm.nazwa}</h3>
+                  {acceptedOffer.lawFirm.nazwaFirmy && (
+                    <p className="text-sm text-zinc-400 mt-1">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-4 bg-zinc-800/30 p-4 rounded-xl border border-border/30">
+                  <div className="text-right">
+                    <span className="text-[10px] text-zinc-400 block uppercase font-medium">Ustalony Budżet</span>
+                    <span className="text-lg font-bold text-[#d7b56d]">{formatCurrency(acceptedOffer.kwotaBrutto)}</span>
+                  </div>
+                  <Separator orientation="vertical" className="h-8" />
+                  <div>
+                    <span className="text-[10px] text-zinc-400 block uppercase font-medium">Czas realizacji</span>
+                    <span className="text-lg font-bold text-white">{acceptedOffer.terminRealizacjiDni} dni</span>
+                  </div>
+                </div>
               </div>
 
-              <Separator />
+              <Separator className="bg-border/20" />
 
-              {/* Dane kontaktowe */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <User className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Osoba kontaktowa</p>
-                    <p className="text-sm text-muted-foreground">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-zinc-300">
+                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
+                  <User className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Osoba kontaktowa</span>
+                    <span className="font-semibold text-white truncate block">
                       {acceptedOffer.lawFirm.imieKontakt} {acceptedOffer.lawFirm.nazwiskoKontakt}
-                    </p>
+                    </span>
                     {acceptedOffer.lawFirm.stanowisko && (
-                      <p className="text-xs text-muted-foreground">{acceptedOffer.lawFirm.stanowisko}</p>
+                      <span className="text-[10px] text-zinc-500 block truncate">{acceptedOffer.lawFirm.stanowisko}</span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Email</p>
+                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
+                  <Mail className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">E-mail</span>
                     <a
                       href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
-                      className="text-sm text-primary hover:underline"
+                      className="font-semibold text-[#0da192] hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.emailKontakt}
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Telefon</p>
+                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
+                  <Phone className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Telefon</span>
                     <a
                       href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
-                      className="text-sm text-primary hover:underline"
+                      className="font-semibold text-[#0da192] hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.numerTelefonu}
                     </a>
                     {acceptedOffer.lawFirm.numerTelefonu2 && (
                       <a
                         href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
-                        className="text-sm text-primary hover:underline block"
+                        className="font-semibold text-[#0da192] hover:underline truncate block mt-0.5"
                       >
                         {acceptedOffer.lawFirm.numerTelefonu2}
                       </a>
@@ -579,48 +408,16 @@ export default function ClientCaseDetailsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Adres</p>
-                    <p className="text-sm text-muted-foreground">
-                      {acceptedOffer.lawFirm.adres}<br />
+                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
+                  <MapPin className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-medium">Adres</span>
+                    <span className="font-semibold text-white block">
+                      {acceptedOffer.lawFirm.adres}
+                    </span>
+                    <span className="text-xs text-zinc-400 block mt-0.5">
                       {acceptedOffer.lawFirm.kodPocztowy} {acceptedOffer.lawFirm.miasto}
-                    </p>
-                  </div>
-                </div>
-
-                {acceptedOffer.lawFirm.stronaWww && (
-                  <div className="flex items-start gap-3 md:col-span-2">
-                    <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium">Strona WWW</p>
-                      <a
-                        href={acceptedOffer.lawFirm.stronaWww}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline"
-                      >
-                        {acceptedOffer.lawFirm.stronaWww}
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Szczegóły oferty */}
-              <div>
-                <h4 className="font-semibold mb-3">Szczegóły zaakceptowanej oferty</h4>
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium">Kwota brutto</p>
-                    <p className="text-lg font-bold">{formatCurrency(acceptedOffer.kwotaBrutto)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Termin realizacji</p>
-                    <p className="text-lg font-bold">{acceptedOffer.terminRealizacjiDni} dni</p>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -629,113 +426,343 @@ export default function ClientCaseDetailsPage() {
         )
       })()}
 
-      {/* Oferty */}
-      {caseData.offers && caseData.offers.length > 0 && (
-        <Card className={caseData.status !== "OFERTY_OTRZYMANE" ? "hidden" : ""}>
-          <CardHeader>
-            <CardTitle>Otrzymane oferty ({caseData.offers.length})</CardTitle>
-            <CardDescription>Lista ofert złożonych przez ekspertów prawnych</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {caseData.offers.map((offer) => (
-                <Card key={offer.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{offer.lawFirm.nazwa}</CardTitle>
-                        <CardDescription>
-                          {offer.lawFirm.miasto} • {formatDate(offer.createdAt)}
-                        </CardDescription>
-                      </div>
-                      <Badge variant={offerStatusLabels[offer.status]?.variant || "default"}>
-                        {offerStatusLabels[offer.status]?.label || offer.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-sm font-medium">Kwota brutto</p>
-                          <p className="text-2xl font-bold">{formatCurrency(offer.kwotaBrutto)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">Termin realizacji</p>
-                          <p className="text-2xl font-bold">{offer.terminRealizacjiDni} dni</p>
-                        </div>
-                      </div>
-                      <Separator />
-                      <div>
-                        <p className="text-sm font-medium mb-2">Opis oferty</p>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                          {offer.opisOferty}
-                        </p>
-                      </div>
-                      {offer.status === "ZLOZONA" && (
-                        <div className="flex gap-2">
-                          <Button
-                            className="flex-1"
-                            onClick={() => handleAcceptOffer(offer.id)}
-                            disabled={processingOfferId === offer.id}
-                          >
-                            <CheckCircle2 className="mr-2 h-4 w-4" />
-                            {processingOfferId === offer.id ? "Przetwarzanie..." : "Zaakceptuj"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="flex-1"
-                            onClick={() => handleRejectOffer(offer.id)}
-                            disabled={processingOfferId === offer.id}
-                          >
-                            <XCircle className="mr-2 h-4 w-4" />
-                            {processingOfferId === offer.id ? "Przetwarzanie..." : "Odrzuć"}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Main split grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+        {/* Left column: Case description, Offers, Message Logs */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Case description */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-4 px-6">
+              <CardTitle className="text-lg font-playfair text-white">Opis sprawy</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed font-light">{caseData.opisSprawy}</p>
+            </CardContent>
+          </Card>
 
-      {/* Wiadomości */}
-      {caseData.messages && caseData.messages.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Wiadomości ({caseData.messages.length})</CardTitle>
-            <CardDescription>Korespondencja dotycząca sprawy</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {caseData.messages.map((message) => (
-                <Card key={message.id} className={!message.przeczytana ? "border-primary" : ""}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-base">{message.temat}</CardTitle>
-                        <CardDescription>
-                          Od: {message.sender.name || message.sender.email} •{" "}
-                          {formatDate(message.createdAt)}
-                        </CardDescription>
+          {/* Otrzymane Oferty */}
+          {caseData.offers && caseData.offers.length > 0 && (
+            <Card className={cn(
+              "border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg",
+              caseData.status !== "OFERTY_OTRZYMANE" && "hidden"
+            )}>
+              <CardHeader className="border-b border-border/20 py-4 px-6">
+                <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-[#d7b56d] animate-pulse" />
+                  Otrzymane oferty od kancelarii ({caseData.offers.length})
+                </CardTitle>
+                <CardDescription className="text-zinc-400 text-xs">
+                  Porównaj warunki, terminy oraz szczegółowe opisy ofert przed podjęciem ostatecznej decyzji.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {caseData.offers.map((offer) => {
+                    const isOfferPending = offer.status === "ZLOZONA"
+
+                    return (
+                      <Card key={offer.id} className={cn(
+                        "border border-border/30 bg-background/30 rounded-xl overflow-hidden shadow-md group transition-all duration-300",
+                        isOfferPending && "hover:border-[#d7b56d]/50 hover:bg-background/40"
+                      )}>
+                        <CardHeader className="py-4 px-6 border-b border-border/20">
+                          <div className="flex items-center justify-between gap-4">
+                            <div>
+                              <CardTitle className="text-base text-white font-playfair group-hover:text-[#d7b56d] transition-colors">{offer.lawFirm.nazwa}</CardTitle>
+                              <CardDescription className="text-zinc-400 text-xs mt-0.5">
+                                Lokalizacja: {offer.lawFirm.miasto} • Złożono {formatDate(offer.createdAt)}
+                              </CardDescription>
+                            </div>
+                            <Badge
+                              variant={offerStatusLabels[offer.status]?.variant || "default"}
+                              className={cn(
+                                offer.status === "ZLOZONA" && "bg-blue-500/10 text-blue-400 border-blue-500/20 border",
+                                offer.status === "ZAAKCEPTOWANA" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 border",
+                                offer.status === "ODRZUCONA" && "bg-rose-500/10 text-rose-400 border-rose-500/20 border"
+                              )}
+                            >
+                              {offerStatusLabels[offer.status]?.label || offer.status}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                          <div className="grid grid-cols-2 gap-4 p-4 bg-zinc-800/20 rounded-xl border border-border/30">
+                            <div>
+                              <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Kwota brutto</span>
+                              <span className="text-2xl font-bold text-white">{formatCurrency(offer.kwotaBrutto)}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-medium">Termin realizacji</span>
+                              <span className="text-2xl font-bold text-white">{offer.terminRealizacjiDni} dni</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <span className="text-xs font-semibold text-zinc-300 block">Opis i warunki oferty:</span>
+                            <p className="text-sm text-zinc-400 whitespace-pre-wrap font-light leading-relaxed">
+                              {offer.opisOferty}
+                            </p>
+                          </div>
+
+                          {offer.status === "ZLOZONA" && (
+                            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                              <Button
+                                className="flex-1 h-10 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-medium rounded-xl border-t border-white/10 shadow-sm gap-2"
+                                onClick={() => handleAcceptOffer(offer.id)}
+                                disabled={processingOfferId === offer.id}
+                              >
+                                {processingOfferId === offer.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <CheckCircle2 className="h-4 w-4" />
+                                )}
+                                {processingOfferId === offer.id ? "Przetwarzanie..." : "Zaakceptuj ofertę"}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="flex-1 h-10 border-rose-500/20 hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 rounded-xl gap-2"
+                                onClick={() => handleRejectOffer(offer.id)}
+                                disabled={processingOfferId === offer.id}
+                              >
+                                {processingOfferId === offer.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <XCircle className="h-4 w-4" />
+                                )}
+                                {processingOfferId === offer.id ? "Przetwarzanie..." : "Odrzuć ofertę"}
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Wiadomości */}
+          {caseData.messages && caseData.messages.length > 0 && (
+            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-border/20 py-4 px-6">
+                <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-indigo-400" />
+                  Wymiana wiadomości ({caseData.messages.length})
+                </CardTitle>
+                <CardDescription className="text-zinc-400 text-xs">Historia korespondencji z ekspertami dotycząca sprawy.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {caseData.messages.map((message) => (
+                    <Card key={message.id} className={cn(
+                      "border border-border/30 bg-background/20 rounded-xl overflow-hidden shadow-sm transition-all duration-200",
+                      !message.przeczytana && "border-indigo-500/40 bg-indigo-500/5"
+                    )}>
+                      <CardHeader className="py-3 px-5 border-b border-border/20 flex flex-row items-center justify-between">
+                        <div>
+                          <CardTitle className="text-sm font-semibold text-white">{message.temat}</CardTitle>
+                          <CardDescription className="text-[10px] text-zinc-400 mt-0.5">
+                            Nadawca: {message.sender.name || message.sender.email} • {formatDate(message.createdAt)}
+                          </CardDescription>
+                        </div>
+                        {!message.przeczytana && (
+                          <Badge className="bg-indigo-500 text-white text-[9px] px-2 py-0.5 animate-pulse">Nowa</Badge>
+                        )}
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <p className="text-xs text-zinc-300 whitespace-pre-wrap font-light leading-relaxed">{message.tresc}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Right column: Details info sidebar */}
+        <div className="space-y-6">
+          {/* Podsumowanie sprawy */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-3.5 px-6">
+              <CardTitle className="text-base font-playfair text-white">Podsumowanie</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+              <div className="flex gap-3">
+                <Briefcase className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Typ klienta</span>
+                  <span className="font-medium text-white">{caseTypeLabels[caseData.typSprawy] || caseData.typSprawy}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Kategoria główna</span>
+                  <span className="font-medium text-white">{caseData.category.nazwa}</span>
+                </div>
+              </div>
+
+              {caseData.wybranadziedzinaPrawa && (
+                <div className="flex gap-3">
+                  <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Dziedzina prawa</span>
+                    <span className="font-medium text-white">{caseData.wybranadziedzinaPrawa}</span>
+                  </div>
+                </div>
+              )}
+
+              {caseData.wybranaSpecyfikacja && (
+                <div className="flex gap-3">
+                  <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Zakres / Specyfikacja</span>
+                    <span className="font-medium text-white">{caseData.wybranaSpecyfikacja}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <MapPin className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Lokalizacja</span>
+                  <span className="font-medium text-white">
+                    {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Clock className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Dodano dnia</span>
+                  <span className="font-medium text-white">{formatDate(caseData.createdAt)}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Wymagania i Budżet */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-3.5 px-6">
+              <CardTitle className="text-base font-playfair text-white">Wymagania i Budżet</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+              <div className="flex gap-3">
+                <Calendar className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Oczekiwany termin</span>
+                  <span className="font-medium text-white">
+                    {caseData.oczekiwanyTerminRealizacji
+                      ? new Date(caseData.oczekiwanyTerminRealizacji).toLocaleDateString("pl-PL")
+                      : "Elastyczny (do ustaleń)"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Euro className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Szacowany budżet</span>
+                  <span className="font-medium text-white">
+                    {caseData.budzetOd || caseData.budzetDo
+                      ? `${caseData.budzetOd ? `Od ${formatCurrency(caseData.budzetOd)}` : ""} ${caseData.budzetDo ? `Do ${formatCurrency(caseData.budzetDo)}` : ""}`
+                      : "Do negocjacji"}
+                    {caseData.doNegocjacji && " (do negocjacji)"}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Dane kontaktowe */}
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-3.5 px-6">
+              <CardTitle className="text-base font-playfair text-white">Moje dane kontaktowe</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+              <div className="flex gap-3">
+                <User className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Osoba kontaktowa</span>
+                  <span className="font-medium text-white">{caseData.imieNazwisko}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Mail className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Email</span>
+                  <span className="font-medium text-white truncate block">{caseData.emailKontakt}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Phone className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Telefon</span>
+                  <span className="font-medium text-white">{caseData.telefonKontakt}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <MessageSquare className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[9px] text-zinc-500 block uppercase font-semibold">Preferowany kontakt</span>
+                  <span className="font-medium text-white">
+                    {contactTypeLabels[caseData.preferowanyKontakt] || caseData.preferowanyKontakt}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Załączniki */}
+          {caseData.zalaczniki && caseData.zalaczniki.length > 0 && (
+            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-border/20 py-3.5 px-6">
+                <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+                  <Paperclip className="h-4 w-4 text-[#0da192]" />
+                  Załączone pliki ({caseData.zalaczniki.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                {caseData.zalaczniki.map((fileUrl, index) => {
+                  const filename = fileUrl.split('/').pop() || fileUrl
+                  const extension = filename.split('.').pop()?.toLowerCase()
+
+                  return (
+                    <div key={index} className="flex items-center justify-between p-2.5 rounded-xl border border-border/30 bg-background/20 group hover:border-[#0da192]/30 transition-all duration-200">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <FileText className="h-4 w-4 text-zinc-500 group-hover:text-[#0da192] transition-colors shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-xs font-medium text-white truncate block max-w-[120px] sm:max-w-[150px]">{filename}</span>
+                          {extension && (
+                            <span className="text-[9px] text-zinc-500 uppercase font-semibold block">{extension}</span>
+                          )}
+                        </div>
                       </div>
-                      {!message.przeczytana && (
-                        <Badge variant="default">Nowa</Badge>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-zinc-800/30 rounded-lg shrink-0"
+                        asChild
+                      >
+                        <a href={fileUrl} download target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4" />
+                        </a>
+                      </Button>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm whitespace-pre-wrap">{message.tresc}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                  )
+                })}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
