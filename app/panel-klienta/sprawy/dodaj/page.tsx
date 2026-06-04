@@ -15,7 +15,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { Check, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X } from "lucide-react"
+import { BorderBeam } from "@/components/ui/border-beam"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Check, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X, Sparkles, Loader2, User, Building2, Landmark } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -54,6 +57,26 @@ interface FormData {
   telefonKontakt: string
   preferowanyKontakt: PreferredContact | ""
   akceptujeKlauzule: boolean
+}
+
+const stepContainerVariants = {
+  hidden: { opacity: 0, x: 15 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.35,
+      ease: "easeOut" as const
+    }
+  },
+  exit: {
+    opacity: 0,
+    x: -15,
+    transition: {
+      duration: 0.25,
+      ease: "easeIn" as const
+    }
+  }
 }
 
 export default function ClientAddCasePage() {
@@ -215,8 +238,6 @@ export default function ClientAddCasePage() {
       })
   }
 
-
-
   // Obsługa uploadu plików
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -361,35 +382,43 @@ export default function ClientAddCasePage() {
 
   const renderStepIndicator = () => (
     <div className="mb-8">
-      <div className="flex items-center justify-between">
-        {[1, 2, 3, 4, 5].map((step) => (
-          <div key={step} className="flex items-center">
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${step === currentStep
-                ? "border-primary bg-primary text-primary-foreground"
-                : step < currentStep
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-muted-foreground/30 bg-muted text-muted-foreground"
-                }`}
-            >
-              {step}
-            </div>
-            {step < 5 && (
+      <div className="flex items-center justify-between max-w-xl mx-auto px-4">
+        {[1, 2, 3, 4, 5].map((step) => {
+          const isCompleted = step < currentStep
+          const isCurrent = step === currentStep
+          return (
+            <div key={step} className="flex items-center">
               <div
-                className={`mx-2 h-0.5 w-12 ${step < currentStep ? "bg-primary" : "bg-muted-foreground/30"
-                  }`}
-              />
-            )}
-          </div>
-        ))}
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold text-sm transition-all duration-300 relative",
+                  isCompleted
+                    ? "border-transparent bg-[#0da192] text-white"
+                    : isCurrent
+                      ? "border-[#0da192] bg-[#0da192]/10 text-white shadow-[0_0_15px_rgba(13,161,146,0.3)] animate-pulse"
+                      : "border-border/40 bg-zinc-950/20 text-zinc-500"
+                )}
+              >
+                {isCompleted ? <Check className="h-5 w-5 stroke-[2.5]" /> : step}
+              </div>
+              {step < 5 && (
+                <div
+                  className={cn(
+                    "mx-2 h-0.5 w-12 sm:w-16 rounded-full transition-all duration-300",
+                    step < currentStep ? "bg-[#0da192]" : "bg-zinc-800"
+                  )}
+                />
+              )}
+            </div>
+          )
+        })}
       </div>
-      <div className="mt-4 text-center">
-        <h3 className="text-lg font-semibold">
+      <div className="mt-5 text-center">
+        <h3 className="text-sm font-semibold tracking-wider uppercase text-[#0da192]">
           {currentStep === 1 && "Krok 1: Typ sprawy"}
-          {currentStep === 2 && "Krok 2: Kategoria sprawy"}
-          {currentStep === 3 && "Krok 3: Opis sprawy"}
-          {currentStep === 4 && "Krok 4: Termin i budżet"}
-          {currentStep === 5 && "Krok 5: Dane kontaktowe"}
+          {currentStep === 2 && "Krok 2: Kategoria i Lokalizacja"}
+          {currentStep === 3 && "Krok 3: Opis i Szczegóły"}
+          {currentStep === 4 && "Krok 4: Harmonogram i Budżet"}
+          {currentStep === 5 && "Krok 5: Kontakt i Weryfikacja"}
         </h3>
       </div>
     </div>
@@ -398,45 +427,61 @@ export default function ClientAddCasePage() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
-        <Label className="text-base mb-4 block">Wybierz typ sprawy</Label>
-        <div className="grid gap-4">
+        <Label className="text-zinc-300 text-sm font-semibold mb-4 block">Wybierz typ sprawy *</Label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { value: "OSOBA_PRYWATNA", label: "Osoba prywatna", description: "Sprawa dotycząca osoby fizycznej" },
-            { value: "FIRMA", label: "Firma", description: "Sprawa dotycząca przedsiębiorstwa" },
-            { value: "ORGANIZACJA", label: "Organizacja", description: "Sprawa dotycząca organizacji lub fundacji" },
-          ].map((option) => (
-            <Card
-              key={option.value}
-              className={`cursor-pointer transition-colors ${formData.typSprawy === option.value
-                ? "border-primary bg-primary/5"
-                : "hover:border-primary/50"
-                }`}
-              onClick={() => {
-                updateFormData("typSprawy", option.value)
-                updateFormData("categoryId", "") // Reset selected category
-                setSelectedParentIdForModal(null) // Reset selected parent category in modal
-              }}
-            >
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${formData.typSprawy === option.value
-                      ? "border-primary"
-                      : "border-muted-foreground/30"
-                      }`}
-                  >
-                    {formData.typSprawy === option.value && (
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                    )}
+            { value: "OSOBA_PRYWATNA", label: "Osoba prywatna", icon: User, description: "Sprawa dotyczy osoby fizycznej, np. prawo pracy, rozwód, spadek." },
+            { value: "FIRMA", label: "Firma / JDG", icon: Building2, description: "Sprawa dotyczy przedsiębiorstwa, spółek handlowych, kontraktów biznesowych." },
+            { value: "ORGANIZACJA", label: "Organizacja / NGO", icon: Landmark, description: "Sprawa dotyczy stowarzyszeń, fundacji lub innych organizacji pożytku publicznego." },
+          ].map((option) => {
+            const isSelected = formData.typSprawy === option.value
+            const OptionIcon = option.icon
+            return (
+              <Card
+                key={option.value}
+                className={cn(
+                  "cursor-pointer border transition-all duration-300 rounded-2xl relative overflow-hidden p-6 group hover:bg-zinc-950/20 flex flex-col justify-between h-full min-h-[160px]",
+                  isSelected
+                    ? "border-[#0da192] bg-[#0da192]/5 shadow-[0_0_20px_rgba(13,161,146,0.1)]"
+                    : "border-border/30 bg-zinc-950/10 hover:border-zinc-700/60"
+                )}
+                onClick={() => {
+                  updateFormData("typSprawy", option.value)
+                  updateFormData("categoryId", "") // Reset selected category
+                  setSelectedParentIdForModal(null) // Reset selected parent category in modal
+                }}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "h-10 w-10 rounded-xl flex items-center justify-center border transition-all duration-300",
+                      isSelected
+                        ? "bg-[#0da192]/10 border-[#0da192]/30 text-[#0da192]"
+                        : "bg-zinc-900/60 border-border/10 text-zinc-400 group-hover:text-zinc-300"
+                    )}>
+                      <OptionIcon className="h-5 w-5" />
+                    </div>
+                    <div
+                      className={cn(
+                        "h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all",
+                        isSelected
+                          ? "border-[#0da192]"
+                          : "border-zinc-700 group-hover:border-zinc-500"
+                      )}
+                    >
+                      {isSelected && (
+                        <div className="h-2.5 w-2.5 rounded-full bg-[#0da192]" />
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <CardTitle className="text-base">{option.label}</CardTitle>
-                    <CardDescription>{option.description}</CardDescription>
+                  <div className="space-y-1.5">
+                    <h4 className="text-base font-semibold text-white">{option.label}</h4>
+                    <p className="text-xs text-zinc-400 font-light leading-relaxed">{option.description}</p>
                   </div>
                 </div>
-              </CardHeader>
-            </Card>
-          ))}
+              </Card>
+            )
+          })}
         </div>
       </div>
     </div>
@@ -450,9 +495,9 @@ export default function ClientAddCasePage() {
     const activeChildren = activeParent?.children || []
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         <div>
-          <Label className="mb-2 block">Kategoria *</Label>
+          <Label className="text-zinc-300 text-xs font-semibold mb-2 block">Kategoria sprawy *</Label>
           <Dialog open={isCategoryModalOpen} onOpenChange={(open) => {
             setIsCategoryModalOpen(open)
             if (!open) {
@@ -460,19 +505,19 @@ export default function ClientAddCasePage() {
             }
           }}>
             {selectedPath ? (
-              <Card className="border-primary bg-primary/5 transition-all">
+              <Card className="border border-[#0da192]/30 bg-[#0da192]/5 rounded-2xl shadow-md overflow-hidden relative">
                 <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <div className="h-9 w-9 rounded-xl bg-[#0da192]/10 flex items-center justify-center text-[#0da192] border border-[#0da192]/20">
                       <FolderOpen className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground font-medium">Wybrana kategoria</p>
-                      <h4 className="text-sm font-semibold text-foreground mt-0.5">{selectedPath}</h4>
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Wybrana kategoria</p>
+                      <h4 className="text-sm font-bold text-white mt-0.5">{selectedPath}</h4>
                     </div>
                   </div>
                   <DialogTrigger asChild>
-                    <Button type="button" variant="outline" size="sm" className="ml-4">
+                    <Button type="button" variant="outline" className="h-9 rounded-xl border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 text-xs font-semibold shrink-0">
                       Zmień kategorię
                     </Button>
                   </DialogTrigger>
@@ -482,39 +527,40 @@ export default function ClientAddCasePage() {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="w-full flex flex-col items-center justify-center py-6 px-4 border-2 border-dashed border-muted hover:border-primary/50 rounded-xl hover:bg-accent/30 transition-all text-center group"
+                  className="w-full flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-border/20 hover:border-[#0da192]/40 rounded-2xl hover:bg-zinc-950/20 transition-all text-center group"
                 >
-                  <div className="h-10 w-10 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-all mb-3">
+                  <div className="h-11 w-11 rounded-xl bg-zinc-900/60 border border-border/10 group-hover:bg-[#0da192]/10 group-hover:text-[#0da192] group-hover:border-[#0da192]/20 flex items-center justify-center text-zinc-400 transition-all mb-3">
                     <Search className="h-5 w-5" />
                   </div>
-                  <span className="font-semibold text-sm text-foreground">Wybierz kategorię sprawy</span>
-                  <span className="text-xs text-muted-foreground mt-1">Kliknij, aby wyszukać lub wybrać z listy</span>
+                  <span className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Wybierz kategorię sprawy</span>
+                  <span className="text-xs text-zinc-500 mt-1 font-light">Kliknij, aby otworzyć wyszukiwarkę i spis dziedzin prawa</span>
                 </button>
               </DialogTrigger>
             )}
 
-            <DialogContent className="sm:max-w-3xl w-full p-6">
+            <DialogContent className="sm:max-w-3xl w-full bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[70px] rounded-full pointer-events-none" />
               <DialogHeader>
-                <DialogTitle>Wybierz kategorię sprawy</DialogTitle>
-                <DialogDescription>
-                  Wyszukaj odpowiednią kategorię wpisując jej nazwę lub wybierz ją z listy poniżej.
+                <DialogTitle className="text-xl font-bold font-playfair text-white">Wybierz kategorię sprawy</DialogTitle>
+                <DialogDescription className="text-zinc-400 text-xs">
+                  Wyszukaj odpowiednią kategorię prawną lub wybierz ją ręcznie z podziału tematycznego.
                 </DialogDescription>
               </DialogHeader>
 
               {/* Wyszukiwarka */}
-              <div className="relative my-2">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <div className="relative my-3 group">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 group-focus-within:text-[#0da192] transition-colors" />
                 <Input
-                  placeholder="Wyszukaj kategorię..."
+                  placeholder="Wpisz np. rozwód, praca, spółka..."
                   value={categorySearchQuery}
                   onChange={(e) => setCategorySearchQuery(e.target.value)}
-                  className="pl-9 pr-8"
+                  className="pl-9 pr-8 h-11 bg-zinc-950/40 border-border/40 rounded-xl text-white placeholder:text-zinc-500 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-zinc-950/60 transition-all text-sm"
                 />
                 {categorySearchQuery && (
                   <button
                     type="button"
                     onClick={() => setCategorySearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -523,10 +569,10 @@ export default function ClientAddCasePage() {
 
               {categorySearchQuery ? (
                 /* Wyniki wyszukiwania */
-                <div className="max-h-[350px] overflow-y-auto space-y-2 pr-1 my-2">
+                <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 my-2">
                   {getSearchResults().length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground text-sm">
-                      Brak wyników dla frazy "{categorySearchQuery}"
+                    <div className="text-center py-12 text-zinc-500 text-sm font-light">
+                      Nie znaleziono kategorii dla frazy &quot;{categorySearchQuery}&quot;
                     </div>
                   ) : (
                     getSearchResults().map((cat: any) => (
@@ -538,23 +584,25 @@ export default function ClientAddCasePage() {
                           setIsCategoryModalOpen(false)
                           setCategorySearchQuery("")
                         }}
-                        className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-colors ${formData.categoryId === cat.id
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-muted hover:border-primary/50 hover:bg-accent/50"
-                          }`}
+                        className={cn(
+                          "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all",
+                          formData.categoryId === cat.id
+                            ? "border-[#0da192] bg-[#0da192]/5 text-[#0da192]"
+                            : "border-border/10 hover:border-zinc-700 hover:bg-zinc-950/20"
+                        )}
                       >
                         <div className="flex flex-col">
-                          <span className="font-medium text-sm text-foreground">
+                          <span className="font-semibold text-sm text-zinc-200">
                             {cat.nazwa}
                           </span>
                           {cat.parentName && (
-                            <span className="text-xs text-muted-foreground mt-0.5">
-                              {cat.parentName}
+                            <span className="text-[10px] text-zinc-500 font-light mt-0.5">
+                              Dziedzina nadrzędna: {cat.parentName}
                             </span>
                           )}
                         </div>
                         {formData.categoryId === cat.id && (
-                          <Check className="h-4 w-4 text-primary shrink-0" />
+                          <Check className="h-4 w-4 text-[#0da192] shrink-0" />
                         )}
                       </button>
                     ))
@@ -562,40 +610,42 @@ export default function ClientAddCasePage() {
                 </div>
               ) : (
                 /* Układ dwukolumnowy */
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[350px] my-2">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[320px] my-2">
                   {/* Lewa kolumna: Kategorie główne (2/5) */}
-                  <div className="md:col-span-2 border rounded-lg p-2 overflow-y-auto bg-muted/20 space-y-1">
-                    <div className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider mb-1">
-                      Kategorie główne
+                  <div className="md:col-span-2 border border-border/10 rounded-xl p-2 overflow-y-auto bg-zinc-950/30 space-y-1">
+                    <div className="text-[9px] font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider mb-1">
+                      Działy prawa
                     </div>
                     {isLoadingCategories ? (
-                      <div className="text-sm text-muted-foreground px-2 py-1">Ładowanie...</div>
+                      <div className="text-xs text-zinc-500 px-2 py-2 flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin text-[#0da192]" /> Ładowanie...</div>
                     ) : filteredCats.length === 0 ? (
-                      <div className="text-sm text-muted-foreground px-2 py-1">Brak kategorii</div>
+                      <div className="text-xs text-zinc-500 px-2 py-2">Brak dostępnych kategorii</div>
                     ) : (
                       filteredCats.map((parent: any) => (
                         <button
                           key={parent.id}
                           type="button"
                           onClick={() => setSelectedParentIdForModal(parent.id)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left text-sm transition-all ${activeParentId === parent.id
-                              ? "bg-primary text-primary-foreground font-medium shadow-sm"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                            }`}
+                          className={cn(
+                            "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all",
+                            activeParentId === parent.id
+                              ? "bg-[#0da192] text-white font-semibold shadow-md"
+                              : "text-zinc-400 hover:text-white hover:bg-white/5"
+                          )}
                         >
                           <span className="truncate">{parent.nazwa}</span>
-                          <ChevronRight className={`h-4 w-4 shrink-0 opacity-70 ${activeParentId === parent.id ? "text-primary-foreground" : "text-muted-foreground"}`} />
+                          <ChevronRight className={cn("h-3.5 w-3.5 shrink-0 opacity-70", activeParentId === parent.id ? "text-white" : "text-zinc-500")} />
                         </button>
                       ))
                     )}
                   </div>
 
                   {/* Prawa kolumna: Podkategorie (3/5) */}
-                  <div className="md:col-span-3 border rounded-lg p-2 overflow-y-auto space-y-2">
+                  <div className="md:col-span-3 border border-border/10 rounded-xl p-2 overflow-y-auto space-y-2">
                     {activeParent ? (
                       <>
-                        <div className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
-                          Podkategorie: {activeParent.nazwa}
+                        <div className="text-[9px] font-semibold text-zinc-500 px-2.5 py-1 uppercase tracking-wider">
+                          Specjalizacje: {activeParent.nazwa}
                         </div>
 
                         <div className="space-y-1.5 pt-1">
@@ -606,26 +656,28 @@ export default function ClientAddCasePage() {
                               updateFormData("categoryId", activeParent.id)
                               setIsCategoryModalOpen(false)
                             }}
-                            className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${formData.categoryId === activeParent.id
-                                ? "border-primary bg-primary/5 text-primary"
-                                : "border-dashed border-muted hover:border-primary/50 hover:bg-accent/50"
-                              }`}
+                            className={cn(
+                              "w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all",
+                              formData.categoryId === activeParent.id
+                                ? "border-[#0da192] bg-[#0da192]/5 text-[#0da192]"
+                                : "border-dashed border-border/20 hover:border-[#0da192]/50 hover:bg-zinc-950/20"
+                            )}
                           >
                             <div className="flex flex-col">
-                              <span className="font-semibold text-sm text-foreground">
-                                Cała kategoria: {activeParent.nazwa}
+                              <span className="font-semibold text-xs text-white">
+                                Ogólny zakres: {activeParent.nazwa}
                               </span>
-                              <span className="text-xs text-muted-foreground mt-0.5">
-                                Wybierz, jeśli sprawa dotyczy ogólnego zakresu
+                              <span className="text-[9px] text-zinc-500 font-light mt-0.5 leading-normal">
+                                Wybierz, jeśli sprawa dotyczy całego zakresu tej dziedziny
                               </span>
                             </div>
                             {formData.categoryId === activeParent.id && (
-                              <Check className="h-4 w-4 text-primary shrink-0" />
+                              <Check className="h-4 w-4 text-[#0da192] shrink-0" />
                             )}
                           </button>
 
                           {/* Separator */}
-                          {activeChildren.length > 0 && <div className="h-px bg-muted my-2" />}
+                          {activeChildren.length > 0 && <div className="h-px bg-zinc-800/60 my-2" />}
 
                           {/* Lista podkategorii */}
                           {activeChildren.map((child: any) => (
@@ -636,22 +688,22 @@ export default function ClientAddCasePage() {
                                 updateFormData("categoryId", child.id)
                                 setIsCategoryModalOpen(false)
                               }}
-                              className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all ${formData.categoryId === child.id
-                                  ? "border-primary bg-primary/5 text-primary"
-                                  : "border-muted hover:border-primary/50 hover:bg-accent/50"
-                                }`}
+                              className={cn(
+                                "w-full flex items-center justify-between p-3 rounded-xl border border-border/10 text-left transition-all text-xs font-medium text-zinc-300 hover:border-zinc-700 hover:bg-zinc-950/20",
+                                formData.categoryId === child.id && "border-[#0da192] bg-[#0da192]/5 text-[#0da192] hover:border-[#0da192]"
+                              )}
                             >
-                              <span className="text-sm font-medium text-foreground">{child.nazwa}</span>
+                              <span>{child.nazwa}</span>
                               {formData.categoryId === child.id && (
-                                <Check className="h-4 w-4 text-primary shrink-0" />
+                                <Check className="h-3.5 w-3.5 text-[#0da192] shrink-0" />
                               )}
                             </button>
                           ))}
                         </div>
                       </>
                     ) : (
-                      <div className="text-center py-12 text-muted-foreground text-sm">
-                        Wybierz kategorię główną z lewej strony, aby zobaczyć szczegóły.
+                      <div className="text-center py-12 text-zinc-500 text-xs font-light">
+                        Wybierz dziedzinę główną z panelu po lewej stronie.
                       </div>
                     )}
                   </div>
@@ -661,90 +713,96 @@ export default function ClientAddCasePage() {
           </Dialog>
         </div>
 
-        <div>
-          <Label htmlFor="voivodeshipId">Województwo *</Label>
-          <Select
-            value={formData.voivodeshipId}
-            onValueChange={(value) => {
-              setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
-            }}
-          >
-            <SelectTrigger id="voivodeshipId">
-              <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
-            </SelectTrigger>
-            <SelectContent>
-              {voivodeships.map((voivodeship: any) => (
-                <SelectItem key={voivodeship.id} value={voivodeship.slug}>
-                  {voivodeship.nazwa}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="cityId">Miasto *</Label>
-          <Select
-            value={formData.cityId}
-            onValueChange={(value) => updateFormData("cityId", value)}
-            disabled={!formData.voivodeshipId || isLoadingCities}
-          >
-            <SelectTrigger id="cityId">
-              <SelectValue placeholder={
-                !formData.voivodeshipId
-                  ? "Wybierz najpierw województwo"
-                  : isLoadingCities
-                    ? "Ładowanie miast..."
-                    : "Wybierz miasto"
-              } />
-            </SelectTrigger>
-            <SelectContent>
-              {cities.length === 0 ? (
-                <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
-              ) : (
-                cities.map((city: any) => (
-                  <SelectItem key={city.id} value={city.id}>
-                    {city.nazwa}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="voivodeshipId" className="text-zinc-300 text-xs font-semibold">Województwo *</Label>
+            <Select
+              value={formData.voivodeshipId}
+              onValueChange={(value) => {
+                setFormData(prev => ({ ...prev, voivodeshipId: value, cityId: "" }))
+              }}
+            >
+              <SelectTrigger id="voivodeshipId" className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm mt-1.5">
+                <SelectValue placeholder={isLoadingVoivodeships ? "Ładowanie województw..." : "Wybierz województwo"} />
+              </SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                {voivodeships.map((voivodeship: any) => (
+                  <SelectItem key={voivodeship.id} value={voivodeship.slug} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
+                    {voivodeship.nazwa}
                   </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="cityId" className="text-zinc-300 text-xs font-semibold">Miasto *</Label>
+            <Select
+              value={formData.cityId}
+              onValueChange={(value) => updateFormData("cityId", value)}
+              disabled={!formData.voivodeshipId || isLoadingCities}
+            >
+              <SelectTrigger id="cityId" className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm mt-1.5">
+                <SelectValue placeholder={
+                  !formData.voivodeshipId
+                    ? "Wybierz najpierw województwo"
+                    : isLoadingCities
+                      ? "Ładowanie miast..."
+                      : "Wybierz miasto"
+                } />
+              </SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                {cities.length === 0 ? (
+                  <SelectItem value="none" disabled>Brak dostępnych miast</SelectItem>
+                ) : (
+                  cities.map((city: any) => (
+                    <SelectItem key={city.id} value={city.id} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
+                      {city.nazwa}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
     )
   }
 
   const renderStep3 = () => (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <Label htmlFor="nazwaSprawy">Nazwa sprawy *</Label>
+        <Label htmlFor="nazwaSprawy" className="text-zinc-300 text-xs font-semibold">Nazwa sprawy *</Label>
         <Input
           id="nazwaSprawy"
           value={formData.nazwaSprawy}
           onChange={(e) => updateFormData("nazwaSprawy", e.target.value)}
-          placeholder="Krótki tytuł sprawy"
+          placeholder="np. Sporządzenie umowy najmu lokalu komercyjnego"
+          className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
         />
       </div>
 
       <div>
-        <Label htmlFor="opisSprawy">Opis sprawy * (minimum 50 znaków)</Label>
+        <Label htmlFor="opisSprawy" className="text-zinc-300 text-xs font-semibold">Opis sprawy * (minimum 50 znaków)</Label>
         <Textarea
           id="opisSprawy"
           value={formData.opisSprawy}
           onChange={(e) => updateFormData("opisSprawy", e.target.value)}
-          placeholder="Szczegółowy opis sprawy..."
+          placeholder="Opisz szczegółowo stan faktyczny, kluczowe okoliczności, cele oraz pytania prawne, na które szukasz odpowiedzi..."
           rows={8}
-          className="resize-none"
+          className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 resize-none"
         />
-        <p className={`text-sm mt-2 ${formData.opisSprawy.length >= 50 ? 'text-green-600' : 'text-muted-foreground'}`}>
-          Znaki: {formData.opisSprawy.length} / 50 (minimum)
-        </p>
+        <div className="flex justify-between items-center mt-2.5">
+          <span className="text-[10px] text-zinc-500 font-light">Opisz problem prawny jak najdokładniej.</span>
+          <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-md", formData.opisSprawy.length >= 50 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-500/10 text-zinc-500')}>
+            Znaki: {formData.opisSprawy.length} / 50
+          </span>
+        </div>
       </div>
 
       <div>
-        <Label>Załączniki (opcjonalnie, max 5 plików)</Label>
-        <div className="mt-2 space-y-2">
+        <Label className="text-zinc-300 text-xs font-semibold">Załączniki (opcjonalnie, maks. 5 plików)</Label>
+        <div className="mt-2 space-y-2.5">
           {uploadedFiles.length < 5 && (
             <div>
               <input
@@ -756,30 +814,54 @@ export default function ClientAddCasePage() {
                 disabled={isUploading}
                 accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif,.webp"
               />
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => document.getElementById("file-upload")?.click()}
-                disabled={isUploading}
+              <div
+                className={cn(
+                  "border border-dashed border-border/30 rounded-xl transition-all text-center p-6 mt-1",
+                  isUploading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:border-[#0da192]/40 hover:bg-zinc-950/15 cursor-pointer group"
+                )}
+                onClick={() => {
+                  if (!isUploading) {
+                    document.getElementById("file-upload")?.click()
+                  }
+                }}
               >
-                <Upload className="mr-2 h-4 w-4" />
-                {isUploading ? "Uploading..." : "Dodaj załącznik"}
-              </Button>
+                <div className={cn(
+                  "mx-auto h-9 w-9 rounded-lg bg-zinc-900/60 border border-border/10 flex items-center justify-center text-zinc-400 transition-all mb-2.5",
+                  !isUploading && "group-hover:bg-[#0da192]/10 group-hover:text-[#0da192] group-hover:border-[#0da192]/20"
+                )}>
+                  {isUploading ? (
+                    <Loader2 className="h-4.5 w-4.5 animate-spin text-[#0da192]" />
+                  ) : (
+                    <Upload className="h-4.5 w-4.5" />
+                  )}
+                </div>
+                <span className={cn(
+                  "font-semibold text-xs text-white transition-colors block",
+                  !isUploading && "group-hover:text-[#0da192]"
+                )}>
+                  {isUploading ? "Przesyłanie plików..." : "Wybierz dokumenty do dodania"}
+                </span>
+                <span className="text-[10px] text-zinc-500 mt-1 block font-light">
+                  Kliknij, aby wybrać pliki z dysku
+                </span>
+              </div>
             </div>
           )}
-          <p className="text-xs text-muted-foreground">
-            Dozwolone typy: PDF, DOC, DOCX, XLS, XLSX, TXT, obrazy (max 10MB każdy)
+          <p className="text-[10px] text-zinc-500 font-light">
+            Obsługiwane pliki: PDF, DOC, DOCX, XLS, XLSX, TXT oraz grafiki (maksymalnie 10MB na plik).
           </p>
           {uploadedFiles.map((file, index) => (
-            <div key={index} className="flex items-center justify-between rounded-lg border p-3">
-              <span className="text-sm truncate">{file.originalName}</span>
+            <div key={index} className="flex items-center justify-between rounded-xl border border-border/10 bg-zinc-950/20 p-3.5 mt-2">
+              <span className="text-xs text-zinc-300 truncate max-w-md">{file.originalName}</span>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => handleRemoveFile(index)}
                 disabled={isUploading}
+                className="h-8 w-8 rounded-lg hover:text-rose-400 hover:bg-[#ff0000]/5 transition-colors p-0 shrink-0"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -791,31 +873,33 @@ export default function ClientAddCasePage() {
   )
 
   const renderStep4 = () => (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <Label htmlFor="oczekiwanyTerminRealizacji">Oczekiwany termin realizacji (opcjonalnie)</Label>
+        <Label htmlFor="oczekiwanyTerminRealizacji" className="text-zinc-300 text-xs font-semibold">Oczekiwany termin realizacji (opcjonalnie)</Label>
         <Input
           id="oczekiwanyTerminRealizacji"
           type="date"
           value={formData.oczekiwanyTerminRealizacji}
+          className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
           onChange={(e) => updateFormData("oczekiwanyTerminRealizacji", e.target.value)}
         />
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-3 py-1.5">
         <Checkbox
           id="trybPilny"
           checked={formData.trybPilny}
           onCheckedChange={(checked) => updateFormData("trybPilny", checked)}
+          className="h-5 w-5 border-border/50 text-[#0da192] focus:ring-[#0da192]/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-transparent rounded"
         />
-        <Label htmlFor="trybPilny" className="cursor-pointer font-normal">
-          Sprawa pilna - wymaga szybkiej reakcji
+        <Label htmlFor="trybPilny" className="cursor-pointer text-sm text-zinc-300 font-medium">
+          Sprawa pilna - wymaga natychmiastowej interwencji
         </Label>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="budzetOd">Budżet od (PLN)</Label>
+          <Label htmlFor="budzetOd" className="text-zinc-300 text-xs font-semibold">Szacowany budżet od (PLN)</Label>
           <Input
             id="budzetOd"
             type="number"
@@ -824,10 +908,11 @@ export default function ClientAddCasePage() {
             value={formData.budzetOd}
             onChange={(e) => updateFormData("budzetOd", e.target.value)}
             placeholder="0.00"
+            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
           />
         </div>
         <div>
-          <Label htmlFor="budzetDo">Budżet do (PLN)</Label>
+          <Label htmlFor="budzetDo" className="text-zinc-300 text-xs font-semibold">Szacowany budżet do (PLN)</Label>
           <Input
             id="budzetDo"
             type="number"
@@ -836,93 +921,103 @@ export default function ClientAddCasePage() {
             value={formData.budzetDo}
             onChange={(e) => updateFormData("budzetDo", e.target.value)}
             placeholder="0.00"
+            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
           />
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-3 py-1.5">
         <Checkbox
           id="doNegocjacji"
           checked={formData.doNegocjacji}
           onCheckedChange={(checked) => updateFormData("doNegocjacji", checked)}
+          className="h-5 w-5 border-border/50 text-[#0da192] focus:ring-[#0da192]/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-transparent rounded"
         />
-        <Label htmlFor="doNegocjacji" className="cursor-pointer font-normal">
-          Budżet do negocjacji
+        <Label htmlFor="doNegocjacji" className="cursor-pointer text-sm text-zinc-300 font-medium">
+          Budżet pozostawiam do negocjacji z ekspertem
         </Label>
       </div>
 
-      <div className="rounded-lg border border-muted bg-muted/50 p-4">
-        <p className="text-sm text-muted-foreground">
-          💡 Określenie budżetu pomoże ekspertom przygotować odpowiednie oferty.
-          Możesz pozostawić te pola puste, jeśli nie masz określonych preferencji.
-        </p>
+      <div className="rounded-xl border border-[#0da192]/20 bg-[#0da192]/5 p-4 mt-6 flex items-start gap-3">
+        <Sparkles className="h-5 w-5 text-[#0da192] shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <h5 className="text-xs font-semibold text-[#0da192] uppercase tracking-wider">Wskazówka</h5>
+          <p className="text-xs text-zinc-300 leading-relaxed font-light">
+            Określenie zakresu finansowego pozwala ekspertom dopasować wycenę do Twoich możliwości. Jeśli nie znasz szacowanego kosztu, zostaw pola puste i zaznacz opcję budżetu do negocjacji.
+          </p>
+        </div>
       </div>
     </div>
   )
 
   const renderStep5 = () => (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
+        <Label htmlFor="imieNazwisko" className="text-zinc-300 text-xs font-semibold">Imię i nazwisko / Nazwa podmiotu *</Label>
         <Input
           id="imieNazwisko"
           value={formData.imieNazwisko}
           onChange={(e) => updateFormData("imieNazwisko", e.target.value)}
           placeholder="Jan Kowalski"
+          className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
         />
       </div>
 
-      <div>
-        <Label htmlFor="emailKontakt">Email kontaktowy *</Label>
-        <Input
-          id="emailKontakt"
-          type="email"
-          value={formData.emailKontakt}
-          onChange={(e) => updateFormData("emailKontakt", e.target.value)}
-          placeholder="jan.kowalski@example.com"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="emailKontakt" className="text-zinc-300 text-xs font-semibold">Adres e-mail *</Label>
+          <Input
+            id="emailKontakt"
+            type="email"
+            value={formData.emailKontakt}
+            onChange={(e) => updateFormData("emailKontakt", e.target.value)}
+            placeholder="jan.kowalski@example.com"
+            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="telefonKontakt" className="text-zinc-300 text-xs font-semibold">Numer telefonu *</Label>
+          <Input
+            id="telefonKontakt"
+            type="tel"
+            value={formData.telefonKontakt}
+            onChange={(e) => updateFormData("telefonKontakt", e.target.value)}
+            placeholder="+48 123 456 789"
+            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+          />
+        </div>
       </div>
 
       <div>
-        <Label htmlFor="telefonKontakt">Telefon kontaktowy *</Label>
-        <Input
-          id="telefonKontakt"
-          type="tel"
-          value={formData.telefonKontakt}
-          onChange={(e) => updateFormData("telefonKontakt", e.target.value)}
-          placeholder="+48 123 456 789"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="preferowanyKontakt">Preferowany sposób kontaktu *</Label>
+        <Label htmlFor="preferowanyKontakt" className="text-zinc-300 text-xs font-semibold">Preferowana forma kontaktu *</Label>
         <Select
           value={formData.preferowanyKontakt}
           onValueChange={(value) => updateFormData("preferowanyKontakt", value)}
         >
-          <SelectTrigger id="preferowanyKontakt">
+          <SelectTrigger id="preferowanyKontakt" className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm mt-1.5">
             <SelectValue placeholder="Wybierz sposób kontaktu" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="EMAIL">Email</SelectItem>
-            <SelectItem value="TELEFON">Telefon</SelectItem>
-            <SelectItem value="OBA">Email i telefon</SelectItem>
+          <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+            <SelectItem value="EMAIL" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">E-mail</SelectItem>
+            <SelectItem value="TELEFON" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Telefon komórkowy</SelectItem>
+            <SelectItem value="OBA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Zarówno e-mail, jak i telefon</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="flex items-start space-x-2 rounded-lg border p-4">
+      <div className="flex items-start space-x-3 rounded-xl border border-border/10 p-4 bg-zinc-950/25 mt-6">
         <Checkbox
           id="akceptujeKlauzule"
           checked={formData.akceptujeKlauzule}
           onCheckedChange={(checked) => updateFormData("akceptujeKlauzule", checked)}
-          className="mt-1"
+          className="mt-1 h-5 w-5 border-border/50 text-[#0da192] focus:ring-[#0da192]/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-transparent rounded shrink-0"
         />
-        <Label htmlFor="akceptujeKlauzule" className="cursor-pointer text-sm leading-relaxed">
-          Akceptuję klauzulę informacyjną dotyczącą przetwarzania danych osobowych *
+        <Label htmlFor="akceptujeKlauzule" className="cursor-pointer text-xs text-zinc-300 leading-relaxed font-light">
+          Oświadczam, że zapoznałem się i akceptuję klauzulę informacyjną oraz regulamin portalu odnośnie przetwarzania danych osobowych w celu realizacji zlecenia. *
           <br />
-          <span className="text-muted-foreground">
-            Podane dane będą widoczne dla ekspertów rozpatrujących Twoją sprawę.
+          <span className="text-zinc-500 text-[10px] block mt-1 font-light">
+            Podane dane kontaktowe zostaną udostępnione wyłącznie wybranym ekspertom po złożeniu przez nich ofert.
           </span>
         </Label>
       </div>
@@ -930,60 +1025,104 @@ export default function ClientAddCasePage() {
   )
 
   return (
-    <div className="w-full space-y-6">
-      <div>
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold font-playfair tracking-tight">Dodaj Nową Sprawę</h1>
-          <p className="text-sm text-muted-foreground mt-1.5">
-            Wypełnij formularz, aby dodać nową sprawę i otrzymać oferty od ekspertów prawnych
-          </p>
-        </div>
+    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-        <Card>
-          <CardContent className="pt-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Dodaj nową sprawę</h1>
+        <p className="text-sm text-zinc-400 mt-1.5 font-light">
+          Wypełnij poniższy formularz krok po kroku. Umożliwi to prawnikom dokładną analizę i rzetelną wycenę Twojej sprawy.
+        </p>
+        <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkles className="h-3 w-3 animate-pulse" />
+          KREATOR NOWEGO ZLECENIA PRAWNEGO
+        </div>
+      </motion.div>
+
+      {/* Main Form Area */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+        className="relative z-10"
+      >
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+          <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+          <CardContent className="p-6">
             {renderStepIndicator()}
 
-            <form className="space-y-6">
-              {currentStep === 1 && renderStep1()}
-              {currentStep === 2 && renderStep2()}
-              {currentStep === 3 && renderStep3()}
-              {currentStep === 4 && renderStep4()}
-              {currentStep === 5 && renderStep5()}
+            <div className="min-h-[300px] py-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  variants={stepContainerVariants}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                >
+                  {currentStep === 1 && renderStep1()}
+                  {currentStep === 2 && renderStep2()}
+                  {currentStep === 3 && renderStep3()}
+                  {currentStep === 4 && renderStep4()}
+                  {currentStep === 5 && renderStep5()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-              <div className="flex justify-between pt-6 border-t">
+            <div className="flex justify-between pt-6 border-t border-border/20 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
+                className="h-11 px-5 border-border/50 hover:bg-muted text-white rounded-xl gap-2 transition-all"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Wstecz
+              </Button>
+
+              {currentStep < 5 ? (
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={handlePrevious}
-                  disabled={currentStep === 1}
+                  onClick={handleNext}
+                  disabled={!validateStep(currentStep)}
+                  className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-1.5 transition-all disabled:opacity-50"
                 >
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Wstecz
+                  Dalej
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
-
-                {currentStep < 5 ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={!validateStep(currentStep)}
-                  >
-                    Dalej
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={!validateStep(5) || isSubmitting}
-                  >
-                    {isSubmitting ? "Dodawanie..." : "Dodaj sprawę"}
-                  </Button>
-                )}
-              </div>
-            </form>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={!validateStep(5) || isSubmitting}
+                  className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-1.5 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-1.5 text-white" />
+                      Dodawanie...
+                    </>
+                  ) : (
+                    <>
+                      Utwórz sprawę
+                      <ChevronRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
     </div>
   )
 }
