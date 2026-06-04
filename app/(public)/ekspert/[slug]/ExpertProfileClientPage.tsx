@@ -60,6 +60,7 @@ import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -238,6 +239,11 @@ export default function LawFirmProfilePage() {
   const searchParams = useSearchParams()
   const { data: session } = useSession()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+
+  // Parallax calculations for header image
+  const { scrollY } = useScroll()
+  const imageY = useTransform(scrollY, [0, 440], [0, 120])
+  const imageScale = useTransform(scrollY, [0, 440], [1.05, 1.15])
   const isOwnProfile = !!(session?.user?.lawFirm?.id && lawFirm?.id && session.user.lawFirm.id === lawFirm.id)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -624,13 +630,18 @@ export default function LawFirmProfilePage() {
             <div className="absolute inset-0 bg-black/40 z-[1]" />
           </>
         ) : lawFirm.zdjecieGlowne ? (
-          <Image
-            src={lawFirm.zdjecieGlowne}
-            alt={lawFirm.nazwa}
-            fill
-            id="cover-photo"
-            className="object-cover z-[2] opacity-75"
-          />
+          <motion.div
+            className="absolute inset-0 z-[2] will-change-transform"
+            style={{ y: imageY, scale: imageScale }}
+          >
+            <Image
+              src={lawFirm.zdjecieGlowne}
+              alt={lawFirm.nazwa}
+              fill
+              id="cover-photo"
+              className="object-cover opacity-75"
+            />
+          </motion.div>
         ) : (
           <div className={cn(
             "absolute inset-0 z-[5]",
