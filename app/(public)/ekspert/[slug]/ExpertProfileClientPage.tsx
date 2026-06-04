@@ -62,6 +62,12 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Check, ChevronDown } from "lucide-react"
+
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
 
 interface LawFirm {
   id: string
@@ -255,6 +261,56 @@ export default function LawFirmProfilePage() {
     politykaPrivacy: false,
   })
   const [sendingContact, setSendingContact] = useState(false)
+  const [showContactForm, setShowContactForm] = useState(false)
+
+  const [cities, setCities] = useState<any[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
+
+  // Dynamic fetch and caching for cities and postal codes
+  useEffect(() => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
+
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            clientCitiesCache[query] = data
+            setCities(data)
+          }
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [locationSearch])
 
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
@@ -351,6 +407,7 @@ export default function LawFirmProfilePage() {
       }
 
       toast.success("Twoja wiadomość została wysłana do kancelarii")
+      setShowContactForm(false)
 
       // Reset formularza
       setContactForm({
@@ -1162,137 +1219,192 @@ export default function LawFirmProfilePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleContactSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
-                    <Input
-                      id="imieNazwisko"
-                      value={contactForm.imieNazwisko}
-                      onChange={(e) =>
-                        setContactForm({ ...contactForm, imieNazwisko: e.target.value })
-                      }
-                      placeholder="Jan Kowalski"
-                      required
-                    />
-                  </div>
+                {!showContactForm ? (
+                  <Button onClick={() => setShowContactForm(true)} className="w-full">
+                    Pokaż formularz kontaktowy
+                  </Button>
+                ) : (
+                  <form onSubmit={handleContactSubmit} className="space-y-4 animate-in fade-in-50 duration-200">
+                    <div>
+                      <Label htmlFor="imieNazwisko">Imię i nazwisko *</Label>
+                      <Input
+                        id="imieNazwisko"
+                        value={contactForm.imieNazwisko}
+                        onChange={(e) =>
+                          setContactForm({ ...contactForm, imieNazwisko: e.target.value })
+                        }
+                        placeholder="Jan Kowalski"
+                        required
+                      />
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-2">
                     <div>
                       <Label htmlFor="miasto">Miasto *</Label>
+                      <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="w-full text-left justify-between font-normal text-sm"
+                          >
+                            <span className="truncate">{contactForm.miasto || "Wybierz miasto..."}</span>
+                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[300px] p-0" align="start">
+                          <Command shouldFilter={false}>
+                            <CommandInput
+                              placeholder="Wyszukaj miasto..."
+                              value={locationSearch}
+                              onValueChange={setLocationSearch}
+                            />
+                            <CommandList className="max-h-60 overflow-y-auto">
+                              {isLoadingCities && (
+                                <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                              )}
+                              {!isLoadingCities && locationSearch.trim().length < 2 && (
+                                <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                  Wpisz co najmniej 2 znaki...
+                                </div>
+                              )}
+                              {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                                <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                              )}
+                              <CommandGroup>
+                                {cities.map((city) => {
+                                  const matchedPostal = city.postalCodes?.find((p: any) =>
+                                    p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                                  )
+                                  const displayValue = matchedPostal
+                                    ? `${city.nazwa} (${matchedPostal.code})`
+                                    : city.nazwa
+
+                                  return (
+                                    <CommandItem
+                                      key={city.id}
+                                      value={city.nazwa}
+                                      onSelect={() => {
+                                        setContactForm({
+                                          ...contactForm,
+                                          miasto: city.nazwa,
+                                          wojewodztwo: city.voivodeship?.nazwa || "",
+                                        })
+                                        setLocationOpen(false)
+                                      }}
+                                      className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm"
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <Check
+                                          className={cn(
+                                            "h-4 w-4 text-teal-500",
+                                            contactForm.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                        <span>{displayValue}</span>
+                                      </div>
+                                      <span className="text-xs text-muted-foreground ml-2 text-right">
+                                        {city.voivodeship?.nazwa}
+                                      </span>
+                                    </CommandItem>
+                                  )
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
                       <Input
-                        id="miasto"
-                        value={contactForm.miasto}
+                        id="email"
+                        type="email"
+                        value={contactForm.email}
                         onChange={(e) =>
-                          setContactForm({ ...contactForm, miasto: e.target.value })
+                          setContactForm({ ...contactForm, email: e.target.value })
                         }
-                        placeholder="Warszawa"
+                        placeholder="jan@example.com"
                         required
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="wojewodztwo">Województwo *</Label>
+                      <Label htmlFor="telefon">Telefon</Label>
                       <Input
-                        id="wojewodztwo"
-                        value={contactForm.wojewodztwo}
+                        id="telefon"
+                        type="tel"
+                        value={contactForm.telefon}
                         onChange={(e) =>
-                          setContactForm({ ...contactForm, wojewodztwo: e.target.value })
+                          setContactForm({ ...contactForm, telefon: e.target.value })
                         }
-                        placeholder="Mazowieckie"
+                        placeholder="+48 123 456 789"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="typSprawy">Typ sprawy *</Label>
+                      <Select
+                        value={contactForm.typSprawy}
+                        onValueChange={(value) =>
+                          setContactForm({ ...contactForm, typSprawy: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="prywatna">Prywatna</SelectItem>
+                          <SelectItem value="firmowa">Firmowa</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="tresc">Treść wiadomości *</Label>
+                      <Textarea
+                        id="tresc"
+                        value={contactForm.tresc}
+                        onChange={(e) =>
+                          setContactForm({ ...contactForm, tresc: e.target.value })
+                        }
+                        placeholder="Opisz swoją sprawę..."
+                        rows={5}
                         required
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={contactForm.email}
-                      onChange={(e) =>
-                        setContactForm({ ...contactForm, email: e.target.value })
-                      }
-                      placeholder="jan@example.com"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="telefon">Telefon</Label>
-                    <Input
-                      id="telefon"
-                      type="tel"
-                      value={contactForm.telefon}
-                      onChange={(e) =>
-                        setContactForm({ ...contactForm, telefon: e.target.value })
-                      }
-                      placeholder="+48 123 456 789"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="typSprawy">Typ sprawy *</Label>
-                    <Select
-                      value={contactForm.typSprawy}
-                      onValueChange={(value) =>
-                        setContactForm({ ...contactForm, typSprawy: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="prywatna">Prywatna</SelectItem>
-                        <SelectItem value="firmowa">Firmowa</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tresc">Treść wiadomości *</Label>
-                    <Textarea
-                      id="tresc"
-                      value={contactForm.tresc}
-                      onChange={(e) =>
-                        setContactForm({ ...contactForm, tresc: e.target.value })
-                      }
-                      placeholder="Opisz swoją sprawę..."
-                      rows={5}
-                      required
-                    />
-                  </div>
-
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="politykaPrivacy"
-                      checked={contactForm.politykaPrivacy}
-                      onCheckedChange={(checked) =>
-                        setContactForm({ ...contactForm, politykaPrivacy: !!checked })
-                      }
-                      disabled={!session?.user}
-                    />
-                    <Label htmlFor="politykaPrivacy" className="text-xs cursor-pointer">
-                      Akceptuję politykę prywatności i wyrażam zgodę na przetwarzanie moich danych osobowych *
-                    </Label>
-                  </div>
-
-                  {session?.user ? (
-                    <Button type="submit" className="w-full" disabled={sendingContact}>
-                      <Send className="mr-2 h-4 w-4" />
-                      {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
-                    </Button>
-                  ) : (
-                    <div className="p-4 bg-muted rounded-lg text-center">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Wysłanie wiadomości będzie możliwe po zalogowaniu
-                      </p>
-                      <Button type="button" onClick={() => router.push("/logowanie")} className="w-full">
-                        Zaloguj się
-                      </Button>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="politykaPrivacy"
+                        checked={contactForm.politykaPrivacy}
+                        onCheckedChange={(checked) =>
+                          setContactForm({ ...contactForm, politykaPrivacy: !!checked })
+                        }
+                        disabled={!session?.user}
+                      />
+                      <Label htmlFor="politykaPrivacy" className="text-xs cursor-pointer">
+                        Akceptuję politykę prywatności i wyrażam zgodę na przetwarzanie moich danych osobowych *
+                      </Label>
                     </div>
-                  )}
-                </form>
+
+                    {session?.user ? (
+                      <Button type="submit" className="w-full" disabled={sendingContact}>
+                        <Send className="mr-2 h-4 w-4" />
+                        {sendingContact ? "Wysyłanie..." : "Wyślij wiadomość"}
+                      </Button>
+                    ) : (
+                      <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Wysłanie wiadomości będzie możliwe po zalogowaniu
+                        </p>
+                        <Button type="button" onClick={() => router.push("/logowanie")} className="w-full">
+                          Zaloguj się
+                        </Button>
+                      </div>
+                    )}
+                  </form>
+                )}
               </CardContent>
             </Card>
           </div>
