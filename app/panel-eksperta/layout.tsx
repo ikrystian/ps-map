@@ -289,16 +289,6 @@ export default function LawFirmPanelLayout({
               )
             }
 
-            {/* Active accent dot for extra polish */}
-            {
-              isActive && (inSheet || !isCollapsed) && (
-                <motion.span
-                  layoutId="expert-sidebar-active-indicator"
-                  className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
-              )
-            }
           </Link>
         )
       })}
