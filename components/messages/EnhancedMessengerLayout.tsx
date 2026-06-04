@@ -1,11 +1,13 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { BorderBeam } from "@/components/ui/border-beam"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { cn } from "@/lib/utils"
 import type { Conversation } from "@/types/conversations"
-import { Wifi } from "lucide-react"
+import { Wifi, Loader2, MessageCircle } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useState } from "react"
 import { EnhancedChatArea } from "./EnhancedChatArea"
@@ -126,40 +128,48 @@ export function EnhancedMessengerLayout() {
     return (
       <div className="flex items-center justify-center min-h-[400px] h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Ładowanie wiadomości...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="mt-4 text-muted-foreground text-sm font-light">Ładowanie wiadomości...</p>
         </div>
       </div>
     )
   }
 
+  const isClient = session?.user?.role === "CLIENT"
+  const themeColor = isClient ? "#d7b56d" : "#0da192"
+
   return (
     <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-14rem)] min-h-[500px]">
       {/* Connection status indicator */}
-      <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="mb-2 flex items-center justify-between text-xs text-zinc-400 font-light">
         <div className="flex items-center gap-2">
           {isConnected ? (
             <>
-              <Wifi className="h-3 w-3 text-green-500" />
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
               <span>Połączono (w czasie rzeczywistym)</span>
             </>
           ) : (
             <>
-
+              <Wifi className="h-3 w-3 text-amber-500 animate-pulse" />
+              <span className="text-amber-500">Brak połączenia realtime</span>
             </>
           )}
         </div>
         {unreadCount > 0 && (
-          <Badge variant="destructive" className="h-5">
+          <Badge className={cn("h-5 text-[10px] font-bold text-white px-2 rounded-full border-t border-white/10 shadow-md", isClient ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352]" : "bg-gradient-to-r from-[#0da192] to-[#0a8276]")}>
             {unreadCount} nieprzeczytanych
           </Badge>
         )}
       </div>
 
-      <Card className="h-full flex flex-col md:flex-row overflow-hidden">
+      <Card className="h-full flex flex-col md:flex-row overflow-hidden border border-border/30 bg-card/25 backdrop-blur-md shadow-2xl relative">
+        <BorderBeam lightColor={themeColor} lightWidth={450} duration={7} borderWidth={1} />
         {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
         <div
-          className={`w-full md:w-80 lg:w-96 md:border-r flex-shrink-0 ${selectedConversationId ? "hidden md:block" : "block"
+          className={`w-full md:w-80 lg:w-96 md:border-r border-border/20 flex-shrink-0 ${selectedConversationId ? "hidden md:block" : "block"
             }`}
         >
           <EnhancedConversationList
@@ -184,13 +194,17 @@ export function EnhancedMessengerLayout() {
               onBack={() => setSelectedConversationId(null)}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
-              <div className="text-center">
-                <p className="text-lg font-medium">Wybierz konwersację lub</p>
-                <p className="text-sm mt-2">
-                  przejdź do wyszukiwarki aby znaleźć eksperta z którym możesz
-                  nawiązać kontakt
-                </p>
+            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4 bg-zinc-950/20">
+              <div className="text-center space-y-4 max-w-sm">
+                <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center mx-auto text-zinc-500">
+                  <MessageCircle className="h-7 w-7" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-white">Wybierz konwersację</h3>
+                  <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-light">
+                    Wybierz czat z listy po lewej stronie lub przejdź do katalogu spraw/ekspertów, aby nawiązać nowy kontakt.
+                  </p>
+                </div>
               </div>
             </div>
           )}
