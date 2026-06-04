@@ -66,15 +66,15 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="flex flex-col sm:flex-row gap-6 mb-20 justify-center items-center px-4"
           >
-            <Link href="/kategorie/#sprawy-prywatne">
-              <InteractiveHoverButton className="min-w-[280px] h-[72px] text-lg rounded-2xl shadow-2xl shadow-primary/20">
+            <Link href="/kategorie/#sprawy-prywatne" className="group">
+              <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
                 Sprawy prywatne
-              </InteractiveHoverButton>
+                <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </button>
             </Link>
 
             <Link href="/kategorie/#sprawy-firmowe" className="group">
               <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
-                <Briefcase className="mr-3 h-5 w-5 text-neutral-400 group-hover:text-white transition-colors" />
                 Sprawy firmowe
                 <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
               </button>
@@ -120,22 +120,6 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-500"
-      >
-        <span className="text-[10px] uppercase tracking-widest font-medium">Przewiń</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </motion.div>
-      </motion.div>
 
       {/* Bottom radial fade */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#121212] to-transparent z-10" />
