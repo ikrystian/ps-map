@@ -129,6 +129,12 @@ export async function GET(request: NextRequest) {
         description: "Środowisko KSeF: test (testowe/sandbox) lub prod (produkcyjne)",
       }
     }
+    if (!settingsObject.showChatAssistant) {
+      settingsObject.showChatAssistant = {
+        value: "true",
+        description: "Czy wyświetlać asystenta czatu (ChatAssistant) na stronie",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
