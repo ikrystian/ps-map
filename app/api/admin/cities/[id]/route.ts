@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { serverCache } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -29,6 +30,9 @@ export async function PATCH(
       }
     })
 
+    // Invalidate cached cities
+    serverCache.invalidatePattern("cities")
+
     return NextResponse.json(city)
   } catch (error) {
     console.error("Error updating city:", error)
@@ -53,6 +57,9 @@ export async function DELETE(
     await prisma.city.delete({
       where: { id },
     })
+
+    // Invalidate cached cities
+    serverCache.invalidatePattern("cities")
 
     return NextResponse.json({ success: true })
   } catch (error) {
