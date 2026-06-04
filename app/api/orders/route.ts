@@ -54,6 +54,9 @@ export async function GET(request: NextRequest) {
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
         where,
+        include: {
+          subscriptionPlan: true,
+        },
         orderBy: {
           createdAt: "desc",
         },
