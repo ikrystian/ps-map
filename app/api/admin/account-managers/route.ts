@@ -13,6 +13,15 @@ export async function GET(request: NextRequest) {
 
     const accountManagers = await prisma.accountManager.findMany({
       include: {
+        lawFirms: {
+          select: {
+            id: true,
+            nazwa: true,
+            emailKontakt: true,
+            numerTelefonu: true,
+            miasto: true
+          }
+        },
         _count: {
           select: { lawFirms: true }
         }
