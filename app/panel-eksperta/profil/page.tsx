@@ -1,21 +1,22 @@
 "use client"
 
+import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationHoursForm"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { AdditionalTab } from "@/components/panel-eksperta/profil/AdditionalTab"
+import { BasicTab } from "@/components/panel-eksperta/profil/BasicTab"
+import { ContactTab } from "@/components/panel-eksperta/profil/ContactTab"
+import { MultimediaTab } from "@/components/panel-eksperta/profil/MultimediaTab"
+import { SpecializationTab } from "@/components/panel-eksperta/profil/SpecializationTab"
 import { Button } from "@/components/ui/button"
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { toast } from "@/components/ui/sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2 } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { Loader2, Save, Sparkles } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
-
-import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationHoursForm"
-import { BasicTab } from "@/components/panel-eksperta/profil/BasicTab"
-import { ContactTab } from "@/components/panel-eksperta/profil/ContactTab"
-import { SpecializationTab } from "@/components/panel-eksperta/profil/SpecializationTab"
-import { MultimediaTab } from "@/components/panel-eksperta/profil/MultimediaTab"
-import { AdditionalTab } from "@/components/panel-eksperta/profil/AdditionalTab"
 
 interface Voivodeship {
   id: string
@@ -40,7 +41,12 @@ function LawFirmProfilePageContent() {
 
   useEffect(() => {
     const tabParam = searchParams.get("tab")
-    if (tabParam && ["basic", "contact", "specialization", "multimedia", "consultations", "additional"].includes(tabParam)) {
+    if (
+      tabParam &&
+      ["basic", "contact", "specialization", "multimedia", "consultations", "additional"].includes(
+        tabParam
+      )
+    ) {
       setActiveTab(tabParam)
     }
   }, [searchParams])
@@ -51,6 +57,7 @@ function LawFirmProfilePageContent() {
     const newUrl = `${currentPath}?tab=${value}`
     router.push(newUrl, { scroll: false })
   }
+
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -195,8 +202,11 @@ function LawFirmProfilePageContent() {
           }
           // Konwertuj null na puste stringi dla wszystkich pól
           Object.keys(normalizedData).forEach((key) => {
-            if (normalizedData[key] === null && typeof formData[key as keyof typeof formData] === 'string') {
-              normalizedData[key] = ''
+            if (
+              normalizedData[key] === null &&
+              typeof formData[key as keyof typeof formData] === "string"
+            ) {
+              normalizedData[key] = ""
             }
           })
           setFormData({
@@ -314,7 +324,7 @@ function LawFirmProfilePageContent() {
       }
     }
 
-    try {
+  try {
       // Wyklucz categoriesIds, aby nie nadpisać kolejności ustawionej w Zakresie usług
       const { categoriesIds, ...dataToSave } = formData
 
@@ -528,38 +538,87 @@ function LawFirmProfilePageContent() {
 
   const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne") => {
     handleInputChange(field, "")
-    toast.success(
-      field === "logo" ? "Logo zostało usunięte" : "Zdjęcie główne zostało usunięte"
-    )
+    toast.success(field === "logo" ? "Logo zostało usunięte" : "Zdjęcie główne zostało usunięte")
   }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie profilu kancelarii...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <PageHeader
-        title="Profil Eksperta"
-        subtitle="Zarządzaj informacjami o swoim profilu"
-      />
+    <form onSubmit={handleSubmit} className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <TabsList id="tour-profil-tabs">
-          <TabsTrigger value="basic">Podstawowe</TabsTrigger>
-          <TabsTrigger value="contact">Kontakt</TabsTrigger>
-          <TabsTrigger value="specialization">Zakres usług</TabsTrigger>
-          <TabsTrigger value="multimedia">Multimedia</TabsTrigger>
-          <TabsTrigger value="consultations">Godziny konsultacji</TabsTrigger>
-          <TabsTrigger value="additional">Dodatkowe</TabsTrigger>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <PageHeader
+          title="Profil Kancelarii"
+          subtitle="Edytuj dane prezentacyjne swojej kancelarii widoczne dla klientów w wyszukiwarce."
+          titleClassName="text-white text-3xl sm:text-4xl"
+        />
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkles className="h-3 w-3 animate-pulse" />
+          MÓJ PROFIL EKSPERTA
+        </div>
+      </motion.div>
+
+      {/* Re-designed premium tab selector */}
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6 relative z-10">
+        <TabsList className="p-1 bg-card/20 backdrop-blur-md border border-border/30 rounded-xl flex gap-1 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none">
+          <TabsTrigger
+            value="basic"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Podstawowe
+          </TabsTrigger>
+          <TabsTrigger
+            value="contact"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Kontakt
+          </TabsTrigger>
+          <TabsTrigger
+            value="specialization"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Zakres usług
+          </TabsTrigger>
+          <TabsTrigger
+            value="multimedia"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Multimedia
+          </TabsTrigger>
+          <TabsTrigger
+            value="consultations"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Godziny konsultacji
+          </TabsTrigger>
+          <TabsTrigger
+            value="additional"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Dodatkowe
+          </TabsTrigger>
         </TabsList>
 
         {/* Dane podstawowe */}
-        <TabsContent value="basic" className="space-y-6">
+        <TabsContent value="basic" className="space-y-6 animate-in fade-in-50 duration-300">
           <BasicTab
             formData={formData}
             handleInputChange={handleInputChange}
@@ -571,7 +630,7 @@ function LawFirmProfilePageContent() {
         </TabsContent>
 
         {/* Dane kontaktowe */}
-        <TabsContent value="contact" className="space-y-6">
+        <TabsContent value="contact" className="space-y-6 animate-in fade-in-50 duration-300">
           <ContactTab
             formData={formData}
             handleInputChange={handleInputChange}
@@ -580,7 +639,7 @@ function LawFirmProfilePageContent() {
         </TabsContent>
 
         {/* Zakres usług */}
-        <TabsContent value="specialization" className="space-y-6">
+        <TabsContent value="specialization" className="space-y-6 animate-in fade-in-50 duration-300">
           <SpecializationTab
             formData={formData}
             categories={categories}
@@ -597,7 +656,7 @@ function LawFirmProfilePageContent() {
         </TabsContent>
 
         {/* Multimedia */}
-        <TabsContent value="multimedia" className="space-y-6">
+        <TabsContent value="multimedia" className="space-y-6 animate-in fade-in-50 duration-300">
           <MultimediaTab
             formData={formData}
             isUploading={isUploading}
@@ -608,26 +667,38 @@ function LawFirmProfilePageContent() {
         </TabsContent>
 
         {/* Godziny konsultacji */}
-        <TabsContent value="consultations">
+        <TabsContent value="consultations" className="animate-in fade-in-50 duration-300">
           <ConsultationHoursForm />
         </TabsContent>
 
         {/* Dodatkowe */}
-        <TabsContent value="additional" className="space-y-6">
-          <AdditionalTab
-            formData={formData}
-            handleInputChange={handleInputChange}
-          />
+        <TabsContent value="additional" className="space-y-6 animate-in fade-in-50 duration-300">
+          <AdditionalTab formData={formData} handleInputChange={handleInputChange} />
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" disabled={isSaving}>
-          Anuluj
-        </Button>
-        <Button type="submit" disabled={isSaving}>
-          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {/* Submit / Cancel Actions */}
+      <div className="flex justify-end gap-3 pt-4 relative z-10 border-t border-border/20">
+        <Button
+          type="submit"
+          disabled={isSaving}
+          className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+        >
+          {isSaving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
           Zapisz profil
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl transition-all duration-200"
+          onClick={() => router.push("/panel-eksperta")}
+          disabled={isSaving}
+        >
+          Anuluj
         </Button>
       </div>
 
@@ -656,11 +727,13 @@ function LawFirmProfilePageContent() {
 
 export default function LawFirmProfilePage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="relative min-h-[400px] flex items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+        </div>
+      }
+    >
       <LawFirmProfilePageContent />
     </Suspense>
   )
