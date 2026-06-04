@@ -171,8 +171,144 @@ export default function WinWithUsClientPage() {
         </div>
       </section>
 
-      {/* New Section: Prawniku, dlaczego warto współpracować z ProstaSprawa.pl? */}
+      {/* New Section: Użytkowniku, dlaczego ProstaSprawa.pl? */}
       <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+        {/* Subtle background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-teal-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto w-full relative z-10 text-center">
+          
+          {/* Section Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light leading-tight mb-20"
+          >
+            Użytkowniku, dlaczego <span className="font-bold">ProstaSprawa.pl</span>?
+          </motion.h2>
+
+          {/* Two Columns Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 max-w-5xl mx-auto">
+            
+            {/* Column 1: Bezpłatne pytanie */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="flex flex-col items-center text-center group"
+            >
+              {/* Icon 1: Speech bubble with question mark */}
+              <div className="mb-6 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-16 h-16"
+                >
+                  <path d="M46 38c0 5.5-4.5 10-10 10H22l-8 8V48c-3.3 0-6-2.7-6-6V22c0-3.3 2.7-6 6-6h24c3.3 0 6 2.7 6 6v16z" />
+                  <path d="M48 24h4c3.3 0 6 2.7 6 6v16l-8-8H44" opacity="0.5" />
+                  <path d="M26 26c0-2 1.5-3.5 3-3.5s3 1.5 3 3.5c0 2-3 3-3 3" />
+                  <circle cx="29" cy="34" r="1.2" fill="currentColor" />
+                </svg>
+              </div>
+
+              {/* Subheading */}
+              <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-4">
+                Bezpłatne pytanie
+              </h3>
+
+              {/* Paragraph */}
+              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+                Jako użytkownik serwisu prostasprawa.pl możesz w łatwy i szybki sposób uzyskać poradę prawną, bezpośrednio w swojej sprawie. Zadając anonimowo, bezpłatne pytanie, otrzymujesz informację prawną, odnoszącą się bezpośrednio do opisanej sytuacji.
+              </p>
+
+              {/* Button */}
+              <Link href="/pytania">
+                <motion.button
+                  whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-sm sm:text-base tracking-wide"
+                >
+                  Zobacz pytania
+                </motion.button>
+              </Link>
+            </motion.div>
+
+            {/* Column 2: Wyszukiwarka prawników */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex flex-col items-center text-center group"
+            >
+              {/* Icon 2: Lawyer with scales */}
+              <div className="mb-6 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-16 h-16"
+                >
+                  <circle cx="26" cy="18" r="6" />
+                  <path d="M20 18c0-3 3-4 6-4s6 1 6 4" />
+                  <path d="M12 48c0-5 4-9 9-9h10c5 0 9 4 9 9v4H12v-4z" />
+                  <path d="M26 39v6l-2-2z" />
+                  <path d="M21 39l5 4 5-4" />
+                  <path d="M48 26h12" />
+                  <path d="M54 18v26" />
+                  <path d="M54 44h4M54 44h-4" />
+                  <path d="M48 26l-2 8h4l-2-8z" />
+                  <path d="M46 34c0 1.5 1 2 2 2s2-.5 2-2" />
+                  <path d="M60 26l-2 8h4l-2-8z" />
+                  <path d="M58 34c0 1.5 1 2 2 2s2-.5 2-2" />
+                </svg>
+              </div>
+
+              {/* Subheading */}
+              <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-4">
+                Wyszukiwarka prawników
+              </h3>
+
+              {/* Paragraph */}
+              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+                Wolisz bezpośrednie rozwiązania? Skorzystaj z naszej wyszukiwarki i znajdź Prawnika z Twojej okolicy. W serwisie prostasprawa.pl zarejestrowani są Eksperci z całej Polski.
+              </p>
+
+              {/* Button */}
+              <Link href="/szukaj-prawnika">
+                <motion.button
+                  whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-sm sm:text-base tracking-wide"
+                >
+                  Zobacz prawnika
+                </motion.button>
+              </Link>
+            </motion.div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* Section 3: Prawniku, dlaczego warto współpracować z ProstaSprawa.pl? */}
+      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
         {/* Ambient glows to match premium theme */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-amber-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
 
@@ -200,8 +336,14 @@ export default function WinWithUsClientPage() {
                   />
                 </div>
 
-                {/* Overlapping Gold Double Checkmark Logo */}
-                <div className="absolute -right-8 -bottom-8 w-48 h-48 sm:w-56 sm:h-56 lg:w-60 lg:h-60 z-20 pointer-events-none drop-shadow-[0_15px_30px_rgba(202,138,4,0.25)]">
+                {/* Overlapping gold double checkmark logo container */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-28 sm:h-28 bg-[#1e1d1a]/95 border border-neutral-700/60 rounded-2xl shadow-2xl flex items-center justify-center p-5 z-20 backdrop-blur-sm"
+                >
                   <svg
                     viewBox="0 0 100 100"
                     fill="none"
@@ -209,31 +351,31 @@ export default function WinWithUsClientPage() {
                     className="w-full h-full"
                   >
                     <defs>
-                      <linearGradient id="gold-metallic" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#fef08a" />
-                        <stop offset="35%" stopColor="#eab308" />
-                        <stop offset="70%" stopColor="#ca8a04" />
-                        <stop offset="100%" stopColor="#854d0e" />
+                      <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#d4af37" />
+                        <stop offset="50%" stopColor="#f3e5ab" />
+                        <stop offset="100%" stopColor="#aa7c11" />
                       </linearGradient>
                     </defs>
-                    {/* First/Back Checkmark */}
+                    {/* First checkmark */}
                     <path
-                      d="M 12 50 L 32 70 L 80 22"
-                      stroke="url(#gold-metallic)"
-                      strokeWidth="8.5"
+                      d="M20 50 L40 70 L80 30"
+                      stroke="url(#gold-grad)"
+                      strokeWidth="10"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                    {/* Second/Front Checkmark, offset to the right & down */}
+                    {/* Second overlapping checkmark (offset) */}
                     <path
-                      d="M 28 50 L 44 66 L 90 20"
-                      stroke="url(#gold-metallic)"
-                      strokeWidth="8.5"
+                      d="M32 58 L46 72 L76 42"
+                      stroke="url(#gold-grad)"
+                      strokeWidth="7"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      opacity="0.8"
                     />
                   </svg>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
 
@@ -265,8 +407,8 @@ export default function WinWithUsClientPage() {
         </div>
       </section>
 
-      {/* New Section: Serwis ProstaSprawa.pl pozwala na znalezienie klientów w dwojaki sposób */}
-      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+      {/* Section 4: Działanie serwisu: Serwis ProstaSprawa.pl pozwala uzyskać pomoc prawną w dwojaki sposób: */}
+      <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
 
@@ -280,8 +422,9 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6 }}
             className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light text-center leading-tight mb-20 max-w-3xl mx-auto"
           >
-            Serwis ProstaSprawa.pl pozwala na <br />
-            <span className="font-bold">znalezienie klientów</span> w dwojaki sposób:
+            <span className="text-sm font-sans tracking-[0.25em] text-[#0da192] uppercase block mb-3">Działanie serwisu:</span>
+            Serwis ProstaSprawa.pl pozwala <br />
+            <span className="font-bold">uzyskać pomoc prawną</span> w dwojaki sposób:
           </motion.h2>
 
           {/* Cards Grid */}
@@ -379,8 +522,8 @@ export default function WinWithUsClientPage() {
         </div>
       </section>
 
-      {/* New Section: Ranking */}
-      <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+      {/* Section 5: Ranking */}
+      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-amber-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
 
@@ -427,7 +570,7 @@ export default function WinWithUsClientPage() {
               <span className="font-bold text-white">ProstaSprawa.pl</span> stawia na najlepszych! Jako serwis chcemy promować naszych najbardziej aktywnych użytkowników. W tym celu prowadzimy ranking ekspertów, uwzględniający ich działania w serwisie ProstaSprawa.pl.
             </p>
             <p>
-              Chcesz abyśmy promowali właśnie Ciebie? Wszystko jest w Twoich rękach. Twoje zaangażowanie i rzetelność pozwoli Ci na dotarcie do szerszego grona potencjalnych klientów. Wyższa pozycja w naszym rankingu to więcej wyświetleń Twojej wizytówki przez użytkowników serwisu i za pośrednictwem przeglądarek. Naszych najlepszych prawników promujemy również na stronach zewnętrznych zaprzyjaźnionych serwisów za pośrednictwem dynamicznych widgetów.
+              Chcesz abyśmy promowali właśnie Ciebie? Wszystko jest w Twoich rękach. Twoje zaangażowanie i rzetelność pozwoli Ci na dotarcie do szerszego grona potencjalnych klientów. Wyższa pozycja w naszym rankingu to więcej wyświetleń Twojej wizytówki przez użytkowników serwisu i za profesjonalne przeglądarki. Naszych najlepszych prawników promujemy również na stronach zewnętrznych zaprzyjaźnionych serwisów za pośrednictwem dynamicznych widgetów.
             </p>
             <p>
               Pamiętaj - im bardziej aktywny jesteś, tym bardziej jesteś widoczny. Zacznij działać już dziś i nie zmarnuj swojej szansy.

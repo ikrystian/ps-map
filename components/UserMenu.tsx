@@ -90,7 +90,7 @@ export default function UserMenu({
           {userName && <span className="text-sm font-medium hidden sm:block">{userName}</span>}
 
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align="end" className="w-56  z-1551">
           <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
