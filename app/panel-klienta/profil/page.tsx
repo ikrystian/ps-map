@@ -16,6 +16,8 @@ import {
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
@@ -25,6 +27,7 @@ import {
   AlertCircle,
   Building,
   Check,
+  ChevronDown,
   Globe,
   Image as ImageIcon,
   Loader2,
@@ -46,6 +49,9 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
 
 const profileFormSchema = z.object({
   clientType: z.enum(["INDIVIDUAL", "BUSINESS"]),
@@ -105,6 +111,11 @@ export default function ClientProfilePage() {
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null)
   const [showAvatarCropper, setShowAvatarCropper] = useState(false)
 
+  const [cities, setCities] = useState<any[]>([])
+  const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -128,6 +139,58 @@ export default function ClientProfilePage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  // Dynamic fetch and caching for cities and postal codes
+  useEffect(() => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
+
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            clientCitiesCache[query] = data
+            setCities(data)
+          }
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [locationSearch])
+
+  // Reset location search when popover closes
+  useEffect(() => {
+    if (!locationOpen) {
+      setLocationSearch("")
+      setCities([])
+    }
+  }, [locationOpen])
 
   const fetchData = async () => {
     try {
@@ -774,6 +837,7 @@ export default function ClientProfilePage() {
                             <Input
                               placeholder="00-000"
                               className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              readOnly
                               {...field}
                             />
                           </FormControl>
@@ -786,15 +850,83 @@ export default function ClientProfilePage() {
                       control={form.control}
                       name="miasto"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col justify-end">
                           <FormLabel className="text-xs font-semibold text-zinc-300">Miasto</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Warszawa"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
-                              {...field}
-                            />
-                          </FormControl>
+                          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className="h-11 w-full bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-white text-sm font-normal text-left justify-between"
+                                >
+                                  <span className="truncate">{field.value || "Wybierz miasto..."}</span>
+                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
+                              <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                                <CommandInput
+                                  placeholder="Wyszukaj miasto..."
+                                  value={locationSearch}
+                                  onValueChange={setLocationSearch}
+                                  className="text-white bg-transparent border-neutral-800"
+                                />
+                                <CommandList className="max-h-60 overflow-y-auto">
+                                  {isLoadingCities && (
+                                    <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                                  )}
+                                  {!isLoadingCities && locationSearch.trim().length < 2 && (
+                                    <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                      Wpisz co najmniej 2 znaki...
+                                    </div>
+                                  )}
+                                  {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                                    <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                                  )}
+                                  <CommandGroup>
+                                    {cities.map((city) => {
+                                      const matchedPostal = city.postalCodes?.find((p: any) =>
+                                        p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                                      )
+                                      const displayValue = matchedPostal
+                                        ? `${city.nazwa} (${matchedPostal.code})`
+                                        : city.nazwa
+
+                                      return (
+                                        <CommandItem
+                                          key={city.id}
+                                          value={city.nazwa}
+                                          onSelect={() => {
+                                            field.onChange(city.nazwa)
+                                            const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || ""
+                                            form.setValue("kodPocztowy", selectedPostalCode)
+                                            form.setValue("voivodeshipId", city.voivodeshipId)
+                                            setLocationOpen(false)
+                                          }}
+                                          className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <Check
+                                              className={cn(
+                                                "h-4 w-4 text-teal-400",
+                                                field.value === city.nazwa ? "opacity-100" : "opacity-0"
+                                              )}
+                                            />
+                                            <span>{displayValue}</span>
+                                          </div>
+                                          <span className="text-xs text-muted-foreground ml-2 text-right">
+                                            {city.voivodeship?.nazwa}
+                                          </span>
+                                        </CommandItem>
+                                      )
+                                    })}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -809,6 +941,7 @@ export default function ClientProfilePage() {
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
+                            disabled={true}
                           >
                             <FormControl>
                               <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-white text-sm">
