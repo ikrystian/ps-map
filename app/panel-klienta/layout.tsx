@@ -316,7 +316,7 @@ export default function ClientPanelLayout({
             {/* Footer */}
             <div className="mt-12 pb-4">
               {/* Partners banner */}
-              <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 p-5 w-full mx-auto mb-6">
+              <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
                 <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
 
                 <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
