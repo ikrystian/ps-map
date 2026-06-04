@@ -197,10 +197,7 @@ export default function ClientFavoritesPage() {
         <p className="text-sm text-zinc-400 mt-1.5 font-light">
           Lista Twoich ulubionych kancelarii i ekspertów prawnych, z którymi chcesz pozostać w kontakcie.
         </p>
-        <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
-          <Heart className="h-3 w-3 fill-[#0da192] text-[#0da192]" />
-          TWOJA LISTA ULUBIONYCH
-        </div>
+
       </motion.div>
 
       {favorites.length === 0 ? (
