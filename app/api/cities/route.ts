@@ -22,16 +22,14 @@ export async function GET(request: NextRequest) {
           where.OR = [
             {
               nazwa: {
-                contains: search,
-                mode: "insensitive"
+                contains: search
               }
             },
             {
               postalCodes: {
                 some: {
                   code: {
-                    contains: search,
-                    mode: "insensitive"
+                    contains: search
                   }
                 }
               }
