@@ -110,11 +110,11 @@ export default function AdminLayout({
             {navigation.map((item, index) => {
               const isActive = pathname === item.href ||
                 (item.href !== "/admin" &&
-                 item.href !== "/admin/transakcje" &&
-                 pathname.startsWith(item.href)) ||
+                  item.href !== "/admin/transakcje" &&
+                  pathname.startsWith(item.href)) ||
                 (item.href === "/admin/transakcje" &&
-                 pathname.startsWith("/admin/transakcje") &&
-                 !pathname.startsWith("/admin/transakcje/punkty"))
+                  pathname.startsWith("/admin/transakcje") &&
+                  !pathname.startsWith("/admin/transakcje/punkty"))
 
               return (
                 <Link
@@ -199,7 +199,7 @@ export default function AdminLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container mx-auto p-6">
+          <div className="container-full mx-auto p-6">
             {children}
           </div>
         </main>
