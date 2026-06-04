@@ -26,7 +26,7 @@ import { cn, stripHtmlTags } from "@/lib/utils"
 import { Briefcase, Check, CheckCircle2, ChevronDown, Clock, Filter, Grid3x3, List, MapPin, Search, Star, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 
@@ -128,7 +128,9 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 const clientCitiesCache: Record<string, any[]> = {}
 
 export default function CategoryClientPage() {
-  const { slug } = useParams() as { slug: string }
+  const params = useParams()
+  const slugArray = Array.isArray(params?.slug) ? params.slug : params?.slug ? [params.slug] : []
+  const slug = slugArray[slugArray.length - 1] || ""
   const router = useRouter()
   const [category, setCategory] = useState<Category | null>(null)
   const [allCategories, setAllCategories] = useState<Category[]>([])
