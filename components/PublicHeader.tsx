@@ -111,6 +111,7 @@ export default function PublicHeader({
 
   const isDlaPrawnikaActive = pathname.startsWith("/dla-prawnika")
   const isZNamiWygrywaszActive = pathname === "/z-nami-wygrywasz"
+  const isKontaktActive = pathname === "/kontakt"
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -351,6 +352,18 @@ export default function PublicHeader({
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link href="/kontakt" className={cn(
+                    navigationMenuTriggerStyle(),
+                    "bg-transparent hover:bg-[#121212]",
+                    isKontaktActive && "text-primary font-semibold"
+                  )}>
+                    Kontakt
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
               <NavigationMenuIndicator />
             </NavigationMenuList>
           </NavigationMenu>
@@ -556,6 +569,28 @@ export default function PublicHeader({
                         )}
                       >
                         Dla prawnika
+                      </Link>
+
+                      <Link
+                        href="/z-nami-wygrywasz"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Z nami wygrywasz
+                      </Link>
+
+                      <Link
+                        href="/kontakt"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isKontaktActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Kontakt
                       </Link>
 
                     </div>
