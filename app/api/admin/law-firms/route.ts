@@ -276,7 +276,7 @@ export async function POST(request: NextRequest) {
           voivodeshipId,
           opis: opis || "",
           typOferty,
-          pakietSubskrypcji: pakietSubskrypcji || "PODSTAWOWY",
+          pakietSubskrypcji: (pakietSubskrypcji === "" || pakietSubskrypcji === "none" || pakietSubskrypcji === null) ? null : (pakietSubskrypcji || "PODSTAWOWY"),
           zweryfikowana: zweryfikowana || false,
           aktywna: aktywna !== undefined ? aktywna : true,
           zgodaRegulamin: true,

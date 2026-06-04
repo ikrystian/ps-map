@@ -103,7 +103,7 @@ export default function EditLawFirmPage() {
       callaPolska: false,
       onlineOnly: false,
       typOferty: "WSZYSTKIE",
-      pakietSubskrypcji: "PODSTAWOWY",
+      pakietSubskrypcji: "",
       punktySaldo: 0,
       dataPakietuOd: "",
       dataPakietuDo: "",
@@ -204,7 +204,7 @@ export default function EditLawFirmPage() {
             callaPolska: lawFirm.callaPolska || false,
             onlineOnly: lawFirm.onlineOnly || false,
             typOferty: lawFirm.typOferty,
-            pakietSubskrypcji: lawFirm.pakietSubskrypcji,
+            pakietSubskrypcji: lawFirm.pakietSubskrypcji || "",
             punktySaldo: lawFirm.punktySaldo,
             dataPakietuOd: lawFirm.dataPakietuOd ? new Date(lawFirm.dataPakietuOd).toISOString().split('T')[0] : "",
             dataPakietuDo: lawFirm.dataPakietuDo ? new Date(lawFirm.dataPakietuDo).toISOString().split('T')[0] : "",
@@ -273,6 +273,11 @@ export default function EditLawFirmPage() {
       // Rename email fields for API
       updateData.userEmail = values.email
       delete updateData.email
+
+      // Map pakietSubskrypcji to null if it is empty/falsy
+      if (updateData.pakietSubskrypcji === "" || !updateData.pakietSubskrypcji) {
+        updateData.pakietSubskrypcji = null
+      }
 
       const response = await fetch(`/api/admin/law-firms/${params.id}`, {
         method: "PUT",
@@ -768,13 +773,17 @@ export default function EditLawFirmPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Pakiet subskrypcji</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
+                        value={field.value || "none"}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Wybierz pakiet" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="none">Brak pakietu</SelectItem>
                           <SelectItem value="PODSTAWOWY">Podstawowy</SelectItem>
                           <SelectItem value="STANDARD">Standard</SelectItem>
                           <SelectItem value="PREMIUM">Premium</SelectItem>

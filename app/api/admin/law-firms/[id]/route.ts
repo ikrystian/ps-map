@@ -341,7 +341,9 @@ export async function PUT(
 
     // Points and subscription
     if (body.punktySaldo !== undefined) lawFirmUpdateData.punktySaldo = body.punktySaldo
-    if (body.pakietSubskrypcji !== undefined) lawFirmUpdateData.pakietSubskrypcji = body.pakietSubskrypcji
+    if (body.pakietSubskrypcji !== undefined) {
+      lawFirmUpdateData.pakietSubskrypcji = (body.pakietSubskrypcji === "" || body.pakietSubskrypcji === "none" || body.pakietSubskrypcji === null) ? null : body.pakietSubskrypcji
+    }
     if (body.dataPakietuOd !== undefined) {
       lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd === "" ? null : new Date(body.dataPakietuOd)
     }

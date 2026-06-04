@@ -74,7 +74,7 @@ export const lawFirmSchema = z.object({
 
   // Type and subscription
   typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
-  pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]),
+  pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]).nullable().optional().or(z.literal("")),
   punktySaldo: z.number(),
   dataPakietuOd: z.string().optional(),
   dataPakietuDo: z.string().optional(),

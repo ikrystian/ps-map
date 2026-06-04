@@ -100,7 +100,7 @@ const createLawFirmSchema = z.object({
 
   // Type and subscription
   typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
-  pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]),
+  pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]).nullable().optional().or(z.literal("")),
   punktySaldo: z.number(),
   dataPakietuOd: z.string().optional(),
   dataPakietuDo: z.string().optional(),
@@ -177,7 +177,7 @@ export default function NewLawFirmPage() {
       callaPolska: false,
       onlineOnly: false,
       typOferty: "WSZYSTKIE",
-      pakietSubskrypcji: "PODSTAWOWY",
+      pakietSubskrypcji: "",
       punktySaldo: 0,
       dataPakietuOd: "",
       dataPakietuDo: "",
@@ -208,12 +208,16 @@ export default function NewLawFirmPage() {
   const handleSubmit = async (values: CreateLawFirmFormValues) => {
     try {
       setIsSubmitting(true)
+      const submitValues = {
+        ...values,
+        pakietSubskrypcji: (values.pakietSubskrypcji === "" || !values.pakietSubskrypcji) ? null : values.pakietSubskrypcji,
+      }
       const response = await fetch("/api/admin/law-firms", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submitValues),
       })
 
       if (response.ok) {
@@ -691,13 +695,17 @@ export default function NewLawFirmPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Pakiet subskrypcji</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
+                        value={field.value || "none"}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Wybierz pakiet" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="none">Brak pakietu</SelectItem>
                           <SelectItem value="PODSTAWOWY">Podstawowy</SelectItem>
                           <SelectItem value="STANDARD">Standard</SelectItem>
                           <SelectItem value="PREMIUM">Premium</SelectItem>
