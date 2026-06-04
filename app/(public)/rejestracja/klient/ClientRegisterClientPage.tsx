@@ -15,6 +15,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
+
 export default function ClientRegistrationPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
@@ -39,8 +42,10 @@ export default function ClientRegistrationPage() {
   const [error, setError] = useState("")
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
-  const [cities, setCities] = useState<string[]>([])
+  const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -68,22 +73,57 @@ export default function ClientRegistrationPage() {
     localStorage.setItem("client_registration_data", JSON.stringify(dataToSave))
   }, [formData, isInitialized])
 
+  // Dynamic fetch and caching for cities and postal codes
   useEffect(() => {
-    const fetchCities = async () => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
+
+    if (clientCitiesCache[query]) {
+      setCities(clientCitiesCache[query])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch("/api/cities")
+        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        })
         if (response.ok) {
           const data = await response.json()
           if (Array.isArray(data)) {
-            setCities(data.map((c: any) => c.nazwa))
+            clientCitiesCache[query] = data
+            setCities(data)
           }
         }
-      } catch (error) {
-        console.error("Error fetching cities:", error)
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
       }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
     }
-    fetchCities()
-  }, [])
+  }, [locationSearch])
+
+  // Reset location search when popover closes
+  useEffect(() => {
+    if (!locationOpen) {
+      setLocationSearch("")
+      setCities([])
+    }
+  }, [locationOpen])
 
   useEffect(() => {
     if (session?.user) {
@@ -366,38 +406,66 @@ export default function ClientRegistrationPage() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={locationOpen}
-                      className="w-full justify-between h-11 font-normal"
+                      className="w-full justify-between h-11 font-normal text-left"
                       disabled={isLoading || !!session?.user}
                     >
-                      {formData.miasto || "Wybierz miasto..."}
+                      <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Szukaj miasta..." />
+                  <PopoverContent className="w-[300px] p-0" align="start">
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Szukaj miasta..."
+                        value={locationSearch}
+                        onValueChange={setLocationSearch}
+                      />
                       <CommandList>
-                        <CommandEmpty>Nie znaleziono miasta.</CommandEmpty>
+                        {isLoadingCities && (
+                          <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                        )}
+                        {!isLoadingCities && locationSearch.trim().length < 2 && (
+                          <div className="text-neutral-500 py-3 text-center text-xs px-3">
+                            Wpisz co najmniej 2 znaki...
+                          </div>
+                        )}
+                        {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                          <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                        )}
                         <CommandGroup>
-                          {cities.map((city) => (
-                            <CommandItem
-                              key={city}
-                              value={city}
-                              onSelect={(currentValue) => {
-                                const matchedCity = cities.find(c => c.toLowerCase() === currentValue.toLowerCase()) || city
-                                handleChange("miasto", matchedCity)
-                                setLocationOpen(false)
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.miasto === city ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {city}
-                            </CommandItem>
-                          ))}
+                          {cities.map((city) => {
+                            const matchedPostal = city.postalCodes?.find((p: any) =>
+                              p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                            )
+                            const displayValue = matchedPostal
+                              ? `${city.nazwa} (${matchedPostal.code})`
+                              : city.nazwa
+
+                            return (
+                              <CommandItem
+                                key={city.id}
+                                value={city.nazwa}
+                                onSelect={() => {
+                                  handleChange("miasto", city.nazwa)
+                                  setLocationOpen(false)
+                                }}
+                                className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Check
+                                    className={cn(
+                                      "h-4 w-4 text-primary",
+                                      formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <span>{displayValue}</span>
+                                </div>
+                                <span className="text-xs text-muted-foreground ml-2 text-right">
+                                  {city.voivodeship?.nazwa}
+                                </span>
+                              </CommandItem>
+                            )
+                          })}
                         </CommandGroup>
                       </CommandList>
                     </Command>
