@@ -264,6 +264,120 @@ export default function WinWithUsClientPage() {
           </div>
         </div>
       </section>
+
+      {/* New Section: Serwis ProstaSprawa.pl pozwala na znalezienie klientów w dwojaki sposób */}
+      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+        {/* Subtle background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+          
+          {/* Section Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light text-center leading-tight mb-20 max-w-3xl mx-auto"
+          >
+            Serwis ProstaSprawa.pl pozwala na <br />
+            <span className="font-bold">znalezienie klientów</span> w dwojaki sposób:
+          </motion.h2>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto mb-16">
+            
+            {/* Card 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative group"
+            >
+              {/* Green circular badge */}
+              <div className="absolute -top-6 left-8 w-12 h-12 rounded-full bg-[#1b6349] flex items-center justify-center text-white font-bold text-lg shadow-lg z-20">
+                01.
+              </div>
+              {/* Card Container */}
+              <div className="bg-[#1a1916] border border-neutral-800/80 rounded-2xl p-8 pt-12 h-full flex flex-col justify-between transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.08)]">
+                <div>
+                  <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-6 leading-snug">
+                    Kompleksowa <br />
+                    <span className="font-bold">obsługa prawna.</span>
+                  </h3>
+                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
+                    Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników z całego kraju. Problemy związane z działalnością gospodarczą, kwestie podatkowe, spory pracownicze czy osobiste wyzwania prawne jak rozwód czy sprawy spadkowe - u nas znajdziesz wsparcie ekspertów z każdej dziedzin.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Card 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative group"
+            >
+              {/* Green circular badge */}
+              <div className="absolute -top-6 left-8 w-12 h-12 rounded-full bg-[#1b6349] flex items-center justify-center text-white font-bold text-lg shadow-lg z-20">
+                02.
+              </div>
+              {/* Card Container */}
+              <div className="bg-[#1a1916] border border-neutral-800/80 rounded-2xl p-8 pt-12 h-full flex flex-col justify-between transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.08)]">
+                <div>
+                  <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-6 leading-snug">
+                    Odpowiadaj na pytania <br />
+                    <span className="font-bold">i buduj zaufanie.</span>
+                  </h3>
+                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
+                    Aktywność w serwisie przyciąga uwagę, budując równocześnie wizerunek eksperta, budzącego zaufanie klientów. Najbardziej aktywni Prawnicy są dodatkowo promowani w serwisie oraz na naszych zewnętrznych, zaprzyjaźnionych stronach.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+
+          {/* Button */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex justify-center mb-24"
+          >
+            <Link href="/pytania">
+              <motion.button
+                whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-[#1e6b4f] text-white font-medium px-10 py-4 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-base tracking-wide"
+              >
+                Przejrzyj nasze najnowsze pytania
+              </motion.button>
+            </Link>
+          </motion.div>
+
+          {/* Disclaimer Text */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="border-t border-neutral-900/60 pt-10 max-w-4xl mx-auto text-center flex flex-col gap-3"
+          >
+            <p className="text-neutral-500 font-sans text-xs leading-relaxed">
+              Wszystkie dostępne w serwisie ProstaSprawa.pl rodzaje promocji działalności prawniczej są zgodne z zasadami etyki zawodowej.
+            </p>
+            <p className="text-neutral-500 font-sans text-xs leading-relaxed">
+              Zniesienie ograniczenia terytorialnego pozwala Prawnikowi dzięki serwisowi prostasprawa.pl docierać ze swoimi usługami i wiedzą nie tylko do osób w swoim regionie, ale i z całej Polski.
+            </p>
+          </motion.div>
+
+        </div>
+      </section>
     </>
   )
 }
