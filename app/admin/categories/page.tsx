@@ -127,6 +127,17 @@ export default function AdminCategoriesPage() {
     setExpandedRows(newExpanded)
   }
 
+  // Rozwijanie wszystkich kategorii
+  const handleExpandAll = () => {
+    const allIds = categories.map(cat => cat.id)
+    setExpandedRows(new Set(allIds))
+  }
+
+  // Zwijanie wszystkich kategorii
+  const handleCollapseAll = () => {
+    setExpandedRows(new Set())
+  }
+
 
   // Budowanie hierarchii kategorii
   const buildCategoryHierarchy = (categories: Category[]): Category[] => {
@@ -258,10 +269,18 @@ export default function AdminCategoriesPage() {
             Dodawaj, edytuj i zarządzaj kategoriami prawnymi
           </p>
         </div>
-        <Button onClick={() => router.push("/admin/categories/new")}>
-          <Plus className="h-4 w-4 mr-2" />
-          Dodaj kategorię
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExpandAll}>
+            Rozwiń wszystkie
+          </Button>
+          <Button variant="outline" onClick={handleCollapseAll}>
+            Zwiń wszystkie
+          </Button>
+          <Button onClick={() => router.push("/admin/categories/new")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Dodaj kategorię
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -302,7 +321,7 @@ export default function AdminCategoriesPage() {
           <DialogHeader>
             <DialogTitle>Potwierdzenie usunięcia</DialogTitle>
             <DialogDescription>
-              Czy na pewno chcesz usunąć kategorię "{selectedCategory?.nazwa}"? Tej operacji nie można cofnąć.
+              Czy na pewno chcesz usunąć kategorię &quot;{selectedCategory?.nazwa}&quot;? Tej operacji nie można cofnąć.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
