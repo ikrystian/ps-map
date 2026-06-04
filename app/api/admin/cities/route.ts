@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth"
+import { serverCache } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/admin/cities - Fetch all cities with pagination and filters
+// GET /api/admin/cities - Fetch cities with pagination and filters
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -14,6 +15,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const voivodeshipId = searchParams.get("voivodeshipId")
     const search = searchParams.get("search")
+    
+    const pageParam = searchParams.get("page")
+    const limitParam = searchParams.get("limit")
+    const page = pageParam && !isNaN(parseInt(pageParam, 10)) ? parseInt(pageParam, 10) : undefined
+    const limit = limitParam && !isNaN(parseInt(limitParam, 10)) ? parseInt(limitParam, 10) : undefined
 
     const where: any = {}
     if (voivodeshipId) {
@@ -23,17 +29,40 @@ export async function GET(request: NextRequest) {
       where.nazwa = { contains: search }
     }
 
-    const cities = await prisma.city.findMany({
-      where,
-      include: {
-        voivodeship: true,
-      },
-      orderBy: {
-        nazwa: "asc",
-      },
-    })
-
-    return NextResponse.json(cities)
+    if (page !== undefined && limit !== undefined) {
+      const skip = (page - 1) * limit
+      const [cities, total] = await Promise.all([
+        prisma.city.findMany({
+          where,
+          include: {
+            voivodeship: true,
+          },
+          orderBy: {
+            nazwa: "asc",
+          },
+          skip,
+          take: limit,
+        }),
+        prisma.city.count({ where })
+      ])
+      return NextResponse.json({
+        cities,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit)
+      })
+    } else {
+      const cities = await prisma.city.findMany({
+        where,
+        include: {
+          voivodeship: true,
+        },
+        orderBy: {
+          nazwa: "asc",
+        },
+      })
+      return NextResponse.json(cities)
+    }
   } catch (error) {
     console.error("Error fetching admin cities:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -65,6 +94,9 @@ export async function POST(request: NextRequest) {
         voivodeship: true,
       }
     })
+
+    // Invalidate cached cities
+    serverCache.invalidatePattern("cities")
 
     return NextResponse.json(city)
   } catch (error) {
