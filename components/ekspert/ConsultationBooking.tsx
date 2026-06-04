@@ -343,6 +343,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 onSlotSelect={handleSlotSelect}
                 adminTimeZone="Europe/Warsaw"
                 slotDuration={duration}
+                locale="pl"
               />
             </div>
           </motion.div>

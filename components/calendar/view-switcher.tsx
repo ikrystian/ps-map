@@ -22,19 +22,33 @@ import type { ViewType } from "./types";
 export function ViewSwitcher({
   view,
   onChange,
+  locale = "en",
 }: {
   view: ViewType;
   onChange: (v: ViewType) => void;
+  locale?: string;
 }) {
   const views: { key: ViewType; icon: React.ReactNode; label: string }[] = [
     {
       key: "month",
       icon: <LayoutGrid className="h-3.5 w-3.5" />,
-      label: "Month",
+      label: locale === "pl" ? "Miesiąc" : "Month",
     },
-    { key: "week", icon: <Calendar className="h-3.5 w-3.5" />, label: "Week" },
-    { key: "day", icon: <Sun className="h-3.5 w-3.5" />, label: "Day" },
-    { key: "agenda", icon: <List className="h-3.5 w-3.5" />, label: "Agenda" },
+    {
+      key: "week",
+      icon: <Calendar className="h-3.5 w-3.5" />,
+      label: locale === "pl" ? "Tydzień" : "Week",
+    },
+    {
+      key: "day",
+      icon: <Sun className="h-3.5 w-3.5" />,
+      label: locale === "pl" ? "Dzień" : "Day",
+    },
+    {
+      key: "agenda",
+      icon: <List className="h-3.5 w-3.5" />,
+      label: locale === "pl" ? "Terminarz" : "Agenda",
+    },
   ];
   return (
     <div className="flex items-center gap-0.5 bg-muted rounded-lg p-0.5">

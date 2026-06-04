@@ -32,27 +32,33 @@ export function SlotTip({
   slot,
   adminTZ,
   viewerTZ,
+  locale = "en",
 }: {
   slot: Slot;
   adminTZ: string;
   viewerTZ: string;
+  locale?: string;
 }) {
   return (
     <div className="text-xs space-y-1 min-w-[140px]">
       {slot.booked ? (
-        <p className="font-medium text-rose-400">Already booked</p>
+        <p className="font-medium text-rose-400">
+          {locale === "pl" ? "Termin zajęty" : "Already booked"}
+        </p>
       ) : (
-        <p className="font-medium">Book this slot</p>
+        <p className="font-medium">
+          {locale === "pl" ? "Zarezerwuj ten termin" : "Book this slot"}
+        </p>
       )}
       <p className="text-muted-foreground">
-        Your time:{" "}
+        {locale === "pl" ? "Twój czas:" : "Your time:"}{" "}
         <span className="text-background font-semibold">
           {slot.displayTime}
         </span>
       </p>
       {adminTZ !== viewerTZ && (
         <p className="text-muted-foreground">
-          Host time:{" "}
+          {locale === "pl" ? "Czas eksperta:" : "Host time:"}{" "}
           <span className="text-background font-semibold">
             {slot.adminDisplayTime}
           </span>

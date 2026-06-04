@@ -76,6 +76,8 @@ export interface CalendarSchedulerProps {
   defaultViewerTimeZone?: string;
   /** Duration of each booking slot in minutes (e.g., 15, 30, 60). */
   slotDuration: number;
+  /** Locale of the calendar ('pl' or 'en') */
+  locale?: "pl" | "en";
 }
 
 /** The four calendar view modes available to users. */

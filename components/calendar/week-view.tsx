@@ -20,6 +20,7 @@ import {
   isToday,
   startOfWeek,
 } from "date-fns";
+import { pl } from "date-fns/locale";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -46,6 +47,7 @@ export function WeekView({
   slotDuration,
   adminTZ,
   viewerTZ,
+  locale = "en",
   onDateSelect,
   onSlotSelect,
 }: {
@@ -56,10 +58,11 @@ export function WeekView({
   slotDuration: number;
   adminTZ: string;
   viewerTZ: string;
+  locale?: string;
   onDateSelect: (d: Date) => void;
   onSlotSelect: (d: Date, t: string) => void;
 }) {
-  const weekStart = startOfWeek(current, { weekStartsOn: 0 });
+  const weekStart = startOfWeek(current, { weekStartsOn: locale === "pl" ? 1 : 0 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const allAdminTimes = useMemo(() => {
@@ -83,10 +86,17 @@ export function WeekView({
         >
           <div className="py-2 px-2 text-xs justify-center flex flex-col text-muted-foreground items-center gap-0.5 font-medium">
             {adminTZ !== viewerTZ ? (
-              <>
-                <span className="block">Your TZ</span>
-                <span className="block opacity-60">Host TZ</span>
-              </>
+              locale === "pl" ? (
+                <>
+                  <span className="block text-center text-[10px] whitespace-nowrap">Twój czas</span>
+                  <span className="block text-center text-[9px] opacity-60 whitespace-nowrap">Ekspert</span>
+                </>
+              ) : (
+                <>
+                  <span className="block">Your TZ</span>
+                  <span className="block opacity-60">Host TZ</span>
+                </>
+              )
             ) : (
               ""
             )}
@@ -106,7 +116,9 @@ export function WeekView({
                 )}
               >
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {format(day, "EEE")}
+                  {locale === "pl"
+                    ? format(day, "EEEEEE", { locale: pl }).toUpperCase()
+                    : format(day, "EEE")}
                 </span>
                 <span
                   className={cn(
@@ -127,7 +139,7 @@ export function WeekView({
         <ScrollArea className="h-[420px]">
           {allAdminTimes.length === 0 ? (
             <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
-              No availability this week
+              {locale === "pl" ? "Brak wolnych terminów w tym tygodniu" : "No availability this week"}
             </div>
           ) : (
             allAdminTimes.map((adminTime) => {
@@ -140,11 +152,11 @@ export function WeekView({
                 >
                   <div className="py-2 px-2 text-right pr-3 leading-none pt-2">
                     <span className="text-[10px] text-foreground font-mono block">
-                      {formatInViewer(repUtc, viewerTZ)}
+                      {formatInViewer(repUtc, viewerTZ, locale)}
                     </span>
                     {adminTZ !== viewerTZ && (
                       <span className="text-[9px] text-muted-foreground font-mono block mt-0.5">
-                        {formatInAdmin(repUtc, adminTZ)}
+                        {formatInAdmin(repUtc, adminTZ, locale)}
                       </span>
                     )}
                   </div>
@@ -187,7 +199,11 @@ export function WeekView({
                                 : "bg-emerald-50 text-emerald-700 hover:bg-primary hover:text-primary-foreground dark:bg-emerald-950/30 dark:text-emerald-400 active:scale-95",
                           )}
                         >
-                          {isPast ? "Past" : booked ? "Booked" : "Open"}
+                          {isPast
+                            ? (locale === "pl" ? "Minęło" : "Past")
+                            : booked
+                              ? (locale === "pl" ? "Zajęte" : "Booked")
+                              : (locale === "pl" ? "Wolne" : "Open")}
                         </button>
                       </div>
                     );
