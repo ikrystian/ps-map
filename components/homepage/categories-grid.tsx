@@ -62,7 +62,7 @@ const CategoryCard = memo(
             <img
               src={category.ikonaUrl}
               alt=""
-              className="h-10 w-10 object-contain"
+              className="h-10 w-10 object-contain brightness-0 invert"
             />
           ) : category.ikona ? (
             (() => {
