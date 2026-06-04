@@ -428,57 +428,261 @@ export default function WinWithUsClientPage() {
           </motion.h2>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto mb-16">
+          <div className="flex flex-col gap-16 max-w-5xl mx-auto mb-16">
             
-            {/* Card 1 */}
+            {/* Card 1: Zadaj pytanie */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="relative group"
+              className="relative bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 md:p-12 transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)]"
             >
-              {/* Green circular badge */}
-              <div className="absolute -top-6 left-8 w-12 h-12 rounded-full bg-[#1b6349] flex items-center justify-center text-white font-bold text-lg shadow-lg z-20">
-                01.
+              {/* Overlapping Badge */}
+              <div className="absolute -top-6 left-8 px-6 py-2 bg-[#111110] border border-neutral-800/80 rounded-xl flex items-center justify-center shadow-lg z-20">
+                <span className="font-playfair text-white font-bold text-3xl leading-none">01</span>
               </div>
-              {/* Card Container */}
-              <div className="bg-[#1a1916] border border-neutral-800/80 rounded-2xl p-8 pt-12 h-full flex flex-col justify-between transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.08)]">
-                <div>
-                  <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-6 leading-snug">
-                    Kompleksowa <br />
-                    <span className="font-bold">obsługa prawna.</span>
-                  </h3>
-                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
-                    Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników z całego kraju. Problemy związane z działalnością gospodarczą, kwestie podatkowe, spory pracownicze czy osobiste wyzwania prawne jak rozwód czy sprawy spadkowe - u nas znajdziesz wsparcie ekspertów z każdej dziedzin.
+
+              {/* Title */}
+              <h3 className="font-playfair text-xl sm:text-2xl text-neutral-200 font-normal text-center mb-16 mt-4">
+                Aby zadać pytanie za pośrednictwem ProstaSprawa.pl należy:
+              </h3>
+
+              {/* Steps Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative">
+                
+                {/* Connecting Curved Dotted SVG Line (only visible on md+) */}
+                <svg
+                  viewBox="0 0 800 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block"
+                >
+                  <path
+                    d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
+                    stroke="#2a2926"
+                    strokeWidth="1.5"
+                    strokeDasharray="6 6"
+                  />
+                  <circle cx="50" cy="40" r="4.5" fill="#fff" />
+                  <g transform="translate(740, 27) scale(0.65)" fill="#666">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </g>
+                </svg>
+
+                {/* Step 1 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    01
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* Envelope Icon with nested phone circle */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <rect x="4" y="10" width="32" height="22" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M4 12 L20 22 L36 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="28" cy="22" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      {/* Phone inside circle */}
+                      <path d="M26 20 C26 21.5 27 23 29 23" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                      <path d="M25.5 19.5 L26.5 20.5 L26 21 C26.5 21.5 27 22 27.5 21.5 L28 21 L29 22" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Uzupełnić <br />
+                    adres e-mail
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    na podany adres przesyłana jest informacja o pojawieniu się nowej odpowiedzi, jednak sam adres e-mail nie jest podawany do publicznej wiadomości;
                   </p>
                 </div>
+
+                {/* Step 2 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    02
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* Document Icon with nested phone circle */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <rect x="7" y="6" width="26" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M12 12 H28 M12 18 H22 M12 24 H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="28" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      {/* Phone inside circle */}
+                      <path d="M26 22 C26 23.5 27 25 29 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                      <path d="M25.5 21.5 L26.5 22.5 L26 23 C26.5 23.5 27 24 27.5 23.5 L28 23 L29 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Uzupełnić pole <br />
+                    "Zadaj pytanie"
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    służy ono do określenia przedmiotu opisywanej sprawy;
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    03
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* User profile Icon with nested phone receiver */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <circle cx="20" cy="12" r="6" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M8 30 C8 24 13 22 20 22 C27 22 32 24 32 30" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="29" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      {/* Phone inside circle */}
+                      <path d="M27 22 C27 23.5 28 25 30 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                      <path d="M26.5 21.5 L27.5 22.5 L27 23 C27.5 23.5 28 24 28.5 23.5 L29 23 L30 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Uzupełnić pole <br />
+                    "Wyjaśnij sytuację"
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    tutaj pytający może zaprezentować kontekst opisywanej sytuacji w celu lepszego jej zobrazowania;
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Extra info text below columns */}
+              <p className="text-neutral-300 font-playfair text-sm sm:text-base italic text-center mt-12 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Osoba zadająca pytanie ma również możliwość wybrania kategorii, której ono dotyczy, jednak nie jest to krok obowiązkowy.
+              </p>
+
+              {/* Disclaimer / Warning */}
+              <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
+                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
+                <p className="text-neutral-500 font-sans text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                  Tekst, który Użytkownik umieści w powyższych polach zostanie w całości opublikowany w serwisie - bez uprzedniej moderacji. Mając więc na uwadze bezpieczeństwo naszych użytkowników nie zalecamy podawania żadnych danych osobowych w tychże polach.
+                </p>
               </div>
             </motion.div>
 
-            {/* Card 2 */}
+            {/* Card 2: Wyszukaj Prawnika */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative group"
+              className="relative bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 md:p-12 transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)]"
             >
-              {/* Green circular badge */}
-              <div className="absolute -top-6 left-8 w-12 h-12 rounded-full bg-[#1b6349] flex items-center justify-center text-white font-bold text-lg shadow-lg z-20">
-                02.
+              {/* Overlapping Badge */}
+              <div className="absolute -top-6 left-8 px-6 py-2 bg-[#111110] border border-neutral-800/80 rounded-xl flex items-center justify-center shadow-lg z-20">
+                <span className="font-playfair text-white font-bold text-3xl leading-none">02</span>
               </div>
-              {/* Card Container */}
-              <div className="bg-[#1a1916] border border-neutral-800/80 rounded-2xl p-8 pt-12 h-full flex flex-col justify-between transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.08)]">
-                <div>
-                  <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-6 leading-snug">
-                    Odpowiadaj na pytania <br />
-                    <span className="font-bold">i buduj zaufanie.</span>
-                  </h3>
-                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
-                    Aktywność w serwisie przyciąga uwagę, budując równocześnie wizerunek eksperta, budzącego zaufanie klientów. Najbardziej aktywni Prawnicy są dodatkowo promowani w serwisie oraz na naszych zewnętrznych, zaprzyjaźnionych stronach.
+
+              {/* Title */}
+              <h3 className="font-playfair text-xl sm:text-2xl text-neutral-200 font-normal text-center mb-16 mt-4">
+                Aby bezpośrednio skontaktować się z Prawnikiem należy:
+              </h3>
+
+              {/* Steps Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative">
+                
+                {/* Connecting Curved Dotted SVG Line (only visible on md+) */}
+                <svg
+                  viewBox="0 0 800 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block"
+                >
+                  <path
+                    d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
+                    stroke="#2a2926"
+                    strokeWidth="1.5"
+                    strokeDasharray="6 6"
+                  />
+                  <circle cx="50" cy="40" r="4.5" fill="#fff" />
+                  <g transform="translate(740, 27) scale(0.65)" fill="#666">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </g>
+                </svg>
+
+                {/* Step 1 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    01
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* Search / Glass Icon */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <circle cx="16" cy="16" r="8" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="22" y1="22" x2="32" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="28" cy="28" r="5" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Wyszukać <br />
+                    Eksperta
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    skorzystaj z naszej wyszukiwarki lub rankingu na stronie głównej, filtrując według specjalizacji i lokalizacji;
                   </p>
                 </div>
+
+                {/* Step 2 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    02
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* Star / Profile review icon */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <rect x="8" y="6" width="24" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M12 12 H22 M12 18 H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <polygon points="16,24 18,28 22,28 19,30 20,34 16,32 12,34 13,30 10,28 14,28" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Zapoznać się <br />
+                    z profilem
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    przeczytaj opinie innych klientów, sprawdź zakres oferowanej pomocy prawnej, cennik oraz dotychczasową aktywność;
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-center relative z-10">
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
+                    03
+                  </div>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
+                    {/* Calendar / Telephone icon */}
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
+                      <rect x="6" y="8" width="28" height="24" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M6 14 H34 M12 6 V10 M28 6 V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="28" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      {/* Phone inside circle */}
+                      <path d="M26 22 C26 23.5 27 25 29 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                      <path d="M25.5 21.5 L26.5 22.5 L26 23 C26.5 23.5 27 24 27.5 23.5 L28 23 L29 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
+                    Nawiązać <br />
+                    kontakt
+                  </h4>
+                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                    zadzwoń pod wskazany numer telefonu, wyślij wiadomość bezpośrednią lub zarezerwuj dogodny termin konsultacji;
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Extra info text below columns */}
+              <p className="text-neutral-300 font-playfair text-sm sm:text-base italic text-center mt-12 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Kontakt z Ekspertem jest całkowicie bezpłatny i nie wiąże się z żadnymi opłatami na rzecz serwisu.
+              </p>
+
+              {/* Disclaimer / Warning */}
+              <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
+                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
+                <p className="text-neutral-500 font-sans text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                  Warunki ewentualnej współpracy oraz wysokość honorarium są ustalane bezpośrednio pomiędzy Klientem a Prawnikiem. Serwis ProstaSprawa.pl nie pośredniczy w tych ustaleniach.
+                </p>
               </div>
             </motion.div>
 
