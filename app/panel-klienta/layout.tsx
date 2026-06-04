@@ -326,20 +326,12 @@ export default function ClientPanelLayout({
                     rel="noopener noreferrer"
                     className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800/20 text-zinc-400 group-hover:text-white transition-colors">
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                        <circle cx="12" cy="12" r="2.5" fill="currentColor" />
-                        <path d="M12 7a5 5 0 1 1-5 5" />
-                        <path d="M12 3a9 9 0 1 1-9 9" />
-                      </svg>
-                    </div>
+
                     <div className="flex flex-col items-start leading-none">
                       <span className="text-md font-bold text-white tracking-tight">
                         Identyfikacja<span className="font-extrabold text-zinc-300">Firm</span>
                       </span>
-                      <span className="text-[7.5px] text-zinc-500 uppercase tracking-widest font-bold mt-0.5 self-end">
-                        kielce
-                      </span>
+
                     </div>
                   </a>
 
@@ -353,12 +345,7 @@ export default function ClientPanelLayout({
                     rel="noopener noreferrer"
                     className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800/20 text-zinc-400 group-hover:text-white transition-colors">
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M7 8.5v4h5.5" />
-                        <path d="M12.5 5.5v10" />
-                      </svg>
-                    </div>
+
                     <span className="text-md font-bold text-white tracking-tight">
                       4<span className="font-semibold text-zinc-300">Connection</span>
                     </span>

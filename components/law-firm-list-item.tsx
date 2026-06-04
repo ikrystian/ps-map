@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { PackageBadge, PackageType } from "@/components/permissions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,7 +13,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn, stripHtmlTags } from "@/lib/utils";
 import {
-  ArrowUpRight,
   Globe,
   LucideIcon,
   Mail,
@@ -19,6 +20,7 @@ import {
   Phone,
   Star,
 } from "lucide-react";
+import ArrowUpLeftIcon from "@/components/ui/arrow-up-left-icon";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -320,8 +322,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
         ? `OIRP ${lawFirm.oirpMiasto}`
         : "ORA Kielce";
 
+  const [isCardHovered, setIsCardHovered] = useState(true);
+
   return (
-    <Link href={`/ekspert/${lawFirm.slug}`} className="block group">
+    <Link
+      href={`/ekspert/${lawFirm.slug}`}
+      className="block group expert-item"
+      onMouseEnter={() => setIsCardHovered(false)}
+      onMouseLeave={() => setIsCardHovered(true)}
+    >
       <Card
         className={cn(
           "relative overflow-hidden transition-all duration-500 hover:-translate-y-2 list-main-item border",
@@ -504,8 +513,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 />
               </div>
 
-              <div className="bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 group-hover:bg-[#0db19f] group-hover:shadow-[0_0_15px_rgba(13,177,159,0.3)] flex items-center justify-center">
-                <ArrowUpRight className="w-6 h-6 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <div className="expert-item-btn bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 group-hover:bg-[#0db19f] group-hover:shadow-[0_0_15px_rgba(13,177,159,0.3)] flex items-center justify-center absolute right-0 bottom-0">
+                <ArrowUpLeftIcon
+                  size={36}
+                  strokeWidth={2.5}
+                  isHovered={isCardHovered}
+                  duration={0.5}
+                  repeatDelay={0}
+                  className="text-white"
+                />
               </div>
             </div>
           </div>
