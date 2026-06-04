@@ -11,6 +11,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { BorderBeam } from "@/components/ui/border-beam"
+import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 interface LawFirm {
   id: string
@@ -87,6 +88,23 @@ export default function RankingClientPage() {
 
   return (
     <div className="min-h-screen bg-background-sec pb-12 overflow-hidden animate-fade-in">
+      {/* Breadcrumbs Banner */}
+      <div
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container mx-auto px-4 relative z-10">
+          <ResponsiveBreadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Ranking" },
+            ]}
+          />
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="relative py-16 md:py-24 overflow-hidden border-b border-border/10 bg-zinc-950/40">
         <div className="absolute top-0 left-1/4 w-[350px] h-[350px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
