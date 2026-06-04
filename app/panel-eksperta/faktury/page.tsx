@@ -1,6 +1,7 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { BorderBeam } from "@/components/ui/border-beam"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 import {
   CheckCircle2,
   Clock,
@@ -20,10 +23,13 @@ import {
   FileText,
   Loader2,
   Send,
-  XCircle
+  XCircle,
+  Sparkles,
+  Coins,
+  ShieldCheck,
+  AlertCircle
 } from "lucide-react"
 import { useEffect, useState } from "react"
-
 
 interface Invoice {
   id: string
@@ -52,19 +58,41 @@ interface Invoice {
   }
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
-  DRAFT: { label: "Szkic", variant: "secondary", icon: Clock },
-  ISSUED: { label: "Wystawiona", variant: "outline", icon: FileText },
-  SENT: { label: "Wysłana", variant: "default", icon: CheckCircle2 },
-  PAID: { label: "Opłacona", variant: "default", icon: CheckCircle2 },
-  CANCELLED: { label: "Anulowana", variant: "destructive", icon: XCircle },
+const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
+  DRAFT: { label: "Szkic", className: "bg-zinc-500/10 text-zinc-400 border border-zinc-500/30", icon: Clock },
+  ISSUED: { label: "Wystawiona", className: "bg-sky-500/10 text-sky-400 border border-sky-500/30", icon: FileText },
+  SENT: { label: "Wysłana", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30", icon: CheckCircle2 },
+  PAID: { label: "Opłacona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30", icon: CheckCircle2 },
+  CANCELLED: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/30", icon: XCircle },
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 300,
+      damping: 24,
+    },
+  },
 }
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [syncingId, setSyncingId] = useState<string | null>(null)
-
 
   useEffect(() => {
     fetchInvoices()
@@ -103,7 +131,6 @@ export default function InvoicesPage() {
     }
   }
 
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
@@ -128,211 +155,383 @@ export default function InvoicesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie faktur VAT...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Faktury VAT"
-        subtitle="Historia faktur VAT dla Twojego profilu"
-      />
+    <div className="relative space-y-8 pb-12 overflow-hidden min-h-screen">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {invoices.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Brak faktur</h3>
-            <p className="text-muted-foreground">
-              Nie masz jeszcze żadnych faktur VAT
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista faktur</CardTitle>
-            <CardDescription>
-              Wszystkie faktury VAT wystawione dla Twojego profilu
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Numer faktury</TableHead>
-                  <TableHead>Data wystawienia</TableHead>
-                  <TableHead>Przedmiot</TableHead>
-                  <TableHead>Kwota netto</TableHead>
-                  <TableHead>VAT</TableHead>
-                  <TableHead>Kwota brutto</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Status KSeF</TableHead>
-                  <TableHead>Akcje</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoices.map((invoice) => {
-                  const statusInfo = statusConfig[invoice.status] || statusConfig.ISSUED
-                  const StatusIcon = statusInfo.icon
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <PageHeader
+          title="Faktury VAT"
+          subtitle="Zarządzaj swoimi fakturami, sprawdzaj status płatności oraz wysyłaj dokumenty do KSeF."
+          titleClassName="text-white text-3xl sm:text-4xl"
+        />
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+          <Sparkles className="h-3 w-3 animate-pulse" />
+          ROZLICZENIA I KRAJOWY SYSTEM E-FAKTUR
+        </div>
+      </motion.div>
 
-                  return (
-                    <TableRow key={invoice.id}>
-                      <TableCell className="font-medium">
-                        {invoice.invoiceNumber}
-                      </TableCell>
-                      <TableCell>{formatDate(invoice.issueDate)}</TableCell>
-                      <TableCell>
-                        {invoice.order.orderType === "SUBSCRIPTION" ? (
-                          <div>
-                            <div className="font-medium">
-                              {invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}
+      {/* Main Container */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="space-y-6 relative z-10"
+      >
+        {invoices.length === 0 ? (
+          <motion.div variants={itemVariants}>
+            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+              <CardContent className="flex flex-col items-center justify-center py-16 max-w-md mx-auto text-center space-y-4">
+                <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
+                  <FileText className="h-8 w-8 text-zinc-500 animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Brak faktur</h3>
+                  <p className="text-zinc-400 text-xs mt-1.5 leading-relaxed font-light">
+                    Nie wystawiono jeszcze żadnych faktur VAT na Twoim profilu. Faktury pojawią się automatycznie po wykupieniu pakietu punktów lub subskrypcji.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ) : (
+          <>
+            <motion.div variants={itemVariants}>
+              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+                <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+                <CardHeader className="border-b border-border/20 py-4 px-6">
+                  <CardTitle className="text-lg font-playfair text-white">Historia faktur</CardTitle>
+                  <CardDescription className="text-zinc-400 text-xs">
+                    Wszystkie wygenerowane faktury rozliczeniowe za usługi portalu ({invoices.length})
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-b border-border/20 hover:bg-transparent">
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Numer faktury</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data wystawienia</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Przedmiot</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Kwota netto</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">VAT</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Kwota brutto</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-44">Status KSeF</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {invoices.map((invoice) => {
+                          const statusInfo = statusConfig[invoice.status] || statusConfig.ISSUED
+                          const StatusIcon = statusInfo.icon
+
+                          return (
+                            <TableRow key={invoice.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
+                              <TableCell className="py-4 px-6 font-semibold text-white">
+                                {invoice.invoiceNumber}
+                              </TableCell>
+                              <TableCell className="py-4 px-6 text-xs font-light text-zinc-400">
+                                <div className="flex items-center gap-1.5">
+                                  <Clock className="h-3.5 w-3.5 text-zinc-500" />
+                                  {formatDate(invoice.issueDate)}
+                                </div>
+                              </TableCell>
+                              <TableCell className="py-4 px-6">
+                                {invoice.order.orderType === "SUBSCRIPTION" ? (
+                                  <div>
+                                    <div className="font-semibold text-zinc-200">
+                                      {invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}
+                                    </div>
+                                    <div className="text-[10px] text-zinc-500 font-light">
+                                      Zamówienie: {invoice.order.orderNumber}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <div className="font-semibold text-zinc-200">Pakiet punktów</div>
+                                    <div className="text-[10px] text-zinc-500 font-light">
+                                      Zamówienie: {invoice.order.orderNumber}
+                                    </div>
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell className="py-4 px-6 font-light">{formatCurrency(invoice.netAmount)}</TableCell>
+                              <TableCell className="py-4 px-6 font-light text-xs text-zinc-400">
+                                {formatCurrency(invoice.vatAmount)}
+                                <span className="text-[10px] text-zinc-500 ml-1">
+                                  ({invoice.vatRate}%)
+                                </span>
+                              </TableCell>
+                              <TableCell className="py-4 px-6 font-bold text-white">
+                                {formatCurrency(invoice.grossAmount)}
+                              </TableCell>
+                              <TableCell className="py-4 px-6">
+                                <Badge className={cn("gap-1.5 py-0.5 rounded-md font-medium", statusInfo.className)}>
+                                  <StatusIcon className="h-3.5 w-3.5" />
+                                  {statusInfo.label}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="py-4 px-6">
+                                {invoice.ksefStatus === "ACCEPTED" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 rounded-md">
+                                      <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                                      Zaakceptowano
+                                    </Badge>
+                                    {invoice.ksefNumber && (
+                                      <div className="text-[9px] font-mono text-zinc-500 break-all max-w-[140px]" title={invoice.ksefNumber}>
+                                        {invoice.ksefNumber}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "SENT" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 rounded-md">
+                                      <Clock className="h-3 w-3 animate-pulse text-blue-400" />
+                                      Wysłano
+                                    </Badge>
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "PENDING" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 rounded-md">
+                                      <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+                                      Przetwarzanie
+                                    </Badge>
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "FAILED" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 rounded-md" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
+                                      <XCircle className="h-3 w-3" />
+                                      Błąd wysyłki
+                                    </Badge>
+                                    {invoice.ksefDiagnostics && (
+                                      <div className="text-[9px] text-rose-400 max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
+                                        {invoice.ksefDiagnostics}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
+                                  <div className="mt-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-xs text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-2 py-1 h-7 flex items-center gap-1"
+                                      onClick={() => handleSendToKsef(invoice.id)}
+                                      disabled={syncingId === invoice.id}
+                                    >
+                                      {syncingId === invoice.id ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Send className="h-3 w-3" />
+                                      )}
+                                      {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                                    </Button>
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell className="py-4 px-6 text-right">
+                                <div className="flex items-center justify-end">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDownload(invoice)}
+                                    className="h-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all text-xs gap-1.5"
+                                  >
+                                    <Download className="h-3.5 w-3.5" />
+                                    Pobierz PDF
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile Card List View */}
+                  <div className="block md:hidden p-4 space-y-3">
+                    {invoices.map((invoice) => {
+                      const statusInfo = statusConfig[invoice.status] || statusConfig.ISSUED
+                      const StatusIcon = statusInfo.icon
+
+                      return (
+                        <div key={invoice.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-[#0da192]/30 transition-all">
+                          <div className="flex justify-between items-start gap-2">
+                            <div>
+                              <h4 className="font-semibold text-white text-sm">
+                                {invoice.invoiceNumber}
+                              </h4>
+                              <p className="text-[10px] text-zinc-500 font-light mt-0.5">{formatDate(invoice.issueDate)}</p>
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                              Zamówienie: {invoice.order.orderNumber}
-                            </div>
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="font-medium">Pakiet punktów</div>
-                            <div className="text-sm text-muted-foreground">
-                              Zamówienie: {invoice.order.orderNumber}
-                            </div>
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>{formatCurrency(invoice.netAmount)}</TableCell>
-                      <TableCell>
-                        {formatCurrency(invoice.vatAmount)}
-                        <span className="text-xs text-muted-foreground ml-1">
-                          ({invoice.vatRate}%)
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-semibold">
-                        {formatCurrency(invoice.grossAmount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={statusInfo.variant} className="gap-1">
-                          <StatusIcon className="h-3 w-3" />
-                          {statusInfo.label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {invoice.ksefStatus === "ACCEPTED" && (
-                          <div className="space-y-1">
-                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1 py-0.5">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                              Zaakceptowano
+                            <Badge className={cn("gap-1 py-0.5 rounded-md font-medium text-[10px]", statusInfo.className)}>
+                              <StatusIcon className="h-3 w-3" />
+                              {statusInfo.label}
                             </Badge>
-                            {invoice.ksefNumber && (
-                              <div className="text-[10px] font-mono text-muted-foreground break-all max-w-[140px]" title={invoice.ksefNumber}>
-                                {invoice.ksefNumber}
+                          </div>
+
+                          <div className="border-t border-border/5 pt-2">
+                            <span className="text-[10px] text-zinc-500 block font-light">Przedmiot</span>
+                            <span className="text-zinc-200 font-semibold text-xs">
+                              {invoice.order.orderType === "SUBSCRIPTION"
+                                ? (invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji")
+                                : "Pakiet punktów"
+                              }
+                            </span>
+                            <p className="text-[9px] text-zinc-500">Zamówienie: {invoice.order.orderNumber}</p>
+                          </div>
+
+                          <div className="flex justify-between items-center border-t border-border/5 pt-2 text-[10px]">
+                            <div>
+                              <span className="text-zinc-500 block font-light">Kwota netto</span>
+                              <span className="text-zinc-300 font-medium">{formatCurrency(invoice.netAmount)}</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-zinc-500 block font-light">Kwota brutto</span>
+                              <span className="text-[#0da192] font-semibold text-sm">{formatCurrency(invoice.grossAmount)}</span>
+                            </div>
+                          </div>
+
+                          {/* KSeF Status on Mobile */}
+                          <div className="flex items-center justify-between border-t border-border/5 pt-2.5">
+                            <div>
+                              <span className="text-zinc-500 block font-light text-[9px]">Status KSeF</span>
+                              <div className="mt-1">
+                                {invoice.ksefStatus === "ACCEPTED" && (
+                                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                    <CheckCircle2 className="h-3 w-3" />
+                                    Zaakceptowano
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "SENT" && (
+                                  <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                    <Clock className="h-3 w-3 animate-pulse" />
+                                    Wysłano
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "PENDING" && (
+                                  <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 px-2 text-[9px]">
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Przetwarzanie
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "FAILED" && (
+                                  <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 px-2 text-[9px]">
+                                    <XCircle className="h-3 w-3" />
+                                    Błąd wysyłki
+                                  </Badge>
+                                )}
+                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-[10px] text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-md p-1 h-auto flex items-center gap-1"
+                                    onClick={() => handleSendToKsef(invoice.id)}
+                                    disabled={syncingId === invoice.id}
+                                  >
+                                    {syncingId === invoice.id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <Send className="h-3 w-3" />
+                                    )}
+                                    {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                                  </Button>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        )}
-                        {invoice.ksefStatus === "SENT" && (
-                          <div className="space-y-1">
-                            <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 gap-1 py-0.5">
-                              <Clock className="h-3 w-3 animate-pulse text-blue-500" />
-                              Wysłano
-                            </Badge>
-                          </div>
-                        )}
-                        {invoice.ksefStatus === "PENDING" && (
-                          <div className="space-y-1">
-                            <Badge variant="outline" className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 gap-1 py-0.5">
-                              <Loader2 className="h-3 w-3 animate-spin text-amber-500" />
-                              Przetwarzanie
-                            </Badge>
-                          </div>
-                        )}
-                        {invoice.ksefStatus === "FAILED" && (
-                          <div className="space-y-1">
-                            <Badge variant="destructive" className="gap-1 py-0.5" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
-                              <XCircle className="h-3 w-3" />
-                              Błąd wysyłki
-                            </Badge>
-                            {invoice.ksefDiagnostics && (
-                              <div className="text-[10px] text-destructive max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
-                                {invoice.ksefDiagnostics}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
-                          <div className="mt-1">
+                            </div>
+
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
-                              className="text-xs text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950/30 p-1 h-auto flex items-center"
-                              onClick={() => handleSendToKsef(invoice.id)}
-                              disabled={syncingId === invoice.id}
+                              onClick={() => handleDownload(invoice)}
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1 text-[10px]"
                             >
-                              {syncingId === invoice.id ? (
-                                <Loader2 className="h-3 w-3 animate-spin mr-1" />
-                              ) : (
-                                <Send className="h-3 w-3 mr-1" />
-                              )}
-                              {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                              <Download className="h-3.5 w-3.5" />
+                              Pobierz PDF
                             </Button>
                           </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDownload(invoice)}
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            Pobierz PDF
-                          </Button>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+                      )
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-      {/* Podsumowanie */}
-      {invoices.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Podsumowanie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <div className="text-sm text-muted-foreground">Liczba faktur</div>
-                <div className="text-2xl font-bold">{invoices.length}</div>
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Opłacone</div>
-                <div className="text-2xl font-bold text-green-600">
-                  {invoices.filter((inv) => inv.status === "PAID").length}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Łączna kwota</div>
-                <div className="text-2xl font-bold">
-                  {formatCurrency(
-                    invoices.reduce((sum, inv) => sum + inv.grossAmount, 0)
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            {/* Podsumowanie */}
+            <motion.div variants={itemVariants}>
+              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+                <CardHeader className="border-b border-border/20 py-4 px-6">
+                  <CardTitle className="text-lg font-playfair text-white">Podsumowanie finansowe</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Liczba dokumentów</div>
+                        <div className="text-2xl font-bold text-white tracking-tight">{invoices.length}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Opłacone faktury</div>
+                        <div className="text-2xl font-bold text-emerald-400 tracking-tight">
+                          {invoices.filter((inv) => inv.status === "PAID").length}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-lg bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d]">
+                        <Coins className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Łączna kwota brutto</div>
+                        <div className="text-2xl font-bold text-white tracking-tight">
+                          {formatCurrency(
+                            invoices.reduce((sum, inv) => sum + inv.grossAmount, 0)
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </>
+        )}
+      </motion.div>
     </div>
   )
 }
