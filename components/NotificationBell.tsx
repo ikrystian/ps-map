@@ -14,7 +14,8 @@ import { toast } from "@/components/ui/sonner"
 import { useSocket } from "@/hooks/useSocket"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
-import { Bell, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
+import BellIcon from "@/components/bell-icon"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -176,7 +177,14 @@ export function NotificationBell() {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+          <BellIcon
+            size={20}
+            strokeWidth={2}
+            isHovered={unreadCount === 0}
+            duration={0.8}
+            repeatDelay={2}
+            className="text-current"
+          />
           {unreadCount > 0 && (
             <Badge
               variant="destructive"
