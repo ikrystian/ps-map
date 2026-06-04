@@ -23,6 +23,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Plus,
   UserCircle,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
@@ -298,6 +299,12 @@ export default function ClientPanelLayout({
 
           {/* Notifications and User menu */}
           <div className="flex items-center gap-3">
+            <Link href="/panel-klienta/sprawy/dodaj">
+
+
+              <Button variant="outline">Dodaj sprawę<Plus className="h-4 w-4" /></Button>
+            </Link>
+
             <NotificationBell />
             <UserMenu
               userRole="CLIENT"

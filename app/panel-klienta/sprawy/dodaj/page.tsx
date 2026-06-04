@@ -1041,7 +1041,6 @@ export default function ClientAddCasePage() {
         <p className="text-sm text-zinc-400 mt-1.5 font-light">
           Wypełnij poniższy formularz krok po kroku. Umożliwi to prawnikom dokładną analizę i rzetelną wycenę Twojej sprawy.
         </p>
-        d
       </motion.div>
 
       {/* Main Form Area */}
