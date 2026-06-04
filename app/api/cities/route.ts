@@ -19,13 +19,31 @@ export async function GET(request: NextRequest) {
           where.voivodeshipId = voivodeshipId
         }
         if (search) {
-          where.nazwa = { contains: search }
+          where.OR = [
+            {
+              nazwa: {
+                contains: search,
+                mode: "insensitive"
+              }
+            },
+            {
+              postalCodes: {
+                some: {
+                  code: {
+                    contains: search,
+                    mode: "insensitive"
+                  }
+                }
+              }
+            }
+          ]
         }
 
         return await prisma.city.findMany({
           where,
           include: {
             voivodeship: true,
+            postalCodes: true,
           },
           orderBy: {
             nazwa: "asc",
