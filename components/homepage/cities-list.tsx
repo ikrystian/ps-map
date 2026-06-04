@@ -251,7 +251,7 @@ export const CITIES = [
 ]
 
 export function CitiesList() {
-  const [cities, setCities] = useState<string[]>([])
+  const [cities, setCities] = useState<{ id: string; nazwa: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -261,7 +261,15 @@ export function CitiesList() {
         const res = await fetch("/api/cities")
         const data = await res.json()
         if (Array.isArray(data)) {
-          setCities(data.map((c: any) => c.nazwa))
+          const seen = new Set<string>()
+          const unique: { id: string; nazwa: string }[] = []
+          for (const c of data) {
+            if (c.nazwa && !seen.has(c.nazwa)) {
+              seen.add(c.nazwa)
+              unique.push({ id: c.id, nazwa: c.nazwa })
+            }
+          }
+          setCities(unique)
         }
       } catch (error) {
         console.error("Error fetching cities:", error)
@@ -303,14 +311,14 @@ export function CitiesList() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {visibleCities.map((city) => (
               <Button
-                key={city}
+                key={city.id}
                 asChild
                 variant="outline"
                 className="justify-start"
               >
-                <Link href={`/szukaj-prawnika?miasto=${city}`}>
+                <Link href={`/szukaj-prawnika?miasto=${city.nazwa}`}>
                   <MapPin className="h-4 w-4 mr-2 text-primary" />
-                  {city}
+                  {city.nazwa}
                 </Link>
               </Button>
             ))}
