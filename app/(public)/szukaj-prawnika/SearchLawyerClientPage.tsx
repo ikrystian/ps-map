@@ -104,6 +104,9 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
   return currentTime >= fromTime && currentTime <= toTime
 }
 
+// Client-side cache for city searches to avoid redundant api queries
+const clientCitiesCache: Record<string, any[]> = {}
+
 export default function SearchLawyerPage() {
   const searchParams = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
@@ -111,7 +114,9 @@ export default function SearchLawyerPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [cities, setCities] = useState<Array<{ id: string; nazwa: string; voivodeshipId: string; voivodeship: { slug: string } }>>([])
+  const [cities, setCities] = useState<any[]>([])
+  const [locationSearch, setLocationSearch] = useState("")
+  const [isLoadingCities, setIsLoadingCities] = useState(false)
   const [total, setTotal] = useState(0)
   const [locationOpen, setLocationOpen] = useState(false)
 
@@ -175,22 +180,7 @@ export default function SearchLawyerPage() {
       }
     }
 
-    const fetchCities = async () => {
-      try {
-        const response = await fetch("/api/cities")
-        if (response.ok) {
-          const data = await response.json()
-          if (Array.isArray(data)) {
-            setCities(data)
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching cities:", error)
-      }
-    }
-
     fetchFilters()
-    fetchCities()
   }, [])
 
   // Fetch law firms based on filters
@@ -228,31 +218,79 @@ export default function SearchLawyerPage() {
     fetchLawFirms()
   }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page])
 
-  const totalPages = Math.ceil(total / limit)
+  // Dynamic fetch and caching for cities
+  useEffect(() => {
+    const query = locationSearch.trim().toLowerCase()
+    if (query.length < 2) {
+      setCities([])
+      setIsLoadingCities(false)
+      return
+    }
 
-  // Cities filtered by selected voivodeship
-  const filteredCities = selectedVoivodeship === "all"
-    ? cities
-    : cities.filter(c => c.voivodeship.slug === selectedVoivodeship)
+    const activeVoivodeship = voivodeships.find(v => v.slug === selectedVoivodeship)
+    const voivodeshipId = activeVoivodeship?.id || "all"
+    const cacheKey = `${voivodeshipId}:${query}`
+
+    if (clientCitiesCache[cacheKey]) {
+      setCities(clientCitiesCache[cacheKey])
+      setIsLoadingCities(false)
+      return
+    }
+
+    setIsLoadingCities(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(async () => {
+      try {
+        let url = `/api/cities?search=${encodeURIComponent(query)}`
+        if (voivodeshipId !== "all") {
+          url += `&voivodeshipId=${voivodeshipId}`
+        }
+
+        const response = await fetch(url, {
+          signal: controller.signal,
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data)) {
+            clientCitiesCache[cacheKey] = data
+            setCities(data)
+          }
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching cities:", error)
+        }
+      } finally {
+        setIsLoadingCities(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [locationSearch, selectedVoivodeship, voivodeships])
+
+  // Reset location search when popover closes
+  useEffect(() => {
+    if (!locationOpen) {
+      setLocationSearch("")
+      setCities([])
+    }
+  }, [locationOpen])
+
+  const totalPages = Math.ceil(total / limit)
 
   const handleVoivodeshipChange = (value: string) => {
     setSelectedVoivodeship(value)
-    // Clear city if it doesn't belong to newly selected voivodeship
-    if (value !== "all" && selectedCity) {
-      const cityObj = cities.find(c => c.nazwa === selectedCity)
-      if (cityObj && cityObj.voivodeship.slug !== value) {
-        setSelectedCity("")
-      }
-    }
+    setSelectedCity("")
     setPage(1)
   }
 
-  const handleCityChange = (cityName: string) => {
+  const handleCityChange = (cityName: string, voivodeshipSlug?: string) => {
     setSelectedCity(cityName)
-    // Auto-set voivodeship based on selected city
-    const cityObj = cities.find(c => c.nazwa === cityName)
-    if (cityObj) {
-      setSelectedVoivodeship(cityObj.voivodeship.slug)
+    if (voivodeshipSlug) {
+      setSelectedVoivodeship(voivodeshipSlug)
     }
     setPage(1)
   }
@@ -399,37 +437,64 @@ export default function SearchLawyerPage() {
                             </div>
                           </button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0" align="start">
-                          <Command>
-                            <CommandInput placeholder="Szukaj miasta..." />
-                            <CommandList>
-                              <CommandEmpty>Nie znaleziono.</CommandEmpty>
+                        <PopoverContent className="w-[240px] p-0 bg-card border-neutral-800 text-white" align="start">
+                          <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                            <CommandInput
+                              placeholder="Szukaj miasta..."
+                              value={locationSearch}
+                              onValueChange={setLocationSearch}
+                              className="text-white bg-transparent border-neutral-800"
+                            />
+                            <CommandList className="max-h-60 overflow-y-auto">
+                              {isLoadingCities && (
+                                <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                              )}
+                              {!isLoadingCities && locationSearch.trim().length < 2 && (
+                                <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                  Wpisz co najmniej 2 znaki...
+                                </div>
+                              )}
+                              {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                                <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono.</div>
+                              )}
                               <CommandGroup>
-                                {filteredCities.map((city) => (
-                                  <CommandItem
-                                    key={city.id}
-                                    value={city.nazwa}
-                                    onSelect={(currentValue) => {
-                                      const matchedCity = filteredCities.find(c => c.nazwa.toLowerCase() === currentValue.toLowerCase())
-                                      if (matchedCity) {
-                                        if (matchedCity.nazwa === selectedCity) {
+                                {cities.map((city) => {
+                                  const matchedPostal = city.postalCodes?.find((p: any) =>
+                                    p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                                  )
+                                  const displayValue = matchedPostal
+                                    ? `${city.nazwa} (${matchedPostal.code})`
+                                    : city.nazwa
+
+                                  return (
+                                    <CommandItem
+                                      key={city.id}
+                                      value={city.nazwa}
+                                      onSelect={() => {
+                                        if (city.nazwa === selectedCity) {
                                           setSelectedCity("")
                                         } else {
-                                          handleCityChange(matchedCity.nazwa)
+                                          handleCityChange(city.nazwa, city.voivodeship?.slug)
                                         }
-                                      }
-                                      setLocationOpen(false)
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        selectedCity === city.nazwa ? "opacity-100" : "opacity-0"
-                                      )}
-                                    />
-                                    {city.nazwa}
-                                  </CommandItem>
-                                ))}
+                                        setLocationOpen(false)
+                                      }}
+                                      className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <Check
+                                          className={cn(
+                                            "h-4 w-4 text-teal-400",
+                                            selectedCity === city.nazwa ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                        <span>{displayValue}</span>
+                                      </div>
+                                      <span className="text-xs text-neutral-400 ml-2 text-right">
+                                        {city.voivodeship?.nazwa}
+                                      </span>
+                                    </CommandItem>
+                                  )
+                                })}
                               </CommandGroup>
                             </CommandList>
                           </Command>
