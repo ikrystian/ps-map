@@ -203,7 +203,7 @@ export default function ClientDashboardPage() {
       >
         <PageHeader
           title="Panel Klienta"
-          subtitle={`Witaj ponownie, ${clientData?.imie || "Użytkowniku"}! Zarządzaj swoimi sprawami prawnymi w jednym, zintegrowanym miejscu.`}
+          subtitle={`Witaj, ${clientData?.imie || "Użytkowniku"}! Zarządzaj swoimi sprawami prawnymi w jednym, zintegrowanym miejscu.`}
           titleClassName="text-white text-3xl sm:text-4xl"
         >
           <Button
