@@ -219,12 +219,14 @@ export function SpecializationTab({
             <div className="grid sm:grid-cols-2 gap-4 hidden">
               <div
                 className={cn(
-                  "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                  "flex items-center justify-between p-4 rounded-xl border-2 transition-all",
                   formData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
                 )}
-                onClick={() => handleInputChange("callaPolska", !formData.callaPolska)}
               >
-                <div className="flex items-center gap-3">
+                <Label
+                  htmlFor="callaPolska-switch"
+                  className="flex items-center gap-3 cursor-pointer flex-1"
+                >
                   <div
                     className={cn(
                       "p-2 rounded-lg",
@@ -237,21 +239,24 @@ export function SpecializationTab({
                     <p className="font-semibold text-sm">Cała Polska</p>
                     <p className="text-xs text-muted-foreground">Widoczność w każdym mieście</p>
                   </div>
-                </div>
+                </Label>
                 <Switch
-                  checked={formData.callaPolska}
+                  id="callaPolska-switch"
+                  checked={!!formData.callaPolska}
                   onCheckedChange={(val) => handleInputChange("callaPolska", val)}
                 />
               </div>
 
               <div
                 className={cn(
-                  "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                  "flex items-center justify-between p-4 rounded-xl border-2 transition-all",
                   formData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
                 )}
-                onClick={() => handleInputChange("onlineOnly", !formData.onlineOnly)}
               >
-                <div className="flex items-center gap-3">
+                <Label
+                  htmlFor="onlineOnly-switch"
+                  className="flex items-center gap-3 cursor-pointer flex-1"
+                >
                   <div
                     className={cn(
                       "p-2 rounded-lg",
@@ -264,9 +269,10 @@ export function SpecializationTab({
                     <p className="font-semibold text-sm">Tylko online</p>
                     <p className="text-xs text-muted-foreground">Konsultacje zdalne</p>
                   </div>
-                </div>
+                </Label>
                 <Switch
-                  checked={formData.onlineOnly}
+                  id="onlineOnly-switch"
+                  checked={!!formData.onlineOnly}
                   onCheckedChange={(val) => handleInputChange("onlineOnly", val)}
                 />
               </div>
@@ -309,18 +315,23 @@ export function SpecializationTab({
                       <div
                         key={v.id}
                         className={cn(
-                          "flex items-center gap-3 p-2 rounded-lg border transition-all cursor-pointer",
+                          "flex items-center gap-3 p-2 rounded-lg border transition-all",
                           formData.voivodeshipsIds.includes(v.id)
                             ? "bg-primary/5 border-primary/30 text-primary font-medium"
                             : "border-transparent bg-card hover:bg-muted/50"
                         )}
-                        onClick={() => toggleVoivodeship(v.id)}
                       >
                         <Checkbox
+                          id={`voiv-${v.id}`}
                           checked={formData.voivodeshipsIds.includes(v.id)}
                           onCheckedChange={() => toggleVoivodeship(v.id)}
                         />
-                        <span className="text-sm">{v.nazwa}</span>
+                        <Label
+                          htmlFor={`voiv-${v.id}`}
+                          className="text-sm cursor-pointer flex-1 py-1"
+                        >
+                          {v.nazwa}
+                        </Label>
                       </div>
                     ))}
                   </div>
@@ -361,18 +372,23 @@ export function SpecializationTab({
                                   <div
                                     key={city.id}
                                     className={cn(
-                                      "flex items-center gap-2 p-1.5 rounded-md transition-all cursor-pointer",
+                                      "flex items-center gap-2 p-1.5 rounded-md transition-all",
                                       formData.citiesIds.includes(city.id)
                                         ? "bg-primary/10 text-primary font-medium"
                                         : "hover:bg-muted"
                                     )}
-                                    onClick={() => toggleCity(city.id)}
                                   >
                                     <Checkbox
+                                      id={`city-${city.id}`}
                                       checked={formData.citiesIds.includes(city.id)}
                                       onCheckedChange={() => toggleCity(city.id)}
                                     />
-                                    <span className="text-xs">{city.nazwa}</span>
+                                    <Label
+                                      htmlFor={`city-${city.id}`}
+                                      className="text-xs cursor-pointer flex-1 py-1"
+                                    >
+                                      {city.nazwa}
+                                    </Label>
                                   </div>
                                 ))
                               )}
