@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, Building2 } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2 } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
@@ -46,7 +46,6 @@ const postSchema = z.object({
   tytul: z.string().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
   tresc: z.string().min(1, "Treść jest wymagana"),
   categoryId: z.string().optional(),
-  lawFirmId: z.string().min(1, "Wybór kancelarii jest wymagany"),
   obrazekWyrozniajacy: z.string().optional().or(z.literal("")),
   tagi: z.array(z.string()).optional(),
   metaTitle: z.string().optional(),
@@ -60,12 +59,6 @@ interface BlogCategory {
   id: string
   nazwa: string
   slug: string
-}
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  nazwaFirmy: string
 }
 
 const containerVariants = {
@@ -93,11 +86,9 @@ const itemVariants = {
 
 export default function AdminEditBlogPostPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])
-  const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
-  const [loadingLawFirms, setLoadingLawFirms] = useState(true)
   const router = useRouter()
   const params = useParams()
   const postId = params.id as string
@@ -108,7 +99,6 @@ export default function AdminEditBlogPostPage() {
       tytul: "",
       tresc: "",
       categoryId: "",
-      lawFirmId: "",
       obrazekWyrozniajacy: "",
       tagi: [],
       metaTitle: "",
@@ -119,7 +109,6 @@ export default function AdminEditBlogPostPage() {
 
   useEffect(() => {
     fetchCategories()
-    fetchLawFirms()
   }, [])
 
   useEffect(() => {
@@ -139,20 +128,6 @@ export default function AdminEditBlogPostPage() {
       console.error("Error fetching categories:", error)
     } finally {
       setLoadingCategories(false)
-    }
-  }
-
-  const fetchLawFirms = async () => {
-    try {
-      const response = await fetch("/api/admin/law-firms?limit=1000")
-      if (response.ok) {
-        const data = await response.json()
-        setLawFirms(data.lawFirms || [])
-      }
-    } catch (error) {
-      console.error("Error fetching law firms:", error)
-    } finally {
-      setLoadingLawFirms(false)
     }
   }
 
@@ -181,7 +156,6 @@ export default function AdminEditBlogPostPage() {
           tytul: post.tytul || "",
           tresc: post.tresc || "",
           categoryId: post.categoryId || "",
-          lawFirmId: post.lawFirmId || "",
           obrazekWyrozniajacy: post.obrazekWyrozniajacy || "",
           tagi: parsedTagi,
           metaTitle: post.metaTitle || "",
@@ -254,7 +228,7 @@ export default function AdminEditBlogPostPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edytuj artykuł (Admin)</h1>
           <p className="text-muted-foreground text-sm">
-            Zaktualizuj szczegóły wpisu blogowego w imieniu wybranej kancelarii.
+            Zaktualizuj szczegóły wpisu blogowego administratora portalu.
           </p>
         </div>
       </div>
@@ -267,51 +241,6 @@ export default function AdminEditBlogPostPage() {
             animate="show"
             className="space-y-6"
           >
-            {/* Wybór Kancelarii */}
-            <motion.div variants={itemVariants}>
-              <Card className="border shadow-sm">
-                <CardHeader className="py-5 px-6 border-b">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-primary" />
-                    Przypisanie do kancelarii *
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Kancelaria/ekspert, do którego przypisany jest ten wpis blogowy. Możesz ją zmienić w dowolnym momencie.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <FormField
-                    control={form.control}
-                    name="lawFirmId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs font-semibold">Wybierz kancelarię *</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          disabled={loadingLawFirms}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="h-11">
-                              <SelectValue placeholder="Wybierz kancelarię z listy" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="max-h-[300px]">
-                            {lawFirms.map((lf) => (
-                              <SelectItem key={lf.id} value={lf.id}>
-                                {lf.nazwa} ({lf.nazwaFirmy})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </motion.div>
-
             {/* Podstawowe informacje */}
             <motion.div variants={itemVariants}>
               <Card className="border shadow-sm">
@@ -563,7 +492,7 @@ export default function AdminEditBlogPostPage() {
                         <div className="space-y-0.5">
                           <FormLabel className="text-sm font-semibold">Opublikuj artykuł</FormLabel>
                           <FormDescription className="text-xs text-muted-foreground max-w-sm">
-                            Po zaznaczeniu artykuł natychmiast ukaże się na profilu publicznym wybranej kancelarii.
+                            Po zaznaczeniu artykuł natychmiast ukaże się na blogu portalu.
                           </FormDescription>
                         </div>
                         <FormControl>
