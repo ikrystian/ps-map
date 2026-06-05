@@ -22,6 +22,11 @@ import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin
+} from "react-icons/fa"
+import {
   Award,
   BarChart3,
   BookOpen,
@@ -31,12 +36,9 @@ import {
   Coins,
   CreditCard,
   ExternalLink,
-  Facebook,
   FileStack,
   FileText,
-  Instagram,
   LayoutDashboard,
-  Linkedin,
   LogOut,
   Menu,
   MessageSquare,

@@ -11,15 +11,17 @@ import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin
+} from "react-icons/fa"
+import {
   Briefcase,
   CalendarCheck,
   ChevronLeft,
   ChevronRight,
-  Facebook,
   Heart,
-  Instagram,
   LayoutDashboard,
-  Linkedin,
   LogOut,
   Menu,
   MessageSquare,

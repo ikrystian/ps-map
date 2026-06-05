@@ -1,11 +1,8 @@
 import { auth } from "@/auth"
 import { createGoogleMeetLink } from "@/lib/google-meet"
 import { sendSystemNotification } from "@/lib/notifications"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
-
-
-const prisma = new PrismaClient()
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()

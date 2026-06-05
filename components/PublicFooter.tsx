@@ -1,6 +1,13 @@
 "use client"
 
-import { Facebook, Instagram, Linkedin, Mail, Phone, Twitter, Youtube } from "lucide-react"
+import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin,
+  FaTwitter as Twitter,
+  FaYoutube as Youtube
+} from "react-icons/fa"
+import { Mail, Phone } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 

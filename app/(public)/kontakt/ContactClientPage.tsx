@@ -2,7 +2,14 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Youtube, Instagram, Check } from "lucide-react"
+import {
+  FaFacebook as Facebook,
+  FaTwitter as Twitter,
+  FaLinkedin as Linkedin,
+  FaYoutube as Youtube,
+  FaInstagram as Instagram
+} from "react-icons/fa"
+import { Phone, Mail, MapPin, Check } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"

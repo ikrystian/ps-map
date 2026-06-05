@@ -18,6 +18,12 @@ import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
+  FaFacebook as Facebook,
+  FaLinkedin as Linkedin,
+  FaInstagram as Instagram,
+  FaTwitter as Twitter
+} from "react-icons/fa"
+import {
   ArrowLeft,
   Loader2,
   Upload,
@@ -29,10 +35,6 @@ import {
   Image as ImageIcon,
   TrendingUp,
   Globe,
-  Facebook,
-  Linkedin,
-  Instagram,
-  Twitter,
   Clock,
   Lock,
   Settings2,

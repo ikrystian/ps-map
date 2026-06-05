@@ -35,17 +35,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin,
+  FaTwitter as Twitter
+} from "react-icons/fa"
+import {
   Award,
   Calendar,
   CheckCircle2,
   Clock,
   Eye,
-  Facebook,
   Globe,
   GraduationCap,
   Heart,
-  Instagram,
-  Linkedin,
   Mail,
   MapPin,
   MessageSquare,
@@ -53,7 +56,6 @@ import {
   Send,
   Share2,
   Star,
-  Twitter,
   ZoomIn
 } from "lucide-react"
 import { useSession } from "next-auth/react"
