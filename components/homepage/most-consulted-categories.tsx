@@ -294,7 +294,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                     className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
-                    <div className="relative h-90 w-full overflow-hidden aspect-[5/3] bg-zinc-900">
+                    <div className="relative h-85 w-full overflow-hidden aspect-[5/2] bg-zinc-900">
                       <img
                         src={getFirmImage(firm, index)}
                         alt={firm.nazwa}
@@ -303,7 +303,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
 
 
                       {/* Rating Badge Overlay */}
-                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/5">
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10  backdrop-blur-md p-2 rounded-xl border border-white/5">
                         <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
                           {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
                         </div>
@@ -341,7 +341,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                       </div>
 
                       {/* Bottom Action Row with Circular and Square buttons */}
-                      <div className="flex justify-between items-center w-full pt-4 border-t border-zinc-800/80">
+                      <div className="flex justify-center items-center w-full pt-4 border-t border-zinc-800/80">
                         <div className="flex gap-2">
                           {/* Circular Phone Action */}
                           <ContactButton
@@ -370,7 +370,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                         {/* Square Profile Navigation Link */}
                         <Link
                           href={`/ekspert/${firm.slug}`}
-                          className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                          className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] absolute right-0 bottom-0 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                           title="Zobacz pełny profil"
                         >
                           <ArrowUpRight className="w-5 h-5 text-white" />

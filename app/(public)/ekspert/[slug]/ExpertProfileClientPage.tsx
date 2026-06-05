@@ -694,7 +694,7 @@ export default function LawFirmProfilePage() {
                         alt={lawFirm.nazwa}
                         id="logo-photo"
                         fill
-                        className="object-contain p-4 transition-transform duration-500 group-hover:scale-110"
+                        className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
                       />
                     </div>
                   </div>

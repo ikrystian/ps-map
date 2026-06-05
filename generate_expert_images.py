@@ -275,8 +275,7 @@ def main():
         )
         
         cover_prompt = (
-            f"A wide banner cover photo for a law firm named '{name}' in {city}, "
-            f"description: '{desc[:100]}', professional lawyer office interior background, "
+            f"A wide banner cover photo for a law firm named '{name}'3"
             f"elegant corporate banner, warm modern office lighting, legal theme, 21:9 format."
         )
         
