@@ -6,7 +6,10 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 const getPrismaInstance = () => {
-  const dbUrl = process.env.DATABASE_URL || 'file:./dev.db'
+  let dbUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
+  if (dbUrl === 'file:./dev.db') {
+    dbUrl = 'file:./prisma/dev.db'
+  }
   console.log("prisma.ts getPrismaInstance called. process.env.DATABASE_URL:", process.env.DATABASE_URL, "dbUrl:", dbUrl)
   
   const adapter = new PrismaLibSql({
