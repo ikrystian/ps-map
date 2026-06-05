@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
 import { seedPackages } from './seed-packages'; // Importuj istniejący seeder pakietów
 import { seedAccountManagers } from './seeds/account-managers'; // Importuj seeder opiekunów
@@ -18,8 +18,6 @@ import { seedTestData } from './seeds/test-data'; // Importuj nowy seeder danych
 import { seedTestUser } from './seeds/test-user'
 import { seedTransactions } from './seeds/transactions'; // Importuj seeder transakcji
 import { seedVoivodeships } from './seeds/voivodeships'
-
-const prisma = new PrismaClient()
 
 async function main() {
   console.log('Start seeding...')
