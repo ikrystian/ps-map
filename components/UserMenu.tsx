@@ -136,18 +136,7 @@ export default function UserMenu({
                 Moje sprawy
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/panel-klienta/dokumenty" className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-3">
-                <FileStack className="h-4 w-4 text-muted-foreground" />
-                Dokumenty
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/panel-klienta/faktury" className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-3">
-                <Receipt className="h-4 w-4 text-muted-foreground" />
-                Faktury
-              </Link>
-            </DropdownMenuItem>
+
             <DropdownMenuItem asChild>
               <Link href="/panel-klienta/pomoc" className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-3">
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
