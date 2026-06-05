@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/blog - Pobiera wszystkie wpisy (tylko ADMIN) z filtrami i statystykami
@@ -107,3 +108,110 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+// POST /api/admin/blog - Tworzy nowy wpis (tylko ADMIN)
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth()
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const {
+      tytul,
+      slug: customSlug,
+      tresc,
+      categoryId,
+      lawFirmId,
+      tagi,
+      obrazekWyrozniajacy,
+      metaTitle,
+      metaDescription,
+      opublikowany,
+    } = body
+
+    // Walidacja
+    if (!tytul || !tresc || !lawFirmId) {
+      return NextResponse.json(
+        { error: "Tytuł, treść i kancelaria są wymagane" },
+        { status: 400 }
+      )
+    }
+
+    // Generuj slug lub użyj podanego
+    const slug = customSlug || generateSlug(tytul)
+
+    // Sprawdź czy slug jest unikalny
+    const existingPost = await prisma.blogPost.findUnique({
+      where: { slug },
+    })
+
+    if (existingPost) {
+      return NextResponse.json(
+        { error: "Wpis z tym slugiem już istnieje" },
+        { status: 409 }
+      )
+    }
+
+    // Walidacja lawFirmId
+    const lawFirm = await prisma.lawFirm.findUnique({
+      where: { id: lawFirmId },
+    })
+
+    if (!lawFirm) {
+      return NextResponse.json(
+        { error: "Wybrana kancelaria nie istnieje" },
+        { status: 400 }
+      )
+    }
+
+    // Walidacja categoryId jeśli podano
+    if (categoryId) {
+      const category = await prisma.blogCategory.findUnique({
+        where: { id: categoryId },
+      })
+
+      if (!category) {
+        return NextResponse.json(
+          { error: "Wybrana kategoria nie istnieje" },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Utwórz wpis
+    const post = await prisma.blogPost.create({
+      data: {
+        tytul,
+        slug,
+        tresc,
+        lawFirmId,
+        categoryId: categoryId || null,
+        tagi: tagi && Array.isArray(tagi) && tagi.length > 0 ? JSON.stringify(tagi) : null,
+        obrazekWyrozniajacy: obrazekWyrozniajacy || null,
+        metaTitle: metaTitle || null,
+        metaDescription: metaDescription || null,
+        opublikowany: opublikowany || false,
+        dataPublikacji: opublikowany ? new Date() : null,
+      },
+      include: {
+        category: true,
+        lawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+          },
+        },
+      },
+    })
+
+    return NextResponse.json(post, { status: 201 })
+  } catch (error) {
+    console.error("Error creating admin blog post:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
