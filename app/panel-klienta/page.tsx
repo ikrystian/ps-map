@@ -85,9 +85,9 @@ interface BlogPost {
   category?: {
     nazwa: string
   }
-  lawFirm: {
+  lawFirm?: {
     nazwa: string
-  }
+  } | null
 }
 
 const containerVariants = {
@@ -449,7 +449,7 @@ export default function ClientDashboardPage() {
                           {post.tytul}
                         </h4>
                         <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
-                          <span className="truncate max-w-[90px]">{post.lawFirm.nazwa}</span>
+                          <span className="truncate max-w-[90px]">{post.lawFirm?.nazwa || "Portal"}</span>
                           <span>{new Date(post.dataPublikacji || post.createdAt || "").toLocaleDateString("pl-PL")}</span>
                         </div>
                       </div>

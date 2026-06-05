@@ -37,9 +37,9 @@ import {
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnimatePresence, motion } from "framer-motion"
-import { Download, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, User, HardDrive, Clock, ShieldAlert } from "lucide-react"
+import { Download, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, User, HardDrive, Clock, ShieldAlert, Eye } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -200,6 +200,18 @@ export default function DocumentsPage() {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [uploadProgress, setUploadProgress] = useState(false)
 
+  // Preview state variables
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [previewContent, setPreviewContent] = useState<{
+    type: "pdf" | "text" | "docx" | "unsupported"
+    url?: string
+    text?: string
+    blob?: Blob
+  } | null>(null)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState("ALL")
@@ -316,6 +328,66 @@ export default function DocumentsPage() {
     setSelectedDocument(document)
     setIsDeleteDialogOpen(true)
   }
+
+  // Preview handlers
+  const handlePreviewDocument = async (doc: Document) => {
+    setSelectedDocument(doc)
+    setIsPreviewDialogOpen(true)
+    setPreviewLoading(true)
+    setPreviewContent(null)
+
+    try {
+      const response = await fetch(`/api/law-firms/documents/${doc.id}/download`)
+      if (!response.ok) throw new Error("Błąd pobierania pliku")
+
+      const blob = await response.blob()
+      const extension = doc.rozszerzenie.toLowerCase()
+
+      if (extension === "pdf") {
+        const pdfBlob = new Blob([blob], { type: "application/pdf" })
+        const url = URL.createObjectURL(pdfBlob)
+        setPreviewContent({ type: "pdf", url, blob: pdfBlob })
+      } else if (extension === "txt") {
+        const text = await blob.text()
+        setPreviewContent({ type: "text", text })
+      } else if (extension === "docx") {
+        setPreviewContent({ type: "docx", blob })
+      } else {
+        setPreviewContent({ type: "unsupported" })
+      }
+    } catch (error) {
+      toast.error("Nie udało się otworzyć podglądu pliku")
+      setIsPreviewDialogOpen(false)
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
+  const closePreviewDialog = () => {
+    setIsPreviewDialogOpen(false)
+    if (previewContent?.url) {
+      URL.revokeObjectURL(previewContent.url)
+    }
+    setPreviewContent(null)
+  }
+
+  useEffect(() => {
+    if (isPreviewDialogOpen && previewContent?.type === "docx" && previewContent.blob && containerRef.current) {
+      import("docx-preview").then(({ renderAsync }) => {
+        if (containerRef.current) {
+          containerRef.current.innerHTML = ""
+          renderAsync(previewContent.blob, containerRef.current, undefined, {
+            className: "docx-preview",
+            inWrapper: false,
+            ignoreWidth: true,
+            ignoreHeight: true,
+          }).catch((err) => {
+            console.error("Error rendering docx:", err)
+          })
+        }
+      })
+    }
+  }, [isPreviewDialogOpen, previewContent])
 
   // Stats calculation
   const totalDocsCount = documents.length
@@ -795,6 +867,15 @@ export default function DocumentsPage() {
                                 <Button
                                   variant="outline"
                                   size="icon"
+                                  onClick={() => handlePreviewDocument(document)}
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
+                                  title="Podgląd dokumentu"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
                                   onClick={() => handleDownloadDocument(document)}
                                   className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
                                   title="Pobierz dokument"
@@ -868,6 +949,15 @@ export default function DocumentsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePreviewDocument(document)}
+                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
+                                title="Podgląd dokumentu"
+                              >
+                                <Eye className="h-3.5 w-3.5" />
+                              </Button>
                               <Button
                                 variant="outline"
                                 size="icon"
@@ -945,6 +1035,102 @@ export default function DocumentsPage() {
             >
               Usuń dokument
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog podglądu */}
+      <Dialog open={isPreviewDialogOpen} onOpenChange={(open) => {
+        if (!open) closePreviewDialog()
+      }}>
+        <DialogContent className="bg-zinc-900 border border-border/40 max-w-4xl w-[95vw] rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
+          
+          <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/20 shrink-0">
+            <div>
+              <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+                <FileText className="h-5 w-5 text-[#0da192]" />
+                {selectedDocument?.nazwa}
+              </DialogTitle>
+              <DialogDescription className="text-zinc-400 text-xs mt-1">
+                Typ: <span className="capitalize">{getDocumentTypeLabel(selectedDocument?.typDokumentu || "")}</span> • Rozmiar: {selectedDocument && formatFileSize(selectedDocument.rozmiar)}
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-hidden py-4 flex flex-col items-center justify-center min-h-[300px]">
+            {previewLoading ? (
+              <div className="text-center space-y-4">
+                <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+                <p className="text-muted-foreground text-sm font-light">Wczytywanie podglądu...</p>
+              </div>
+            ) : previewContent ? (
+              <>
+                {previewContent.type === "pdf" && previewContent.url && (
+                  <iframe
+                    src={previewContent.url}
+                    className="w-full h-full min-h-[50vh] md:min-h-[60vh] rounded-lg border border-border/20 bg-white"
+                    title={selectedDocument?.nazwa}
+                  />
+                )}
+                
+                {previewContent.type === "text" && (
+                  <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-zinc-950 rounded-lg border border-border/20 overflow-auto p-4">
+                    <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300 select-text">
+                      {previewContent.text}
+                    </pre>
+                  </div>
+                )}
+                
+                {previewContent.type === "docx" && (
+                  <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-white rounded-lg border border-border/20 overflow-auto p-4 md:p-8 shadow-inner select-text">
+                    <div ref={containerRef} className="docx-preview-container text-black" />
+                  </div>
+                )}
+
+                {previewContent.type === "unsupported" && (
+                  <div className="text-center py-12 space-y-4 max-w-md">
+                    <div className="h-16 w-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
+                      <ShieldAlert className="h-8 w-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">Podgląd niedostępny</h4>
+                      <p className="text-sm text-zinc-400 mt-2 leading-relaxed">
+                        Natywny podgląd dla formatu <span className="font-semibold text-white">.{selectedDocument?.rozszerzenie}</span> nie jest bezpośrednio obsługiwany w przeglądarce. Pobierz plik na swój dysk, aby go otworzyć.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => selectedDocument && handleDownloadDocument(selectedDocument)}
+                      className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Pobierz plik
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-zinc-500 text-sm">Wystąpił błąd podczas ładowania podglądu.</div>
+            )}
+          </div>
+
+          <DialogFooter className="pt-4 border-t border-border/20 shrink-0 flex flex-col-reverse sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={closePreviewDialog}
+              className="border-border/50 hover:bg-muted text-white rounded-xl h-11 w-full sm:w-auto"
+            >
+              Zamknij
+            </Button>
+            {selectedDocument && (
+              <Button
+                onClick={() => handleDownloadDocument(selectedDocument)}
+                className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2 w-full sm:w-auto"
+              >
+                <Download className="h-4 w-4" />
+                Pobierz
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
