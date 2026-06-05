@@ -69,9 +69,9 @@ function convertHTMLToBlocks(html: string): any[] {
           }
         })
       } else if (tagName === "ul" || tagName === "ol") {
-        const items: string[] = []
-        node.querySelectorAll("li").forEach((li: any) => {
-          items.push(li.innerHTML)
+        const items: { content: string; items: any[] }[] = []
+        node.querySelectorAll(":scope > li").forEach((li: any) => {
+          items.push({ content: li.innerHTML, items: [] })
         })
         blocks.push({
           type: "list",
@@ -186,7 +186,11 @@ function convertBlocksToHTML(blocks: any[]): string {
         return `<p>${block.data.text}</p>`
       case "list": {
         const tag = block.data.style === "ordered" ? "ol" : "ul"
-        const items = block.data.items.map((item: string) => `<li>${item}</li>`).join("")
+        const items = block.data.items.map((item: any) => {
+          // @editorjs/list v2.x uses objects {content, items}, v1.x used plain strings
+          const text = typeof item === "string" ? item : (item?.content ?? "")
+          return `<li>${text}</li>`
+        }).join("")
         return `<${tag}>${items}</${tag}>`
       }
       case "checklist": {
