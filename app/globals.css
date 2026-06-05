@@ -493,6 +493,7 @@ a .bg-card {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -672,4 +673,254 @@ a .bg-card {
 
 .top-bar-public {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)
+}
+
+/* Editor.js Dark Mode Overrides */
+.dark {
+
+  /* Main text color inside editor blocks */
+  /* Popover menus (Slash command menu, Block settings) */
+  .ce-popover {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .ce-popover__item {
+    color: var(--popover-foreground) !important;
+  }
+
+  .ce-popover__item-icon {
+    background-color: var(--muted) !important;
+    color: var(--foreground) !important;
+    border-color: var(--border) !important;
+    box-shadow: none !important;
+  }
+
+  .ce-popover__item:hover:not(.ce-popover__item--disabled) {
+    background-color: var(--accent) !important;
+  }
+
+  .ce-popover__item--active {
+    background-color: var(--accent) !important;
+    color: var(--accent-foreground) !important;
+  }
+
+
+
+
+  .ce-popover__search {
+    background-color: var(--muted) !important;
+    border-bottom: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+  }
+
+  .ce-popover__search input {
+    color: var(--foreground) !important;
+  }
+
+  /* Inline Toolbar (formatting bar on select text) */
+  .ce-inline-toolbar {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .ce-inline-toolbar__dropdown {
+    color: var(--foreground) !important;
+  }
+
+  .ce-inline-toolbar__dropdown:hover {
+    background-color: var(--accent) !important;
+  }
+
+  .ce-inline-tool {
+    color: var(--foreground) !important;
+  }
+
+  .ce-inline-tool:hover {
+    background-color: var(--accent) !important;
+  }
+
+  .ce-inline-tool--active {
+    color: var(--primary) !important;
+  }
+
+  /* Plus button & settings button */
+  .ce-toolbar__plus,
+  .ce-toolbar__settings-btn {
+    color: var(--foreground) !important;
+    background-color: var(--muted) !important;
+    border: 1px solid var(--border) !important;
+  }
+
+  .ce-toolbar__plus:hover,
+  .ce-toolbar__settings-btn:hover {
+    background-color: var(--accent) !important;
+  }
+
+  /* Input fields inside warning/link tools */
+  .cdx-input {
+    background-color: var(--muted) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+  }
+
+  .cdx-input::placeholder {
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Image block container */
+  .image-tool__image {
+    background-color: var(--muted) !important;
+    border: 1px solid var(--border) !important;
+  }
+
+  .image-tool__caption {
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Settings panel */
+  .ce-settings {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+  }
+
+  .ce-settings__button {
+    color: var(--foreground) !important;
+  }
+
+  .ce-settings__button:hover {
+    background-color: var(--accent) !important;
+  }
+
+  .ce-settings__button--active {
+    color: var(--primary) !important;
+    background-color: var(--accent) !important;
+  }
+
+  /* Conversion toolbar */
+  .ce-conversion-toolbar {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+  }
+
+  .ce-conversion-tool {
+    color: var(--foreground) !important;
+  }
+
+  .ce-conversion-tool:hover {
+    background-color: var(--accent) !important;
+  }
+
+  .ce-conversion-tool--active {
+    background-color: var(--accent) !important;
+    color: var(--primary) !important;
+  }
+
+  /* Delimiter divider block */
+  .ce-delimiter:before {
+    color: var(--border) !important;
+  }
+
+  /* Table Tool editing UI */
+  .tc-table {
+    border-color: var(--border) !important;
+  }
+
+  .tc-row {
+    border-color: var(--border) !important;
+  }
+
+  .tc-cell {
+    border-color: var(--border) !important;
+    color: var(--foreground) !important;
+    background-color: transparent !important;
+  }
+
+  .tc-cell--header {
+    background-color: var(--muted) !important;
+    font-weight: bold;
+  }
+
+  .tc-row--header {
+    background-color: var(--muted) !important;
+  }
+
+  .tc-row--header .tc-cell {
+    background-color: var(--muted) !important;
+  }
+
+  /* Popover for tables */
+  .tc-popover {
+    background-color: var(--popover) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .tc-popover__item {
+    color: var(--popover-foreground) !important;
+  }
+
+  .tc-popover__item:hover {
+    background-color: var(--accent) !important;
+  }
+
+  .tc-popover__item-icon {
+    color: var(--foreground) !important;
+  }
+
+  /* Selection marker colors */
+  .cdx-marker {
+    background-color: rgba(13, 161, 146, 0.3) !important;
+    color: inherit !important;
+  }
+
+  /* Checklist items */
+  .cdx-checklist__item-checkbox {
+    border-color: var(--border) !important;
+    background-color: var(--muted) !important;
+  }
+
+  .cdx-checklist__item--checked .cdx-checklist__item-checkbox {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+  }
+
+  .cdx-checklist__item--checked .cdx-checklist__item-checkbox-check {
+    border-color: var(--primary-foreground) !important;
+  }
+
+  .cdx-checklist__item-text {
+    color: var(--foreground) !important;
+  }
+
+  /* Quote block */
+  .cdx-quote__text {
+    color: var(--foreground) !important;
+  }
+
+  .cdx-quote__caption {
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Warning block */
+  .cdx-warning__title {
+    color: var(--foreground) !important;
+  }
+
+  .cdx-warning__message {
+    color: var(--muted-foreground) !important;
+  }
+}
+
+.prose {
+  p {
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
 }
