@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           .map((c: string) => c.trim())
           .filter((c: string) => c !== "")
       : []
-    const uniqueCodes = Array.from(new Set(codes))
+    const uniqueCodes = Array.from(new Set(codes)) as string[]
 
     const city = await prisma.city.create({
       data: {
