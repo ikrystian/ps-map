@@ -3,6 +3,7 @@ import { existsSync } from "fs"
 import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
 import path from "path"
+import { optimizeImage } from "@/lib/image-processor"
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +39,13 @@ export async function POST(request: NextRequest) {
     }
 
     const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    const originalBuffer = Buffer.from(bytes)
+
+    const { buffer, filename: optimizedFilename } = await optimizeImage(
+      originalBuffer,
+      file.name,
+      file.type
+    )
 
     // Utwórz folder uploads jeśli nie istnieje
     const uploadsDir = path.join(process.cwd(), ".uploads", "images")
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
     // Generuj unikalną nazwę pliku
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
-    const extension = file.name.split(".").pop()
+    const extension = optimizedFilename.split(".").pop()
     const filename = `${timestamp}-${randomString}.${extension}`
     const filepath = path.join(uploadsDir, filename)
 
