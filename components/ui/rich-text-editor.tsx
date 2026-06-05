@@ -1,45 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { toast } from "@/components/ui/sonner"
-import { Toggle } from "@/components/ui/toggle"
+import { useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
-import Image from "@tiptap/extension-image"
-import Link from "@tiptap/extension-link"
-import TextAlign from "@tiptap/extension-text-align"
-import Underline from "@tiptap/extension-underline"
-import Youtube from "@tiptap/extension-youtube"
-import { EditorContent, useEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import {
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  Code,
-  Heading1,
-  Heading2,
-  Heading3,
-  Image as ImageIcon,
-  Italic,
-  Link as LinkIcon,
-  List,
-  ListOrdered,
-  Quote,
-  Redo,
-  Strikethrough,
-  Underline as UnderlineIcon,
-  Undo,
-  Youtube as YoutubeIcon
-} from "lucide-react"
-import { useCallback, useState } from "react"
 
 interface RichTextEditorProps {
   value: string
@@ -49,353 +11,386 @@ interface RichTextEditorProps {
   minHeight?: string
 }
 
+// Convert HTML string to Editor.js Block format
+function convertHTMLToBlocks(html: string): any[] {
+  if (typeof window === "undefined" || !html) return []
+
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, "text/html")
+  const blocks: any[] = []
+
+  doc.body.childNodes.forEach((node: any) => {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tagName = node.tagName.toLowerCase()
+
+      if (tagName.startsWith("h") && tagName.length === 2) {
+        const level = parseInt(tagName.charAt(1))
+        blocks.push({
+          type: "header",
+          data: {
+            text: node.innerHTML,
+            level: level >= 1 && level <= 6 ? level : 2
+          }
+        })
+      } else if (tagName === "p") {
+        const text = node.innerHTML.trim()
+        if (text && text !== "<br>") {
+          blocks.push({
+            type: "paragraph",
+            data: {
+              text
+            }
+          })
+        }
+      } else if (tagName === "ul" && (node.classList.contains("checklist") || node.classList.contains("cdx-checklist"))) {
+        const items: any[] = []
+        node.querySelectorAll("li").forEach((li: any) => {
+          const isChecked = li.getAttribute("data-checked") === "true" || 
+                            li.classList.contains("cdx-checklist__item--checked") ||
+                            !!li.querySelector("input[type='checkbox'][checked]") ||
+                            (li.querySelector("input[type='checkbox']") as HTMLInputElement)?.checked === true
+          
+          // Strip checklist checkbox from text if parsed from raw HTML representation
+          let text = li.innerHTML
+          const checkbox = li.querySelector("input[type='checkbox']")
+          if (checkbox) {
+            text = li.textContent?.replace(/^\[[ xX]\]\s*/, "") || li.innerHTML
+          }
+          
+          items.push({
+            text: text.trim(),
+            checked: isChecked
+          })
+        })
+        blocks.push({
+          type: "checklist",
+          data: {
+            items
+          }
+        })
+      } else if (tagName === "ul" || tagName === "ol") {
+        const items: string[] = []
+        node.querySelectorAll("li").forEach((li: any) => {
+          items.push(li.innerHTML)
+        })
+        blocks.push({
+          type: "list",
+          data: {
+            style: tagName === "ol" ? "ordered" : "unordered",
+            items
+          }
+        })
+      } else if (tagName === "blockquote") {
+        const p = node.querySelector("p")
+        const cite = node.querySelector("cite")
+        blocks.push({
+          type: "quote",
+          data: {
+            text: p ? p.innerHTML : node.innerHTML,
+            caption: cite ? cite.innerHTML : "",
+            alignment: "left"
+          }
+        })
+      } else if (tagName === "figure" || tagName === "img") {
+        const img = tagName === "img" ? node : node.querySelector("img")
+        const figcaption = tagName === "figure" ? node.querySelector("figcaption") : null
+        if (img && img.src) {
+          blocks.push({
+            type: "image",
+            data: {
+              file: {
+                url: img.src
+              },
+              caption: figcaption ? figcaption.innerHTML : "",
+              withBorder: false,
+              withBackground: false,
+              stretched: false
+            }
+          })
+        }
+      } else if (tagName === "hr") {
+        blocks.push({
+          type: "delimiter",
+          data: {}
+        })
+      } else if (tagName === "table") {
+        const content: string[][] = []
+        let withHeadings = false
+        
+        node.querySelectorAll("tr").forEach((tr: any) => {
+          const row: string[] = []
+          tr.querySelectorAll("th, td").forEach((cell: any) => {
+            if (cell.tagName.toLowerCase() === "th") {
+              withHeadings = true
+            }
+            row.push(cell.innerHTML)
+          })
+          if (row.length > 0) {
+            content.push(row)
+          }
+        })
+        
+        blocks.push({
+          type: "table",
+          data: {
+            withHeadings,
+            content
+          }
+        })
+      } else if (tagName === "div" && (node.classList.contains("warning-block") || node.classList.contains("cdx-warning"))) {
+        const titleEl = node.querySelector(".warning-title") || node.querySelector(".cdx-warning__title")
+        const messageEl = node.querySelector(".warning-message") || node.querySelector(".cdx-warning__message")
+        blocks.push({
+          type: "warning",
+          data: {
+            title: titleEl ? titleEl.innerHTML : "",
+            message: messageEl ? messageEl.innerHTML : node.innerHTML
+          }
+        })
+      }
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent?.trim()
+      if (text) {
+        blocks.push({
+          type: "paragraph",
+          data: {
+            text
+          }
+        })
+      }
+    }
+  })
+
+  // Fallback if no blocks were parsed
+  if (blocks.length === 0 && html) {
+    blocks.push({
+      type: "paragraph",
+      data: {
+        text: html
+      }
+    })
+  }
+
+  return blocks
+}
+
+// Convert Editor.js Blocks to HTML string
+function convertBlocksToHTML(blocks: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ""
+
+  return blocks.map(block => {
+    switch (block.type) {
+      case "header":
+        return `<h${block.data.level}>${block.data.text}</h${block.data.level}>`
+      case "paragraph":
+        return `<p>${block.data.text}</p>`
+      case "list": {
+        const tag = block.data.style === "ordered" ? "ol" : "ul"
+        const items = block.data.items.map((item: string) => `<li>${item}</li>`).join("")
+        return `<${tag}>${items}</${tag}>`
+      }
+      case "checklist": {
+        const checkItems = block.data.items.map((item: any) =>
+          `<li data-checked="${item.checked ? "true" : "false"}">${item.text}</li>`
+        ).join("")
+        return `<ul class="checklist">${checkItems}</ul>`
+      }
+      case "warning": {
+        return `<div class="warning-block"><strong class="warning-title">${block.data.title || ""}</strong><p class="warning-message">${block.data.message || ""}</p></div>`
+      }
+      case "delimiter": {
+        return `<hr />`
+      }
+      case "table": {
+        const withHeadings = block.data.withHeadings
+        const rows = block.data.content.map((row: string[], rowIndex: number) => {
+          const cellTag = (withHeadings && rowIndex === 0) ? "th" : "td"
+          const cells = row.map((cell: string) => `<${cellTag}>${cell}</${cellTag}>`).join("")
+          return `<tr>${cells}</tr>`
+        })
+        
+        if (withHeadings && rows.length > 0) {
+          return `<table><thead>${rows[0]}</thead><tbody>${rows.slice(1).join("")}</tbody></table>`
+        }
+        return `<table><tbody>${rows.join("")}</tbody></table>`
+      }
+      case "quote":
+        return `<blockquote><p>${block.data.text}</p>${block.data.caption ? `<cite>${block.data.caption}</cite>` : ""}</blockquote>`
+      case "embed":
+        return `<div class="embed-container"><iframe src="${block.data.embed}" width="100%" height="320" frameborder="0" allowfullscreen></iframe></div>`
+      case "image": {
+        const src = block.data.file?.url || ""
+        if (!src) return ""
+        return `<figure><img src="${src}" alt="${block.data.caption || ""}" />${block.data.caption ? `<figcaption>${block.data.caption}</figcaption>` : ""}</figure>`
+      }
+      default:
+        console.warn("Unhandled block type:", block.type)
+        return ""
+    }
+  }).join("")
+}
+
 export function RichTextEditor({
   value,
   onChange,
-  placeholder,
+  placeholder = "Kliknij tutaj, aby rozpocząć pisanie...",
   className,
   minHeight = "400px"
 }: RichTextEditorProps) {
-  const [linkUrl, setLinkUrl] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [youtubeUrl, setYoutubeUrl] = useState("")
+  const containerRef = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<any>(null)
+  const isUpdatingRef = useRef(false)
+  const initialValueRef = useRef(value)
 
-  const editor = useEditor({
-    immediatelyRender: false,
-    extensions: [
-      StarterKit,
-      Image.configure({
-        inline: true,
-        allowBase64: true,
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-primary underline cursor-pointer',
+  useEffect(() => {
+    if (typeof window === "undefined" || !containerRef.current) return
+
+    let editorInstance: any = null
+
+    // We import dynamically inside useEffect since Editor.js runs client-side only
+    const initEditor = async () => {
+      const EditorJS = (await import("@editorjs/editorjs")).default
+      const Header = (await import("@editorjs/header")).default
+      const List = (await import("@editorjs/list")).default
+      const ImageTool = (await import("@editorjs/image")).default
+      const Embed = (await import("@editorjs/embed")).default
+      const Quote = (await import("@editorjs/quote")).default
+      const Checklist = (await import("@editorjs/checklist")).default
+      const Table = (await import("@editorjs/table")).default
+      const Warning = (await import("@editorjs/warning")).default
+      const Delimiter = (await import("@editorjs/delimiter")).default
+      const Underline = (await import("@editorjs/underline")).default
+      const Marker = (await import("@editorjs/marker")).default
+
+      const initialBlocks = convertHTMLToBlocks(initialValueRef.current)
+
+      editorInstance = new EditorJS({
+        holder: containerRef.current!,
+        placeholder,
+        data: {
+          blocks: initialBlocks
         },
-      }),
-      Youtube.configure({
-        controls: false,
-      }),
-      Underline,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-    ],
-    content: value,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
-    },
-    editorProps: {
-      attributes: {
-        class: cn(
-          "prose prose-sm max-w-none focus:outline-none p-4",
-          "prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl",
-          "prose-p:my-2 prose-ul:my-2 prose-ol:my-2",
-          "prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic",
-          "prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded",
-          "prose-img:rounded-lg prose-img:shadow-md prose-img:max-w-full",
-          "min-h-[200px]"
-        ),
-        style: `min-height: ${minHeight}`
-      },
-    },
-  })
+        tools: {
+          header: {
+            class: Header,
+            inlineToolbar: ["link", "bold", "italic", "underline", "marker"]
+          },
+          list: {
+            class: List,
+            inlineToolbar: true
+          },
+          quote: {
+            class: Quote,
+            inlineToolbar: true
+          },
+          checklist: {
+            class: Checklist,
+            inlineToolbar: true
+          },
+          table: {
+            class: Table,
+            inlineToolbar: true,
+            config: {
+              rows: 2,
+              cols: 2,
+            },
+          },
+          warning: {
+            class: Warning,
+            inlineToolbar: true,
+            config: {
+              titlePlaceholder: "Tytuł ostrzeżenia",
+              messagePlaceholder: "Treść ostrzeżenia",
+            },
+          },
+          delimiter: Delimiter,
+          embed: Embed,
+          underline: Underline,
+          marker: {
+            class: Marker,
+            shortcut: "CMD+SHIFT+M",
+          },
+          image: {
+            class: ImageTool,
+            config: {
+              uploader: {
+                uploadByFile(file: File) {
+                  const formData = new FormData()
+                  formData.append("file", file)
 
-  const setLink = useCallback(() => {
-    if (!editor) return
-
-    if (linkUrl === null) {
-      return
-    }
-
-    if (linkUrl === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run()
-      return
-    }
-
-    editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run()
-    setLinkUrl("")
-  }, [editor, linkUrl])
-
-  const addImage = useCallback(() => {
-    if (!editor) return
-
-    if (imageUrl) {
-      editor.chain().focus().setImage({ src: imageUrl }).run()
-      setImageUrl("")
-    }
-  }, [editor, imageUrl])
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const formData = new FormData()
-    formData.append("file", file)
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+                  return fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                  })
+                    .then(response => response.json())
+                    .then(result => {
+                      return {
+                        success: 1,
+                        file: {
+                          url: result.url
+                        }
+                      }
+                    })
+                    .catch(error => {
+                      console.error("Upload error:", error)
+                      return {
+                        success: 0
+                      }
+                    })
+                }
+              }
+            }
+          }
+        },
+        onChange: async (api) => {
+          if (isUpdatingRef.current) return
+          const savedData = await api.saver.save()
+          const html = convertBlocksToHTML(savedData.blocks)
+          onChange(html)
+        }
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        editor?.chain().focus().setImage({ src: data.url }).run()
-        toast.success("Zdjęcie dodane")
-      } else {
-        toast.error("Błąd przesyłania zdjęcia")
+      editorRef.current = editorInstance
+    }
+
+    initEditor()
+
+    return () => {
+      if (editorInstance && typeof editorInstance.destroy === "function") {
+        editorInstance.destroy()
       }
-    } catch (error) {
-      toast.error("Błąd przesyłania zdjęcia")
+      editorRef.current = null
     }
-  }
+  }, [placeholder])
 
-  const addYoutubeVideo = useCallback(() => {
-    if (!editor) return
+  // Sync value from parent (only if value changed externally)
+  useEffect(() => {
+    const editor = editorRef.current
+    if (!editor || !editor.isReady) return
 
-    if (youtubeUrl) {
-      editor.commands.setYoutubeVideo({
-        src: youtubeUrl,
+    editor.isReady.then(() => {
+      editor.saver.save().then((savedData: any) => {
+        const currentHTML = convertBlocksToHTML(savedData.blocks)
+        const cleanValue = value || ""
+
+        if (cleanValue !== currentHTML) {
+          isUpdatingRef.current = true
+          const newBlocks = convertHTMLToBlocks(cleanValue)
+          editor.render({ blocks: newBlocks }).then(() => {
+            isUpdatingRef.current = false
+          })
+        }
       })
-      setYoutubeUrl("")
-    }
-  }, [editor, youtubeUrl])
-
-  if (!editor) {
-    return null
-  }
+    })
+  }, [value])
 
   return (
-    <div className={cn("border rounded-lg overflow-hidden bg-background", className)}>
-      {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/30 sticky top-0 z-10">
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('bold')}
-            onPressedChange={() => editor.chain().focus().toggleBold().run()}
-            aria-label="Toggle bold"
-          >
-            <Bold className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('italic')}
-            onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-            aria-label="Toggle italic"
-          >
-            <Italic className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('underline')}
-            onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
-            aria-label="Toggle underline"
-          >
-            <UnderlineIcon className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('strike')}
-            onPressedChange={() => editor.chain().focus().toggleStrike().run()}
-            aria-label="Toggle strikethrough"
-          >
-            <Strikethrough className="h-4 w-4" />
-          </Toggle>
-        </div>
-
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('heading', { level: 1 })}
-            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            aria-label="Heading 1"
-          >
-            <Heading1 className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('heading', { level: 2 })}
-            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            aria-label="Heading 2"
-          >
-            <Heading2 className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('heading', { level: 3 })}
-            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            aria-label="Heading 3"
-          >
-            <Heading3 className="h-4 w-4" />
-          </Toggle>
-        </div>
-
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Toggle
-            size="sm"
-            pressed={editor.isActive({ textAlign: 'left' })}
-            onPressedChange={() => editor.chain().focus().setTextAlign('left').run()}
-            aria-label="Align left"
-          >
-            <AlignLeft className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive({ textAlign: 'center' })}
-            onPressedChange={() => editor.chain().focus().setTextAlign('center').run()}
-            aria-label="Align center"
-          >
-            <AlignCenter className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive({ textAlign: 'right' })}
-            onPressedChange={() => editor.chain().focus().setTextAlign('right').run()}
-            aria-label="Align right"
-          >
-            <AlignRight className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive({ textAlign: 'justify' })}
-            onPressedChange={() => editor.chain().focus().setTextAlign('justify').run()}
-            aria-label="Align justify"
-          >
-            <AlignJustify className="h-4 w-4" />
-          </Toggle>
-        </div>
-
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('bulletList')}
-            onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
-            aria-label="Bullet list"
-          >
-            <List className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('orderedList')}
-            onPressedChange={() => editor.chain().focus().toggleOrderedList().run()}
-            aria-label="Ordered list"
-          >
-            <ListOrdered className="h-4 w-4" />
-          </Toggle>
-        </div>
-
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('blockquote')}
-            onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
-            aria-label="Blockquote"
-          >
-            <Quote className="h-4 w-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
-            pressed={editor.isActive('codeBlock')}
-            onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
-            aria-label="Code block"
-          >
-            <Code className="h-4 w-4" />
-          </Toggle>
-        </div>
-
-        <div className="flex items-center gap-1 border-r pr-2 mr-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className={cn(editor.isActive('link') && "bg-accent")}>
-                <LinkIcon className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="https://example.com"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                />
-                <Button onClick={setLink} size="sm">Dodaj</Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <ImageIcon className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Z dysku</p>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Z URL</p>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="https://example.com/image.jpg"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                    />
-                    <Button onClick={addImage} size="sm">Dodaj</Button>
-                  </div>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <YoutubeIcon className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="https://youtube.com/watch?v=..."
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                />
-                <Button onClick={addYoutubeVideo} size="sm">Dodaj</Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="flex items-center gap-1 ml-auto">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-          >
-            <Undo className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-          >
-            <Redo className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <EditorContent editor={editor} />
+    <div className={cn("border rounded-xl overflow-hidden bg-background p-6", className)}>
+      <div 
+        ref={containerRef} 
+        className="editorjs-wrapper min-w-full prose prose-sm max-w-none dark:prose-invert focus:outline-none [&_.codex-editor__redactor]:pb-12 [&_.ce-block]:my-1.5 [&_.ce-header]:font-bold [&_.ce-header]:text-foreground [&_.ce-paragraph]:text-foreground [&_.ce-paragraph]:leading-relaxed [&_.cdx-list]:pl-6 [&_.cdx-list]:list-disc [&_.cdx-quote]:border-l-4 [&_.cdx-quote]:border-primary [&_.cdx-quote]:pl-4 [&_.cdx-quote]:italic [&_.cdx-warning]:bg-amber-500/10 [&_.cdx-warning]:border-l-4 [&_.cdx-warning]:border-amber-500 [&_.cdx-warning]:p-4 [&_.cdx-warning]:rounded-r-lg [&_.cdx-warning__title]:font-bold [&_.cdx-warning__title]:mb-1 [&_.cdx-warning__title]:text-foreground [&_.cdx-warning__message]:text-sm [&_.cdx-warning__message]:text-foreground [&_.ce-delimiter]:py-4 [&_.ce-delimiter]:text-2xl [&_.ce-delimiter]:font-bold [&_.ce-delimiter]:text-muted-foreground/50"
+        style={{ minHeight }}
+      />
     </div>
   )
 }
