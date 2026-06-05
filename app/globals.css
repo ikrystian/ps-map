@@ -734,13 +734,7 @@ a .bg-card {
     background-color: var(--accent) !important;
   }
 
-  .ce-inline-tool {
-    color: var(--foreground) !important;
-  }
 
-  .ce-inline-tool:hover {
-    background-color: var(--accent) !important;
-  }
 
   .ce-inline-tool--active {
     color: var(--primary) !important;
