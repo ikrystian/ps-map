@@ -74,43 +74,43 @@ export function AboutTab({
       {(lawFirm.unikatowyOpisUslugi ||
         lawFirm.categories.length > 0 ||
         (lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0)) && (
-        <Card className="border border-border/50 shadow-sm rounded-2xl overflow-hidden">
-          <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
-            <CardTitle className="text-lg font-bold">Zakres usług i specjalizacje</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            {lawFirm.unikatowyOpisUslugi && (
-              <p className="whitespace-pre-wrap text-sm text-foreground/90 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
-            )}
+          <Card className="border border-border/50 shadow-sm rounded-2xl overflow-hidden">
+            <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+              <CardTitle className="text-lg font-bold">Zakres usług i specjalizacje</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              {lawFirm.unikatowyOpisUslugi && (
+                <p className="whitespace-pre-wrap text-md text-foreground/90 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
+              )}
 
-            {lawFirm.categories.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Kategorie spraw</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {lawFirm.categories.map((cat) => (
-                    <Badge key={cat.category.slug} variant="secondary" className="bg-secondary/70 border border-border/60 hover:bg-secondary font-medium rounded-lg text-xs py-0.5 px-2.5 transition-colors">
-                      {cat.category.nazwa}
-                    </Badge>
-                  ))}
+              {lawFirm.categories.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-md font-bold uppercase text-muted-foreground tracking-wider">Kategorie spraw</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {lawFirm.categories.map((cat) => (
+                      <Badge key={cat.category.slug} variant="secondary" className="bg-secondary/70 border border-border/60 hover:bg-secondary font-medium rounded-lg text-md py-0.5 px-2.5 transition-colors">
+                        {cat.category.nazwa}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
-              <div className="space-y-2 pt-2 border-t border-border/30">
-                <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Obszary praktyki</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {lawFirm.slowaKluczowe.map((keyword, index) => (
-                    <Badge key={index} variant="outline" className="bg-background/40 border-border/50 hover:bg-muted/20 text-xs py-0.5 px-2 rounded-lg font-normal transition-colors">
-                      {keyword}
-                    </Badge>
-                  ))}
+              {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-border/30">
+                  <p className="text-md font-bold uppercase text-muted-foreground tracking-wider">Obszary praktyki</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {lawFirm.slowaKluczowe.map((keyword, index) => (
+                      <Badge key={index} variant="outline" className="bg-background/40 border-border/50 hover:bg-muted/20 text-md py-0.5 px-2 rounded-lg font-normal transition-colors">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+              )}
+            </CardContent>
+          </Card>
+        )}
 
       {/* Education */}
       {lawFirm.edukacja && lawFirm.edukacja.length > 0 && (
@@ -129,7 +129,7 @@ export function AboutTab({
                   <div className="absolute left-[3px] top-2 bottom-0 w-0.5 bg-border last:hidden" />
                   {/* Timeline node */}
                   <div className="absolute left-0 top-[6px] h-2 w-2 rounded-full bg-primary ring-4 ring-background" />
-                  
+
                   <div className="space-y-1">
                     <p className="font-bold text-foreground leading-snug">{edu.uczelnia}</p>
                     <p className="text-sm text-muted-foreground font-medium">{edu.wydzial}</p>
@@ -160,8 +160,8 @@ export function AboutTab({
                   <Award className="h-8 w-8 text-primary/80 flex-shrink-0 mt-0.5 p-1 rounded-lg bg-primary/10" />
                   <div className="flex-1 space-y-1">
                     <p className="font-bold text-sm text-foreground leading-snug">{cert.nazwaCertyfikatu}</p>
-                    <p className="text-xs text-muted-foreground">Wydawca: <span className="font-medium text-foreground/80">{cert.wydawca}</span></p>
-                    <p className="text-xs text-muted-foreground">Uzyskano: <span className="font-medium text-foreground/80">{formatDate(cert.dataUzyskania)}</span></p>
+                    <p className="text-md text-muted-foreground">Wydawca: <span className="font-medium text-foreground/80">{cert.wydawca}</span></p>
+                    <p className="text-md text-muted-foreground">Uzyskano: <span className="font-medium text-foreground/80">{formatDate(cert.dataUzyskania)}</span></p>
                     {cert.numerCertyfikatu && (
                       <p className="text-[10px] text-muted-foreground font-mono bg-muted/40 px-1.5 py-0.5 rounded w-fit">Nr: {cert.numerCertyfikatu}</p>
                     )}
@@ -170,7 +170,7 @@ export function AboutTab({
                         href={cert.skanCertyfikatu}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline hover:text-primary/80 transition-colors font-semibold pt-1.5"
+                        className="inline-flex items-center gap-1 text-md text-primary hover:underline hover:text-primary/80 transition-colors font-semibold pt-1.5"
                       >
                         <FileText className="h-3 w-3" />
                         Zobacz skan certyfikatu
@@ -200,9 +200,8 @@ export function AboutTab({
                     .map(({ img, i }) => (
                       <div
                         key={i}
-                        className={`relative rounded-2xl overflow-hidden cursor-pointer group bg-muted/30 border border-border/40 shadow-sm transition-transform duration-300 hover:scale-[1.02] hover:shadow-md ${
-                          i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-square" : "aspect-[4/3]"
-                        }`}
+                        className={`relative rounded-2xl overflow-hidden cursor-pointer group bg-muted/30 border border-border/40 shadow-sm transition-transform duration-300 hover:scale-[1.02] hover:shadow-md ${i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-square" : "aspect-[4/3]"
+                          }`}
                         onClick={() => {
                           setLightboxIndex(i)
                           setLightboxOpen(true)

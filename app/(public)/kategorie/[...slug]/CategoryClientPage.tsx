@@ -23,18 +23,62 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn, stripHtmlTags } from "@/lib/utils"
-import { Briefcase, Check, CheckCircle2, ChevronDown, Clock, Filter, Grid3x3, List, MapPin, Search, Star, X } from "lucide-react"
+import {
+  Briefcase,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock,
+  Filter,
+  Grid3x3,
+  List,
+  MapPin,
+  Search,
+  Star,
+  X,
+  Scale,
+  Gavel,
+  ShieldCheck,
+  HeartPulse,
+  Home,
+  User,
+  Zap,
+  Hammer,
+  CircleDollarSign,
+  Globe,
+  Lock,
+  MessageSquare
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+const ICON_MAP: Record<string, any> = {
+  Scale,
+  Briefcase,
+  Gavel,
+  ShieldCheck,
+  HeartPulse,
+  Home,
+  User,
+  Zap,
+  Hammer,
+  CircleDollarSign,
+  Globe,
+  Lock,
+  MessageSquare
+}
 
 interface Category {
   id: string
   nazwa: string
   slug: string
   opis: string | null
+  opisDodatkowy: string | null
+  ikona?: string | null
+  ikonaUrl?: string | null
+  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   metaTitle: string | null
   metaDescription: string | null
   parent?: {
@@ -333,6 +377,18 @@ export default function CategoryClientPage() {
     setPage(1)
   }
 
+  const scrollToActiveList = () => {
+    const element = document.getElementById("sort-and-count")
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY
+      const offsetPosition = elementPosition - 80
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      })
+    }
+  }
+
   if (!category && !isLoading) {
     return (
       <div className="min-h-screen  bg-[#0f0f0e]">
@@ -387,28 +443,12 @@ export default function CategoryClientPage() {
         {category ? (
           <div className="mb-8 md:flex justify-between">
             <h1 className="text-4xl mb-4 font-playfair">{category.nazwa}</h1>
-            {category.opis && (
-              <div
-                className="text-lg text-muted-foreground mb-4 prose prose-sm max-w-none dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: category.opis }}
-              />
-            )}
-
-            <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-primary" />
-                <span>
-                  <strong>{category._count.lawFirms}</strong>{" "}
-                  {category._count.lawFirms === 1 ? "kancelaria" : "kancelarie"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-primary" />
-                <span>
-                  <strong>{category._count.cases}</strong>{" "}
-                  {category._count.cases === 1 ? "sprawa" : "spraw"}
-                </span>
-              </div>
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-primary" />
+              <span>
+                <strong>{category._count.lawFirms}</strong>{" "}
+                {category._count.lawFirms === 1 ? "kancelaria" : "kancelarie"}
+              </span>
             </div>
 
             {/* Subcategories */}
@@ -814,7 +854,10 @@ export default function CategoryClientPage() {
                   <div className="flex justify-center gap-2">
                     <Button
                       variant="outline"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      onClick={() => {
+                        setPage((p) => Math.max(1, p - 1))
+                        scrollToActiveList()
+                      }}
                       disabled={page === 1}
                     >
                       Poprzednia
@@ -827,7 +870,10 @@ export default function CategoryClientPage() {
                           <Button
                             key={pageNum}
                             variant={page === pageNum ? "default" : "outline"}
-                            onClick={() => setPage(pageNum)}
+                            onClick={() => {
+                              setPage(pageNum)
+                              scrollToActiveList()
+                            }}
                           >
                             {pageNum}
                           </Button>
@@ -837,7 +883,10 @@ export default function CategoryClientPage() {
 
                     <Button
                       variant="outline"
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() => {
+                        setPage((p) => Math.min(totalPages, p + 1))
+                        scrollToActiveList()
+                      }}
                       disabled={page === totalPages}
                     >
                       Następna
@@ -859,6 +908,24 @@ export default function CategoryClientPage() {
             )}
           </div>
         </div>
+
+        {/* Sekcja opisu kategorii (nad stopką) */}
+        {category && (category.opis || category.opisDodatkowy) && (
+          <div className="mt-16 pt-10 border-t border-neutral-900/60 container text-left">
+            {category.opis && (
+              <div
+                className="text-white text-base md:text-lg leading-relaxed whitespace-pre-line mb-6 font-medium"
+                dangerouslySetInnerHTML={{ __html: category.opis }}
+              />
+            )}
+            {category.opisDodatkowy && (
+              <div
+                className="text-neutral-300 text-sm md:text-base leading-relaxed whitespace-pre-line"
+                dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

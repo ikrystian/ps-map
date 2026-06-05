@@ -711,7 +711,7 @@ export default function LawFirmProfilePage() {
               <div className="space-y-4 flex-1 w-full">
                 <div className="space-y-2">
                   <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start flex-wrap">
-                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-playfair tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
                       {lawFirm.nazwa}
                     </h1>
                     <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
@@ -1241,7 +1241,7 @@ export default function LawFirmProfilePage() {
                           <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.voivodeships.map((v, index) => (
-                              <Badge key={index} variant="outline" className="bg-background/50 border-border/60 font-medium px-2 py-0.5 rounded-lg">
+                              <Badge key={index} variant="outline" className="bg-background/50 border-border/60 font-medium px-2 py-1 rounded-lg text-sm">
                                 {v.voivodeship.nazwa}
                               </Badge>
                             ))}
@@ -1252,10 +1252,10 @@ export default function LawFirmProfilePage() {
                       {/* Cities */}
                       {lawFirm.cities.length > 0 && (
                         <div className="space-y-2">
-                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
+                          <p className="text-md font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
                           <div className="flex flex-wrap gap-1.5">
                             {lawFirm.cities.map((c, index) => (
-                              <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10 font-medium px-2 py-0.5 rounded-lg">
+                              <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10 font-semibold text-md px-2 py-0.5 rounded-lg">
                                 {c.city.nazwa}
                               </Badge>
                             ))}

@@ -86,19 +86,9 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                             Firmowe
                           </Badge>
                         </div>
-                        {lawFirmCategory.category.opis && (
-                          <CardDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                            {lawFirmCategory.category.opis}
-                          </CardDescription>
-                        )}
+
                       </CardHeader>
-                      {lawFirmCategory.category.opisDodatkowy && (
-                        <CardContent className="pt-0 pb-4 px-6 border-t border-border/20 bg-muted/5">
-                          <p className="text-xs text-muted-foreground leading-relaxed mt-3">
-                            {lawFirmCategory.category.opisDodatkowy}
-                          </p>
-                        </CardContent>
-                      )}
+
                     </Card>
                   ))}
               </div>
@@ -126,19 +116,9 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                             Prywatne
                           </Badge>
                         </div>
-                        {lawFirmCategory.category.opis && (
-                          <CardDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                            {lawFirmCategory.category.opis}
-                          </CardDescription>
-                        )}
+
                       </CardHeader>
-                      {lawFirmCategory.category.opisDodatkowy && (
-                        <CardContent className="pt-0 pb-4 px-6 border-t border-border/20 bg-muted/5">
-                          <p className="text-xs text-muted-foreground leading-relaxed mt-3">
-                            {lawFirmCategory.category.opisDodatkowy}
-                          </p>
-                        </CardContent>
-                      )}
+
                     </Card>
                   ))}
               </div>
@@ -164,9 +144,7 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                       {serviceUnitLabels[service.jednostka] || service.jednostka}
                     </Badge>
                   </div>
-                  {service.opisUslugi && (
-                    <CardDescription className="text-xs text-muted-foreground mt-2 leading-relaxed">{service.opisUslugi}</CardDescription>
-                  )}
+
                 </CardHeader>
                 <CardContent className="pt-3 pb-4 px-6 border-t border-border/20 bg-muted/5 flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground font-medium">Cena:</span>
@@ -174,10 +152,10 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                     {service.cenaOd && service.cenaDo
                       ? `${formatCurrency(service.cenaOd)} - ${formatCurrency(service.cenaDo)}`
                       : service.cenaOd
-                      ? `od ${formatCurrency(service.cenaOd)}`
-                      : service.cenaDo
-                      ? `do ${formatCurrency(service.cenaDo)}`
-                      : "wycena indywidualna"}
+                        ? `od ${formatCurrency(service.cenaOd)}`
+                        : service.cenaDo
+                          ? `do ${formatCurrency(service.cenaDo)}`
+                          : "wycena indywidualna"}
                   </span>
                 </CardContent>
               </Card>

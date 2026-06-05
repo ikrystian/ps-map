@@ -229,7 +229,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                       <TooltipTrigger asChild>
                         {button}
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white font-sans text-xs">
+                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white text-xs">
                         Informacja dostępna po zalogowaniu
                       </TooltipContent>
                     </Tooltip>

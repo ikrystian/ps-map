@@ -309,6 +309,18 @@ export default function SearchLawyerPage() {
     setPage(1)
   }
 
+  const scrollToActiveList = () => {
+    const element = document.getElementById("sort-and-count")
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY
+      const offsetPosition = elementPosition - 80
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background-sec">
       {/* Breadcrumbs Banner */}
@@ -791,7 +803,10 @@ export default function SearchLawyerPage() {
                 <div className="flex justify-center gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    onClick={() => {
+                      setPage((p) => Math.max(1, p - 1))
+                      scrollToActiveList()
+                    }}
                     disabled={page === 1}
                   >
                     Poprzednia
@@ -804,7 +819,10 @@ export default function SearchLawyerPage() {
                         <Button
                           key={pageNum}
                           variant={page === pageNum ? "default" : "outline"}
-                          onClick={() => setPage(pageNum)}
+                          onClick={() => {
+                            setPage(pageNum)
+                            scrollToActiveList()
+                          }}
                         >
                           {pageNum}
                         </Button>
@@ -814,7 +832,10 @@ export default function SearchLawyerPage() {
 
                   <Button
                     variant="outline"
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() => {
+                      setPage((p) => Math.min(totalPages, p + 1))
+                      scrollToActiveList()
+                    }}
                     disabled={page === totalPages}
                   >
                     Następna

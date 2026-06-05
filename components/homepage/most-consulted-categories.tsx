@@ -313,7 +313,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                               <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
                             ))}
                           </div>
-                          <span className="text-sm text-zinc-300 font-semibold mt-1">
+                          <span className="text-sm text-black font-semibold mt-1">
                             {firm.reviewCount || 11} opinii
                           </span>
                         </div>
@@ -328,7 +328,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                           {getProfessionTitle(firm)}
                         </span>
                         {/* Lawyer / Firm Name */}
-                        <h3 className="text-[19px] font-bold text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                        <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
                           <Link href={`/ekspert/${firm.slug}`}>
                             {firm.nazwa}
                           </Link>

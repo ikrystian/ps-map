@@ -348,7 +348,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
-          <div className="relative w-full md:w-[320px] lg:w-[400px] h-[180px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
+          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[280px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
               {lawFirm.zdjecieGlowne || lawFirm.logo ? (
                 <Image
@@ -435,7 +435,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl md:text-2xl font-fairplay font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
+                  <h3 className="text-xl md:text-2xl font-playfair font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
                     <span className="truncate">{lawFirm.nazwa}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge
