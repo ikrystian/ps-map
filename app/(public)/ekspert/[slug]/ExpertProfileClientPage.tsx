@@ -66,6 +66,7 @@ import "yet-another-react-lightbox/styles.css"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, ChevronDown } from "lucide-react"
+import { TooltipPreview } from "@/components/unlumen-ui/tooltip-preview"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -254,6 +255,7 @@ export default function LawFirmProfilePage() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [activeTab, setActiveTab] = useState("about")
+  const [mapsDialogOpen, setMapsDialogOpen] = useState(false)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -995,10 +997,19 @@ export default function LawFirmProfilePage() {
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</p>
                     <div className="text-sm text-foreground">
                       {session?.user ? (
-                        <p className="leading-relaxed">
-                          {lawFirm.adres}<br />
-                          {lawFirm.kodPocztowy} {lawFirm.miasto}
-                        </p>
+                        <button
+                          onClick={() => setMapsDialogOpen(true)}
+                          className="leading-relaxed text-left hover:text-primary transition-colors cursor-pointer group"
+                          title="Pokaż na mapie"
+                        >
+                          <span className="group-hover:underline underline-offset-2 decoration-primary/50">
+                            {lawFirm.adres}<br />
+                            {lawFirm.kodPocztowy} {lawFirm.miasto}
+                          </span>
+                          <span className="inline-flex items-center gap-1 ml-1 text-xs text-primary/60 group-hover:text-primary transition-colors">
+                            <MapPin className="h-3 w-3" />
+                          </span>
+                        </button>
                       ) : (
                         <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
                       )}
@@ -1048,17 +1059,18 @@ export default function LawFirmProfilePage() {
                     <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
                       <Globe className="h-5 w-5" />
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
                       <div className="text-sm text-foreground">
-                        <a
-                          href={lawFirm.stronaWww}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline hover:text-primary/80 transition-colors font-medium break-all"
+                        <TooltipPreview
+                          href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
+                          title={lawFirm.nazwa}
+                          description={lawFirm.opis || `Oficjalna strona internetowa kancelarii ${lawFirm.nazwa}`}
+                          favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
+                          className="text-primary font-medium break-all"
                         >
                           {lawFirm.stronaWww}
-                        </a>
+                        </TooltipPreview>
                       </div>
                     </div>
                   </div>
@@ -1522,6 +1534,44 @@ export default function LawFirmProfilePage() {
           index={lightboxIndex}
         />
       )}
+
+      {/* Google Maps Dialog */}
+      <Dialog open={mapsDialogOpen} onOpenChange={setMapsDialogOpen}>
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden rounded-2xl border border-border/60">
+          <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/40">
+            <DialogTitle className="flex items-center gap-2 text-base font-bold">
+              <MapPin className="h-5 w-5 text-primary" />
+              {lawFirm.nazwa}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {lawFirm.adres}, {lawFirm.kodPocztowy} {lawFirm.miasto}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative w-full h-[420px]">
+            <iframe
+              title="Lokalizacja kancelarii na mapie"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(`${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}, Polska`)}&output=embed&z=15`}
+              className="w-full h-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+          <DialogFooter className="px-6 py-4 border-t border-border/40 flex items-center justify-between gap-3">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}, Polska`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:text-primary/80 hover:underline transition-colors font-medium flex items-center gap-1"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              Otwórz w Google Maps
+            </a>
+            <Button variant="outline" size="sm" onClick={() => setMapsDialogOpen(false)} className="rounded-xl">
+              Zamknij
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
