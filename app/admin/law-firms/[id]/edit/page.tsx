@@ -546,7 +546,6 @@ export default function EditLawFirmPage() {
 
       if (response.ok) {
         toast.success("Kancelaria została zaktualizowana pomyślnie")
-        router.push("/admin/law-firms")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd podczas aktualizacji kancelarii")
