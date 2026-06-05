@@ -205,6 +205,16 @@ export async function POST(request: NextRequest) {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') + '-' + nip.slice(-4)
 
+      // Sprawdź czy włączona jest opcja automatycznego przyznawania pakietu Biznes na 3 miesiące
+      const autoGrantSetting = await prisma.settings.findUnique({
+        where: { key: "autoGrantBusinessPackage" }
+      })
+      const isAutoGrantActive = autoGrantSetting?.value === "true"
+
+      const subPackage = isAutoGrantActive ? "BIZNES" : null
+      const pkgStart = isAutoGrantActive ? new Date() : null
+      const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
+
       await prisma.lawFirm.create({
         data: {
           userId: user.id,
@@ -227,6 +237,9 @@ export async function POST(request: NextRequest) {
           miasto: userData.lawFirm.miasto,
           voivodeshipId: userData.lawFirm.voivodeshipId || defaultVoivodeship.id,
           typOferty: userData.lawFirm.typOferty,
+          pakietSubskrypcji: subPackage as any,
+          dataPakietuOd: pkgStart,
+          dataPakietuDo: pkgEnd,
           zgodaRegulamin: userData.lawFirm.zgodaRegulamin || false,
           zgodaPrzetwarzanie: userData.lawFirm.zgodaPrzetwarzanie || false,
         },

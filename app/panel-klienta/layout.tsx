@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { cn } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import {
   FaFacebook as Facebook,
@@ -84,6 +84,7 @@ export default function ClientPanelLayout({
   }, [session, pathname])
 
   const handleLogout = async () => {
+    await clearAppCacheAndStorage()
     await signOut({ callbackUrl: "/" });
   };
 

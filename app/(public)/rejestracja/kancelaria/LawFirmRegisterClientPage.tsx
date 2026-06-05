@@ -20,7 +20,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
@@ -182,6 +182,29 @@ export default function LawFirmRegistrationPage() {
   const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  const prevVoivodeshipIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (isInitialized) {
+      if (prevVoivodeshipIdRef.current === null) {
+        prevVoivodeshipIdRef.current = formData.voivodeshipId || ""
+      } else if (formData.voivodeshipId !== prevVoivodeshipIdRef.current) {
+        prevVoivodeshipIdRef.current = formData.voivodeshipId
+        setFormData(prev => ({
+          ...prev,
+          voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : []
+        }))
+        if (fieldErrors.voivodeshipsIds) {
+          setFieldErrors(prev => {
+            const newErrors = { ...prev }
+            delete newErrors.voivodeshipsIds
+            return newErrors
+          })
+        }
+      }
+    }
+  }, [formData.voivodeshipId, isInitialized, fieldErrors.voivodeshipsIds])
 
   const totalSteps = steps.length
 

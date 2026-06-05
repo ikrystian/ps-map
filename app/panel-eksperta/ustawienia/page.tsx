@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
-import { cn } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import { motion } from "framer-motion"
 import {
   Calendar,
@@ -408,6 +408,7 @@ export default function LawFirmSettingsPage() {
       }
 
       toast.success("Konto zostało usunięte")
+      await clearAppCacheAndStorage()
       await signOut({ callbackUrl: "/" })
     } catch (error) {
       console.error("Error deleting account:", error)
@@ -416,6 +417,7 @@ export default function LawFirmSettingsPage() {
   }
 
   const handleLogout = async () => {
+    await clearAppCacheAndStorage()
     await signOut({ callbackUrl: "/" })
   }
 

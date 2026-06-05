@@ -82,3 +82,27 @@ export function stripHtmlTags(html: string | null | undefined): string {
     .replace(/&#39;/gi, "'")
   return stripped.replace(/\s+/g, " ").trim()
 }
+
+/**
+ * Clears all client-side cache and storage (localStorage, sessionStorage, and browser caches).
+ */
+export async function clearAppCacheAndStorage() {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.clear()
+      sessionStorage.clear()
+    } catch (e) {
+      console.error("Failed to clear Web Storage:", e)
+    }
+
+    if ("caches" in window) {
+      try {
+        const cacheNames = await caches.keys()
+        await Promise.all(cacheNames.map((name) => caches.delete(name)))
+      } catch (e) {
+        console.error("Failed to clear Caches:", e)
+      }
+    }
+  }
+}
+

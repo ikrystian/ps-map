@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Geist_Mono, Playfair_Display, Poppins } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import { ConsentManager } from "./consent-manager";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -57,27 +56,23 @@ export default async function RootLayout({
         className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased`}
         suppressHydrationWarning
       >
-        <ConsentManager>
-
-          <Providers session={session}>
-            <NextTopLoader
-              color="var(--primary)"
-              initialPosition={0.08}
-              crawlSpeed={200}
-              height={3}
-              crawl={true}
-              showSpinner={false}
-              easing="ease"
-              speed={200}
-              shadow="0 0 10px var(--primary), 0 0 5px var(--primary)"
-            />
-            {children}
-            <Toaster />
-            <Sonner />
-            {showChat && <ChatAssistant />}
-          </Providers>
-
-        </ConsentManager>
+        <Providers session={session}>
+          <NextTopLoader
+            color="var(--primary)"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px var(--primary), 0 0 5px var(--primary)"
+          />
+          {children}
+          <Toaster />
+          <Sonner />
+          {showChat && <ChatAssistant />}
+        </Providers>
       </body>
     </html>
   )

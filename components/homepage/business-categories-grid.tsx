@@ -58,7 +58,7 @@ const BusinessCategoryCard = memo(({
         ) : category.ikona ? (
           (() => {
             const Icon = icons[category.ikona as keyof typeof icons]
-            return Icon ? <Icon className="h-10 w-10 text-white" /> : null
+            return Icon ? <Icon className="h-16 w-16 md:h-10 md:w-10 text-white" /> : null
           })()
         ) : null}
         <h3 className={titleClassName}>{category.nazwa}</h3>

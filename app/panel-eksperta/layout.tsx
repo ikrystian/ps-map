@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
@@ -12,6 +12,7 @@ import { triggerBadgeCheck } from "@/app/actions/badges"
 import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
+import { BusinessPackageWelcomeModal } from "@/components/law-firm/BusinessPackageWelcomeModal"
 import { MessagesBell } from "@/components/MessagesBell"
 import { NotificationBell } from "@/components/NotificationBell"
 import { ExpiredPackageModal } from "@/components/permissions"
@@ -87,6 +88,7 @@ export default function LawFirmPanelLayout({
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
   const [showExpiredModal, setShowExpiredModal] = useState(false)
   const [showNotificationModal, setShowNotificationModal] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -157,15 +159,19 @@ export default function LawFirmPanelLayout({
     }
   }, [permissionsLoading, packageExpired, packageName, session])
 
-  // Sprawdź czy ustawienia powiadomień są skonfigurowane
+  // Sprawdź czy ustawienia powiadomień są skonfigurowane oraz czy przyznano pakiet powitalny
   useEffect(() => {
     const checkNotificationSettings = async () => {
       try {
         const response = await fetch("/api/notification-settings")
         if (response.ok) {
           const data = await response.json()
-          if (data && data.isConfigured === false) {
-            setShowNotificationModal(true)
+          if (data) {
+            if (data.isConfigured === false) {
+              setShowNotificationModal(true)
+            } else if (data.welcomePackageSeen === false && subscriptionType === "BIZNES") {
+              setShowWelcomeModal(true)
+            }
           }
         }
       } catch (error) {
@@ -176,9 +182,10 @@ export default function LawFirmPanelLayout({
     if (session?.user?.role === "LAW_FIRM" && pathname !== "/panel-eksperta/ustawienia") {
       checkNotificationSettings()
     }
-  }, [session, pathname])
+  }, [session, pathname, subscriptionType])
 
   const handleLogout = async () => {
+    await clearAppCacheAndStorage()
     await signOut({ callbackUrl: "/" })
   }
 
@@ -614,7 +621,22 @@ export default function LawFirmPanelLayout({
       <NotificationSettingsPromptModal
         open={showNotificationModal}
         onOpenChange={setShowNotificationModal}
-        onSuccess={() => setShowNotificationModal(false)}
+        onSuccess={() => {
+          setShowNotificationModal(false)
+          // Po pomyślnym zapisaniu powiadomień, jeśli ekspert ma pakiet Biznes i nie widział modalu powitalnego, wyświetl go
+          if (subscriptionType === "BIZNES") {
+            setShowWelcomeModal(true)
+          }
+        }}
+      />
+
+      {/* Modal powitalny dla darmowego pakietu Biznes */}
+      <BusinessPackageWelcomeModal
+        open={showWelcomeModal}
+        onOpenChange={setShowWelcomeModal}
+        onConfirm={() => {
+          setShowWelcomeModal(false)
+        }}
       />
 
       {/* Account Manager Widget */}

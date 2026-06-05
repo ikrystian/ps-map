@@ -135,6 +135,12 @@ export async function GET(request: NextRequest) {
         description: "Czy wyświetlać asystenta czatu (ChatAssistant) na stronie",
       }
     }
+    if (!settingsObject.autoGrantBusinessPackage) {
+      settingsObject.autoGrantBusinessPackage = {
+        value: "false",
+        description: "Czy automatycznie przyznawać nowo zarejestrowanym ekspertom darmowy 3-miesięczny pakiet Biznes",
+      }
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

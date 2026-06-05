@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn, getSubscriptionBorderColor } from "@/lib/utils"
+import { cn, getSubscriptionBorderColor, clearAppCacheAndStorage } from "@/lib/utils"
 import {
   Briefcase,
   ChevronDown,
@@ -57,6 +57,7 @@ export default function UserMenu({
   const borderColor = getSubscriptionBorderColor(subscriptionType)
 
   const handleLogout = async () => {
+    await clearAppCacheAndStorage()
     await signOut({ callbackUrl: "/wylogowano" })
   }
 

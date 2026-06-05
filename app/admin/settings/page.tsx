@@ -107,6 +107,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  autoGrantBusinessPackage?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -138,6 +142,7 @@ export default function AdminSettingsPage() {
   const [ksefToken, setKsefToken] = useState("")
   const [ksefEnv, setKsefEnv] = useState("test")
   const [showChatAssistant, setShowChatAssistant] = useState("true")
+  const [autoGrantBusinessPackage, setAutoGrantBusinessPackage] = useState("false")
 
 
   useEffect(() => {
@@ -174,6 +179,7 @@ export default function AdminSettingsPage() {
         setKsefToken(data.ksefToken?.value || "")
         setKsefEnv(data.ksefEnv?.value || "test")
         setShowChatAssistant(data.showChatAssistant?.value || "true")
+        setAutoGrantBusinessPackage(data.autoGrantBusinessPackage?.value || "false")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -345,6 +351,10 @@ export default function AdminSettingsPage() {
               value: showChatAssistant,
               description: "Czy wyświetlać asystenta czatu (ChatAssistant) na stronie",
             },
+            autoGrantBusinessPackage: {
+              value: autoGrantBusinessPackage,
+              description: "Czy automatycznie przyznawać nowo zarejestrowanym ekspertom darmowy 3-miesięczny pakiet Biznes",
+            },
           },
         }),
       })
@@ -489,6 +499,22 @@ export default function AdminSettingsPage() {
             <p className="text-sm text-muted-foreground">
               Określa ile maksymalnie słów kluczowych (tagów) może dodać kancelaria bez aktywnego pakietu
             </p>
+          </div>
+
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="autoGrantBusinessPackage" className="text-base font-semibold">
+                Darmowy pakiet Biznes dla nowych ekspertów
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Po włączeniu każdy nowo zarejestrowany ekspert otrzyma automatycznie pakiet Biznes na okres 3 miesięcy od momentu rejestracji.
+              </p>
+            </div>
+            <Switch
+              id="autoGrantBusinessPackage"
+              checked={autoGrantBusinessPackage === "true"}
+              onCheckedChange={(checked) => setAutoGrantBusinessPackage(checked ? "true" : "false")}
+            />
           </div>
         </CardContent>
       </Card>

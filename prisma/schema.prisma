@@ -1265,6 +1265,7 @@ model NotificationSettings {
   powiadomieniaSmNowa         Boolean  @default(false)  // SMS przy nowej wiadomości
   wiadomosciZbiorcze          Boolean  @default(true)   // E-mail - wiadomości zbiorcze
   urlop                       Boolean  @default(false)  // Tryb urlopowy
+  welcomePackageSeen          Boolean  @default(false)  // Czy wyświetlono modal powitalny o przyznaniu darmowego pakietu Biznes
 
   updatedAt         DateTime @updatedAt
 

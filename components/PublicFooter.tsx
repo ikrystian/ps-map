@@ -45,7 +45,7 @@ export default function PublicFooter() {
                 className="brightness-200"
               />
             </Link>
-            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-light max-w-sm">
+            <p className="text-sm text-neutral-400 leading-relaxed font-light max-w-sm">
               Prostasprawa.pl to nowoczesny portal, który łączy osoby potrzebujące pomocy prawnej z doświadczonymi specjalistami. Oferujemy szybki i bezpieczny dostęp do porad prawnych, umożliwiając łatwe znalezienie odpowiedniego prawnika w różnych dziedzinach prawa.
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function PublicFooter() {
             <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
               Menu
             </h3>
-            <ul className="space-y-2 text-xs md:text-sm font-light text-neutral-400">
+            <ul className="space-y-2 text-sm font-light text-neutral-400">
               <li>
                 <Link href="/kategorie" className="hover:text-[#d7b56d] transition-colors">
                   Sprawy prywatne

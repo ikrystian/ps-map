@@ -66,7 +66,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <Link href={`/blog/${post.slug}`} className="block group">
-                    <div className="relative overflow-hidden rounded-2xl aspect-[4/5] cursor-pointer shadow-2xl bg-neutral-900 transition-all duration-500">
+                    <div className="relative overflow-hidden rounded-2xl aspect-[5/4] md:aspect-[4/5] cursor-pointer shadow-2xl bg-neutral-900 transition-all duration-500">
                       {/* Background Image with subtle zoom on hover */}
                       <Image
                         src={post.obrazekWyrozniajacy || "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop"}

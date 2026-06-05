@@ -485,6 +485,16 @@ export async function POST(request: NextRequest) {
         ? body.categoriesIds[0]
         : null
 
+      // Sprawdź czy włączona jest opcja automatycznego przyznawania pakietu Biznes na 3 miesiące
+      const autoGrantSetting = await tx.settings.findUnique({
+        where: { key: "autoGrantBusinessPackage" }
+      })
+      const isAutoGrantActive = autoGrantSetting?.value === "true"
+
+      const subPackage = isAutoGrantActive ? "BIZNES" : null
+      const pkgStart = isAutoGrantActive ? new Date() : null
+      const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
+
       // Utwórz profil kancelarii
       const lawFirm = await tx.lawFirm.create({
         data: {
@@ -510,6 +520,9 @@ export async function POST(request: NextRequest) {
           opis: body.opis || "",
           stronaWww: body.stronaWww || null,
           typOferty: body.typOferty,
+          pakietSubskrypcji: subPackage as any,
+          dataPakietuOd: pkgStart,
+          dataPakietuDo: pkgEnd,
           zgodaRegulamin: body.zgodaRegulamin,
           zgodaPrzetwarzanie: body.zgodaPrzetwarzanie,
           callaPolska: body.callaPolska || false,
