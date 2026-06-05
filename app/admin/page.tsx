@@ -610,7 +610,7 @@ export default function AdminDashboardPage() {
                         {post.tytul}
                       </div>
                       <div className="text-xs text-muted-foreground font-light truncate">
-                        Kancelaria: {post.lawFirm.nazwa || 'Brak kancelarii'}
+                        Autor: {post.lawFirm?.nazwa || 'Administracja'}
                       </div>
                     </div>
                   </div>
