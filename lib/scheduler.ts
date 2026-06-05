@@ -1,4 +1,4 @@
-import { sendConsultationReminders } from "./consultations"
+import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./consultations"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
@@ -10,6 +10,7 @@ let isSubscriptionsJobRunning = false
 let isRemindersJobRunning = false
 let isEmailsJobRunning = false
 let isRankingsJobRunning = false
+let isMeetLinksJobRunning = false
 
 /**
  * Inicjalizuje okresowe zadania w tle wykonywane po stronie serwera aplikacji
@@ -104,6 +105,22 @@ export function initScheduler() {
       isRankingsJobRunning = false
     }
   }, 12 * 60 * 60 * 1000)
+
+  // 6. Generowanie linków Google Meet na 5 minut przed konsultacją (co 1 minutę)
+  setInterval(async () => {
+    if (isMeetLinksJobRunning) return
+    isMeetLinksJobRunning = true
+    try {
+      const count = await generateUpcomingGoogleMeetLinks()
+      if (count > 0) {
+        console.log(`[SCHEDULER] Generated ${count} upcoming Google Meet links`)
+      }
+    } catch (error) {
+      console.error("[SCHEDULER] Error in Google Meet links generation job:", error)
+    } finally {
+      isMeetLinksJobRunning = false
+    }
+  }, 60 * 1000)
 
   console.log("[SCHEDULER] Background scheduler initialized and running.")
 }

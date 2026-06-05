@@ -2,6 +2,108 @@ import { sendEmail } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
+import { createGoogleMeetLink } from "./google-meet"
+import { sendSystemNotification } from "./notifications"
+
+/**
+ * Generuje linki Google Meet dla zaakceptowanych konsultacji na 5 minut przed ich rozpoczęciem.
+ */
+export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
+  const now = new Date()
+  // Generujemy linki dla spotkań rozpoczynających się w ciągu najbliższych 5 minut i 30 sekund
+  const targetTime = new Date(now.getTime() + 5.5 * 60 * 1000)
+
+  const upcomingBookings = await prisma.consultationBooking.findMany({
+    where: {
+      status: "ACCEPTED",
+      googleMeetUrl: null,
+      consultationDate: {
+        gte: now,
+        lte: targetTime,
+      },
+    },
+    include: {
+      client: { include: { user: true } },
+      lawFirm: { include: { user: true } },
+    },
+  })
+
+  let count = 0
+
+  for (const booking of upcomingBookings) {
+    try {
+      const meetLink = await createGoogleMeetLink({
+        id: booking.id,
+        proposedDateTime: booking.consultationDate.toISOString(),
+        description: booking.topic,
+        lawFirm: booking.lawFirm,
+        client: booking.client,
+      })
+
+      if (meetLink) {
+        await prisma.consultationBooking.update({
+          where: { id: booking.id },
+          data: { googleMeetUrl: meetLink },
+        })
+
+        const dateStr = new Date(booking.consultationDate).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+        const linkTresc = ` Link do spotkania Google Meet: ${meetLink}`;
+
+        // Wyślij powiadomienie do klienta
+        await sendSystemNotification({
+          userId: booking.client.userId,
+          typ: "KONSULTACJA_ZAAKCEPTOWANA",
+          tytul: "Twój link do konsultacji jest gotowy",
+          tresc: `Twój wirtualny pokój z ${booking.lawFirm.nazwa} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
+          linkUrl: "/panel-klienta/consultacje",
+          emailHtml: `
+            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+              <h2 style="color: #0da192;">Twój link do konsultacji jest gotowy!</h2>
+              <p>Dzień dobry,</p>
+              <p>Za chwilę rozpoczyna się Twoja konsultacja z <strong>${booking.lawFirm.nazwa}</strong>.</p>
+              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
+              <p><strong>Link do spotkania (Google Meet):</strong><br/>
+              <a href="${meetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0da192; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold;">Dołącz do Google Meet</a></p>
+              <p style="font-size: 12px; color: #666;">Spotkanie wideo jest ważne przez 1 godzinę.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
+            </div>
+          `,
+          force: true,
+        })
+
+        // Wyślij powiadomienie do eksperta
+        await sendSystemNotification({
+          userId: booking.lawFirm.userId,
+          typ: "KONSULTACJA_ZAAKCEPTOWANA",
+          tytul: "Twój link do konsultacji jest gotowy",
+          tresc: `Twój wirtualny pokój z klientem ${booking.client.user.name} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
+          linkUrl: "/panel-eksperta/consultacje",
+          emailHtml: `
+            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+              <h2 style="color: #0da192;">Twój link do konsultacji jest gotowy!</h2>
+              <p>Dzień dobry,</p>
+              <p>Za chwilę rozpoczyna się Twoja konsultacja z klientem <strong>${booking.client.user.name}</strong>.</p>
+              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
+              <p><strong>Link do spotkania (Google Meet):</strong><br/>
+              <a href="${meetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0da192; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold;">Dołącz do Google Meet</a></p>
+              <p style="font-size: 12px; color: #666;">Spotkanie wideo jest ważne przez 1 godzinę.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
+            </div>
+          `,
+          force: true,
+        })
+
+        count++
+      }
+    } catch (error) {
+      console.error(`Error generating meet link for booking ${booking.id}:`, error)
+    }
+  }
+
+  return count
+}
 
 /**
  * Pobiera zaplanowane i opłacone konsultacje rozpoczynające się w ciągu najbliższej godziny,
