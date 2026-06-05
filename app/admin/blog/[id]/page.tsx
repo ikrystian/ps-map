@@ -193,7 +193,6 @@ export default function AdminEditBlogPostPage() {
 
       if (response.ok) {
         toast.success("Artykuł został zaktualizowany")
-        router.push("/admin/blog")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd aktualizacji wpisu")
