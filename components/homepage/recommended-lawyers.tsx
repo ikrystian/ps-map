@@ -122,10 +122,10 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
   // Returns a premium image for the lawyer, falling back to unsplash headshots if missing or placeholder
   const getFirmImage = (firm: LawFirm, index: number) => {
-    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads"))) {
+    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
       return firm.logo
     }
-    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads"))) {
+    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
       return firm.zdjecieGlowne
     }
     return PORTRAITS[index % PORTRAITS.length]

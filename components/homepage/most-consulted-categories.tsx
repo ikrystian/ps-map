@@ -193,10 +193,10 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
   }
 
   const getFirmImage = (firm: LawFirm, index: number) => {
-    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads"))) {
+    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
       return firm.logo
     }
-    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads"))) {
+    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
       return firm.zdjecieGlowne
     }
     return PORTRAITS[index % PORTRAITS.length]

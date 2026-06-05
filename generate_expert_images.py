@@ -6,12 +6,25 @@ import sqlite3
 import argparse
 import tempfile
 import requests
+import re
+import unicodedata
 from PIL import Image
 from io import BytesIO
 
 # Default configuration
 DEFAULT_BASE_URL = "https://ps-dev.com.pl"
 NANOBANANA_API_URL = "https://api.nanobananaapi.ai/api/v1/nanobanana"
+
+def slugify(text):
+    """Converts a string to a safe directory name (slug)."""
+    # Normalize unicode characters to convert letters with diacritics to ascii
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
+    # Keep only alphanumeric characters, spaces, hyphens, and underscores
+    text = re.sub(r'[^\w\s-]', '', text).strip().lower()
+    # Replace spaces and multiple hyphens/underscores with a single hyphen
+    text = re.sub(r'[-\s]+', '-', text)
+    return text
+
 
 def load_env(path=".env"):
     """Loads environment variables from a .env file."""
@@ -197,7 +210,7 @@ def update_expert_profile(base_url, law_firm_id, logo_img, cover_img):
         raise Exception(f"Upload failed: {res.get('error', 'Unknown error')}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate expert profile logos and cover photos.")
+    parser = argparse.ArgumentParser(description="Generate expert profile logos and cover photos. Cover photo without texts!")
     parser.add_argument("--api-key", help="Nanobanana API Key (can also set NANOBANANA_API_KEY env var)")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL, help="Base URL of the Next.js app (default: http://localhost:3000)")
     parser.add_argument("--limit", type=int, help="Limit number of expert profiles to process")
@@ -276,9 +289,37 @@ def main():
             print("--- Generating Cover Photo (1920x600 px) ---")
             cover_img = generate_image(api_key, cover_prompt, "21:9", 1920, 600)
             
-            # 3. Upload to Next.js app
-            print("--- Updating Profile ---")
-            update_expert_profile(args.base_url, lf_id, logo_img, cover_img)
+            # 3. Save images locally in public/generate/[nazwakancelarii]
+            folder_name = slugify(name)
+            target_dir = os.path.join("public", "generate", folder_name)
+            os.makedirs(target_dir, exist_ok=True)
+            
+            logo_path = os.path.join(target_dir, "logo.jpg")
+            cover_path = os.path.join(target_dir, "cover.jpg")
+            
+            print(f"  Saving logo locally to: {logo_path}")
+            logo_img.save(logo_path, format="JPEG", quality=90)
+            
+            print(f"  Saving cover photo locally to: {cover_path}")
+            cover_img.save(cover_path, format="JPEG", quality=90)
+            
+            # 4. Update SQLite database to point to the local paths
+            logo_db_path = f"/generate/{folder_name}/logo.jpg"
+            cover_db_path = f"/generate/{folder_name}/cover.jpg"
+            cursor.execute(
+                "UPDATE LawFirm SET logo = ?, zdjecieGlowne = ? WHERE id = ?",
+                (logo_db_path, cover_db_path, lf_id)
+            )
+            conn.commit()
+            print(f"  Updated SQLite database with static paths: logo={logo_db_path}, cover={cover_db_path}")
+            
+            # 5. Upload to Next.js app if base-url is remote (optional sync)
+            if args.base_url and "localhost" not in args.base_url and "127.0.0.1" not in args.base_url:
+                print("--- Updating Profile via Remote API ---")
+                update_expert_profile(args.base_url, lf_id, logo_img, cover_img)
+            else:
+                print("  Skipping API upload because we updated the database directly.")
+                
             success_count += 1
             
         except Exception as e:

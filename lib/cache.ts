@@ -182,6 +182,6 @@ export async function getOrSetCached<T>(
   const duration = (performance.now() - startTime).toFixed(1);
   console.log(`[Cache WRITE] Key: "${key}" | Fetched in ${duration}ms | TTL: ${ttlSeconds}s`);
 
-  serverCache.set(key, freshData, ttlSeconds * 1000);
+  serverCache.set(key, freshData, ttlSeconds * 10000);
   return freshData;
 }

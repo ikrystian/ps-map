@@ -12,13 +12,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { ImageUpload } from "@/components/ui/image-upload"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Loader2, Upload, X, Image as ImageIcon } from "lucide-react"
+import { ImageCropper } from "@/components/ui/image-cropper"
+import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -51,6 +52,12 @@ export default function EditLawFirmPage() {
     konwersja: 0,
     pozycjaRanking: null as number | null,
   })
+
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null)
+  const [showLogoCropper, setShowLogoCropper] = useState(false)
+  const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
+  const [showMainImageCropper, setShowMainImageCropper] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
   const form = useForm<LawFirmFormValues>({
     resolver: zodResolver(lawFirmSchema),
@@ -114,6 +121,139 @@ export default function EditLawFirmPage() {
       accountManagerId: "",
     },
   })
+
+  const handleLogoFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedLogoFile(file)
+    setShowLogoCropper(true)
+  }
+
+  const handleLogoCropComplete = async (croppedBlob: Blob) => {
+    setShowLogoCropper(false)
+    setIsUploading(true)
+
+    try {
+      const file = new File([croppedBlob], selectedLogoFile?.name || "logo.jpg", {
+        type: croppedBlob.type,
+      })
+
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image")
+      }
+
+      const data = await response.json()
+      const uploadUrl = data.url
+      if (uploadUrl) {
+        form.setValue("logo", uploadUrl)
+        toast.success("Logo zostało przesłane")
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
+    } finally {
+      setIsUploading(false)
+      setSelectedLogoFile(null)
+    }
+  }
+
+  const handleLogoCropCancel = () => {
+    setShowLogoCropper(false)
+    setSelectedLogoFile(null)
+  }
+
+  const handleMainImageFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    // Show cropper
+    setSelectedMainImageFile(file)
+    setShowMainImageCropper(true)
+  }
+
+  const handleMainImageCropComplete = async (croppedBlob: Blob) => {
+    setShowMainImageCropper(false)
+    setIsUploading(true)
+
+    try {
+      const file = new File([croppedBlob], selectedMainImageFile?.name || "main-image.jpg", {
+        type: croppedBlob.type,
+      })
+
+      const formDataToSend = new FormData()
+      formDataToSend.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image")
+      }
+
+      const data = await response.json()
+      const uploadUrl = data.url
+      if (uploadUrl) {
+        form.setValue("zdjecieGlowne", uploadUrl)
+        toast.success("Zdjęcie główne zostało przesłane")
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
+    } finally {
+      setIsUploading(false)
+      setSelectedMainImageFile(null)
+    }
+  }
+
+  const handleMainImageCropCancel = () => {
+    setShowMainImageCropper(false)
+    setSelectedMainImageFile(null)
+  }
+
+  const handleRemoveSingleImage = (field: "logo" | "zdjecieGlowne") => {
+    form.setValue(field, "")
+    toast.success(field === "logo" ? "Logo zostało usunięte" : "Zdjęcie główne zostało usunięte")
+  }
 
   // Fetch voivodeships
   useEffect(() => {
@@ -549,12 +689,89 @@ export default function EditLawFirmPage() {
                   <FormItem>
                     <FormLabel>Logo (opcjonalnie)</FormLabel>
                     <FormControl>
-                      <ImageUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        label=""
-                        description="Logo kancelarii będzie wyświetlane w profilu publicznym"
-                      />
+                      <div>
+                        {field.value ? (
+                          <div className="flex items-start gap-4">
+                            <div className="relative h-32 w-32 rounded-lg overflow-hidden border-2 border-border bg-card">
+                              <Image
+                                src={field.value}
+                                alt="Logo"
+                                fill
+                                className="object-contain p-2"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <label
+                                htmlFor="logo-upload"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
+                              >
+                                {isUploading ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Przesyłanie...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Zmień logo
+                                  </>
+                                )}
+                              </label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => handleRemoveSingleImage("logo")}
+                                disabled={isUploading}
+                              >
+                                <X className="mr-2 h-4 w-4" />
+                                Usuń logo
+                              </Button>
+                            </div>
+                            <input
+                              id="logo-upload"
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              className="hidden"
+                              onChange={handleLogoFileSelect}
+                              disabled={isUploading}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <label
+                              htmlFor="logo-upload"
+                              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                            >
+                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                {isUploading ? (
+                                  <>
+                                    <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                                    <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                                    <p className="mb-2 text-sm text-muted-foreground">
+                                      <span className="font-semibold">Kliknij aby przesłać</span> logo
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      PNG, JPG, WEBP (max 5MB)
+                                    </p>
+                                  </>
+                                )}
+                              </div>
+                            </label>
+                            <input
+                              id="logo-upload"
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              className="hidden"
+                              onChange={handleLogoFileSelect}
+                              disabled={isUploading}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -995,12 +1212,89 @@ export default function EditLawFirmPage() {
                   <FormItem>
                     <FormLabel>Zdjęcie główne (opcjonalnie)</FormLabel>
                     <FormControl>
-                      <ImageUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        label=""
-                        description="Główne zdjęcie profilu kancelarii"
-                      />
+                      <div>
+                        {field.value ? (
+                          <div className="space-y-3">
+                            <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-border">
+                              <Image
+                                src={field.value}
+                                alt="Zdjęcie główne"
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <label
+                                htmlFor="main-image-upload"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
+                              >
+                                {isUploading ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Przesyłanie...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Zmień zdjęcie
+                                  </>
+                                )}
+                              </label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => handleRemoveSingleImage("zdjecieGlowne")}
+                                disabled={isUploading}
+                              >
+                                <X className="mr-2 h-4 w-4" />
+                                Usuń zdjęcie
+                              </Button>
+                            </div>
+                            <input
+                              id="main-image-upload"
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              className="hidden"
+                              onChange={handleMainImageFileSelect}
+                              disabled={isUploading}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <label
+                              htmlFor="main-image-upload"
+                              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                            >
+                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                {isUploading ? (
+                                  <>
+                                    <Loader2 className="h-10 w-10 mb-3 text-muted-foreground animate-spin" />
+                                    <p className="text-sm text-muted-foreground">Przesyłanie...</p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                                    <p className="mb-2 text-sm text-muted-foreground">
+                                      <span className="font-semibold">Kliknij aby przesłać</span> zdjęcie główne
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      PNG, JPG, WEBP (max 5MB)
+                                    </p>
+                                  </>
+                                )}
+                              </div>
+                            </label>
+                            <input
+                              id="main-image-upload"
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              className="hidden"
+                              onChange={handleMainImageFileSelect}
+                              disabled={isUploading}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1441,6 +1735,26 @@ export default function EditLawFirmPage() {
           </div>
         </form>
       </Form>
+
+      {selectedLogoFile && (
+        <ImageCropper
+          image={selectedLogoFile}
+          aspectRatio={1}
+          onCropComplete={handleLogoCropComplete}
+          onCancel={handleLogoCropCancel}
+          open={showLogoCropper}
+        />
+      )}
+
+      {selectedMainImageFile && (
+        <ImageCropper
+          image={selectedMainImageFile}
+          aspectRatio={2}
+          onCropComplete={handleMainImageCropComplete}
+          onCancel={handleMainImageCropCancel}
+          open={showMainImageCropper}
+        />
+      )}
     </div>
   )
 }

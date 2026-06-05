@@ -22,7 +22,7 @@ const PORTRAITS = [
 ]
 
 const getFirmImage = (firm: LawFirm, index: number) => {
-  if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads"))) {
+  if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
     return firm.logo
   }
   return PORTRAITS[index % PORTRAITS.length]
