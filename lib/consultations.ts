@@ -10,15 +10,17 @@ import { sendSystemNotification } from "./notifications"
  */
 export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
   const now = new Date()
-  // Generujemy linki dla spotkań rozpoczynających się w ciągu najbliższych 5 minut i 30 sekund
-  const targetTime = new Date(now.getTime() + 5.5 * 60 * 1000)
+  // Generujemy linki dla spotkań rozpoczynających się w ciągu najbliższych 30 minut
+  // oraz tych, które już się rozpoczęły, ale wciąż trwają lub rozpoczęły się niedawno (do 60 minut wstecz)
+  const startTime = new Date(now.getTime() - 60 * 60 * 1000)
+  const targetTime = new Date(now.getTime() + 30 * 60 * 1000)
 
   const upcomingBookings = await prisma.consultationBooking.findMany({
     where: {
       status: "ACCEPTED",
       googleMeetUrl: null,
       consultationDate: {
-        gte: now,
+        gte: startTime,
         lte: targetTime,
       },
     },
