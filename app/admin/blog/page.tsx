@@ -847,7 +847,7 @@ export default function AdminBlogPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Czy na pewno chcesz usunąć?</AlertDialogTitle>
             <AlertDialogDescription>
-              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot; kancelarii {selectedPost?.lawFirm.nazwa}?
+              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot;{selectedPost?.lawFirm ? ` kancelarii ${selectedPost.lawFirm.nazwa}` : ' (wpis administracji)'}?
               Ta operacja jest nieodwracalna.
             </AlertDialogDescription>
           </AlertDialogHeader>
