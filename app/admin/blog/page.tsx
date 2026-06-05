@@ -537,10 +537,16 @@ export default function AdminBlogPage() {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div className="font-medium text-foreground">{post.lawFirm.nazwa}</div>
-                        <div className="text-muted-foreground text-xs">
-                          {post.lawFirm.nazwaFirmy}
-                        </div>
+                        {post.lawFirm ? (
+                          <>
+                            <div className="font-medium text-foreground">{post.lawFirm.nazwa}</div>
+                            <div className="text-muted-foreground text-xs">
+                              {post.lawFirm.nazwaFirmy}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="font-medium text-foreground italic text-muted-foreground">Admin</div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -663,7 +669,7 @@ export default function AdminBlogPage() {
             <div className="space-y-6">
               <DialogHeader>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <span className="font-semibold">{selectedPost.lawFirm.nazwa}</span>
+                  <span className="font-semibold">{selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Administracja"}</span>
                   <span>•</span>
                   <span>{formatDate(selectedPost.createdAt)}</span>
                 </div>
@@ -676,46 +682,7 @@ export default function AdminBlogPage() {
               </DialogHeader>
 
               {/* Szybkie ustawienia admina w modalu */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg border">
-                <div className="space-y-2">
-                  <Label htmlFor="modal-lawfirm" className="text-sm font-semibold">Kancelaria / Autor</Label>
-                  <Select
-                    value={selectedPost.lawFirmId || selectedPost.lawFirm.id}
-                    onValueChange={async (value) => {
-                      try {
-                        const response = await fetch(`/api/admin/blog/${selectedPost.id}`, {
-                          method: "PATCH",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ lawFirmId: value }),
-                        })
-                        if (response.ok) {
-                          toast.success("Kancelaria została zaktualizowana")
-                          const updated = await response.json()
-                          setSelectedPost(updated)
-                          setPosts((prev) => prev.map((p) => (p.id === selectedPost.id ? updated : p)))
-                        } else {
-                          throw new Error("Błąd aktualizacji kancelarii")
-                        }
-                      } catch (err) {
-                        toast.error("Nie udało się zaktualizować kancelarii")
-                      }
-                    }}
-                  >
-                    <SelectTrigger id="modal-lawfirm" className="bg-background">
-                      <SelectValue placeholder="Wybierz kancelarię" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {lawFirms.map((lf) => (
-                        <SelectItem key={lf.id} value={lf.id}>
-                          {lf.nazwa}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg border">
                 <div className="space-y-2">
                   <Label htmlFor="modal-category" className="text-sm font-semibold">Kategoria wpisu</Label>
                   <Select
