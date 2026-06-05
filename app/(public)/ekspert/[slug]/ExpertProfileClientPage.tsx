@@ -1096,15 +1096,19 @@ export default function LawFirmProfilePage() {
                     <div className="space-y-1 min-w-0">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
                       <div className="text-sm text-foreground">
-                        <TooltipPreview
-                          href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
-                          title={lawFirm.nazwa}
-                          description={lawFirm.opis || `Oficjalna strona internetowa kancelarii ${lawFirm.nazwa}`}
-                          favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
-                          className="text-primary font-medium break-all"
-                        >
-                          {lawFirm.stronaWww}
-                        </TooltipPreview>
+                        {session?.user ? (
+                          <TooltipPreview
+                            href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
+                            title={lawFirm.nazwa}
+                            description={lawFirm.opis || `Oficjalna strona internetowa kancelarii ${lawFirm.nazwa}`}
+                            favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
+                            className="text-primary font-medium break-all"
+                          >
+                            {lawFirm.stronaWww}
+                          </TooltipPreview>
+                        ) : (
+                          <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                        )}
                       </div>
                     </div>
                   </div>
