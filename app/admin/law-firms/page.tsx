@@ -53,6 +53,7 @@ interface LawFirm {
   miasto: string
   voivodeshipId: string
   opis?: string | null
+  logo?: string | null
   typOferty: OfferType
   pakietSubskrypcji: SubscriptionPackage
   punktySaldo: number
@@ -360,9 +361,22 @@ export default function AdminLawFirmsPage() {
                 lawFirms.map((lawFirm) => (
                   <TableRow key={lawFirm.id}>
                     <TableCell className="font-medium">
-                      <div>
-                        <div>{lawFirm.nazwa}</div>
-                        <div className="text-xs text-muted-foreground">{lawFirm.nazwaFirmy}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-muted border flex items-center justify-center flex-shrink-0">
+                          {lawFirm.logo ? (
+                            <img
+                              src={lawFirm.logo}
+                              alt={lawFirm.nazwa}
+                              className="object-contain h-full w-full p-0.5"
+                            />
+                          ) : (
+                            <Building2 className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div>
+                          <div>{lawFirm.nazwa}</div>
+                          <div className="text-xs text-muted-foreground">{lawFirm.nazwaFirmy}</div>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">{lawFirm.nip}</TableCell>
