@@ -274,7 +274,7 @@ export default function ConsultationsPage() {
           >
             <div className="flex flex-col gap-5 lg:flex-row lg:justify-between lg:items-center">
               <div className="flex gap-4 flex-1 min-w-0">
-                <Avatar className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl flex-shrink-0 border border-border/40">
+                <Avatar className="h-32 w-32 sm:h-32 sm:w-32 rounded-xl flex-shrink-0 border border-border/40">
                   {booking.client?.user?.image && (
                     <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />
                   )}
@@ -285,7 +285,7 @@ export default function ConsultationsPage() {
                 <div className="flex flex-col gap-2.5 min-w-0">
                   <div className="flex items-center gap-2 text-white">
                     <User className="h-4 w-4 text-zinc-400" />
-                    <span className="font-semibold text-base">{booking.client.user.name}</span>
+                    <span className="font-semibold text-xl font-fairplay">{booking.client.user.name}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -327,7 +327,7 @@ export default function ConsultationsPage() {
                     )}
                   </div>
 
-                  {booking.status === "ACCEPTED" && (
+                  {booking.status === "ACCEPTED" && !booking.isArchived && new Date(booking.consultationDate) >= now && (
                     <div className="mt-1.5">
                       {booking.googleMeetUrl ? (
                         <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">

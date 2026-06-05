@@ -208,7 +208,7 @@ export default function ClientConsultationsPage() {
             <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
               <div className="flex gap-4 flex-1 min-w-0">
                 <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
-                  <Avatar className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl border border-border/40">
+                  <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-xl border border-border/40">
                     {booking.lawFirm?.logo && (
                       <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
                     )}
@@ -218,7 +218,7 @@ export default function ClientConsultationsPage() {
                   </Avatar>
                 </Link>
                 <div className="flex flex-col gap-2.5 min-w-0">
-                  <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-base text-white hover:text-[#0da192] transition-colors truncate">
+                  <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-xl font-fairplay text-white hover:text-[#0da192] transition-colors truncate">
                     {booking.lawFirm.nazwa}
                   </Link>
 
@@ -261,7 +261,7 @@ export default function ClientConsultationsPage() {
                     )}
                   </div>
 
-                  {booking.status === "ACCEPTED" && (
+                  {booking.status === "ACCEPTED" && !booking.isArchived && new Date(booking.consultationDate) >= now && (
                     <div className="mt-1">
                       {booking.googleMeetUrl ? (
                         <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">
