@@ -1919,6 +1919,7 @@ model ConsultationBooking {
   paymentStatus   PaymentStatus      @default(OCZEKUJE)
 
   googleMeetUrl   String?
+  isArchived      Boolean            @default(false)
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/components/ui/sonner"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
-import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video, Sparkles, MessageCircle } from "lucide-react"
+import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video, Sparkles, MessageCircle, MoreVertical } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -15,6 +15,8 @@ import { useEffect, useState } from "react"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -128,14 +130,7 @@ export default function ClientConsultationsPage() {
       const response = await fetch(`/api/clients/${session.user.client.id}/consultation-bookings`)
       if (response.ok) {
         const data = await response.json()
-        const now = new Date()
-        const future = data.filter((b: any) => new Date(b.consultationDate) >= now)
-        const past = data.filter((b: any) => new Date(b.consultationDate) < now)
-        
-        future.sort((a: any, b: any) => new Date(a.consultationDate).getTime() - new Date(b.consultationDate).getTime())
-        past.sort((a: any, b: any) => new Date(b.consultationDate).getTime() - new Date(a.consultationDate).getTime())
-        
-        setBookings([...future, ...past])
+        setBookings(data)
       } else {
         throw new Error("Failed to fetch bookings")
       }
@@ -169,6 +164,13 @@ export default function ClientConsultationsPage() {
     }
   }
 
+  const now = new Date()
+  const upcomingBookings = bookings.filter((b: any) => new Date(b.consultationDate) >= now)
+  const pastBookings = bookings.filter((b: any) => new Date(b.consultationDate) < now)
+
+  upcomingBookings.sort((a: any, b: any) => new Date(a.consultationDate).getTime() - new Date(b.consultationDate).getTime())
+  pastBookings.sort((a: any, b: any) => new Date(b.consultationDate).getTime() - new Date(a.consultationDate).getTime())
+
   if (isLoading) {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
@@ -176,6 +178,164 @@ export default function ClientConsultationsPage() {
           <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie Twoich konsultacji...</p>
         </div>
+      </div>
+    )
+  }
+
+  const renderBookingList = (bookingsList: any[], emptyMessage: string) => {
+    if (bookingsList.length === 0) {
+      return (
+        <div className="text-center py-12 px-4 space-y-4 max-w-md mx-auto">
+          <div className="h-12 w-12 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center mx-auto">
+            <Calendar className="h-5 w-5 text-zinc-500" />
+          </div>
+          <div>
+            <p className="text-zinc-400 text-sm font-light leading-relaxed">
+              {emptyMessage}
+            </p>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="space-y-4">
+        {bookingsList.map((booking) => (
+          <div
+            key={booking.id}
+            className="border border-border/10 bg-zinc-950/20 hover:border-[#0da192]/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
+          >
+            <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+              <div className="flex gap-4 flex-1 min-w-0">
+                <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
+                  <Avatar className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl border border-border/40">
+                    {booking.lawFirm?.logo && (
+                      <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
+                    )}
+                    <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
+                      {booking.lawFirm?.nazwa ? booking.lawFirm.nazwa.substring(0, 2).toUpperCase() : "KA"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+                <div className="flex flex-col gap-2.5 min-w-0">
+                  <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-base text-white hover:text-[#0da192] transition-colors truncate">
+                    {booking.lawFirm.nazwa}
+                  </Link>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                      <Calendar className="h-3 w-3" />
+                      {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
+                    </Badge>
+                    <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                      <Clock className="h-3 w-3" />
+                      {booking.duration} min
+                    </Badge>
+                    <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm max-w-[200px] truncate" title={booking.topic}>
+                      <FileText className="h-3 w-3" />
+                      {booking.topic}
+                    </Badge>
+                    <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
+                      <CreditCard className="h-3 w-3" />
+                      {booking.price.toFixed(2)} zł
+                    </Badge>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {booking.status === 'ACCEPTED' ? (
+                      <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zaakceptowana</Badge>
+                    ) : booking.status === 'REJECTED' ? (
+                      <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-sm py-0 px-2 rounded-md">Odrzucona</Badge>
+                    ) : (
+                      <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-sm py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
+                    )}
+
+                    {booking.paymentStatus === 'ZAPLACONE' ? (
+                      <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
+                    ) : (
+                      <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
+                    )}
+
+                    {booking.status === 'ACCEPTED' && (
+                      <ConsultationTimer targetDate={booking.consultationDate} />
+                    )}
+                  </div>
+
+                  {booking.status === "ACCEPTED" && (
+                    <div className="mt-1">
+                      {booking.googleMeetUrl ? (
+                        <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">
+                          <Video className="h-4 w-4 text-blue-400 shrink-0" />
+                          <span className="text-zinc-500 text-xs font-light pr-1">Link do pokoju:</span>
+                          <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline truncate">
+                            {booking.googleMeetUrl}
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-xl">
+                          <Video className="h-4 w-4 text-amber-400 shrink-0 animate-pulse" />
+                          <p className="text-xs text-zinc-400 font-light">
+                            Link do Google Meet pojawi się na 5 minut przed planowaną konsultacją.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {booking.status === "PENDING" && (
+                    <p className="text-sm text-zinc-500 italic font-light mt-1">Link do wirtualnego pokoju spotkania (Google Meet) pojawi się po zaakceptowaniu rezerwacji.</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 shrink-0 self-end md:self-center">
+                <Button
+                  asChild
+                  size="sm"
+                  className="h-9 px-4 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
+                >
+                  <Link href={`/ekspert/${booking.lawFirm.slug}`}>
+                    Przejdź do strony eksperta
+                  </Link>
+                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 border border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border border-border/20 text-zinc-300 rounded-xl p-1.5 shadow-xl">
+                    <DropdownMenuItem
+                      disabled={isChatLoading === booking.id}
+                      onClick={() => handleGoToChat(booking)}
+                      className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors"
+                    >
+                      {isChatLoading === booking.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
+                      ) : (
+                        <MessageCircle className="h-4 w-4 text-[#0da192]" />
+                      )}
+                      <span>Napisz wiadomość</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator className="bg-zinc-800/50 my-1" />
+
+                    <DropdownMenuItem
+                      onClick={() => handleDelete(booking.id)}
+                      className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-rose-500/10 text-rose-500 hover:text-rose-400 cursor-pointer transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4 text-rose-500" />
+                      <span>Usuń</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -210,144 +370,38 @@ export default function ClientConsultationsPage() {
         <motion.div variants={itemVariants}>
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
             <CardContent className="p-6">
-              <div className="space-y-4">
-                {bookings.length === 0 ? (
-                  <div className="text-center py-16 flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
-                    <div className="h-14 w-14 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
-                      <Calendar className="h-6 w-6 text-zinc-500 animate-pulse" />
-                    </div>
-                    <div>
-                      <h4 className="text-base font-semibold text-white">Brak rezerwacji</h4>
-                      <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed font-light">
-                        Nie masz obecnie żadnych umówionych konsultacji prawnych. Możesz umówić się na rozmowę bezpośrednio na profilu wybranego eksperta.
-                      </p>
-                    </div>
+              {bookings.length === 0 ? (
+                <div className="text-center py-16 flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
+                  <div className="h-14 w-14 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
+                    <Calendar className="h-6 w-6 text-zinc-500 animate-pulse" />
                   </div>
-                ) : (
-                  bookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="border border-border/10 bg-zinc-950/20 hover:border-[#0da192]/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
-                    >
-                      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
-                        <div className="flex gap-4 flex-1 min-w-0">
-                          <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
-                            <Avatar className="h-36 w-36 rounded-xl border border-border/40">
-                              {booking.lawFirm?.logo && (
-                                <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
-                              )}
-                              <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
-                                {booking.lawFirm?.nazwa ? booking.lawFirm.nazwa.substring(0, 2).toUpperCase() : "KA"}
-                              </AvatarFallback>
-                            </Avatar>
-                          </Link>
-                          <div className="flex flex-col gap-2.5 min-w-0">
-                            <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-base text-white hover:text-[#0da192] transition-colors truncate">
-                              {booking.lawFirm.nazwa}
-                            </Link>
+                  <div>
+                    <h4 className="text-base font-semibold text-white">Brak rezerwacji</h4>
+                    <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed font-light">
+                      Nie masz obecnie żadnych umówionych konsultacji prawnych. Możesz umówić się na rozmowę bezpośrednio na profilu wybranego eksperta.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <Tabs defaultValue="upcoming" className="w-full space-y-6">
+                  <TabsList className="bg-zinc-950/40 border border-border/10 p-1 rounded-xl flex w-full max-w-md">
+                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-900/60 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                      Nadchodzące ({upcomingBookings.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-900/60 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                      Minione ({pastBookings.length})
+                    </TabsTrigger>
+                  </TabsList>
 
-                            <div className="flex flex-wrap gap-2">
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
-                                <Calendar className="h-3 w-3" />
-                                {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
-                              </Badge>
-                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
-                                <Clock className="h-3 w-3" />
-                                {booking.duration} min
-                              </Badge>
-                              <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm max-w-[200px] truncate" title={booking.topic}>
-                                <FileText className="h-3 w-3" />
-                                {booking.topic}
-                              </Badge>
-                              <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
-                                <CreditCard className="h-3 w-3" />
-                                {booking.price.toFixed(2)} zł
-                              </Badge>
-                            </div>
+                  <TabsContent value="upcoming" className="space-y-4 outline-none focus-visible:ring-0">
+                    {renderBookingList(upcomingBookings, "Brak nadchodzących konsultacji.")}
+                  </TabsContent>
 
-                            <div className="flex flex-wrap items-center gap-2">
-                              {booking.status === 'ACCEPTED' ? (
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zaakceptowana</Badge>
-                              ) : booking.status === 'REJECTED' ? (
-                                <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-sm py-0 px-2 rounded-md">Odrzucona</Badge>
-                              ) : (
-                                <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-sm py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
-                              )}
-
-                              {booking.paymentStatus === 'ZAPLACONE' ? (
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
-                              ) : (
-                                <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
-                              )}
-
-                              {booking.status === 'ACCEPTED' && (
-                                <ConsultationTimer targetDate={booking.consultationDate} />
-                              )}
-                            </div>
-
-                            {booking.status === "ACCEPTED" && (
-                              <div className="mt-1">
-                                {booking.googleMeetUrl ? (
-                                  <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">
-                                    <Video className="h-4 w-4 text-blue-400 shrink-0" />
-                                    <span className="text-zinc-500 text-xs font-light pr-1">Link do pokoju:</span>
-                                    <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline truncate">
-                                      {booking.googleMeetUrl}
-                                    </a>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-xl">
-                                    <Video className="h-4 w-4 text-amber-400 shrink-0 animate-pulse" />
-                                    <p className="text-xs text-zinc-400 font-light">
-                                      Link do Google Meet pojawi się na 5 minut przed planowaną konsultacją.
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            {booking.status === "PENDING" && (
-                              <p className="text-sm text-zinc-500 italic font-light mt-1">Link do wirtualnego pokoju spotkania (Google Meet) pojawi się po zaakceptowaniu rezerwacji.</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2 md:self-center">
-                          <Button
-                            asChild
-                            size="sm"
-                            className="w-full md:w-auto h-9 px-4 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
-                          >
-                            <Link href={`/ekspert/${booking.lawFirm.slug}`}>
-                              Przejdź do strony eksperta
-                            </Link>
-                          </Button>
-                          <Button
-                            size="sm"
-                            disabled={isChatLoading === booking.id}
-                            onClick={() => handleGoToChat(booking)}
-                            className="w-full md:w-auto h-9 px-4 border border-[#0da192]/20 bg-[#0da192]/5 text-[#0da192] hover:bg-[#0da192]/10 rounded-xl text-xs font-semibold transition-all"
-                          >
-                            {isChatLoading === booking.id ? (
-                              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <MessageCircle className="mr-1.5 h-3.5 w-3.5" />
-                            )}
-                            Napisz wiadomość
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDelete(booking.id)}
-                            className="w-full md:w-auto h-9 border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 rounded-xl transition-all text-xs font-semibold"
-                          >
-                            <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                            Usuń
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+                  <TabsContent value="past" className="space-y-4 outline-none focus-visible:ring-0">
+                    {renderBookingList(pastBookings, "Brak minionych konsultacji.")}
+                  </TabsContent>
+                </Tabs>
+              )}
             </CardContent>
           </Card>
         </motion.div>
