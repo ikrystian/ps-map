@@ -198,23 +198,27 @@ export default function BlogPostPage() {
               <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-white/10 pt-6">
                 {/* Author Info */}
                 <div className="flex items-center gap-2.5">
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-neutral-900 flex-shrink-0">
-                    {post.lawFirm.logo ? (
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-neutral-900 flex-shrink-0 flex items-center justify-center">
+                    {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
                         alt={post.lawFirm.nazwa}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <Building2 className="w-4 h-4 text-neutral-400 m-2" />
+                      <Building2 className="w-4 h-4 text-primary/80" />
                     )}
                   </div>
-                  <Link
-                    href={`/ekspert/${post.lawFirm.slug}`}
-                    className="font-medium text-white hover:text-primary transition-colors"
-                  >
-                    {post.lawFirm.nazwa}
-                  </Link>
+                  {post.lawFirm ? (
+                    <Link
+                      href={`/ekspert/${post.lawFirm.slug}`}
+                      className="font-medium text-white hover:text-primary transition-colors"
+                    >
+                      {post.lawFirm.nazwa}
+                    </Link>
+                  ) : (
+                    <span className="font-medium text-white">Administracja</span>
+                  )}
                 </div>
 
                 <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
@@ -285,23 +289,27 @@ export default function BlogPostPage() {
               <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-neutral-800/80 pt-6">
                 {/* Author Info */}
                 <div className="flex items-center gap-2.5">
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-850 bg-neutral-900 flex-shrink-0">
-                    {post.lawFirm.logo ? (
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-850 bg-neutral-900 flex-shrink-0 flex items-center justify-center">
+                    {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
                         alt={post.lawFirm.nazwa}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <Building2 className="w-4 h-4 text-neutral-400 m-2" />
+                      <Building2 className="w-4 h-4 text-primary/80" />
                     )}
                   </div>
-                  <Link
-                    href={`/ekspert/${post.lawFirm.slug}`}
-                    className="font-medium text-white hover:text-primary transition-colors"
-                  >
-                    {post.lawFirm.nazwa}
-                  </Link>
+                  {post.lawFirm ? (
+                    <Link
+                      href={`/ekspert/${post.lawFirm.slug}`}
+                      className="font-medium text-white hover:text-primary transition-colors"
+                    >
+                      {post.lawFirm.nazwa}
+                    </Link>
+                  ) : (
+                    <span className="font-medium text-white">Administracja</span>
+                  )}
                 </div>
 
                 <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
@@ -355,12 +363,16 @@ export default function BlogPostPage() {
                   <Building2 className="w-4 h-4 text-primary" />
                   <span>
                     Artykuł przygotowany przez{" "}
-                    <Link
-                      href={`/ekspert/${post.lawFirm.slug}`}
-                      className="font-semibold text-white hover:text-primary hover:underline transition-colors"
-                    >
-                      {post.lawFirm.nazwa}
-                    </Link>
+                    {post.lawFirm ? (
+                      <Link
+                        href={`/ekspert/${post.lawFirm.slug}`}
+                        className="font-semibold text-white hover:text-primary hover:underline transition-colors"
+                      >
+                        {post.lawFirm.nazwa}
+                      </Link>
+                    ) : (
+                      <span className="font-semibold text-white">zespół redakcyjny</span>
+                    )}
                   </span>
                 </div>
               </div>
@@ -389,8 +401,8 @@ export default function BlogPostPage() {
                     asChild
                     className="bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl px-6 py-6 transition-all shadow-lg hover:shadow-primary/20 text-sm font-semibold cursor-pointer"
                   >
-                    <Link href={`/ekspert/${post.lawFirm.slug}`}>
-                      Zobacz profil eksperta
+                    <Link href={post.lawFirm ? `/ekspert/${post.lawFirm.slug}` : "/szukaj-prawnika"}>
+                      {post.lawFirm ? "Zobacz profil eksperta" : "Znajdź eksperta"}
                     </Link>
                   </Button>
                   <Button
@@ -409,73 +421,116 @@ export default function BlogPostPage() {
 
           {/* Sticky Editorial Sidebar */}
           <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[95px] h-fit">
-            {/* About Author card */}
-            <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
-              {/* Visual glow on hover */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
+            {post.lawFirm ? (
+              /* About Author card */
+              <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+                {/* Visual glow on hover */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
 
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  {post.lawFirm.logo ? (
-                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-neutral-800/80 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-primary/40 transition-colors">
-                      <img
-                        src={post.lawFirm.logo}
-                        alt={post.lawFirm.nazwa}
-                        className="w-full h-full object-cover"
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    {post.lawFirm.logo ? (
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-neutral-800/80 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-primary/40 transition-colors">
+                        <img
+                          src={post.lawFirm.logo}
+                          alt={post.lawFirm.nazwa}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                        <Building2 className="w-8 h-8 text-neutral-500" />
+                      </div>
+                    )}
+
+                    <div>
+                      <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
+                        Ekspert prawny
+                      </Badge>
+                      <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">
+                        {post.lawFirm.nazwa}
+                      </h3>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {post.lawFirm.nazwaFirmy}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-neutral-800/60" />
+
+                  {/* Location */}
+                  <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                    <MapPin className="w-4 h-4 text-primary/80 flex-shrink-0" />
+                    <span>
+                      {post.lawFirm.miasto}, woj. {post.lawFirm.voivodeship.nazwa}
+                    </span>
+                  </div>
+
+                  {/* Description excerpt */}
+                  {post.lawFirm.opis && (
+                    <>
+                      <Separator className="bg-neutral-800/60" />
+                      <div
+                        className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
+                        dangerouslySetInnerHTML={{ __html: post.lawFirm.opis }}
                       />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
-                      <Building2 className="w-8 h-8 text-neutral-500" />
-                    </div>
+                    </>
                   )}
 
-                  <div>
-                    <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
-                      Ekspert prawny
-                    </Badge>
-                    <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">
-                      {post.lawFirm.nazwa}
-                    </h3>
-                    <p className="text-xs text-neutral-400 mt-1">
-                      {post.lawFirm.nazwaFirmy}
-                    </p>
-                  </div>
+                  {/* View Profile Button */}
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl py-5 transition-all shadow-lg hover:shadow-primary/20 cursor-pointer"
+                  >
+                    <Link href={`/ekspert/${post.lawFirm.slug}`}>
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Zobacz profil eksperta
+                    </Link>
+                  </Button>
                 </div>
-
-                <Separator className="bg-neutral-800/60" />
-
-                {/* Location */}
-                <div className="flex items-center gap-2.5 text-xs text-neutral-400">
-                  <MapPin className="w-4 h-4 text-primary/80 flex-shrink-0" />
-                  <span>
-                    {post.lawFirm.miasto}, woj. {post.lawFirm.voivodeship.nazwa}
-                  </span>
-                </div>
-
-                {/* Description excerpt */}
-                {post.lawFirm.opis && (
-                  <>
-                    <Separator className="bg-neutral-800/60" />
-                    <div
-                      className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
-                      dangerouslySetInnerHTML={{ __html: post.lawFirm.opis }}
-                    />
-                  </>
-                )}
-
-                {/* View Profile Button */}
-                <Button
-                  asChild
-                  className="w-full bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl py-5 transition-all shadow-lg hover:shadow-primary/20 cursor-pointer"
-                >
-                  <Link href={`/ekspert/${post.lawFirm.slug}`}>
-                    <Building2 className="w-4 h-4 mr-2" />
-                    Zobacz profil eksperta
-                  </Link>
-                </Button>
               </div>
-            </div>
+            ) : (
+              /* About Portal card */
+              <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                      <Building2 className="w-8 h-8 text-primary" />
+                    </div>
+
+                    <div>
+                      <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
+                        Administracja
+                      </Badge>
+                      <h3 className="font-semibold text-white text-base leading-tight">
+                        Prosta Sprawa
+                      </h3>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Portal Pomocy Prawnej
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-neutral-800/60" />
+
+                  <p className="text-sm text-neutral-400 leading-relaxed">
+                    Nasz portal pomaga w szybkim znajdowaniu sprawdzonych kancelarii prawnych i ekspertów w całej Polsce.
+                  </p>
+
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl py-5 transition-all shadow-lg hover:shadow-primary/20 cursor-pointer"
+                  >
+                    <Link href="/szukaj-prawnika">
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Znajdź eksperta
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Quick Contact CTA */}
             <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 border border-primary/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
@@ -486,15 +541,17 @@ export default function BlogPostPage() {
                 Szybki kontakt
               </h4>
               <p className="text-sm text-neutral-400 mb-5 leading-relaxed">
-                Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do
-                kancelarii.
+                {post.lawFirm
+                  ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do kancelarii."
+                  : "Masz dodatkowe pytania? Wyślij wiadomość do redakcji portalu."
+                }
               </p>
               <Button
                 asChild
                 variant="outline"
                 className="w-full border-neutral-850 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-xl py-5 transition-all cursor-pointer"
               >
-                <Link href={`/ekspert/${post.lawFirm.slug}#kontakt`}>
+                <Link href={post.lawFirm ? `/ekspert/${post.lawFirm.slug}#kontakt` : "/kontakt"}>
                   Napisz wiadomość
                 </Link>
               </Button>
