@@ -241,10 +241,24 @@ export function RichTextEditor({
   const editorRef = useRef<any>(null)
   const isUpdatingRef = useRef(false)
   const initialValueRef = useRef(value)
+  const onChangeRef = useRef(onChange)
+
+  // Keep onChange ref updated to avoid effect dependency re-runs
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+
+  // Keep initial value ref updated until editor is ready
+  useEffect(() => {
+    if (!editorRef.current) {
+      initialValueRef.current = value
+    }
+  }, [value])
 
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return
 
+    let isCancelled = false
     let editorInstance: any = null
 
     // We import dynamically inside useEffect since Editor.js runs client-side only
@@ -261,6 +275,8 @@ export function RichTextEditor({
       const Delimiter = (await import("@editorjs/delimiter")).default
       const Underline = (await import("@editorjs/underline")).default
       const Marker = (await import("@editorjs/marker")).default
+
+      if (isCancelled || !containerRef.current) return
 
       const initialBlocks = convertHTMLToBlocks(initialValueRef.current)
 
@@ -346,9 +362,19 @@ export function RichTextEditor({
           if (isUpdatingRef.current) return
           const savedData = await api.saver.save()
           const html = convertBlocksToHTML(savedData.blocks)
-          onChange(html)
+          onChangeRef.current(html)
         }
       })
+
+      try {
+        await editorInstance.isReady
+      } catch (readyError) {
+        console.error("EditorJS failed to initialize:", readyError)
+      }
+
+      if (isCancelled) {
+        return
+      }
 
       editorRef.current = editorInstance
     }
@@ -356,8 +382,23 @@ export function RichTextEditor({
     initEditor()
 
     return () => {
-      if (editorInstance && typeof editorInstance.destroy === "function") {
-        editorInstance.destroy()
+      isCancelled = true
+      if (editorInstance) {
+        const destroyEditor = () => {
+          if (typeof editorInstance.destroy === "function") {
+            try {
+              editorInstance.destroy()
+            } catch (e) {
+              console.error("Error destroying EditorJS instance:", e)
+            }
+          }
+        }
+
+        if (editorInstance.isReady) {
+          editorInstance.isReady.then(destroyEditor).catch(destroyEditor)
+        } else {
+          destroyEditor()
+        }
       }
       editorRef.current = null
     }
