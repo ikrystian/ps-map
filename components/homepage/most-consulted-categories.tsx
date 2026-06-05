@@ -132,12 +132,6 @@ const CATEGORY_TABS = [
   }
 ]
 
-const PORTRAITS = [
-  "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=500", // Marcin Andrzej Wesołowski type
-  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=500", // Anna Lewandowska type
-  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500"  // Joahim Mogba type
-]
-
 export function MostConsultedCategories({ consultedData, categories, lawFirms }: MostConsultedCategoriesProps) {
   const { status } = useSession()
   const isLoggedIn = status === "authenticated"
@@ -199,7 +193,6 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
     if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
       return firm.zdjecieGlowne
     }
-    return PORTRAITS[index % PORTRAITS.length]
   }
 
   const getProfessionTitle = (firm: LawFirm) => {

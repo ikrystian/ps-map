@@ -9,23 +9,12 @@ interface NewExpertsProps {
   newLawFirms: LawFirm[]
 }
 
-// Premium curated portrait headshots matching the high-end mockup design
-const PORTRAITS = [
-  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600", // Iwona Maria Blackova style
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600", // Konstanty style
-  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600", // Jan Nowacki style
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600", // Emily Porter style
-  "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600", 
-  "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=600", 
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600", 
-  "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=600"
-]
+
 
 const getFirmImage = (firm: LawFirm, index: number) => {
   if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
     return firm.logo
   }
-  return PORTRAITS[index % PORTRAITS.length]
 }
 
 const getVoivodeshipForCity = (city: string): string => {
@@ -74,48 +63,14 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
     }
   }
 
-  // Fallback data in case the database doesn't have enough entries or is loading
-  const fallbackExperts = [
-    {
-      id: "fallback-1",
-      slug: "iwona-maria-blackova",
-      nazwa: "Iwona Maria Blackova",
-      miasto: "Mikołajki",
-      categories: [{ id: "c1", nazwa: "Radca Prawny" }],
-      voivodeship: { id: "v1", nazwa: "Warmińsko-Mazurskie" }
-    },
-    {
-      id: "fallback-2",
-      slug: "konstanty-kownacki-matuszak",
-      nazwa: "Konstanty Kownacki -Matuszak",
-      miasto: "Kielce",
-      categories: [{ id: "c2", nazwa: "Komornik" }],
-      voivodeship: { id: "v2", nazwa: "Świętokrzyskie" }
-    },
-    {
-      id: "fallback-3",
-      slug: "jan-nowacki",
-      nazwa: "Jan Nowacki",
-      miasto: "Kraków",
-      categories: [{ id: "c3", nazwa: "Prawnik" }],
-      voivodeship: { id: "v3", nazwa: "Małopolskie" }
-    },
-    {
-      id: "fallback-4",
-      slug: "emily-porter",
-      nazwa: "Emily Porter",
-      miasto: "Kielce",
-      categories: [{ id: "c4", nazwa: "Adwokat" }],
-      voivodeship: { id: "v4", nazwa: "Świętokrzyskie" }
-    }
-  ]
 
-  const experts = newLawFirms && newLawFirms.length > 0 ? newLawFirms : fallbackExperts
+
+  const experts = newLawFirms && newLawFirms.length > 0 ? newLawFirms : []
 
   return (
     <section className="py-20 bg-[#121212] text-white overflow-hidden border-t border-zinc-900/60">
       <div className="container mx-auto px-4 max-w-7xl relative">
-        
+
         {/* Title row with modern line design */}
         <div className="flex items-center justify-between gap-6 mb-16 px-1">
           <h2 className="font-playfair text-2xl md:text-3xl lg:text-[34px] font-normal text-white tracking-wide whitespace-nowrap">
@@ -126,9 +81,9 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
         {/* Carousel / Slider Container */}
         <div className="relative w-full px-1">
-          
+
           {/* Left Arrow Button */}
-          <button 
+          <button
             onClick={scrollLeft}
             className="absolute -left-4 lg:-left-12 xl:-left-16 top-1/2 -translate-y-1/2 w-12 h-12 rounded-lg bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
             aria-label="Previous slide"
@@ -138,7 +93,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
           {/* Slider content area */}
           <div className="overflow-hidden">
-            <div 
+            <div
               ref={sliderRef}
               className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-4 snap-x snap-mandatory"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -173,7 +128,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                     </div>
 
                     {/* Center floating up-right diagonal arrow button (Placed outside the overflow-hidden container to prevent clipping) */}
-                    <Link 
+                    <Link
                       href={`/ekspert/${firm.slug}`}
                       className="absolute top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
                       title="Zobacz profil"
@@ -187,7 +142,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                       <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase mb-2 block">
                         {profession}
                       </span>
-                      
+
                       {/* Name */}
                       <h3 className="font-sans font-medium text-[18px] leading-tight text-white mb-2 max-w-[90%] line-clamp-2 min-h-[2.8rem] flex items-center justify-center group-hover:text-[#008073] transition-colors duration-200">
                         <Link href={`/ekspert/${firm.slug}`}>
@@ -207,7 +162,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
           </div>
 
           {/* Right Arrow Button */}
-          <button 
+          <button
             onClick={scrollRight}
             className="absolute -right-4 lg:-right-12 xl:-right-16 top-1/2 -translate-y-1/2 w-12 h-12 rounded-lg bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
             aria-label="Next slide"
