@@ -51,6 +51,7 @@ export default function ClientPanelLayout({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isClient, setIsClient] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [menuCounts, setMenuCounts] = useState<{ sprawy?: number; konsultacje?: number }>({})
 
   // Real-time unread messages count
   const { unreadCount } = useRealtimeMessages({
@@ -60,6 +61,25 @@ export default function ClientPanelLayout({
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Fetch navigation menu counts
+  useEffect(() => {
+    const fetchMenuCounts = async () => {
+      try {
+        const response = await fetch("/api/menu-counts")
+        if (response.ok) {
+          const data = await response.json()
+          setMenuCounts(data)
+        }
+      } catch (error) {
+        console.error("Error fetching menu counts:", error)
+      }
+    }
+
+    if (session?.user) {
+      fetchMenuCounts()
+    }
+  }, [session, pathname])
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -107,6 +127,11 @@ export default function ClientPanelLayout({
           (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
         const isMessagesItem = item.href === "/panel-klienta/wiadomosci"
         const showBadge = isMessagesItem && unreadCount > 0
+
+        const isSprawy = item.href === "/panel-klienta/sprawy"
+        const isKonsultacje = item.href === "/panel-klienta/konsultacje"
+        const count = isSprawy ? menuCounts.sprawy : isKonsultacje ? menuCounts.konsultacje : undefined
+        const showCountBadge = count !== undefined
 
         return (
           <Link
@@ -166,8 +191,20 @@ export default function ClientPanelLayout({
               </span>
             )}
 
+            {showCountBadge && (
+              <span className={cn(
+                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
+                isActive
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-[#0da192]/15 text-[#0da192] border border-[#0da192]/30 dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/50",
+                !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
+              )}>
+                {count}
+              </span>
+            )}
+
             {/* Active accent dot for extra polish */}
-            {isActive && (inSheet || !isCollapsed) && (
+            {isActive && (inSheet || !isCollapsed) && !showCountBadge && (
               <motion.span
                 layoutId="client-sidebar-active-indicator"
                 className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"

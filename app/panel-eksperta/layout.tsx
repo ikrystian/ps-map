@@ -97,6 +97,27 @@ export default function LawFirmPanelLayout({
     setIsClient(true)
   }, [])
 
+  const [menuCounts, setMenuCounts] = useState<{ sprawy?: number; oferty?: number; konsultacje?: number }>({})
+
+  // Fetch navigation menu counts
+  useEffect(() => {
+    const fetchMenuCounts = async () => {
+      try {
+        const response = await fetch("/api/menu-counts")
+        if (response.ok) {
+          const data = await response.json()
+          setMenuCounts(data)
+        }
+      } catch (error) {
+        console.error("Error fetching menu counts:", error)
+      }
+    }
+
+    if (session?.user) {
+      fetchMenuCounts()
+    }
+  }, [session, pathname])
+
   // Hook do sprawdzania uprawnień
   const { packageExpired, expiryDate, packageName, loading: permissionsLoading } = usePermissions()
 
@@ -215,6 +236,12 @@ export default function LawFirmPanelLayout({
         const isMessagesItem = item.href === "/panel-eksperta/wiadomosci"
         const showBadge = isMessagesItem && unreadCount > 0
 
+        const isSprawy = item.href === "/panel-eksperta/sprawy"
+        const isOferty = item.href === "/panel-eksperta/oferty"
+        const isKonsultacje = item.href === "/panel-eksperta/konsultacje"
+        const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : undefined
+        const showCountBadge = count !== undefined
+
         return (
           <Link
             key={item.name}
@@ -256,6 +283,20 @@ export default function LawFirmPanelLayout({
                   !inSheet && isCollapsed && "absolute -right-1 -top-1"
                 )}>
                   {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )
+            }
+
+            {
+              showCountBadge && (
+                <span className={cn(
+                  "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
+                  isActive
+                    ? "bg-primary-foreground/20 text-primary-foreground"
+                    : "bg-[#0da192]/15 text-[#0da192] border border-[#0da192]/30 dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/50",
+                  !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
+                )}>
+                  {count}
                 </span>
               )
             }
