@@ -171,30 +171,43 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { lawFirmUserId } = body
-
-    if (!lawFirmUserId) {
-      return Response.json(
-        { error: "Brak ID kancelarii" },
-        { status: 400 }
-      )
-    }
+    const { lawFirmUserId, clientUserId } = body
 
     const userId = session.user.id
     const userRole = session.user.role
 
-    // Sprawdź, czy użytkownik jest klientem
-    if (userRole !== "CLIENT") {
+    let clientUserQueryId = ""
+    let lawFirmUserQueryId = ""
+
+    if (userRole === "CLIENT") {
+      clientUserQueryId = userId
+      lawFirmUserQueryId = lawFirmUserId
+      if (!lawFirmUserId) {
+        return Response.json(
+          { error: "Brak ID kancelarii" },
+          { status: 400 }
+        )
+      }
+    } else if (userRole === "LAW_FIRM") {
+      clientUserQueryId = clientUserId
+      lawFirmUserQueryId = userId
+      if (!clientUserId) {
+        return Response.json(
+          { error: "Brak ID klienta" },
+          { status: 400 }
+        )
+      }
+    } else {
       return Response.json(
-        { error: "Tylko klienci mogą inicjować konwersacje" },
+        { error: "Nieprawidłowa rola do wykonania tej operacji" },
         { status: 403 }
       )
     }
 
-    // Sprawdź, czy odbiorca jest kancelarią
+    // Sprawdź, czy odbiorca będący kancelarią istnieje
     const lawFirmUser = await prisma.user.findFirst({
       where: {
-        id: lawFirmUserId,
+        id: lawFirmUserQueryId,
         role: "LAW_FIRM",
       },
       include: {
@@ -214,11 +227,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Sprawdź, czy odbiorca będący klientem istnieje
+    const clientUserObj = await prisma.user.findFirst({
+      where: {
+        id: clientUserQueryId,
+        role: "CLIENT",
+      },
+    })
+
+    if (!clientUserObj) {
+      return Response.json(
+        { error: "Nie znaleziono klienta" },
+        { status: 404 }
+      )
+    }
+
     // Sprawdź, czy konwersacja już istnieje
     let conversation = await prisma.conversation.findFirst({
       where: {
-        clientUserId: userId,
-        lawFirmUserId: lawFirmUserId,
+        clientUserId: clientUserQueryId,
+        lawFirmUserId: lawFirmUserQueryId,
       },
       include: {
         clientUser: {
@@ -256,8 +284,8 @@ export async function POST(request: NextRequest) {
     if (!conversation) {
       conversation = await prisma.conversation.create({
         data: {
-          clientUserId: userId,
-          lawFirmUserId: lawFirmUserId,
+          clientUserId: clientUserQueryId,
+          lawFirmUserId: lawFirmUserQueryId,
         },
         include: {
           clientUser: {

@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/components/ui/sonner"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
-import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video, Sparkles } from "lucide-react"
+import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video, Sparkles, MessageCircle } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { motion } from "framer-motion"
@@ -94,8 +95,31 @@ function ConsultationTimer({ targetDate }: { targetDate: string }) {
 
 export default function ClientConsultationsPage() {
   const { data: session } = useSession()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [bookings, setBookings] = useState<any[]>([])
+  const [isChatLoading, setIsChatLoading] = useState<string | null>(null)
+
+  const handleGoToChat = async (booking: any) => {
+    setIsChatLoading(booking.id)
+    try {
+      const response = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lawFirmUserId: booking.lawFirm.userId }),
+      })
+      if (response.ok) {
+        const conv = await response.json()
+        router.push(`/panel-klienta/wiadomosci?conversationId=${conv.id}`)
+      } else {
+        throw new Error("Failed to load conversation")
+      }
+    } catch (error) {
+      toast.error("Nie udało się otworzyć czatu.")
+    } finally {
+      setIsChatLoading(null)
+    }
+  }
 
   const fetchBookings = async () => {
     if (!session?.user?.client?.id) return
@@ -295,6 +319,19 @@ export default function ClientConsultationsPage() {
                             <Link href={`/ekspert/${booking.lawFirm.slug}`}>
                               Przejdź do strony eksperta
                             </Link>
+                          </Button>
+                          <Button
+                            size="sm"
+                            disabled={isChatLoading === booking.id}
+                            onClick={() => handleGoToChat(booking)}
+                            className="w-full md:w-auto h-9 px-4 border border-[#0da192]/20 bg-[#0da192]/5 text-[#0da192] hover:bg-[#0da192]/10 rounded-xl text-xs font-semibold transition-all"
+                          >
+                            {isChatLoading === booking.id ? (
+                              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <MessageCircle className="mr-1.5 h-3.5 w-3.5" />
+                            )}
+                            Napisz wiadomość
                           </Button>
                           <Button
                             size="sm"
