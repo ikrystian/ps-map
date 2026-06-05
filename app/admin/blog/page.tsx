@@ -44,11 +44,13 @@ import {
   BookOpen,
   Calendar,
   CheckCircle2,
+  Edit,
   ExternalLink,
   Eye,
   FileText,
   FolderOpen,
   Globe,
+  Plus,
   Search,
   Tag,
   Trash2,
@@ -93,6 +95,7 @@ interface PaginationData {
 export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [categories, setCategories] = useState<any[]>([])
+  const [lawFirms, setLawFirms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
@@ -142,6 +145,22 @@ export default function AdminBlogPage() {
       }
     }
     fetchCategories()
+  }, [])
+
+  // Pobierz kancelarie raz przy montowaniu
+  useEffect(() => {
+    const fetchLawFirms = async () => {
+      try {
+        const response = await fetch("/api/admin/law-firms?limit=1000")
+        if (response.ok) {
+          const data = await response.json()
+          setLawFirms(data.lawFirms || [])
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania kancelarii:", error)
+      }
+    }
+    fetchLawFirms()
   }, [])
 
   const fetchPosts = async (page: number = 1) => {
@@ -326,6 +345,12 @@ export default function AdminBlogPage() {
             Zarządzaj wpisami blogowymi kancelarii partnerskich, zatwierdzaj publikacje i filtruj dane.
           </p>
         </div>
+        <Button asChild className="sm:ml-auto flex items-center gap-1.5 shadow-sm">
+          <Link href="/admin/blog/nowy">
+            <Plus className="h-4 w-4" />
+            Dodaj wpis
+          </Link>
+        </Button>
       </div>
 
       {/* Karty statystyk */}
@@ -565,6 +590,16 @@ export default function AdminBlogPage() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          title="Edytuj wpis"
+                        >
+                          <Link href={`/admin/blog/${post.id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
                         {post.opublikowany && (
                           <Button
                             variant="ghost"
@@ -641,7 +676,46 @@ export default function AdminBlogPage() {
               </DialogHeader>
 
               {/* Szybkie ustawienia admina w modalu */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg border">
+                <div className="space-y-2">
+                  <Label htmlFor="modal-lawfirm" className="text-sm font-semibold">Kancelaria / Autor</Label>
+                  <Select
+                    value={selectedPost.lawFirmId || selectedPost.lawFirm.id}
+                    onValueChange={async (value) => {
+                      try {
+                        const response = await fetch(`/api/admin/blog/${selectedPost.id}`, {
+                          method: "PATCH",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ lawFirmId: value }),
+                        })
+                        if (response.ok) {
+                          toast.success("Kancelaria została zaktualizowana")
+                          const updated = await response.json()
+                          setSelectedPost(updated)
+                          setPosts((prev) => prev.map((p) => (p.id === selectedPost.id ? updated : p)))
+                        } else {
+                          throw new Error("Błąd aktualizacji kancelarii")
+                        }
+                      } catch (err) {
+                        toast.error("Nie udało się zaktualizować kancelarii")
+                      }
+                    }}
+                  >
+                    <SelectTrigger id="modal-lawfirm" className="bg-background">
+                      <SelectValue placeholder="Wybierz kancelarię" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[200px]">
+                      {lawFirms.map((lf) => (
+                        <SelectItem key={lf.id} value={lf.id}>
+                          {lf.nazwa}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="modal-category" className="text-sm font-semibold">Kategoria wpisu</Label>
                   <Select
@@ -779,6 +853,12 @@ export default function AdminBlogPage() {
               <div className="flex justify-end gap-2 border-t pt-4">
                 <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
                   Zamknij
+                </Button>
+                <Button asChild variant="outline" className="flex items-center gap-1.5">
+                  <Link href={`/admin/blog/${selectedPost.id}`}>
+                    <Edit className="h-4 w-4" />
+                    Edytuj wpis
+                  </Link>
                 </Button>
                 {selectedPost.opublikowany && (
                   <Button asChild>
