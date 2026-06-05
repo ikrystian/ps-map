@@ -77,7 +77,7 @@ export async function DELETE(
     })
 
     return NextResponse.json({
-      message: `Wpis "${post.tytul}" kancelarii "${post.lawFirm.nazwa}" został usunięty`,
+      message: `Wpis "${post.tytul}"${post.lawFirm ? ` kancelarii "${post.lawFirm.nazwa}"` : ""} został usunięty`,
     })
   } catch (error) {
     console.error("Error deleting blog post:", error)
