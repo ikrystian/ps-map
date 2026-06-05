@@ -28,6 +28,14 @@ export async function GET(
             nazwaFirmy: true,
           },
         },
+        sponsoredLawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+            slug: true,
+          },
+        },
       },
     })
 
@@ -113,6 +121,8 @@ export async function PATCH(
       metaTitle,
       metaDescription,
       opublikowany,
+      isSponsored,
+      sponsoredLawFirmId,
     } = body
 
     // Sprawdź czy wpis istnieje
@@ -188,6 +198,18 @@ export async function PATCH(
       }
     }
 
+    if (isSponsored !== undefined) {
+      data.isSponsored = isSponsored
+      if (!isSponsored) {
+        data.sponsoredLawFirmId = null
+      }
+    }
+
+    if (sponsoredLawFirmId !== undefined) {
+      const activeSponsored = isSponsored !== undefined ? isSponsored : existingPost.isSponsored
+      data.sponsoredLawFirmId = activeSponsored ? (sponsoredLawFirmId || null) : null
+    }
+
     const updatedPost = await prisma.blogPost.update({
       where: { id },
       data,
@@ -198,6 +220,14 @@ export async function PATCH(
             id: true,
             nazwa: true,
             nazwaFirmy: true,
+          },
+        },
+        sponsoredLawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+            slug: true,
           },
         },
       },
