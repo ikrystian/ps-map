@@ -657,7 +657,7 @@ export default function LawFirmProfilePage() {
       </div>
 
       {/* Overlapping Hero Card Container */}
-      <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
 
         {/* Floating Profile Info Card */}
         <div className={cn(
@@ -841,12 +841,43 @@ export default function LawFirmProfilePage() {
             </div>
 
             {/* Actions Section */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-center lg:justify-end self-stretch lg:self-auto border-t lg:border-t-0 pt-6 lg:pt-0 mt-2 lg:mt-0 border-white/10">
-              <div className="flex items-center gap-2 justify-center lg:justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-center lg:justify-end self-stretch lg:self-end border-t lg:border-t-0 pt-6 lg:pt-0 mt-2 lg:mt-0 border-white/10">
+              <div className="flex items-center gap-2 justify-center lg:justify-end flex-wrap">
+
+                {/* Social Media Icons */}
+                {lawFirm.linkLinkedIn && (
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="LinkedIn" asChild>
+                    <a href={lawFirm.linkLinkedIn} target="_blank" rel="noopener noreferrer">
+                      <Linkedin className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+                {lawFirm.linkFacebook && (
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Facebook" asChild>
+                    <a href={lawFirm.linkFacebook} target="_blank" rel="noopener noreferrer">
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+                {lawFirm.linkInstagram && (
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:text-white hover:border-transparent text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Instagram" asChild>
+                    <a href={lawFirm.linkInstagram} target="_blank" rel="noopener noreferrer">
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+                {lawFirm.linkTwitter && (
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Twitter / X" asChild>
+                    <a href={lawFirm.linkTwitter} target="_blank" rel="noopener noreferrer">
+                      <Twitter className="h-5 w-5" />
+                    </a>
+                  </Button>
+                )}
+
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:text-red-400 text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
+                  className="ml-4 h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:text-red-400 text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
                   title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
                   onClick={handleToggleFavorite}
                   disabled={isFavoriteLoading}
@@ -886,6 +917,7 @@ export default function LawFirmProfilePage() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+
               </div>
 
               {session?.user?.role === "CLIENT" ? (
@@ -1135,49 +1167,7 @@ export default function LawFirmProfilePage() {
               </Card>
             )}
 
-            {/* Social Media Card */}
-            {(lawFirm.linkLinkedIn || lawFirm.linkFacebook || lawFirm.linkInstagram || lawFirm.linkTwitter) && (
-              <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
-                <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
-                  <CardTitle className="text-lg font-bold flex items-center gap-2">
-                    <Share2 className="h-5 w-5 text-primary/80" />
-                    Media społecznościowe
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex gap-3 justify-center md:justify-start">
-                    {lawFirm.linkLinkedIn && (
-                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] transition-all hover:scale-110" asChild>
-                        <a href={lawFirm.linkLinkedIn} target="_blank" rel="noopener noreferrer">
-                          <Linkedin className="h-5 w-5" />
-                        </a>
-                      </Button>
-                    )}
-                    {lawFirm.linkFacebook && (
-                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all hover:scale-110" asChild>
-                        <a href={lawFirm.linkFacebook} target="_blank" rel="noopener noreferrer">
-                          <Facebook className="h-5 w-5" />
-                        </a>
-                      </Button>
-                    )}
-                    {lawFirm.linkInstagram && (
-                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:text-white hover:border-transparent transition-all hover:scale-110" asChild>
-                        <a href={lawFirm.linkInstagram} target="_blank" rel="noopener noreferrer">
-                          <Instagram className="h-5 w-5" />
-                        </a>
-                      </Button>
-                    )}
-                    {lawFirm.linkTwitter && (
-                      <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black transition-all hover:scale-110" asChild>
-                        <a href={lawFirm.linkTwitter} target="_blank" rel="noopener noreferrer">
-                          <Twitter className="h-5 w-5" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+
 
             {/* Subscription Package Card */}
             {lawFirm.pakietSubskrypcji && (() => {
