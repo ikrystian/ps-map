@@ -59,15 +59,9 @@ export default function PublicFooter() {
                   Sprawy firmowe
                 </Link>
               </li>
-
-              <li>
-                <Link href="/dla-prawnika" className="hover:text-[#d7b56d] transition-colors">
-                  Dla prawnika
-                </Link>
-              </li>
               <li>
                 <Link href="/o-nas" className="hover:text-[#d7b56d] transition-colors">
-                  Opinie
+                  O nas
                 </Link>
               </li>
               <li>
@@ -75,6 +69,15 @@ export default function PublicFooter() {
                   Zgody
                 </Link>
               </li>
+              <li>
+                <Link href="/kontakt" className="hover:text-[#d7b56d] transition-colors">
+                  Kontakt
+                </Link>
+              </li>
+              <Link href="/Regulamin" className=" hover:text-[#d7b56d] transition-colors flex items-center">
+
+                <span>Regulamin</span>
+              </Link>
             </ul>
           </div>
 
@@ -85,15 +88,15 @@ export default function PublicFooter() {
             </h3>
             <ul className="space-y-2 text-xs md:text-sm font-light">
               <li>
-                <Link href="/ranking" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/blog" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
                   <GoldCheck />
-                  <span>Ranking kancelarii</span>
+                  <span>Artykuły</span>
                 </Link>
               </li>
               <li>
-                <Link href="/dodaj-sprawe" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/ranking" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
                   <GoldCheck />
-                  <span>Dodaj sprawę</span>
+                  <span>Ranking kancelarii</span>
                 </Link>
               </li>
               <li>
@@ -114,21 +117,13 @@ export default function PublicFooter() {
                   <span>Rejestracja</span>
                 </Link>
               </li>
-              <li className="pt-1">
-                <Link href="/regulamin" className="text-[#0da192] hover:text-[#097b6f] transition-colors font-medium">
-                  Regulamin
-                </Link>
-              </li>
               <li>
-                <Link href="/polityka-prywatnosci" className="text-[#0da192] hover:text-[#097b6f] transition-colors font-medium">
+                <Link href="/polityka-prywatnosci" className="text-neutral-400 hover:text-[#d7b56d] transition-colors font-medium">
+                  <GoldCheck />
                   Prywatność
                 </Link>
               </li>
-              <li>
-                <Link href="/kontakt" className="text-[#0da192] hover:text-[#097b6f] transition-colors font-medium">
-                  Kontakt
-                </Link>
-              </li>
+
             </ul>
           </div>
 
@@ -230,6 +225,6 @@ export default function PublicFooter() {
         </div>
 
       </div>
-    </footer>
+    </footer >
   )
 }
