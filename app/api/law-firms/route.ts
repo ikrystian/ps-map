@@ -330,8 +330,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let body: any = null
   try {
-    const body = await request.json()
+    body = await request.json()
 
     // Walidacja wymaganych pól
     const requiredFields = [
@@ -413,6 +414,47 @@ export async function POST(request: NextRequest) {
 
     // Hash hasła
     const hashedPassword = await bcrypt.hash(body.password, 10)
+
+    // Walidacja istnienia relacji w bazie danych (np. po re-seeding)
+    const voivodeship = await prisma.voivodeship.findUnique({
+      where: { id: body.voivodeshipId },
+    })
+    if (!voivodeship) {
+      return NextResponse.json(
+        { error: "Wybrane województwo główne nie istnieje w bazie danych. Odśwież stronę." },
+        { status: 400 }
+      )
+    }
+
+    if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds)) {
+      const dbVoivodeships = await prisma.voivodeship.findMany({
+        where: { id: { in: body.voivodeshipsIds } },
+        select: { id: true },
+      })
+      const dbVoivodeshipIds = new Set(dbVoivodeships.map(v => v.id))
+      body.voivodeshipsIds = body.voivodeshipsIds.filter((id: string) => dbVoivodeshipIds.has(id))
+      if (body.voivodeshipsIds.length === 0) {
+        return NextResponse.json(
+          { error: "Wybrane województwa obszaru działania nie istnieją w bazie danych. Odśwież stronę." },
+          { status: 400 }
+        )
+      }
+    }
+
+    if (body.categoriesIds && Array.isArray(body.categoriesIds)) {
+      const dbCategories = await prisma.category.findMany({
+        where: { id: { in: body.categoriesIds } },
+        select: { id: true },
+      })
+      const dbCategoryIds = new Set(dbCategories.map(c => c.id))
+      body.categoriesIds = body.categoriesIds.filter((id: string) => dbCategoryIds.has(id))
+      if (body.categoriesIds.length === 0) {
+        return NextResponse.json(
+          { error: "Wybrane specjalizacje nie istnieją w bazie danych. Odśwież stronę." },
+          { status: 400 }
+        )
+      }
+    }
 
     // Utwórz użytkownika i kancelarię w transakcji
     const result = await prisma.$transaction(async (tx: any) => {
@@ -565,10 +607,18 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating law firm:", error)
+    if (error && error.meta) {
+      console.error("Prisma error meta details:", JSON.stringify(error.meta, null, 2))
+    }
+    console.error("Received registration request body:", {
+      voivodeshipId: body?.voivodeshipId,
+      categoriesIds: body?.categoriesIds,
+      mainCategoryId: body?.categoriesIds && Array.isArray(body.categoriesIds) && body.categoriesIds.length > 0 ? body.categoriesIds[0] : null
+    })
     return NextResponse.json(
-      { error: "Błąd podczas tworzenia kancelarii" },
+      { error: "Błąd podczas tworzenia kancelarii", details: error?.message, meta: error?.meta },
       { status: 500 }
     )
   }

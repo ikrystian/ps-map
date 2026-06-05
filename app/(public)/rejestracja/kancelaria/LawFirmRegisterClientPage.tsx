@@ -67,9 +67,9 @@ const step3Schema = z.object({
 
 const step4Schema = z.object({
   adres: z.string().min(3, "Adres jest wymagany"),
+  kodPocztowy: z.string().regex(/^\d{2}-\d{3}$/, "Wpisz poprawny kod pocztowy (np. 00-000)"),
   miasto: z.string().min(2, "Miasto jest wymagane"),
-  kodPocztowy: z.string().optional().or(z.literal("")),
-  voivodeshipId: z.string().optional().or(z.literal("")),
+  voivodeshipId: z.string().min(1, "Województwo jest wymagane"),
 })
 
 const step5Schema = z.object({
@@ -281,9 +281,54 @@ export default function LawFirmRegistrationPage() {
   // Dynamic fetch and caching for cities and postal codes
   useEffect(() => {
     const query = locationSearch.trim().toLowerCase()
+    
+    // If search query is short/empty, check if we can show cities for the postal code
     if (query.length < 2) {
-      setCities([])
-      setIsLoadingCities(false)
+      if (formData.kodPocztowy && formData.kodPocztowy.length === 6) {
+        const fetchCitiesForPostal = async () => {
+          setIsLoadingCities(true)
+          try {
+            const response = await fetch(`/api/cities?search=${formData.kodPocztowy}`)
+            if (response.ok) {
+              const data = await response.json()
+              if (Array.isArray(data)) {
+                setCities(data)
+                
+                // If exactly 1 city matches and is different from current form data
+                if (data.length === 1) {
+                  const matchedCity = data[0]
+                  setFormData(prev => {
+                    if (prev.miasto === matchedCity.nazwa && prev.voivodeshipId === matchedCity.voivodeshipId) {
+                      return prev
+                    }
+                    return {
+                      ...prev,
+                      miasto: matchedCity.nazwa,
+                      voivodeshipId: matchedCity.voivodeshipId
+                    }
+                  })
+                  
+                  // Clear errors
+                  setFieldErrors(prev => {
+                    const newErrors = { ...prev }
+                    delete newErrors.miasto
+                    delete newErrors.voivodeshipId
+                    return newErrors
+                  })
+                }
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching cities by postal code:", error)
+          } finally {
+            setIsLoadingCities(false)
+          }
+        }
+        fetchCitiesForPostal()
+      } else {
+        setCities([])
+        setIsLoadingCities(false)
+      }
       return
     }
 
@@ -320,15 +365,43 @@ export default function LawFirmRegistrationPage() {
       clearTimeout(timeoutId)
       controller.abort()
     }
-  }, [locationSearch])
+  }, [locationSearch, formData.kodPocztowy])
 
   // Reset location search when popover closes
   useEffect(() => {
     if (!locationOpen) {
       setLocationSearch("")
-      setCities([])
+      // Keep cities list if we have a valid postal code so it is shown when popover opens next time
+      if (formData.kodPocztowy?.length !== 6) {
+        setCities([])
+      }
     }
-  }, [locationOpen])
+  }, [locationOpen, formData.kodPocztowy])
+
+  const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^\d]/g, "")
+    if (val.length > 5) val = val.slice(0, 5)
+    
+    let formatted = val
+    if (val.length > 2) {
+      formatted = `${val.slice(0, 2)}-${val.slice(2)}`
+    }
+
+    setFormData(prev => {
+      const shouldClear = formatted.length < 6 && prev.kodPocztowy !== formatted
+      return {
+        ...prev,
+        kodPocztowy: formatted,
+        ...(shouldClear ? { miasto: "", voivodeshipId: "" } : {})
+      }
+    })
+
+    if (fieldErrors.kodPocztowy) {
+      const newErrors = { ...fieldErrors }
+      delete newErrors.kodPocztowy
+      setFieldErrors(newErrors)
+    }
+  }
 
   const validateStep = () => {
     setError("")
@@ -805,91 +878,133 @@ export default function LawFirmRegistrationPage() {
               {fieldErrors.adres && <p className="text-xs text-destructive">{fieldErrors.adres}</p>}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
-              <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={locationOpen}
-                    className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
-                    disabled={isLoading}
-                  >
-                    <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
-                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0" align="start">
-                  <Command shouldFilter={false}>
-                    <CommandInput
-                      placeholder="Szukaj miasta..."
-                      value={locationSearch}
-                      onValueChange={setLocationSearch}
-                    />
-                    <CommandList>
-                      {isLoadingCities && (
-                        <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
-                      )}
-                      {!isLoadingCities && locationSearch.trim().length < 2 && (
-                        <div className="text-neutral-500 py-3 text-center text-xs px-3">
-                          Wpisz co najmniej 2 znaki...
-                        </div>
-                      )}
-                      {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                        <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
-                      )}
-                      <CommandGroup>
-                        {cities.map((city) => {
-                          const matchedPostal = city.postalCodes?.find((p: any) =>
-                            p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
-                          )
-                          const displayValue = matchedPostal
-                            ? `${city.nazwa} (${matchedPostal.code})`
-                            : city.nazwa
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="kodPocztowy" className={cn(fieldErrors.kodPocztowy && "text-destructive")}>Kod pocztowy *</Label>
+                <Input
+                  id="kodPocztowy"
+                  type="text"
+                  value={formData.kodPocztowy}
+                  onChange={handlePostalCodeChange}
+                  placeholder="00-000"
+                  className={cn("h-11", fieldErrors.kodPocztowy && "border-destructive")}
+                />
+                {fieldErrors.kodPocztowy && <p className="text-xs text-destructive">{fieldErrors.kodPocztowy}</p>}
+              </div>
 
-                          return (
-                            <CommandItem
-                              key={city.id}
-                              value={city.nazwa}
-                              onSelect={() => {
-                                const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || "00-000"
-                                setFormData({
-                                  ...formData,
-                                  miasto: city.nazwa,
-                                  voivodeshipId: city.voivodeshipId,
-                                  kodPocztowy: selectedPostalCode,
-                                })
-                                if (fieldErrors.miasto) {
-                                  const newErrors = { ...fieldErrors }
-                                  delete newErrors.miasto
-                                  setFieldErrors(newErrors)
-                                }
-                                setLocationOpen(false)
-                              }}
-                              className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Check
-                                  className={cn(
-                                    "h-4 w-4 text-primary",
-                                    formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                <span>{displayValue}</span>
-                              </div>
-                              <span className="text-xs text-muted-foreground ml-2 text-right">
-                                {city.voivodeship?.nazwa}
-                              </span>
-                            </CommandItem>
-                          )
-                        })}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
+              <div className="space-y-2">
+                <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={locationOpen}
+                      className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
+                      disabled={isLoading}
+                    >
+                      <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] p-0" align="start">
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Szukaj miasta..."
+                        value={locationSearch}
+                        onValueChange={setLocationSearch}
+                      />
+                      <CommandList>
+                        {isLoadingCities && (
+                          <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                        )}
+                        {!isLoadingCities && locationSearch.trim().length < 2 && cities.length === 0 && (
+                          <div className="text-neutral-500 py-3 text-center text-xs px-3">
+                            Wpisz co najmniej 2 znaki...
+                          </div>
+                        )}
+                        {!isLoadingCities && (locationSearch.trim().length >= 2 || cities.length > 0) && cities.length === 0 && (
+                          <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                        )}
+                        <CommandGroup>
+                          {cities.map((city) => {
+                            const matchedPostal = city.postalCodes?.find((p: any) =>
+                              p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                            )
+                            const displayValue = matchedPostal
+                              ? `${city.nazwa} (${matchedPostal.code})`
+                              : city.nazwa
+
+                            return (
+                              <CommandItem
+                                key={city.id}
+                                value={city.nazwa}
+                                onSelect={() => {
+                                  const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || "00-000"
+                                  setFormData({
+                                    ...formData,
+                                    miasto: city.nazwa,
+                                    voivodeshipId: city.voivodeshipId,
+                                    kodPocztowy: selectedPostalCode,
+                                  })
+                                  if (fieldErrors.miasto) {
+                                    const newErrors = { ...fieldErrors }
+                                    delete newErrors.miasto
+                                    setFieldErrors(newErrors)
+                                  }
+                                  setLocationOpen(false)
+                                }}
+                                className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Check
+                                    className={cn(
+                                      "h-4 w-4 text-primary",
+                                      formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <span>{displayValue}</span>
+                                </div>
+                                <span className="text-xs text-muted-foreground ml-2 text-right">
+                                  {city.voivodeship?.nazwa}
+                                </span>
+                              </CommandItem>
+                            )
+                          })}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="voivodeshipId" className={cn(fieldErrors.voivodeshipId && "text-destructive")}>Województwo *</Label>
+                <Select
+                  value={formData.voivodeshipId}
+                  onValueChange={(val) => {
+                    setFormData({ ...formData, voivodeshipId: val })
+                    if (fieldErrors.voivodeshipId) {
+                      const newErrors = { ...fieldErrors }
+                      delete newErrors.voivodeshipId
+                      setFieldErrors(newErrors)
+                    }
+                  }}
+                >
+                  <SelectTrigger className={cn("h-11", fieldErrors.voivodeshipId && "border-destructive")}>
+                    <SelectValue placeholder="Wybierz..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {voivodeships.map((v) => (
+                      <SelectItem key={v.id} value={v.id}>
+                        {v.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldErrors.voivodeshipId && <p className="text-xs text-destructive">{fieldErrors.voivodeshipId}</p>}
+              </div>
             </div>
           </div>
         )
