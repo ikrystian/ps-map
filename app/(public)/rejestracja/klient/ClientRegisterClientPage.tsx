@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
-import { Check, ChevronDown } from "lucide-react"
+import { Check, ChevronDown, Eye, EyeOff } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -46,6 +46,8 @@ export default function ClientRegistrationPage() {
   const [locationOpen, setLocationOpen] = useState(false)
   const [locationSearch, setLocationSearch] = useState("")
   const [isLoadingCities, setIsLoadingCities] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -532,15 +534,29 @@ export default function ClientRegistrationPage() {
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="password" className={cn(errors.password && "text-destructive")}>Hasło *</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={(e) => handleChange("password", e.target.value)}
-                      disabled={isLoading}
-                      className={cn("h-11", errors.password && "border-destructive focus-visible:ring-destructive")}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={(e) => handleChange("password", e.target.value)}
+                        disabled={isLoading}
+                        className={cn("h-11 pr-10", errors.password && "border-destructive focus-visible:ring-destructive")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                     {errors.password && (
                       <p className="text-xs text-destructive mt-1">{errors.password}</p>
                     )}
@@ -548,15 +564,29 @@ export default function ClientRegistrationPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword" className={cn(errors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                      disabled={isLoading}
-                      className={cn("h-11", errors.confirmPassword && "border-destructive focus-visible:ring-destructive")}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.confirmPassword}
+                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                        disabled={isLoading}
+                        className={cn("h-11 pr-10", errors.confirmPassword && "border-destructive focus-visible:ring-destructive")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                     {errors.confirmPassword && (
                       <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
                     )}

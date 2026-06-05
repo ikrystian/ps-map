@@ -9,6 +9,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  EyeOff,
   Globe,
   Lock,
   MapPin,
@@ -182,6 +184,8 @@ export default function LawFirmRegistrationPage() {
   const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const prevVoivodeshipIdRef = useRef<string | null>(null)
 
@@ -1214,42 +1218,70 @@ export default function LawFirmRegistrationPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="password" className={cn(fieldErrors.password && "text-destructive")}>Hasło *</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={(e) => {
-                        setFormData({ ...formData, password: e.target.value })
-                        if (fieldErrors.password) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.password
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      disabled={isLoading}
-                      className={cn("h-11", fieldErrors.password && "border-destructive")}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={(e) => {
+                          setFormData({ ...formData, password: e.target.value })
+                          if (fieldErrors.password) {
+                            const newErrors = { ...fieldErrors }
+                            delete newErrors.password
+                            setFieldErrors(newErrors)
+                          }
+                        }}
+                        disabled={isLoading}
+                        className={cn("h-11 pr-10", fieldErrors.password && "border-destructive")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                     {fieldErrors.password && <p className="text-xs text-destructive">{fieldErrors.password}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword" className={cn(fieldErrors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.confirmPassword}
-                      onChange={(e) => {
-                        setFormData({ ...formData, confirmPassword: e.target.value })
-                        if (fieldErrors.confirmPassword) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.confirmPassword
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      disabled={isLoading}
-                      className={cn("h-11", fieldErrors.confirmPassword && "border-destructive")}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.confirmPassword}
+                        onChange={(e) => {
+                          setFormData({ ...formData, confirmPassword: e.target.value })
+                          if (fieldErrors.confirmPassword) {
+                            const newErrors = { ...fieldErrors }
+                            delete newErrors.confirmPassword
+                            setFieldErrors(newErrors)
+                          }
+                        }}
+                        disabled={isLoading}
+                        className={cn("h-11 pr-10", fieldErrors.confirmPassword && "border-destructive")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                     {fieldErrors.confirmPassword && <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>}
                   </div>
                 </div>
