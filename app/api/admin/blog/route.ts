@@ -70,6 +70,14 @@ export async function GET(request: NextRequest) {
               nazwaFirmy: true,
             },
           },
+          sponsoredLawFirm: {
+            select: {
+              id: true,
+              nazwa: true,
+              nazwaFirmy: true,
+              slug: true,
+            },
+          },
         },
         orderBy,
         skip,
@@ -130,6 +138,8 @@ export async function POST(request: NextRequest) {
       metaTitle,
       metaDescription,
       opublikowany,
+      isSponsored,
+      sponsoredLawFirmId,
     } = body
 
     // Walidacja
@@ -183,6 +193,8 @@ export async function POST(request: NextRequest) {
         metaDescription: metaDescription || null,
         opublikowany: opublikowany || false,
         dataPublikacji: opublikowany ? new Date() : null,
+        isSponsored: isSponsored || false,
+        sponsoredLawFirmId: isSponsored ? (sponsoredLawFirmId || null) : null,
       },
       include: {
         category: true,
@@ -191,6 +203,14 @@ export async function POST(request: NextRequest) {
             id: true,
             nazwa: true,
             nazwaFirmy: true,
+          },
+        },
+        sponsoredLawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+            slug: true,
           },
         },
       },
