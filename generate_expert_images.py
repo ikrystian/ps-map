@@ -154,7 +154,7 @@ def generate_image(api_key, prompt, aspect_ratio, target_w, target_h):
 
 def update_expert_profile(base_url, law_firm_id, logo_img, cover_img):
     """Sends the processed images via POST to the Next.js app endpoint."""
-    url = f"{base_url}/api/law-firms/update-images"
+    url = f"{base_url}/api/law-firms/update-images?id={law_firm_id}"
     
     # Save images to memory buffers as JPEG
     logo_io = BytesIO()
@@ -172,11 +172,21 @@ def update_expert_profile(base_url, law_firm_id, logo_img, cover_img):
     data = {
         "id": law_firm_id
     }
+    headers = {
+        "X-Law-Firm-Id": law_firm_id
+    }
     
     print(f"  Uploading images to local endpoint: {url}...")
-    response = requests.post(url, data=data, files=files)
-    response.raise_for_status()
+    response = requests.post(url, data=data, files=files, headers=headers)
     
+    if response.status_code != 200:
+        try:
+            err_json = response.json()
+            err_msg = err_json.get("error") or response.text
+        except Exception:
+            err_msg = response.text
+        raise Exception(f"Upload endpoint returned status {response.status_code}: {err_msg}")
+        
     res = response.json()
     if res.get("success"):
         print("  Update successful!")

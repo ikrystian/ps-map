@@ -7,7 +7,10 @@ import { join } from "path"
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    const lawFirmId = formData.get("id") as string
+    const lawFirmId = 
+      (formData.get("id") as string) || 
+      request.nextUrl.searchParams.get("id") ||
+      request.headers.get("x-law-firm-id")
     
     if (!lawFirmId) {
       return NextResponse.json({ error: "Missing expert/law firm ID" }, { status: 400 })
