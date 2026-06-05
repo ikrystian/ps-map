@@ -455,7 +455,7 @@ export default function BlogPage() {
                     {/* Author, Date & Visual Trigger */}
                     <div className="pt-6 border-t border-border/40 flex items-center justify-between flex-wrap gap-4">
                       <div className="flex items-center gap-3">
-                        {featuredPost.lawFirm.logo ? (
+                        {featuredPost.lawFirm && featuredPost.lawFirm.logo ? (
                           <img
                             src={featuredPost.lawFirm.logo}
                             alt={featuredPost.lawFirm.nazwa}
@@ -468,7 +468,7 @@ export default function BlogPage() {
                         )}
                         <div>
                           <span className="block text-sm font-semibold text-foreground leading-none mb-1">
-                            {featuredPost.lawFirm.nazwa}
+                            {featuredPost.lawFirm ? featuredPost.lawFirm.nazwa : "Administracja"}
                           </span>
                           <span className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Calendar className="w-3.5 h-3.5" />
@@ -567,7 +567,7 @@ export default function BlogPage() {
                           {/* Card Footer author detail */}
                           <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2.5">
-                              {post.lawFirm.logo ? (
+                              {post.lawFirm && post.lawFirm.logo ? (
                                 <img
                                   src={post.lawFirm.logo}
                                   alt={post.lawFirm.nazwa}
@@ -579,7 +579,7 @@ export default function BlogPage() {
                                 </div>
                               )}
                               <span className="text-xs font-semibold text-foreground leading-tight truncate max-w-[120px]">
-                                {post.lawFirm.nazwa}
+                                {post.lawFirm ? post.lawFirm.nazwa : "Administracja"}
                               </span>
                             </div>
 
