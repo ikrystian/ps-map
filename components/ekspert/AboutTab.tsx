@@ -60,7 +60,7 @@ export function AboutTab({
           </CardHeader>
           <CardContent className="p-6">
             <div
-              className="about-description prose prose-sm max-w-none dark:prose-invert leading-relaxed text-foreground/90"
+              className="about-description"
               dangerouslySetInnerHTML={{ __html: lawFirm.opis }}
             />
           </CardContent>
