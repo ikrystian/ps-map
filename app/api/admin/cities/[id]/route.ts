@@ -25,7 +25,7 @@ export async function PATCH(
           .map((c: string) => c.trim())
           .filter((c: string) => c !== "")
       : []
-    const uniqueCodes = Array.from(new Set(codes))
+    const uniqueCodes = Array.from(new Set(codes)) as string[]
 
     const city = await prisma.$transaction(async (tx) => {
       if (postalCodes !== undefined) {
