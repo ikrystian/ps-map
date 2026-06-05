@@ -133,9 +133,9 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Walidacja
-    if (!tytul || !tresc || !lawFirmId) {
+    if (!tytul || !tresc) {
       return NextResponse.json(
-        { error: "Tytuł, treść i kancelaria są wymagane" },
+        { error: "Tytuł i treść są wymagane" },
         { status: 400 }
       )
     }
@@ -152,18 +152,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Wpis z tym slugiem już istnieje" },
         { status: 409 }
-      )
-    }
-
-    // Walidacja lawFirmId
-    const lawFirm = await prisma.lawFirm.findUnique({
-      where: { id: lawFirmId },
-    })
-
-    if (!lawFirm) {
-      return NextResponse.json(
-        { error: "Wybrana kancelaria nie istnieje" },
-        { status: 400 }
       )
     }
 
@@ -187,7 +175,7 @@ export async function POST(request: NextRequest) {
         tytul,
         slug,
         tresc,
-        lawFirmId,
+        lawFirmId: null,
         categoryId: categoryId || null,
         tagi: tagi && Array.isArray(tagi) && tagi.length > 0 ? JSON.stringify(tagi) : null,
         obrazekWyrozniajacy: obrazekWyrozniajacy || null,
