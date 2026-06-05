@@ -27,6 +27,23 @@ export async function GET(
             voivodeship: true,
           },
         },
+        sponsoredLawFirm: {
+          select: {
+            id: true,
+            nazwa: true,
+            nazwaFirmy: true,
+            logo: true,
+            opis: true,
+            slug: true,
+            miasto: true,
+            voivodeship: {
+              select: {
+                id: true,
+                nazwa: true,
+              },
+            },
+          },
+        },
       },
     })
 
