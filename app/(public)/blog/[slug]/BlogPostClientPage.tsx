@@ -42,7 +42,21 @@ interface BlogPost {
       id: string;
       nazwa: string;
     };
-  };
+  } | null;
+  isSponsored: boolean;
+  sponsoredLawFirm: {
+    id: string;
+    slug: string;
+    nazwa: string;
+    nazwaFirmy: string;
+    logo: string | null;
+    opis: string | null;
+    miasto: string;
+    voivodeship: {
+      id: string;
+      nazwa: string;
+    };
+  } | null;
 }
 
 export default function BlogPostPage() {
@@ -187,6 +201,14 @@ export default function BlogPostPage() {
                     {post.category.nazwa}
                   </Badge>
                 )}
+                {post.isSponsored && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-sm uppercase tracking-wider font-semibold px-2.5 py-0.5 animate-pulse"
+                  >
+                    Sponsorowany
+                  </Badge>
+                )}
               </div>
 
               {/* Title */}
@@ -276,6 +298,14 @@ export default function BlogPostPage() {
                     className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
                   >
                     {post.category.nazwa}
+                  </Badge>
+                )}
+                {post.isSponsored && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-sm uppercase tracking-wider font-semibold px-2.5 py-0.5 animate-pulse"
+                  >
+                    Sponsorowany
                   </Badge>
                 )}
               </div>
@@ -378,6 +408,73 @@ export default function BlogPostPage() {
               </div>
             </article>
 
+            {post.isSponsored && post.sponsoredLawFirm && (
+              <div className="relative overflow-hidden bg-gradient-to-br from-[#1f1a0e]/60 to-[#0e0d0a] border border-amber-500/20 rounded-3xl p-8 shadow-2xl group transition-all duration-300 hover:border-amber-500/30">
+                {/* Visual ambient glows */}
+                <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-amber-500/10 blur-[70px] pointer-events-none" />
+                <div className="absolute -left-10 -top-10 w-48 h-48 rounded-full bg-yellow-500/5 blur-[70px] pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center md:items-start">
+                  {post.sponsoredLawFirm.logo ? (
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-amber-500/20 shadow-lg flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
+                      <img
+                        src={post.sponsoredLawFirm.logo}
+                        alt={post.sponsoredLawFirm.nazwa}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 rounded-2xl bg-neutral-950 flex items-center justify-center border border-amber-500/20 shadow-lg flex-shrink-0">
+                      <Building2 className="w-10 h-10 text-amber-500/60" />
+                    </div>
+                  )}
+
+                  <div className="flex-1 text-center md:text-left space-y-4">
+                    <div>
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+                        <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs uppercase tracking-wider font-semibold">
+                          Partner merytoryczny publikacji
+                        </Badge>
+                        <span className="text-xs text-neutral-500 flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {post.sponsoredLawFirm.miasto}
+                        </span>
+                      </div>
+                      <h3 className="font-playfair text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                        {post.sponsoredLawFirm.nazwa}
+                      </h3>
+                      {post.sponsoredLawFirm.opis && (
+                        <div
+                          className="text-sm text-neutral-350 leading-relaxed line-clamp-3 about-description"
+                          dangerouslySetInnerHTML={{ __html: post.sponsoredLawFirm.opis }}
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
+                      <Button
+                        asChild
+                        className="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white rounded-xl px-6 py-6 transition-all shadow-lg hover:shadow-amber-500/20 text-sm font-semibold cursor-pointer border-0"
+                      >
+                        <Link href={`/ekspert/${post.sponsoredLawFirm.slug}`}>
+                          Skonsultuj się z ekspertem
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="border-neutral-800 bg-[#0f0f0e]/50 hover:bg-neutral-850 hover:text-white text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer"
+                      >
+                        <Link href={`/ekspert/${post.sponsoredLawFirm.slug}#kontakt`}>
+                          Zadaj pytanie online
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Bottom Premium CTA Block */}
             <div className="relative overflow-hidden bg-gradient-to-br from-[#13201e]/60 to-[#0e0e0d] border border-primary/20 rounded-3xl p-8 shadow-2xl group">
               {/* Blur accent glow */}
@@ -421,7 +518,76 @@ export default function BlogPostPage() {
 
           {/* Sticky Editorial Sidebar */}
           <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[95px] h-fit">
-            {post.lawFirm ? (
+            {post.isSponsored && post.sponsoredLawFirm ? (
+              /* About Sponsor card */
+              <div className="bg-[#1e1a0f]/60 border border-amber-500/20 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+                {/* Visual amber glow on hover */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-amber-500/25" />
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500/80 via-yellow-500/80 to-amber-500/80" />
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    {post.sponsoredLawFirm.logo ? (
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/20 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
+                        <img
+                          src={post.sponsoredLawFirm.logo}
+                          alt={post.sponsoredLawFirm.nazwa}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                        <Building2 className="w-8 h-8 text-amber-500/60" />
+                      </div>
+                    )}
+
+                    <div>
+                      <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs uppercase tracking-wider mb-1.5 font-semibold animate-pulse">
+                        Sponsor artykułu
+                      </Badge>
+                      <h3 className="font-semibold text-white text-base leading-tight group-hover:text-amber-400 transition-colors">
+                        {post.sponsoredLawFirm.nazwa}
+                      </h3>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {post.sponsoredLawFirm.nazwaFirmy}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Separator className="bg-neutral-800/60" />
+
+                  {/* Location */}
+                  <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                    <MapPin className="w-4 h-4 text-amber-500/80 flex-shrink-0" />
+                    <span>
+                      {post.sponsoredLawFirm.miasto}, woj. {post.sponsoredLawFirm.voivodeship.nazwa}
+                    </span>
+                  </div>
+
+                  {/* Description excerpt */}
+                  {post.sponsoredLawFirm.opis && (
+                    <>
+                      <Separator className="bg-neutral-800/60" />
+                      <div
+                        className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
+                        dangerouslySetInnerHTML={{ __html: post.sponsoredLawFirm.opis }}
+                      />
+                    </>
+                  )}
+
+                  {/* View Profile Button */}
+                  <Button
+                    asChild
+                    className="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white rounded-xl py-5 transition-all shadow-lg hover:shadow-amber-500/20 cursor-pointer border-0"
+                  >
+                    <Link href={`/ekspert/${post.sponsoredLawFirm.slug}`}>
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Zobacz profil sponsora
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ) : post.lawFirm ? (
               /* About Author card */
               <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
                 {/* Visual glow on hover */}
