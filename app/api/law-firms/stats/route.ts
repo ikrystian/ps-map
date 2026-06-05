@@ -89,6 +89,89 @@ export async function GET(request: NextRequest) {
     const averageRating = reviewStats._avg.ocenaOgolna || 0
     const reviewsCount = reviewStats._count.id
 
+    // Oblicz rozkład ocen (1-5 gwiazdek)
+    const reviewBreakdown = await prisma.review.groupBy({
+      by: ["ocenaOgolna"],
+      where: {
+        lawFirmId: lawFirm.id,
+        aktywna: true,
+      },
+      _count: { id: true },
+    })
+
+    const starsBreakdown = [5, 4, 3, 2, 1].map(stars => {
+      const found = reviewBreakdown.find(r => r.ocenaOgolna === stars)
+      return {
+        stars: `${stars} ★`,
+        count: found?._count.id || 0,
+      }
+    })
+
+    // Typy klientów (indywidualni vs biznesowi) dla wygranych ofert
+    const wonOffers = await prisma.offer.findMany({
+      where: {
+        lawFirmId: lawFirm.id,
+        status: "ZAAKCEPTOWANA",
+      },
+      include: {
+        case: {
+          include: {
+            client: {
+              select: {
+                clientType: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    let individualCount = 0
+    let businessCount = 0
+
+    wonOffers.forEach(o => {
+      if (o.case?.client?.clientType === "BUSINESS") {
+        businessCount++
+      } else {
+        individualCount++
+      }
+    })
+
+    const clientTypeBreakdown = [
+      { name: "Indywidualni", value: individualCount },
+      { name: "Biznesowi", value: businessCount },
+    ]
+
+    // Rozkład spraw pilnych (tryb pilny vs normalny) w złożonych ofertach
+    const submittedOffers = await prisma.offer.findMany({
+      where: {
+        lawFirmId: lawFirm.id,
+      },
+      include: {
+        case: {
+          select: {
+            trybPilny: true
+          }
+        }
+      }
+    })
+
+    let urgentCount = 0
+    let normalCount = 0
+
+    submittedOffers.forEach(o => {
+      if (o.case?.trybPilny) {
+        urgentCount++
+      } else {
+        normalCount++
+      }
+    })
+
+    const urgencyBreakdown = [
+      { name: "Pilne", value: urgentCount },
+      { name: "Normalne", value: normalCount },
+    ]
+
     // Statystyki bieżącego miesiąca
     const casesThisMonth = await prisma.case.count({
       where: {
@@ -191,6 +274,9 @@ export async function GET(request: NextRequest) {
         offers: s.offersSubmitted,
         won: s.offersAccepted,
       })),
+      starsBreakdown,
+      clientTypeBreakdown,
+      urgencyBreakdown,
     })
   } catch (error) {
     console.error("Error fetching statistics:", error)

@@ -23,6 +23,25 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from "recharts"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from "@/components/ui/chart"
 
 interface StatsData {
   lawFirm: {
@@ -55,6 +74,18 @@ interface StatsData {
     offers: number
     won: number
   }>
+  starsBreakdown?: Array<{
+    stars: string
+    count: number
+  }>
+  clientTypeBreakdown?: Array<{
+    name: string
+    value: number
+  }>
+  urgencyBreakdown?: Array<{
+    name: string
+    value: number
+  }>
 }
 
 const formatDate = (dateString: string) => {
@@ -64,6 +95,70 @@ const formatDate = (dateString: string) => {
   ]
   const [year, month] = dateString.split("-")
   return `${months[parseInt(month) - 1]} ${year}`
+}
+
+const viewsChartConfig = {
+  views: {
+    label: "Wyświetlenia",
+    color: "#0da192",
+  },
+}
+
+const offersChartConfig = {
+  total: {
+    label: "Złożone oferty",
+    color: "#3b82f6",
+  },
+  accepted: {
+    label: "Zaakceptowane oferty",
+    color: "#10b981",
+  },
+}
+
+const categoriesChartConfig = {
+  offers: {
+    label: "Złożone oferty",
+    color: "#d7b56d",
+  },
+  won: {
+    label: "Wygrane oferty",
+    color: "#0da192",
+  },
+}
+
+const starsChartConfig = {
+  count: {
+    label: "Liczba ocen",
+    color: "#f59e0b",
+  },
+}
+
+const clientTypeChartConfig = {
+  value: {
+    label: "Liczba zleceń",
+  },
+  Indywidualni: {
+    label: "Klienci indywidualni",
+    color: "#0da192",
+  },
+  Biznesowi: {
+    label: "Klienci biznesowi",
+    color: "#d7b56d",
+  },
+}
+
+const urgencyChartConfig = {
+  value: {
+    label: "Liczba ofert",
+  },
+  Pilne: {
+    label: "Sprawy pilne",
+    color: "#ef4444",
+  },
+  Normalne: {
+    label: "Sprawy normalne",
+    color: "#3b82f6",
+  },
 }
 
 // Framer motion variants
@@ -230,8 +325,7 @@ export default function LawFirmStatsPage() {
   }
 
   const { lawFirm, stats, monthlyViews, monthlyOffers, categoryStats } = data
-  const maxViews = Math.max(...monthlyViews.map(m => m.views))
-  const maxOffers = Math.max(...monthlyOffers.map(m => m.total))
+  const maxViews = monthlyViews.length > 0 ? Math.max(...monthlyViews.map(m => m.views)) : 0
 
   return (
     <div className="relative space-y-8">
@@ -357,40 +451,46 @@ export default function LawFirmStatsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-5">
-                  {monthlyViews.map((item) => {
-                    const percentage = maxViews > 0 ? (item.views / maxViews) * 100 : 0
-                    return (
-                      <div key={item.month} className="space-y-2">
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="font-semibold text-zinc-300">
-                            {formatDate(item.month)}
-                          </span>
-                          <span className="text-zinc-400 font-light">
-                            {item.views} wyświetleń
-                          </span>
-                        </div>
-                        <div className="h-8 bg-zinc-900/60 border border-zinc-800/40 rounded-xl overflow-hidden relative">
-                          {percentage > 0 ? (
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${percentage}%` }}
-                              transition={{ duration: 0.8, ease: "easeOut" }}
-                              className="h-full bg-gradient-to-r from-[#0da192] to-[#0a8276] flex items-center px-4 shadow-[0_0_15px_rgba(13,161,146,0.15)]"
-                            >
-                              <span className="text-xs text-white font-semibold">
-                                {item.views}
-                              </span>
-                            </motion.div>
-                          ) : (
-                            <div className="h-full flex items-center px-4 text-zinc-500 text-xs font-light">
-                              Brak wyświetleń w tym okresie
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="h-[320px] w-full pt-4">
+                  <ChartContainer config={viewsChartConfig} className="h-full w-full">
+                    <AreaChart
+                      data={monthlyViews.map(item => ({
+                        month: formatDate(item.month),
+                        views: item.views
+                      }))}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#0da192" stopOpacity={0.4}/>
+                          <stop offset="95%" stopColor="#0da192" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
+                      <XAxis
+                        dataKey="month"
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Area
+                        type="monotone"
+                        dataKey="views"
+                        stroke="#0da192"
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill="url(#colorViews)"
+                      />
+                    </AreaChart>
+                  </ChartContainer>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20 grid grid-cols-3 gap-4">
@@ -436,61 +536,36 @@ export default function LawFirmStatsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-6">
-                  {monthlyOffers.map((item) => {
-                    const totalPercentage = maxOffers > 0 ? (item.total / maxOffers) * 100 : 0
-                    const acceptedPercentage = item.total > 0 ? (item.accepted / item.total) * 100 : 0
-                    return (
-                      <div key={item.month} className="space-y-3">
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="font-semibold text-zinc-300">
-                            {formatDate(item.month)}
-                          </span>
-                          <div className="text-xs text-zinc-400 font-light">
-                            Skuteczność: <span className="font-bold text-emerald-400">{item.accepted}</span> z {item.total}
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="space-y-1">
-                            <span className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Złożone oferty</span>
-                            <div className="h-6 bg-zinc-900/60 border border-zinc-800/40 rounded-lg overflow-hidden">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${totalPercentage}%` }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="h-full bg-blue-500/80 flex items-center px-3"
-                              >
-                                <span className="text-sm text-white font-semibold">
-                                  {item.total}
-                                </span>
-                              </motion.div>
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <span className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Wygrane i zaakceptowane</span>
-                            <div className="h-6 bg-zinc-900/60 border border-zinc-800/40 rounded-lg overflow-hidden">
-                              {acceptedPercentage > 0 ? (
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${acceptedPercentage}%` }}
-                                  transition={{ duration: 0.8, ease: "easeOut" }}
-                                  className="h-full bg-emerald-500/80 flex items-center px-3"
-                                >
-                                  <span className="text-sm text-white font-semibold">
-                                    {item.accepted} ({acceptedPercentage.toFixed(0)}%)
-                                  </span>
-                                </motion.div>
-                              ) : (
-                                <div className="h-full flex items-center px-3 text-zinc-500 text-sm font-light">
-                                  0 wygranych
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="h-[320px] w-full pt-4">
+                  <ChartContainer config={offersChartConfig} className="h-full w-full">
+                    <BarChart
+                      data={monthlyOffers.map(item => ({
+                        month: formatDate(item.month),
+                        total: item.total,
+                        accepted: item.accepted
+                      }))}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
+                      <XAxis
+                        dataKey="month"
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartLegend content={<ChartLegendContent />} />
+                      <Bar dataKey="total" fill="var(--color-total)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="accepted" fill="var(--color-accepted)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20 grid grid-cols-3 gap-4">
@@ -538,41 +613,36 @@ export default function LawFirmStatsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-6">
-                  {categoryStats.map((item) => {
-                    const winRate = item.offers > 0 ? (item.won / item.offers) * 100 : 0
-                    return (
-                      <div key={item.category} className="space-y-2">
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="font-semibold text-zinc-300">{item.category}</span>
-                          <div className="flex items-center gap-4 text-xs font-light text-zinc-400">
-                            <span>{item.offers} złożonych</span>
-                            <span className="text-emerald-400 font-semibold">
-                              {item.won} wygranych ({winRate.toFixed(0)}%)
-                            </span>
-                          </div>
-                        </div>
-                        <div className="h-8 bg-zinc-900/60 border border-zinc-800/40 rounded-xl overflow-hidden relative">
-                          {winRate > 0 ? (
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${winRate}%` }}
-                              transition={{ duration: 0.8, ease: "easeOut" }}
-                              className="h-full bg-gradient-to-r from-emerald-500 to-[#0da192] flex items-center justify-between px-4"
-                            >
-                              <span className="text-xs text-white font-semibold">
-                                {winRate.toFixed(0)}% skuteczności
-                              </span>
-                            </motion.div>
-                          ) : (
-                            <div className="h-full flex items-center px-4 text-zinc-500 text-xs font-light">
-                              Brak wygranych ofert
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="h-[350px] w-full pt-4">
+                  <ChartContainer config={categoriesChartConfig} className="h-full w-full">
+                    <BarChart
+                      data={categoryStats}
+                      layout="vertical"
+                      margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" horizontal={false} />
+                      <XAxis
+                        type="number"
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        dataKey="category"
+                        type="category"
+                        stroke="#71717a"
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                        width={90}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartLegend content={<ChartLegendContent />} />
+                      <Bar dataKey="offers" fill="var(--color-offers)" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="won" fill="var(--color-won)" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ChartContainer>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20">
@@ -630,8 +700,7 @@ export default function LawFirmStatsPage() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        id="tour-stats-ranking"
-        className="grid gap-4 md:grid-cols-2 z-10 relative"
+        className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 z-10 relative"
       >
         {/* Card 5: Pozycja w rankingu */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
@@ -641,41 +710,139 @@ export default function LawFirmStatsPage() {
               Pozycja w rankingu
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="text-center py-6 flex flex-col items-center justify-center space-y-2">
-              <div className="text-6xl font-black bg-gradient-to-r from-[#d7b56d] to-[#b39352] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(215,181,109,0.15)] font-playfair">
-                {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
-              </div>
-              <div className="text-xs text-zinc-400 font-light">
-                Pozycja Twojej kancelarii w ogólnopolskim rankingu ekspertów
-              </div>
+          <CardContent className="p-6 h-[250px] flex flex-col items-center justify-center space-y-2">
+            <div className="text-6xl font-black bg-gradient-to-r from-[#d7b56d] to-[#b39352] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(215,181,109,0.15)] font-playfair">
+              {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
+            </div>
+            <div className="text-xs text-zinc-400 font-light text-center">
+              Pozycja Twojej kancelarii w ogólnopolskim rankingu ekspertów na platformie
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 6: Opinie klientów */}
+        {/* Card 6: Rozkład ocen */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group lg:col-span-1">
+          <CardHeader className="border-b border-border/20 py-4 px-6">
+            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+              <Star className="h-5 w-5 text-amber-400" />
+              Rozkład ocen
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            {data.starsBreakdown && data.starsBreakdown.length > 0 ? (
+              <div className="h-[180px] w-full">
+                <ChartContainer config={starsChartConfig} className="h-full w-full">
+                  <BarChart
+                    data={data.starsBreakdown}
+                    layout="vertical"
+                    margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <XAxis type="number" hide />
+                    <YAxis
+                      dataKey="stars"
+                      type="category"
+                      stroke="#a1a1aa"
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                      width={35}
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar
+                      dataKey="count"
+                      fill="var(--color-count)"
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ChartContainer>
+              </div>
+            ) : (
+              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light">
+                Brak opinii do przeanalizowania
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Card 7: Typy Klientów */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
               <Users className="h-5 w-5 text-[#0da192]" />
-              Opinie klientów
+              Typy klientów
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="text-center py-6 flex flex-col items-center justify-center space-y-3">
-              <div className="text-5xl font-black text-white font-playfair">
-                {stats.reviewsCount}
+            {data.clientTypeBreakdown && (data.clientTypeBreakdown[0].value > 0 || data.clientTypeBreakdown[1].value > 0) ? (
+              <div className="h-[180px] w-full">
+                <ChartContainer config={clientTypeChartConfig} className="h-full w-full">
+                  <PieChart>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Pie
+                      data={data.clientTypeBreakdown}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={40}
+                      outerRadius={55}
+                      paddingAngle={3}
+                    >
+                      {data.clientTypeBreakdown.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.name === "Indywidualni" ? "var(--color-Indywidualni)" : "var(--color-Biznesowi)"}
+                        />
+                      ))}
+                    </Pie>
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ChartContainer>
               </div>
-              <div className="text-xs text-zinc-400 font-light">
-                Łączna liczba wystawionych opinii i ocen
+            ) : (
+              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light text-center px-4">
+                Zdobądź pierwsze zlecenia, aby zobaczyć statystyki klientów
               </div>
-              <div className="flex items-center justify-center gap-2 bg-zinc-900/40 px-4 py-1.5 rounded-full border border-border/20 shadow-inner">
-                {renderStars(Math.round(stats.averageRating))}
-                <span className="text-sm font-bold text-white font-mono">
-                  {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "0.0"}
-                </span>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Card 8: Pilność spraw */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
+          <CardHeader className="border-b border-border/20 py-4 px-6">
+            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-indigo-400" />
+              Pilność spraw
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            {data.urgencyBreakdown && (data.urgencyBreakdown[0].value > 0 || data.urgencyBreakdown[1].value > 0) ? (
+              <div className="h-[180px] w-full">
+                <ChartContainer config={urgencyChartConfig} className="h-full w-full">
+                  <PieChart>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Pie
+                      data={data.urgencyBreakdown}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={40}
+                      outerRadius={55}
+                      paddingAngle={3}
+                    >
+                      {data.urgencyBreakdown.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.name === "Pilne" ? "var(--color-Pilne)" : "var(--color-Normalne)"}
+                        />
+                      ))}
+                    </Pie>
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ChartContainer>
               </div>
-            </div>
+            ) : (
+              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light text-center px-4">
+                Złóż pierwsze oferty, aby sprawdzić pilność spraw
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
