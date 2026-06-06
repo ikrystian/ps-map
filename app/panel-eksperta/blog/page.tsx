@@ -128,7 +128,8 @@ export default function LawFirmBlogPage() {
     setIsDeleteDialogOpen(true)
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date | undefined) => {
+    if (!dateString) return ""
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "2-digit",
@@ -389,7 +390,7 @@ export default function LawFirmBlogPage() {
                 </div>
 
                 {/* Paginacja */}
-                {pagination.pages > 1 && (
+                {(pagination.pages || 0) > 1 && (
                   <div className="flex items-center justify-center gap-4 py-4 px-6 border-t border-border/20">
                     <Button
                       variant="outline"
@@ -401,13 +402,13 @@ export default function LawFirmBlogPage() {
                       Poprzednia
                     </Button>
                     <span className="text-xs text-zinc-400">
-                      Strona <span className="text-white font-semibold">{pagination.page}</span> z <span className="text-white font-semibold">{pagination.pages}</span>
+                      Strona <span className="text-white font-semibold">{pagination.page}</span> z <span className="text-white font-semibold">{pagination.pages || 1}</span>
                     </span>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => fetchPosts(pagination.page + 1)}
-                      disabled={pagination.page === pagination.pages}
+                      disabled={pagination.page === (pagination.pages || 1)}
                       className="h-9 border-border/50 text-zinc-300 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:hover:bg-transparent rounded-xl transition-all"
                     >
                       Następna

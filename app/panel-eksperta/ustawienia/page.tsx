@@ -120,6 +120,8 @@ export default function LawFirmSettingsPage() {
   const [showAvatarCropper, setShowAvatarCropper] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isRemovingAvatar, setIsRemovingAvatar] = useState(false)
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
 
   // Dane użytkownika
   const [userData, setUserData] = useState<UserData>({
@@ -402,6 +404,7 @@ export default function LawFirmSettingsPage() {
   }
 
   const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true)
     try {
       const response = await fetch("/api/auth/me", {
         method: "DELETE",
@@ -417,6 +420,8 @@ export default function LawFirmSettingsPage() {
     } catch (error) {
       console.error("Error deleting account:", error)
       toast.error("Nie udało się usunąć konta")
+    } finally {
+      setIsDeletingAccount(false)
     }
   }
 
@@ -709,35 +714,14 @@ export default function LawFirmSettingsPage() {
                         Bezpowrotnie usuń dane i zlikwiduj profil eksperta.
                       </p>
                     </div>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="shrink-0 h-10 px-5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl gap-2 transition-all"
-                        >
-                          <Trash2 className="h-4.5 w-4.5" />
-                          Usuń konto
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="bg-card border border-border/40 max-w-md rounded-2xl">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-xl font-bold font-playfair text-white">Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-muted-foreground text-sm pt-2 leading-relaxed">
-                            Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil eksperta w katalogu,
-                            złożone oferty, wiadomości oraz historia zostaną trwale usunięte z bazy danych.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="gap-2 sm:gap-0 pt-4">
-                          <AlertDialogCancel className="border-border/50 hover:bg-muted text-white rounded-xl">Anuluj</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={handleDeleteAccount}
-                            className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10"
-                          >
-                            Tak, usuń moje konto
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setShowDeleteAccountConfirm(true)}
+                      className="shrink-0 h-10 px-5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl gap-2 transition-all"
+                    >
+                      <Trash2 className="h-4.5 w-4.5" />
+                      Usuń konto
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -1215,6 +1199,17 @@ export default function LawFirmSettingsPage() {
         title="Usuń zdjęcie profilowe"
         description="Czy na pewno chcesz usunąć swoje zdjęcie profilowe? Tej operacji nie można cofnąć."
         confirmText="Usuń"
+        cancelText="Anuluj"
+      />
+
+      <ConfirmDeleteDialog
+        open={showDeleteAccountConfirm}
+        onOpenChange={setShowDeleteAccountConfirm}
+        onConfirm={handleDeleteAccount}
+        isPending={isDeletingAccount}
+        title="Usuń konto"
+        description="Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil eksperta w katalogu, złożone oferty, wiadomości oraz historia zostaną trwale usunięte z bazy danych."
+        confirmText="Tak, usuń moje konto"
         cancelText="Anuluj"
       />
     </div>
