@@ -29,6 +29,7 @@ import { Edit, Lock, RefreshCw, Search, Trash2, Unlock, UserPlus } from "lucide-
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface User {
   id: string
@@ -268,11 +269,8 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Zarządzanie użytkownikami</h1>
-          <p className="text-muted-foreground">Zarządzaj użytkownikami systemu</p>
-        </div>
+      <AdminHeaderSetter title="Zarządzanie użytkownikami" subtitle="Zarządzaj użytkownikami systemu" />
+      <div className="flex items-center justify-end">
         <Button asChild>
           <Link href="/admin/users/new">
             <UserPlus className="mr-2 h-4 w-4" />

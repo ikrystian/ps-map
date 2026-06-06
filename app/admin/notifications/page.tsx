@@ -41,6 +41,7 @@ import {
   User
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 // Types
 type NotificationType =
@@ -212,15 +213,8 @@ export default function NotificationsAdminPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Centrum Powiadomień</h1>
-          <p className="text-muted-foreground mt-1">
-            Testuj wysyłkę, śledź historię i zarządzaj ścieżkami powiadomień w systemie.
-          </p>
-        </div>
-        <Bell className="h-10 w-10 text-muted-foreground opacity-20" />
-      </div>
+      <AdminHeaderSetter title="Centrum Powiadomień" subtitle="Testuj wysyłkę, śledź historię i zarządzaj ścieżkami powiadomień w systemie" />
+
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-[600px]">

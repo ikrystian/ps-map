@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Save, Settings2, Upload, Globe, Image as ImageIcon } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Settings {
   favicon?: {
@@ -490,16 +491,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">
-          <Settings2 className="h-8 w-8" />
-          Ustawienia systemu
-        </h1>
-        <p className="text-muted-foreground">
-          Zarządzaj globalnymi ustawieniami platformy
-        </p>
-      </div>
-
+      <AdminHeaderSetter title="Ustawienia systemu" subtitle="Zarządzaj globalnymi ustawieniami platformy" />
       <Separator />
 
       {/* Ustawienia ogólne */}

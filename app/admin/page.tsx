@@ -15,6 +15,7 @@ import {
   Users,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface DashboardStats {
   statistics: {
@@ -225,10 +226,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-base mt-2">Przegląd systemu i statystyki</p>
-      </div>
+      <AdminHeaderSetter title="Dashboard" subtitle="Przegląd systemu i statystyki" />
 
       {/* Statistics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">

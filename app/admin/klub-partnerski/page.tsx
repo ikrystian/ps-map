@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table"
 import { Award, CheckCircle, Gift, RefreshCw, Search, TrendingUp, Users, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface PartnerProgram {
   id: string
@@ -183,13 +184,9 @@ export default function AdminKlubPartnerskiPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Klub Partnerski" subtitle="Zarządzanie programem partnerskim" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Klub Partnerski</h1>
-          <p className="text-gray-600 mt-2">
-            Zarządzanie programem partnerskim
-          </p>
-        </div>
+        <div />
         <Button
           onClick={handleAllocatePoints}
           disabled={allocating}

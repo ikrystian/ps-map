@@ -33,6 +33,7 @@ import {
 import { CheckCircle, Eye, Search, Star, Trash2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 const reasonLabels: Record<string, string> = {
   SPAM: "Spam lub reklama",
@@ -240,14 +241,7 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Opinie</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj wszystkimi opiniami w systemie
-          </p>
-        </div>
-      </div>
+      <AdminHeaderSetter title="Opinie" subtitle="Zarządzaj wszystkimi opiniami w systemie" />
 
       {/* Filters */}
       <Card>

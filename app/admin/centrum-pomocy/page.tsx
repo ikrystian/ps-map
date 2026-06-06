@@ -39,6 +39,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Edit, Eye, Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 // Schema walidacji dla kategorii
@@ -397,12 +398,10 @@ export default function AdminHelpCenterPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Centrum pomocy</h1>
-        <p className="text-muted-foreground">
-          Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy ekspertów
-        </p>
-      </div>
+      <AdminHeaderSetter 
+        title="Centrum pomocy" 
+        subtitle="Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy ekspertów" 
+      />
 
       <Tabs defaultValue="categories" className="w-full">
         <TabsList>

@@ -20,6 +20,7 @@ import { ChevronLeft, Trash } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -104,6 +105,7 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
 
     return (
         <div className="space-y-6">
+            <AdminHeaderSetter title="Edytuj order" subtitle="Zmień szczegóły orderu przyznawanego ekspertom" />
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/admin/badges">
@@ -111,7 +113,6 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
                             <ChevronLeft className="h-4 w-4" />
                         </Button>
                     </Link>
-                    <h1 className="text-3xl font-bold">Edytuj order</h1>
                 </div>
                 <Button variant="destructive" size="icon" onClick={onDelete} disabled={loading}>
                     <Trash className="h-4 w-4" />

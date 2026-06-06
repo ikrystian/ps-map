@@ -58,6 +58,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface BlogPost {
   id: string
@@ -337,14 +338,10 @@ export default function AdminBlogPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Wpisy blogowe" subtitle="Zarządzaj wpisami blogowymi ekspertów partnerskich, zatwierdzaj publikacje i filtruj dane" />
       {/* Nagłówek */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Wpisy blogowe</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj wpisami blogowymi ekspertów partnerskich, zatwierdzaj publikacje i filtruj dane.
-          </p>
-        </div>
+        <div />
         <Button asChild className="sm:ml-auto flex items-center gap-1.5 shadow-sm">
           <Link href="/admin/blog/nowy">
             <Plus className="h-4 w-4" />

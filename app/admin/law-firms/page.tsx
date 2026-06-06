@@ -27,6 +27,7 @@ import {
 import { Building2, CheckCircle, Edit, RefreshCw, Search, Trash2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 // Enums from Prisma
 type LawFirmType = "OSOBA_FIZYCZNA" | "SPOLKA_CYWILNA" | "SPOLKA_PARTNERSKA" | "SPOLKA_KOMANDYTOWA" | "SPOLKA_JAWNA" | "SPOLKA_ZOO" | "INNY"
@@ -232,11 +233,9 @@ export default function AdminLawFirmsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Eksperci" subtitle="Zarządzaj wszystkimi ekspertami prawnymi w systemie" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Zarządzanie Ekspertami</h1>
-          <p className="text-muted-foreground">Zarządzaj wszystkimi ekspertami prawnymi w systemie</p>
-        </div>
+        <div />
         <Button asChild>
           <Link href="/admin/law-firms/new">
             <Building2 className="mr-2 h-4 w-4" />

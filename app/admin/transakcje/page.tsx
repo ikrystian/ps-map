@@ -42,6 +42,7 @@ import {
 import { CreditCard, Edit, Euro, Eye, Search, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface LawFirm {
   id: string
@@ -271,14 +272,7 @@ export default function AdminTransakcjePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Transakcje</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj wszystkimi transakcjami ekspertów
-          </p>
-        </div>
-      </div>
+      <AdminHeaderSetter title="Transakcje" subtitle="Zarządzaj wszystkimi transakcjami ekspertów" />
 
       {/* Tabs */}
       <div className="flex border-b border-border space-x-6 pb-px">

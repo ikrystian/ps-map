@@ -35,6 +35,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 // Validation schema
@@ -194,16 +195,13 @@ export default function NewCasePage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Nowa sprawa" subtitle="Utwórz nową sprawę dla klienta" />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/cases">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Nowa sprawa</h1>
-          <p className="text-muted-foreground">Utwórz nową sprawę dla klienta</p>
-        </div>
       </div>
 
       <Form {...form}>

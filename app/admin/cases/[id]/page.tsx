@@ -19,6 +19,7 @@ import { AlertCircle, Archive, ArrowLeft, Building2, Clock, Edit, MessageSquare,
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface User {
   id: string
@@ -232,6 +233,7 @@ export default function CaseDetailsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title={caseData.nazwaSprawy} subtitle={`ID: ${caseData.id}`} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -240,10 +242,6 @@ export default function CaseDetailsPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold">{caseData.nazwaSprawy}</h1>
-            <p className="text-muted-foreground">ID: {caseData.id}</p>
-          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>

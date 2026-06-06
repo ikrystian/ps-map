@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table"
 import { AlertCircle, Calendar, CheckCircle, Download, Mail, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface NewsletterSubscriber {
   id: string
@@ -155,12 +156,7 @@ export default function AdminNewsletterPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Newsletter</h1>
-        <p className="text-muted-foreground">
-          Zarządzaj subskrybentami newslettera
-        </p>
-      </div>
+      <AdminHeaderSetter title="Newsletter" subtitle="Zarządzaj subskrybentami newslettera" />
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">

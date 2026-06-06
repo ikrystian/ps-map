@@ -18,6 +18,7 @@ import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"
 import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface SystemLog {
   id: string
@@ -138,15 +139,7 @@ export default function AdminLogsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">
-          <FileText className="h-8 w-8" />
-          Logi Systemowe
-        </h1>
-        <p className="text-muted-foreground">
-          Przeglądaj i filtruj logi aktywności systemu
-        </p>
-      </div>
+      <AdminHeaderSetter title="Logi systemowe" subtitle="Przeglądaj i filtruj logi aktywności systemu" />
 
       {/* Filtry */}
       <Card>

@@ -22,6 +22,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 const pageSchema = z.object({
@@ -154,6 +155,7 @@ export default function NewPagePage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Nowa strona" subtitle="Utwórz nową stronę z modułów" />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -162,12 +164,6 @@ export default function NewPagePage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold">Nowa strona</h1>
-            <p className="text-muted-foreground mt-2">
-              Utwórz nową stronę z modułów
-            </p>
-          </div>
         </div>
         <Button onClick={form.handleSubmit(handleSave)} disabled={saving}>
           <Save className="mr-2 h-4 w-4" />

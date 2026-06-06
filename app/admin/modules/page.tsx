@@ -48,6 +48,7 @@ import { ArrowLeft, Check, Code, Copy, Edit, Eye, Monitor, Plus, RefreshCw, Sear
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 const moduleSchema = z.object({
   name: z.string().min(1, "Nazwa jest wymagana"),
@@ -294,13 +295,9 @@ export default function AdminModulesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
+      <AdminHeaderSetter title="Moduły" subtitle="Zarządzaj modułami HTML do budowy stron" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Moduły</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj modułami HTML do budowy stron
-          </p>
-        </div>
+        <div />
         <div className="flex gap-2">
           <BlockImporter onImported={fetchModules} />
           <Button onClick={() => setIsCreateDialogOpen(true)}>

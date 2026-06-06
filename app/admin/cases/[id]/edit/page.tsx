@@ -22,6 +22,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 // Validation schema
@@ -213,16 +214,13 @@ export default function EditCasePage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Edycja sprawy" subtitle={form.getValues("nazwaSprawy") || ""} />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/cases">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Edycja sprawy</h1>
-          <p className="text-muted-foreground">{form.getValues("nazwaSprawy")}</p>
-        </div>
       </div>
 
       <Form {...form}>

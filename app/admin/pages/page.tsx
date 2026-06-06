@@ -33,6 +33,7 @@ import {
 import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Page {
   id: string
@@ -136,13 +137,9 @@ export default function AdminPagesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
+      <AdminHeaderSetter title="Strony" subtitle="Zarządzaj stronami budowanymi z modułów" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Strony</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj stronami budowanymi z modułów
-          </p>
-        </div>
+        <div />
         <Link href="/admin/pages/new">
           <Button>
             <Plus className="mr-2 h-4 w-4" />

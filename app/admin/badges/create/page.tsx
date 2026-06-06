@@ -19,6 +19,7 @@ import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -80,13 +81,13 @@ export default function CreateBadgePage() {
 
     return (
         <div className="space-y-6">
+            <AdminHeaderSetter title="Dodaj nowy order" subtitle="Utwórz nowy order przyznawany ekspertom" />
             <div className="flex items-center gap-4">
                 <Link href="/admin/badges">
                     <Button variant="ghost" size="icon">
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                 </Link>
-                <h1 className="text-3xl font-bold">Dodaj nowy order</h1>
             </div>
 
             <div className="max-w-2xl border rounded-lg p-6 bg-card">

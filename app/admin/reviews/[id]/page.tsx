@@ -22,6 +22,7 @@ import { ArrowLeft, CheckCircle, Save, Star, Trash2, XCircle } from "lucide-reac
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Review {
   id: string
@@ -220,6 +221,7 @@ export default function ReviewDetailsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Szczegóły opinii" subtitle={`ID: ${review.id}`} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -229,10 +231,6 @@ export default function ReviewDetailsPage() {
               Powrót do listy
             </Link>
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Szczegóły opinii</h1>
-            <p className="text-muted-foreground">ID: {review.id}</p>
-          </div>
         </div>
         <div className="flex gap-2">
           {!isEditing ? (

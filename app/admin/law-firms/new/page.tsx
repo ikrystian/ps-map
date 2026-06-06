@@ -23,6 +23,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 // Validation schema for law firm form
@@ -236,16 +237,13 @@ export default function NewLawFirmPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Dodaj Nowego Eksperta" subtitle="Wprowadź dane nowego eksperta prawnego" />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/law-firms">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Dodaj Nową Eksperta</h1>
-          <p className="text-muted-foreground">Wprowadź dane nowego eksperta prawniczej</p>
-        </div>
       </div>
 
       <Form {...form}>

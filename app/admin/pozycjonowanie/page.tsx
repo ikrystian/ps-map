@@ -35,6 +35,7 @@ import {
   XCircle
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface ActivePromotion {
   id: string
@@ -316,15 +317,10 @@ export default function AdminPozycjonowaniePage() {
   return (
     <div className="space-y-6">
       {/* Title section */}
+      <AdminHeaderSetter title="Pozycjonowanie" subtitle="Wizualizacja, analiza matematyczna oraz ręczne interwencje w rankingach wyszukiwania i stronach promowanych" />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <Sliders className="h-8 w-8 text-primary" />
-            Pozycjonowanie i Kolejność Rankingu
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Wizualizacja, analiza matematyczna oraz ręczne interwencje w rankingach wyszukiwania i stronach promowanych.
-          </p>
+
         </div>
         <div className="flex items-center gap-2">
           <Button

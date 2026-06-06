@@ -23,6 +23,7 @@ import {
 import { ChevronDown, ChevronRight, Edit, Plus, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Category {
   id: string
@@ -263,13 +264,9 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Zarządzanie kategoriami" subtitle="Dodawaj, edytuj i zarządzaj kategoriami prawnymi" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Zarządzanie kategoriami</h1>
-          <p className="text-muted-foreground">
-            Dodawaj, edytuj i zarządzaj kategoriami prawnymi
-          </p>
-        </div>
+        <div />
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExpandAll}>
             Rozwiń wszystkie

@@ -17,6 +17,7 @@ import { ArrowLeft, Loader2, Save } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface SubscriptionPlanForm {
   typ: string
@@ -117,18 +118,13 @@ export default function AddSubscriptionPlanPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Dodaj nowy pakiet" subtitle="Utwórz nowy pakiet subskrypcji" />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/pakiety">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Dodaj nowy pakiet</h1>
-          <p className="text-muted-foreground mt-2">
-            Utwórz nowy pakiet subskrypcji
-          </p>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit}>

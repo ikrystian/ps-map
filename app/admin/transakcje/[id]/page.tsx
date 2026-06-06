@@ -35,6 +35,7 @@ import { ArrowLeft, CreditCard, Edit, Receipt, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface LawFirm {
   id: string
@@ -239,6 +240,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
+      <AdminHeaderSetter title={`Zamówienie ${order.orderNumber || order.id.slice(0, 8)}`} subtitle="Szczegóły transakcji" />
       {/* Nagłówek */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -247,16 +249,6 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <Link href="/admin/transakcje" className="hover:underline">Transakcje</Link>
-              <span>/</span>
-              <span className="font-medium text-foreground">Szczegóły</span>
-            </div>
-            <h1 className="text-3xl font-bold font-playfair tracking-tight">
-              Zamówienie {order.orderNumber || order.id.slice(0, 8)}
-            </h1>
-          </div>
         </div>
 
         <div className="flex items-center gap-2">

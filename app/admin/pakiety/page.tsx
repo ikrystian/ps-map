@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface SubscriptionPlan {
   id: string
@@ -98,13 +99,9 @@ export default function AdminSubscriptionPlansPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Pakiety subskrypcji" subtitle="Zarządzaj pakietami subskrypcji dla ekspertów" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Pakiety subskrypcji</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj pakietami subskrypcji dla ekspertów
-          </p>
-        </div>
+        <div />
         <Button asChild>
           <Link href="/admin/pakiety/dodaj">
             <Plus className="mr-2 h-4 w-4" />

@@ -5,6 +5,8 @@ import Image from "next/image"
 import { useState } from "react"
 
 import AdminNotificationBell from "@/components/AdminNotificationBell"
+import AdminPageTitle from "@/components/admin/AdminPageTitle"
+import { AdminTitleProvider } from "@/components/admin/AdminTitleContext"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
 import { cn } from "@/lib/utils"
@@ -77,133 +79,152 @@ export default function AdminLayout({
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
+  const activeItem = navigation.find(item => {
+    return pathname === item.href ||
+      (item.href !== "/admin" &&
+        item.href !== "/admin/transakcje" &&
+        pathname.startsWith(item.href)) ||
+      (item.href === "/admin/transakcje" &&
+        pathname.startsWith("/admin/transakcje") &&
+        !pathname.startsWith("/admin/transakcje/punkty"))
+  })
+
+  const defaultSubtitle = activeItem
+    ? activeItem.name === "Dashboard"
+      ? "Przegląd systemu i statystyki"
+      : `Zarządzanie sekcją ${activeItem.name.toLowerCase()}`
+    : "Zarządzanie systemem"
+
   return (
-    <div className="flex h-screen bg-background-sec">
-      {/* Sidebar */}
-      <aside className={cn(
-        " transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-64"
-      )}>
-        <div className="flex h-full flex-col">
-          {/* Logo/Header */}
-          <div className="flex h-16 items-center border-border px-4 justify-between bg-card">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="h-8 w-8"
+    <AdminTitleProvider defaultTitle={activeItem?.name} defaultSubtitle={defaultSubtitle}>
+      <div className="flex h-screen bg-background-sec">
+        {/* Sidebar */}
+        <aside className={cn(
+          " transition-all duration-300 ease-in-out",
+          isCollapsed ? "w-16" : "w-64"
+        )}>
+          <div className="flex h-full flex-col">
+            {/* Logo/Header */}
+            <div className="flex h-16 items-center border-border px-4 justify-between bg-card">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="h-8 w-8"
+              >
+                {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
+              {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
+                <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+                <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
+              </Link>}
+            </div>
+
+            {/* Navigation */}
+            <nav
+              className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+              id="admin-nav-sidebar"
+              onMouseLeave={() => setHoveredIndex(null)}
             >
-              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-            {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
-            </Link>}
-          </div>
+              {navigation.map((item, index) => {
+                const isActive = pathname === item.href ||
+                  (item.href !== "/admin" &&
+                    item.href !== "/admin/transakcje" &&
+                    pathname.startsWith(item.href)) ||
+                  (item.href === "/admin/transakcje" &&
+                    pathname.startsWith("/admin/transakcje") &&
+                    !pathname.startsWith("/admin/transakcje/punkty"))
 
-          {/* Navigation */}
-          <nav
-            className="flex-1 space-y-1 overflow-y-auto p-4 relative"
-            id="admin-nav-sidebar"
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
-            {navigation.map((item, index) => {
-              const isActive = pathname === item.href ||
-                (item.href !== "/admin" &&
-                  item.href !== "/admin/transakcje" &&
-                  pathname.startsWith(item.href)) ||
-                (item.href === "/admin/transakcje" &&
-                  pathname.startsWith("/admin/transakcje") &&
-                  !pathname.startsWith("/admin/transakcje/punkty"))
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    className={cn(
+                      "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors outline-none",
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                        : "text-muted-foreground hover:text-foreground",
+                      isCollapsed && "justify-center",
+                      item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
+                    )}
+                    title={isCollapsed ? item.name : undefined}
+                  >
+                    {/* Sliding/Fading Hover Background Pill */}
+                    <AnimatePresence>
+                      {hoveredIndex === index && !isActive && (
+                        <motion.span
+                          layoutId="admin-sidebar-hover-pill"
+                          className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                          initial={{ opacity: 0, scale: 0.96 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.96 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 380,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
 
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  className={cn(
-                    "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                      : "text-muted-foreground hover:text-foreground",
-                    isCollapsed && "justify-center",
-                    item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
-                  )}
-                  title={isCollapsed ? item.name : undefined}
-                >
-                  {/* Sliding/Fading Hover Background Pill */}
-                  <AnimatePresence>
-                    {hoveredIndex === index && !isActive && (
+                    <div className="flex items-center justify-center flex-shrink-0">
+                      <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
+                    </div>
+
+                    {/* Text label with elegant fade-slide */}
+                    {!isCollapsed && (
                       <motion.span
-                        layoutId="admin-sidebar-hover-pill"
-                        className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                        initial={{ opacity: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 380,
-                          damping: 30,
+                        animate={{
+                          x: hoveredIndex === index && !isActive ? 4 : 0,
+                          fontWeight: isActive ? 600 : 500,
                         }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      >
+                        {item.name}
+                      </motion.span>
+                    )}
+
+                    {/* Active accent dot for extra polish */}
+                    {isActive && !isCollapsed && (
+                      <motion.span
+                        layoutId="admin-sidebar-active-indicator"
+                        className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
                       />
                     )}
-                  </AnimatePresence>
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        </aside>
 
-                  <div className="flex items-center justify-center flex-shrink-0">
-                    <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
-                  </div>
+        {/* Main content area */}
+        <div className="flex flex-1 flex-col">
+          {/* Header */}
+          <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
+            {/* Logo */}
+            <div className="flex items-center">
+              {/* NEW TITLE COMPONENT HERE */}
+              <AdminPageTitle />
+            </div>
 
-                  {/* Text label with elegant fade-slide */}
-                  {!isCollapsed && (
-                    <motion.span
-                      animate={{
-                        x: hoveredIndex === index && !isActive ? 4 : 0,
-                        fontWeight: isActive ? 600 : 500,
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    >
-                      {item.name}
-                    </motion.span>
-                  )}
+            {/* User menu */}
+            <div className="flex items-center gap-3">
+              <AdminNotificationBell />
+              <UserMenu userRole="ADMIN" />
+            </div>
+          </header>
 
-                  {/* Active accent dot for extra polish */}
-                  {isActive && !isCollapsed && (
-                    <motion.span
-                      layoutId="admin-sidebar-active-indicator"
-                      className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              )
-            })}
-          </nav>
+          {/* Main content */}
+          <main className="flex-1 overflow-y-auto">
+            <div className="container-full mx-auto p-6">
+              {children}
+            </div>
+          </main>
         </div>
-      </aside>
-
-      {/* Main content area */}
-      <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
-          {/* Logo */}
-          <div className="flex items-center">
-            {/* NEW TITLE COMPONENT HERE */}
-          </div>
-
-          {/* User menu */}
-          <div className="flex items-center gap-3">
-            <AdminNotificationBell />
-            <UserMenu userRole="ADMIN" />
-          </div>
-        </header>
-
-        {/* Main content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="container-full mx-auto p-6">
-            {children}
-          </div>
-        </main>
       </div>
-    </div>
+    </AdminTitleProvider>
   )
 }

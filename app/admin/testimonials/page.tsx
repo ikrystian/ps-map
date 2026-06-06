@@ -16,6 +16,7 @@ import {
   X
 } from "lucide-react"
 import React, { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 type Testimonial = {
   id: string
@@ -193,17 +194,10 @@ export default function AdminTestimonialsPage() {
 
   return (
     <div className="space-y-8 text-zinc-100 p-6 min-h-screen">
+      <AdminHeaderSetter title="Opinie na głównej" subtitle="Zarządzaj referencjami w karuzeli Aceternity UI 3D na głównej landing page" />
       {/* Upper header action row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <MessageSquare className="h-8 w-8 text-primary" />
-            Opinie na głównej
-          </h1>
-          <p className="text-zinc-400 text-sm mt-1.5">
-            Zarządzaj referencjami w karuzeli Aceternity UI 3D na głównej landing page.
-          </p>
-        </div>
+        <div />
 
         <button
           onClick={openAddModal}

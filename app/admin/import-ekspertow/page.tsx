@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { toast } from "@/components/ui/sonner"
 import { AlertCircle, CheckCircle, Download, FileJson, Upload, XCircle } from "lucide-react"
 import { useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface ImportResult {
   summary: {
@@ -124,12 +125,7 @@ export default function ImportEkspertow() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Import ekspertów z pliku JSON</h1>
-        <p className="text-muted-foreground mt-2">
-          Importuj eksperci prawni z pliku JSON zawierającego pełne profile
-        </p>
-      </div>
+      <AdminHeaderSetter title="Import ekspertów" subtitle="Importuj eksperci prawni z pliku JSON zawierającego pełne profile" />
 
       {/* Instructions Card */}
       <Card>

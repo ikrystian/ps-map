@@ -53,6 +53,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { motion, AnimatePresence } from "framer-motion"
 
 import {
@@ -570,6 +571,7 @@ export default function EditLawFirmPage() {
 
   return (
     <div className="space-y-6 pb-24 relative">
+      <AdminHeaderSetter title="Edytuj Eksperta" subtitle="Kompleksowe zarządzanie informacjami i konfiguracją eksperta" />
       {/* Sticky Header with Title */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-5 border-border">
         <div className="flex items-center gap-3">
@@ -578,10 +580,6 @@ export default function EditLawFirmPage() {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">Edytuj Eksperta</h1>
-            <p className="text-sm text-muted-foreground">Kompleksowe zarządzanie informacjami i konfiguracją eksperta</p>
-          </div>
         </div>
       </div>
 

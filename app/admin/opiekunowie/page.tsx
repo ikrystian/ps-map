@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/table'
 import { Pencil, Plus, Trash2, Upload, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { AdminHeaderSetter } from '@/components/admin/AdminTitleContext'
 
 interface AccountManager {
   id: string
@@ -212,11 +213,9 @@ export default function AccountManagersPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Opiekunowie" subtitle="Zarządzaj opiekunami przypisanymi do ekspertów" />
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Opiekunowie ekspertów</h1>
-          <p className="text-gray-500 mt-2">Zarządzaj opiekunami przypisanymi do ekspercie</p>
-        </div>
+        <div />
         <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
             <Button>

@@ -37,6 +37,7 @@ import {
   Trash2
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface EmailTemplate {
   id: string
@@ -318,14 +319,7 @@ export default function EmailManagementPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">Zarządzanie emailami</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj szablonami emaili, ich wyglądem i logami wysyłki
-          </p>
-        </div>
-      </div>
+      <AdminHeaderSetter title="Zarządzanie emailami" subtitle="Zarządzaj szablonami emaili, ich wyglądem i logami wysyłki" />
 
       <Tabs defaultValue="templates" className="w-full">
         <TabsList className="mb-4">

@@ -23,6 +23,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import * as z from "zod"
 
 // Validation schema for user form
@@ -170,16 +171,13 @@ export default function NewUserPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Dodaj Nowego Użytkownika" subtitle="Wprowadź dane nowego użytkownika" />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/users">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Dodaj Nowego Użytkownika</h1>
-          <p className="text-muted-foreground">Wprowadź dane nowego użytkownika</p>
-        </div>
       </div>
 
       <Form {...form}>

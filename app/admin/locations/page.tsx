@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Voivodeship {
   id: string
@@ -268,13 +269,9 @@ export default function AdminLocationsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Lokalizacje" subtitle="Zarządzaj miastami i ich przypisaniem do województw" />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Lokalizacje</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj miastami i ich przypisaniem do województw.
-          </p>
-        </div>
+        <div />
         <div className="flex gap-2 w-full md:w-auto">
           <Button onClick={handleSeed} variant="outline" className="gap-2 flex-1 md:flex-none" disabled={isSaving}>
             <Plus className="h-4 w-4" /> Importuj z listy

@@ -36,6 +36,7 @@ import {
   Trash2
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Advertisement {
   id: string
@@ -278,14 +279,10 @@ export default function AdminAdsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Reklamy" subtitle="Definiuj miejsca na banery reklamowe, włączaj kreacje, przeglądaj statystyki wyświetleń i kliknięć." />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Zarządzanie Reklamami</h1>
-          <p className="text-muted-foreground mt-1">
-            Definiuj miejsca na banery reklamowe, włączaj kreacje, przeglądaj statystyki wyświetleń i kliknięć.
-          </p>
-        </div>
+        <div />
         <Button onClick={() => handleOpenDialog()} className="gap-2 self-start md:self-auto">
           <Plus className="h-4 w-4" />
           Dodaj reklamę

@@ -12,6 +12,7 @@ import { db } from "@/lib/db"
 import { Plus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 export default async function BadgesPage() {
     const badges = await db.badge.findMany({
@@ -22,8 +23,9 @@ export default async function BadgesPage() {
 
     return (
         <div className="space-y-6">
+            <AdminHeaderSetter title="Ordery" subtitle="Zarządzaj orderami i odznakami w systemie" />
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold">Ordery i Odznaki</h1>
+                <div />
                 <Link href="/admin/badges/create">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />

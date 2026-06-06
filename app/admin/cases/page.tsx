@@ -33,6 +33,7 @@ import {
 import { Archive, Edit, Eye, Plus, Search, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface Client {
   id: string
@@ -204,11 +205,9 @@ export default function AdminCasesPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Sprawy" subtitle="Przeglądaj i zarządzaj wszystkimi sprawami w systemie" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Zarządzanie sprawami</h1>
-          <p className="text-muted-foreground">Przeglądaj i zarządzaj wszystkimi sprawami w systemie</p>
-        </div>
+        <div />
         <Button asChild>
           <Link href="/admin/cases/new">
             <Plus className="h-4 w-4 mr-2" />

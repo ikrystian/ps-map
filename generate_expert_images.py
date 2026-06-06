@@ -171,11 +171,11 @@ def update_expert_profile(base_url, law_firm_id, logo_img, cover_img):
     
     # Save images to memory buffers as JPEG
     logo_io = BytesIO()
-    logo_img.save(logo_io, format="JPEG", quality=90)
+    logo_img.save(logo_io, format="JPEG", quality=70)
     logo_io.seek(0)
     
     cover_io = BytesIO()
-    cover_img.save(cover_io, format="JPEG", quality=90)
+    cover_img.save(cover_io, format="JPEG", quality=70)
     cover_io.seek(0)
     
     files = {
@@ -271,12 +271,12 @@ def main():
         logo_prompt = (
             f"A clean vector logo for a law firm named '{name}', "
             f"legal themes, scale of justice, professional corporate branding, "
-            f"minimalist icon on a solid white background, 1:1 format."
+            f"minimalist icon on a solid white background, very small space between logo and edge of image, 1:1 format."
         )
         
         cover_prompt = (
             f"A wide banner cover photo for a law firm named '{name}'3"
-            f"elegant corporate banner, warm modern office lighting, legal theme, 21:9 format."
+            f"elegant corporate banner, warm modern office lighting, legal theme, no other texts than name of firm, 21:9 format."
         )
         
         try:

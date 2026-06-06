@@ -17,6 +17,7 @@ import { ArrowLeft, Loader2, Save } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface SubscriptionPlanForm {
   typ: string
@@ -144,18 +145,13 @@ export default function EditSubscriptionPlanPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Edytuj pakiet" subtitle="Zmień szczegóły pakietu subskrypcji" />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/pakiety">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Edytuj pakiet</h1>
-          <p className="text-muted-foreground mt-2">
-            Zmień szczegóły pakietu subskrypcji
-          </p>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit}>

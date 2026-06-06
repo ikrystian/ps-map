@@ -48,6 +48,7 @@ import { Edit, Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 const categorySchema = z.object({
   nazwa: z.string().min(1, "Nazwa jest wymagana"),
@@ -235,13 +236,9 @@ export default function AdminBlogCategoriesPage() {
 
   return (
     <div className="space-y-6">
+      <AdminHeaderSetter title="Kategorie bloga" subtitle="Zarządzaj kategoriami wpisów blogowych" />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Kategorie bloga</h1>
-          <p className="text-muted-foreground">
-            Zarządzaj kategoriami wpisów blogowych
-          </p>
-        </div>
+        <div />
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>

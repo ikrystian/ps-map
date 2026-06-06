@@ -31,6 +31,7 @@ import {
 import { ArrowRightLeft, Coins, Eye, Receipt, Search, TrendingDown, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface LawFirm {
   id: string
@@ -75,7 +76,7 @@ export default function AdminTransakcjePunktyPage() {
   const [loading, setLoading] = useState(true)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedTx, setSelectedTx] = useState<PointTransaction | null>(null)
-  
+
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
     page: 1,
@@ -154,14 +155,7 @@ export default function AdminTransakcjePunktyPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Transakcje</h1>
-          <p className="text-muted-foreground mt-2">
-            Zarządzaj wszystkimi transakcjami ekspertów
-          </p>
-        </div>
-      </div>
+      <AdminHeaderSetter title="Transakcje punktami" subtitle="Zarządzaj wszystkimi transakcjami punktowymi ekspertów" />
 
       {/* Tabs */}
       <div className="flex border-b border-border space-x-6 pb-px">
@@ -294,7 +288,7 @@ export default function AdminTransakcjePunktyPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={typeInfo.variant}
                           className={typeInfo.customClass}
                         >
@@ -379,7 +373,7 @@ export default function AdminTransakcjePunktyPage() {
               <div className="grid grid-cols-2 gap-4 bg-muted/30 p-4 rounded-xl border">
                 <div>
                   <span className="text-xs uppercase font-semibold text-muted-foreground block mb-1">Typ transakcji</span>
-                  <Badge 
+                  <Badge
                     variant={(pointTransactionTypeLabels[selectedTx.type] || { variant: "outline" }).variant}
                     className={(pointTransactionTypeLabels[selectedTx.type] || {}).customClass + " px-2.5 py-1 text-xs"}
                   >

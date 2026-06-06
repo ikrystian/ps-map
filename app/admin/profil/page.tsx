@@ -22,6 +22,7 @@ import { pl } from "date-fns/locale/pl"
 import { Calendar, KeyRound, Loader2, Mail, Save, Shield, User } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface AdminProfile {
   id: string
@@ -185,16 +186,7 @@ export default function AdminProfilPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-medium tracking-tight font-playfair">
-          <User className="h-8 w-8" />
-          Mój Profil
-        </h1>
-        <p className="text-muted-foreground">
-          Zarządzaj swoim kontem administratora
-        </p>
-      </div>
-
+      <AdminHeaderSetter title="Mój Profil" subtitle="Zarządzaj swoim kontem administratora" />
       <Separator />
 
       {/* Profile Header */}

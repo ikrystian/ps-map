@@ -31,6 +31,7 @@ import {
   X
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface PromotionConfig {
   id: string
@@ -250,13 +251,11 @@ export default function AdminPromotionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-medium tracking-tight font-playfair">Zarządzanie promocjami</h1>
-          <p className="text-muted-foreground mt-2">
-            Konfiguruj typy promocji dostępne dla ekspertów
-          </p>
-        </div>
+      <AdminHeaderSetter 
+        title="Zarządzanie promocjami" 
+        subtitle="Konfiguruj typy promocji dostępne dla ekspertów" 
+      />
+      <div className="flex items-center justify-end">
         <Button onClick={() => handleOpenDialog()}>
           <Plus className="h-4 w-4 mr-2" />
           Dodaj typ promocji
