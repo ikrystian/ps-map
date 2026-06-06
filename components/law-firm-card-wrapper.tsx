@@ -5,7 +5,7 @@ import React from "react"
 
 interface LawFirmCardWrapperProps {
   children: React.ReactNode
-  pakietSubskrypcji?: string
+  pakietSubskrypcji?: string | null
   className?: string
 }
 

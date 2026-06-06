@@ -89,7 +89,7 @@ export interface LawFirm extends LawFirmWithLocation {
   aktywna?: boolean
   createdAt?: string | Date
   updatedAt?: string | Date
-  rank?: number
+  rank?: number | null
   profilViews?: number
 
   categories: Array<{

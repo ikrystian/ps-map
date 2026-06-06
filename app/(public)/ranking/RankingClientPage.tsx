@@ -154,14 +154,14 @@ export default function RankingClientPage() {
           >
             {lawFirms.map((firm) => {
               const borderColor = getSubscriptionBorderColor(firm.subscriptionType)
-              const isTopThree = firm.rank <= 3
+              const isTopThree = firm.rank && firm.rank <= 3
 
               return (
                 <motion.div key={firm.id} variants={itemVariants}>
                   <LawFirmCardWrapper pakietSubskrypcji={firm.subscriptionType} className="rounded-2xl">
                     <Card
                       className={cn(
-                        "transition-all duration-300 border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden hover:border-[#0da192]/30 hover:bg-zinc-950/20",
+                        "transition-all duration-300 border border-border/20 bg-zinc-750 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden hover:border-[#0da192]/30 hover:bg-zinc-950/20",
                         isTopThree && "border-[#d7b56d]/30"
                       )}
                     >
@@ -179,10 +179,10 @@ export default function RankingClientPage() {
                                   firm.rank === 1 && "bg-gradient-to-r from-amber-400 via-[#d7b56d] to-yellow-600 text-zinc-950 shadow-[0_0_15px_rgba(215,181,109,0.3)] border border-[#d7b56d]/40",
                                   firm.rank === 2 && "bg-gradient-to-r from-zinc-300 via-zinc-400 to-zinc-500 text-zinc-950 shadow-[0_0_15px_rgba(156,163,175,0.2)] border border-zinc-400/40",
                                   firm.rank === 3 && "bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white shadow-[0_0_15px_rgba(180,83,9,0.2)] border border-amber-700/40",
-                                  firm.rank > 3 && "bg-zinc-900/60 border border-border/10 text-zinc-300"
+                                  firm.rank && firm.rank > 3 && "bg-zinc-900/60 border border-border/10 text-zinc-300"
                                 )}
                               >
-                                {getRankIcon(firm.rank) || `#${firm.rank}`}
+                                {getRankIcon(firm.rank || 0) || `#${firm.rank}`}
                               </div>
                               <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-950/40 border border-border/15 text-sm text-zinc-400 font-light mt-1">
                                 <Coins className="h-3 w-3 text-[#d7b56d]" />
@@ -244,7 +244,7 @@ export default function RankingClientPage() {
                               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs">
                                 <div className="flex items-center gap-1.5 text-zinc-400 font-light">
                                   <MapPin className="h-3.5 w-3.5 text-[#0da192]" />
-                                  <span>{firm.miasto}, {firm.voivodeship.nazwa}</span>
+                                  <span>{firm.miasto}, {firm.voivodeship?.nazwa}</span>
                                 </div>
                                 {firm.reviewCount > 0 && (
                                   <div className="flex items-center gap-1.5 text-zinc-300">
