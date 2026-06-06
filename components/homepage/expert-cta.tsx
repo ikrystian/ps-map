@@ -7,7 +7,7 @@ import Link from "next/link";
 export function ExpertCTA() {
   return (
     <section
-      className="relative overflow-hidden w-full bg-black py-6 md:py-12"
+      className="relative overflow-hidden w-full bg-black py-6 md:py-20"
       id="expert-cta"
       style={{
         backgroundImage: "url('/images/meet-expert.png')",
