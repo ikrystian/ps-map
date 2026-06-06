@@ -69,14 +69,7 @@ const ICON_MAP: Record<string, any> = {
   Lock,
   MessageSquare
 }
-import { Category } from "@/types/categories"
-import type { LawFirm } from "@/types"
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-  slug: string
-}
+import type { LawFirm, Voivodeship, Category } from "@/types"
 
 // Helper function to check if law firm is open
 const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {

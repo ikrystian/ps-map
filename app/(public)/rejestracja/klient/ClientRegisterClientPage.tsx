@@ -22,10 +22,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import { Voivodeship } from "@/types"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}

@@ -21,8 +21,5 @@ export interface Promotion {
 
 import { Category } from "@/types/categories"
 export type { Category }
-
-export interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
+export type { Voivodeship }

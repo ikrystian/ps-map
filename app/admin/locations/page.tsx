@@ -31,12 +31,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-  slug: string
-}
+import type { Voivodeship } from "@/types"
 
 interface City {
   id: string

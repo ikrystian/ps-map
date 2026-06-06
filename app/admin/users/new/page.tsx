@@ -51,10 +51,7 @@ const createUserSchema = z.object({
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
 
 export default function NewUserPage() {
   const router = useRouter()

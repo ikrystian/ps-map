@@ -52,3 +52,9 @@ export type {
   Review, ReviewReport
 } from "./reviews"
 
+// Voivodeship types
+export type {
+  Voivodeship
+} from "./voivodeships"
+
+

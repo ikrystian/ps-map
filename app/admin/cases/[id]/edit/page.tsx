@@ -50,12 +50,7 @@ const caseSchema = z.object({
 
 type CaseFormValues = z.infer<typeof caseSchema>
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
-
-import { Category } from "@/types/categories"
+import { Category, Voivodeship } from "@/types"
 
 export default function EditCasePage() {
   const params = useParams()

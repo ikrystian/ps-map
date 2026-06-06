@@ -37,11 +37,7 @@ interface LawFirmCategory {
   kolejnosc: number
   category: Category
 }
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
 
 interface City {
   id: string

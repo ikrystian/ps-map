@@ -93,10 +93,8 @@ export const lawFirmSchema = z.object({
 
 export type LawFirmFormValues = z.infer<typeof lawFirmSchema>
 
-export interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
+export type { Voivodeship }
 
 export interface AccountManager {
   id: string

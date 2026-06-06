@@ -117,10 +117,7 @@ const createLawFirmSchema = z.object({
 
 type CreateLawFirmFormValues = z.infer<typeof createLawFirmSchema>
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
 
 export default function NewLawFirmPage() {
   const router = useRouter()

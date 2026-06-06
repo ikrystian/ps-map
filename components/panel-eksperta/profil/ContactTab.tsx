@@ -15,10 +15,7 @@ import { cn } from "@/lib/utils"
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import { Voivodeship } from "@/types"
 
 interface ContactTabProps {
   formData: {

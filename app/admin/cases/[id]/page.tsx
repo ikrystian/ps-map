@@ -45,13 +45,7 @@ interface Client {
   }
 }
 
-import { Category } from "@/types/categories"
-import type { LawFirm } from "@/types"
-
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { LawFirm, Category, Voivodeship } from "@/types"
 
 interface Offer {
   id: string

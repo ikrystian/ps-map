@@ -94,10 +94,7 @@ const userSchema = z.object({
 
 type UserFormValues = z.infer<typeof userSchema>
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import type { Voivodeship } from "@/types"
 
 interface UserData {
   id: string

@@ -80,10 +80,7 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
-interface Voivodeship {
-  id: string
-  nazwa: string
-}
+import { Voivodeship } from "@/types"
 
 const containerVariants = {
   hidden: { opacity: 0 },
