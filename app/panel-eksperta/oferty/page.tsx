@@ -351,7 +351,6 @@ export default function LawFirmOffersPage() {
       <PageHeader
         title="Moje Oferty"
         subtitle="Przeglądaj i zarządzaj złożonymi ofertami dla spraw klientów. Oferty zaakceptowane przez klienta są wyróżnione na górze listy."
-        titleClassName="text-white text-3xl sm:text-4xl"
       />
 
       {/* Grid Stats Redesigned for Premium Look */}
