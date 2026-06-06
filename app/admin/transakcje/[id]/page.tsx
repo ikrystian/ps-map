@@ -36,14 +36,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  nazwaFirmy: string
-  emailKontakt: string
-  nip: string | null
-}
+import type { LawFirm } from "@/types"
 
 interface SubscriptionPlan {
   id: string
