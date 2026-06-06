@@ -12,28 +12,7 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
-
-interface LawFirm {
-  id: string
-  slug: string
-  nazwa: string
-  nazwaFirmy: string
-  logo?: string | null
-  opis?: string | null
-  miasto: string
-  punktySaldo: number
-  zweryfikowana: boolean
-  subscriptionType?: string
-  voivodeship: {
-    nazwa: string
-  }
-  categories: Array<{
-    nazwa: string
-  }>
-  avgRating: number
-  reviewCount: number
-  rank: number
-}
+import type { LawFirm } from "@/types"
 
 export default function RankingClientPage() {
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
