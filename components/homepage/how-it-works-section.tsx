@@ -11,7 +11,7 @@ export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")
 
     return (
-        <section className="bg-black text-white py-20 overflow-hidden relative">
+        <section className="bg-black text-white py-8 lg:py-20 overflow-hidden relative">
             <div className="container mx-auto px-4 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
