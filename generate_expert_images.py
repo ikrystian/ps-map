@@ -264,7 +264,7 @@ def main():
             print("  Expert already has custom images. Skipping. Use --force to override.")
             continue
             
-        desc = desc or "Kancelaria Prawna i Pomoc Prawna"
+        desc = desc or "Ekspert Prawny i Pomoc Prawna"
         city = city or "Polska"
         
         # Prepare prompts
@@ -288,7 +288,7 @@ def main():
             print("--- Generating Cover Photo (1920x600 px) ---")
             cover_img = generate_image(api_key, cover_prompt, "21:9", 1920, 600)
             
-            # 3. Save images locally in public/generate/[nazwakancelarii]
+            # 3. Save images locally in public/generate/[nazwaeksperta]
             folder_name = slugify(name)
             target_dir = os.path.join("public", "generate", folder_name)
             os.makedirs(target_dir, exist_ok=True)
