@@ -57,4 +57,7 @@ export type {
   Voivodeship
 } from "./voivodeships"
 
-
+// Blog types
+export type {
+  BlogCategory
+} from "./blog"

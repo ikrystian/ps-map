@@ -55,13 +55,9 @@ const postSchema = z.object({
   opublikowany: z.boolean(),
 })
 
-type PostFormValues = z.infer<typeof postSchema>
+import type { BlogCategory } from "@/types"
 
-interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
-}
+type PostFormValues = z.infer<typeof postSchema>
 
 const containerVariants = {
   hidden: { opacity: 0 },

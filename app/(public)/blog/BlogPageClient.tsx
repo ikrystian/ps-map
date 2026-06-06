@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import type { BlogCategory } from "@/types";
 
 interface BlogPost {
   id: string;
@@ -45,12 +46,6 @@ interface BlogPost {
     nazwaFirmy: string;
     logo: string | null;
   };
-}
-
-interface BlogCategory {
-  id: string;
-  nazwa: string;
-  slug: string;
 }
 
 interface PaginationData {

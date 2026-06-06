@@ -47,6 +47,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import type { BlogCategory } from "@/types"
 import * as z from "zod"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
@@ -58,19 +59,6 @@ const categorySchema = z.object({
 })
 
 type CategoryFormValues = z.infer<typeof categorySchema>
-
-interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
-  aktywna: boolean
-  createdAt: string
-  updatedAt: string
-  _count?: {
-    blogPosts: number
-  }
-}
 
 export default function AdminBlogCategoriesPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])

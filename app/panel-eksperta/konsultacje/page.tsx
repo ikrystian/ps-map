@@ -17,12 +17,7 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
-}
+import type { BlogCategory } from "@/types"
 
 const containerVariants = {
   hidden: { opacity: 0 },

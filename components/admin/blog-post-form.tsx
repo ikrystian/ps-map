@@ -57,6 +57,8 @@ const postFormSchema = z.object({
 
 type PostFormValues = z.infer<typeof postFormSchema>
 
+import type { BlogCategory } from "@/types"
+
 const postSchema = postFormSchema.refine((data) => {
   if (data.isSponsored && !data.sponsoredLawFirmId) {
     return false
@@ -66,12 +68,6 @@ const postSchema = postFormSchema.refine((data) => {
   message: "Musisz wybrać eksperta/eksperta dla wpisu sponsorowanego",
   path: ["sponsoredLawFirmId"],
 })
-
-interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
-}
 
 const containerVariants = {
   hidden: { opacity: 0 },

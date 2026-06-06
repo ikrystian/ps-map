@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { cn } from "@/lib/utils"
 import type { CategoryWithChildren } from "@/types/categories"
+import type { BlogCategory } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { Check, ChevronDown, ChevronRight, IdCard, List, MapPin, Menu, Search, X } from "lucide-react"
 import Image from "next/image"
@@ -26,7 +27,6 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 
-
 interface PublicHeaderProps {
   isAuthenticated?: boolean
   userRole?: "CLIENT" | "LAW_FIRM" | "ADMIN" | null
@@ -34,13 +34,6 @@ interface PublicHeaderProps {
   userImage?: string | null
   punktySaldo?: number
   userId?: string
-}
-
-interface BlogCategory {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
 }
 
 interface BlogPost {
