@@ -151,7 +151,7 @@ export function SearchHelpSection() {
   ];
 
   return (
-    <section className="relative bg-[#2C2B29] text-white py-24 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10">
+    <section className="relative bg-[#2C2B29] text-white py-8 lg:py-20 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10">
       {/* Container */}
       <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
@@ -168,7 +168,7 @@ export function SearchHelpSection() {
         </p>
 
         {/* Steps Grid */}
-        <div className="relative w-full grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8">
+        <div className="relative w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8">
           {/* Connecting SVG Dotted Wave Line (Visible on Desktop only) */}
           <div className="absolute inset-0 pointer-events-none z-0 hidden md:block w-full h-[150px] top-[90px]">
             <svg
