@@ -78,10 +78,7 @@ interface Voivodeship {
   nazwa: string
 }
 
-interface Category {
-  id: string
-  nazwa: string
-}
+import { Category } from "@/types/categories"
 
 export default function NewCasePage() {
   const router = useRouter()

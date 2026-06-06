@@ -25,37 +25,7 @@ import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
-  opisDodatkowy?: string | null
-  ikona?: string | null
-  ikonaUrl?: string | null
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  parentId?: string | null
-  metaTitle?: string | null
-  metaDescription?: string | null
-  aktywna: boolean
-  kolejnosc: number
-  wyswietlajNaGlownejPrywatne?: boolean
-  wyswietlajNaGlownejFirmowe?: boolean
-  createdAt: string
-  updatedAt: string
-  parent?: {
-    id: string
-    nazwa: string
-  } | null
-  children?: {
-    id: string
-    nazwa: string
-  }[]
-  _count?: {
-    lawFirms: number
-    cases: number
-  }
-}
+import { Category } from "@/types/categories"
 
 export default function AdminCategoriesPage() {
   const router = useRouter()

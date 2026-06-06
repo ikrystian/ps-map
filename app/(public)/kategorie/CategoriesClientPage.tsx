@@ -31,34 +31,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
-  opisDodatkowy?: string | null
-  ikona?: string | null
-  ikonaUrl?: string | null
-  backgroundImageUrl?: string | null
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  aktywna: boolean
-  parentId?: string | null
-  children?: {
-    id: string
-    nazwa: string
-    slug: string
-    ikona?: string | null
-    ikonaUrl?: string | null
-    _count?: {
-      lawFirms: number
-      cases: number
-    }
-  }[]
-  _count?: {
-    lawFirms: number
-    cases: number
-  }
-}
+import { Category } from "@/types/categories"
 
 const DEFAULT_BUSINESS_IMAGE = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
 const DEFAULT_PRIVATE_IMAGE = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"

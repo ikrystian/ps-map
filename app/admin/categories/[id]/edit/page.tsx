@@ -5,24 +5,7 @@ import { toast } from "@/components/ui/sonner"
 import { useRouter } from "next/navigation"
 import { use, useCallback, useEffect, useState } from "react"
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
-  opisDodatkowy?: string | null
-  ikona?: string | null
-  ikonaUrl?: string | null
-  backgroundImageUrl?: string | null
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  parentId?: string | null
-  metaTitle?: string | null
-  metaDescription?: string | null
-  aktywna: boolean
-  kolejnosc: number
-  wyswietlajNaGlownejPrywatne?: boolean
-  wyswietlajNaGlownejFirmowe?: boolean
-}
+import { Category } from "@/types/categories"
 
 interface EditCategoryPageProps {
   params: Promise<{ id: string }>

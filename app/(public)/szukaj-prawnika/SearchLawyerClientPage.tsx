@@ -54,12 +54,7 @@ interface LawFirm {
   godzinyOtwarcia?: Record<string, string>
 }
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  ikona?: string | null
-}
+import { Category } from "@/types/categories"
 
 interface Voivodeship {
   id: string

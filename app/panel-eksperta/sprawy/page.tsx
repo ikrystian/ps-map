@@ -86,13 +86,7 @@ interface Case {
     createdAt: string
   }>
 }
-
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  parentId?: string | null
-}
+import { Category } from "@/types/categories"
 
 const containerVariants = {
   hidden: { opacity: 0 },

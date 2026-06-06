@@ -73,12 +73,7 @@ interface Case {
     } | null
   }>
 }
-
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-}
+import { Category } from "@/types/categories"
 
 const statusLabels: Record<string, { label: string; className: string }> = {
   NOWA: { label: "Nowa", className: "bg-teal-500/10 text-teal-400 border border-teal-500/30" },

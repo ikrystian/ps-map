@@ -21,8 +21,9 @@ export interface CategoryBase {
  * Category with metadata (for admin/management)
  */
 export interface Category extends CategoryBase {
-  ikona: any
+  ikona?: any | null
   opis?: string | null
+  opisDodatkowy?: string | null
   aktywna: boolean
   ikonaUrl?: string | null
   backgroundImageUrl?: string | null
@@ -32,6 +33,14 @@ export interface Category extends CategoryBase {
   kolejnosc?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  parent?: {
+    id: string
+    nazwa: string
+    slug?: string
+  } | null
+  children?: any[]
 }
 
 /**

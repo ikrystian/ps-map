@@ -29,18 +29,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Search, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis?: string | null
-  opisDodatkowy?: string | null
-  ikona?: string | null
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  aktywna: boolean
-  parentId: string | null
-  children?: Category[]
-}
+import { Category } from "@/types/categories"
 
 interface LawFirmCategory {
   id: string

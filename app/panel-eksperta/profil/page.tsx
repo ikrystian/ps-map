@@ -29,10 +29,7 @@ interface City {
   voivodeshipId: string
 }
 
-interface Category {
-  id: string
-  nazwa: string
-}
+import { Category } from "@/types/categories"
 
 function LawFirmProfilePageContent() {
   const router = useRouter()

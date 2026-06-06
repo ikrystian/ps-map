@@ -55,10 +55,7 @@ interface Voivodeship {
   nazwa: string
 }
 
-interface Category {
-  id: string
-  nazwa: string
-}
+import { Category } from "@/types/categories"
 
 export default function EditCasePage() {
   const params = useParams()

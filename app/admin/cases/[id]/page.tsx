@@ -45,11 +45,7 @@ interface Client {
   }
 }
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-}
+import { Category } from "@/types/categories"
 
 interface Voivodeship {
   id: string

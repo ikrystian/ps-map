@@ -97,15 +97,11 @@ const step8Schema = z.object({
   path: ["confirmPassword"]
 })
 
+import { Category } from "@/types/categories"
+
 interface Voivodeship {
   id: string
   nazwa: string
-}
-
-interface Category {
-  id: string
-  nazwa: string
-  parentId?: string | null
 }
 
 const steps = [

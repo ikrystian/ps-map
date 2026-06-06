@@ -19,10 +19,8 @@ export interface Promotion {
   isVirtualUpcoming?: boolean
 }
 
-export interface Category {
-  id: string
-  nazwa: string
-}
+import { Category } from "@/types/categories"
+export type { Category }
 
 export interface Voivodeship {
   id: string

@@ -69,37 +69,7 @@ const ICON_MAP: Record<string, any> = {
   Lock,
   MessageSquare
 }
-
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  opis: string | null
-  opisDodatkowy: string | null
-  ikona?: string | null
-  ikonaUrl?: string | null
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  metaTitle: string | null
-  metaDescription: string | null
-  parent?: {
-    id: string
-    nazwa: string
-    slug: string
-  } | null
-  children: Array<{
-    id: string
-    nazwa: string
-    slug: string
-    _count?: {
-      lawFirms: number
-      cases: number
-    }
-  }>
-  _count: {
-    lawFirms: number
-    cases: number
-  }
-}
+import { Category } from "@/types/categories"
 
 interface LawFirm {
   id: string
@@ -446,8 +416,8 @@ export default function CategoryClientPage() {
             <div className="flex items-center gap-2">
               <Briefcase className="h-4 w-4 text-primary" />
               <span>
-                <strong>{category._count.lawFirms}</strong>{" "}
-                {category._count.lawFirms === 1 ? "ekspert" : "eksperci"}
+                <strong>{category._count?.lawFirms ?? 0}</strong>{" "}
+                {category._count?.lawFirms === 1 ? "ekspert" : "eksperci"}
               </span>
             </div>
 
@@ -462,7 +432,7 @@ export default function CategoryClientPage() {
                         <span>{child.nazwa}</span>
                         {child._count?.lawFirms !== undefined && (
                           <span className="text-sm text-muted-foreground/80 font-medium">
-                            ({child._count.lawFirms})
+                            ({child._count?.lawFirms})
                           </span>
                         )}
                       </Badge>

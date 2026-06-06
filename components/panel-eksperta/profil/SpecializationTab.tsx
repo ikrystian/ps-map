@@ -12,11 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { Globe, Loader2, MapPin } from "lucide-react"
 import Link from "next/link"
-
-interface Category {
-  id: string
-  nazwa: string
-}
+import { Category } from "@/types/categories"
 
 interface Voivodeship {
   id: string

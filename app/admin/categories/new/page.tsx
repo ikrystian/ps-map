@@ -5,18 +5,7 @@ import { toast } from "@/components/ui/sonner"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-interface Category {
-  id: string
-  nazwa: string
-  slug: string
-  typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
-  parentId?: string | null
-  aktywna: boolean
-  kolejnosc: number
-  backgroundImageUrl?: string | null
-  wyswietlajNaGlownejPrywatne?: boolean
-  wyswietlajNaGlownejFirmowe?: boolean
-}
+import { Category } from "@/types/categories"
 
 export default function NewCategoryPage() {
   const router = useRouter()
