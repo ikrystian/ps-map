@@ -5,34 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award, GraduationCap, ZoomIn, FileText, CheckCircle2, Star, Sparkles } from "lucide-react"
 import Image from "next/image"
-
-interface LawFirm {
-  opis?: string
-  badges: any[]
-  unikatowyOpisUslugi?: string
-  categories: Array<{
-    category: {
-      nazwa: string
-      slug: string
-    }
-  }>
-  slowaKluczowe?: string[]
-  edukacja?: Array<{
-    uczelnia: string
-    wydzial: string
-    rokOd: number
-    rokDo: number
-  }>
-  certificates: Array<{
-    id: string
-    nazwaCertyfikatu: string
-    wydawca: string
-    dataUzyskania: string
-    numerCertyfikatu?: string
-    skanCertyfikatu?: string
-  }>
-  galeriaZdjec?: string[]
-}
+import type { LawFirm } from "@/types"
 
 interface AboutTabProps {
   lawFirm: LawFirm
