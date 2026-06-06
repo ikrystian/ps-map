@@ -150,7 +150,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           </div>
           <div className="mb-12">
             <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap">
+              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap font-playfair">
                 Popularne sprawy prywatne
               </h2>
               <div className="flex-grow border-t border-zinc-800/80" />
@@ -201,20 +201,46 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
             ))}
           </div>
 
-          {/* Mobile Grid Layout (1 column) */}
-          <div className="grid md:hidden grid-cols-1 gap-4 mb-8">
-            {activeCategories.map((category, index) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                index={index + 20}
-                hovered={hovered}
-                setHovered={setHovered}
-                imageUrl={`https://images.unsplash.com/photo-${index % 2 === 0 ? "1589829545856-d10d557cf95f" : "1450101499163-c8848c66ca85"}?w=800&q=80`}
-                aspectRatio="aspect-video"
-                titleClassName="text-white text-xl font-bold text-center"
-              />
-            ))}
+          {/* Mobile Grid Layout (1 left + 2 right repeating) */}
+          <div className="md:hidden mb-8 flex flex-col gap-4">
+            {Array.from({ length: Math.ceil(activeCategories.length / 3) }, (_, groupIdx) => {
+              const group = activeCategories.slice(groupIdx * 3, groupIdx * 3 + 3);
+              const areaName = (i: number) => `g${groupIdx}i${i}`;
+              const areas =
+                group.length === 1
+                  ? `"${areaName(0)}"`
+                  : group.length === 2
+                    ? `"${areaName(0)} ${areaName(1)}"`
+                    : `"${areaName(0)} ${areaName(1)}" "${areaName(0)} ${areaName(2)}"`;
+              return (
+                <div
+                  key={groupIdx}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gridTemplateAreas: areas,
+                    gap: "1rem",
+                  }}
+                >
+                  {group.map((category, i) => {
+                    const globalIndex = groupIdx * 3 + i + 20;
+                    return (
+                      <CategoryCard
+                        key={category.id}
+                        category={category}
+                        index={globalIndex}
+                        hovered={hovered}
+                        setHovered={setHovered}
+                        gridArea={areaName(i)}
+                        imageUrl={`https://images.unsplash.com/photo-${globalIndex % 2 === 0 ? "1589829545856-d10d557cf95f" : "1450101499163-c8848c66ca85"}?w=800&q=80`}
+                        aspectRatio={i === 0 && group.length === 3 ? "" : "aspect-video"}
+                        titleClassName="text-white text-xl font-bold text-center"
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
 
           <div className="text-right">
