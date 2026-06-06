@@ -32,14 +32,7 @@ import { ArrowRightLeft, Coins, Eye, Receipt, Search, TrendingDown, TrendingUp }
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  nazwaFirmy: string
-  emailKontakt: string
-  punktySaldo: number
-}
+import type { LawFirm } from "@/types"
 
 interface PointTransaction {
   id: string
