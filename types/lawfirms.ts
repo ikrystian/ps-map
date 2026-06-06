@@ -28,35 +28,184 @@ export interface LawFirmWithLocation extends LawFirmBase {
   ulica?: string | null
   kodPocztowy?: string | null
   voivodeship?: {
-    id: string
+    id?: string
     nazwa: string
-  }
+    slug?: string
+  } | null
+  voivodeshipId?: string
 }
 
 /**
- * Law firm for public listing/search
+ * Law firm for public listing/search and general usage
  */
 export interface LawFirm extends LawFirmWithLocation {
+  typ?: string | null
+  typInny?: string | null
+  nip?: string | null
+  regon?: string | null
+  krs?: string | null
+  imieKontakt?: string | null
+  nazwiskoKontakt?: string | null
+  stanowisko?: string | null
+  numerTelefonu2?: string | null
+  adres?: string | null
+  latitude?: number | null
+  longitude?: number | null
   opis?: string | null
+  filmYouTube?: string | null
+  okladkaFilmu?: string | null
+  kolejnoscMultimedia?: string | null
+  statusGodzinyOtwarcia?: boolean
+  godzinyOtwarcia?: Record<string, string> | any
+  linkLinkedIn?: string | null
+  linkFacebook?: string | null
+  linkInstagram?: string | null
+  linkTwitter?: string | null
+  linkTikTok?: string | null
+  telefon?: string | null
+  email?: string | null
+  strona?: string | null
+  unikatowyOpisUslugi?: string | null
+  slowaKluczowe?: string[] | any
+  callaPolska?: boolean
+  onlineOnly?: boolean
+  typOferty?: string | null
+  punktySaldo?: number
+  pakietSubskrypcji?: string | null
+  dataPakietuOd?: string | Date | null
+  dataPakietuDo?: string | Date | null
+  mainCategoryName?: string
+  subscriptionType?: string | null
+  autoRenewal?: boolean
+  wyswietleniaProfilu?: number
+  zlozoneOferty?: number
+  wygraneOferty?: number
+  konwersja?: number
+  pozycjaRanking?: number | null
+  zgodaRegulamin?: boolean
+  zgodaPrzetwarzanie?: boolean
   zweryfikowana: boolean
-  categories: CategoryReference[]
+  aktywna?: boolean
+  createdAt?: string | Date
+  updatedAt?: string | Date
+  rank?: number
+  profilViews?: number
+
+  categories: Array<{
+    id?: string
+    kolejnosc?: number
+    category?: {
+      id?: string
+      nazwa: string
+      slug: string
+      opis?: string | null
+      opisDodatkowy?: string | null
+      ikona?: string | null
+      typ?: string
+    }
+    // simple format support
+    nazwa?: string
+    slug?: string
+  }>
   avgRating: number
   reviewCount: number
-  profilViews?: number
-  pakietSubskrypcji?: string
+
+  voivodeships?: Array<{
+    voivodeship: {
+      nazwa: string
+    }
+  }>
+  cities?: Array<{
+    city: {
+      nazwa: string
+      voivodeship: {
+        nazwa: string
+      }
+    }
+  }>
+  services?: Array<{
+    id: string
+    nazwaUslugi: string
+    opisUslugi: string
+    cenaOd?: number | null
+    cenaDo?: number | null
+    jednostka: string
+  }>
+  certificates?: Array<{
+    id: string
+    nazwaCertyfikatu: string
+    wydawca: string
+    dataUzyskania: string
+    dataWaznosci?: string
+    numerCertyfikatu?: string
+    skanCertyfikatu?: string
+  }>
+  blogPosts?: Array<{
+    id: string
+    tytul: string
+    slug: string
+    tresc: string
+    obrazekWyrozniajacy?: string
+    dataPublikacji: string
+    wyswietlenia: number
+  }>
+  reviews?: Array<{
+    id: string
+    ocenaOgolna: number
+    profesjonalizm?: number
+    komunikacja?: number
+    terminowosc?: number
+    stosunekJakosci?: number
+    tytulOpinii: string
+    trescOpinii: string
+    polecam: boolean
+    anonimowa: boolean
+    odpowiedz?: string
+    dataOdpowiedzi?: string
+    createdAt: string
+    client: {
+      imie: string
+      nazwisko: string
+      user?: {
+        image?: string | null
+      }
+    }
+  }>
+  badges?: Array<{
+    id: string
+    badge: {
+      id: string
+      name: string
+      description: string
+      imageUrl: string
+      conditionType: string
+      threshold: number
+      createdAt: string
+      updatedAt: string
+    }
+    awardedAt: string
+  }>
+  user?: {
+    id: string
+    email: string
+    name?: string | null
+    status?: string
+    createdAt?: string | Date
+  }
+  _count?: {
+    offers?: number
+    reviews?: number
+    blogPosts?: number
+    orders?: number
+    categories?: number
+    services?: number
+  }
 }
 
 /**
  * Complete law firm profile (for profile pages)
  */
 export interface LawFirmProfile extends LawFirm {
-  telefon?: string | null
-  email?: string | null
-  strona?: string | null
-  nip?: string | null
-  regon?: string | null
-  krs?: string | null
-  opis?: string | null
   specjalizacje?: string | null
   wyksztalcenie?: string | null
   certyfikaty?: string | null
@@ -68,11 +217,6 @@ export interface LawFirmProfile extends LawFirm {
     nazwa: string
     cena: number
   } | null
-  user?: {
-    id: string
-    name: string
-    email: string
-  }
 }
 
 /**
@@ -85,3 +229,4 @@ export interface LawFirmReference {
   nazwaFirmy: string
   logo?: string | null
 }
+
