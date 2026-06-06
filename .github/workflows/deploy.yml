@@ -28,7 +28,7 @@ jobs:
           echo "Creating commits.json with git diff information..."
           python3 -c '
           import json, os, subprocess
-          
+
           def run_git(cmd):
               try:
                   return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
@@ -37,15 +37,15 @@ jobs:
 
           before = os.environ.get("GITHUB_EVENT_BEFORE", "")
           after = os.environ.get("GITHUB_SHA", "")
-          
+
           diff_base = before
           if not diff_base or diff_base == "0000000000000000000000000000000000000000":
               diff_base = "HEAD~1"
-              
+
           if diff_base != "HEAD~1":
               if run_git(f"git rev-parse --verify {diff_base}").strip() == "":
                   diff_base = "HEAD~1"
-                  
+
           if run_git(f"git rev-parse --verify {diff_base}").strip() == "":
               diff_base = run_git("git hash-object -t tree /dev/null").strip() or "4b825dc642cb6eb9a0ffaa2e54d2897fd356c834"
 
@@ -69,7 +69,7 @@ jobs:
                       else:
                           empty_tree = run_git("git hash-object -t tree /dev/null").strip() or "4b825dc642cb6eb9a0ffaa2e54d2897fd356c834"
                           commit_diff = run_git(f"git diff {empty_tree} {commit_id}")
-                          
+
               formatted_commits.append({
                   "id": c.get("id"),
                   "message": c.get("message"),
@@ -87,7 +87,6 @@ jobs:
               "pusher": os.environ.get("GITHUB_ACTOR", ""),
               "before": before,
               "after": after,
-              "diff": global_diff,
               "commits": formatted_commits
           }
 
@@ -95,7 +94,7 @@ jobs:
               json.dump(payload, f, indent=2)
           '
           cat commits.json
-          
+
       - name: Send webhook with commits
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
@@ -121,16 +120,16 @@ jobs:
         run: |
           ssh "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
-            cd /root/projects/ps-map 
+            cd /root/projects/ps-map
             git pull origin main
-            
+
             # Ensure Bun is installed and in PATH for the SSH session
             export PATH="$HOME/.bun/bin:$PATH"
             if ! command -v bun &> /dev/null; then
               echo "Bun is not installed. Installing Bun..."
               curl -fsSL https://bun.sh/install | bash
             fi
-            
+
             bun install
             bun run build
             pm2 reload 0
