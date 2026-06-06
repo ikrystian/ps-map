@@ -394,6 +394,7 @@ function sendTrelloTaskFromDb(PDO $db, int $id): array
   $payload = [
     'id' => '6a23b02d3e367db7037b3eec',
     'name' => $msg['trello_name'],
+    'desc' => $msg['trello_desc'] ?? '',
     'idList' => '6a2387672c4937a0f4e1eb07',
     'idMembers' => ['5340fce41a7ea48003d38596'],
     'customFieldItems' => [
