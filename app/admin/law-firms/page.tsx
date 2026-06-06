@@ -28,59 +28,12 @@ import { Building2, CheckCircle, Edit, RefreshCw, Search, Trash2, XCircle } from
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import type { LawFirm } from "@/types"
 
 // Enums from Prisma
 type LawFirmType = "OSOBA_FIZYCZNA" | "SPOLKA_CYWILNA" | "SPOLKA_PARTNERSKA" | "SPOLKA_KOMANDYTOWA" | "SPOLKA_JAWNA" | "SPOLKA_ZOO" | "INNY"
 type OfferType = "STALA_WSPOLPRACA" | "JEDNORAZOWA_USLUGA" | "KONSULTACJA" | "WSZYSTKIE"
 type SubscriptionPackage = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES"
-
-interface LawFirm {
-  id: string
-  typ: LawFirmType
-  typInny?: string | null
-  nazwa: string
-  nazwaFirmy: string
-  nip: string
-  regon?: string | null
-  krs?: string | null
-  imieKontakt: string
-  nazwiskoKontakt: string
-  stanowisko?: string | null
-  numerTelefonu: string
-  numerTelefonu2?: string | null
-  emailKontakt: string
-  adres: string
-  kodPocztowy: string
-  miasto: string
-  voivodeshipId: string
-  opis?: string | null
-  logo?: string | null
-  typOferty: OfferType
-  pakietSubskrypcji: SubscriptionPackage
-  punktySaldo: number
-  zweryfikowana: boolean
-  aktywna: boolean
-  createdAt: string
-  updatedAt: string
-  user: {
-    id: string
-    email: string
-    status: string
-    createdAt: string
-  }
-  voivodeship: {
-    id: string
-    nazwa: string
-  }
-  _count: {
-    offers: number
-    reviews: number
-    blogPosts: number
-    orders: number
-    categories: number
-    services: number
-  }
-}
 
 interface PaginatedResponse {
   lawFirms: LawFirm[]
