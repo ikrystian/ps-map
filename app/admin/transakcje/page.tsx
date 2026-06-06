@@ -43,13 +43,7 @@ import { CreditCard, Edit, Euro, Eye, Search, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  nazwaFirmy: string
-  emailKontakt: string
-}
+import type { LawFirm } from "@/types"
 
 interface SubscriptionPlan {
   id: string
