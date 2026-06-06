@@ -41,17 +41,9 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import type { LawFirm } from "@/types"
 
 const POINTS_PER_PLN = 2
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  pakietSubskrypcji: string
-  dataPakietuOd: string | null
-  dataPakietuDo: string | null
-  punktySaldo: number
-}
 
 interface SubscriptionPlan {
   id: string
