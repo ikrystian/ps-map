@@ -517,7 +517,7 @@ export default function LawFirmCaseDetailsPage() {
           {!hasExistingOffer && caseData.status !== "W_TRAKCIE" && caseData.status !== "ZAKONCZONA" && (
             <Card className="border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
               <CardHeader className="border-b border-border/20 py-4 px-6">
-                <CardTitle className="text-lg font-bold font-playfair text-white">Złóż ofertę kancelarii</CardTitle>
+                <CardTitle className="text-lg font-bold font-playfair text-white">Złóż ofertę eksperta</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs font-light">
                   Przedstaw klientowi swoje warunki finansowe, termin realizacji oraz szczegółowy zakres pomocy prawnej.
                 </CardDescription>

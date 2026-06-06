@@ -275,7 +275,7 @@ export default function AdminTransakcjePage() {
         <div>
           <h1 className="text-3xl font-bold">Transakcje</h1>
           <p className="text-muted-foreground mt-2">
-            Zarządzaj wszystkimi transakcjami kancelarii
+            Zarządzaj wszystkimi transakcjami ekspertów
           </p>
         </div>
       </div>
@@ -353,7 +353,7 @@ export default function AdminTransakcjePage() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Szukaj po numerze, kancelarii..."
+                placeholder="Szukaj po numerze, eksperta..."
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -407,7 +407,7 @@ export default function AdminTransakcjePage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Numer zamówienia</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead>Typ</TableHead>
                 <TableHead>Szczegóły</TableHead>
                 <TableHead>Kwota</TableHead>

@@ -682,7 +682,7 @@ export default function BlogPostPage() {
                   <Separator className="bg-neutral-800/60" />
 
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    Nasz portal pomaga w szybkim znajdowaniu sprawdzonych kancelarii prawnych i ekspertów w całej Polsce.
+                    Nasz portal pomaga w szybkim znajdowaniu sprawdzonych ekspertów w całej Polsce.
                   </p>
 
                   <Button
@@ -708,7 +708,7 @@ export default function BlogPostPage() {
               </h4>
               <p className="text-sm text-neutral-400 mb-5 leading-relaxed">
                 {post.lawFirm
-                  ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do kancelarii."
+                  ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do ekspercie."
                   : "Masz dodatkowe pytania? Wyślij wiadomość do redakcji portalu."
                 }
               </p>

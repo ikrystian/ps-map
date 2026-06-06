@@ -172,7 +172,7 @@ export default function LawFirmReviewsPage() {
     setError(null)
 
     try {
-      // Pobierz ID kancelarii
+      // Pobierz ID eksperta
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (!lawFirmResponse.ok) {
         throw new Error("Nie udało się pobrać danych eksperta")
@@ -840,7 +840,7 @@ export default function LawFirmReviewsPage() {
                           </div>
                         )}
 
-                        {/* Odpowiedź Kancelarii (Wątek z linią łączącą) */}
+                        {/* Odpowiedź Eksperta (Wątek z linią łączącą) */}
                         {review.odpowiedz && lawFirm && (
                           <div className="pl-0 md:pl-16 relative">
                             {/* Linia łącząca wątek odpowiedzi */}
@@ -848,7 +848,7 @@ export default function LawFirmReviewsPage() {
 
                             <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 mt-2 shadow-sm relative group/reply">
                               <div className="flex items-start gap-3">
-                                {/* Logo kancelarii */}
+                                {/* Logo ekspercie */}
                                 <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
                                   {lawFirm.logo ? (
                                     <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />

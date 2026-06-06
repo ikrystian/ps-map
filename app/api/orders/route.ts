@@ -3,7 +3,7 @@ import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
-// GET - Pobierz historię zamówień punktów dla kancelarii
+// GET - Pobierz historię zamówień punktów dla ekspertów
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -15,15 +15,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       select: { id: true }
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -96,22 +96,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (shouldAutoApprove) {
-      // 1. Zwiększ saldo punktów kancelarii natychmiast
+      // 1. Zwiększ saldo punktów eksperta natychmiast
       await prisma.lawFirm.update({
         where: { id: lawFirm.id },
         data: {

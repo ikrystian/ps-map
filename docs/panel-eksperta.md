@@ -1,6 +1,6 @@
 # Widoki Panelu Eksperta (Prawnika)
 
-Dokumentacja opisuje interfejs użytkownika z perspektywy eksperta (prawnika/kancelarii) korzystającego z systemu. Skupia się na zawartości ekranów, dostępnych akcjach i zachowaniu aplikacji.
+Dokumentacja opisuje interfejs użytkownika z perspektywy eksperta (prawnika/eksperta) korzystającego z systemu. Skupia się na zawartości ekranów, dostępnych akcjach i zachowaniu aplikacji.
 
 ---
 
@@ -41,16 +41,16 @@ Ekran powitalny, który agreguje najważniejsze dane i ułatwia szybki dostęp d
 
 ## 3. Profil Publiczny (Wizytówka Eksperta)
 
-Miejsce, w którym ekspert konfiguruje, jak jego kancelaria jest widoczna dla klientów w wyszukiwarce. Interfejs jest podzielony na zakładki.
+Miejsce, w którym ekspert konfiguruje, jak jego ekspert jest widoczna dla klientów w wyszukiwarce. Interfejs jest podzielony na zakładki.
 
 ### Zakładka: Podstawowe
-- **Pola tekstowe:** Nazwa kancelarii/eksperta, krótki opis (zajawka), szczegółowy opis działalności.
+- **Pola tekstowe:** Nazwa eksperta/eksperta, krótki opis (zajawka), szczegółowy opis działalności.
 - **Wybór:** Rok założenia działalności.
 - **Akcje:** Przycisk zapisu zmian.
 
 ### Zakładka: Specjalizacje
 - **Kategorie i Tagowanie:** Ekspert wybiera główne obszary prawa, w których się specjalizuje.
-- **Lista:** Oznaczenie branż i konkretnych rodzajów spraw, które kancelaria najczęściej obsługuje.
+- **Lista:** Oznaczenie branż i konkretnych rodzajów spraw, które ekspert najczęściej obsługuje.
 
 ### Zakładka: Multimedia
 - **Sekcja "Logo":**

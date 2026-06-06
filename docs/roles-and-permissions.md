@@ -12,7 +12,7 @@ Gość to osoba odwiedzająca platformę, która nie posiada konta lub nie zalog
 
 **Co może zobaczyć:**
 - Pełną treść strony głównej oraz podstron informacyjnych (Jak to działa, Cennik/Pakiety, Blog, Kontakt).
-- Katalog ekspertów (listę kancelarii) oraz ich publiczne wizytówki.
+- Katalog ekspertów (listę eksperta) oraz ich publiczne wizytówki.
 - Formularz dodawania nowej sprawy prawnej (wypełnienie formularza wymusi utworzenie konta w locie).
 - Stronę logowania i rejestracji.
 - Publiczne opinie o ekspertach.
@@ -27,7 +27,7 @@ Gość to osoba odwiedzająca platformę, która nie posiada konta lub nie zalog
 - Dodać nową sprawę przez publiczny kreator (na końcu procesu musi podać email, aby utworzyć konto).
 - Skontaktować się z administracją przez formularz kontaktowy.
 - Zapisać się do newslettera.
-- Rozpocząć proces rejestracji konta (jako Klient lub Kancelaria).
+- Rozpocząć proces rejestracji konta (jako Klient lub Ekspert).
 
 ---
 
@@ -41,31 +41,31 @@ Klient to zarejestrowany użytkownik poszukujący pomocy prawnej. Klient może w
 - Listę tylko swoich zgłoszonych spraw oraz status każdej z nich.
 - Oferty przesłane wyłącznie dla jego spraw (nie widzi ofert złożonych innym klientom).
 - Historię swoich konwersacji (Chat) z ekspertami.
-- Listę swoich "Ulubionych Kancelarii".
+- Listę swoich "Ulubionych Eksperta".
 - Historię swoich powiadomień.
 - Ustawienia swojego profilu i preferencje.
 
 **Czego nie może zobaczyć / Co jest zablokowane:**
 - Nie ma dostępu do panelu Eksperta (tablicy wszystkich spraw) ani panelu Administratora.
-- Nie widzi spraw innych klientów ani statystyk kancelarii (poza tymi, które są upublicznione na wizytówce).
+- Nie widzi spraw innych klientów ani statystyk eksperta (poza tymi, które są upublicznione na wizytówce).
 - Nie widzi ofert złożonych przez ekspertów do spraw innych klientów.
 
 **Co może zrobić:**
 - Dodawać nowe sprawy prawnicze.
 - Edytować szczegóły sprawy (tylko do momentu otrzymania pierwszej oferty).
-- Odrzucać, akceptować lub negocjować otrzymane oferty od kancelarii.
-- Prowadzić tekstową komunikację w czasie rzeczywistym z wybranymi kancelariami.
+- Odrzucać, akceptować lub negocjować otrzymane oferty od ekspertów.
+- Prowadzić tekstową komunikację w czasie rzeczywistym z wybranymi ekspertami.
 - Wysyłać załączniki (dokumenty) w ramach chatu.
-- Wystawiać opinie i oceny dla kancelarii po zakończeniu sprawy.
+- Wystawiać opinie i oceny dla ekspertów po zakończeniu sprawy.
 - Zarządzać swoim profilem, zmieniać hasło, ustawienia powiadomień email/push.
 - Zamykać (archiwizować) swoje sprawy.
 - Zgłaszać naruszenia lub problemy z ekspertami do administracji.
 
 ---
 
-## 3. Ekspert / Kancelaria (Law Firm)
+## 3. Ekspert / Ekspert (Law Firm)
 
-Ekspert to zarejestrowany prawnik, adwokat, radca prawny lub cała kancelaria, która świadczy usługi w systemie. Konto Eksperta przechodzi proces weryfikacji.
+Ekspert to zarejestrowany prawnik, adwokat, radca prawny lub cała ekspert, która świadczy usługi w systemie. Konto Eksperta przechodzi proces weryfikacji.
 
 **Co może zobaczyć:**
 - Wszystko to, co Gość (strefa publiczna).
@@ -78,9 +78,9 @@ Ekspert to zarejestrowany prawnik, adwokat, radca prawny lub cała kancelaria, k
 - Historię swoich transakcji i faktur.
 
 **Czego nie może zobaczyć / Co jest zablokowane:**
-- Nie widzi paneli innych kancelarii ani szczegółowych danych (np. stawek) w ofertach złożonych przez konkurencję.
+- Nie widzi paneli innych eksperta ani szczegółowych danych (np. stawek) w ofertach złożonych przez konkurencję.
 - Nie ma dostępu do pełnego Panelu Klienta (nie może z tego samego konta dodawać spraw w sposób, w jaki robi to Klient) ani Panelu Admina.
-- Dostęp do niektórych funkcji promujących wizytówkę może być zablokowany, jeśli Kancelaria nie ma wykupionego odpowiedniego Pakietu.
+- Dostęp do niektórych funkcji promujących wizytówkę może być zablokowany, jeśli Ekspert nie ma wykupionego odpowiedniego Pakietu.
 - Jeśli konto nie zostało jeszcze zweryfikowane przez Administratora, ekspert może widzieć komunikat blokujący pełną interakcję z klientami (np. brak możliwości składania ofert).
 
 **Co może zrobić:**
@@ -101,7 +101,7 @@ Administrator to pracownik zarządzający całą platformą. Posiada najwyższe 
 
 **Co może zobaczyć:**
 - **Panel Administratora** - dedykowane centrum dowodzenia systemem.
-- Pełną listę wszystkich użytkowników (Klientów i Kancelarii) wraz z ich danymi wrażliwymi, historią logowań i statusem.
+- Pełną listę wszystkich użytkowników (Klientów i Eksperta) wraz z ich danymi wrażliwymi, historią logowań i statusem.
 - Każdą sprawę zgłoszoną w systemie (niezależnie od jej statusu).
 - Wszystkie transakcje i opłacone subskrypcje (historia billingowa).
 - Panel moderacji opinii i zgłoszeń od użytkowników.
@@ -113,12 +113,12 @@ Administrator to pracownik zarządzający całą platformą. Posiada najwyższe 
 - Zawartość prywatnych wiadomości tekstowych (czatu) między Klientem a Ekspertem może być zanonimizowana lub niedostępna ze względów prawnych/tajemnicy adwokackiej (chyba że regulamin pozwala na wgląd w przypadku zgłoszenia naruszeń).
 
 **Co może zrobić:**
-- Weryfikować i akceptować profile nowo zarejestrowanych Kancelarii (zmiana statusu ze "Niezweryfikowany" na "Zweryfikowany").
+- Weryfikować i akceptować profile nowo zarejestrowanych Eksperta (zmiana statusu ze "Niezweryfikowany" na "Zweryfikowany").
 - Blokować, zawieszać lub trwale usuwać konta dowolnych użytkowników.
 - Nadawać uprawnienia (np. mianować innego użytkownika Administratorem).
 - Dodawać, edytować i usuwać Kategorie Spraw i Specjalizacje Prawnicze.
 - Akceptować, odrzucać lub usuwać Opinie wystawiane przez Klientów.
-- Przyznawać punkty promocyjne ręcznie wybranym Kancelariom.
+- Przyznawać punkty promocyjne ręcznie wybranym Ekspertom.
 - Wysyłać powiadomienia systemowe/globalne do wszystkich użytkowników.
 - Zarządzać treściami na blogu (publikacja, edycja, usuwanie artykułów).
 - Generować raporty finansowe i statystyczne.
@@ -150,7 +150,7 @@ Administrator to pracownik zarządzający całą platformą. Posiada najwyższe 
 
 ## Działanie systemu w przypadku braku uprawnień
 
-Jeśli jakikolwiek użytkownik (lub bot) spróbuje uzyskać dostęp do zasobu lub wykonać akcję, do której nie ma uprawnień (np. Klient próbuje wejść na `/admin` lub Kancelaria próbuje złożyć ofertę do zamkniętej sprawy), system reaguje w określony sposób:
+Jeśli jakikolwiek użytkownik (lub bot) spróbuje uzyskać dostęp do zasobu lub wykonać akcję, do której nie ma uprawnień (np. Klient próbuje wejść na `/admin` lub Ekspert próbuje złożyć ofertę do zamkniętej sprawy), system reaguje w określony sposób:
 1. **Zabezpieczenie na poziomie widoku:** Elementy interfejsu (przyciski, linki w menu) prowadzące do zabronionych miejsc są automatycznie ukrywane.
 2. **Przekierowanie:** Próba wejścia bezpośrednio z paska adresu URL skutkuje natychmiastowym przekierowaniem na stronę główną lub stronę logowania.
 3. **Komunikat:** Wyświetlany jest tzw. alert (toast) lub strona błędu (Error State) informująca: "Nie masz uprawnień do przeglądania tej strony" lub "Sesja wygasła. Zaloguj się ponownie".

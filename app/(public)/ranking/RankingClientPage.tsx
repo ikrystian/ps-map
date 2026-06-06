@@ -121,7 +121,7 @@ export default function RankingClientPage() {
               Oficjalny Ranking Serwisu
             </motion.div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair tracking-tight text-white">
-              Najlepsi Prawnicy & Kancelarie
+              Najlepsi Prawnicy & Eksperci
             </h1>
             <p className="text-sm md:text-base text-zinc-400 max-w-xl mx-auto font-light leading-relaxed">
               Zestawienie top 100 najbardziej aktywnych i najwyżej ocenianych ekspertów prawnych w Polsce w oparciu o rzetelne statystyki aktywności.
@@ -350,7 +350,7 @@ export default function RankingClientPage() {
               Jak działa ranking?
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs font-light mt-1">
-              Poznaj przejrzyste zasady tworzenia rankingu kancelarii prawnych
+              Poznaj przejrzyste zasady tworzenia rankingu ekspertów
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -360,7 +360,7 @@ export default function RankingClientPage() {
               </div>
               <h4 className="font-bold text-sm text-white">Punkty w rankingu</h4>
               <p className="text-xs text-zinc-400 font-light leading-relaxed">
-                Kancelarie zdobywają punkty za aktywność w serwisie: odpowiadanie na zapytania klientów,
+                Eksperci zdobywają punkty za aktywność w serwisie: odpowiadanie na zapytania klientów,
                 otrzymywanie pozytywnych opinii, publikowanie artykułów oraz uczestnictwo w programie
                 partnerskim.
               </p>
@@ -371,7 +371,7 @@ export default function RankingClientPage() {
               </div>
               <h4 className="font-bold text-sm text-white">Aktualizacja rankingu</h4>
               <p className="text-xs text-zinc-400 font-light leading-relaxed">
-                Ranking jest aktualizowany na bieżąco i odzwierciedla rzeczywistą aktywność kancelarii
+                Ranking jest aktualizowany na bieżąco i odzwierciedla rzeczywistą aktywność eksperta
                 w serwisie. Pozycje w rankingu mogą się zmieniać w zależności od zdobywanych punktów.
               </p>
             </div>
@@ -381,7 +381,7 @@ export default function RankingClientPage() {
               </div>
               <h4 className="font-bold text-sm text-white">Korzyści z wysokiej pozycji</h4>
               <p className="text-xs text-zinc-400 font-light leading-relaxed">
-                Kancelarie wysoko w rankingu zyskują większą widoczność w serwisie, co przekłada się
+                Eksperci wysoko w rankingu zyskują większą widoczność w serwisie, co przekłada się
                 na więcej zapytań od potencjalnych klientów i budowanie zaufania wśród użytkowników.
               </p>
             </div>

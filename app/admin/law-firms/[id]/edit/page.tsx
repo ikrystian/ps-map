@@ -415,10 +415,10 @@ export default function EditLawFirmPage() {
             console.error("Error fetching notification settings:", error)
           }
         } else {
-          throw new Error("Błąd podczas pobierania danych kancelarii")
+          throw new Error("Błąd podczas pobierania danych eksperta")
         }
       } catch (error) {
-        toast.error("Nie udało się pobrać danych kancelarii")
+        toast.error("Nie udało się pobrać danych eksperta")
         router.push("/admin/law-firms")
       } finally {
         setLoading(false)
@@ -547,13 +547,13 @@ export default function EditLawFirmPage() {
       })
 
       if (response.ok) {
-        toast.success("Kancelaria została zaktualizowana pomyślnie")
+        toast.success("Ekspert została zaktualizowana pomyślnie")
       } else {
         const error = await response.json()
-        throw new Error(error.error || "Błąd podczas aktualizacji kancelarii")
+        throw new Error(error.error || "Błąd podczas aktualizacji eksperta")
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować kancelarii")
+      toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować eksperta")
     } finally {
       setIsSubmitting(false)
     }
@@ -579,8 +579,8 @@ export default function EditLawFirmPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">Edytuj Kancelarię</h1>
-            <p className="text-sm text-muted-foreground">Kompleksowe zarządzanie informacjami i konfiguracją kancelarii</p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">Edytuj Eksperta</h1>
+            <p className="text-sm text-muted-foreground">Kompleksowe zarządzanie informacjami i konfiguracją eksperta</p>
           </div>
         </div>
       </div>
@@ -698,7 +698,7 @@ export default function EditLawFirmPage() {
                                 <FormItem>
                                   <FormLabel>Nazwa (skrócona)</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Nazwa kancelarii" {...field} />
+                                    <Input placeholder="Nazwa eksperta" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -726,10 +726,10 @@ export default function EditLawFirmPage() {
                               <FormItem>
                                 <FormLabel>Slug URL (opcjonalnie)</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="np. kancelaria-kowalski" {...field} />
+                                  <Input placeholder="np. ekspert-kowalski" {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                  Przyjazny URL dla profilu kancelarii. Zostanie wygenerowany automatycznie jeśli pozostawisz puste.
+                                  Przyjazny URL dla profilu eksperta. Zostanie wygenerowany automatycznie jeśli pozostawisz puste.
                                 </FormDescription>
                                 <FormMessage />
                               </FormItem>
@@ -783,9 +783,9 @@ export default function EditLawFirmPage() {
                             name="opis"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Opis kancelarii</FormLabel>
+                                <FormLabel>Opis eksperta</FormLabel>
                                 <FormControl>
-                                  <Textarea placeholder="Opis kancelarii..." className="min-h-32" {...field} />
+                                  <Textarea placeholder="Opis eksperta..." className="min-h-32" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -899,7 +899,7 @@ export default function EditLawFirmPage() {
                                   <div className="space-y-1 leading-none">
                                     <FormLabel className="cursor-pointer">Cała Polska</FormLabel>
                                     <FormDescription>
-                                      Kancelaria świadczy usługi na terenie całego kraju
+                                      Ekspert świadczy usługi na terenie całego kraju
                                     </FormDescription>
                                   </div>
                                 </FormItem>
@@ -919,7 +919,7 @@ export default function EditLawFirmPage() {
                                   <div className="space-y-1 leading-none">
                                     <FormLabel className="cursor-pointer">Tylko online</FormLabel>
                                     <FormDescription>
-                                      Kancelaria świadczy usługi wyłącznie przez internet / zdalnie
+                                      Ekspert świadczy usługi wyłącznie przez internet / zdalnie
                                     </FormDescription>
                                   </div>
                                 </FormItem>
@@ -1072,7 +1072,7 @@ export default function EditLawFirmPage() {
                               <FormItem>
                                 <FormLabel>Email do kontaktu</FormLabel>
                                 <FormControl>
-                                  <Input type="email" placeholder="kontakt@kancelaria.pl" {...field} />
+                                  <Input type="email" placeholder="kontakt@ekspert.pl" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -1416,7 +1416,7 @@ export default function EditLawFirmPage() {
                                   </FormControl>
                                   <FormLabel htmlFor="chk-aktywna" className="cursor-pointer text-sm font-semibold flex items-center gap-1.5">
                                     <span className={`h-2.5 w-2.5 rounded-full ${field.value ? "bg-green-500 animate-ping" : "bg-gray-400"}`} />
-                                    Kancelaria Aktywna
+                                    Ekspert Aktywna
                                   </FormLabel>
                                 </FormItem>
                               )}
@@ -1428,7 +1428,7 @@ export default function EditLawFirmPage() {
                             name="accountManagerId"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Opiekun kancelarii (Account Manager)</FormLabel>
+                                <FormLabel>Opiekun eksperta (Account Manager)</FormLabel>
                                 <Select
                                   onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
                                   value={field.value || "none"}
@@ -1448,7 +1448,7 @@ export default function EditLawFirmPage() {
                                   </SelectContent>
                                 </Select>
                                 <FormDescription className="text-xs">
-                                  Dedykowany opiekun z ramienia serwisu, wyświetlany w panelu kancelarii.
+                                  Dedykowany opiekun z ramienia serwisu, wyświetlany w panelu eksperta.
                                 </FormDescription>
                                 <FormMessage />
                               </FormItem>
@@ -1666,7 +1666,7 @@ export default function EditLawFirmPage() {
                               <FormItem>
                                 <FormLabel className="text-sm font-semibold">Unikalny opis usług i wyróżniki</FormLabel>
                                 <FormControl>
-                                  <Textarea placeholder="Opisz co wyróżnia kancelarię na tle konkurencji..." className="min-h-24" {...field} />
+                                  <Textarea placeholder="Opisz co wyróżnia eksperta na tle konkurencji..." className="min-h-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -1698,14 +1698,14 @@ export default function EditLawFirmPage() {
                         <ImageIcon className="h-5 w-5 text-primary" />
                         <div>
                           <CardTitle className="text-lg">Multimedia i wizualizacja</CardTitle>
-                          <CardDescription>Zarządzaj wyglądem profilu kancelarii</CardDescription>
+                          <CardDescription>Zarządzaj wyglądem profilu eksperta</CardDescription>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-8 pt-6">
                         
                         {/* Logo */}
                         <div className="space-y-3 border-b pb-6">
-                          <h4 className="text-sm font-semibold">Logo kancelarii</h4>
+                          <h4 className="text-sm font-semibold">Logo ekspercie</h4>
                           <FormField
                             control={form.control}
                             name="logo"

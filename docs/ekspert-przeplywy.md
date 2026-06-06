@@ -1,18 +1,18 @@
 # Przepływy w Panelu Eksperta (Prawnika)
 
-Dokumentacja ta opisuje krok po kroku najczęstsze ścieżki i procesy (tzw. flows), które wykonuje użytkownik (prawnik/kancelaria) w swoim panelu zarządzania.
+Dokumentacja ta opisuje krok po kroku najczęstsze ścieżki i procesy (tzw. flows), które wykonuje użytkownik (prawnik/ekspert) w swoim panelu zarządzania.
 
 ---
 
 ## 1. Uzupełnianie i Edycja Profilu Publicznego (Wizytówki)
 
-**Cel:** Stworzenie atrakcyjnej, widocznej dla klientów strony profilowej kancelarii.
+**Cel:** Stworzenie atrakcyjnej, widocznej dla klientów strony profilowej eksperta.
 
 **Kroki przebiegu:**
 1. Ekspert loguje się na swoje konto i w menu bocznym wybiera opcję "Profil" lub "Wizytówka".
 2. System wyświetla ekran z pięcioma zakładkami: Podstawowe, Specjalizacje, Multimedia, Kontakt, Dodatkowe.
 3. Ekspert zaczyna od zakładki "Podstawowe":
-   - Wpisuje nazwę kancelarii, krótki opis i rok założenia.
+   - Wpisuje nazwę eksperta, krótki opis i rok założenia.
    - Po wypełnieniu klika "Zapisz". W rogu ekranu pojawia się zielony komunikat o sukcesie (tzw. toast).
 4. Przechodzi do zakładki "Multimedia", by dodać elementy graficzne:
    - Klika pole z napisem "Kliknij aby przesłać logo" i wybiera plik z komputera.
@@ -39,7 +39,7 @@ Dokumentacja ta opisuje krok po kroku najczęstsze ścieżki i procesy (tzw. flo
    - Podaje proponowane wynagrodzenie (lub widełki) oraz wpisuje wiadomość uzasadniającą jego propozycję dla klienta (np. opis planu działania, doświadczenie w podobnych sprawach).
    - Klika przycisk "Wyślij ofertę".
 7. Na przycisku pojawia się mała, obracająca się ikonka ładowania – system w tle zapisuje dane.
-8. Po sukcesie system chowa formularz i w jego miejscu wyświetla zieloną ramkę z napisem "Złożyłeś już ofertę do tej sprawy". Przycisk zmienia się na "Zobacz swoje oferty". Klient na swoim koncie natychmiast otrzymuje informację (powiadomienie), że kancelaria złożyła propozycję.
+8. Po sukcesie system chowa formularz i w jego miejscu wyświetla zieloną ramkę z napisem "Złożyłeś już ofertę do tej sprawy". Przycisk zmienia się na "Zobacz swoje oferty". Klient na swoim koncie natychmiast otrzymuje informację (powiadomienie), że ekspert złożyła propozycję.
 
 ---
 
@@ -69,7 +69,7 @@ Dokumentacja ta opisuje krok po kroku najczęstsze ścieżki i procesy (tzw. flo
 2. Na pierwszym kafelku widzi zlecenie z budżetem, który uważa za zbyt niski lub spoza jego kompetencji.
 3. Znajduje małą ikonkę z symbolem kosza ("Ukryj sprawę") w rogu kafelka i ją klika.
 4. Przed podjęciem akcji ekran przyciemnia się, a na środku pojawia się wyskakujące okno (Modal) z dużym, wyraźnym pytaniem "Czy na pewno chcesz ukryć tę sprawę?".
-5. System dodatkowo wyświetla wyjaśnienie w małym tekście pod spodem: "Ta akcja usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych kancelarii, ale Ty nie będziesz jej już oglądać w tym panelu."
+5. System dodatkowo wyświetla wyjaśnienie w małym tekście pod spodem: "Ta akcja usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych eksperta, ale Ty nie będziesz jej już oglądać w tym panelu."
 6. Ekspert klika czerwony przycisk "Ukryj sprawę".
 7. Okno zamyka się, a wybrana sprawa animacyjnie znika z siatki. Ekspert jej więcej na liście nie zobaczy.
 

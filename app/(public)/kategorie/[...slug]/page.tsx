@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
       title: category.metaTitle || `${category.nazwa} - Eksperci i Pomoc Prawna | Prosta Sprawa`,
-      description: category.metaDescription || category.opis || `Potrzebujesz pomocy prawnej w zakresie: ${category.nazwa}? Znajdź wykwalifikowanych adwokatów, radców prawnych i kancelarie.`,
+      description: category.metaDescription || category.opis || `Potrzebujesz pomocy prawnej w zakresie: ${category.nazwa}? Znajdź wykwalifikowanych adwokatów, radców prawnych i ekspertów.`,
     }
   } catch (error) {
     console.error("Error generating metadata for category:", error)

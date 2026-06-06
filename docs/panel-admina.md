@@ -24,7 +24,7 @@ Widok ten służy do przeglądania i podstawowego zarządzania wszystkimi zareje
 - **Nagłówek:** Tytuł „Użytkownicy” wraz ze wskaźnikiem łącznej liczby zarejestrowanych osób.
 - **Pasek narzędzi (Filtry):**
   - Pole wyszukiwania – pozwala na wpisanie imienia, nazwiska lub adresu e-mail.
-  - Filtr ról – pozwala wyświetlić tylko Klientów, Kancelarie lub Administratorów.
+  - Filtr ról – pozwala wyświetlić tylko Klientów, Ekspertów lub Administratorów.
   - Filtr statusu – pozwala wyświetlić konta Aktywne, Nieaktywne, Zawieszone lub Zablokowane.
   - Przycisk odświeżenia – przywraca listę do aktualnego stanu.
 - **Tabela wyników:** Zawiera kolumny: Avatar, Imię i Nazwisko (lub nazwa firmy), Email, Rola (kolorowe etykiety np. Klient, Ekspert), Status konta, Profil powiązany, Data utworzenia oraz Akcje.
@@ -43,7 +43,7 @@ Widok ten służy do przeglądania i podstawowego zarządzania wszystkimi zareje
 
 ## 3. Zarządzanie Ekspertami / Prawnikami
 
-Widok dedykowany do zarządzania wyłącznie kontami o profilu „Kancelaria” lub „Ekspert”.
+Widok dedykowany do zarządzania wyłącznie kontami o profilu „Ekspert” lub „Ekspert”.
 
 ### Wygląd i zawartość
 - **Pasek filtrów:** Oprócz standardowego wyszukiwania, administrator ma filtry dedykowane biznesowi:

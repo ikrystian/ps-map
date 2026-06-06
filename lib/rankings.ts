@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma"
 
 /**
- * Oblicza ocenę pozycjonowania (ranking score) dla każdej aktywnej kancelarii
+ * Oblicza ocenę pozycjonowania (ranking score) dla każdej aktywnej eksperta
  * i aktualizuje pozycje w rankingu w bazie danych.
  */
 export async function calculateRankings(): Promise<number> {
-  // Pobierz wszystkie aktywne kancelarie wraz z ich statystykami i recenzjami
+  // Pobierz wszystkich aktywnych ekspertów wraz z ich statystykami i recenzjami
   const lawFirms = await prisma.lawFirm.findMany({
     where: {
       aktywna: true,
@@ -27,7 +27,7 @@ export async function calculateRankings(): Promise<number> {
     },
   })
 
-  // Oblicz ocenę rankingu dla każdej kancelarii
+  // Oblicz ocenę rankingu dla każdej eksperta
   const lawFirmsWithScore = lawFirms.map((firm: any) => {
     const reviewCount = firm.reviews.length
     const avgRating = reviewCount > 0

@@ -20,15 +20,15 @@ export async function DELETE(
       )
     }
 
-    // Sprawdź czy zalogowany użytkownik ma rolę kancelarii
+    // Sprawdź czy zalogowany użytkownik ma rolę eksperta
     if (session.user.role !== "LAW_FIRM") {
       return NextResponse.json(
-        { error: "Tylko kancelarie mogą usuwać opinie za punkty" },
+        { error: "Tylko eksperci mogą usuwać opinie za punkty" },
         { status: 403 }
       )
     }
 
-    // Pobierz ID kancelarii powiązanej z zalogowanym użytkownikiem
+    // Pobierz ID eksperta powiązanej z zalogowanym użytkownikiem
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       select: { id: true, punktySaldo: true, nazwa: true }
@@ -43,7 +43,7 @@ export async function DELETE(
 
     const { id: reviewId } = await params
 
-    // Pobierz opinię i sprawdź czy należy do tej kancelarii
+    // Pobierz opinię i sprawdź czy należy do tego eksperta
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
     })
@@ -106,7 +106,7 @@ export async function DELETE(
 
     // Wykonaj transakcję Prisma
     const updatedReview = await prisma.$transaction(async (tx) => {
-      // 1. Zaktualizuj saldo punktów kancelarii
+      // 1. Zaktualizuj saldo punktów eksperta
       await tx.lawFirm.update({
         where: { id: lawFirm.id },
         data: {

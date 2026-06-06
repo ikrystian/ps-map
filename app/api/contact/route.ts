@@ -54,9 +54,9 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Jeśli podano lawFirmId, powiąż/wyślij powiadomienie do kancelarii
+    // Jeśli podano lawFirmId, powiąż/wyślij powiadomienie do ekspercie
     if (lawFirmId) {
-      // Sprawdź czy kancelaria istnieje
+      // Sprawdź czy ekspert istnieje
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { id: lawFirmId },
         select: {
@@ -68,12 +68,12 @@ export async function POST(request: NextRequest) {
 
       if (!lawFirm) {
         return Response.json(
-          { error: "Nie znaleziono kancelarii" },
+          { error: "Nie znaleziono ekspercie" },
           { status: 404 }
         )
       }
 
-      // Utwórz powiadomienie dla kancelarii (wraz z weryfikacją wysłania maila)
+      // Utwórz powiadomienie dla ekspertów (wraz z weryfikacją wysłania maila)
       let emailData
       if (lawFirm.emailKontakt) {
         emailData = generateContactFormEmail(

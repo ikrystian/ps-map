@@ -447,7 +447,7 @@ export default function CategoryClientPage() {
               <Briefcase className="h-4 w-4 text-primary" />
               <span>
                 <strong>{category._count.lawFirms}</strong>{" "}
-                {category._count.lawFirms === 1 ? "kancelaria" : "kancelarie"}
+                {category._count.lawFirms === 1 ? "ekspert" : "eksperci"}
               </span>
             </div>
 
@@ -668,7 +668,7 @@ export default function CategoryClientPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
               <p className="text-sm text-muted-foreground">
                 Znaleziono <span className="font-semibold text-foreground text-primary">{total}</span>{" "}
-                {total === 1 ? "kancelarię" : "kancelarie"}
+                {total === 1 ? "eksperta" : "eksperci"}
               </p>
 
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
@@ -897,7 +897,7 @@ export default function CategoryClientPage() {
             ) : (
               <div className="text-center py-12">
                 <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Nie znaleziono kancelarii</h3>
+                <h3 className="text-lg font-semibold mb-2">Nie znaleziono ekspercie</h3>
                 <p className="text-muted-foreground mb-4">
                   Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników
                 </p>

@@ -228,7 +228,7 @@ export function PromotionSuccessDialog({
               <p className="text-sm text-muted-foreground leading-normal">
                 Wszystkie swoje aktywne i zaplanowane promowania możesz wygodnie kontrolować w
                 sekcji <strong>&quot;Panel Kontrolny Kampanii&quot;</strong>. Szczegółowe
-                potwierdzenie z instrukcjami zostało wysłane również na adres e-mail kancelarii.
+                potwierdzenie z instrukcjami zostało wysłane również na adres e-mail eksperta.
               </p>
             </div>
           </div>

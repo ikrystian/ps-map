@@ -400,7 +400,7 @@ export default function AdminHelpCenterPage() {
       <div>
         <h1 className="text-3xl font-bold">Centrum pomocy</h1>
         <p className="text-muted-foreground">
-          Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy kancelarii
+          Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy ekspertów
         </p>
       </div>
 
@@ -526,7 +526,7 @@ export default function AdminHelpCenterPage() {
                             <SelectContent>
                               <SelectItem value="ALL">Wszyscy</SelectItem>
                               <SelectItem value="CLIENT">Klienci</SelectItem>
-                              <SelectItem value="LAW_FIRM">Eksperci / Kancelarie</SelectItem>
+                              <SelectItem value="LAW_FIRM">Eksperci</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -938,7 +938,7 @@ export default function AdminHelpCenterPage() {
                       <SelectContent>
                         <SelectItem value="ALL">Wszyscy</SelectItem>
                         <SelectItem value="CLIENT">Klienci</SelectItem>
-                        <SelectItem value="LAW_FIRM">Eksperci / Kancelarie</SelectItem>
+                        <SelectItem value="LAW_FIRM">Eksperci</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

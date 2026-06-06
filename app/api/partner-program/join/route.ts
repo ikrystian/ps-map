@@ -18,15 +18,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       select: {
@@ -40,12 +40,12 @@ export async function POST(request: NextRequest) {
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
 
-    // Sprawdź czy kancelaria ma stronę WWW
+    // Sprawdź czy ekspert ma stronę WWW
     if (!lawFirm.stronaWww) {
       return Response.json(
         { error: "Aby dołączyć do programu partnerskiego, musisz mieć podaną stronę WWW w profilu" },

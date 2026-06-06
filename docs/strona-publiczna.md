@@ -32,7 +32,7 @@ Widok pozwalający na przeglądanie i filtrowanie bazy ekspertów.
     *   Wybór specjalizacji (drzewo kategorii).
     *   Szybkie filtry (np. tylko zweryfikowani prawnicy, dostępni online, najwyżej oceniani).
     *   Sortowanie (według trafności, ocen, odległości).
-*   **Lista wyników:** Zwraca karty prawników/kancelarii spełniających kryteria.
+*   **Lista wyników:** Zwraca karty prawników/eksperta spełniających kryteria.
     *   Każda karta zawiera: logo/zdjęcie, nazwę, lokalizację (miasto/województwo), odznakę weryfikacji, specjalizację, średnią ocen (gwiazdki) oraz znacznik dostępności ("Otwarte" w kolorze zielonym lub "Zamknięte" w kolorze czerwonym).
     *   Po kliknięciu karty użytkownik przechodzi do pełnego profilu eksperta.
     *   Wśród wyników może pojawić się banner reklamowy (np. po czwartym prawniku).
@@ -40,9 +40,9 @@ Widok pozwalający na przeglądanie i filtrowanie bazy ekspertów.
 *   **Stany alternatywne:** Jeśli nic nie znaleziono, wyświetlany jest odpowiedni komunikat z zachętą do zmiany filtrów. Podobnie pojawiają się komunikaty (skeleton loaders) w czasie wczytywania danych.
 
 ## 3. Profil Publiczny Eksperta (Wizytówka)
-Szczegółowy widok informacji o konkretnym prawniku/kancelarii.
+Szczegółowy widok informacji o konkretnym prawniku/eksperta.
 
-*   **Nagłówek profilu (Banner):** Duże zdjęcie w tle, logo, nazwa kancelarii, odznaka weryfikacji, średnia ocen.
+*   **Nagłówek profilu (Banner):** Duże zdjęcie w tle, logo, nazwa eksperta, odznaka weryfikacji, średnia ocen.
 *   **Podstawowe informacje:** Krótki opis działalności, rok założenia, lokalizacja.
 *   **Zakładki nawigacyjne:**
     *   **O nas:** Pełny opis działalności, doświadczenie.
@@ -61,7 +61,7 @@ Proces tworzenia nowego konta jest podzielony na wybór ról.
 ### Ekran wyboru typu konta
 Zawiera krótkie podsumowanie statystyk platformy i dwa duże kafle do wyboru:
 1.  **Jestem klientem** (ikona użytkownika, "Szukam pomocy prawnej").
-2.  **Jestem prawnikiem / kancelarią** (ikona wagi, "Oferuję usługi prawne").
+2.  **Jestem prawnikiem / ekspertem** (ikona wagi, "Oferuję usługi prawne").
 Na dole jest odnośnik dla osób posiadających już konto ("Zaloguj się").
 
 ### Formularz Rejestracji Klienta
@@ -81,10 +81,10 @@ Na dole jest odnośnik dla osób posiadających już konto ("Zaloguj się").
 *   **Zgody:** Checkboxy akceptacji regulaminu i polityki prywatności (Wymagane).
 *   **Akcje:** Po prawidłowym wypełnieniu wszystkich wymaganych pól, przycisk wysyła formularz. Jeśli pojawią się błędy (np. złe hasło lub brak wymaganego pola), stosowne pola są oznaczane na czerwono.
 
-### Formularz Rejestracji Kancelarii / Prawnika
+### Formularz Rejestracji Eksperta / Prawnika
 Formularz jest znacznie bardziej rozbudowany, zbiera więcej danych zawodowych.
-*   **Typ działalności:** Lista rozwijana (np. Kancelaria Adwokacka, Kancelaria Radcy Prawnego, inna - wtedy pojawia się dodatkowe pole tekstowe do wpisania). Wymagane.
-*   **Nazwa kancelarii** (Pole tekstowe, Wymagane, wyświetlane publicznie).
+*   **Typ działalności:** Lista rozwijana (np. Ekspert Adwokacka, Ekspert Radcy Prawnego, inna - wtedy pojawia się dodatkowe pole tekstowe do wpisania). Wymagane.
+*   **Nazwa eksperta** (Pole tekstowe, Wymagane, wyświetlane publicznie).
 *   **Pełna nazwa firmy (do faktur)** (Pole tekstowe, Wymagane).
 *   **NIP** (Pole tekstowe, Wymagane).
 *   **REGON** (Pole tekstowe, Opcjonalne).
@@ -117,7 +117,7 @@ Widok umożliwiający autoryzację do konta.
 
 ## 7. Blog (Baza Wiedzy)
 Centrum wiedzy i artykułów poradnikowych tworzonych m.in. przez ekspertów platformy.
-*   **Lista Wpisów:** Kafelki z artykułami. Posiadają tytuł, obrazek wyróżniający (jeśli istnieje), datę publikacji, informacje o autorze (kancelarii, wraz z logo), przypisaną kategorię oraz krótki wstęp (zajawkę).
+*   **Lista Wpisów:** Kafelki z artykułami. Posiadają tytuł, obrazek wyróżniający (jeśli istnieje), datę publikacji, informacje o autorze (eksperta, wraz z logo), przypisaną kategorię oraz krótki wstęp (zajawkę).
 *   **Wyszukiwanie i Filtrowanie:**
     *   Pole do wyszukiwania pełnotekstowego (reagujące z lekkim opóźnieniem - tzw. debouncing, aby nie odświeżać strony z każdą literą).
     *   Filtrowanie według kategorii wpisu (np. Prawo Pracy, Porady dla firm).

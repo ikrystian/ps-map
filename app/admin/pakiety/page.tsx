@@ -102,7 +102,7 @@ export default function AdminSubscriptionPlansPage() {
         <div>
           <h1 className="text-3xl font-bold">Pakiety subskrypcji</h1>
           <p className="text-muted-foreground mt-2">
-            Zarządzaj pakietami subskrypcji dla kancelarii
+            Zarządzaj pakietami subskrypcji dla ekspertów
           </p>
         </div>
         <Button asChild>

@@ -69,7 +69,7 @@ export function BusinessPackageWelcomeModal({
           </AlertDialogTitle>
 
           <AlertDialogDescription className="text-center text-sm text-zinc-400 md:text-base max-w-lg mx-auto">
-            Jako powitanie na naszej platformie, automatycznie przyznaliśmy Twojej kancelarii najwyższy pakiet <span className="text-amber-400 font-semibold">Biznes VIP na okres 3 miesięcy całkowicie za darmo</span>!
+            Jako powitanie na naszej platformie, automatycznie przyznaliśmy Twojego profilu najwyższy pakiet <span className="text-amber-400 font-semibold">Biznes VIP na okres 3 miesięcy całkowicie za darmo</span>!
           </AlertDialogDescription>
         </AlertDialogHeader>
 

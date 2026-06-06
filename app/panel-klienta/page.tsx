@@ -601,7 +601,7 @@ export default function ClientDashboardPage() {
               </div>
               <div className="flex gap-2.5 items-start">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">2</span>
-                <p>Sprawa trafia do kancelarii spełniających Twoje kryteria lokalizacyjne i tematyczne.</p>
+                <p>Sprawa trafia do ekspertów spełniających Twoje kryteria lokalizacyjne i tematyczne.</p>
               </div>
               <div className="flex gap-2.5 items-start">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">3</span>

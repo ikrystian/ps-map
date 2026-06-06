@@ -1,7 +1,7 @@
 /**
  * React Hook dla Systemu Uprawnień
  *
- * Umożliwia komponentom sprawdzanie uprawnień kancelarii
+ * Umożliwia komponentom sprawdzanie uprawnień eksperta
  * na podstawie wykupionego pakietu subskrypcji.
  */
 
@@ -60,7 +60,7 @@ interface UsePermissionsReturn {
 // ============================================================================
 
 /**
- * Hook do sprawdzania uprawnień kancelarii
+ * Hook do sprawdzania uprawnień eksperta
  *
  * @example
  * const { hasFeature, checkLimit, packageName, loading } = usePermissions();
@@ -82,7 +82,7 @@ export function usePermissions(): UsePermissionsReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Funkcja do pobierania danych kancelarii
+  // Funkcja do pobierania danych eksperta
   const fetchLawFirmData = useCallback(async () => {
     if (status === "loading") {
       return;

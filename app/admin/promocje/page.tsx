@@ -254,7 +254,7 @@ export default function AdminPromotionsPage() {
         <div>
           <h1 className="text-xl font-medium tracking-tight font-playfair">Zarządzanie promocjami</h1>
           <p className="text-muted-foreground mt-2">
-            Konfiguruj typy promocji dostępne dla kancelarii
+            Konfiguruj typy promocji dostępne dla ekspertów
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
@@ -355,7 +355,7 @@ export default function AdminPromotionsPage() {
               <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">Brak konfiguracji promocji</h3>
               <p className="text-muted-foreground mb-4">
-                Dodaj pierwszą konfigurację promocji dla kancelarii
+                Dodaj pierwszą konfigurację promocji dla ekspertów
               </p>
               <Button onClick={() => handleOpenDialog()}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -374,7 +374,7 @@ export default function AdminPromotionsPage() {
               {editingConfig ? "Edytuj konfigurację promocji" : "Dodaj konfigurację promocji"}
             </DialogTitle>
             <DialogDescription>
-              Skonfiguruj parametry typu promocji dostępnego dla kancelarii
+              Skonfiguruj parametry typu promocji dostępnego dla ekspertów
             </DialogDescription>
           </DialogHeader>
 

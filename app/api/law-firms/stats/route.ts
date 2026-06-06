@@ -9,14 +9,14 @@ export async function GET(request: NextRequest) {
     if (result instanceof NextResponse) return result
     const { lawFirm: lawFirmPermData } = result
 
-    // Pobierz pełne dane kancelarii
+    // Pobierz pełne dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { id: lawFirmPermData.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }

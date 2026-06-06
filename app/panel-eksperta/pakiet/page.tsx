@@ -476,7 +476,7 @@ export default function LawFirmPackagePage() {
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 self-start">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Wzmocnij pozycję swojej kancelarii</span>
+          <span>Wzmocnij pozycję swojej eksperta</span>
         </div>
       </PageHeader>
 
@@ -538,7 +538,7 @@ export default function LawFirmPackagePage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold tracking-tight text-foreground">{lawFirm.punktySaldo} pkt</div>
-                  <p className="text-xs text-muted-foreground mt-0.5">Saldo punktowe Twojej kancelarii</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Saldo punktowe Twojego profilu</p>
                 </div>
               </div>
               <Link href="/panel-eksperta/punkty" className="shrink-0">

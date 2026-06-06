@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     const displayName = lawFirm.nazwaFirmy || lawFirm.nazwa
-    const title = `${displayName} - Prawnik / Kancelaria ${lawFirm.miasto} | Prosta Sprawa`
+    const title = `${displayName} - Ekspert ${lawFirm.miasto} | Prosta Sprawa`
     const description = lawFirm.opis || `Profil ekspertów prawnych z firmy ${displayName} w mieście ${lawFirm.miasto}. Zobacz specjalizacje, opinie klientów oraz wolne terminy konsultacji.`
 
     return {

@@ -356,7 +356,7 @@ export default function LawFirmProfilePage() {
         const response = await fetch(`/api/law-firms/${params.slug}`)
 
         if (!response.ok) {
-          throw new Error("Nie udało się pobrać danych kancelarii")
+          throw new Error("Nie udało się pobrać danych eksperta")
         }
 
         const data = await response.json()
@@ -369,7 +369,7 @@ export default function LawFirmProfilePage() {
           // Ignore errors for view tracking
         })
 
-        // Sprawdź czy kancelaria jest w ulubionych
+        // Sprawdź czy ekspert jest w ulubionych
         if (session?.user?.role === "CLIENT") {
           const favoriteResponse = await fetch(`/api/law-firms/${data.id}/favorite`)
           if (favoriteResponse.ok) {
@@ -416,7 +416,7 @@ export default function LawFirmProfilePage() {
         throw new Error(errorData.error || "Nie udało się wysłać wiadomości")
       }
 
-      toast.success("Twoja wiadomość została wysłana do kancelarii")
+      toast.success("Twoja wiadomość została wysłana do ekspercie")
       setShowContactForm(false)
 
       // Reset formularza
@@ -454,13 +454,13 @@ export default function LawFirmProfilePage() {
 
   const handleToggleFavorite = async () => {
     if (!session?.user) {
-      toast.error("Musisz być zalogowany, aby dodać kancelarię do ulubionych")
+      toast.error("Musisz być zalogowany, aby dodać eksperta do ulubionych")
       router.push("/logowanie")
       return
     }
 
     if (session.user.role !== "CLIENT") {
-      toast.error("Tylko klienci mogą dodawać kancelarie do ulubionych")
+      toast.error("Tylko klienci mogą dodawać ekspertów do ulubionych")
       return
     }
 
@@ -483,8 +483,8 @@ export default function LawFirmProfilePage() {
 
       toast.success(
         isFavorite
-          ? "Kancelaria została usunięta z Twojej listy ulubionych"
-          : "Kancelaria została dodana do Twojej listy ulubionych"
+          ? "Ekspert został usunięty z Twojej listy ulubionych"
+          : "Ekspert został dodany do Twojej listy ulubionych"
       )
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Wystąpił błąd")
@@ -501,7 +501,7 @@ export default function LawFirmProfilePage() {
     }
 
     if (session.user.role !== "CLIENT") {
-      toast.error("Tylko klienci mogą rozpocząć czat z kancelariami")
+      toast.error("Tylko klienci mogą rozpocząć czat z ekspertami")
       return
     }
 
@@ -510,10 +510,10 @@ export default function LawFirmProfilePage() {
     setIsStartingChat(true)
 
     try {
-      // Pobierz ID użytkownika kancelarii
+      // Pobierz ID użytkownika eksperta
       const lawFirmUserResponse = await fetch(`/api/law-firms/${lawFirm.id}`)
       if (!lawFirmUserResponse.ok) {
-        throw new Error("Nie udało się pobrać danych kancelarii")
+        throw new Error("Nie udało się pobrać danych eksperta")
       }
 
       const lawFirmData = await lawFirmUserResponse.json()
@@ -575,7 +575,7 @@ export default function LawFirmProfilePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Ładowanie profilu kancelarii...</p>
+          <p className="mt-4 text-muted-foreground">Ładowanie profilu eksperta...</p>
         </div>
       </div>
     )
@@ -587,7 +587,7 @@ export default function LawFirmProfilePage() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Błąd</CardTitle>
-            <CardDescription>{error || "Nie znaleziono kancelarii"}</CardDescription>
+            <CardDescription>{error || "Nie znaleziono ekspercie"}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => router.push("/")} variant="outline">
@@ -612,7 +612,7 @@ export default function LawFirmProfilePage() {
   return (
     <div className="min-h-screen bg-background-sec pb-16">
       {/* Header Image / Video Banner */}
-      <div className="relative h-[280px] md:h-[380px] lg:h-[640px] w-full flex items-end overflow-hidden" id="kancelaria-header">
+      <div className="relative h-[280px] md:h-[380px] lg:h-[640px] w-full flex items-end overflow-hidden" id="ekspert-header">
         {youtubeVideoId ? (
           <>
             <iframe
@@ -897,7 +897,7 @@ export default function LawFirmProfilePage() {
                     <DialogHeader>
                       <DialogTitle>Udostępnij profil</DialogTitle>
                       <DialogDescription>
-                        Skopiuj link do profilu tej kancelarii.
+                        Skopiuj link do profilu tego eksperta.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="flex items-center space-x-2 pt-2">
@@ -1100,7 +1100,7 @@ export default function LawFirmProfilePage() {
                           <TooltipPreview
                             href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
                             title={lawFirm.nazwa}
-                            description={lawFirm.opis || `Oficjalna strona internetowa kancelarii ${lawFirm.nazwa}`}
+                            description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
                             favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
                             className="text-primary font-medium break-all"
                           >
@@ -1199,22 +1199,22 @@ export default function LawFirmProfilePage() {
                     </div>
                     {pkg === "BIZNES" && (
                       <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
-                        Kancelaria z najwyższym pakietem - pełen dostęp do wszystkich funkcji
+                        Ekspert z najwyższym pakietem - pełen dostęp do wszystkich funkcji
                       </p>
                     )}
                     {pkg === "PREMIUM" && (
                       <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
-                        Zaawansowana kancelaria z rozszerzonymi funkcjami
+                        Zaawansowany ekspert z rozszerzonymi funkcjami
                       </p>
                     )}
                     {pkg === "STANDARD" && (
                       <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
-                        Kancelaria z pakietem standardowym
+                        Ekspert z pakietem standardowym
                       </p>
                     )}
                     {pkg === "PODSTAWOWY" && (
                       <p className="text-xs text-center text-muted-foreground mt-3 font-medium">
-                        Kancelaria z pakietem podstawowym
+                        Ekspert z pakietem podstawowym
                       </p>
                     )}
                   </CardContent>
@@ -1313,12 +1313,12 @@ export default function LawFirmProfilePage() {
               <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
                   <Send className="h-5 w-5 text-primary/80" />
-                  Skontaktuj się z kancelarią
+                  Skontaktuj się z ekspertem
                 </CardTitle>
                 <CardDescription>
                   {session?.user
-                    ? "Wypełnij formularz, a kancelaria odpowie najszybciej jak to możliwe"
-                    : "Zaloguj się, aby wysłać wiadomość do kancelarii"
+                    ? "Wypełnij formularz, a ekspert odpowie najszybciej jak to możliwe"
+                    : "Zaloguj się, aby wysłać wiadomość do eksperta"
                   }
                 </CardDescription>
               </CardHeader>
@@ -1545,7 +1545,7 @@ export default function LawFirmProfilePage() {
           </DialogHeader>
           <div className="relative w-full h-[420px]">
             <iframe
-              title="Lokalizacja kancelarii na mapie"
+              title="Lokalizacja eksperta na mapie"
               src={`https://maps.google.com/maps?q=${encodeURIComponent(`${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}, Polska`)}&output=embed&z=15`}
               className="w-full h-full border-0"
               loading="lazy"

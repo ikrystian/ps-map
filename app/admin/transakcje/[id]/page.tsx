@@ -440,12 +440,12 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
           </Card>
         </div>
 
-        {/* Prawa kolumna: Kancelaria i Metadane czasu */}
+        {/* Prawa kolumna: Ekspert i Metadane czasu */}
         <div className="space-y-6">
-          {/* Karta Kancelarii */}
+          {/* Karta Eksperta */}
           <Card>
             <CardHeader className="border-b">
-              <CardTitle className="text-lg">Dane Kancelarii</CardTitle>
+              <CardTitle className="text-lg">Dane Eksperta</CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-4 text-sm">
               <div>
@@ -472,7 +472,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div className="border-t pt-3">
                 <Link href={`/admin/law-firms/${order.lawFirm.id}`} className="w-full">
                   <Button variant="outline" size="sm" className="w-full">
-                    Pokaż profil kancelarii
+                    Pokaż profil eksperta
                   </Button>
                 </Link>
               </div>

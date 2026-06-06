@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 /**
  * GET /api/law-firms/my-ranking
- * Zwraca dane o pozycji rankingowej zalogowanej kancelarii
+ * Zwraca dane o pozycji rankingowej zalogowanej eksperta
  */
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii zalogowanego użytkownika
+    // Pobierz dane eksperta zalogowanego użytkownika
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       include: {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Znajdź pozycję aktualnej kancelarii w rankingu ogólnym
+    // Znajdź pozycję aktualnej eksperta w rankingu ogólnym
     const higherRankedCount = await prisma.lawFirm.count({
       where: {
         user: { deletedAt: null },
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     })
     const avgViews = viewsStats._avg.wyswietleniaProfilu || 0
 
-    // Pobierz statystyki ofert dla wszystkich kancelarii
+    // Pobierz statystyki ofert dla wszystkich eksperta
     const allOffersStats = await prisma.offer.groupBy({
       by: ["lawFirmId"],
       _count: {
@@ -187,12 +187,12 @@ export async function GET(request: NextRequest) {
 
     if (!lawFirm.opis || lawFirm.opis.length < 200) {
       improvementTips.push(
-        "Dodaj szczegółowy opis swojej kancelarii - profile z pełnym opisem są częściej wybierane przez klientów."
+        "Dodaj szczegółowy opis swojej eksperta - profile z pełnym opisem są częściej wybierane przez klientów."
       )
     }
 
     if (!lawFirm.logo) {
-      improvementTips.push("Dodaj logo swojej kancelarii, aby zwiększyć rozpoznawalność i profesjonalizm profilu.")
+      improvementTips.push("Dodaj logo swojej eksperta, aby zwiększyć rozpoznawalność i profesjonalizm profilu.")
     }
 
     if (lawFirm.categories.length < 3) {
@@ -203,7 +203,7 @@ export async function GET(request: NextRequest) {
 
     if (totalOffers < avgOffers) {
       improvementTips.push(
-        "Składaj więcej ofert na sprawy - aktywne kancelarie mają lepszą pozycję w rankingu i większe zaufanie klientów."
+        "Składaj więcej ofert na sprawy - aktywni eksperci mają lepszą pozycję w rankingu i większe zaufanie klientów."
       )
     }
 

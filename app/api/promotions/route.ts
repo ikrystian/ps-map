@@ -24,27 +24,27 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz kancelarie
+    // Pobierz ekspertów
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
 
-    // Pobierz promocje kancelarii
+    // Pobierz promocje eksperta
     const promotions = await prisma.promotion.findMany({
       where: {
         lawFirmId: lawFirm.id,
@@ -75,22 +75,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz kancelarie
+    // Pobierz ekspertów
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Sprawdź limit 4 promowań w roku na kancelarię (tylko z tych dwóch typów)
+      // Sprawdź limit 4 promowań w roku na eksperta (tylko z tych dwóch typów)
       const yearStart = new Date(targetYear, 0, 1, 0, 0, 0, 0)
       const yearEnd = new Date(targetYear, 11, 31, 23, 59, 59, 999)
       const annualPromotionsCount = await prisma.promotion.count({
@@ -175,12 +175,12 @@ export async function POST(request: NextRequest) {
 
       if (annualPromotionsCount >= 4) {
         return Response.json(
-          { error: "Kancelaria może zakupić maksymalnie 4 promowania w roku kalendarzowym" },
+          { error: "Ekspert może zakupić maksymalnie 4 promowania w roku kalendarzowym" },
           { status: 400 }
         )
       }
 
-      // Sprawdź limit 1 promowania w miesiącu na kancelarię (tylko z tych dwóch typów)
+      // Sprawdź limit 1 promowania w miesiącu na eksperta (tylko z tych dwóch typów)
       const monthlyPromotionsCount = await prisma.promotion.count({
         where: {
           lawFirmId: lawFirm.id,
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
 
       if (monthlyPromotionsCount >= 1) {
         return Response.json(
-          { error: "Kancelaria może zakupić maksymalnie 1 promowanie w miesiącu kalendarzowym" },
+          { error: "Ekspert może zakupić maksymalnie 1 promowanie w miesiącu kalendarzowym" },
           { status: 400 }
         )
       }
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
       end.setDate(end.getDate() + czasTrwaniaDni)
     }
 
-    // Sprawdź czy kancelaria ma wystarczająco punktów
+    // Sprawdź czy ekspert ma wystarczająco punktów
     if (lawFirm.punktySaldo < kosztPunktow) {
       return Response.json(
         { error: "Niewystarczająca liczba punktów" },

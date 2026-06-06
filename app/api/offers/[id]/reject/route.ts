@@ -111,7 +111,7 @@ export async function POST(
         }
       })
 
-      // Utwórz powiadomienie dla kancelarii
+      // Utwórz powiadomienie dla ekspertów
       await tx.notification.create({
         data: {
           userId: offer.lawFirm.userId,

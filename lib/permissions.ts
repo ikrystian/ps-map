@@ -1,7 +1,7 @@
 /**
  * System Uprawnień Oparty na Pakietach Subskrypcji
  *
- * Ten moduł definiuje uprawnienia dla kancelarii na podstawie wykupionego pakietu.
+ * Ten moduł definiuje uprawnienia dla ekspertów na podstawie wykupionego pakietu.
  * Pakiety: PODSTAWOWY, STANDARD, PREMIUM, BIZNES
  */
 
@@ -11,7 +11,7 @@
 // ============================================================================
 
 /**
- * Typ reprezentujący kancelarię z minimalnymi danymi do sprawdzania uprawnień
+ * Typ reprezentujący eksperta z minimalnymi danymi do sprawdzania uprawnień
  */
 export interface LawFirmPermissionData {
   id: string;
@@ -55,7 +55,7 @@ export interface LimitCheckResult {
 }
 
 /**
- * Pełny zestaw uprawnień dla kancelarii
+ * Pełny zestaw uprawnień dla ekspertów
  */
 export interface PermissionsSet {
   // Informacje o pakiecie
@@ -219,7 +219,7 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
 // ============================================================================
 
 /**
- * Sprawdza czy pakiet kancelarii jest aktywny (nieprzeterminowany)
+ * Sprawdza czy pakiet eksperta jest aktywny (nieprzeterminowany)
  */
 export function hasActivePackage(lawFirm: LawFirmPermissionData): boolean {
   if (!lawFirm.dataPakietuOd || !lawFirm.dataPakietuDo) {
@@ -231,7 +231,7 @@ export function hasActivePackage(lawFirm: LawFirmPermissionData): boolean {
 }
 
 /**
- * Sprawdza czy pakiet kancelarii wygasł
+ * Sprawdza czy pakiet eksperta wygasł
  */
 export function isPackageExpired(lawFirm: LawFirmPermissionData): boolean {
   // Jeśli użytkownik nigdy nie miał pakietu, to nie jest "wygasły"
@@ -265,14 +265,14 @@ export function daysUntilExpiry(lawFirm: LawFirmPermissionData): number | null {
 }
 
 /**
- * Pobiera pełny zestaw uprawnień dla kancelarii
+ * Pobiera pełny zestaw uprawnień dla ekspertów
  */
 export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): PermissionsSet {
   const active = hasActivePackage(lawFirm);
   const expired = isPackageExpired(lawFirm);
   const defaultCategories = lawFirm.defaultMaxCategories ?? 0;
 
-  // Jeśli kancelaria nie ma pakietu LUB pakiet nie jest aktywny, zwróć podstawowe uprawnienia
+  // Jeśli ekspert nie ma pakietu LUB pakiet nie jest aktywny, zwróć podstawowe uprawnienia
   if (!lawFirm.pakietSubskrypcji || !active) {
     return {
       packageName: lawFirm.pakietSubskrypcji,
@@ -320,7 +320,7 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
 }
 
 /**
- * Sprawdza czy kancelaria ma dostęp do konkretnej funkcji
+ * Sprawdza czy ekspert ma dostęp do konkretnej funkcji
  *
  * WAŻNE: Jeśli pakiet wygasł, zwraca false dla wszystkich funkcji premium
  */
@@ -340,7 +340,7 @@ export function canAccessFeature(
 /**
  * Sprawdza limit dla danego typu zasobu
  *
- * @param lawFirm - Dane kancelarii
+ * @param lawFirm - Dane eksperta
  * @param limitType - Typ limitu do sprawdzenia
  * @param currentValue - Obecna wartość (np. liczba aktywnych spraw)
  * @returns Wynik sprawdzenia z informacją czy można wykonać akcję
@@ -425,7 +425,7 @@ export function getPackageDisplayName(packageType: string | null): string {
  */
 export function getFeatureDisplayName(feature: Feature): string {
   const names: Record<Feature, string> = {
-    canAccessBlog: 'Blog kancelarii',
+    canAccessBlog: 'Blog eksperta',
     canAccessStatistics: 'Zaawansowane statystyki',
     canPromoteProfile: 'Promowanie profilu',
     canAccessPrioritySearch: 'Priorytet w wyszukiwaniu',
@@ -457,7 +457,7 @@ export function getLimitDisplayName(limitType: LimitType): string {
 // ============================================================================
 
 /**
- * Sprawdza czy kancelaria może dodać nową sprawę (sprawdza limit)
+ * Sprawdza czy ekspert może dodać nową sprawę (sprawdza limit)
  */
 export async function canAddNewCase(
   lawFirm: LawFirmPermissionData,
@@ -483,7 +483,7 @@ export async function canAddNewCase(
 }
 
 /**
- * Sprawdza czy kancelaria może dodać nową kategorię (sprawdza limit)
+ * Sprawdza czy ekspert może dodać nową kategorię (sprawdza limit)
  */
 export async function canAddNewCategory(
   lawFirm: LawFirmPermissionData,
@@ -509,7 +509,7 @@ export async function canAddNewCategory(
 }
 
 /**
- * Sprawdza czy kancelaria może prowadzić bloga
+ * Sprawdza czy ekspert może prowadzić bloga
  */
 export async function canManageBlog(
   lawFirm: LawFirmPermissionData
@@ -534,7 +534,7 @@ export async function canManageBlog(
 }
 
 /**
- * Sprawdza czy kancelaria może widzieć zaawansowane statystyki
+ * Sprawdza czy ekspert może widzieć zaawansowane statystyki
  */
 export async function canViewStatistics(
   lawFirm: LawFirmPermissionData

@@ -447,7 +447,7 @@ export default function ReviewDetailsPage() {
           {/* Law Firm Response */}
           <Card>
             <CardHeader>
-              <CardTitle>Odpowiedź kancelarii</CardTitle>
+              <CardTitle>Odpowiedź eksperta</CardTitle>
               <CardDescription>
                 {review.dataOdpowiedzi
                   ? `Odpowiedź dodana: ${formatDate(review.dataOdpowiedzi)}`
@@ -462,7 +462,7 @@ export default function ReviewDetailsPage() {
                     id="odpowiedz"
                     value={odpowiedz}
                     onChange={(e) => setOdpowiedz(e.target.value)}
-                    placeholder="Odpowiedź kancelarii (opcjonalna)"
+                    placeholder="Odpowiedź eksperta (opcjonalna)"
                     rows={4}
                     className="resize-none"
                   />
@@ -485,7 +485,7 @@ export default function ReviewDetailsPage() {
           {/* Law Firm Info */}
           <Card>
             <CardHeader>
-              <CardTitle>Kancelaria</CardTitle>
+              <CardTitle>Ekspert</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div>

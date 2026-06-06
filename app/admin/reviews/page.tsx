@@ -329,7 +329,7 @@ export default function AdminReviewsPage() {
               <TableRow>
                 <TableHead>Tytuł</TableHead>
                 <TableHead>Autor</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead>Ocena</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Data</TableHead>

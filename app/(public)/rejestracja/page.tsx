@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Załóż bezpłatne konto",
-  description: "Wybierz rodzaj konta (Klient lub Kancelaria) i dołącz do platformy Prosta Sprawa już dziś.",
+  description: "Wybierz rodzaj konta (Klient lub Ekspert) i dołącz do platformy Prosta Sprawa już dziś.",
 }
 
 export default function RegistrationPage() {
@@ -74,13 +74,13 @@ export default function RegistrationPage() {
 
           {/* Card 2 - Lawyer */}
           <Link
-            href="/rejestracja/kancelaria"
+            href="/rejestracja/ekspert"
             className="relative flex flex-col justify-end h-[380px] sm:h-[600px] rounded-2xl overflow-hidden group cursor-pointer border border-border/80 bg-card/45 hover:border-primary/50 transition-all duration-500 hover:shadow-lg"
           >
             {/* Background Image */}
             <Image
               src="/images/registration_lawyer.png"
-              alt="Prawnik / Kancelaria"
+              alt="Ekspert"
               fill
               sizes="(max-width: 768px) 100vw, 400px"
               priority

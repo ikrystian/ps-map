@@ -21,7 +21,7 @@ export default function ClientMessagesPage() {
       >
         <PageHeader
           title="Wiadomości"
-          subtitle="Komunikuj się z ekspertami i kancelariami prawnymi bezpośrednio na platformie."
+          subtitle="Komunikuj się z ekspertami i ekspertami prawnymi bezpośrednio na platformie."
           titleClassName="text-white text-3xl sm:text-4xl"
         />
 

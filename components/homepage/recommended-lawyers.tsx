@@ -299,7 +299,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                           <ContactButton
                             icon={Phone}
                             href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
-                            title="Zadzwoń do kancelarii"
+                            title="Zadzwoń do ekspercie"
                           />
 
                           {/* Circular Email Action */}

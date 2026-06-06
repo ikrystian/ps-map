@@ -286,7 +286,7 @@ export default function AdminSettingsPage() {
           settings: {
             maxLawFirmCategories: {
               value: maxCategories,
-              description: "Maksymalna liczba kategorii, które może zaznaczyć kancelaria",
+              description: "Maksymalna liczba kategorii, które może zaznaczyć ekspert",
             },
             siteName: {
               value: siteName,
@@ -314,7 +314,7 @@ export default function AdminSettingsPage() {
             },
             maxLawFirmTags: {
               value: maxTags,
-              description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
+              description: "Maksymalna liczba słów kluczowych dla ekspertów bez aktywnego pakietu",
             },
             showExpertTutorial: {
               value: showExpertTutorial,
@@ -726,18 +726,18 @@ export default function AdminSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Ustawienia kancelarii */}
+      {/* Ustawienia eksperta */}
       <Card>
         <CardHeader>
-          <CardTitle>Ustawienia kancelarii</CardTitle>
+          <CardTitle>Ustawienia eksperta</CardTitle>
           <CardDescription>
-            Konfiguracja parametrów dla kancelarii prawnych
+            Konfiguracja parametrów dla ekspertów prawnych
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="maxCategories">
-              Maksymalna liczba kategorii dla kancelarii
+              Maksymalna liczba kategorii dla ekspertów
             </Label>
             <Input
               id="maxCategories"
@@ -749,13 +749,13 @@ export default function AdminSettingsPage() {
               placeholder="10"
             />
             <p className="text-sm text-muted-foreground">
-              Określa ile maksymalnie kategorii może zaznaczyć kancelaria w zakresie usług
+              Określa ile maksymalnie kategorii może zaznaczyć ekspert w zakresie usług
             </p>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="maxTags">
-              Maksymalna liczba słów kluczowych dla kancelarii
+              Maksymalna liczba słów kluczowych dla ekspertów
             </Label>
             <Input
               id="maxTags"
@@ -767,7 +767,7 @@ export default function AdminSettingsPage() {
               placeholder="5"
             />
             <p className="text-sm text-muted-foreground">
-              Określa ile maksymalnie słów kluczowych (tagów) może dodać kancelaria bez aktywnego pakietu
+              Określa ile maksymalnie słów kluczowych (tagów) może dodać ekspert bez aktywnego pakietu
             </p>
           </div>
 

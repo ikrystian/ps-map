@@ -767,7 +767,7 @@ const SprawyPage = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-playfair text-white">Czy na pewno chcesz ukryć tę sprawę?</DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm pt-2">
-              Ta akcja usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych kancelarii, ale Ty nie będziesz jej już oglądać w tym panelu.
+              Ta akcja usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych eksperta, ale Ty nie będziesz jej już oglądać w tym panelu.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0 pt-4">

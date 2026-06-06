@@ -10,8 +10,8 @@ interface LawFirmCardWrapperProps {
 }
 
 /**
- * Komponent owijający karty kancelarii
- * Automatycznie stosuje Magic Card dla kancelarii o pakiecie BIZNES
+ * Komponent owijający karty eksperta
+ * Automatycznie stosuje Magic Card dla ekspertów o pakiecie BIZNES
  */
 export function LawFirmCardWrapper({
   children,

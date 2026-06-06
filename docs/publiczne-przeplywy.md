@@ -8,7 +8,7 @@ Ten dokument krok po kroku opisuje najważniejsze procesy i ścieżki, przez kt�
 
 **Warunki wstępne:** Użytkownik wchodzi na stronę główną lub bezpośrednio w zakładkę "Szukaj prawnika".
 1. Użytkownik wybiera z menu zakładkę z wyszukiwarką.
-2. Formularz domyślnie pokazuje wszystkich dostępnych i zweryfikowanych prawników/kancelarie z platformy.
+2. Formularz domyślnie pokazuje wszystkich dostępnych i zweryfikowanych prawników/ekspertów z platformy.
 3. Aby zawęzić wyniki, użytkownik określa lokalizację: najpierw z listy wybiera pożądane województwo, a następnie w polu miasta wpisuje lub wyszukuje miejscowość.
 4. Istnieje możliwość użycia szybkich filtrów, np. wymuszenia pokazywania wyłącznie ekspertów w pełni zweryfikowanych, dostępnych online, lub posiadających najwyższe oceny. Wyniki można sortować według trafności, ocen lub odległości.
 5. Jeżeli lista wyników jest bardzo długa, użytkownik przemieszcza się po nich za pomocą numerowanych przycisków paginacji na dole ekranu.
@@ -34,7 +34,7 @@ Ten dokument krok po kroku opisuje najważniejsze procesy i ścieżki, przez kt�
 1. Użytkownik przechodzi na stronę rejestracji z głównego menu lub klikając "Załóż konto" przy logowaniu.
 2. Otwiera się strona z zapytaniem o **Typ konta** i wyborem pomiędzy dwiema kafelkami:
    * **Jestem klientem**
-   * **Jestem prawnikiem / kancelarią**
+   * **Jestem prawnikiem / ekspertem**
 
 ### Ścieżka A: Klient
 1. Użytkownik wybiera "Jestem klientem".
@@ -43,10 +43,10 @@ Ten dokument krok po kroku opisuje najważniejsze procesy i ścieżki, przez kt�
 4. Użytkownik akceptuje regulamin i politykę prywatności.
 5. Kliknięcie przycisku finalizacji powoduje przesłanie formularza. Oczekiwany rezultat to sukces rejestracji – użytkownik odbiera na wskazany e-mail wiadomość aktywacyjną weryfikującą adres.
 
-### Ścieżka B: Kancelaria / Prawnik
-1. Użytkownik wybiera "Jestem prawnikiem / kancelarią".
+### Ścieżka B: Ekspert / Prawnik
+1. Użytkownik wybiera "Jestem prawnikiem / ekspertem".
 2. Widzi znacznie bardziej rozbudowany formularz nakierowany na dane rynkowe.
-3. Krok po kroku uzupełnia szczegóły: wybiera profil (Adwokat, Radca itp.), wpisuje nazwę kancelarii, pełne dane rozliczeniowe z NIP-em, dane personalne przedstawiciela/osoby kontaktowej.
+3. Krok po kroku uzupełnia szczegóły: wybiera profil (Adwokat, Radca itp.), wpisuje nazwę eksperta, pełne dane rozliczeniowe z NIP-em, dane personalne przedstawiciela/osoby kontaktowej.
 4. Ważnym krokiem jest wybór obszaru działania (główne województwo, z którego obsługuje klientów fizycznie) oraz zadeklarowanie głównej specjalizacji prawnej z listy systemowej.
 5. Podaje adres e-mail, będący jednocześnie loginem, oraz ustanawia i potwierdza hasło.
 6. Podobnie jak w ścieżce Klienta, błędy lub ominięte pola wstrzymują rejestrację podświetlając stosowne etykiety.
@@ -81,11 +81,11 @@ Ten dokument krok po kroku opisuje najważniejsze procesy i ścieżki, przez kt�
 
 ## 6. Zarys Przepływu Zakupowego w Sklepie (Wizja na podstawie makiet)
 
-**Warunki wstępne:** Kancelaria posiada aktywne konto i brakuje jej punktów na realizację odpowiedzi w sprawach klientów.
+**Warunki wstępne:** Ekspert posiada aktywne konto i brakuje jej punktów na realizację odpowiedzi w sprawach klientów.
 *(Ten proces jest na ten moment jedynie zarysem przyszłego działania, opartym na zasobach pozostawionych w systemie).*
 1. Użytkownik przechodzi do panelu "Sklep" i wybiera pakiet np. "Punktów" lub subskrypcję.
 2. Interesujący użytkownika produkt dodawany jest do podstrony "Koszyk". Użytkownik przechodzi do Koszyka, by upewnić się, co zostało wybrane.
 3. Użytkownik akceptuje listę produktów z Koszyka i udaje się na stronę "Zamówienie".
 4. Wypełnia wszystkie niezbędne dane fakturowe/płatnościowe, wybiera metodę płatności (np. PayU, Blik) i finalizuje opłacenie rachunku.
 5. Zostaje przekierowany do bramki płatności, a po udanej transakcji wraca na platformę.
-6. Otrzymuje potwierdzenie na stronie "Podziękowania", co automatycznie podnosi stan punktów do wydawania w wirtualnym saldzie widocznym na górnym pasku dla kont typu Kancelaria. Otrzymany rachunek/fakturę można w każdej chwili później wyświetlić, wywołując powiązany z nim widok szczegółów w historii transakcji.
+6. Otrzymuje potwierdzenie na stronie "Podziękowania", co automatycznie podnosi stan punktów do wydawania w wirtualnym saldzie widocznym na górnym pasku dla kont typu Ekspert. Otrzymany rachunek/fakturę można w każdej chwili później wyświetlić, wywołując powiązany z nim widok szczegółów w historii transakcji.

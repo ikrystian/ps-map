@@ -109,7 +109,7 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
 
 /**
  * Pobiera zaplanowane i opłacone konsultacje rozpoczynające się w ciągu najbliższej godziny,
- * a następnie wysyła przypomnienia e-mail do klientów oraz kancelarii.
+ * a następnie wysyła przypomnienia e-mail do klientów oraz eksperta.
  */
 export async function sendConsultationReminders(): Promise<number> {
   const now = new Date()
@@ -140,7 +140,7 @@ export async function sendConsultationReminders(): Promise<number> {
       await sendEmail({
         to: booking.client.user.email,
         subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwa}`,
-        html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z kancelarią ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+        html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z ekspertem ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
       })
     } catch (error) {
       console.error(`Failed to send consultation reminder to client ${booking.client.user.email}:`, error)

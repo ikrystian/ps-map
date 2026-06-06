@@ -149,11 +149,11 @@ export async function DELETE(
       )
     }
 
-    // Sprawdzenie czy opiekun ma przypisane kancelarie
+    // Sprawdzenie czy opiekun ma przypisani eksperci
     if (existing._count.lawFirms > 0) {
       return NextResponse.json(
         {
-          error: 'Nie można usunąć opiekuna, który ma przypisane kancelarie. Najpierw usuń przypisania.'
+          error: 'Nie można usunąć opiekuna, który ma przypisani eksperci. Najpierw usuń przypisania.'
         },
         { status: 400 }
       )

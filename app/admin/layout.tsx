@@ -42,8 +42,8 @@ import { usePathname } from "next/navigation"
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
-  { name: "Kancelarie", href: "/admin/law-firms", icon: Building2 },
-  { name: "Import kancelarii", href: "/admin/import-kancelarii", icon: Upload },
+  { name: "Eksperci", href: "/admin/law-firms", icon: Building2 },
+  { name: "Import ekspertów", href: "/admin/import-ekspertow", icon: Upload },
   { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
   { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
   { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
@@ -187,7 +187,7 @@ export default function AdminLayout({
         <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
           {/* Logo */}
           <div className="flex items-center">
-
+            {/* NEW TITLE COMPONENT HERE */}
           </div>
 
           {/* User menu */}

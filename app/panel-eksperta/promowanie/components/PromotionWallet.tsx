@@ -95,7 +95,7 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
             </div>
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Maksymalny Prestiż</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Obecność na stronie głównej oraz w elitarnej sekcji polecanych buduje silną markę kancelarii w regionie.
+              Obecność na stronie głównej oraz w elitarnej sekcji polecanych buduje silną markę eksperta w regionie.
             </p>
           </div>
         </div>

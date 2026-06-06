@@ -136,7 +136,7 @@ export const REALISTIC_CASES = [
   {
     category: "Zarządzanie zasobami ludzkimi",
     nazwa: "Wprowadzenie systemu motywacyjnego (ESOP)",
-    opis: "Chcemy wdrożyć w naszym startupie program opcji na udziały dla kluczowych pracowników. Szukamy kancelarii, która przygotuje strukturę prawną i podatkową takiego rozwiązania.",
+    opis: "Chcemy wdrożyć w naszym startupie program opcji na udziały dla kluczowych pracowników. Szukamy eksperta, która przygotuje strukturę prawną i podatkową takiego rozwiązania.",
   },
   {
     category: "Finanse i inwestycje",

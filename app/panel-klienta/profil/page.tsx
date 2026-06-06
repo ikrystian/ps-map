@@ -723,7 +723,7 @@ export default function ClientProfilePage() {
                   </CardTitle>
                   <CardDescription className="text-zinc-400 text-xs">
                     {form.watch("clientType") === "BUSINESS"
-                      ? "Informacje o osobie reprezentującej firmę w kontaktach z kancelariami."
+                      ? "Informacje o osobie reprezentującej firmę w kontaktach z ekspertami."
                       : "Podstawowe informacje o Tobie."}
                   </CardDescription>
                 </CardHeader>

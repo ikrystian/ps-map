@@ -96,7 +96,7 @@ export function ConsultationHoursForm() {
 
   const handleSubmit = async () => {
     if (!session?.user?.lawFirm?.id) {
-      toast.error("Nie znaleziono danych kancelarii. Spróbuj zalogować się ponownie.")
+      toast.error("Nie znaleziono danych eksperta. Spróbuj zalogować się ponownie.")
       return
     }
     setIsSaving(true)
@@ -133,7 +133,7 @@ export function ConsultationHoursForm() {
           <div className="flex flex-col items-center justify-center min-h-[200px] text-center space-y-4">
             <AlertCircle className="h-12 w-12 text-muted-foreground" />
             <div>
-              <p className="text-lg font-semibold">Brak danych kancelarii</p>
+              <p className="text-lg font-semibold">Brak danych eksperta</p>
               <p className="text-sm text-muted-foreground">
                 Zaloguj się ponownie, aby zaktualizować swoje dane sesji.
               </p>

@@ -97,7 +97,7 @@ Kiedy system pobiera dane z serwera, zamiast pustego ekranu lub prostej "kręcą
 
 Wydzielone bloki na stronie, często z subtelnym obramowaniem i cieniem. Służą do grupowania powiązanych informacji.
 - Zazwyczaj zawierają Nagłówek (tytuł bloku), Treść (np. tekst, liczby, formularz) oraz Stopkę (przyciski akcji).
-- W systemie powszechnie używane do prezentacji Kancelarii w wynikach wyszukiwania, oraz do wyświetlania pojedynczych spraw (zleceń).
+- W systemie powszechnie używane do prezentacji Eksperta w wynikach wyszukiwania, oraz do wyświetlania pojedynczych spraw (zleceń).
 
 ## 10. Odznaki i Etykiety (Badges / Tags)
 

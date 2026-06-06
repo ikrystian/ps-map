@@ -24,7 +24,7 @@ export default function VerificationPage() {
             if (role === "CLIENT") {
                 router.push("/rejestracja/klient")
             } else if (role === "LAW_FIRM") {
-                router.push("/rejestracja/kancelaria")
+                router.push("/rejestracja/ekspert")
             } else {
                 // Default fallback if no specific registration flow was started
                 // Check user role to decide where to go

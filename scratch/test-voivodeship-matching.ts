@@ -13,7 +13,7 @@ async function main() {
 
   console.log(`Found ${verifiedLawFirms.length} verified law firms:`)
   for (const lf of verifiedLawFirms) {
-    console.log(`- Kancelaria: ${lf.nazwa}`)
+    console.log(`- Ekspert: ${lf.nazwa}`)
     console.log(`  Categories: ${lf.categories.map(c => c.category.nazwa).join(', ')}`)
     console.log(`  Voivodeships: ${lf.voivodeships.map(v => v.voivodeship.nazwa).join(', ')}`)
   }

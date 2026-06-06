@@ -88,7 +88,7 @@ export function MessengerLayout() {
             <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
               <div className="text-center">
                 <p className="text-lg font-medium">Wybierz konwersację lub</p>
-                <p className="text-sm mt-2">przejdź do wyszukiwarki aby znaleźć kancelarię z którą możesz nawiązać kontakt</p>
+                <p className="text-sm mt-2">przejdź do wyszukiwarki aby znaleźć eksperta z którą możesz nawiązać kontakt</p>
               </div>
             </div>
           )}

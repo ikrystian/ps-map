@@ -9,7 +9,7 @@ const REPORT_REASONS = [
     descriptions: [
       'Opinia zawiera odnośniki do zewnętrznych serwisów konkurencyjnych.',
       'Treść to ewidentna reklama innej firmy świadczącej usługi prawne.',
-      'Kopiowana treść reklamowa wklejana pod wieloma kancelariami.',
+      'Kopiowana treść reklamowa wklejana pod wieloma ekspertami.',
     ],
   },
   {
@@ -23,8 +23,8 @@ const REPORT_REASONS = [
   {
     reason: 'Nieprawdziwe informacje',
     descriptions: [
-      'Kancelaria twierdzi, że osoba o takim imieniu i nazwisku nigdy nie była ich klientem ani nie prowadzono dla niej żadnej sprawy.',
-      'Opisane fakty są całkowicie zmyślone, sprawa o podanej sygnaturze nie istniała w tej kancelarii.',
+      'Ekspert twierdzi, że osoba o takim imieniu i nazwisku nigdy nie była ich klientem ani nie prowadzono dla niej żadnej sprawy.',
+      'Opisane fakty są całkowicie zmyślone, sprawa o podanej sygnaturze nie istniała w tego eksperta.',
       'Użytkownik kłamie w kwestii kosztów - umówiona kwota była zupełnie inna i zatwierdzona umową.',
     ],
   },
@@ -32,8 +32,8 @@ const REPORT_REASONS = [
     reason: 'Konflikt interesów / Konkurencja',
     descriptions: [
       'Podejrzenie, że opinia została wystawiona przez bezpośrednią konkurencję w celu obniżenia ratingu.',
-      'Wystawca opinii to były pracownik, z którym kancelaria rozstała się w konflikcie.',
-      'Opinia napisana z konta powiązanego z inną lokalną kancelarią adwokacką.',
+      'Wystawca opinii to były pracownik, z którym ekspert rozstała się w konflikcie.',
+      'Opinia napisana z konta powiązanego z innym lokalnym ekspertem/prawnikiem.',
     ],
   },
   {

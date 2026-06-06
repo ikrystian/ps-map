@@ -54,13 +54,13 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.maxLawFirmCategories) {
       settingsObject.maxLawFirmCategories = {
         value: "10",
-        description: "Maksymalna liczba kategorii, które może zaznaczyć kancelaria",
+        description: "Maksymalna liczba kategorii, które może zaznaczyć ekspert",
       }
     }
     if (!settingsObject.maxLawFirmTags) {
       settingsObject.maxLawFirmTags = {
         value: "5",
-        description: "Maksymalna liczba słów kluczowych dla kancelarii bez aktywnego pakietu",
+        description: "Maksymalna liczba słów kluczowych dla ekspertów bez aktywnego pakietu",
       }
     }
     if (!settingsObject.showExpertTutorial) {

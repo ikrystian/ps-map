@@ -213,7 +213,7 @@ export function UserInfoDialog({
               <div className="flex items-center gap-3 text-muted-foreground">
                 <UserCircle className="h-4 w-4 flex-shrink-0" />
                 <span>
-                  {userInfo.role === "LAW_FIRM" ? "Kancelaria prawna" : "Klient"}
+                  {userInfo.role === "LAW_FIRM" ? "Ekspert prawny" : "Klient"}
                 </span>
               </div>
 

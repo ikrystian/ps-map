@@ -95,7 +95,7 @@ export function CampaignControlCenter({
                 <div className="space-y-1">
                   <h4 className="text-sm font-semibold text-white">Brak aktywnych kampanii</h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                    Twoja kancelaria nie ma obecnie uruchomionych promowań. Wybierz format powyżej, aby zacząć.
+                    Twoja ekspert nie ma obecnie uruchomionych promowań. Wybierz format powyżej, aby zacząć.
                   </p>
                 </div>
               </CardContent>

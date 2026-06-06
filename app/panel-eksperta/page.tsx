@@ -680,7 +680,7 @@ export default function LawFirmDashboardPage() {
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Pozycja rankingu</h3>
                   <p className="text-sm text-zinc-500 leading-normal font-light">
-                    Monitoruj widoczność swojej kancelarii
+                    Monitoruj widoczność swojej eksperta
                   </p>
                 </div>
               </CardContent>
@@ -1014,7 +1014,7 @@ export default function LawFirmDashboardPage() {
               Promuj swoje usługi
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
-              Zwiększ pozycję kancelarii w katalogu i pozyskuj zlecenia bezpośrednio
+              Zwiększ pozycję eksperta w katalogu i pozyskuj zlecenia bezpośrednio
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
@@ -1026,7 +1026,7 @@ export default function LawFirmDashboardPage() {
                 <div>
                   <p className="font-semibold text-sm text-white">Wyróżnienie profilu</p>
                   <p className="text-sm text-zinc-500 font-light mt-0.5">
-                    Twoja kancelaria będzie wyświetlana nad innymi bezpłatnymi kontami.
+                    Twoja ekspert będzie wyświetlana nad innymi bezpłatnymi kontami.
                   </p>
                 </div>
               </div>
@@ -1121,7 +1121,7 @@ export default function LawFirmDashboardPage() {
                 <div>
                   <p className="font-semibold text-sm text-white">Priorytet w poleceniach</p>
                   <p className="text-sm text-zinc-500 font-light mt-0.5">
-                    Kancelaria będzie rekomendowana w automatycznych powiadomieniach dla klientów.
+                    Ekspert będzie rekomendowana w automatycznych powiadomieniach dla klientów.
                   </p>
                 </div>
               </div>
@@ -1166,7 +1166,7 @@ export default function LawFirmDashboardPage() {
           <CardContent className="p-6 space-y-5">
             <div className="prose prose-sm max-w-none text-zinc-300 font-light leading-relaxed">
               <p className="text-xs md:text-sm">
-                Program dla kancelarii partnerskich. Umieszczając logotyp, odnośnik lub krótki widget na swojej firmowej witrynie, aktywujesz dodatkowe pakiety punktów i ułatwiasz klientom kontakt.
+                Program dla ekspertów partnerskich. Umieszczając logotyp, odnośnik lub krótki widget na swojej firmowej witrynie, aktywujesz dodatkowe pakiety punktów i ułatwiasz klientom kontakt.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -1316,7 +1316,7 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="text-xs text-zinc-400 font-light space-y-1">
-                <p>Kancelaria otrzymała łącznie <span className="text-white font-semibold">{stats.reviewsCount}</span> {stats.reviewsCount === 1 ? "opinię" : "opinii"}.</p>
+                <p>Ekspert otrzymała łącznie <span className="text-white font-semibold">{stats.reviewsCount}</span> {stats.reviewsCount === 1 ? "opinię" : "opinii"}.</p>
                 <Link href="/panel-eksperta/opinie">
                   <Button variant="link" className="p-0 h-auto text-xs text-[#0da192] hover:text-[#0fbaa8] font-semibold">
                     Czytaj opinie klientów &rarr;

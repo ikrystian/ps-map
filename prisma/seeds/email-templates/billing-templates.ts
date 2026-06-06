@@ -5,7 +5,7 @@ export const billingTemplates = [
     typ: EmailType.PLATNOSC_POTWIERDZONA,
     nazwa: 'Potwierdzenie płatności',
     temat: 'Potwierdzenie płatności - Prosta Sprawa',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 Twoja płatność została pomyślnie przetworzona!
 
@@ -17,12 +17,12 @@ Szczegóły zamówienia:
 
 {szczegoly}
 
-Faktura VAT została wygenerowana i jest dostępna w panelu kancelarii.
+Faktura VAT została wygenerowana i jest dostępna w panelu eksperta.
 
 Dziękujemy za zakup!
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; margin-top: 0; margin-bottom: 16px; color: #00b49e;">✓ Płatność zatwierdzona pomyślnie</h2>
-<p style="margin: 0 0 16px 0;">Witaj <strong>{kancelaria}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
 <p style="margin: 0 0 16px 0;">Z przyjemnością informujemy, że Twoja płatność za zamówienie została zaksięgowana w systemie i pomyślnie przetworzona.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -57,9 +57,9 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoFaktury}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Pobierz fakturę VAT</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{numerZamowienia}', '{produkt}', '{kwota}', '{data}', '{szczegoly}', '{linkDoFaktury}'],
+    zmienne: ['{ekspert}', '{numerZamowienia}', '{produkt}', '{kwota}', '{data}', '{szczegoly}', '{linkDoFaktury}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{numerZamowienia}': 'Numer zamówienia',
       '{produkt}': 'Nazwa produktu/pakietu',
       '{kwota}': 'Kwota płatności',
@@ -73,7 +73,7 @@ Zespół Prosta Sprawa`,
     typ: EmailType.SUBSKRYPCJA_WYGASA,
     nazwa: 'Przypomnienie o wygasającej subskrypcji',
     temat: 'Twoja subskrypcja wygasa za {dniDoWygasniecia} dni',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 Informujemy, że Twoja subskrypcja pakietu {nazwaSubskrypcji} w serwisie Prosta Sprawa wygasa za {dniDoWygasniecia} dni.
 
@@ -82,12 +82,12 @@ Data wygaśnięcia: {dataWygasniecia}
 Po wygaśnięciu subskrypcji stracisz dostęp do:
 {listaFunkcji}
 
-Aby przedłużyć subskrypcję i zachować wszystkie korzyści, zaloguj się do panelu kancelarii.
+Aby przedłużyć subskrypcję i zachować wszystkie korzyści, zaloguj się do panelu eksperta.
 
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; margin-top: 0; margin-bottom: 16px; color: #f59e0b;">⚠️ Twoja subskrypcja wygasa</h2>
-<p style="margin: 0 0 16px 0;">Witaj <strong>{kancelaria}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
 <p style="margin: 0 0 16px 0;">Chcemy przypomnieć, że Twój active pakiet subskrypcyjny <strong>{nazwaSubskrypcji}</strong> wygaśnie za <strong>{dniDoWygasniecia} dni</strong>.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -113,9 +113,9 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPakietow}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przedłuż subskrypcję teraz</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{nazwaSubskrypcji}', '{dniDoWygasniecia}', '{dataWygasniecia}', '{listaFunkcji}', '{linkDoPakietow}'],
+    zmienne: ['{ekspert}', '{nazwaSubskrypcji}', '{dniDoWygasniecia}', '{dataWygasniecia}', '{listaFunkcji}', '{linkDoPakietow}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSubskrypcji}': 'Nazwa pakietu subskrypcyjnego',
       '{dniDoWygasniecia}': 'Liczba dni do wygaśnięcia',
       '{dataWygasniecia}': 'Data wygaśnięcia subskrypcji',
@@ -128,7 +128,7 @@ Zespół Prosta Sprawa`,
     typ: EmailType.NISKI_STAN_PUNKTOW,
     nazwa: 'Przypomnienie o niskim stanie punktów',
     temat: 'Niski stan punktów - uzupełnij saldo',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 Twoje saldo punktów w systemie Prosta Sprawa jest niskie.
 
@@ -144,7 +144,7 @@ Uzupełnij saldo, aby dalej korzystać ze wszystkich możliwości platformy!
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; margin-top: 0; margin-bottom: 16px; color: #f59e0b;">⚠️ Niski stan punktów</h2>
-<p style="margin: 0 0 16px 0;">Witaj <strong>{kancelaria}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
 <p style="margin: 0 0 16px 0;">Zauważyliśmy, że stan Twojego konta punktowego w serwisie <strong>ProstaSprawa</strong> jest bardzo niski. Może to wkrótce uniemożliwić promowanie ofert i profilu.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
@@ -156,15 +156,15 @@ Zespół Prosta Sprawa`,
 <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #d4d4d4; line-height: 1.6;">
   <li style="margin-bottom: 8px;">Promować swojego profilu w wynikach wyszukiwania.</li>
   <li style="margin-bottom: 8px;">Wyróżniać składanych ofert, by trafiały na szczyt skrzynki klienta.</li>
-  <li style="margin-bottom: 0;">Skutecznie rywalizować z innymi kancelariami o najciekawsze zlecenia.</li>
+  <li style="margin-bottom: 0;">Skutecznie rywalizować z innymi ekspertami o najciekawsze zlecenia.</li>
 </ul>
 
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSklepu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zasil konto punktami</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{aktualnyStanPunktow}', '{linkDoSklepu}'],
+    zmienne: ['{ekspert}', '{aktualnyStanPunktow}', '{linkDoSklepu}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{aktualnyStanPunktow}': 'Aktualna liczba punktów',
       '{linkDoSklepu}': 'Link do sklepu z punktami',
     },
@@ -172,9 +172,9 @@ Zespół Prosta Sprawa`,
   },
   {
     typ: EmailType.SUBSKRYPCJA_KONIEC,
-    nazwa: 'Koniec pakietu subskrypcji - dla kancelarii',
+    nazwa: 'Koniec pakietu subskrypcji - dla ekspertów',
     temat: 'Twój pakiet subskrypcyjny {nazwaSubskrypcji} wygasł',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 Informujemy, że Twój pakiet subskrypcyjny {nazwaSubskrypcji} w serwisie Prosta Sprawa wygasł z dniem {dataWygasniecia}.
 
@@ -185,7 +185,7 @@ Aby przywrócić pełną funkcjonalność konta i dalej pozyskiwać klientów, w
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; margin-top: 0; margin-bottom: 16px; color: #ef4444;">⚠️ Twój pakiet subskrypcyjny wygasł</h2>
-<p style="margin: 0 0 16px 0;">Witaj <strong>{kancelaria}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
 <p style="margin: 0 0 16px 0;">Informujemy, że Twój dotychczasowy pakiet subskrypcji <strong>{nazwaSubskrypcji}</strong> wygasł z dniem <strong>{dataWygasniecia}</strong>.</p>
 
 <div style="background-color: #241414; border-left: 4px solid #ef4444; border-radius: 4px; padding: 16px; margin: 24px 0;">
@@ -198,9 +198,9 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPakietow}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Wybierz pakiet subskrypcji</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{nazwaSubskrypcji}', '{dataWygasniecia}', '{linkDoPakietow}'],
+    zmienne: ['{ekspert}', '{nazwaSubskrypcji}', '{dataWygasniecia}', '{linkDoPakietow}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSubskrypcji}': 'Nazwa pakietu subskrypcyjnego',
       '{dataWygasniecia}': 'Data wygaśnięcia subskrypcji',
       '{linkDoPakietow}': 'Link do wyboru pakietów w panelu',

@@ -103,7 +103,7 @@ export default function PublicFooter() {
               <li>
                 <Link href="/ranking" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
                   <GoldCheck />
-                  <span>Ranking kancelarii</span>
+                  <span>Ranking eksperta</span>
                 </Link>
               </li>
               <li>

@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
       lawFirmUserQueryId = lawFirmUserId
       if (!lawFirmUserId) {
         return Response.json(
-          { error: "Brak ID kancelarii" },
+          { error: "Brak ID eksperta" },
           { status: 400 }
         )
       }
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź, czy odbiorca będący kancelarią istnieje
+    // Sprawdź, czy odbiorca będący ekspertem istnieje
     const lawFirmUser = await prisma.user.findFirst({
       where: {
         id: lawFirmUserQueryId,
@@ -222,7 +222,7 @@ export async function POST(request: NextRequest) {
 
     if (!lawFirmUser || !lawFirmUser.lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono kancelarii" },
+        { error: "Nie znaleziono ekspercie" },
         { status: 404 }
       )
     }

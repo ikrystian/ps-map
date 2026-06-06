@@ -55,7 +55,7 @@ export function AboutTab({
           <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
             <CardTitle className="text-lg font-bold flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary/80" />
-              O kancelarii
+              O ekspercie
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">

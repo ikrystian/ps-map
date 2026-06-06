@@ -21,7 +21,7 @@ export function PromotionBadge({ highlightType, className = "" }: PromotionBadge
       color: "bg-yellow-500/10 text-yellow-700 border-yellow-500/20",
     },
     TOP_LISTA: {
-      label: "Top Kancelaria",
+      label: "Top Ekspert",
       icon: Award,
       color: "bg-purple-500/10 text-purple-700 border-purple-500/20",
     },

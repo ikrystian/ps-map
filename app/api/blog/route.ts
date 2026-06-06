@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/blog - Pobiera wpisy zalogowanej kancelarii
+// GET /api/blog - Pobiera wpisy zalogowanej eksperta
 export async function GET(request: NextRequest) {
   try {
     // Sprawdź uprawnienia do bloga (tylko BIZNES)
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (result instanceof NextResponse) return result
     const { lawFirm } = result
 
-    // Pobierz wszystkie wpisy kancelarii
+    // Pobierz wszystkie wpisy eksperta
     const posts = await prisma.blogPost.findMany({
       where: {
         lawFirmId: lawFirm.id,
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/blog - Tworzy nowy wpis dla zalogowanej kancelarii
+// POST /api/blog - Tworzy nowy wpis dla zalogowanej eksperta
 export async function POST(request: NextRequest) {
   try {
     // Sprawdź uprawnienia do bloga (tylko BIZNES)

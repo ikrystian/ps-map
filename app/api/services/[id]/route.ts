@@ -43,7 +43,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz kancelarię
+    // Pobierz eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
@@ -52,7 +52,7 @@ export async function PUT(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Sprawdź czy usługa należy do kancelarii
+    // Sprawdź czy usługa należy do ekspercie
     const existingService = await prisma.service.findUnique({
       where: { id },
     })
@@ -102,7 +102,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz kancelarię
+    // Pobierz eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
@@ -111,7 +111,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Sprawdź czy usługa należy do kancelarii
+    // Sprawdź czy usługa należy do ekspercie
     const existingService = await prisma.service.findUnique({
       where: { id },
     })

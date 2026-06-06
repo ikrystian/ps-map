@@ -2,12 +2,12 @@
 export const REALISTIC_REVIEWS = [
   {
     tytul: "Pełen profesjonalizm",
-    tresc: "Jestem bardzo zadowolony z usług kancelarii. Sprawa rozwodowa przebiegła sprawnie i bez zbędnego stresu. Pan adwokat zawsze pod telefonem, wszystko cierpliwie tłumaczył. Polecam każdemu, kto szuka rzetelnej pomocy.",
+    tresc: "Jestem bardzo zadowolony z usług eksperta. Sprawa rozwodowa przebiegła sprawnie i bez zbędnego stresu. Pan adwokat zawsze pod telefonem, wszystko cierpliwie tłumaczył. Polecam każdemu, kto szuka rzetelnej pomocy.",
     ocena: 5,
   },
   {
     tytul: "Skutecznie i szybko",
-    tresc: "Kancelaria pomogła mi odzyskać odszkodowanie od ubezpieczyciela, który początkowo odmówił wypłaty. Dzięki ich zaangażowaniu dostałem pełną kwotę. Bardzo dziękuję za pomoc!",
+    tresc: "Ekspert pomogła mi odzyskać odszkodowanie od ubezpieczyciela, który początkowo odmówił wypłaty. Dzięki ich zaangażowaniu dostałem pełną kwotę. Bardzo dziękuję za pomoc!",
     ocena: 5,
   },
   {
@@ -17,7 +17,7 @@ export const REALISTIC_REVIEWS = [
   },
   {
     tytul: "Pomoc w biznesie",
-    tresc: "Współpracujemy z tą kancelarią przy obsłudze naszej spółki. Analizy umów są zawsze trafne i dostarczane na czas. Doceniamy praktyczne podejście do problemów biznesowych.",
+    tresc: "Współpracujemy z tym ekspertem przy obsłudze naszej spółki. Analizy umów są zawsze trafne i dostarczane na czas. Doceniamy praktyczne podejście do problemów biznesowych.",
     ocena: 5,
   },
   {
@@ -32,7 +32,7 @@ export const REALISTIC_REVIEWS = [
   },
   {
     tytul: "Rzeczowo i na temat",
-    tresc: "Krótko, zwięźle i skutecznie. Kancelaria przygotowała dla mnie regulamin sklepu internetowego. Wszystko zgodnie z obowiązującymi przepisami. Polecam.",
+    tresc: "Krótko, zwięźle i skutecznie. Ekspert przygotowała dla mnie regulamin sklepu internetowego. Wszystko zgodnie z obowiązującymi przepisami. Polecam.",
     ocena: 5,
   },
   {
@@ -47,7 +47,7 @@ export const REALISTIC_REVIEWS = [
   },
   {
     tytul: "Pomoc w prawie pracy",
-    tresc: "Dzięki pomocy kancelarii udało mi się wygrać sprawę o niesłuszne zwolnienie. Bardzo dziękuję za wsparcie psychiczne i merytoryczne w tym trudnym dla mnie czasie.",
+    tresc: "Dzięki pomocy ekspertów udało mi się wygrać sprawę o niesłuszne zwolnienie. Bardzo dziękuję za wsparcie psychiczne i merytoryczne w tym trudnym dla mnie czasie.",
     ocena: 5,
   },
 ];

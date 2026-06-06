@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     if (session.user.role !== "CLIENT") {
       return Response.json(
-        { error: "Tylko klienci mogą przeglądać ulubione kancelarie" },
+        { error: "Tylko klienci mogą przeglądać ulubionych ekspertów" },
         { status: 403 }
       )
     }
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Pobierz ulubione kancelarie
+    // Pobierz ulubionych ekspertów
     const favorites = await prisma.favoriteLawFirm.findMany({
       where: {
         clientId: client.id,
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching favorite law firms:", error)
     return Response.json(
-      { error: "Wystąpił błąd podczas pobierania ulubionych kancelarii" },
+      { error: "Wystąpił błąd podczas pobierania ulubionych ekspertów" },
       { status: 500 }
     )
   }

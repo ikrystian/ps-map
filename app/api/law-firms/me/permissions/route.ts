@@ -1,7 +1,7 @@
 /**
  * API Endpoint: /api/law-firms/me/permissions
  *
- * Zwraca dane o uprawnieniach zalogowanej kancelarii
+ * Zwraca dane o uprawnieniach zalogowanej eksperta
  */
 
 import { getAuthenticatedLawFirm } from "@/lib/api-permissions";
@@ -12,14 +12,14 @@ import { NextResponse } from "next/server";
 /**
  * GET /api/law-firms/me/permissions
  *
- * Pobiera dane kancelarii z informacjami o pakiecie i uprawnieniach
+ * Pobiera dane eksperta z informacjami o pakiecie i uprawnieniach
  */
 export async function GET() {
   const lawFirm = await getAuthenticatedLawFirm();
 
   if (!lawFirm) {
     return NextResponse.json(
-      { error: "Unauthorized - musisz być zalogowany jako kancelaria" },
+      { error: "Unauthorized - musisz być zalogowany jako ekspert" },
       { status: 401 }
     );
   }

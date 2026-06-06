@@ -63,7 +63,7 @@ const postSchema = postFormSchema.refine((data) => {
   }
   return true
 }, {
-  message: "Musisz wybrać eksperta/kancelarię dla wpisu sponsorowanego",
+  message: "Musisz wybrać eksperta/eksperta dla wpisu sponsorowanego",
   path: ["sponsoredLawFirmId"],
 })
 
@@ -583,7 +583,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                         Wpis sponsorowany
                       </CardTitle>
                       <CardDescription className="text-xs">
-                        Oznacz ten wpis jako sponsorowany i przypisz do niego eksperta lub kancelarię.
+                        Oznacz ten wpis jako sponsorowany i przypisz do niego eksperta lub eksperta.
                       </CardDescription>
                     </div>
                     <Button 
@@ -646,7 +646,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                                 name="sponsoredLawFirmId"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-xs font-semibold">Wybierz eksperta / kancelarię *</FormLabel>
+                                    <FormLabel className="text-xs font-semibold">Wybierz eksperta / eksperta *</FormLabel>
                                     <Select
                                       onValueChange={field.onChange}
                                       value={field.value}
@@ -654,7 +654,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                                     >
                                       <FormControl>
                                         <SelectTrigger className="h-11">
-                                          <SelectValue placeholder="Wybierz kancelarię lub eksperta" />
+                                          <SelectValue placeholder="Wybierz eksperta lub eksperta" />
                                         </SelectTrigger>
                                       </FormControl>
                                       <SelectContent>

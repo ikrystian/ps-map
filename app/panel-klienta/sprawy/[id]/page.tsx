@@ -186,7 +186,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się zaakceptować oferty")
       }
 
-      toast.success("Oferta została pomyślnie zaakceptowana. Kancelaria została powiadomiona.")
+      toast.success("Oferta została pomyślnie zaakceptowana. Ekspert została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -216,7 +216,7 @@ export default function ClientCaseDetailsPage() {
         throw new Error(errorData.error || "Nie udało się odrzucić oferty")
       }
 
-      toast.success("Oferta została odrzucona. Kancelaria została powiadomiona.")
+      toast.success("Oferta została odrzucona. Ekspert została powiadomiona.")
 
       // Odśwież dane sprawy
       const caseResponse = await fetch(`/api/cases/${params.id}`)
@@ -320,7 +320,7 @@ export default function ClientCaseDetailsPage() {
         </PageHeader>
       </div>
 
-      {/* Wybrana Kancelaria (Zaakceptowana oferta) */}
+      {/* Wybrana Ekspert (Zaakceptowana oferta) */}
       {(() => {
         const acceptedOffer = caseData.offers?.find((offer) => offer.status === "ZAAKCEPTOWANA")
         if (!acceptedOffer) return null
@@ -334,7 +334,7 @@ export default function ClientCaseDetailsPage() {
                 Twój wybrany ekspert prawny
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs">
-                Oferta tej kancelarii została przez Ciebie zaakceptowana. Skontaktuj się z ekspertem, aby rozpocząć realizację.
+                Oferta tego eksperta została przez Ciebie zaakceptowana. Skontaktuj się z ekspertem, aby rozpocząć realizację.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
@@ -449,7 +449,7 @@ export default function ClientCaseDetailsPage() {
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-[#d7b56d] animate-pulse" />
-                  Otrzymane oferty od kancelarii ({caseData.offers.length})
+                  Otrzymane oferty od ekspertów ({caseData.offers.length})
                 </CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
                   Porównaj warunki, terminy oraz szczegółowe opisy ofert przed podjęciem ostatecznej decyzji.

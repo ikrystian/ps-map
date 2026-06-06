@@ -185,9 +185,9 @@ export default function UserMenu({
 
         {/* User menu */}
         <DropdownMenu>
-          <Trigger image={userImage} alt="Kancelaria" />
+          <Trigger image={userImage} alt="Ekspert" />
           <DropdownMenuContent align="end" className="w-64 p-0 overflow-hidden">
-            <ProfileHeader image={userImage} alt="Kancelaria" />
+            <ProfileHeader image={userImage} alt="Ekspert" />
 
             <div className="py-1">
               <DropdownMenuItem asChild>

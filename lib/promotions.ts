@@ -1,7 +1,7 @@
 /**
  * System Promocji - Helper Functions
  *
- * Funkcje pomocnicze do zarządzania i sprawdzania aktywnych promocji kancelarii
+ * Funkcje pomocnicze do zarządzania i sprawdzania aktywnych promocji eksperta
  */
 
 import {
@@ -37,7 +37,7 @@ export interface PromotionBoost {
 // ============================================================================
 
 /**
- * Pobiera wszystkie aktywne promocje dla kancelarii
+ * Pobiera wszystkie aktywne promocje dla ekspertów
  */
 export async function getActiveLawFirmPromotions(
   lawFirmId: string
@@ -69,7 +69,7 @@ export async function getActiveLawFirmPromotions(
 }
 
 /**
- * Sprawdza czy kancelaria ma aktywną promocję danego typu
+ * Sprawdza czy ekspert ma aktywną promocję danego typu
  */
 export async function hasActivePromotion(
   lawFirmId: string,
@@ -80,7 +80,7 @@ export async function hasActivePromotion(
 }
 
 /**
- * Sprawdza czy kancelaria ma aktywną promocję dla danej kategorii
+ * Sprawdza czy ekspert ma aktywną promocję dla danej kategorii
  */
 export async function hasActiveCategoryPromotion(
   lawFirmId: string,
@@ -109,7 +109,7 @@ export async function hasActiveCategoryPromotion(
 }
 
 /**
- * Sprawdza czy kancelaria ma aktywną promocję dla danego województwa
+ * Sprawdza czy ekspert ma aktywną promocję dla danego województwa
  */
 export async function hasActiveVoivodeshipPromotion(
   lawFirmId: string,
@@ -138,7 +138,7 @@ export async function hasActiveVoivodeshipPromotion(
 }
 
 /**
- * Oblicza boost rankingu dla kancelarii na podstawie aktywnych promocji
+ * Oblicza boost rankingu dla ekspertów na podstawie aktywnych promocji
  *
  * Zwraca mnożnik, który należy zastosować do pozycji w rankingu:
  * - PODBICIE_OGLOSZENIA: 1.5x
@@ -146,7 +146,7 @@ export async function hasActiveVoivodeshipPromotion(
  * - TOP_LISTA: 3x
  * - STRONA_GLOWNA: 5x
  *
- * Jeśli kancelaria ma wiele promocji, stosowany jest najwyższy mnożnik
+ * Jeśli ekspert ma wiele promocji, stosowany jest najwyższy mnożnik
  */
 export async function calculatePromotionBoost(
   lawFirmId: string,
@@ -213,7 +213,7 @@ export async function calculatePromotionBoost(
 }
 
 /**
- * Pobiera kancelarie z aktywną promocją STRONA_GLOWNA
+ * Pobiera ekspertów z aktywną promocją STRONA_GLOWNA
  * (do wyświetlenia na stronie głównej)
  */
 export async function getFeaturedLawFirms(limit: number = 5) {
@@ -252,8 +252,8 @@ export async function getFeaturedLawFirms(limit: number = 5) {
 }
 
 /**
- * Pobiera kancelarie z aktywną promocją TOP_LISTA
- * (do wyświetlenia w sekcji "Top Kancelarie")
+ * Pobiera ekspertów z aktywną promocją TOP_LISTA
+ * (do wyświetlenia w sekcji "Top Eksperci")
  */
 export async function getTopLawFirms(limit: number = 10) {
   const now = new Date()
@@ -291,14 +291,14 @@ export async function getTopLawFirms(limit: number = 10) {
 }
 
 /**
- * Sprawdza czy kancelaria powinna być wyróżniona wizualnie
+ * Sprawdza czy ekspert powinna być wyróżniona wizualnie
  */
 export async function shouldHighlightLawFirm(lawFirmId: string): Promise<boolean> {
   return await hasActivePromotion(lawFirmId, "WYROZNIENIE")
 }
 
 /**
- * Pobiera typ wyróżnienia dla kancelarii (jeśli ma aktywną promocję)
+ * Pobiera typ wyróżnienia dla ekspertów (jeśli ma aktywną promocję)
  */
 export async function getLawFirmHighlightType(
   lawFirmId: string,
@@ -394,7 +394,7 @@ export async function renewExpiredPromotions() {
 
   for (const promotion of expiredPromotions) {
     try {
-      // Sprawdź czy kancelaria ma wystarczająco punktów
+      // Sprawdź czy ekspert ma wystarczająco punktów
       if (promotion.lawFirm.punktySaldo < promotion.kosztPunktow) {
         // Dezaktywuj promocję i wyłącz auto-odnowienie
         await prisma.promotion.update({

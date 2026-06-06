@@ -125,7 +125,7 @@ export async function GET(
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
     } else if (session.user.role === "LAW_FIRM") {
-      // Kancelaria może zobaczyć sprawy z odpowiednim statusem
+      // Ekspert może zobaczyć sprawy z odpowiednim statusem
       // lub sprawy, do których złożyła ofertę
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { userId: session.user.id },
@@ -138,18 +138,18 @@ export async function GET(
       const hasOffer = caseData.offers.some((offer: any) => offer.lawFirmId === lawFirm.id)
       const isAvailable = ["NOWA", "OFERTY_OTRZYMANE"].includes(caseData.status)
 
-      // Sprawdź czy istnieje zaakceptowana oferta od innej kancelarii
+      // Sprawdź czy istnieje zaakceptowana oferta od innej eksperta
       const acceptedOffer = caseData.offers.find((offer: any) => offer.status === "ZAAKCEPTOWANA")
       const hasAcceptedOfferFromOther = acceptedOffer && acceptedOffer.lawFirmId !== lawFirm.id
 
-      // Jeśli istnieje zaakceptowana oferta od innej kancelarii, odmów dostępu
+      // Jeśli istnieje zaakceptowana oferta od innej eksperta, odmów dostępu
       if (hasAcceptedOfferFromOther) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
       // Dozwolony dostęp jeśli:
-      // - kancelaria złożyła ofertę do tej sprawy, lub
-      // - sprawa ma status NOWA lub OFERTY_OTRZYMANE (i nie ma zaakceptowanej oferty od innej kancelarii)
+      // - ekspert złożyła ofertę do tej sprawy, lub
+      // - sprawa ma status NOWA lub OFERTY_OTRZYMANE (i nie ma zaakceptowanej oferty od innej eksperta)
       if (!hasOffer && !isAvailable) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }

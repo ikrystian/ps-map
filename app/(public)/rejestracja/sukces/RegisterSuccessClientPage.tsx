@@ -120,7 +120,7 @@ export default function RegistrationSuccessPage() {
       heroTitle="Aktywacja Twojego konta"
       heroDescription={
         role === "LAW_FIRM"
-          ? "Zarejestrowałeś się jako Kancelaria/Prawnik. Potwierdź swój adres e-mail, aby móc skonfigurować swój profil eksperta i docierać do klientów."
+          ? "Zarejestrowałeś się jako Ekspert/Prawnik. Potwierdź swój adres e-mail, aby móc skonfigurować swój profil eksperta i docierać do klientów."
           : "Zarejestrowałeś się jako Klient. Weryfikacja e-maila jest niezbędna, aby zapewnić bezpieczeństwo Twoich danych i spraw."
       }
       heroStats={[

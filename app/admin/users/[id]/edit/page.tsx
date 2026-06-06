@@ -347,7 +347,7 @@ export default function EditUserPage() {
         throw new Error(error.error || "Błąd podczas aktualizacji użytkownika")
       }
 
-      // Zapisz ustawienia powiadomień jeśli rola to Kancelaria
+      // Zapisz ustawienia powiadomień jeśli rola to Ekspert
       if (values.role === "LAW_FIRM" && values.notificationSettings) {
         const settingsResponse = await fetch(`/api/admin/users/${params.id}/notification-settings`, {
           method: "PUT",
@@ -584,7 +584,7 @@ export default function EditUserPage() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="CLIENT">Klient</SelectItem>
-                              <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
+                              <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
                               <SelectItem value="ADMIN">Administrator</SelectItem>
                             </SelectContent>
                           </Select>
@@ -798,7 +798,7 @@ export default function EditUserPage() {
               )}
             </TabsContent>
 
-            {/* Ustawienia powiadomień i preferencji Kancelarii */}
+            {/* Ustawienia powiadomień i preferencji Eksperta */}
             <TabsContent value="notifications" className="space-y-6">
               {userRole === "LAW_FIRM" && (
                 <div className="grid md:grid-cols-2 gap-6">
@@ -810,7 +810,7 @@ export default function EditUserPage() {
                         Ustawienia powiadomień e-mail
                       </CardTitle>
                       <CardDescription>
-                        Dostosuj preferencje powiadomień e-mail wysyłanych do kancelarii
+                        Dostosuj preferencje powiadomień e-mail wysyłanych do ekspercie
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -900,7 +900,7 @@ export default function EditUserPage() {
                                   Ciekawe oferty i promocje
                                 </FormLabel>
                                 <FormDescription className="text-xs">
-                                  Promocje i specjalne oferty przygotowane dla kancelarii.
+                                  Promocje i specjalne oferty przygotowane dla ekspertów.
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -1216,7 +1216,7 @@ export default function EditUserPage() {
                                     Automatyczne prośby o opinie
                                   </FormLabel>
                                   <FormDescription className="text-xs">
-                                    Automatyczne wysyłanie próśb do kancelarii o wystawienie opinii po zakończeniu sprawy.
+                                    Automatyczne wysyłanie próśb do ekspercie o wystawienie opinii po zakończeniu sprawy.
                                   </FormDescription>
                                 </div>
                                 <FormControl>

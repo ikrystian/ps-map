@@ -168,10 +168,10 @@ export function createRandomOffer(prisma: PrismaClient) {
 
     const descriptions = [
         "Szanowni Państwo, chętnie podejmiemy się prowadzenia tej sprawy. Mamy duże doświadczenie w podobnych tematach. Proponujemy kompleksową obsługę prawną wraz z reprezentacją przed sądem.",
-        "Dzień dobry, analizując Państwa zapytanie, jesteśmy w stanie zaoferować bardzo korzystne warunki współpracy. Nasza kancelaria specjalizuje się w tym obszarze prawa.",
+        "Dzień dobry, analizując Państwa zapytanie, jesteśmy w stanie zaoferować bardzo korzystne warunki współpracy. Nasza ekspert specjalizuje się w tym obszarze prawa.",
         "W odpowiedzi na zgłoszenie, przedstawiam ofertę prowadzenia sprawy. Cena obejmuje analizę dokumentacji, przygotowanie pism procesowych oraz udział w jednej rozprawie.",
         "Zapraszamy do współpracy. Gwarantujemy profesjonalizm i indywidualne podejście do zgłoszonego problemu. Możemy umówić się na spotkanie w celu omówienia szczegółów.",
-        "Nasza kancelaria posiada zespół ekspertów, którzy od lat zajmują się takimi sprawami. Oferujemy pełne wsparcie i doradztwo na każdym etapie postępowania."
+        "Nasza ekspert posiada zespół ekspertów, którzy od lat zajmują się takimi sprawami. Oferujemy pełne wsparcie i doradztwo na każdym etapie postępowania."
     ];
 
     return {

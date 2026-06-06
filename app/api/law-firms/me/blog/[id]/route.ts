@@ -15,14 +15,14 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return NextResponse.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -41,7 +41,7 @@ export async function GET(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (post.lawFirmId !== lawFirm.id) {
       return NextResponse.json(
         { error: "Brak uprawnień do tego wpisu" },
@@ -68,14 +68,14 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return NextResponse.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -91,7 +91,7 @@ export async function PUT(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (existingPost.lawFirmId !== lawFirm.id) {
       return NextResponse.json(
         { error: "Brak uprawnień do tego wpisu" },
@@ -201,14 +201,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return NextResponse.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -224,7 +224,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (post.lawFirmId !== lawFirm.id) {
       return NextResponse.json(
         { error: "Brak uprawnień do tego wpisu" },

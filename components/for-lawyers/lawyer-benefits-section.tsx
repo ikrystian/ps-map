@@ -65,7 +65,7 @@ export function LawyerBenefitsSection() {
                         asChild
                         className="bg-[#008080] hover:bg-[#006666] text-white px-12 py-6 text-lg rounded-md font-medium transition-all duration-300"
                     >
-                        <Link href="/rejestracja/kancelaria">
+                        <Link href="/rejestracja/ekspert">
                             Zarejestruj się
                         </Link>
                     </Button>

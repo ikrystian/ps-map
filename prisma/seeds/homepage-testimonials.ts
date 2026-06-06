@@ -12,7 +12,7 @@ export const SAMPLE_TESTIMONIALS = [
   {
     name: "Marcin Wesołowski",
     designation: "Przedsiębiorca, Wrocław",
-    quote: "Kancelaria wykazała się ogromnym profesjonalizmem przy audycie umów handlowych w naszej firmie. Gorąco polecam wszystkim szukającym pomocy.",
+    quote: "Ekspert wykazała się ogromnym profesjonalizmem przy audycie umów handlowych w naszej firmie. Gorąco polecam wszystkim szukającym pomocy.",
     src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=500",
     active: true,
     order: 1

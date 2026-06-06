@@ -18,21 +18,21 @@ export async function POST(
 
     if (session.user.role !== "CLIENT") {
       return Response.json(
-        { error: "Tylko klienci mogą dodawać kancelarie do ulubionych" },
+        { error: "Tylko klienci mogą dodawać ekspertów do ulubionych" },
         { status: 403 }
       )
     }
 
     const { id: lawFirmId } = await params
 
-    // Sprawdź czy kancelaria istnieje
+    // Sprawdź czy ekspert istnieje
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { id: lawFirmId },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Kancelaria nie istnieje" },
+        { error: "Ekspert nie istnieje" },
         { status: 404 }
       )
     }
@@ -61,7 +61,7 @@ export async function POST(
 
     if (existing) {
       return Response.json(
-        { error: "Kancelaria jest już w ulubionych" },
+        { error: "Ekspert jest już w ulubionych" },
         { status: 400 }
       )
     }
@@ -100,7 +100,7 @@ export async function DELETE(
 
     if (session.user.role !== "CLIENT") {
       return Response.json(
-        { error: "Tylko klienci mogą usuwać kancelarie z ulubionych" },
+        { error: "Tylko klienci mogą usuwać ekspertów z ulubionych" },
         { status: 403 }
       )
     }

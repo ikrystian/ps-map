@@ -3,9 +3,9 @@ import { EmailType } from '@prisma/client'
 export const caseTemplates = [
   {
     typ: EmailType.NOWA_SPRAWA,
-    nazwa: 'Nowa sprawa - powiadomienie dla kancelarii',
+    nazwa: 'Nowa sprawa - powiadomienie dla ekspertów',
     temat: 'Nowa sprawa w Twojej kategorii: {nazwaSprawi}',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 W systemie Prosta Sprawa została dodana nowa sprawa, która może Cię zainteresować!
 
@@ -19,7 +19,7 @@ Zaloguj się do panelu, aby zobaczyć pełne szczegóły i złożyć ofertę.
 
 Powodzenia!
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {kancelaria},</h2>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {ekspert},</h2>
 <p style="margin: 0 0 16px 0;">W systemie <strong>ProstaSprawa</strong> została dodana nowa sprawa w Twojej okolicy lub kategorii, która może Cię zainteresować.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -44,19 +44,19 @@ Zespół Prosta Sprawa`,
   </table>
 </div>
 
-<p style="margin: 0 0 24px 0;">Zaloguj się do swojego panelu kancelarii, aby zapoznać się z pełnym opisem i złożyć ofertę pomocy prawnej.</p>
+<p style="margin: 0 0 24px 0;">Zaloguj się do swojego panelu eksperta, aby zapoznać się z pełnym opisem i złożyć ofertę pomocy prawnej.</p>
 
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz szczegóły i złóż ofertę</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{nazwaSprawi}', '{kategoria}', '{klient}', '{budżet}', '{linkDoPanelu}'],
+    zmienne: ['{ekspert}', '{nazwaSprawi}', '{kategoria}', '{klient}', '{budżet}', '{linkDoPanelu}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kategoria}': 'Kategoria prawna',
       '{klient}': 'Imię i nazwisko klienta',
       '{budżet}': 'Zakres budżetu',
-      '{linkDoPanelu}': 'Link do panelu kancelarii',
+      '{linkDoPanelu}': 'Link do panelu eksperta',
     },
     triggery: ['case_created'],
   },
@@ -66,10 +66,10 @@ Zespół Prosta Sprawa`,
     temat: 'Otrzymałeś nową ofertę na sprawę: {nazwaSprawi}',
     tresc: `Witaj {klient},
 
-Dobra wiadomość! Kancelaria {kancelaria} przesłała Ci ofertę dotyczącą sprawy "{nazwaSprawi}".
+Dobra wiadomość! Ekspert {ekspert} przesłała Ci ofertę dotyczącą sprawy "{nazwaSprawi}".
 
 Szczegóły oferty:
-- Kancelaria: {kancelaria}
+- Ekspert: {ekspert}
 - Kwota: {kwota}
 - Termin realizacji: {termin}
 
@@ -78,14 +78,14 @@ Zaloguj się do swojego panelu, aby przejrzeć pełną ofertę i podjąć decyzj
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {klient},</h2>
-<p style="margin: 0 0 16px 0;"><strong>Świetne wieści!</strong> Kancelaria {kancelaria} przesłała nową ofertę dla Twojej sprawy "<strong>{nazwaSprawi}</strong>".</p>
+<p style="margin: 0 0 16px 0;"><strong>Świetne wieści!</strong> Ekspert {ekspert} przesłała nową ofertę dla Twojej sprawy "<strong>{nazwaSprawi}</strong>".</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
   <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #222222; padding-bottom: 8px;">Szczegóły oferty:</h3>
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr>
-      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">Kancelaria:</td>
-      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{kancelaria}</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">Ekspert:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{ekspert}</td>
     </tr>
     <tr>
       <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;" width="30%">Kwota oferty:</td>
@@ -103,10 +103,10 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz szczegóły oferty</a>
 </div>`,
-    zmienne: ['{klient}', '{kancelaria}', '{nazwaSprawi}', '{kwota}', '{termin}', '{linkDoPanelu}'],
+    zmienne: ['{klient}', '{ekspert}', '{nazwaSprawi}', '{kwota}', '{termin}', '{linkDoPanelu}'],
     opisZmiennych: {
       '{klient}': 'Imię klienta',
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kwota}': 'Kwota oferty',
       '{termin}': 'Termin realizacji',
@@ -116,9 +116,9 @@ Zespół Prosta Sprawa`,
   },
   {
     typ: EmailType.AKCEPTACJA_OFERTY,
-    nazwa: 'Akceptacja oferty - powiadomienie dla kancelarii',
+    nazwa: 'Akceptacja oferty - powiadomienie dla ekspertów',
     temat: 'Gratulacje! Twoja oferta została zaakceptowana',
-    tresc: `Gratulacje {kancelaria}!
+    tresc: `Gratulacje {ekspert}!
 
 Klient {klient} zaakceptował Twoją ofertę dotyczącą sprawy "{nazwaSprawi}".
 
@@ -133,7 +133,7 @@ Możesz teraz skontaktować się z klientem, aby ustalić szczegóły współpra
 
 Powodzenia!
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Gratulacje {kancelaria}!</h2>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Gratulacje {ekspert}!</h2>
 <p style="margin: 0 0 16px 0;">Klient <strong>{klient}</strong> właśnie zaakceptował Twoją ofertę pomocy prawnej dotyczącą sprawy "<strong>{nazwaSprawi}</strong>".</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -161,36 +161,36 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Skontaktuj się bezpośrednio z klientem jak najszybciej, aby ustalić szczegóły współpracy oraz podpisać umowę.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przejdź do panelu kancelarii</a>
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przejdź do panelu eksperta</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{klient}', '{nazwaSprawi}', '{kwota}', '{emailKlienta}', '{telefonKlienta}', '{linkDoPanelu}'],
+    zmienne: ['{ekspert}', '{klient}', '{nazwaSprawi}', '{kwota}', '{emailKlienta}', '{telefonKlienta}', '{linkDoPanelu}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{klient}': 'Imię i nazwisko klienta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kwota}': 'Kwota oferty',
       '{emailKlienta}': 'Email klienta',
       '{telefonKlienta}': 'Telefon klienta',
-      '{linkDoPanelu}': 'Link do panelu kancelarii',
+      '{linkDoPanelu}': 'Link do panelu eksperta',
     },
     triggery: ['offer_accepted'],
   },
   {
     typ: EmailType.ODRZUCENIE_OFERTY,
-    nazwa: 'Odrzucenie oferty - powiadomienie dla kancelarii',
+    nazwa: 'Odrzucenie oferty - powiadomienie dla ekspertów',
     temat: 'Oferta odrzucona: {nazwaSprawi}',
-    tresc: `Witaj {kancelaria},
+    tresc: `Witaj {ekspert},
 
 Informujemy, że klient {klient} odrzucił Twoją ofertę dotyczącą sprawy "{nazwaSprawi}".
 
 Nie martw się - w systemie czeka wiele innych spraw!
 
-Zapraszamy do przeglądania aktualnych spraw w panelu kancelarii.
+Zapraszamy do przeglądania aktualnych spraw w panelu eksperta.
 
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
-    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {kancelaria},</h2>
-<p style="margin: 0 0 16px 0;">Chcemy poinformować, że klient <strong>{klient}</strong> zdecydował się odrzucić ofertę złożoną przez Twoją kancelarię dla sprawy "<strong>{nazwaSprawi}</strong>".</p>
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {ekspert},</h2>
+<p style="margin: 0 0 16px 0;">Chcemy poinformować, że klient <strong>{klient}</strong> zdecydował się odrzucić ofertę złożoną przez Twój profil dla sprawy "<strong>{nazwaSprawi}</strong>".</p>
 
 <div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 16px; margin: 24px 0;">
   <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 6px;">💡 Nasza wskazówka:</strong>
@@ -202,9 +202,9 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSpraw}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przeglądaj nowe sprawy</a>
 </div>`,
-    zmienne: ['{kancelaria}', '{klient}', '{nazwaSprawi}', '{linkDoSpraw}'],
+    zmienne: ['{ekspert}', '{klient}', '{nazwaSprawi}', '{linkDoSpraw}'],
     opisZmiennych: {
-      '{kancelaria}': 'Nazwa kancelarii',
+      '{ekspert}': 'Nazwa eksperta',
       '{klient}': 'Imię i nazwisko klienta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{linkDoSpraw}': 'Link do listy spraw',

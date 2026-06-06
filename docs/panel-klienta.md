@@ -54,7 +54,7 @@
   - Widoczny przycisk zerowania filtrów (tylko w momencie gdy są używane).
 - **Karta pojedynczej sprawy:**
   - Z lewej u góry zawiera kolorowe plakietki (oznaczenia statusu, kategorii, "pilne").
-  - Z prawej strony informacja o ofertach – jeśli do sprawy napłynęły wyceny od kancelarii, znajduje się tu podświetlona liczba ofert wraz z miniaturowymi awatarami (kółkami ze zdjęciami) tych ekspertów.
+  - Z prawej strony informacja o ofertach – jeśli do sprawy napłynęły wyceny od eksperta, znajduje się tu podświetlona liczba ofert wraz z miniaturowymi awatarami (kółkami ze zdjęciami) tych ekspertów.
   - Treść wyświetla pogrubiony tytuł, wycinek opisu oraz najważniejsze zadeklarowane parametry w postaci małych kafelków: Lokalizacja, Termin realizacji, Oczekiwany budżet, Data założenia.
   - Na karcie umieszczono rzucający się w oczy przycisk "Zobacz szczegóły".
   - Karta, która ma nowe nadesłane oferty, posiada pulsujące złote obramowanie informujące o podwyższonym priorytecie.
@@ -88,7 +88,7 @@ Dział składa się z sekwencyjnego czarodzieja (kreatora), podzielonego na 5 wi
 
 **Krok 5: Kontakt i Weryfikacja**
 - Domyślnie zasilony informacjami podanymi podczas zakładania konta przez daną osobę, żeby nie musieć za każdym razem wprowadzać e-maila oraz telefonu (ale pozostawiono możliwość edycji, gdyby przypisana sprawa dotyczyła kogoś innego).
-- Należy obowiązkowo wskazać z rozwijanej listy jak kancelarie mają się preferowanie odezwać (telefon, e-mail, jedno i drugie).
+- Należy obowiązkowo wskazać z rozwijanej listy jak eksperci mają się preferowanie odezwać (telefon, e-mail, jedno i drugie).
 - Akceptacja zgód na regulamin, stanowiąca wymóg walidacyjny.
 - Główny przycisk "Opublikuj sprawę". Kliknięcie uruchamia animację procesowania, a zaraz potem wyświetla informację powiadomienia o sukcesie.
 
@@ -102,7 +102,7 @@ Dział składa się z sekwencyjnego czarodzieja (kreatora), podzielonego na 5 wi
   - Z prawej strony (panel boczny): Zestaw podsumowujący wszystko co zadeklarowano w kreatorze nowej sprawy, aby wiedzieć czego odnosiły się oferty: dane klienta, budżet, daty, lista plików do otworzenia lub zgrania.
   - Z lewej (zawartość kluczowa):
     - Długi panel z tekstem stworzonym w kroku trzecim zgłoszenia.
-    - **Panel Ofert:** Jeśli kancelarie przysłały swoje pakiety negocjacyjne, ten moduł zostaje nałożony na podstronę. Generuje dużą listę z odpowiedziami od firm, gdzie każdy kafel oferty składa się ze zwięzłej informacji o koszcie (wygrubiona i wyróżniona z boku liczba), przewidywanym czasie realizacji zadania oraz pełną odpowiedzią w formie komentarza eksperta. Każdy blok oferty posiada u dołu dwa wzywające do odpowiedzi przyciski – opcję zgody na wycenę (odznaczającą się zielenią) oraz opcję jej kategorycznego odrzucenia (czerwona obwódka).
+    - **Panel Ofert:** Jeśli eksperci przysłali swoje pakiety negocjacyjne, ten moduł zostaje nałożony na podstronę. Generuje dużą listę z odpowiedziami od firm, gdzie każdy kafel oferty składa się ze zwięzłej informacji o koszcie (wygrubiona i wyróżniona z boku liczba), przewidywanym czasie realizacji zadania oraz pełną odpowiedzią w formie komentarza eksperta. Każdy blok oferty posiada u dołu dwa wzywające do odpowiedzi przyciski – opcję zgody na wycenę (odznaczającą się zielenią) oraz opcję jej kategorycznego odrzucenia (czerwona obwódka).
     - **Panel wiadomości (częściowo zintegrowany):** Element podrzucający odnośniki i szybki dostęp do rozpoczętych z tego powodu czatów tekstowych z ekspertami zgłaszającymi się z dopytywaniem.
 
 **Akcje i komunikaty:**

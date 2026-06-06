@@ -602,7 +602,7 @@ export default function SearchLawyerPage() {
           {/* Results Count */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
             <p className="text-lg font-medium text-foreground">
-              Znaleziono <span className="text-primary font-semibold">{total}</span> {total === 1 ? 'kancelarię' : 'kancelarii'}
+              Znaleziono <span className="text-primary font-semibold">{total}</span> {total === 1 ? 'eksperta' : 'ekspertów'}
             </p>
 
             {/* View Toggle */}
@@ -643,7 +643,7 @@ export default function SearchLawyerPage() {
           {/* Loading State */}
           {isLoading ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Ładowanie kancelarii...</p>
+              <p className="text-muted-foreground">Ładowanie eksperta...</p>
             </div>
           ) : lawFirms.length > 0 ? (
             <>
@@ -846,7 +846,7 @@ export default function SearchLawyerPage() {
           ) : (
             <div className="text-center py-12">
               <Filter className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Nie znaleziono kancelarii</h3>
+              <h3 className="text-lg font-semibold mb-2">Nie znaleziono ekspercie</h3>
               <p className="text-muted-foreground mb-4">
                 Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników
               </p>

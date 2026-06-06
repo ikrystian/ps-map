@@ -1,12 +1,12 @@
 # Dokumentacja Widoków: Sklep i Pakiety
 
-Moduł Sklepu ("Sklep") na platformie służy do zarządzania subskrypcjami (pakietami) oraz zakupu punktów promocyjnych przez ekspertów (kancelarie).
+Moduł Sklepu ("Sklep") na platformie służy do zarządzania subskrypcjami (pakietami) oraz zakupu punktów promocyjnych przez ekspertów.
 
 ## 1. Strona Główna Sklepu (`/sklep` lub `/pakiety`)
 Główny punkt wejścia do modułu e-commerce platformy.
 
 **Wygląd i zawartość:**
-- **Nagłówek:** "Wybierz pakiet idealny dla Twojej kancelarii".
+- **Nagłówek:** "Wybierz pakiet idealny dla Twojego profilu".
 - **Tabela Porównawcza Pakietów:** Przejrzyste zestawienie dostępnych planów abonamentowych (np. Podstawowy, Standard, Premium, Biznes).
   - Każda kolumna reprezentuje jeden pakiet.
   - Zawiera cenę (miesięczną/roczną), listę funkcji (np. "Widoczność w katalogu", "Nielimitowane oferty", "Wyróżnienie profilu") oznaczonych "ptaszkami" (dostępne) lub "krzyżykami" (niedostępne).

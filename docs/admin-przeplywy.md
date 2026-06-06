@@ -6,13 +6,13 @@ Niniejszy dokument opisuje, w jaki sposób administrator porusza się po systemi
 
 ## 1. Przepływ obsługi i weryfikacji Prawnika / Eksperta
 
-Kiedy w systemie rejestruje się nowa kancelaria, administrator musi upewnić się, że to prawdziwa placówka oraz zatwierdzić jej profil, by był widoczny publicznie w pełnym wymiarze.
+Kiedy w systemie rejestruje się nowa ekspert, administrator musi upewnić się, że to prawdziwa placówka oraz zatwierdzić jej profil, by był widoczny publicznie w pełnym wymiarze.
 
-**Warunki wstępne:** Zarejestrowane konto o roli Ekspert/Kancelaria, brak weryfikacji.
+**Warunki wstępne:** Zarejestrowane konto o roli Ekspert/Ekspert, brak weryfikacji.
 
 1. **Przegląd nowych kont:** Administrator wchodzi do zakładki *Eksperci* lub *Użytkownicy*.
 2. **Filtrowanie:** Korzystając z pasków filtrów, wybiera status *Weryfikacja: Niezweryfikowane*. Lista zawęża się do kont oczekujących.
-3. **Przejście do edycji:** Admin odnajduje odpowiednią kancelarię i klika ikonę ołówka (lub "Szczegóły"), przechodząc do widoku szczegółów profilu.
+3. **Przejście do edycji:** Admin odnajduje odpowiednią eksperta i klika ikonę ołówka (lub "Szczegóły"), przechodząc do widoku szczegółów profilu.
 4. **Weryfikacja danych:**
    - Admin sprawdza *Podstawowe informacje* (czy nazwa, NIP i REGON są poprawne).
    - Sprawdza *Lokalizację* i *Dane kontaktowe*.
@@ -75,7 +75,7 @@ Jeśli ekspert otrzyma negatywną, wulgarną lub nieuczciwą opinię, może zgł
 5. **Decyzja A (Opinia łamie regulamin):**
    - Admin uznaje recenzję za hejt/wulgarną.
    - Klika przycisk z ikoną kosza, by trwale *Usunąć* opinię z portalu.
-   - Ocena całkowita kancelarii automatycznie przelicza się na nowo bez tej opinii.
+   - Ocena całkowita eksperta automatycznie przelicza się na nowo bez tej opinii.
 6. **Decyzja B (Opinia narusza politykę łagodniej lub sprawa w toku):**
    - Admin może na czas sporu kliknąć krzyżyk w kolumnie akcji, aby *Dezaktywować* opinię.
    - Opinia staje się niewidoczna dla publiczności (zawieszona), ale nadal istnieje w panelu.

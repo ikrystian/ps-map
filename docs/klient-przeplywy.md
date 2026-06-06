@@ -20,7 +20,7 @@
 6. **Krok 4: Wymagania dotyczące pracy i budżetu:**
    - Klient decyduje w kalendarzu, do kiedy dana sprawa musi zostać zrealizowana (lub zaznacza okienko mówiące, że termin "nie nagli").
    - W przypadku skrajnie niebezpiecznych dla klienta i wrażliwych spraw, może on odhaczyć suwakiem tryb "Pilne", po którym prawnicy wiedzą, że trzeba do niego priorytetowo wysłać swoje propozycje.
-   - Budżet – może zostawić opcję negocjacyjną na rzecz kancelarii, albo sztywno wypełnić z góry sumy widełkowe (np. od 200 do 1000 PLN).
+   - Budżet – może zostawić opcję negocjacyjną na rzecz eksperta, albo sztywno wypełnić z góry sumy widełkowe (np. od 200 do 1000 PLN).
    - Klika "Dalej".
 7. **Krok 5: Weryfikacja danych kontaktowych:**
    - System wyciąga z zapisanego konta niezbędne dane do formularza i odgórnie uzupełnia rubryki takie jak: Imię i Nazwisko, Email kontaktowy i Telefon. Użytkownik weryfikuje ich poprawność.
@@ -30,7 +30,7 @@
 8. **Krok końcowy:** Na ekranie ukazuje się status działania systemu (animacja ładowania), a następnie wyskakuje zielone potwierdzenie z pomyślnym przyjęciem ogłoszenia. Aplikacja przenosi użytkownika prosto w widok nowo stworzonej sprawy, gdzie ze statusem "Nowa" może on zacząć oczekiwać na nadchodzące oferty. System w tle wysyła powiadomienia do dopasowanych ekspertów.
 
 ## 2. Przepływ Przeglądania i Decyzji o Ofertach
-**Zarys:** Na utworzoną wcześniej sprawę spływają zaproszenia do współpracy i konkretne oferty od doradców i kancelarii. Klient musi się z nimi zapoznać, aby dokonać wyboru i opłacić wykonawcę (prawnika).
+**Zarys:** Na utworzoną wcześniej sprawę spływają zaproszenia do współpracy i konkretne oferty od doradców i eksperta. Klient musi się z nimi zapoznać, aby dokonać wyboru i opłacić wykonawcę (prawnika).
 
 1. **Warunek wstępny:** Sprawa zmieniła status po napłynięciu ofert i ma teraz flagę "Oferty otrzymane". Klient otrzymuje powiadomienie (email/push/dzwoneczek).
 2. **Krok 1:** Klient wchodzi w zakładkę wszystkich spraw i natychmiast na liście identyfikuje pulsujący rekord zgłoszenia po liczbie oczekujących z boku propozycji współprac. Wchodzi we wskazane "Szczegóły".
@@ -41,7 +41,7 @@
    - Szerszą treść dodaną jako adnotację negocjacyjną doradcy.
    - Oceny i opinie danego eksperta (może kliknąć w profil, by zobaczyć więcej).
 5. **Ścieżka alternatywna: Pytania i komunikacja**
-   - Zanim zapadnie ostateczny wyrok przycisku akceptacji, klient postanawia wyjaśnić z danym prawnikiem jeden ze wspominanych wymogów współpracy. W tym celu wchodzi w moduł komunikatora (czatu) na platformie. Rozpisuje się do kancelarii, czy cena dotyczy całego procesu, po czym uzyskuje odpowiedź i może podjąć poinformowaną decyzję.
+   - Zanim zapadnie ostateczny wyrok przycisku akceptacji, klient postanawia wyjaśnić z danym prawnikiem jeden ze wspominanych wymogów współpracy. W tym celu wchodzi w moduł komunikatora (czatu) na platformie. Rozpisuje się do ekspercie, czy cena dotyczy całego procesu, po czym uzyskuje odpowiedź i może podjąć poinformowaną decyzję.
 6. **Krok 4: Odrzucenie niepasujących ofert (Opcjonalnie):**
    - Jeśli któryś z podmiotów całkowicie zawyżył wycenę lub oferuje zbyt długi termin odzewu, pod jego ofertą wybierany jest przez klienta dedykowany czerwony klawisz "Odrzuć ofertę". System żąda chwili na zarejestrowanie faktu (przycisk wykręca spiralkę ładującą się) i oferta znika ze statusu decyzyjnego, informując o tym prawnika (powiadomienie).
 7. **Krok 5: Akceptacja najkorzystniejszej oferty:**
@@ -57,9 +57,9 @@
 ## 3. Przepływ Komunikacji na Czacie (Na żywo)
 **Zarys:** Rozwiązywanie na gorąco przez użytkownika problemów w wewnętrznej tablicy platformy i rozmowy w czacie z usługodawcami.
 
-1. **Warunek wstępny:** Klient i Kancelaria posiadają uformowane okna do korespondowania poprzez panel (np. po złożeniu oferty lub bezpośrednim zapytaniu z profilu).
+1. **Warunek wstępny:** Klient i Ekspert posiadają uformowane okna do korespondowania poprzez panel (np. po złożeniu oferty lub bezpośrednim zapytaniu z profilu).
 2. **Krok 1:** Z zewnątrz do klienta trafia na przykład powiadomienie z pulpitu o 2-ch nieprzeczytanych powiadomieniach. Nawiguje za pomocą lewego paska na ekran Wiadomości.
-3. **Krok 2:** Wchodzi na listę kontaktową przypominającą znane mu masowe aplikacje społeczne. Z boku po lewej wyświetla listę kancelarii; pierwsza na górze wisi gruba kropka krzycząca o "Nowej" nieodczytanej sentencji. Klika.
+3. **Krok 2:** Wchodzi na listę kontaktową przypominającą znane mu masowe aplikacje społeczne. Z boku po lewej wyświetla listę eksperta; pierwsza na górze wisi gruba kropka krzycząca o "Nowej" nieodczytanej sentencji. Klika.
 4. **Krok 3:** W dużej części po prawej, na otwartym panelu wyświetla się ta historia od pierwszej napisanej kwestii na samym dole. Pojawia się także informacja, że w czasie rzeczywistym ta osoba (świecąca u góry zielonym kółkiem dostępu online) teraz mu odpisuje (skaczące animowane kropeczki na samym dole).
 5. **Krok 4:** Klient decyduje się pomóc i po kliknięciu wpisuje na bieżąco w podświetlonym formularzu co się wydarzyło w sprawie. Dodatkowo – klika znak dorysowanej spinki pod wpisywanym tekstem. Dołącza do okienka, przy zachowaniu obciążeń do np. 5 megabajtów, kopię cyfrowego pliku ze skargą.
 6. **Krok 5:** Natychmiast wysyła, naciskając strzałkę burtową wysyłki, lub po prosto uderzając w klawisz "Enter".

@@ -12,7 +12,7 @@ Toasty to małe okienka wyświetlające się zazwyczaj na dole lub z boku ekranu
 - *"Sprawa została pomyślnie dodana i oczekuje na oferty."* – Wyświetlane klientowi tuż po przejściu przez formularz zgłoszenia nowego problemu prawnego.
 - *"Oferta została wysłana do klienta."* – Wyświetlane ekspertowi po udanym wycenieniu sprawy klienta.
 - *"Płatność została zrealizowana. Pakiet Premium jest teraz aktywny."* – Po opłaceniu subskrypcji.
-- *"Opinia została dodana."* – Po wystawieniu oceny kancelarii przez klienta.
+- *"Opinia została dodana."* – Po wystawieniu oceny eksperta przez klienta.
 - *"Zmiany zapisane poprawnie."* – Uniwersalny komunikat w panelu administratora przy edycji słowników czy ról.
 - *"Wiadomość została wysłana."* – Potwierdzenie wysłania wiadomości na czacie.
 
@@ -40,11 +40,11 @@ Kliknięcie w dzwoneczek rozwija listę (dropdown lub boczny panel) pokazującą
 
 **Dla Klienta:**
 - *"Otrzymałeś nową ofertę dla sprawy: [Tytuł sprawy]"* -> Po kliknięciu przenosi do zakładki ofert dla tej sprawy.
-- *"Masz nową wiadomość od Kancelarii [Nazwa]"* -> Przenosi do chatu.
+- *"Masz nową wiadomość od Eksperta [Nazwa]"* -> Przenosi do chatu.
 - *"Twoja sprawa została zamknięta przez system (brak aktywności)."*
 - *"Ekspert [Nazwa] odpowiedział na Twoje pytanie."*
 
-**Dla Kancelarii/Eksperta:**
+**Dla Ekspertów/Eksperta:**
 - *"Nowa sprawa w Twojej okolicy: [Kategoria - Miasto]"* -> Wyzwalane przez system dopasowań.
 - *"Klient [Imię] zaakceptował Twoją ofertę!"* -> Najważniejsze powiadomienie biznesowe.
 - *"Twój profil został pozytywnie zweryfikowany przez Administrację."*
@@ -52,7 +52,7 @@ Kliknięcie w dzwoneczek rozwija listę (dropdown lub boczny panel) pokazującą
 - *"Twój pakiet wygasa jutro. Odnów subskrypcję."*
 
 **Dla Administratora:**
-- *"Nowa Kancelaria [Nazwa] oczekuje na weryfikację."*
+- *"Nowa Ekspert [Nazwa] oczekuje na weryfikację."*
 - *"Zgłoszono naruszenie w opinii #1234."*
 - *"Nowa płatność wymaga ręcznego zatwierdzenia."*
 
@@ -76,7 +76,7 @@ Dla najważniejszych akcji system wysyła również wiadomości e-mail. Dzieje s
 - **Potwierdzenie rejestracji:** "Witaj w ProstaSprawa.pl! Kliknij tutaj, aby zweryfikować swój e-mail."
 - **Reset hasła:** "Otrzymaliśmy prośbę o zmianę hasła. Jeśli to nie Ty, zignoruj tę wiadomość."
 - **Powiadomienie o wiadomości / ofercie:** Gdy użytkownik jest offline (nie jest aktualnie zalogowany i nie widzi "dzwoneczka"), po jakimś czasie otrzymuje maila w stylu: "Cześć, dostałeś nową ofertę! Zaloguj się, aby ją sprawdzić."
-- **Faktura VAT:** (Dla kancelarii) Po opłaceniu pakietu platforma automatycznie przesyła na e-mail fakturę.
+- **Faktura VAT:** (Dla ekspertów) Po opłaceniu pakietu platforma automatycznie przesyła na e-mail fakturę.
 - **Podsumowanie tygodnia:** (Opcjonalnie) Raport dla eksperta z liczbą wyświetleń profilu i nowymi sprawami w jego okolicy.
 
 ## 5. Powiadomienia Push (Web Push)

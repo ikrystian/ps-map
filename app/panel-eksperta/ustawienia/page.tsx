@@ -668,7 +668,7 @@ export default function LawFirmSettingsPage() {
                     W pełni aktywne
                   </Badge>
                   <p className="text-xs text-muted-foreground font-light">
-                    Kancelaria jest zweryfikowana i widoczna w katalogu.
+                    Ekspert jest zweryfikowana i widoczna w katalogu.
                   </p>
                 </div>
               </div>
@@ -703,7 +703,7 @@ export default function LawFirmSettingsPage() {
                     <div className="min-w-0">
                       <h4 className="font-semibold text-rose-400 text-sm">Usuń konto</h4>
                       <p className="text-xs text-muted-foreground/80 font-light mt-0.5">
-                        Bezpowrotnie usuń dane i zlikwiduj profil kancelarii.
+                        Bezpowrotnie usuń dane i zlikwiduj profil eksperta.
                       </p>
                     </div>
                     <AlertDialog>
@@ -720,7 +720,7 @@ export default function LawFirmSettingsPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle className="text-xl font-bold font-playfair text-white">Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
                           <AlertDialogDescription className="text-muted-foreground text-sm pt-2 leading-relaxed">
-                            Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil kancelarii w katalogu,
+                            Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil eksperta w katalogu,
                             złożone oferty, wiadomości oraz historia zostaną trwale usunięte z bazy danych.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -855,7 +855,7 @@ export default function LawFirmSettingsPage() {
                           Ciekawe oferty i promocje
                         </Label>
                         <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
-                          Oferty promocyjne i pakiety punktów stworzone dla Twojej kancelarii.
+                          Oferty promocyjne i pakiety punktów stworzone dla Twojego profilu.
                         </p>
                       </div>
                       <Switch
@@ -972,7 +972,7 @@ export default function LawFirmSettingsPage() {
                           Kontakt z doradcą
                         </Label>
                         <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
-                          Ważne alerty i spersonalizowane oferty wsparcia telefonicznego dla Twojej kancelarii.
+                          Ważne alerty i spersonalizowane oferty wsparcia telefonicznego dla Twojego profilu.
                         </p>
                       </div>
                       <Switch
@@ -1002,7 +1002,7 @@ export default function LawFirmSettingsPage() {
                           Wyświetlanie awatara w katalogu
                         </Label>
                         <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
-                          Zgoda na pokazywanie zdjęcia profilowego/loga kancelarii w katalogu.
+                          Zgoda na pokazywanie zdjęcia profilowego/loga eksperta w katalogu.
                         </p>
                       </div>
                       <Switch
@@ -1096,7 +1096,7 @@ export default function LawFirmSettingsPage() {
                       Ustawienia widoczności
                     </Label>
                     <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
-                      Zezwalaj na składanie ofert bezpośrednich na profilu kancelarii.
+                      Zezwalaj na składanie ofert bezpośrednich na profilu eksperta.
                     </p>
                   </div>
                   <Switch

@@ -270,13 +270,13 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">Manage all users in the system</p>
+          <h1 className="text-3xl font-bold">Zarządzanie użytkownikami</h1>
+          <p className="text-muted-foreground">Zarządzaj użytkownikami systemu</p>
         </div>
         <Button asChild>
           <Link href="/admin/users/new">
             <UserPlus className="mr-2 h-4 w-4" />
-            Add User
+            Dodaj użytkownika
           </Link>
         </Button>
       </div>
@@ -289,7 +289,7 @@ export default function AdminUsersPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name or email..."
+                  placeholder="Szukaj po imieniu, nazwisku lub emailu..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
@@ -304,12 +304,12 @@ export default function AdminUsersPage() {
               setCurrentPage(1)
             }}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by role" />
+                <SelectValue placeholder="Filtruj po roli" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="CLIENT">Client</SelectItem>
-                <SelectItem value="LAW_FIRM">Law Firm</SelectItem>
+                <SelectItem value="all">Wszyskie role</SelectItem>
+                <SelectItem value="CLIENT">Klient</SelectItem>
+                <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
                 <SelectItem value="ADMIN">Admin</SelectItem>
               </SelectContent>
             </Select>
@@ -318,14 +318,14 @@ export default function AdminUsersPage() {
               setCurrentPage(1)
             }}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Filtruj po statusie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="ACTIVE">Active</SelectItem>
-                <SelectItem value="INACTIVE">Inactive</SelectItem>
-                <SelectItem value="SUSPENDED">Suspended</SelectItem>
-                <SelectItem value="BLOCKED">Blocked</SelectItem>
+                <SelectItem value="all">Wszyskie statusy</SelectItem>
+                <SelectItem value="ACTIVE">Aktywny</SelectItem>
+                <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
+                <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
+                <SelectItem value="BLOCKED">Zablokowany</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={fetchUsers} size="icon">

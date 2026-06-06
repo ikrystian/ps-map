@@ -977,7 +977,7 @@ export function EnhancedChatArea({
                   ? "bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20"
                   : "bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20"
               )}>
-                {isClient ? "Kancelaria prawna" : "Klient"}
+                {isClient ? "Ekspert prawny" : "Klient"}
               </span>
             </div>
 
@@ -1004,7 +1004,7 @@ export function EnhancedChatArea({
               )}
               {(isClient && conversation.lawFirmUser.lawFirm.opis) && (
                 <div className="space-y-1 pt-1.5 border-t border-border/5">
-                  <p className="text-zinc-500 font-light">O kancelarii:</p>
+                  <p className="text-zinc-500 font-light">O ekspercie:</p>
                   <p className="text-zinc-400 font-light leading-relaxed whitespace-pre-wrap">{conversation.lawFirmUser.lawFirm.opis}</p>
                 </div>
               )}

@@ -7,14 +7,14 @@ export const authTemplates = [
     temat: 'Witamy w Prosta Sprawa!',
     tresc: `Witaj {imie}!
 
-Dziękujemy za rejestrację w serwisie Prosta Sprawa - platformie łączącej klientów z najlepszymi kancelariami prawnymi w Polsce.
+Dziękujemy za rejestrację w serwisie Prosta Sprawa - platformie łączącej klientów z najlepszymi ekspertami prawnymi w Polsce.
 
 Twoje konto zostało utworzone pomyślnie:
 Email: {email}
 
 Co możesz teraz zrobić:
 1. Dodaj swoją pierwszą sprawę
-2. Przeglądaj profile kancelarii
+2. Przeglądaj profile eksperta
 3. Otrzymuj oferty od prawników
 4. Porównuj i wybieraj najlepsze oferty
 
@@ -24,7 +24,7 @@ Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h1 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 20px; text-align: center;">Witamy w ProstaSprawa!</h1>
 <p style="margin: 0 0 16px 0;">Witaj <strong>{imie}</strong>,</p>
-<p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację w serwisie <strong>ProstaSprawa</strong> – nowoczesnej platformie pomagającej szybko, wygodnie i bezstresowo rozwiązywać sprawy prawne łącząc Cię ze sprawdzonymi kancelariami.</p>
+<p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację w serwisie <strong>ProstaSprawa</strong> – nowoczesnej platformie pomagającej szybko, wygodnie i bezstresowo rozwiązywać sprawy prawne łącząc Cię ze sprawdzonymi ekspertami.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
   <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 8px;">Dane Twojego konta:</strong>
@@ -57,13 +57,13 @@ Zespół Prosta Sprawa`,
   },
   {
     typ: EmailType.REJESTRACJA_KANCELARIA,
-    nazwa: 'Witamy nową kancelarię',
-    temat: 'Witamy w Prosta Sprawa - Panel Kancelarii',
+    nazwa: 'Witamy nowego eksperta',
+    temat: 'Witamy w Prosta Sprawa - Panel Eksperta',
     tresc: `Witamy {nazwa}!
 
 Dziękujemy za dołączenie do platformy Prosta Sprawa. Twoja rejestracja przebiegła pomyślnie.
 
-Dane kancelarii:
+Dane eksperta:
 Nazwa: {nazwa}
 Email: {email}
 NIP: {nip}
@@ -71,7 +71,7 @@ NIP: {nip}
 Status konta: Oczekuje na weryfikację
 
 Kolejne kroki:
-1. Uzupełnij profil swojej kancelarii
+1. Uzupełnij profil swojej eksperta
 2. Dodaj usługi i ceny
 3. Wybierz obszary działania
 4. Poczekaj na weryfikację konta (1-2 dni robocze)
@@ -82,7 +82,7 @@ Zespół Prosta Sprawa sprawdzi Twoje dane i skontaktuje się z Tobą w ciągu 4
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h1 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 20px; text-align: center;">Witamy w ProstaSprawa!</h1>
-<p style="margin: 0 0 16px 0;">Witamy kancelarię <strong>{nazwa}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Witamy eksperta <strong>{nazwa}</strong>,</p>
 <p style="margin: 0 0 16px 0;">Cieszymy się, że dołączasz do grona profesjonalistów świadczących usługi prawne za pośrednictwem serwisu <strong>ProstaSprawa</strong>. Twoja rejestracja przebiegła pomyślnie.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -114,7 +114,7 @@ Zespół Prosta Sprawa`,
 
 <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 18px; font-weight: 600; color: #ffffff; margin-top: 24px; margin-bottom: 12px;">W międzyczasie uzupełnij swój profil:</h3>
 <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #d4d4d4; line-height: 1.6;">
-  <li style="margin-bottom: 8px;">Dodaj logo kancelarii i profesjonalny opis zespołu.</li>
+  <li style="margin-bottom: 8px;">Dodaj logo ekspercie i profesjonalny opis zespołu.</li>
   <li style="margin-bottom: 8px;">Określ precyzyjnie specjalizacje i obszary działania.</li>
   <li style="margin-bottom: 0;">Skonfiguruj godziny pracy i formy kontaktu.</li>
 </ul>
@@ -124,10 +124,10 @@ Zespół Prosta Sprawa`,
 </div>`,
     zmienne: ['{nazwa}', '{email}', '{nip}', '{linkDoPanelu}'],
     opisZmiennych: {
-      '{nazwa}': 'Nazwa kancelarii',
+      '{nazwa}': 'Nazwa eksperta',
       '{email}': 'Adres email',
       '{nip}': 'Numer NIP',
-      '{linkDoPanelu}': 'Link do panelu kancelarii',
+      '{linkDoPanelu}': 'Link do panelu eksperta',
     },
     triggery: ['user_registered_law_firm'],
   },

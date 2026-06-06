@@ -141,7 +141,7 @@ export async function POST(
         }
       })
 
-      // Zaktualizuj statystyki kancelarii
+      // Zaktualizuj statystyki eksperta
       await tx.lawFirm.update({
         where: { id: offer.lawFirmId },
         data: {
@@ -242,7 +242,7 @@ export async function POST(
         }
       }
 
-      // Utwórz powiadomienie dla kancelarii
+      // Utwórz powiadomienie dla ekspertów
       const notification = await tx.notification.create({
         data: {
           userId: offer.lawFirm.userId,
@@ -265,14 +265,14 @@ export async function POST(
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
 
-    // 1. Wyślij e-mail o akceptacji do kancelarii
+    // 1. Wyślij e-mail o akceptacji do ekspercie
     if (offer.lawFirm?.user?.email) {
       try {
         await sendEmailWithTemplate({
           to: offer.lawFirm.user.email,
           templateType: EmailType.AKCEPTACJA_OFERTY,
           variables: {
-            "{kancelaria}": offer.lawFirm.nazwa,
+            "{ekspert}": offer.lawFirm.nazwa,
             "{klient}": `${client.imie} ${client.nazwisko}`,
             "{nazwaSprawi}": offer.case.nazwaSprawy,
             "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
@@ -297,14 +297,14 @@ export async function POST(
       // Przygotuj zmienne jako JSON string do zapisania w bazie danych
       const variablesObj = {
         "{klient}": client.imie,
-        "{kancelaria}": offer.lawFirm.nazwa,
+        "{ekspert}": offer.lawFirm.nazwa,
         "{linkDoOceny}": linkDoOceny,
       }
 
       await prisma.scheduledEmail.create({
         data: {
           to: clientEmail,
-          subject: `Jak oceniasz współpracę z kancelarią ${offer.lawFirm.nazwa}?`,
+          subject: `Jak oceniasz współpracę z ekspertem ${offer.lawFirm.nazwa}?`,
           templateType: EmailType.PROSBA_O_OCENE,
           variables: JSON.stringify(variablesObj),
           scheduledAt,

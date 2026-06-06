@@ -18,10 +18,10 @@ export async function GET(
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
@@ -32,7 +32,7 @@ export async function GET(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -49,7 +49,7 @@ export async function GET(
       )
     }
 
-    // Sprawdź czy promocja należy do tej kancelarii
+    // Sprawdź czy promocja należy do tego eksperta
     if (promotion.lawFirmId !== lawFirm.id) {
       return Response.json(
         { error: "Brak dostępu do tej promocji" },
@@ -85,7 +85,7 @@ export async function PUT(
 
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
@@ -96,7 +96,7 @@ export async function PUT(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -163,7 +163,7 @@ export async function DELETE(
 
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
@@ -174,7 +174,7 @@ export async function DELETE(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }

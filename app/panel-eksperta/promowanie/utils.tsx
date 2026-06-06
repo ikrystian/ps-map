@@ -197,8 +197,8 @@ export const getPromotionSuccessDetails = (
       }
     case "TOP_LISTA":
       return {
-        gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Kancelarie'.",
-        jak: "Twoja kancelaria zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
+        gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Eksperci'.",
+        jak: "Twoja ekspert zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
         kiedy:
           "Twój profil będzie stale wyświetlany w tej karuzeli/liście przez cały opłacony czas trwania promocji.",
       }
@@ -208,14 +208,14 @@ export const getPromotionSuccessDetails = (
           "Główny baner (karuzela / slider) na samej górze strony głównej portalu - najbardziej widoczne miejsce w całym serwisie.",
         jak: "Maksymalna ekspozycja i prestiż. Twój profil ze zdjęciem i chwytliwym nagłówkiem pojawi się jako jedna z pierwszych rzeczy, które zobaczy każdy użytkownik wchodzący na portal. Zapewnia to najwyższą konwersję i dotarcie do tysięcy użytkowników.",
         kiedy:
-          "Slider rotuje promowane kancelarie przez całą dobę. Twoja wizytówka będzie brała udział w tej prestiżowej rotacji przez cały okres trwania promocji.",
+          "Slider rotuje promowanych ekspertów przez całą dobę. Twoja wizytówka będzie brała udział w tej prestiżowej rotacji przez cały okres trwania promocji.",
       }
     case "POLECANI_PRAWNICY":
       return {
         gdzie: `Strona główna serwisu, w specjalnie dedykowanej sekcji 'Polecani prawnicy i adwokaci' dla wybranej przez Ciebie kategorii zawodowej: "${
           category || "Wszystkie"
         }".`,
-        jak: "To ekskluzywne promowanie o najwyższej skuteczności. W danym miesiącu w wybranej kategorii obowiązuje rygorystyczny limit maksymalnie 4 miejsc dla kancelarii, co oznacza znikome rozproszenie uwagi użytkownika i gwarantuje ogromną liczbę zapytań.",
+        jak: "To ekskluzywne promowanie o najwyższej skuteczności. W danym miesiącu w wybranej kategorii obowiązuje rygorystyczny limit maksymalnie 4 miejsc dla ekspertów, co oznacza znikome rozproszenie uwagi użytkownika i gwarantuje ogromną liczbę zapytań.",
         kiedy:
           "Promowanie trwa nieprzerwanie przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca).",
       }

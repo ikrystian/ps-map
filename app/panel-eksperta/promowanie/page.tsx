@@ -129,7 +129,7 @@ export default function LawFirmPromotionPage() {
     setError(null)
 
     try {
-      // Pobierz dane kancelarii
+      // Pobierz dane eksperta
       const lawFirmResponse = await fetch("/api/law-firms/me")
       if (!lawFirmResponse.ok) throw new Error("Nie udało się pobrać danych eksperta")
       const lawFirmData = await lawFirmResponse.json()

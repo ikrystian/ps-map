@@ -15,19 +15,19 @@ export async function GET(request: NextRequest) {
 
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą przeglądać faktury" },
+        { error: "Tylko eksperci mogą przeglądać faktury" },
         { status: 403 }
       )
     }
 
-    // Pobierz kancelarię
+    // Pobierz eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono kancelarii" },
+        { error: "Nie znaleziono ekspercie" },
         { status: 404 }
       )
     }

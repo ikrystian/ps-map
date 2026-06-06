@@ -380,14 +380,14 @@ export async function POST(request: NextRequest) {
       if (body.isSocialRegistration) {
         // Sprawdź czy użytkownik ma już rolę LAW_FIRM
         if (existingUser.role === "LAW_FIRM") {
-          // Sprawdź czy ma profil kancelarii
+          // Sprawdź czy ma profil eksperta
           const lawFirmProfile = await prisma.lawFirm.findUnique({
             where: { userId: existingUser.id }
           })
 
           if (lawFirmProfile) {
             return NextResponse.json(
-              { error: "Masz już konto kancelarii. Zaloguj się." },
+              { error: "Masz już konto eksperta. Zaloguj się." },
               { status: 409 }
             )
           }
@@ -407,7 +407,7 @@ export async function POST(request: NextRequest) {
 
     if (existingNip) {
       return NextResponse.json(
-        { error: "Kancelaria o takim numerze NIP już istnieje" },
+        { error: "Ekspert o takim numerze NIP już istnieje" },
         { status: 409 }
       )
     }
@@ -456,7 +456,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Utwórz użytkownika i kancelarię w transakcji
+    // Utwórz użytkownika i eksperta w transakcji
     const result = await prisma.$transaction(async (tx: any) => {
       let user;
 
@@ -495,7 +495,7 @@ export async function POST(request: NextRequest) {
       const pkgStart = isAutoGrantActive ? new Date() : null
       const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
 
-      // Utwórz profil kancelarii
+      // Utwórz profil eksperta
       const lawFirm = await tx.lawFirm.create({
         data: {
           userId: user.id,
@@ -613,7 +613,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "Kancelaria została pomyślnie zarejestrowana. Sprawdź swoją skrzynkę email, aby potwierdzić adres email.",
+        message: "Ekspert została pomyślnie zarejestrowana. Sprawdź swoją skrzynkę email, aby potwierdzić adres email.",
         userId: result.user.id,
         lawFirmId: result.lawFirm.id,
         emailVerificationSent: emailSent,
@@ -631,7 +631,7 @@ export async function POST(request: NextRequest) {
       mainCategoryId: body?.categoriesIds && Array.isArray(body.categoriesIds) && body.categoriesIds.length > 0 ? body.categoriesIds[0] : null
     })
     return NextResponse.json(
-      { error: "Błąd podczas tworzenia kancelarii", details: error?.message, meta: error?.meta },
+      { error: "Błąd podczas tworzenia eksperta", details: error?.message, meta: error?.meta },
       { status: 500 }
     )
   }

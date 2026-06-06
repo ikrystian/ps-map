@@ -453,7 +453,7 @@ export default function DocumentsPage() {
                   Dodaj nowy dokument
                 </DialogTitle>
                 <DialogDescription className="text-zinc-400 text-xs">
-                  Prześlij plik do biblioteki dokumentów swojej kancelarii, aby mieć do niego szybki dostęp i móc go udostępniać.
+                  Prześlij plik do biblioteki dokumentów swojej eksperta, aby mieć do niego szybki dostęp i móc go udostępniać.
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>

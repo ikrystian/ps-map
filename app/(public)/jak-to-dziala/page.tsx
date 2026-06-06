@@ -19,7 +19,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Jak to działa? Przewodnik po Platformie",
-  description: "Dowiedz się, jak w prosty i bezpieczny sposób opublikować sprawę prawną lub dołączyć jako kancelaria i zdobywać zlecenia.",
+  description: "Dowiedz się, jak w prosty i bezpieczny sposób opublikować sprawę prawną lub dołączyć jako ekspert i zdobywać zlecenia.",
 }
 
 export default function HowItWorksPage() {
@@ -101,7 +101,7 @@ export default function HowItWorksPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Po publikacji Twoja sprawa trafia do kancelarii specjalizujących się w danej dziedzinie.
+                    Po publikacji Twoja sprawa trafia do ekspertów specjalizujących się w danej dziedzinie.
                     System automatycznie dobiera najlepsze dopasowanie.
                   </p>
                   <ul className="space-y-2 text-sm">
@@ -139,7 +139,7 @@ export default function HowItWorksPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Kancelarie zainteresowane Twoją sprawą złożą oferty. Zazwyczaj pierwsze propozycje
+                    Eksperci zainteresowani Twoją sprawą złożą oferty. Zazwyczaj pierwsze propozycje
                     otrzymasz w ciągu kilku godzin.
                   </p>
                   <ul className="space-y-2 text-sm">
@@ -153,7 +153,7 @@ export default function HowItWorksPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Profile i opinie kancelarii</span>
+                      <span>Profile i opinie eksperta</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -176,7 +176,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Sprawdź profile kancelarii, przeczytaj opinie, porównaj ceny i warunki.
+                  Sprawdź profile eksperta, przeczytaj opinie, porównaj ceny i warunki.
                   Możesz zadawać pytania i negocjować warunki.
                 </p>
                 <ul className="space-y-2 text-sm">
@@ -210,7 +210,7 @@ export default function HowItWorksPage() {
               <CardContent>
                 <p className="text-muted-foreground mb-4">
                   Akceptuj wybraną ofertę i rozpocznij współpracę. Po zakończeniu sprawy możesz
-                  wystawić opinię o kancelarii.
+                  wystawić opinię o ekspercie.
                 </p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
@@ -234,10 +234,10 @@ export default function HowItWorksPage() {
         {/* For Law Firms Process */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <Badge className="mb-4 text-lg px-4 py-2 bg-amber-500">Dla Kancelarii</Badge>
+            <Badge className="mb-4 text-lg px-4 py-2 bg-amber-500">Dla Ekspertów</Badge>
             <h2 className="text-3xl font-bold mb-4">Zdobywaj klientów i rozwijaj swoją praktykę</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Profesjonalne narzędzie dla prawników i kancelarii
+              Profesjonalne narzędzie dla ekspertów
             </p>
           </div>
 
@@ -253,7 +253,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Stwórz konto, wypełnij profil kancelarii i wybierz odpowiedni pakiet subskrypcyjny
+                  Stwórz konto, wypełnij profil eksperta i wybierz odpowiedni pakiet subskrypcyjny
                   dopasowany do Twoich potrzeb.
                 </p>
               </CardContent>
@@ -326,7 +326,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Zamiast dzwonić do dziesiątek kancelarii, otrzymujesz oferty w jednym miejscu.
+                  Zamiast dzwonić do dziesiątek ekspertów, otrzymujesz oferty w jednym miejscu.
                   Pierwsze propozycje już po kilku godzinach.
                 </p>
               </CardContent>
@@ -343,7 +343,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Wszystkie kancelarie są weryfikowane. Sprawdzamy licencje zawodowe i uprawnienia.
+                  Wszyscy eksperci są weryfikowani. Sprawdzamy licencje zawodowe i uprawnienia.
                   Twoje dane są bezpieczne dzięki szyfrowaniu SSL.
                 </p>
               </CardContent>
@@ -394,7 +394,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Ponad 1000 kancelarii z całej Polski. Wszystkie specjalizacje prawne - od prawa
+                  Ponad 1000 ekspertów z całej Polski. Wszystkie specjalizacje prawne - od prawa
                   rodzinnego po korporacyjne.
                 </p>
               </CardContent>
@@ -432,7 +432,7 @@ export default function HowItWorksPage() {
               <h3 className="font-semibold mb-2">Czy muszę płacić za korzystanie z platformy jako klient?</h3>
               <p className="text-muted-foreground">
                 Nie, dla klientów korzystanie z Prosta Sprawa jest całkowicie bezpłatne.
-                Płacisz tylko bezpośrednio kancelarii za świadczone usługi prawne.
+                Płacisz tylko bezpośrednio ekspercie za świadczone usługi prawne.
               </p>
             </div>
             <div>
@@ -443,9 +443,9 @@ export default function HowItWorksPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">Czy mogę negocjować cenę z kancelarią?</h3>
+              <h3 className="font-semibold mb-2">Czy mogę negocjować cenę z ekspertem?</h3>
               <p className="text-muted-foreground">
-                Tak, platforma umożliwia komunikację z kancelariami i negocjowanie warunków współpracy,
+                Tak, platforma umożliwia komunikację z ekspertami i negocjowanie warunków współpracy,
                 w tym ceny i terminów realizacji.
               </p>
             </div>
@@ -453,15 +453,15 @@ export default function HowItWorksPage() {
               <h3 className="font-semibold mb-2">Czy moje dane są bezpieczne?</h3>
               <p className="text-muted-foreground">
                 Tak, stosujemy najwyższe standardy bezpieczeństwa zgodne z RODO. Wszystkie dane są
-                szyfrowane, a dostęp do nich mają tylko wybrane przez Ciebie kancelarie.
+                szyfrowane, a dostęp do nich mają tylko wybrani przez Ciebie eksperci.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">Co jeśli nie będę zadowolony z usług kancelarii?</h3>
+              <h3 className="font-semibold mb-2">Co jeśli nie będę zadowolony z usług eksperta?</h3>
               <p className="text-muted-foreground">
                 Możesz zgłosić problem poprzez system reklamacji lub bezpośrednio do organu
                 samorządu zawodowego (okręgowa rada adwokacka/radców prawnych). Platforma pośredniczy
-                w kontakcie, ale umowa jest zawierana bezpośrednio z kancelarią.
+                w kontakcie, ale umowa jest zawierana bezpośrednio z ekspertem.
               </p>
             </div>
           </CardContent>
@@ -485,7 +485,7 @@ export default function HowItWorksPage() {
                   className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
                   asChild
                 >
-                  <a href="/rejestracja">Zarejestruj kancelarię</a>
+                  <a href="/rejestracja">Zarejestruj eksperta</a>
                 </Button>
               </div>
             </div>

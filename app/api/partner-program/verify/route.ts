@@ -5,7 +5,7 @@ import { NextRequest } from "next/server"
 
 /**
  * POST /api/partner-program/verify
- * Weryfikuj obecność bannera na stronie kancelarii
+ * Weryfikuj obecność bannera na stronie eksperta
  */
 export async function POST(request: NextRequest) {
   try {
@@ -18,15 +18,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii z programem partnerskim
+    // Pobierz dane eksperta z programem partnerskim
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       select: {
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }

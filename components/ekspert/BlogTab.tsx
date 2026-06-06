@@ -76,14 +76,14 @@ export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
           </div>
           <div className="text-center pt-4">
             <Button variant="outline" asChild>
-              <a href={`/blog?lawFirmId=${lawFirm.id}`}>Zobacz wszystkie artykuły kancelarii</a>
+              <a href={`/blog?lawFirmId=${lawFirm.id}`}>Zobacz wszystkie artykuły eksperta</a>
             </Button>
           </div>
         </div>
       ) : (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Ta kancelaria nie opublikowała jeszcze żadnych artykułów
+            Ten ekspert nie opublikowała jeszcze żadnych artykułów
           </CardContent>
         </Card>
       )}

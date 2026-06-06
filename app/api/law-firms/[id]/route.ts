@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params
 
-    // Pobierz kancelarię z wszystkimi powiązanymi danymi
+    // Pobierz eksperta z wszystkimi powiązanymi danymi
     const lawFirm = await prisma.lawFirm.findFirst({
       where: {
         OR: [
@@ -177,7 +177,7 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
-    // Sprawdź, czy kancelaria istnieje i należy do zalogowanego użytkownika
+    // Sprawdź, czy ekspert istnieje i należy do zalogowanego użytkownika
     const existingLawFirm = await prisma.lawFirm.findUnique({
       where: { id },
     })
@@ -310,7 +310,7 @@ export async function PUT(
 
     updateData.updatedAt = new Date()
 
-    // Aktualizuj kancelarię
+    // Aktualizuj eksperta
     console.log('Updating law firm with data:', updateData)
     const updatedLawFirm = await prisma.lawFirm.update({
       where: { id },
@@ -418,7 +418,7 @@ export async function DELETE(
 
     const { id } = await params
 
-    // Sprawdź, czy kancelaria istnieje
+    // Sprawdź, czy ekspert istnieje
     const existingLawFirm = await prisma.lawFirm.findUnique({
       where: { id },
       include: {
@@ -508,8 +508,8 @@ export async function DELETE(
         data: {
           userId: existingLawFirm.userId,
           typ: "ZMIANA_STATUSU",
-          tytul: "Profil kancelarii został usunięty",
-          tresc: "Twój profil kancelarii został dezaktywowany. Skontaktuj się z administracją aby go przywrócić.",
+          tytul: "Profil eksperta został usunięty",
+          tresc: "Twój profil eksperta został dezaktywowany. Skontaktuj się z administracją aby go przywrócić.",
           linkUrl: "/kontakt",
         },
       })

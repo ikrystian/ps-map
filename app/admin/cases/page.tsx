@@ -273,7 +273,7 @@ export default function AdminCasesPage() {
                 <TableHead>Klient</TableHead>
                 <TableHead>Kategoria</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead>Oferty/Wiadomości</TableHead>
                 <TableHead>Data utworzenia</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>

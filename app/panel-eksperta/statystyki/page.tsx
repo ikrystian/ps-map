@@ -609,7 +609,7 @@ export default function LawFirmStatsPage() {
               <CardHeader className="border-b border-border/20 py-5 px-6">
                 <CardTitle className="text-lg font-playfair text-white">Statystyki według kategorii</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
-                  Analiza skuteczności i zaangażowania Twojej kancelarii w podziale na dziedziny prawa.
+                  Analiza skuteczności i zaangażowania Twojego profilu w podziale na dziedziny prawa.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -715,7 +715,7 @@ export default function LawFirmStatsPage() {
               {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
             </div>
             <div className="text-xs text-zinc-400 font-light text-center">
-              Pozycja Twojej kancelarii w ogólnopolskim rankingu ekspertów na platformie
+              Pozycja Twojego profilu w ogólnopolskim rankingu ekspertów na platformie
             </div>
           </CardContent>
         </Card>

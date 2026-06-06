@@ -351,7 +351,7 @@ export default function CaseDetailsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Oferty ({caseData.offers.length})</CardTitle>
-              <CardDescription>Lista ofert od kancelarii prawnych</CardDescription>
+              <CardDescription>Lista ofert od ekspertów prawnych</CardDescription>
             </CardHeader>
             <CardContent>
               {caseData.offers.length === 0 ? (
@@ -527,13 +527,13 @@ export default function CaseDetailsPage() {
             </CardContent>
           </Card>
 
-          {/* Przydzielona kancelaria */}
+          {/* Przydzielona ekspert */}
           {acceptedOffer && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Building2 className="h-5 w-5" />
-                  Przydzielona kancelaria
+                  Przydzielona ekspert
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -550,7 +550,7 @@ export default function CaseDetailsPage() {
                 <Separator />
                 <Button variant="outline" size="sm" className="w-full" asChild>
                   <Link href={`/admin/law-firms/${acceptedOffer.lawFirm.id}`}>
-                    Zobacz profil kancelarii
+                    Zobacz profil eksperta
                   </Link>
                 </Button>
               </CardContent>

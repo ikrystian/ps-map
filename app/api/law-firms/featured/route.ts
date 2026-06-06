@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server"
 /**
  * GET /api/law-firms/featured
  *
- * Pobiera promowane kancelarie dla strony głównej:
- * - featured: Kancelarie z promocją STRONA_GLOWNA
- * - top: Kancelarie z promocją TOP_LISTA
+ * Pobiera promowanych ekspertów dla strony głównej:
+ * - featured: Eksperci z promocją STRONA_GLOWNA
+ * - top: Eksperci z promocją TOP_LISTA
  */
 export async function GET(request: NextRequest) {
   try {

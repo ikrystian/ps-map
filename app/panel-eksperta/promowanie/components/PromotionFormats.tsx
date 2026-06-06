@@ -21,7 +21,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
           Dostępne Formaty Promowania
         </h2>
         <p className="text-xs text-muted-foreground">
-          Wybierz format najlepiej dostosowany do celów biznesowych Twojej kancelarii.
+          Wybierz format najlepiej dostosowany do celów biznesowych Twojego profilu.
         </p>
       </div>
 

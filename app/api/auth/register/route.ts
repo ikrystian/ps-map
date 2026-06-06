@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Jeśli LAW_FIRM, utwórz profil kancelarii
+    // Jeśli LAW_FIRM, utwórz profil eksperta
     if (user.role === "LAW_FIRM" && userData.lawFirm) {
       // Pobierz pierwsze województwo mazowieckie jako domyślne
       const defaultVoivodeship = await prisma.voivodeship.findFirst({
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      // Wyślij e-mail powitalny dla kancelarii
+      // Wyślij e-mail powitalny dla ekspertów
       const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
       try {
         await sendEmailWithTemplate({

@@ -249,7 +249,7 @@ export default function ForLawyersPage() {
     e.preventDefault()
     toast({
       title: "Tworzenie profilu...",
-      description: "Przenosimy Cię do formularza rejestracji kancelarii.",
+      description: "Przenosimy Cię do formularza rejestracji eksperta.",
     })
 
     // Redirect to registration with prepopulated query parameters
@@ -258,7 +258,7 @@ export default function ForLawyersPage() {
     params.set("category", kategoria)
     if (lokalizacja) params.set("city", lokalizacja)
 
-    router.push(`/rejestracja/kancelaria?${params.toString()}`)
+    router.push(`/rejestracja/ekspert?${params.toString()}`)
   }
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
@@ -580,7 +580,7 @@ export default function ForLawyersPage() {
 
           {/* Center Action Button */}
           <button
-            onClick={() => router.push("/rejestracja/kancelaria")}
+            onClick={() => router.push("/rejestracja/ekspert")}
             className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3.5 px-16 rounded-md transition-all duration-200 text-sm flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer w-full max-w-[260px]"
           >
             Zarejestruj się
@@ -945,7 +945,7 @@ export default function ForLawyersPage() {
             </h3>
 
             <button
-              onClick={() => router.push("/rejestracja/kancelaria")}
+              onClick={() => router.push("/rejestracja/ekspert")}
               className="bg-[#0da192] hover:bg-[#00897b] text-white font-medium py-3.5 px-16 rounded-md transition-all duration-200 text-sm flex items-center justify-center hover:scale-[1.01] active:scale-[0.99] shadow-lg cursor-pointer w-full max-w-[260px]"
             >
               Zarejestruj się

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/law-firms/me/blog - Pobiera wpisy zalogowanej kancelarii
+// GET /api/law-firms/me/blog - Pobiera wpisy zalogowanej eksperta
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -12,14 +12,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return NextResponse.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20")
     const skip = (page - 1) * limit
 
-    // Pobierz wpisy kancelarii
+    // Pobierz wpisy eksperta
     const [posts, total] = await Promise.all([
       prisma.blogPost.findMany({
         where: {
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/law-firms/me/blog - Tworzy nowy wpis dla zalogowanej kancelarii
+// POST /api/law-firms/me/blog - Tworzy nowy wpis dla zalogowanej eksperta
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
@@ -75,14 +75,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return NextResponse.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }

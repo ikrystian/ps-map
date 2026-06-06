@@ -140,10 +140,10 @@ export async function PUT(
       )
     }
 
-    // Tylko kancelarie mogą edytować oferty
+    // Tylko eksperci mogą edytować oferty
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą edytować oferty" },
+        { error: "Tylko eksperci mogą edytować oferty" },
         { status: 403 }
       )
     }
@@ -155,12 +155,12 @@ export async function PUT(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
 
-    // Sprawdź czy oferta istnieje i należy do kancelarii
+    // Sprawdź czy oferta istnieje i należy do ekspercie
     const existingOffer = await prisma.offer.findUnique({
       where: { id }
     })
@@ -252,10 +252,10 @@ export async function DELETE(
       )
     }
 
-    // Tylko kancelarie mogą usuwać oferty
+    // Tylko eksperci mogą usuwać oferty
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą usuwać oferty" },
+        { error: "Tylko eksperci mogą usuwać oferty" },
         { status: 403 }
       )
     }
@@ -267,12 +267,12 @@ export async function DELETE(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
 
-    // Sprawdź czy oferta istnieje i należy do kancelarii
+    // Sprawdź czy oferta istnieje i należy do ekspercie
     const existingOffer = await prisma.offer.findUnique({
       where: { id }
     })

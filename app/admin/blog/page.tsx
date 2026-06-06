@@ -147,7 +147,7 @@ export default function AdminBlogPage() {
     fetchCategories()
   }, [])
 
-  // Pobierz kancelarie raz przy montowaniu
+  // Pobierz ekspertów raz przy montowaniu
   useEffect(() => {
     const fetchLawFirms = async () => {
       try {
@@ -157,7 +157,7 @@ export default function AdminBlogPage() {
           setLawFirms(data.lawFirms || [])
         }
       } catch (error) {
-        console.error("Błąd podczas pobierania kancelarii:", error)
+        console.error("Błąd podczas pobierania eksperta:", error)
       }
     }
     fetchLawFirms()
@@ -342,7 +342,7 @@ export default function AdminBlogPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Wpisy blogowe</h1>
           <p className="text-muted-foreground">
-            Zarządzaj wpisami blogowymi kancelarii partnerskich, zatwierdzaj publikacje i filtruj dane.
+            Zarządzaj wpisami blogowymi ekspertów partnerskich, zatwierdzaj publikacje i filtruj dane.
           </p>
         </div>
         <Button asChild className="sm:ml-auto flex items-center gap-1.5 shadow-sm">
@@ -413,7 +413,7 @@ export default function AdminBlogPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Szukaj po tytule, kancelarii..."
+              placeholder="Szukaj po tytule, eksperta..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
@@ -512,7 +512,7 @@ export default function AdminBlogPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Tytuł</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead>Kategoria</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Utworzono</TableHead>
@@ -847,7 +847,7 @@ export default function AdminBlogPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Czy na pewno chcesz usunąć?</AlertDialogTitle>
             <AlertDialogDescription>
-              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot;{selectedPost?.lawFirm ? ` kancelarii ${selectedPost.lawFirm.nazwa}` : ' (wpis administracji)'}?
+              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot;{selectedPost?.lawFirm ? ` eksperta ${selectedPost.lawFirm.nazwa}` : ' (wpis administracji)'}?
               Ta operacja jest nieodwracalna.
             </AlertDialogDescription>
           </AlertDialogHeader>

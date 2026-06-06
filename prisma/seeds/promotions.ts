@@ -36,10 +36,10 @@ export async function seedPromotionConfigs(prisma: PrismaClient) {
     {
       type: PromotionType.TOP_LISTA,
       label: 'Top Lista',
-      description: 'Twój profil pojawi się w ekskluzywnej sekcji "Top Kancelarie" na stronie głównej.',
+      description: 'Twój profil pojawi się w ekskluzywnej sekcji "Top Eksperci" na stronie głównej.',
       pointsPerWeek: 100,
       features: JSON.stringify([
-        'Sekcja "Top Kancelarie" na stronie głównej',
+        'Sekcja "Top Eksperci" na stronie głównej',
         'Najwyższa widoczność w serwisie',
         'Ekskluzywna pozycja',
         'Zwiększona wiarygodność'

@@ -195,7 +195,7 @@ export default function ClientFavoritesPage() {
       >
         <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Wybrani Eksperci</h1>
         <p className="text-sm text-zinc-400 mt-1.5 font-light">
-          Lista Twoich ulubionych kancelarii i ekspertów prawnych, z którymi chcesz pozostać w kontakcie.
+          Lista Twoich ulubionych ekspertów i ekspertów prawnych, z którymi chcesz pozostać w kontakcie.
         </p>
 
       </motion.div>

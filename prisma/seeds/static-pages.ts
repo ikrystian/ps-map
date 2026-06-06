@@ -20,7 +20,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
     </div>
     <h1 class="text-4xl font-bold mb-4">Regulamin Platformy Prosta Sprawa</h1>
     <p class="text-lg text-neutral-400 max-w-2xl mx-auto">
-      Zasady korzystania z platformy łączącej klientów z kancelariami prawnymi
+      Zasady korzystania z platformy łączącej klientów z ekspertami prawnymi
     </p>
     <p class="text-sm text-neutral-500 mt-2">
       Ostatnia aktualizacja: ${new Date().toLocaleDateString('pl-PL')}
@@ -41,7 +41,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <a href="#uslugi" class="text-[#E2B13C] hover:underline">3. Zakres usług</a>
       <a href="#rejestracja" class="text-[#E2B13C] hover:underline">4. Rejestracja i konto</a>
       <a href="#klienci" class="text-[#E2B13C] hover:underline">5. Zasady dla klientów</a>
-      <a href="#kancelarie" class="text-[#E2B13C] hover:underline">6. Zasady dla kancelarii</a>
+      <a href="#eksperci" class="text-[#E2B13C] hover:underline">6. Zasady dla ekspertów</a>
       <a href="#platnosci" class="text-[#E2B13C] hover:underline">7. Płatności i rozliczenia</a>
       <a href="#odpowiedzialnosc" class="text-[#E2B13C] hover:underline">8. Odpowiedzialność</a>
       <a href="#wlasnosc" class="text-[#E2B13C] hover:underline">9. Własność intelektualna</a>
@@ -61,11 +61,11 @@ export async function seedStaticPages(prisma: PrismaClient) {
         <li><strong>2. Usługodawca</strong> - właściciel platformy Prosta Sprawa z siedzibą w Warszawie</li>
         <li><strong>3. Użytkownik</strong> - każda osoba korzystająca z Platformy</li>
         <li><strong>4. Klient</strong> - osoba fizyczna, firma lub organizacja poszukująca pomocy prawnej</li>
-        <li><strong>5. Kancelaria</strong> - kancelaria prawna, radca prawny, adwokat lub inny podmiot świadczący usługi prawne</li>
+        <li><strong>5. Ekspert</strong> - ekspert prawny, radca prawny, adwokat lub inny podmiot świadczący usługi prawne</li>
         <li><strong>6. Sprawa</strong> - zgłoszenie klienta opisujące potrzebę pomocy prawnej</li>
-        <li><strong>7. Oferta</strong> - propozycja świadczenia usług prawnych złożona przez Kancelarię</li>
-        <li><strong>8. Pakiet</strong> - abonament subskrypcyjny dla Kancelarii</li>
-        <li><strong>9. Punkty</strong> - wirtualna waluta używana przez Kancelarie</li>
+        <li><strong>7. Oferta</strong> - propozycja świadczenia usług prawnych złożona przez Eksperta</li>
+        <li><strong>8. Pakiet</strong> - abonament subskrypcyjny dla Eksperta</li>
+        <li><strong>9. Punkty</strong> - wirtualna waluta używana przez ekspertów</li>
         <li><strong>10. Konto</strong> - panel użytkownika umożliwiający korzystanie z funkcji Platformy</li>
       </ul>
     </div>
@@ -74,7 +74,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <h3 class="text-xl font-bold mb-4 text-white">§2. Postanowienia ogólne</h3>
       <p class="mb-2"><strong>1.</strong> Regulamin określa zasady korzystania z Platformy Prosta Sprawa.</p>
       <p class="mb-2"><strong>2.</strong> Korzystanie z Platformy jest równoznaczne z akceptacją niniejszego Regulaminu.</p>
-      <p class="mb-2"><strong>3.</strong> Platforma służy do kojarzenia klientów poszukujących pomocy prawnej z kancelariami prawnymi.</p>
+      <p class="mb-2"><strong>3.</strong> Platforma służy do kojarzenia klientów poszukujących pomocy prawnej z ekspertami prawnymi.</p>
       <p class="mb-2"><strong>4.</strong> Usługodawca nie świadczy usług prawnych - pełni wyłącznie rolę pośrednika.</p>
       <p class="mb-2"><strong>5.</strong> Użytkownik zobowiązany jest do korzystania z Platformy zgodnie z prawem i dobrymi obyczajami.</p>
     </div>
@@ -86,14 +86,14 @@ export async function seedStaticPages(prisma: PrismaClient) {
           <h4 class="font-semibold mb-2 text-white">Dla Klientów (bezpłatnie):</h4>
           <ul class="list-disc pl-4 space-y-1 text-sm text-neutral-400">
             <li>Publikacja spraw prawnych</li>
-            <li>Otrzymywanie ofert od kancelarii</li>
-            <li>Przeglądanie profili kancelarii</li>
-            <li>Komunikacja z kancelariami</li>
+            <li>Otrzymywanie ofert od eksperta</li>
+            <li>Przeglądanie profili eksperta</li>
+            <li>Komunikacja z ekspertami</li>
             <li>System ocen i opinii</li>
           </ul>
         </div>
         <div>
-          <h4 class="font-semibold mb-2 text-white">Dla Kancelarii (odpłatnie):</h4>
+          <h4 class="font-semibold mb-2 text-white">Dla Ekspertów (odpłatnie):</h4>
           <ul class="list-disc pl-4 space-y-1 text-sm text-neutral-400">
             <li>Dostęp do zgłoszonych spraw</li>
             <li>Możliwość składania ofert</li>
@@ -109,7 +109,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <h3 class="text-xl font-bold mb-4 text-white">§4. Rejestracja i konto użytkownika</h3>
       <p class="mb-2"><strong>1.</strong> Korzystanie z pełnej funkcjonalności Platformy wymaga rejestracji.</p>
       <p class="mb-2"><strong>2.</strong> Rejestracja jest bezpłatna i dobrowolna.</p>
-      <p class="mb-2"><strong>3.</strong> Użytkownik może zarejestrować się jako Klient lub Kancelaria prawna / Prawnik.</p>
+      <p class="mb-2"><strong>3.</strong> Użytkownik może zarejestrować się jako Klient lub Ekspert prawny / Prawnik.</p>
       <p class="mb-2"><strong>4.</strong> Do rejestracji wymagane są prawdziwe dane: imię, nazwisko, adres e-mail, numer telefonu.</p>
     </div>
 
@@ -117,27 +117,27 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <h3 class="text-xl font-bold mb-4 text-white">§5. Zasady dla klientów</h3>
       <p class="mb-2"><strong>1.</strong> Klient może bezpłatnie publikować sprawy prawne.</p>
       <p class="mb-2"><strong>2.</strong> Opis sprawy musi być zgodny z prawdą i zawierać rzetelne informacje.</p>
-      <p class="mb-2"><strong>3.</strong> Zawarcie umowy i płatności za usługi prawne odbywają się bezpośrednio między klientem a kancelarią.</p>
+      <p class="mb-2"><strong>3.</strong> Zawarcie umowy i płatności za usługi prawne odbywają się bezpośrednio między klientem a ekspertem.</p>
     </div>
 
-    <div id="kancelarie" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
-      <h3 class="text-xl font-bold mb-4 text-white">§6. Zasady dla kancelarii prawnych</h3>
-      <p class="mb-2"><strong>1.</strong> Kancelaria musi posiadać aktywny pakiet abonamentowy lub punkty.</p>
-      <p class="mb-2"><strong>2.</strong> Kancelaria zobowiązana jest do podania prawdziwych danych, uprawnień i kwalifikacji zawodowych.</p>
+    <div id="eksperci" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
+      <h3 class="text-xl font-bold mb-4 text-white">§6. Zasady dla ekspertów prawnych</h3>
+      <p class="mb-2"><strong>1.</strong> Ekspert musi posiadać aktywny pakiet abonamentowy lub punkty.</p>
+      <p class="mb-2"><strong>2.</strong> Ekspert zobowiązana jest do podania prawdziwych danych, uprawnień i kwalifikacji zawodowych.</p>
       <p class="mb-2"><strong>3.</strong> Oferta składana klientowi musi być rzetelna i precyzyjna.</p>
     </div>
 
     <div id="platnosci" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
       <h3 class="text-xl font-bold mb-4 text-white">§7. Płatności i rozliczenia</h3>
       <p class="mb-2"><strong>1.</strong> Usługi dla klientów są całkowicie bezpłatne.</p>
-      <p class="mb-2"><strong>2.</strong> Kancelarie ponoszą opłaty za pakiety abonamentowe oraz promowanie profili.</p>
+      <p class="mb-2"><strong>2.</strong> Eksperci ponoszą opłaty za pakiety abonamentowe oraz promowanie profili.</p>
       <p class="mb-2"><strong>3.</strong> Płatności obsługiwane są za pośrednictwem bezpiecznych bramek płatności.</p>
     </div>
 
     <div id="odpowiedzialnosc" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
       <h3 class="text-xl font-bold mb-4 text-white">§8. Odpowiedzialność</h3>
       <p class="mb-2"><strong>1.</strong> Usługodawca pełni jedynie rolę pośrednika i nie odpowiada za jakość porad prawnych.</p>
-      <p class="mb-2"><strong>2.</strong> Kancelaria ponosi pełną i wyłączną odpowiedzialność za świadczone usługi prawne.</p>
+      <p class="mb-2"><strong>2.</strong> Ekspert ponosi pełną i wyłączną odpowiedzialność za świadczone usługi prawne.</p>
     </div>
 
     <div id="wlasnosc" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
@@ -239,7 +239,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <ul class="space-y-2 pl-4 list-disc text-neutral-400 text-sm">
         <li><strong>Dane rejestracyjne:</strong> Imię, nazwisko, e-mail, telefon, hasło (zaszyfrowane).</li>
         <li><strong>Dane klientów:</strong> Szczegóły zgłaszanych spraw, załączniki.</li>
-        <li><strong>Dane kancelarii:</strong> Nazwa, NIP, adres, licencje zawodowe.</li>
+        <li><strong>Dane eksperta:</strong> Nazwa, NIP, adres, licencje zawodowe.</li>
         <li><strong>Dane techniczne:</strong> IP, ciasteczka (cookies), system operacyjny.</li>
       </ul>
     </div>
@@ -256,7 +256,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
 
     <div id="odbiorcy" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
       <h3 class="text-xl font-bold mb-4 text-white">5. Odbiorcy danych osobowych</h3>
-      <p class="mb-2">Odbiorcami danych są wybrane przez klienta kancelarie, procesorzy płatności, dostawcy serwerów oraz podmioty księgowo-prawne.</p>
+      <p class="mb-2">Odbiorcami danych są wybrane przez klienta eksperci, procesorzy płatności, dostawcy serwerów oraz podmioty księgowo-prawne.</p>
     </div>
 
     <div id="prawa" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
@@ -295,7 +295,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
     </div>
     <h1 class="text-4xl md:text-5xl font-bold mb-4">O Prosta Sprawa</h1>
     <p class="text-xl text-neutral-400 max-w-3xl mx-auto">
-      Łączymy osoby potrzebujące pomocy prawnej z najlepszymi kancelariami w Polsce
+      Łączymy osoby potrzebujące pomocy prawnej z najlepszymi ekspertami w Polsce
     </p>
   </div>
 
@@ -305,7 +305,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <h2 class="text-2xl font-bold mb-4 text-white">Nasza Misja</h2>
       <p class="text-lg leading-relaxed text-neutral-300 max-w-3xl mx-auto">
         Demokratyzujemy dostęp do usług prawnych, umożliwiając każdemu znalezienie odpowiedniej
-        pomocy prawnej w przystępnej cenie. Wspieramy rozwój kancelarii prawnych poprzez
+        pomocy prawnej w przystępnej cenie. Wspieramy rozwój ekspertów prawnych poprzez
         nowoczesne narzędzia marketingowe i dostęp do klientów z całej Polski.
       </p>
     </div>
@@ -315,7 +315,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-16">
     <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 text-center">
       <div class="text-4xl font-bold text-[#E2B13C] mb-2">1000+</div>
-      <p class="text-neutral-400">Aktywnych Kancelarii</p>
+      <p class="text-neutral-400">Aktywnych Eksperta</p>
     </div>
     <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 text-center">
       <div class="text-4xl font-bold text-[#E2B13C] mb-2">5000+</div>
@@ -349,10 +349,10 @@ export async function seedStaticPages(prisma: PrismaClient) {
       <p class="leading-relaxed">
         Prosta Sprawa powstała z frustracji związanej z tradycyjnym procesem szukania pomocy prawnej.
         Założyciele platformy, po własnych doświadczeniach z trudnościami w znalezieniu odpowiedniej
-        kancelarii, postanowili stworzyć rozwiązanie, które uprości ten proces.
+        eksperta, postanowili stworzyć rozwiązanie, które uprości ten proces.
       </p>
       <p class="leading-relaxed">
-        Dziś Prosta Sprawa to największa polska platforma łącząca klientów z kancelariami prawnymi.
+        Dziś Prosta Sprawa to największa polska platforma łącząca klientów z ekspertami prawnymi.
         Obsługujemy wszystkie 16 województw, oferując dostęp do szerokiego spektrum specjalizacji
         prawnych.
       </p>
@@ -371,7 +371,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
           Bezpieczeństwo
         </h4>
         <p class="text-sm text-neutral-400">
-          Wszystkie kancelarie są weryfikowane. Twoje dane są chronione najwyższymi standardami bezpieczeństwa zgodnie z RODO.
+          Wszyscy eksperci są weryfikowani. Twoje dane są chronione najwyższymi standardami bezpieczeństwa zgodnie z RODO.
         </p>
       </div>
 
@@ -395,7 +395,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
           Transparentność
         </h4>
         <p class="text-sm text-neutral-400">
-          Jasne ceny, szczegółowe profile kancelarii, prawdziwe opinie klientów. Żadnych ukrytych kosztów.
+          Jasne ceny, szczegółowe profile eksperta, prawdziwe opinie klientów. Żadnych ukrytych kosztów.
         </p>
       </div>
     </div>
@@ -528,7 +528,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       title: 'Regulamin platformy',
       slug: 'regulamin',
       metaTitle: 'Regulamin Platformy - Prosta Sprawa',
-      metaDescription: 'Zasady korzystania z platformy łączącej klientów z kancelariami prawnymi Prosta Sprawa.',
+      metaDescription: 'Zasady korzystania z platformy łączącej klientów z ekspertami prawnymi Prosta Sprawa.',
       published: true,
       publishedAt: new Date(),
     }

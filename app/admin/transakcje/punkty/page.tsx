@@ -158,7 +158,7 @@ export default function AdminTransakcjePunktyPage() {
         <div>
           <h1 className="text-3xl font-bold">Transakcje</h1>
           <p className="text-muted-foreground mt-2">
-            Zarządzaj wszystkimi transakcjami kancelarii
+            Zarządzaj wszystkimi transakcjami ekspertów
           </p>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function AdminTransakcjePunktyPage() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Szukaj po opisie, kancelarii..."
+                placeholder="Szukaj po opisie, eksperta..."
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -264,7 +264,7 @@ export default function AdminTransakcjePunktyPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Data operacji</TableHead>
-                <TableHead>Kancelaria</TableHead>
+                <TableHead>Ekspert</TableHead>
                 <TableHead>Typ</TableHead>
                 <TableHead>Opis</TableHead>
                 <TableHead>Zmiana punktowa</TableHead>
@@ -420,7 +420,7 @@ export default function AdminTransakcjePunktyPage() {
 
               {/* Law Firm Details */}
               <div>
-                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Dane Kancelarii</h4>
+                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Dane Eksperta</h4>
                 <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
                   <div>
                     <span className="text-muted-foreground block text-xs">Nazwa firmy / Nazwa</span>
@@ -431,7 +431,7 @@ export default function AdminTransakcjePunktyPage() {
                     <span className="font-semibold select-all text-primary/90">{selectedTx.lawFirm.emailKontakt}</span>
                   </div>
                   <div className="col-span-2 border-t pt-2 mt-1">
-                    <span className="text-muted-foreground block text-xs">Aktualne saldo punktów kancelarii</span>
+                    <span className="text-muted-foreground block text-xs">Aktualne saldo punktów eksperta</span>
                     <span className="font-semibold text-emerald-600 dark:text-emerald-500 font-mono">{selectedTx.lawFirm.punktySaldo} pkt</span>
                   </div>
                 </div>

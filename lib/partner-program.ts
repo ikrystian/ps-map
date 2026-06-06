@@ -2,7 +2,7 @@
  * Partner Program Utilities
  *
  * Narzędzia do obsługi programu partnerskiego:
- * - Weryfikacja obecności bannera na stronie kancelarii
+ * - Weryfikacja obecności bannera na stronie eksperta
  * - Generowanie unikalnych kodów bannerów
  * - Automatyczne przydzielanie punktów
  */
@@ -10,7 +10,7 @@
 import { prisma } from '@/lib/prisma'
 
 /**
- * Generuje unikalny kod bannera dla kancelarii
+ * Generuje unikalny kod bannera dla ekspertów
  */
 export function generateBannerCode(lawFirmId: string): string {
   // Tworzymy kod z pierwszych 8 znaków ID + timestamp
@@ -20,9 +20,9 @@ export function generateBannerCode(lawFirmId: string): string {
 }
 
 /**
- * Weryfikuje obecność bannera na stronie kancelarii
+ * Weryfikuje obecność bannera na stronie eksperta
  *
- * @param websiteUrl - URL strony kancelarii do weryfikacji
+ * @param websiteUrl - URL strony eksperta do weryfikacji
  * @param bannerCode - Unikalny kod bannera do znalezienia
  * @returns Promise z wynikiem weryfikacji
  */
@@ -258,7 +258,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
 
       // Przyznaj punkty w transakcji
       await prisma.$transaction(async (tx: any) => {
-        // Dodaj punkty do salda kancelarii
+        // Dodaj punkty do salda eksperta
         await tx.lawFirm.update({
           where: { id: partner.lawFirmId },
           data: {
@@ -306,7 +306,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
 }
 
 /**
- * Generuje HTML kod bannera dla kancelarii
+ * Generuje HTML kod bannera dla ekspertów
  */
 export function generateBannerHtml(bannerCode: string): string {
   return `<!-- ProstaSprawa Partner Banner -->

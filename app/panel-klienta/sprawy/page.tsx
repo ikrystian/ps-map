@@ -417,7 +417,7 @@ export default function ClientCasesPage() {
               <Briefcase className="mx-auto h-14 w-14 text-muted-foreground/60 mb-4 animate-pulse" />
               <h3 className="text-xl font-bold text-white mb-2 font-playfair">Nie masz jeszcze żadnych spraw</h3>
               <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                Dodaj swoją pierwszą sprawę, aby otrzymać bezpłatne oferty od wyspecjalizowanych kancelarii i ekspertów.
+                Dodaj swoją pierwszą sprawę, aby otrzymać bezpłatne oferty od wyspecjalizowanych eksperta i ekspertów.
               </p>
               <Button
                 onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
@@ -535,7 +535,7 @@ export default function ClientCasesPage() {
                               <Avatar key={offer.id} className="h-5 w-5 border border-[#d7b56d]/40 bg-zinc-800">
                                 <AvatarImage
                                   src={offer.lawFirm?.logo || offer.lawFirm?.zdjecieGlowne || undefined}
-                                  alt={offer.lawFirm?.nazwa || "Kancelaria"}
+                                  alt={offer.lawFirm?.nazwa || "Ekspert"}
                                 />
                                 <AvatarFallback className="text-[8px] font-bold text-[#d7b56d] bg-[#d7b56d]/10">
                                   {(offer.lawFirm?.nazwa ?? "K").slice(0, 2).toUpperCase()}

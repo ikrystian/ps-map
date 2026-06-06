@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const lawFirmId = searchParams.get("lawFirmId")
 
     if (lawFirmId) {
-      // Pobierz usługi określonej kancelarii (publiczne)
+      // Pobierz usługi określonej eksperta (publiczne)
       const services = await prisma.service.findMany({
         where: {
           lawFirmId,
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    // Pobierz kancelarię
+    // Pobierz eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Pobierz wszystkie usługi kancelarii
+    // Pobierz wszystkie usługi eksperta
     const services = await prisma.service.findMany({
       where: {
         lawFirmId: lawFirm.id,
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Pobierz kancelarię
+    // Pobierz eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })

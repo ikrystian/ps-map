@@ -2,7 +2,7 @@
  * API Middleware dla Systemu Uprawnień
  *
  * Zapewnia funkcje do zabezpieczania API endpoints sprawdzaniem uprawnień
- * na podstawie pakietu subskrypcji kancelarii.
+ * na podstawie pakietu subskrypcji eksperta.
  */
 
 import { auth } from "@/lib/auth";
@@ -42,12 +42,12 @@ interface LimitError {
 }
 
 // ============================================================================
-// POBIERANIE KANCELARII Z AUTORYZACJĄ
+// POBIERANIE EKSPERTÓW Z AUTORYZACJĄ
 // ============================================================================
 
 /**
  * Sprawdza czy pakiet wygasł i aktualizuje bazę danych jeśli trzeba.
- * Zwraca zaktualizowany obiekt kancelarii lub ten sam jeśli nie było zmian.
+ * Zwraca zaktualizowany obiekt eksperta lub ten sam jeśli nie było zmian.
  */
 export async function checkAndUpdatePackageExpiry<T extends LawFirmPermissionData>(lawFirm: T): Promise<T> {
   if (isPackageExpired(lawFirm)) {
@@ -72,8 +72,8 @@ export async function checkAndUpdatePackageExpiry<T extends LawFirmPermissionDat
 }
 
 /**
- * Pobiera zalogowaną kancelarię z pełnymi danymi o uprawnieniach
- * Zwraca null jeśli użytkownik nie jest zalogowany lub nie jest kancelarią
+ * Pobiera zalogowaną eksperta z pełnymi danymi o uprawnieniach
+ * Zwraca null jeśli użytkownik nie jest zalogowany lub nie jest ekspertem
  */
 export async function getAuthenticatedLawFirm(): Promise<LawFirmPermissionData | null> {
   const session = await auth();
@@ -106,7 +106,7 @@ export async function getAuthenticatedLawFirm(): Promise<LawFirmPermissionData |
 }
 
 /**
- * Wymaga uwierzytelnienia jako kancelaria
+ * Wymaga uwierzytelnienia jako ekspert
  * Zwraca NextResponse z błędem 401 jeśli nie zalogowano lub 403 jeśli nie LAW_FIRM
  */
 export async function requireLawFirmAuth(): Promise<
@@ -117,7 +117,7 @@ export async function requireLawFirmAuth(): Promise<
   if (!lawFirm) {
     return NextResponse.json(
       {
-        error: "Unauthorized - musisz być zalogowany jako kancelaria",
+        error: "Unauthorized - musisz być zalogowany jako ekspert",
         code: "UNAUTHORIZED",
       },
       { status: 401 }
@@ -235,7 +235,7 @@ export async function requireLimit(
 }
 
 /**
- * Pobiera aktualną liczbę aktywnych spraw dla kancelarii
+ * Pobiera aktualną liczbę aktywnych spraw dla ekspertów
  */
 export async function getActiveCasesCount(lawFirmId: string): Promise<number> {
   const count = await prisma.offer.count({
@@ -253,7 +253,7 @@ export async function getActiveCasesCount(lawFirmId: string): Promise<number> {
 }
 
 /**
- * Pobiera aktualną liczbę kategorii dla kancelarii
+ * Pobiera aktualną liczbę kategorii dla ekspertów
  */
 export async function getCategoriesCount(lawFirmId: string): Promise<number> {
   const count = await prisma.lawFirmCategory.count({
@@ -266,7 +266,7 @@ export async function getCategoriesCount(lawFirmId: string): Promise<number> {
 }
 
 /**
- * Pobiera aktualną liczbę województw dla kancelarii
+ * Pobiera aktualną liczbę województw dla ekspertów
  */
 export async function getVoivodeshipsCount(lawFirmId: string): Promise<number> {
   const count = await prisma.lawFirmVoivodeship.count({
@@ -284,7 +284,7 @@ export async function getVoivodeshipsCount(lawFirmId: string): Promise<number> {
 // ============================================================================
 
 /**
- * Wrapper dla route handlers które wymaga autoryzacji jako kancelaria
+ * Wrapper dla route handlers które wymaga autoryzacji jako ekspert
  * oraz sprawdza podstawowe warunki (pakiet aktywny, etc.)
  *
  * @example
@@ -312,7 +312,7 @@ export async function withLawFirmAuth(): Promise<
 }
 
 /**
- * Sprawdza czy kancelaria może dodać ofertę do sprawy
+ * Sprawdza czy ekspert może dodać ofertę do sprawy
  * (sprawdza limit aktywnych spraw)
  */
 export async function canSubmitOffer(lawFirmId: string): Promise<{
@@ -334,7 +334,7 @@ export async function canSubmitOffer(lawFirmId: string): Promise<{
   if (!lawFirm) {
     return {
       allowed: false,
-      reason: "Kancelaria nie została znaleziona.",
+      reason: "Ekspert nie została znaleziona.",
     };
   }
 

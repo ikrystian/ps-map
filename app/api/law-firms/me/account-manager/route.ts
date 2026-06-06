@@ -2,7 +2,7 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
-// GET /api/law-firms/me/account-manager - Pobierz opiekuna przypisanego do zalogowanej kancelarii
+// GET /api/law-firms/me/account-manager - Pobierz opiekuna przypisanego do zalogowanej eksperta
 export async function GET(request: NextRequest) {
   try {
     console.log('[API] /api/law-firms/me/account-manager - Start')

@@ -349,7 +349,7 @@ export default function NewUserPage() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="CLIENT">Klient</SelectItem>
-                          <SelectItem value="LAW_FIRM">Kancelaria</SelectItem>
+                          <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
                           <SelectItem value="ADMIN">Administrator</SelectItem>
                         </SelectContent>
                       </Select>

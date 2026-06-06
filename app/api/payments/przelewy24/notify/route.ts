@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Pobierz zaktualizowaną kancelarię
+      // Pobierz zaktualizowaną eksperta
       const lawFirm = await tx.lawFirm.findUnique({
         where: { id: order.lawFirmId },
       })

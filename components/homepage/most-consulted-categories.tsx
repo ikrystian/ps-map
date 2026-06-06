@@ -198,7 +198,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
   const getProfessionTitle = (firm: LawFirm) => {
     const name = firm.nazwa.toLowerCase()
     if (name.includes("radca")) return "RADCA PRAWNY"
-    if (name.includes("kancelaria")) return "KANCELARIA"
+    if (name.includes("ekspert")) return "EKSPERT"
     if (name.includes("aplikant")) return "APLIKANT"
     if (name.includes("doradca")) return "DORADCA PRAWNY"
     return "ADWOKAT"
@@ -347,7 +347,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                           <ContactButton
                             icon={Phone}
                             href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
-                            title="Zadzwoń do kancelarii"
+                            title="Zadzwoń do ekspercie"
                           />
 
                           {/* Circular Email Action */}

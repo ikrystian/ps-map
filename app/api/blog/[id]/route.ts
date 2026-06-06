@@ -28,7 +28,7 @@ export async function GET(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (post.lawFirmId !== lawFirm.id) {
       return NextResponse.json({ error: "Brak dostępu do tego wpisu" }, { status: 403 })
     }
@@ -62,7 +62,7 @@ export async function PUT(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (existingPost.lawFirmId !== lawFirm.id) {
       return NextResponse.json({ error: "Brak dostępu do tego wpisu" }, { status: 403 })
     }
@@ -175,7 +175,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis należy do tej kancelarii
+    // Sprawdź czy wpis należy do tego eksperta
     if (post.lawFirmId !== lawFirm.id) {
       return NextResponse.json({ error: "Brak dostępu do tego wpisu" }, { status: 403 })
     }

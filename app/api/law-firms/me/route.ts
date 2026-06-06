@@ -14,15 +14,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       include: {
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching law firm data:", error)
     return Response.json(
-      { error: "Błąd podczas pobierania danych kancelarii" },
+      { error: "Błąd podczas pobierania danych eksperta" },
       { status: 500 }
     )
   }

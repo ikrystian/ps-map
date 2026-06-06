@@ -221,14 +221,14 @@ export default function NewLawFirmPage() {
       })
 
       if (response.ok) {
-        toast.success("Kancelaria została utworzona pomyślnie")
+        toast.success("Ekspert została utworzona pomyślnie")
         router.push("/admin/law-firms")
       } else {
         const error = await response.json()
-        throw new Error(error.error || "Błąd podczas tworzenia kancelarii")
+        throw new Error(error.error || "Błąd podczas tworzenia eksperta")
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć kancelarii")
+      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć eksperta")
     } finally {
       setIsSubmitting(false)
     }
@@ -243,8 +243,8 @@ export default function NewLawFirmPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Dodaj Nową Kancelarię</h1>
-          <p className="text-muted-foreground">Wprowadź dane nowej kancelarii prawniczej</p>
+          <h1 className="text-3xl font-bold">Dodaj Nową Eksperta</h1>
+          <p className="text-muted-foreground">Wprowadź dane nowego eksperta prawniczej</p>
         </div>
       </div>
 
@@ -315,7 +315,7 @@ export default function NewLawFirmPage() {
           <Card>
             <CardHeader>
               <CardTitle>Dane podstawowe</CardTitle>
-              <CardDescription>Informacje o kancelarii</CardDescription>
+              <CardDescription>Informacje o ekspercie</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -370,7 +370,7 @@ export default function NewLawFirmPage() {
                     <FormItem>
                       <FormLabel>Nazwa</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nazwa kancelarii" {...field} />
+                        <Input placeholder="Nazwa eksperta" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -398,10 +398,10 @@ export default function NewLawFirmPage() {
                   <FormItem>
                     <FormLabel>Slug URL (opcjonalnie)</FormLabel>
                     <FormControl>
-                      <Input placeholder="np. kancelaria-kowalski" {...field} />
+                      <Input placeholder="np. ekspert-kowalski" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Przyjazny URL dla profilu kancelarii. Zostanie wygenerowany automatycznie jeśli pozostawisz puste.
+                      Przyjazny URL dla profilu eksperta. Zostanie wygenerowany automatycznie jeśli pozostawisz puste.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -457,7 +457,7 @@ export default function NewLawFirmPage() {
                   <FormItem>
                     <FormLabel>Opis (opcjonalnie)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Opis kancelarii..." {...field} />
+                      <Textarea placeholder="Opis eksperta..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -475,7 +475,7 @@ export default function NewLawFirmPage() {
                         value={field.value}
                         onChange={field.onChange}
                         label=""
-                        description="Logo kancelarii będzie wyświetlane w profilu publicznym"
+                        description="Logo ekspercie będzie wyświetlane w profilu publicznym"
                       />
                     </FormControl>
                     <FormMessage />
@@ -571,7 +571,7 @@ export default function NewLawFirmPage() {
                   <FormItem>
                     <FormLabel>Email kontaktowy</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="kontakt@kancelaria.pl" {...field} />
+                      <Input type="email" placeholder="kontakt@ekspert.pl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -584,7 +584,7 @@ export default function NewLawFirmPage() {
           <Card>
             <CardHeader>
               <CardTitle>Adres</CardTitle>
-              <CardDescription>Lokalizacja kancelarii</CardDescription>
+              <CardDescription>Lokalizacja eksperta</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -889,7 +889,7 @@ export default function NewLawFirmPage() {
                         value={field.value}
                         onChange={field.onChange}
                         label=""
-                        description="Główne zdjęcie profilu kancelarii"
+                        description="Główne zdjęcie profilu eksperta"
                       />
                     </FormControl>
                     <FormMessage />
@@ -971,7 +971,7 @@ export default function NewLawFirmPage() {
           <Card>
             <CardHeader>
               <CardTitle>Godziny otwarcia</CardTitle>
-              <CardDescription>Godziny pracy kancelarii</CardDescription>
+              <CardDescription>Godziny pracy eksperta</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -1209,7 +1209,7 @@ export default function NewLawFirmPage() {
                       <div className="space-y-1 leading-none">
                         <FormLabel>Cała Polska</FormLabel>
                         <FormDescription>
-                          Kancelaria świadczy usługi na terenie całej Polski
+                          Ekspert świadczy usługi na terenie całej Polski
                         </FormDescription>
                       </div>
                     </FormItem>
@@ -1229,7 +1229,7 @@ export default function NewLawFirmPage() {
                       <div className="space-y-1 leading-none">
                         <FormLabel>Tylko online</FormLabel>
                         <FormDescription>
-                          Kancelaria świadczy usługi wyłącznie online
+                          Ekspert świadczy usługi wyłącznie online
                         </FormDescription>
                       </div>
                     </FormItem>
@@ -1320,7 +1320,7 @@ export default function NewLawFirmPage() {
               Anuluj
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Tworzenie..." : "Dodaj Kancelarię"}
+              {isSubmitting ? "Tworzenie..." : "Dodaj Eksperta"}
             </Button>
           </div>
         </form>

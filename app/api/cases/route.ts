@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       const searchParams = request.nextUrl.searchParams
       const includeAll = searchParams.get("includeAll") === "true"
 
-      // Pobierz pełny profil kancelarii (zakres usług)
+      // Pobierz pełny profil eksperta (zakres usług)
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { userId: session.user.id },
         select: {
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
       }
 
-      // Zakres usług kancelarii
+      // Zakres usług eksperta
       const lawFirmCategoryIds = lawFirm.categories.map((c) => c.categoryId)
       const lawFirmVoivodeshipIds = lawFirm.voivodeships.map((v) => v.voivodeshipId)
       const lawFirmCityIds = lawFirm.cities.map((c) => c.cityId)
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: "desc" },
       })
 
-      // Filtruj sprawy, aby ukryć te z zaakceptowanymi ofertami od innych kancelarii
+      // Filtruj sprawy, aby ukryć te z zaakceptowanymi ofertami od innych eksperta
       const filteredCases = allCases.filter((caseItem: any) => {
         // Sprawdź czy istnieje zaakceptowana oferta
         const acceptedOffer = caseItem.offers.find((offer: any) => offer.status === "ZAAKCEPTOWANA")
@@ -170,12 +170,12 @@ export async function GET(request: NextRequest) {
           return true
         }
 
-        // Jeśli zaakceptowana oferta jest od tej kancelarii, pokaż sprawę
+        // Jeśli zaakceptowana oferta jest od tego eksperta, pokaż sprawę
         if (acceptedOffer.lawFirmId === lawFirm.id) {
           return true
         }
 
-        // W przeciwnym razie ukryj sprawę (zaakceptowana oferta od innej kancelarii)
+        // W przeciwnym razie ukryj sprawę (zaakceptowana oferta od innej eksperta)
         return false
       })
 
@@ -183,7 +183,7 @@ export async function GET(request: NextRequest) {
       const cases = filteredCases.map((caseItem: any) => ({
         ...caseItem,
         offers: caseItem.offers
-          .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tej kancelarii
+          .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tego eksperta
           .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
       }))
 
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       typ: "SYSTEM",
       tytul: "Sprawa dodana pomyślnie",
-      tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Kancelarie prawne mogą teraz składać oferty.`,
+      tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Eksperci prawni mogą teraz składać oferty.`,
       linkUrl: `/panel-klienta/sprawy/${newCase.id}`,
       force: true, // Kluczowe / systemowe powiadomienie
     })
@@ -354,7 +354,7 @@ export async function POST(request: NextRequest) {
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
 
-    // Powiadom kancelarie o nowej sprawie – TYLKO te, którym ta sprawa pojawi się na liście:
+    // Powiadom ekspertów o nowej sprawie – TYLKO te, którym ta sprawa pojawi się na liście:
     // - callaPolska=true: pasuje do kategorii (lub brak kategorii → wszystkie)
     // - callaPolska=false: AND(lokalizacja, kategoria)
     const lawFirms = await prisma.lawFirm.findMany({
@@ -430,7 +430,7 @@ export async function POST(request: NextRequest) {
       console.error("Failed to send case confirmation email to client:", emailError)
     }
 
-    // Utwórz powiadomienia dla kancelarii
+    // Utwórz powiadomienia dla ekspertów
     console.log(`[NOTIFY] Found ${lawFirms.length} law firm(s) matching new case "${newCase.nazwaSprawy}" (cat: ${newCase.categoryId}, voiv: ${newCase.voivodeshipId}, city: ${newCase.cityId})`)
 
     if (lawFirms.length > 0) {
@@ -450,17 +450,17 @@ export async function POST(request: NextRequest) {
         })
         console.log(`[NOTIFY] Result for ${lf.nazwa}: success=${success}, emailSent=${emailSent}, notificationId=${lfNotification?.id}`)
 
-        // Real-time socket emit do konkretnej kancelarii
+        // Real-time socket emit do konkretnej eksperta
         await emitNewNotification(lf.userId, lfNotification)
 
-        // Wyślij e-mail powiadomienie do kancelarii
+        // Wyślij e-mail powiadomienie do ekspercie
         if (lf.user?.email) {
           try {
             await sendEmailWithTemplate({
               to: lf.user.email,
               templateType: EmailType.NOWA_SPRAWA,
               variables: {
-                "{kancelaria}": lf.nazwa,
+                "{ekspert}": lf.nazwa,
                 "{nazwaSprawi}": newCase.nazwaSprawy,
                 "{kategoria}": category.nazwa,
                 "{klient}": `${client.imie} ${client.nazwisko}`,

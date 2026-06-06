@@ -74,7 +74,7 @@ export function initScheduler() {
     }
   }, 15 * 60 * 1000)
 
-  // 4. Sprawdzanie wygasłych subskrypcji pakietów kancelarii (co 1 godzinę)
+  // 4. Sprawdzanie wygasłych subskrypcji pakietów eksperta (co 1 godzinę)
   setInterval(async () => {
     if (isSubscriptionsJobRunning) return
     isSubscriptionsJobRunning = true

@@ -250,10 +250,10 @@ export async function POST(
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(recipientId, notification)
 
-    // Jeśli klient wysyła załączniki, utwórz dokumenty dla kancelarii
+    // Jeśli klient wysyła załączniki, utwórz dokumenty dla ekspertów
     if (attachments && attachments.length > 0 && session.user.role === "CLIENT") {
       try {
-        // Pobierz ID kancelarii z konwersacji
+        // Pobierz ID eksperta z konwersacji
         const lawFirmUser = await prisma.user.findUnique({
           where: { id: conversation.lawFirmUserId },
           include: { lawFirm: true },

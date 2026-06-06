@@ -103,9 +103,9 @@ interface GlobalOverride {
 }
 
 const CONTEXTS = [
-  { value: "SEARCH", label: "Wyszukiwarka / Lista główna", desc: "Ogólna wyszukiwarka i lista kancelarii na stronie" },
+  { value: "SEARCH", label: "Wyszukiwarka / Lista główna", desc: "Ogólna wyszukiwarka i lista ekspertów na stronie" },
   { value: "HOMEPAGE_FEATURED", label: "Strona główna - Wyróżnione (STRONA_GLOWNA)", desc: "Główna sekcja premium u góry strony" },
-  { value: "HOMEPAGE_TOP", label: "Strona główna - Top Lista (TOP_LISTA)", desc: "Sekcja 'Top Kancelarie' w dolnej części" },
+  { value: "HOMEPAGE_TOP", label: "Strona główna - Top Lista (TOP_LISTA)", desc: "Sekcja 'Top Eksperci' w dolnej części" },
   { value: "HOMEPAGE_RECOMMENDED", label: "Strona główna - Polecani (POLECANI_PRAWNICY)", desc: "Sekcja 'Polecani prawnicy i adwokaci'" },
   { value: "HOMEPAGE_CONSULTED", label: "Strona główna - Najczęściej konsultowani", desc: "Sekcja najczęściej konsultowanych kategorii" },
 ]
@@ -409,7 +409,7 @@ export default function AdminPozycjonowaniePage() {
                 {context === "SEARCH" ? (
                   <div className="space-y-2 mt-2 text-sm text-muted-foreground">
                     <p>
-                      Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdej kancelarii przypisywany jest
+                      Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdej eksperta przypisywany jest
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
                     <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-2xl mx-auto flex items-center justify-center gap-2">
@@ -431,13 +431,13 @@ export default function AdminPozycjonowaniePage() {
                   </div>
                 ) : context === "HOMEPAGE_FEATURED" || context === "HOMEPAGE_TOP" ? (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Ta sekcja wyświetla wyłącznie kancelarie, które mają aktywną promocję o typie odpowiednio{" "}
+                    Ta sekcja wyświetla wyłącznie ekspertów, które mają aktywną promocję o typie odpowiednio{" "}
                     <strong>Strona Główna Premium (STRONA_GLOWNA)</strong> lub <strong>Top Lista (TOP_LISTA)</strong>.
                     Domyślna kolejność zależy od **daty startu promocji** (najnowsze promocje pojawiają się jako pierwsze).
                   </p>
                 ) : (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Ta sekcja na stronie głównej wyświetla wyłącznie kancelarie z aktywną promocją typu{" "}
+                    Ta sekcja na stronie głównej wyświetla wyłącznie ekspertów z aktywną promocją typu{" "}
                     <strong>Polecani Prawnicy (POLECANI_PRAWNICY)</strong> lub <strong>Najczęściej Konsultowane
                       (NAJCZESCIEJ_KONSULTOWANE)</strong>. Domyślnie sortowane są one według **daty zakupu usługi** (najnowsze
                     zakupy u góry).
@@ -446,7 +446,7 @@ export default function AdminPozycjonowaniePage() {
                 <div className="flex items-center gap-2 border-t border-border/60 mt-4 pt-3 text-xs text-muted-foreground">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
                   <span>
-                    <strong>Zarządzanie Pozycją (Ręczne nadpisanie):</strong> Narzucenie pozycji X umieszcza kancelarię
+                    <strong>Zarządzanie Pozycją (Ręczne nadpisanie):</strong> Narzucenie pozycji X umieszcza eksperta
                     dokładnie na miejscu X. Pozostałe elementy przesuwają się o 1 pozycję w dół.
                   </span>
                 </div>
@@ -486,7 +486,7 @@ export default function AdminPozycjonowaniePage() {
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
                     <tr className="bg-zinc-800/40 text-muted-foreground border-b border-border/80 text-xs uppercase font-mono">
-                      <th className="px-6 py-4">Kancelaria</th>
+                      <th className="px-6 py-4">Ekspert</th>
                       <th className="px-6 py-4">Kontekst Widoku</th>
                       <th className="px-6 py-4 text-center">Narzucana Pozycja</th>
                       <th className="px-6 py-4">Powód / Notatka</th>
@@ -574,7 +574,7 @@ export default function AdminPozycjonowaniePage() {
               </CardHeader>
               <CardContent className="pb-4 pt-0 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="search">Szukaj kancelarii</Label>
+                  <Label htmlFor="search">Szukaj eksperta</Label>
                   <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -670,7 +670,7 @@ export default function AdminPozycjonowaniePage() {
               ) : filteredFirms.length === 0 ? (
                 <div className="text-center py-16">
                   <Sliders className="mx-auto h-12 w-12 text-muted-foreground opacity-40 mb-3" />
-                  <p className="text-muted-foreground font-medium">Brak kancelarii spełniających podane kryteria filtrów</p>
+                  <p className="text-muted-foreground font-medium">Brak eksperta spełniających podane kryteria filtrów</p>
                   <p className="text-xs text-muted-foreground/60 mt-1">Upewnij się, że wybrane filtry są poprawne lub zmień kontekst</p>
                 </div>
               ) : (

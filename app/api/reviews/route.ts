@@ -13,18 +13,18 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "10")
 
-    // Sprawdź czy użytkownik jest zalogowany jako kancelaria
+    // Sprawdź czy użytkownik jest zalogowany jako ekspert
     const session = await auth()
     const isLawFirm = session?.user?.role === "LAW_FIRM"
 
     if (!lawFirmId) {
       return Response.json(
-        { error: "Brak ID kancelarii" },
+        { error: "Brak ID eksperta" },
         { status: 400 }
       )
     }
 
-    // Jeśli zalogowany użytkownik to kancelaria, pobierz jej ID
+    // Jeśli zalogowany użytkownik to ekspert, pobierz jej ID
     let userLawFirmId: string | null = null
     if (isLawFirm && session?.user?.id) {
       const lawFirm = await prisma.lawFirm.findUnique({
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     // Buduj warunki zapytania
     const where: Prisma.ReviewWhereInput = {
       lawFirmId,
-      // Pokaż wszystkie opinie dla właściciela kancelarii, tylko aktywne dla innych
+      // Pokaż wszystkie opinie dla właściciela eksperta, tylko aktywne dla innych
       ...(userLawFirmId !== lawFirmId ? { aktywna: true } : {}),
     }
 
@@ -177,19 +177,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy kancelaria istnieje
+    // Sprawdź czy ekspert istnieje
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { id: lawFirmId },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono kancelarii" },
+        { error: "Nie znaleziono ekspercie" },
         { status: 404 }
       )
     }
 
-    // Sprawdź czy klient już wystawił opinię tej kancelarii
+    // Sprawdź czy klient już wystawił opinię tego eksperta
     const existingReview = await prisma.review.findFirst({
       where: {
         lawFirmId,
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
 
     if (existingReview) {
       return Response.json(
-        { error: "Wystawiłeś już opinię tej kancelarii" },
+        { error: "Wystawiłeś już opinię temu ekspertowi" },
         { status: 400 }
       )
     }
@@ -244,8 +244,8 @@ export async function POST(request: NextRequest) {
         const { notification } = await sendSystemNotification({
           userId: admin.id,
           typ: "SYSTEM",
-          tytul: "Nowa opinia o kancelarii",
-          tresc: `Użytkownik ${userEmail} dodał opinię o tytule "${review.tytulOpinii}" dla kancelarii "${lawFirm.nazwa}".`,
+          tytul: "Nowa opinia o ekspercie",
+          tresc: `Użytkownik ${userEmail} dodał opinię o tytule "${review.tytulOpinii}" dla ekspertów "${lawFirm.nazwa}".`,
           linkUrl: `/admin/reviews?search=${encodeURIComponent(review.tytulOpinii)}`,
           force: true,
         })

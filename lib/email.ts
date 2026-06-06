@@ -512,7 +512,7 @@ export function generatePromotionActivatedEmail(
     <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #3d3929; margin-top: 24px; margin-bottom: 12px;">Co dalej?</h3>
     <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
       <li style="margin-bottom: 8px;">Twój profil jest teraz wyświetlany z większą widocznością w wynikach wyszukiwania.</li>
-      <li style="margin-bottom: 8px;">Możesz śledzić statystyki promocji i wyświetleń w panelu kancelarii.</li>
+      <li style="margin-bottom: 8px;">Możesz śledzić statystyki promocji i wyświetleń w panelu eksperta.</li>
       <li style="margin-bottom: 0;">Promocja odnowi się automatycznie, jeśli włączyłeś opcję automatycznego odnowienia.</li>
     </ul>
 
@@ -538,7 +538,7 @@ Szczegóły:
 
 Co dalej?
 - Twój profil jest teraz wyświetlany z większą widocznością
-- Możesz śledzić statystyki promocji w panelu kancelarii
+- Możesz śledzić statystyki promocji w panelu eksperta
 - Promocja odnowi się automatycznie, jeśli włączyłeś automatyczne odnowienie
 
 Zobacz statystyki: ${process.env.NEXTAUTH_URL}/panel-eksperta/promowanie
@@ -705,7 +705,7 @@ Co się stało?
 - Możesz ją ponownie aktywować po doładowaniu punktów
 
 Co możesz zrobić?
-- Dokup punkty w panelu kancelarii
+- Dokup punkty w panelu eksperta
 - Aktywuj promocję ponownie
 
 Dokup punkty: ${process.env.NEXTAUTH_URL}/panel-eksperta/punkty
@@ -732,7 +732,7 @@ export function generateEmailVerificationEmail(
   const contentHtml = `
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Witamy w ProstaSprawa!</h2>
     <p style="margin: 0 0 16px 0;">${greeting}</p>
-    <p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.</p>
+    <p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację ${isLawFirm ? 'eksperta' : 'konta'} w serwisie ProstaSprawa.</p>
     <p style="margin: 0 0 24px 0;">Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email klikając w poniższy przycisk:</p>
     
     <div style="text-align: center; margin: 30px 0;">
@@ -753,7 +753,7 @@ export function generateEmailVerificationEmail(
     
     ${isLawFirm ? `
       <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
-        <li style="margin-bottom: 8px;">Uzupełnić profil swojej kancelarii prawnej.</li>
+        <li style="margin-bottom: 8px;">Uzupełnić profil swojej eksperta prawnej.</li>
         <li style="margin-bottom: 8px;">Przeglądać dostępne zapytania i sprawy od klientów.</li>
         <li style="margin-bottom: 8px;">Składać profesjonalne oferty pomocy prawnej.</li>
         <li style="margin-bottom: 0;">Aktywować promocje zwiększające widoczność Twojego profilu.</li>
@@ -761,7 +761,7 @@ export function generateEmailVerificationEmail(
     ` : `
       <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
         <li style="margin-bottom: 8px;">Dodawać nowe sprawy i zapytania prawne.</li>
-        <li style="margin-bottom: 8px;">Przeglądać oferty pomocy od zweryfikowanych kancelarii.</li>
+        <li style="margin-bottom: 8px;">Przeglądać oferty pomocy od zweryfikowanych eksperta.</li>
         <li style="margin-bottom: 8px;">Bezpośrednio i bezpiecznie kontaktować się z prawnikami.</li>
         <li style="margin-bottom: 0;">Wystawiać oceny i opinie po zakończonej współpracy.</li>
       </ul>
@@ -777,7 +777,7 @@ Witamy w ProstaSprawa!
 
 ${userName ? `Witaj ${userName},` : 'Witaj,'}
 
-Dziękujemy za rejestrację ${isLawFirm ? 'kancelarii' : 'konta'} w serwisie ProstaSprawa.
+Dziękujemy za rejestrację ${isLawFirm ? 'eksperta' : 'konta'} w serwisie ProstaSprawa.
 
 Aby aktywować swoje konto i rozpocząć korzystanie z platformy, musisz potwierdzić swój adres email.
 
@@ -792,7 +792,7 @@ WAŻNE:
 ${isLawFirm ? `
 Co dalej?
 Po potwierdzeniu emaila będziesz mógł:
-- Uzupełnić profil swojej kancelarii
+- Uzupełnić profil swojej eksperta
 - Przeglądać dostępne sprawy
 - Składać oferty klientom
 - Aktywować promocje swojego profilu
@@ -800,7 +800,7 @@ Po potwierdzeniu emaila będziesz mógł:
 Co dalej?
 Po potwierdzeniu emaila będziesz mógł:
 - Dodawać sprawy prawne
-- Przeglądać oferty kancelarii
+- Przeglądać oferty eksperta
 - Kontaktować się z prawnikami
 - Wystawiać opinie
 `}

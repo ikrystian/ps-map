@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Location parameter is required" }, { status: 400 })
     }
 
-    // Jeśli zalogowany użytkownik to kancelaria z pakietem BIZNES, ukrywamy reklamy
+    // Jeśli zalogowany użytkownik to ekspert z pakietem BIZNES, ukrywamy reklamy
     const lawFirm = await getAuthenticatedLawFirm()
     if (lawFirm?.pakietSubskrypcji === "BIZNES") {
       return NextResponse.json({ ad: null, hideBanner: true })

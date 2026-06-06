@@ -4,7 +4,7 @@ import { EmailType } from "@prisma/client"
 import { format } from "date-fns"
 
 /**
- * Sprawdza kancelarie z aktywnym pakietem subskrypcji, które wygasły,
+ * Sprawdza ekspertów z aktywnym pakietem subskrypcji, które wygasły,
  * dezaktywuje pakiety i wysyła powiadomienia e-mail.
  */
 export async function checkExpiredSubscriptions(): Promise<number> {
@@ -44,7 +44,7 @@ export async function checkExpiredSubscriptions(): Promise<number> {
           to: recipientEmail,
           templateType: EmailType.SUBSKRYPCJA_KONIEC,
           variables: {
-            "{kancelaria}": lf.nazwa,
+            "{ekspert}": lf.nazwa,
             "{nazwaSubskrypcji}": packageType,
             "{dataWygasniecia}": dataWygasnieciaStr,
             "{linkDoPakietow}": `${baseUrl}/panel-eksperta/pakiet`

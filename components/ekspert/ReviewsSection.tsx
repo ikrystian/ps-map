@@ -362,7 +362,7 @@ export function ReviewsSection({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{recommendedRate}% klientów</p>
-                  <p className="text-xs text-muted-foreground">poleca tę kancelarię</p>
+                  <p className="text-xs text-muted-foreground">poleca tę eksperta</p>
                 </div>
               </div>
             )}
@@ -378,9 +378,9 @@ export function ReviewsSection({
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold tracking-tight">Dodaj opinię o kancelarii</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold tracking-tight">Dodaj opinię o ekspercie</DialogTitle>
                     <DialogDescription className="text-muted-foreground">
-                      Podziel się swoimi doświadczeniami z pracy z kancelarią <strong>{lawFirmName}</strong>. Twoja opinia pomaga innym użytkownikom podjąć właściwą decyzję.
+                      Podziel się swoimi doświadczeniami ze współpracy z ekspertem <strong>{lawFirmName}</strong>. Twoja opinia pomaga innym użytkownikom podjąć właściwą decyzję.
                     </DialogDescription>
                   </DialogHeader>
 
@@ -388,7 +388,7 @@ export function ReviewsSection({
                     {/* Ocena ogólna */}
                     <div className="space-y-2 bg-secondary/30 p-4 rounded-xl border">
                       <Label htmlFor="ocenaOgolna" className="text-base font-semibold">Ocena ogólna *</Label>
-                      <p className="text-xs text-muted-foreground mb-3">Jak oceniasz całościową współpracę z kancelarią?</p>
+                      <p className="text-xs text-muted-foreground mb-3">Jak oceniasz całościową współpracę z ekspertem?</p>
                       <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -479,7 +479,7 @@ export function ReviewsSection({
                           onChange={(e) =>
                             setReviewForm({ ...reviewForm, trescOpinii: e.target.value })
                           }
-                          placeholder="Opisz szczegółowo swoje doświadczenia ze współpracy z kancelarią. Jak oceniasz zaangażowanie, poziom wiedzy merytorycznej oraz podejście do klienta..."
+                          placeholder="Opisz szczegółowo swoje doświadczenia ze współpracy z ekspertem. Jak oceniasz zaangażowanie, poziom wiedzy merytorycznej oraz podejście do klienta..."
                           rows={6}
                           required
                         />
@@ -504,7 +504,7 @@ export function ReviewsSection({
                         />
                         <Label htmlFor="polecam" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
                           <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
-                          Poleca tę kancelarię
+                          Poleca tę eksperta
                         </Label>
                       </div>
 
@@ -772,12 +772,12 @@ export function ReviewsSection({
                         {review.polecam ? (
                           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground font-semibold bg-muted px-2 py-0.5 rounded-md border border-border">
                             <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
-                            Poleca kancelarię
+                            Poleca eksperta
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground font-semibold bg-muted px-2 py-0.5 rounded-md border border-border">
                             <ThumbsDown className="h-3.5 w-3.5 text-muted-foreground" />
-                            Nie poleca kancelarii
+                            Nie poleca eksperta
                           </span>
                         )}
                       </div>
@@ -836,7 +836,7 @@ export function ReviewsSection({
                         </Avatar>
                         <div className="flex-1 space-y-1">
                           <div className="flex items-center justify-between">
-                            <p className="text-sm font-bold text-foreground">Odpowiedź kancelarii <strong>{lawFirmName}</strong></p>
+                            <p className="text-sm font-bold text-foreground">Odpowiedź eksperta <strong>{lawFirmName}</strong></p>
                             {review.dataOdpowiedzi && (
                               <p className="text-sm text-muted-foreground">
                                 {formatDate(review.dataOdpowiedzi)}
@@ -874,7 +874,7 @@ export function ReviewsSection({
                   <h4 className="text-lg font-semibold">Brak opinii spełniających kryteria</h4>
                   <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
                     {totalReviews === 0
-                      ? "Ta kancelaria nie posiada jeszcze żadnych opinii. Bądź pierwszy i dodaj opinię!"
+                      ? "Ta ekspert nie posiada jeszcze żadnych opinii. Bądź pierwszy i dodaj opinię!"
                       : "Zmień kryteria wyszukiwania lub filtry gwiazdek, aby zobaczyć pozostałe opinie."}
                   </p>
                 </div>

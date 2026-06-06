@@ -14,22 +14,22 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Dostęp tylko dla kancelarii" },
+        { error: "Dostęp tylko dla ekspertów" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     startOfMonth.setDate(1)
     startOfMonth.setHours(0, 0, 0, 0)
 
-    // Pobierz ostatnie sprawy (dostępne dla kancelarii)
+    // Pobierz ostatnie sprawy (dostępne dla ekspertów)
     const recentCases = await prisma.case.findMany({
       where: {
         status: {
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       take: 10,
     })
 
-    // Pobierz ostatnie oferty kancelarii
+    // Pobierz ostatnie oferty eksperta
     const recentOffers = await prisma.offer.findMany({
       where: {
         lawFirmId: updatedLawFirm.id,

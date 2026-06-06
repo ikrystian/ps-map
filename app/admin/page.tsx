@@ -154,7 +154,7 @@ export default function AdminDashboardPage() {
   const formatRole = (role: string) => {
     const roles: Record<string, string> = {
       ADMIN: 'Admin',
-      LAW_FIRM: 'Kancelaria',
+      LAW_FIRM: 'Ekspert',
       CLIENT: 'Klient',
     }
     return roles[role] || role
@@ -311,7 +311,7 @@ export default function AdminDashboardPage() {
 
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 border border-muted bg-card/60 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Kancelarie</CardTitle>
+            <CardTitle className="text-sm font-medium">Eksperci</CardTitle>
             <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500">
               <Building2 className="h-4 w-4" />
             </div>

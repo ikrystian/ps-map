@@ -214,8 +214,8 @@ export default function AccountManagersPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Opiekunowie kancelarii</h1>
-          <p className="text-gray-500 mt-2">Zarządzaj opiekunami przypisanymi do kancelarii</p>
+          <h1 className="text-3xl font-bold">Opiekunowie ekspertów</h1>
+          <p className="text-gray-500 mt-2">Zarządzaj opiekunami przypisanymi do ekspercie</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
           <DialogTrigger asChild>
@@ -231,8 +231,8 @@ export default function AccountManagersPage() {
               </DialogTitle>
               <DialogDescription>
                 {editingManager
-                  ? 'Zaktualizuj dane opiekuna kancelarii'
-                  : 'Dodaj nowego opiekuna kancelarii'}
+                  ? 'Zaktualizuj dane opiekuna eksperta'
+                  : 'Dodaj nowego opiekuna eksperta'}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -399,7 +399,7 @@ export default function AccountManagersPage() {
                 <TableHead>Opiekun</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Telefon</TableHead>
-                <TableHead>Kancelarie</TableHead>
+                <TableHead>Eksperci</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
               </TableRow>

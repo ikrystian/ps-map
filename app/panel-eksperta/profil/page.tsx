@@ -546,7 +546,7 @@ function LawFirmProfilePageContent() {
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
-          <p className="text-muted-foreground text-sm font-light">Wczytywanie profilu kancelarii...</p>
+          <p className="text-muted-foreground text-sm font-light">Wczytywanie profilu eksperta...</p>
         </div>
       </div>
     )
@@ -566,8 +566,8 @@ function LawFirmProfilePageContent() {
         className="relative z-10"
       >
         <PageHeader
-          title="Profil Kancelarii"
-          subtitle="Edytuj dane prezentacyjne swojej kancelarii widoczne dla klientów w wyszukiwarce."
+          title="Profil Eksperta"
+          subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
           titleClassName="text-white text-3xl sm:text-4xl"
         />
 

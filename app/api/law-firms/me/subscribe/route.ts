@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą kupować pakiety" },
+        { error: "Tylko eksperci mogą kupować pakiety" },
         { status: 403 }
       )
     }
@@ -49,14 +49,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono kancelarii" },
+        { error: "Nie znaleziono ekspercie" },
         { status: 404 }
       )
     }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Proporcjonalne rozliczenie - jeśli kancelaria ma aktywny pakiet
+    // Proporcjonalne rozliczenie - jeśli ekspert ma aktywny pakiet
     let proRataCredit = 0
     let upgradeNote = ""
 

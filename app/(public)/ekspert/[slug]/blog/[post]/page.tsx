@@ -32,11 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    const firmName = post.lawFirm?.nazwaFirmy || post.lawFirm?.nazwa || "Kancelarii"
+    const firmName = post.lawFirm?.nazwaFirmy || post.lawFirm?.nazwa || "Eksperta"
     const plainTextDescription = post.tresc.replace(/<[^>]*>/g, "").substring(0, 160)
 
     return {
-      title: post.metaTitle || `${post.tytul} - Blog Kancelarii ${firmName} | Prosta Sprawa`,
+      title: post.metaTitle || `${post.tytul} - Blog Eksperta ${firmName} | Prosta Sprawa`,
       description: post.metaDescription || plainTextDescription || undefined,
     }
   } catch (error) {

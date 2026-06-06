@@ -165,7 +165,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             </div>
             <h3 className="text-xl font-bold text-white mb-2 font-playfair">Konsultacje niedostępne</h3>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Kancelaria nie oferuje obecnie konsultacji online przez naszą platformę. Skontaktuj się bezpośrednio z ekspertem.
+              Ekspert nie oferuje obecnie konsultacji online przez naszą platformę. Skontaktuj się bezpośrednio z ekspertem.
             </p>
           </motion.div>
         ) : !duration ? (

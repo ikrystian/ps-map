@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       where.status = status
     }
 
-    // Sprawdź uprawnienia - kancelaria widzi tylko swoje oferty
+    // Sprawdź uprawnienia - ekspert widzi tylko swoje oferty
     if (session.user.role === "LAW_FIRM") {
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { userId: session.user.id },
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
       if (!lawFirm) {
         return Response.json(
-          { error: "Nie znaleziono profilu kancelarii" },
+          { error: "Nie znaleziono profilu eksperta" },
           { status: 404 }
         )
       }
@@ -150,22 +150,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Tylko kancelarie mogą składać oferty
+    // Tylko eksperci mogą składać oferty
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą składać oferty" },
+        { error: "Tylko eksperci mogą składać oferty" },
         { status: 403 }
       )
     }
 
-    // Pobierz dane kancelarii
+    // Pobierz dane eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id }
     })
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Sprawdź czy kancelaria już złożyła ofertę do tej sprawy
+    // Sprawdź czy ekspert już złożyła ofertę do tej sprawy
     const existingOffer = await prisma.offer.findFirst({
       where: {
         caseId,
@@ -235,7 +235,7 @@ export async function POST(request: NextRequest) {
     if (wyroznienie) {
       punktyWyroznienia = 50 // Koszt wyróżnienia oferty
 
-      // Sprawdź czy kancelaria ma wystarczającą ilość punktów
+      // Sprawdź czy ekspert ma wystarczającą ilość punktów
       if (lawFirm.punktySaldo < punktyWyroznienia) {
         return Response.json(
           { error: "Niewystarczająca liczba punktów" },
@@ -282,7 +282,7 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      // Aktualizuj licznik ofert kancelarii
+      // Aktualizuj licznik ofert eksperta
       await tx.lawFirm.update({
         where: { id: lawFirm.id },
         data: {
@@ -376,7 +376,7 @@ export async function POST(request: NextRequest) {
             userId: caseData.client.userId,
             typ: "NOWA_OFERTA",
             tytul: "Otrzymałeś nową ofertę",
-            tresc: `Kancelaria ${lawFirm.nazwa} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
+            tresc: `Ekspert ${lawFirm.nazwa} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
             linkUrl: `/panel-klienta/oferty/${newOffer.id}`
           }
         })
@@ -412,7 +412,7 @@ export async function POST(request: NextRequest) {
           templateType: EmailType.NOWA_OFERTA,
           variables: {
             "{klient}": caseWithClient.client.imie,
-            "{kancelaria}": lawFirm.nazwa,
+            "{ekspert}": lawFirm.nazwa,
             "{nazwaSprawi}": caseWithClient.nazwaSprawy,
             "{kwota}": formattedKwota,
             "{termin}": formattedTermin,

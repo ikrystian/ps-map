@@ -16,15 +16,15 @@ export async function PUT(
       )
     }
 
-    // Sprawdź czy użytkownik jest kancelarią
+    // Sprawdź czy użytkownik jest ekspertem
     if (session.user.role !== "LAW_FIRM") {
       return Response.json(
-        { error: "Tylko kancelarie mogą odpowiadać na opinie" },
+        { error: "Tylko eksperci mogą odpowiadać na opinie" },
         { status: 403 }
       )
     }
 
-    // Pobierz ID kancelarii
+    // Pobierz ID eksperta
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       select: { id: true }
@@ -32,7 +32,7 @@ export async function PUT(
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono profilu kancelarii" },
+        { error: "Nie znaleziono profilu eksperta" },
         { status: 404 }
       )
     }
@@ -48,7 +48,7 @@ export async function PUT(
       )
     }
 
-    // Sprawdź czy opinia istnieje i należy do tej kancelarii
+    // Sprawdź czy opinia istnieje i należy do tego eksperta
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
     })

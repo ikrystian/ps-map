@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import SearchLawyerClientPage from "./SearchLawyerClientPage"
 
 export const metadata: Metadata = {
-  title: "Wyszukiwarka Prawników i Kancelarii | Prosta Sprawa",
+  title: "Wyszukiwarka Ekspertów | Prosta Sprawa",
   description: "Znajdź prawnika, adwokata lub radcę prawnego. Filtruj według specjalizacji, miasta, województwa i opinii.",
 }
 

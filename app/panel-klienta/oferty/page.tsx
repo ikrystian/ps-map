@@ -433,7 +433,7 @@ export default function ClientOffersPage() {
 
           {selectedOffer && (
             <div className="space-y-6">
-              {/* Informacje o kancelarii */}
+              {/* Informacje o ekspercie */}
               <div>
                 <h3 className="font-semibold mb-2">Ekspert</h3>
                 <div className="p-4 border rounded-lg">

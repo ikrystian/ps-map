@@ -36,7 +36,7 @@ export async function seedTestData(prisma: PrismaClient) {
         const randomLawFirmData = createRandomLawFirm(prisma);
         const slug = `${randomLawFirmData.nazwa.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${faker.string.alphanumeric(5)}`;
 
-        // 4. Stwórz kancelarię
+        // 4. Stwórz eksperta
         const lawFirm = await prisma.lawFirm.create({
           data: {
             ...randomLawFirmData,

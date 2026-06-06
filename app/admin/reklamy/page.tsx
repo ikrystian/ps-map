@@ -529,7 +529,7 @@ export default function AdminAdsPage() {
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="np. Kancelaria XYZ - Kampania Maj"
+                  placeholder="np. Ekspert XYZ - Kampania Maj"
                   className="col-span-3"
                   required
                 />

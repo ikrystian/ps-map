@@ -231,7 +231,7 @@ export default function BlogPage() {
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
             Artykuły, opinie i porady prawne pisane bezpośrednio przez
-            zweryfikowane kancelarie i ekspertów
+            zweryfikowanych ekspertów
           </p>
 
           {/* Clean Floating Search Bar */}

@@ -215,7 +215,7 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         {
-          error: "Nie można usunąć kategorii, która ma powiązane kancelarie, sprawy lub podkategorie",
+          error: "Nie można usunąć kategorii, która ma powiązani eksperci, sprawy lub podkategorie",
           details: {
             lawFirms: existingCategory._count.lawFirms,
             cases: existingCategory._count.cases,

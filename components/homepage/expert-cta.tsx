@@ -46,7 +46,7 @@ export function ExpertCTA() {
 
             {/* Button */}
             <div className="mt-8 md:mt-10">
-              <Link href="/rejestracja/kancelaria">
+              <Link href="/rejestracja/ekspert">
                 <InteractiveHoverButton>Załóż konto</InteractiveHoverButton>
               </Link>
             </div>

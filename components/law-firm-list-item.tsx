@@ -459,7 +459,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               {/* Description */}
               <div className="flex-1">
                 <p className="text-neutral-400 text-sm leading-relaxed font-light line-clamp-3">
-                  {stripHtmlTags(lawFirm.opis) || "Brak opisu kancelarii."}
+                  {stripHtmlTags(lawFirm.opis) || "Brak opisu eksperta."}
                 </p>
               </div>
 
