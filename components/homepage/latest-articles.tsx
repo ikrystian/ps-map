@@ -55,9 +55,9 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {blogPosts.length > 0 ? (
-              blogPosts.map((post, index) => (
+              blogPosts.slice(0, 4).map((post, index) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -69,7 +69,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                     <div className="relative overflow-hidden rounded-2xl aspect-[5/4] md:aspect-[4/5] cursor-pointer shadow-2xl bg-neutral-900 transition-all duration-500">
                       {/* Background Image with subtle zoom on hover */}
                       <Image
-                        src={post.obrazekWyrozniajacy || "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop"}
+                        src={post.obrazekWyrozniajacy || ""}
                         alt={post.tytul}
                         fill
                         className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"

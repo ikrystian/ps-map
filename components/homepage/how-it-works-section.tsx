@@ -23,10 +23,10 @@ export function HowItWorksSection() {
                     <h2 className="text-3xl md:text-4xl font-bold mb-12 font-playfair">Jak to działa?</h2>
 
                     {/* Tabs */}
-                    <div className="flex justify-center gap-12 border-b border-gray-800 w-fit mx-auto">
+                    <div className="flex justify-center gap-4 md:gap-12 border-b border-gray-800 w-fit mx-auto">
                         <button
                             onClick={() => setActiveTab("user")}
-                            className={`pb-4 text-lg font-medium transition-colors relative px-4 ${activeTab === "user" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "user" ? "text-white" : "text-gray-500 hover:text-gray-300"
                                 }`}
                         >
                             Dla użytkowników
@@ -36,7 +36,7 @@ export function HowItWorksSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("expert")}
-                            className={`pb-4 text-lg font-medium transition-colors relative px-4 ${activeTab === "expert" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "expert" ? "text-white" : "text-gray-500 hover:text-gray-300"
                                 }`}
                         >
                             Dla ekspertów
@@ -57,7 +57,7 @@ export function HowItWorksSection() {
                         className="space-y-8"
                     >
                         <div>
-                            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                            <h3 className="text-2xl md:text-4xl font-bold mb-6 leading-tight">
                                 {activeTab === "user"
                                     ? "Szybka i wygodna pomoc prawna, finansowa i księgowa w jednym miejscu!"
                                     : "Rozwijaj swój biznes i zdobywaj nowych klientów!"}

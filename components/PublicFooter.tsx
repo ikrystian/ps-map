@@ -32,7 +32,7 @@ export default function PublicFooter() {
 
       {/* Main footer content wrapper */}
       <div className="relative container mx-auto px-4 pt-16 pb-8 z-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-4 xl:gap-8 lg:gap-12">
 
           {/* Column 1: Logo & About (~35% / 4 cols) */}
           <div className="space-y-4 lg:col-span-4">

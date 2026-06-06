@@ -165,7 +165,7 @@ function buildAiPrompt(string $systemRole, string $slackPrompt, string $trelloPr
     . "1. \"slack\": {$slackPrompt}\n"
     . "2. \"trello\": Obiekt zawierający:\n"
     . "   - \"name\": {$trelloPrompt}\n"
-    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 itp - interwał co 30min). Wez pod uwage prace taka jak kodowanie + konsultacje + testy\n"
+    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 itp - interwał co 30min). Wez pod uwage prace taka jak kodowanie + testy\n"
     . "   - \"description\": Szczegółowy opis zadania Trello w języku polskim, opisujący co dokładnie należy zrobić. Nietechnicznym językiem. \n\n"
     . "Odpowiedz WYŁĄCZNIE poprawnym obiektem JSON w formacie:\n"
     . "{\n"
