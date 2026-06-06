@@ -18,6 +18,7 @@ import {
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import type { LawFirm } from "@/types"
 
 // Format currency
 const formatCurrency = (amount: number) => {
@@ -51,12 +52,6 @@ interface OrderData {
     statystykiAnalizy?: boolean
     mozliwoscBloga?: boolean
   }
-}
-
-interface LawFirm {
-  id: string
-  punktySaldo: number
-  nazwa: string
 }
 
 export default function CheckoutPage() {
