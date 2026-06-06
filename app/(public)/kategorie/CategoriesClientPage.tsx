@@ -39,6 +39,7 @@ interface Category {
   opisDodatkowy?: string | null
   ikona?: string | null
   ikonaUrl?: string | null
+  backgroundImageUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   aktywna: boolean
   parentId?: string | null
@@ -57,6 +58,49 @@ interface Category {
     lawFirms: number
     cases: number
   }
+}
+
+const DEFAULT_BUSINESS_IMAGE = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
+const DEFAULT_PRIVATE_IMAGE = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  "dane-osobowe": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
+  "dzialalnosc-gospodarcza": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+  "ochrona-srodowiska": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
+  "podatki": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
+  "prawo-pracy": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
+  "prawa-autorskie": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80",
+  "przestepstwa-skarbowe": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
+  "przetargi": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
+  "spolki": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
+  "sprawy-sadowe": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
+  "inne-kwestie-firmowe": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80",
+  "technologie-i-innowacje": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
+  "dotacje-i-finansowanie-zewnetrrzne": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80",
+  "finanse-i-inwestycje": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80",
+  "nieruchomosci-komercyjne": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+  "marketing-i-reklama": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=600&q=80",
+  "zdrowie-i-bezpieczenstwo-w-pracy": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
+  "zarzadzanie-zasobami-ludzkimi": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+  "zarzadzanie-kryzysowe": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80",
+  "odnawialne-zrodla-energii-oze": "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80",
+  "prawo-upadlosciowe": "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?auto=format&fit=crop&w=600&q=80",
+  "zobowiazania-finansowe": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80",
+  "rodzina": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80",
+  "majatek-osobisty": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80",
+  "mediacje": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80",
+  "nieruchomosci": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
+  "podatki-osobiste": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80",
+  "zatrudnienie": "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=600&q=80",
+  "ubezpieczenia": "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80",
+  "prawo-karne": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
+  "zdrowie-i-wypadki": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
+  "prawo-konsumenckie": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80",
+  "prawo-medyczne": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
+  "prawo-cyfrowe-i-internetowe": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
+  "prawa-lokatora-i-najemcy": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&w=600&q=80",
+  "prawo-administracyjne": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80",
+  "prawo-oze": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=600&q=80"
 }
 
 const ICON_MAP: Record<string, any> = {
@@ -320,7 +364,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
       {categories.map((category) => {
         const isBusiness = category.typ === "SPRAWY_FIRMOWE"
 
-        // Custom gradient and glow config per category type matching standard brand colors:
+        // Custom gradient and glow config per category tiype matching standard brand colors:
         // Sprawy Firmowe -> Teal (#0da192), Sprawy Prywatne -> Gold/Amber (#d7b56d)
         const gradientFrom = isBusiness ? "#0da192" : "#d7b56d"
         const gradientTo = isBusiness ? "#00897b" : "#bfa05d"
@@ -329,7 +373,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
         return (
           <MagicCard
             key={category.id}
-            className={`flex flex-col h-full overflow-hidden border-border/60 transition-all duration-300 group ${isBusiness
+            className={`flex flex-col h-full overflow-hidden border-border/60 rounded-2xl transition-all duration-300 group ${isBusiness
               ? "hover:border-[#0da192]/40"
               : "hover:border-[#d7b56d]/40"
               }`}
@@ -337,57 +381,67 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
             gradientTo={gradientTo}
             gradientColor={gradientColor}
           >
-            {/* Subtle background glow highlight in top right */}
+            {/* Category Image Header */}
+            <div className="relative w-[calc(100%-2px)] ml-[1px] h-44 overflow-hidden rounded-t-2xl">
+              <img
+                src={category.backgroundImageUrl || CATEGORY_IMAGES[category.slug] || (isBusiness ? DEFAULT_BUSINESS_IMAGE : DEFAULT_PRIVATE_IMAGE)}
+                alt={category.nazwa}
+                className="w-full h-full object-cover filter brightness-[0.85] contrast-[1.05] group-hover:scale-105 group-hover:brightness-100 transition-all duration-700 ease-out"
+              />
+              {/* Elegant dark overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10" />
+
+              {/* Floating Badge on Image */}
+              <div className="absolute top-4 right-4 z-20">
+                <Badge
+                  className={`backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-bold gap-1.5 border transition-all ${isBusiness
+                    ? "bg-slate-900/70 text-[#0da192] border-[#0da192]/30 hover:bg-slate-900/90"
+                    : "bg-slate-900/70 text-[#d7b56d] border-[#d7b56d]/30 hover:bg-slate-900/90"
+                    }`}
+                >
+                  {isBusiness ? (
+                    <>
+                      <Briefcase className="h-3 w-3" />
+                      <span>Sprawy Firmowe</span>
+                    </>
+                  ) : (
+                    <>
+                      <User className="h-3 w-3" />
+                      <span>Sprawy Prywatne</span>
+                    </>
+                  )}
+                </Badge>
+              </div>
+
+              {/* Floating Icon Wrapper overlapping the image bottom */}
+              <Link
+                href={`/kategorie/${category.slug}`}
+                className={`absolute top-3 left-3 z-20 rounded-xl p-3 shadow-lg border transition-all duration-500 transform group-hover:rotate-6 bg-card ${isBusiness
+                  ? "text-[#0da192] border-[#0da192]/20 group-hover:bg-[#0da192] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(13,161,146,0.3)]"
+                  : "text-[#d7b56d] border-[#d7b56d]/20 group-hover:bg-[#d7b56d] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(215,181,109,0.3)]"
+                  }`}
+              >
+                <IconRenderer
+                  iconName={category.ikona}
+                  iconUrl={category.ikonaUrl}
+                  fallback={isBusiness ? Briefcase : Scale}
+                  className="h-6 w-6"
+                />
+              </Link>
+            </div>
+
+            {/* Subtle background glow highlight in bottom right */}
             <div
-              className={`absolute top-0 right-0 h-36 w-36 bg-gradient-to-bl from-transparent via-transparent to-transparent rounded-bl-full pointer-events-none transition-all duration-500 ${isBusiness
+              className={`absolute bottom-0 right-0 h-36 w-36 bg-gradient-to-tl from-transparent via-transparent to-transparent rounded-tl-full pointer-events-none transition-all duration-500 ${isBusiness
                 ? "from-[#0da192]/5 group-hover:from-[#0da192]/10"
                 : "from-[#d7b56d]/5 group-hover:from-[#d7b56d]/10"
                 }`}
             />
 
-            <div className="p-8 flex flex-col h-full relative z-10">
-              <div className="mb-6 flex items-center justify-between">
-                {/* Icon Wrapper with Custom Color Coding */}
-                <Link
-                  href={`/kategorie/${category.slug}`}
-                  className={`rounded-xl p-3 transition-all duration-500 transform group-hover:rotate-6 shadow-sm border ${isBusiness
-                    ? "bg-[#0da192]/10 text-[#0da192] border-[#0da192]/20 group-hover:bg-gradient-to-br group-hover:from-[#0da192] group-hover:to-[#00897b] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(13,161,146,0.3)]"
-                    : "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/20 group-hover:bg-gradient-to-br group-hover:from-[#d7b56d] group-hover:to-[#bfa05d] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_15px_rgba(215,181,109,0.3)]"
-                    }`}
-                >
-                  <IconRenderer
-                    iconName={category.ikona}
-                    iconUrl={category.ikonaUrl}
-                    fallback={isBusiness ? Briefcase : Scale}
-                  />
-                </Link>
-
-                {/* Visual Accent Badge */}
-                <div className="flex flex-col items-end gap-1">
-                  <Badge
-                    className={`rounded-md px-2.5 py-1 text-sm uppercase tracking-wider font-bold gap-1 border transition-colors ${isBusiness
-                      ? "bg-[#0da192]/10 text-[#0da192] border-[#0da192]/20 hover:bg-[#0da192]/20"
-                      : "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/20 hover:bg-[#d7b56d]/20"
-                      }`}
-                  >
-                    {isBusiness ? (
-                      <>
-                        <Briefcase className="h-3 w-3" />
-                        <span>Sprawy Firmowe</span>
-                      </>
-                    ) : (
-                      <>
-                        <User className="h-3 w-3" />
-                        <span>Sprawy Prywatne</span>
-                      </>
-                    )}
-                  </Badge>
-                </div>
-              </div>
-
+            <div className="p-6 flex flex-col flex-grow relative z-10">
               {/* Title with matching color on hover */}
               <Link href={`/kategorie/${category.slug}`}>
-                <h3 className={`text-xl font-bold mb-3 transition-colors line-clamp-1 ${isBusiness ? "group-hover:text-[#0da192]" : "group-hover:text-[#d7b56d]"
+                <h3 className={`text-2xl font-bold mb-3 transition-colors font-playfair line-clamp-1 ${isBusiness ? "group-hover:text-[#0da192]" : "group-hover:text-[#d7b56d]"
                   }`}>
                   {category.nazwa}
                 </h3>
@@ -395,14 +449,14 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
 
               {/* Description */}
               {category.opis && (
-                <p className="text-muted-foreground text-sm line-clamp-2 mb-4 leading-relaxed">
+                <p className="text-muted-foreground text-sm line-clamp-2 mb-6 leading-relaxed flex-grow">
                   {category.opis}
                 </p>
               )}
 
               {/* Subcategories (Children) with Custom Color Coding */}
               {category.children && category.children.length > 0 && (
-                <div className="mb-8 flex flex-wrap gap-x-2 gap-y-2">
+                <div className="mb-3 flex flex-wrap gap-x-2 gap-y-2">
                   {category.children.slice(0, 6).map((child) => (
                     <Link
                       key={child.id}
@@ -412,12 +466,6 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                         : "hover:border-[#d7b56d]/50 hover:bg-[#d7b56d]/5 hover:text-[#d7b56d]"
                         }`}
                     >
-                      <IconRenderer
-                        iconName={child.ikona}
-                        iconUrl={child.ikonaUrl}
-                        fallback={isBusiness ? Briefcase : Scale}
-                        className="h-3 w-3"
-                      />
                       <span>{child.nazwa}</span>
                       {child._count?.lawFirms !== undefined && (
                         <span className={`text-sm transition-colors ml-0.5 font-semibold ${isBusiness
@@ -440,6 +488,15 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                   )}
                 </div>
               )}
+
+              {/* Card Footer with action link */}
+              <div className="mt-auto pt-2 border-t border-border/40 flex items-center justify-between text-sm font-semibold transition-colors">
+                <span className={`transition-colors ${isBusiness ? "group-hover:text-[#0da192]" : "group-hover:text-[#d7b56d]"}`}>
+                  Przeglądaj kategorię
+                </span>
+                <ChevronRight className={`h-4 w-4 transition-transform duration-300 transform group-hover:translate-x-1 ${isBusiness ? "text-[#0da192]" : "text-[#d7b56d]"
+                  }`} />
+              </div>
 
             </div>
           </MagicCard>
