@@ -2,16 +2,16 @@
 
 import { ConsultationHoursForm } from "@/components/panel-eksperta/ConsultationHoursForm"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
-import { AdditionalTab } from "@/components/panel-eksperta/profil/AdditionalTab"
 import { BasicTab } from "@/components/panel-eksperta/profil/BasicTab"
 import { ContactTab } from "@/components/panel-eksperta/profil/ContactTab"
 import { MultimediaTab } from "@/components/panel-eksperta/profil/MultimediaTab"
+import { OfficeHoursCard } from "@/components/panel-eksperta/profil/OfficeHoursCard"
 import { SpecializationTab } from "@/components/panel-eksperta/profil/SpecializationTab"
 import { Button } from "@/components/ui/button"
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { toast } from "@/components/ui/sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2, Save } from "lucide-react"
+import { Loader2, Save, User, MapPin, Award, Image as ImageIcon, Clock } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
@@ -30,7 +30,7 @@ function LawFirmProfilePageContent() {
     const tabParam = searchParams.get("tab")
     if (
       tabParam &&
-      ["basic", "contact", "specialization", "multimedia", "consultations", "additional"].includes(
+      ["basic", "contact", "specialization", "multimedia", "consultations"].includes(
         tabParam
       )
     ) {
@@ -554,42 +554,41 @@ function LawFirmProfilePageContent() {
 
       {/* Re-designed premium tab selector */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6 relative z-10">
-        <TabsList className="p-1 bg-card/20 backdrop-blur-md border border-border/30 rounded-xl flex gap-1 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none">
+        <TabsList className="p-1.5 bg-zinc-950/40 backdrop-blur-md border border-border/30 rounded-xl flex gap-1.5 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none h-auto">
           <TabsTrigger
             value="basic"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
           >
-            Podstawowe
+            <User className="h-4 w-4 shrink-0" />
+            <span>Dane podstawowe</span>
           </TabsTrigger>
           <TabsTrigger
             value="contact"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
           >
-            Kontakt
+            <MapPin className="h-4 w-4 shrink-0" />
+            <span>Kontakt i obszar</span>
           </TabsTrigger>
           <TabsTrigger
             value="specialization"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
           >
-            Zakres usług
+            <Award className="h-4 w-4 shrink-0" />
+            <span>Oferta i zakres</span>
           </TabsTrigger>
           <TabsTrigger
             value="multimedia"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
           >
-            Multimedia
+            <ImageIcon className="h-4 w-4 shrink-0" />
+            <span>Galeria i wideo</span>
           </TabsTrigger>
           <TabsTrigger
             value="consultations"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
           >
-            Godziny konsultacji
-          </TabsTrigger>
-          <TabsTrigger
-            value="additional"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
-          >
-            Dodatkowe
+            <Clock className="h-4 w-4 shrink-0" />
+            <span>Godziny i dostępność</span>
           </TabsTrigger>
         </TabsList>
 
@@ -605,12 +604,18 @@ function LawFirmProfilePageContent() {
           />
         </TabsContent>
 
-        {/* Dane kontaktowe */}
+        {/* Dane kontaktowe i obszar działania */}
         <TabsContent value="contact" className="space-y-6 animate-in fade-in-50 duration-300">
           <ContactTab
             formData={formData}
             handleInputChange={handleInputChange}
             voivodeships={voivodeships}
+            maxVoivodeships={maxVoivodeships}
+            maxCities={maxCities}
+            citiesByVoivodeship={citiesByVoivodeship}
+            loadingCities={loadingCities}
+            toggleVoivodeship={toggleVoivodeship}
+            toggleCity={toggleCity}
           />
         </TabsContent>
 
@@ -620,14 +625,7 @@ function LawFirmProfilePageContent() {
             formData={formData}
             categories={categories}
             limitSlowKluczowych={limitSlowKluczowych}
-            maxVoivodeships={maxVoivodeships}
-            maxCities={maxCities}
-            voivodeships={voivodeships}
-            citiesByVoivodeship={citiesByVoivodeship}
-            loadingCities={loadingCities}
             handleInputChange={handleInputChange}
-            toggleVoivodeship={toggleVoivodeship}
-            toggleCity={toggleCity}
           />
         </TabsContent>
 
@@ -642,14 +640,10 @@ function LawFirmProfilePageContent() {
           />
         </TabsContent>
 
-        {/* Godziny konsultacji */}
-        <TabsContent value="consultations" className="animate-in fade-in-50 duration-300">
+        {/* Godziny i dostępność */}
+        <TabsContent value="consultations" className="space-y-6 animate-in fade-in-50 duration-300">
+          <OfficeHoursCard formData={formData} handleInputChange={handleInputChange} />
           <ConsultationHoursForm />
-        </TabsContent>
-
-        {/* Dodatkowe */}
-        <TabsContent value="additional" className="space-y-6 animate-in fade-in-50 duration-300">
-          <AdditionalTab formData={formData} handleInputChange={handleInputChange} />
         </TabsContent>
       </Tabs>
 
