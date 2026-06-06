@@ -10,17 +10,31 @@ import Image from "next/image"
 import { useId, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
+
 interface ImageUploadProps {
   value?: string
   onChange: (url: string) => void
   label?: string
   description?: string
+  confirmDelete?: boolean
+  confirmDeleteTitle?: string
+  confirmDeleteDescription?: string
 }
 
-export function ImageUpload({ value, onChange, label, description }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  label,
+  description,
+  confirmDelete = false,
+  confirmDeleteTitle = "Usuń obrazek",
+  confirmDeleteDescription = "Czy na pewno chcesz usunąć ten obrazek? Tej operacji nie można cofnąć.",
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isDragActive, setIsDragActive] = useState(false)
   const [urlInput, setUrlInput] = useState(value || "")
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uniqueId = useId()
 
@@ -135,7 +149,18 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button type="button" variant="destructive" size="sm" onClick={handleRemove}>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                if (confirmDelete) {
+                  setShowDeleteConfirm(true)
+                } else {
+                  handleRemove()
+                }
+              }}
+            >
               <X className="h-4 w-4 mr-2" />
               Usuń obrazek
             </Button>
@@ -230,6 +255,19 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
       )}
 
       {description && <p className="text-sm text-muted-foreground">{description}</p>}
+
+      <ConfirmDeleteDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={() => {
+          handleRemove()
+          setShowDeleteConfirm(false)
+        }}
+        title={confirmDeleteTitle}
+        description={confirmDeleteDescription}
+        confirmText="Usuń"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

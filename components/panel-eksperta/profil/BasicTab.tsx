@@ -9,6 +9,8 @@ import { Switch } from "@/components/ui/switch"
 import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck } from "lucide-react"
 import Image from "next/image"
 import dynamic from "next/dynamic"
+import { useState } from "react"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -51,6 +53,8 @@ export function BasicTab({
   handleMainImageFileSelect,
   handleRemoveSingleImage,
 }: BasicTabProps) {
+  const [showLogoConfirm, setShowLogoConfirm] = useState(false)
+  const [showCoverConfirm, setShowCoverConfirm] = useState(false)
   return (
     <div className="space-y-6">
       {/* Dane podstawowe */}
@@ -250,7 +254,7 @@ export function BasicTab({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => handleRemoveSingleImage("logo")}
+                    onClick={() => setShowLogoConfirm(true)}
                     disabled={isUploading}
                     className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
                   >
@@ -344,7 +348,7 @@ export function BasicTab({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => handleRemoveSingleImage("zdjecieGlowne")}
+                    onClick={() => setShowCoverConfirm(true)}
                     disabled={isUploading}
                     className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
                   >
@@ -399,6 +403,26 @@ export function BasicTab({
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDeleteDialog
+        open={showLogoConfirm}
+        onOpenChange={setShowLogoConfirm}
+        onConfirm={() => handleRemoveSingleImage("logo")}
+        title="Usuń logo profilowe"
+        description="Czy na pewno chcesz usunąć swoje logo profilowe? Tej operacji nie można cofnąć."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+      />
+
+      <ConfirmDeleteDialog
+        open={showCoverConfirm}
+        onOpenChange={setShowCoverConfirm}
+        onConfirm={() => handleRemoveSingleImage("zdjecieGlowne")}
+        title="Usuń zdjęcie główne"
+        description="Czy na pewno chcesz usunąć zdjęcie główne (banner)? Tej operacji nie można cofnąć."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

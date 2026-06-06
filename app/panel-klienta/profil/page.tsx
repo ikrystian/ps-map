@@ -20,6 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
@@ -102,6 +103,8 @@ export default function ClientProfilePage() {
   const [clientData, setClientData] = useState<any>(null)
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null)
   const [showAvatarCropper, setShowAvatarCropper] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isRemovingAvatar, setIsRemovingAvatar] = useState(false)
 
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
@@ -316,6 +319,7 @@ export default function ClientProfilePage() {
   }
 
   const handleRemoveAvatar = async () => {
+    setIsRemovingAvatar(true)
     try {
       const response = await fetch("/api/auth/me", {
         method: "PUT",
@@ -343,6 +347,8 @@ export default function ClientProfilePage() {
     } catch (error) {
       console.error("Error removing avatar:", error)
       toast.error("Nie udało się usunąć avatara")
+    } finally {
+      setIsRemovingAvatar(false)
     }
   }
 
@@ -457,8 +463,8 @@ export default function ClientProfilePage() {
                           type="button"
                           variant="ghost"
                           className="w-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl"
-                          onClick={handleRemoveAvatar}
-                          disabled={isUploadingAvatar}
+                          onClick={() => setShowDeleteConfirm(true)}
+                          disabled={isUploadingAvatar || isRemovingAvatar}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Usuń avatar
@@ -1020,6 +1026,17 @@ export default function ClientProfilePage() {
           open={showAvatarCropper}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={handleRemoveAvatar}
+        isPending={isRemovingAvatar}
+        title="Usuń zdjęcie profilowe"
+        description="Czy na pewno chcesz usunąć swoje zdjęcie profilowe? Tej operacji nie można cofnąć."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

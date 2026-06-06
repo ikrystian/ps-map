@@ -41,6 +41,7 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 
 // Schema walidacji formularza
 const documentSchema = z.object({
@@ -198,6 +199,7 @@ export default function DocumentsPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [uploadProgress, setUploadProgress] = useState(false)
+  const [isDeletingDocument, setIsDeletingDocument] = useState(false)
 
   // Preview state variables
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
@@ -303,7 +305,7 @@ export default function DocumentsPage() {
   // Usuwanie dokumentu
   const handleDeleteDocument = async () => {
     if (!selectedDocument) return
-
+    setIsDeletingDocument(true)
     try {
       const response = await fetch(`/api/law-firms/documents/${selectedDocument.id}`, {
         method: "DELETE",
@@ -320,6 +322,8 @@ export default function DocumentsPage() {
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się usunąć dokumentu")
+    } finally {
+      setIsDeletingDocument(false)
     }
   }
 
@@ -1005,37 +1009,16 @@ export default function DocumentsPage() {
       </motion.div>
 
       {/* Dialog usuwania */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-rose-500/5 blur-[50px] rounded-full pointer-events-none" />
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-rose-500" />
-              Potwierdzenie usunięcia
-            </DialogTitle>
-            <DialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
-              Czy na pewno chcesz usunąć dokument <span className="text-white font-semibold">"{selectedDocument?.nazwa}"</span>?
-              Tej operacji nie można cofnąć, a plik zostanie trwale usunięty z serwera.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 pt-6 flex flex-col-reverse sm:flex-row">
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-              className="border-border/50 hover:bg-muted text-white rounded-xl h-10 w-full sm:w-auto"
-            >
-              Anuluj
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteDocument}
-              className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10 h-10 w-full sm:w-auto"
-            >
-              Usuń dokument
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDeleteDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteDocument}
+        isPending={isDeletingDocument}
+        title="Usuń dokument"
+        description={`Czy na pewno chcesz usunąć dokument "${selectedDocument?.nazwa}"? Tej operacji nie można cofnąć, a plik zostanie trwale usunięty z serwera.`}
+        confirmText="Usuń dokument"
+        cancelText="Anuluj"
+      />
 
       {/* Dialog podglądu */}
       <Dialog open={isPreviewDialogOpen} onOpenChange={(open) => {

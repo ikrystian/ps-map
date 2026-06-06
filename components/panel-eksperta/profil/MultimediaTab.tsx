@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, Upload, X, Image as ImageIcon, Video } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 
 interface MultimediaTabProps {
   formData: {
@@ -27,6 +29,7 @@ export function MultimediaTab({
   handleImageUpload,
   handleRemoveImage,
 }: MultimediaTabProps) {
+  const [imageIndexToDelete, setImageIndexToDelete] = useState<number | null>(null)
   return (
     <div className="space-y-6">
       {/* Galeria zdjęć */}
@@ -91,7 +94,7 @@ export function MultimediaTab({
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveImage(index)}
+                      onClick={() => setImageIndexToDelete(index)}
                       className="absolute top-2 right-2 bg-rose-600 hover:bg-rose-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md"
                       title="Usuń zdjęcie"
                     >
@@ -168,6 +171,20 @@ export function MultimediaTab({
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDeleteDialog
+        open={imageIndexToDelete !== null}
+        onOpenChange={(open) => !open && setImageIndexToDelete(null)}
+        onConfirm={() => {
+          if (imageIndexToDelete !== null) {
+            handleRemoveImage(imageIndexToDelete)
+          }
+        }}
+        title="Usuń zdjęcie z galerii"
+        description="Czy na pewno chcesz usunąć to zdjęcie z galerii? Tej operacji nie można cofnąć."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

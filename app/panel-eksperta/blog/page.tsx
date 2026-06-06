@@ -3,16 +3,7 @@
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { FeatureLockedCard } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -66,6 +57,7 @@ export default function LawFirmBlogPage() {
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+  const [isDeletingPost, setIsDeletingPost] = useState(false)
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
     page: 1,
@@ -109,7 +101,7 @@ export default function LawFirmBlogPage() {
 
   const handleDeletePost = async () => {
     if (!selectedPost) return
-
+    setIsDeletingPost(true)
     try {
       const response = await fetch(`/api/law-firms/me/blog/${selectedPost.id}`, {
         method: "DELETE",
@@ -126,6 +118,8 @@ export default function LawFirmBlogPage() {
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się usunąć wpisu")
+    } finally {
+      setIsDeletingPost(false)
     }
   }
 
@@ -427,32 +421,16 @@ export default function LawFirmBlogPage() {
       </motion.div>
 
       {/* Dialog usuwania */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-rose-500/5 blur-[50px] rounded-full pointer-events-none" />
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-rose-500 animate-pulse" />
-              Usuń wpis
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
-              Czy na pewno chcesz usunąć wpis <span className="text-white font-semibold">&quot;{selectedPost?.tytul}&quot;</span>?
-              Ta operacja jest nieodwracalna, a artykuł zniknie z Twojego bloga.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:gap-0 pt-6 flex flex-col-reverse sm:flex-row">
-            <AlertDialogCancel className="border-border/50 hover:bg-muted text-white rounded-xl h-10 w-full sm:w-auto">
-              Anuluj
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeletePost}
-              className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10 h-10 w-full sm:w-auto font-semibold"
-            >
-              Usuń artykuł
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDeleteDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeletePost}
+        isPending={isDeletingPost}
+        title="Usuń wpis bloga"
+        description={`Czy na pewno chcesz usunąć wpis "${selectedPost?.tytul}"? Ta operacja jest nieodwracalna, a artykuł zniknie z Twojego bloga.`}
+        confirmText="Usuń artykuł"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

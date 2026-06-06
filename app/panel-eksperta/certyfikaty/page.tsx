@@ -2,16 +2,7 @@
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -387,32 +378,15 @@ export default function LawFirmCertificatesPage() {
       </motion.div>
 
       {/* Dialog usuwania */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-rose-500/5 blur-[50px] rounded-full pointer-events-none" />
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-rose-500" />
-              Usuń certyfikat
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
-              Czy na pewno chcesz usunąć certyfikat <span className="text-white font-semibold">"{selectedCertificate?.nazwaCertyfikatu}"</span>?
-              Ta akcja jest nieodwracalna, a plik zostanie trwale usunięty z systemu.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:gap-0 pt-6 flex flex-col-reverse sm:flex-row">
-            <AlertDialogCancel className="border-border/50 hover:bg-muted text-white rounded-xl h-10 w-full sm:w-auto">
-              Anuluj
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteCertificate}
-              className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10 h-10 w-full sm:w-auto font-semibold"
-            >
-              Usuń certyfikat
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDeleteDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteCertificate}
+        title="Usuń certyfikat"
+        description={`Czy na pewno chcesz usunąć certyfikat "${selectedCertificate?.nazwaCertyfikatu}"? Ta akcja jest nieodwracalna, a plik zostanie trwale usunięty z systemu.`}
+        confirmText="Usuń certyfikat"
+        cancelText="Anuluj"
+      />
     </div>
   )
 }

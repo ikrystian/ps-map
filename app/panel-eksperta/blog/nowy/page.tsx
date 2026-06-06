@@ -291,6 +291,9 @@ export default function LawFirmNewBlogPostPage() {
                                 onChange={field.onChange}
                                 label="Obrazek wyróżniający"
                                 description="Prześlij grafikę lub podaj bezpośredni link URL. Obrazek posłuży za miniaturę wpisu."
+                                confirmDelete={true}
+                                confirmDeleteTitle="Usuń obrazek z postu"
+                                confirmDeleteDescription="Czy na pewno chcesz usunąć obrazek wyróżniający z tego artykułu?"
                               />
                             </div>
                           </FormControl>
