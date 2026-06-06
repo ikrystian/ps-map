@@ -28,6 +28,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { BlogPost } from '@/types/blog';
 
 interface ClientData {
   id: string
@@ -70,20 +71,7 @@ interface Case {
   }>
 }
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  obrazekWyrozniajacy?: string
-  dataPublikacji: string
-  createdAt?: string
-  category?: {
-    nazwa: string
-  }
-  lawFirm?: {
-    nazwa: string
-  } | null
-}
+
 
 const containerVariants = {
   hidden: { opacity: 0 },

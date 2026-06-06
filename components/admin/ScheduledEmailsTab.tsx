@@ -43,6 +43,7 @@ import {
   XOctagon
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Pagination } from '@/types/pagination';
 
 interface ScheduledEmail {
   id: string
@@ -60,12 +61,7 @@ interface ScheduledEmail {
   updatedAt: string
 }
 
-interface Pagination {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
+
 
 export default function ScheduledEmailsTab() {
   const [emails, setEmails] = useState<ScheduledEmail[]>([])

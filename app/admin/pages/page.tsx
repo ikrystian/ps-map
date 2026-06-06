@@ -34,6 +34,7 @@ import { Edit, Eye, Plus, RefreshCw, Search, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { PaginatedResponse } from '@/types/pagination';
 
 interface Page {
   id: string
@@ -48,15 +49,7 @@ interface Page {
   modules: any[]
 }
 
-interface PaginatedResponse {
-  pages: Page[]
-  pagination: {
-    total: number
-    page: number
-    limit: number
-    pages: number
-  }
-}
+
 
 export default function AdminPagesPage() {
   const [pages, setPages] = useState<Page[]>([])
@@ -89,7 +82,7 @@ export default function AdminPagesPage() {
         throw new Error("Failed to fetch pages")
       }
 
-      const data: PaginatedResponse = await response.json()
+      const data: PaginatedResponse<'pages', Page> = await response.json()
       setPages(data.pages)
       setPagination(data.pagination)
     } catch (error) {

@@ -30,6 +30,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { PaginatedResponse } from '@/types/pagination';
 
 interface User {
   id: string
@@ -63,15 +64,7 @@ interface User {
   }
 }
 
-interface PaginatedResponse {
-  users: User[]
-  pagination: {
-    total: number
-    page: number
-    limit: number
-    pages: number
-  }
-}
+
 
 export default function AdminUsersPage() {
   const { data: session } = useSession()
@@ -108,7 +101,7 @@ export default function AdminUsersPage() {
 
       const response = await fetch(`/api/admin/users?${params.toString()}`)
       if (response.ok) {
-        const data: PaginatedResponse = await response.json()
+        const data: PaginatedResponse<'users', User> = await response.json()
         setUsers(data.users)
         setPagination(data.pagination)
       } else {

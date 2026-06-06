@@ -33,6 +33,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { LawFirm } from "@/types"
+import { PaginationData } from '@/types/pagination';
 
 interface PointTransaction {
   id: string
@@ -45,12 +46,7 @@ interface PointTransaction {
   lawFirm: LawFirm
 }
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+
 
 const pointTransactionTypeLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; customClass?: string }> = {
   SUBSCRIPTION_PURCHASE: { label: "Zakup subskrypcji", variant: "destructive", customClass: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200" },

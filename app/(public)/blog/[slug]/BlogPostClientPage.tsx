@@ -14,50 +14,9 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BlogPost } from '@/types/blog';
 
-interface BlogPost {
-  id: string;
-  tytul: string;
-  slug: string;
-  tresc: string;
-  obrazekWyrozniajacy: string | null;
-  dataPublikacji: string;
-  wyswietlenia: number;
-  metaTitle: string | null;
-  metaDescription: string | null;
-  category: {
-    id: string;
-    nazwa: string;
-    slug: string;
-  } | null;
-  lawFirm: {
-    id: string;
-    slug: string;
-    nazwa: string;
-    nazwaFirmy: string;
-    logo: string | null;
-    opis: string | null;
-    miasto: string;
-    voivodeship: {
-      id: string;
-      nazwa: string;
-    };
-  } | null;
-  isSponsored: boolean;
-  sponsoredLawFirm: {
-    id: string;
-    slug: string;
-    nazwa: string;
-    nazwaFirmy: string;
-    logo: string | null;
-    opis: string | null;
-    miasto: string;
-    voivodeship: {
-      id: string;
-      nazwa: string;
-    };
-  } | null;
-}
+
 
 export default function BlogPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null);

@@ -45,6 +45,7 @@ interface Client {
 }
 
 import { Category, Voivodeship } from "@/types"
+import { PaginationData } from '@/types/pagination';
 
 interface Offer {
   id: string
@@ -77,12 +78,7 @@ interface Case {
   }
 }
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  pages: number
-}
+
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   NOWA: { label: "Nowa", variant: "secondary" },

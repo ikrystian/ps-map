@@ -26,6 +26,7 @@ import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
+import { BlogPost } from '@/types/blog';
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -36,14 +37,7 @@ interface PublicHeaderProps {
   userId?: string
 }
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  obrazekWyrozniajacy: string | null
-  tresc: string
-  dataPublikacji?: string | null
-}
+
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}

@@ -35,6 +35,7 @@ import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { Review } from "@/types"
+import { PaginationData } from '@/types/pagination';
 
 
 const reasonLabels: Record<string, string> = {
@@ -47,12 +48,7 @@ const reasonLabels: Record<string, string> = {
 
 
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  pages: number
-}
+
 
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([])

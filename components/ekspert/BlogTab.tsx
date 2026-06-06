@@ -5,16 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Calendar, Eye } from "lucide-react"
 import Image from "next/image"
 import type { LawFirm } from "@/types"
+import { BlogPost } from '@/types/blog';
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  tresc: string
-  obrazekWyrozniajacy?: string
-  dataPublikacji: string
-  wyswietlenia: number
-}
+
 
 interface BlogTabProps {
   lawFirm: LawFirm

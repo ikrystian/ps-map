@@ -26,34 +26,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { BlogCategory } from "@/types";
+import { PaginationData } from '@/types/pagination';
+import { BlogPost } from '@/types/blog';
 
-interface BlogPost {
-  id: string;
-  tytul: string;
-  slug: string;
-  tresc: string;
-  obrazekWyrozniajacy: string | null;
-  dataPublikacji: string;
-  wyswietlenia: number;
-  category: {
-    id: string;
-    nazwa: string;
-    slug: string;
-  } | null;
-  lawFirm: {
-    id: string;
-    nazwa: string;
-    nazwaFirmy: string;
-    logo: string | null;
-  };
-}
 
-interface PaginationData {
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
-}
+
+
 
 export default function BlogPage() {
   const router = useRouter();
