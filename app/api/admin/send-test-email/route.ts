@@ -109,8 +109,8 @@ export async function POST(request: NextRequest) {
     if (!result) {
       return NextResponse.json(
         {
-          error: "Nie udało się wysłać emaila. Sprawdź konfigurację SMTP w zmiennych środowiskowych.",
-          details: "Upewnij się że EMAIL_SERVER_HOST, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD i EMAIL_FROM są ustawione."
+          error: "Nie udało się wysłać emaila. Sprawdź konfigurację SMTP w panelu administratora.",
+          details: "Upewnij się, że serwer SMTP, użytkownik, hasło, port i adres nadawcy są prawidłowo ustawione w panelu administratora."
         },
         { status: 500 }
       )

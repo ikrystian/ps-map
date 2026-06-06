@@ -104,13 +104,30 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
   let status: EmailLogStatus = EmailLogStatus.FAILED
 
   try {
-    // Sprawdź konfigurację SMTP
-    const smtpConfigured = !!(
-      process.env.EMAIL_SERVER_HOST &&
-      process.env.EMAIL_SERVER_USER &&
-      process.env.EMAIL_SERVER_PASSWORD &&
-      process.env.EMAIL_FROM
-    )
+    // Pobierz konfigurację SMTP z bazy danych z fallbackiem do zmiennych środowiskowych
+    const { prisma } = await import('@/lib/prisma')
+    const dbSettings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: [
+            'emailServerHost',
+            'emailServerPort',
+            'emailServerUser',
+            'emailServerPassword',
+            'emailFrom',
+          ],
+        },
+      },
+    })
+    const settingsMap = new Map(dbSettings.map((s) => [s.key, s.value]))
+
+    const host = settingsMap.get('emailServerHost') || process.env.EMAIL_SERVER_HOST
+    const portStr = settingsMap.get('emailServerPort') || process.env.EMAIL_SERVER_PORT || '587'
+    const user = settingsMap.get('emailServerUser') || process.env.EMAIL_SERVER_USER
+    const pass = settingsMap.get('emailServerPassword') || process.env.EMAIL_SERVER_PASSWORD
+    const from = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
+
+    const smtpConfigured = !!(host && user && pass && from)
 
     // W środowisku development bez konfiguracji SMTP - tylko loguj do konsoli
     if (process.env.NODE_ENV === 'development' && !smtpConfigured) {
@@ -129,24 +146,24 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
 
     // Jeśli SMTP jest skonfigurowany - wyślij prawdziwy email
     if (!smtpConfigured) {
-      errorMessage = 'SMTP not configured. Set EMAIL_SERVER_HOST, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_FROM'
+      errorMessage = 'SMTP not configured. Set SMTP settings in Admin Panel settings or environment variables.'
       console.error(errorMessage)
       return false
     }
 
-    const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
+    const port = parseInt(portStr)
     const result = await sendSMTPEmail(
       {
-        host: process.env.EMAIL_SERVER_HOST!,
+        host,
         port,
         secure: port === 465,
         auth: {
-          user: process.env.EMAIL_SERVER_USER!,
-          pass: process.env.EMAIL_SERVER_PASSWORD!,
+          user,
+          pass,
         },
       },
       {
-        from: process.env.EMAIL_FROM!,
+        from,
         to,
         subject,
         html,

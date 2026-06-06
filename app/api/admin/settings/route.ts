@@ -166,6 +166,39 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // SMTP settings
+    if (!settingsObject.emailServerHost) {
+      settingsObject.emailServerHost = {
+        value: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
+        description: "Adres hosta serwera SMTP",
+      }
+    }
+    if (!settingsObject.emailServerPort) {
+      settingsObject.emailServerPort = {
+        value: process.env.EMAIL_SERVER_PORT || "587",
+        description: "Port serwera SMTP",
+      }
+    }
+    if (!settingsObject.emailServerUser) {
+      settingsObject.emailServerUser = {
+        value: process.env.EMAIL_SERVER_USER || "",
+        description: "Nazwa użytkownika konta SMTP",
+      }
+    }
+    if (!settingsObject.emailServerPassword) {
+      settingsObject.emailServerPassword = {
+        value: process.env.EMAIL_SERVER_PASSWORD || "",
+        description: "Hasło konta SMTP",
+      }
+    }
+    if (!settingsObject.emailFrom) {
+      settingsObject.emailFrom = {
+        value: process.env.EMAIL_FROM || "noreply@prostasprawa.pl",
+        description: "Adres email nadawcy",
+      }
+    }
+
+
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
     console.error("Error fetching settings:", error)

@@ -165,8 +165,8 @@ function buildAiPrompt(string $systemRole, string $slackPrompt, string $trelloPr
     . "1. \"slack\": {$slackPrompt}\n"
     . "2. \"trello\": Obiekt zawierający:\n"
     . "   - \"name\": {$trelloPrompt}\n"
-    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 do 1200 itp - interwał co 30min). Wez pod uwage prace taka jak kodowanie + testy\n"
-    . "   - \"description\": Szczegółowy opis zadania Trello w języku polskim, opisujący co dokładnie należy zrobić. Nietechnicznym językiem. \n\n"
+    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 do 1200 itp - interwał co 30min). Wez pod uwage prace taka jak kodowanie + testy + poprawki\n"
+    . "   - \"description\": Szczegółowy opis zadania Trello w języku polskim, opisujący co dokładnie należy zrobić. \n\n"
     . "Odpowiedz WYŁĄCZNIE poprawnym obiektem JSON w formacie:\n"
     . "{\n"
     . "  \"slack\": \"...\",\n"
@@ -198,8 +198,8 @@ function getAiSummary(array $payload): string
 
   $prompt = buildAiPrompt(
     "Jesteś asystentem programisty. Przeanalizuj poniższe commity z wdrożenia (builda).",
-    "Podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz zwięźle, w punktach, używając emoji. ",
-    "Treść zadania (nazwa zadania), które Twoim zdaniem powinno zostać utworzone, aby dany commit/grupa commitów była zgodna z jego treścią. Nietechnicznym językiem. ",
+    "Podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz w punktach. ",
+    "Treść zadania (nazwa zadania), które Twoim zdaniem powinno zostać utworzone, aby dany commit/grupa commitów była zgodna z jego treścią. ",
     $commitsStr
   );
 

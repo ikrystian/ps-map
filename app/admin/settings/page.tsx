@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Settings2, Upload, Globe, Image as ImageIcon } from "lucide-react"
+import { Loader2, Save, Settings2, Upload, Globe, Image as ImageIcon, Mail } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
@@ -129,6 +129,26 @@ interface Settings {
     value: string
     description: string | null
   }
+  emailServerHost?: {
+    value: string
+    description: string | null
+  }
+  emailServerPort?: {
+    value: string
+    description: string | null
+  }
+  emailServerUser?: {
+    value: string
+    description: string | null
+  }
+  emailServerPassword?: {
+    value: string
+    description: string | null
+  }
+  emailFrom?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -161,6 +181,13 @@ export default function AdminSettingsPage() {
   const [ksefEnv, setKsefEnv] = useState("test")
   const [showChatAssistant, setShowChatAssistant] = useState("true")
   const [autoGrantBusinessPackage, setAutoGrantBusinessPackage] = useState("false")
+
+  // SMTP Settings
+  const [emailServerHost, setEmailServerHost] = useState("")
+  const [emailServerPort, setEmailServerPort] = useState("587")
+  const [emailServerUser, setEmailServerUser] = useState("")
+  const [emailServerPassword, setEmailServerPassword] = useState("")
+  const [emailFrom, setEmailFrom] = useState("")
 
   // Favicon i Open Graph (SEO)
   const [favicon, setFavicon] = useState("/favicon.png")
@@ -210,6 +237,13 @@ export default function AdminSettingsPage() {
         setKsefEnv(data.ksefEnv?.value || "test")
         setShowChatAssistant(data.showChatAssistant?.value || "true")
         setAutoGrantBusinessPackage(data.autoGrantBusinessPackage?.value || "false")
+        
+        // SMTP Settings
+        setEmailServerHost(data.emailServerHost?.value || "")
+        setEmailServerPort(data.emailServerPort?.value || "587")
+        setEmailServerUser(data.emailServerUser?.value || "")
+        setEmailServerPassword(data.emailServerPassword?.value || "")
+        setEmailFrom(data.emailFrom?.value || "")
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -272,6 +306,14 @@ export default function AdminSettingsPage() {
       }
       if (!ksefToken) {
         toast.error("Token autoryzacyjny KSeF jest wymagany przy włączonej integracji")
+        return
+      }
+    }
+
+    if (emailServerHost) {
+      const portNum = parseInt(emailServerPort)
+      if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+        toast.error("Port serwera SMTP musi być liczbą od 1 do 65535")
         return
       }
     }
@@ -400,6 +442,26 @@ export default function AdminSettingsPage() {
             ogImage: {
               value: ogImage,
               description: "Adres URL lub ścieżka do domyślnego obrazka Open Graph (zalecane 1200x630)",
+            },
+            emailServerHost: {
+              value: emailServerHost,
+              description: "Adres hosta serwera SMTP",
+            },
+            emailServerPort: {
+              value: emailServerPort,
+              description: "Port serwera SMTP",
+            },
+            emailServerUser: {
+              value: emailServerUser,
+              description: "Nazwa użytkownika konta SMTP",
+            },
+            emailServerPassword: {
+              value: emailServerPassword,
+              description: "Hasło konta SMTP",
+            },
+            emailFrom: {
+              value: emailFrom,
+              description: "Adres email nadawcy",
             },
           },
         }),
@@ -551,6 +613,94 @@ export default function AdminSettingsPage() {
                 Email wsparcia technicznego
               </p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Ustawienia SMTP (Wysyłka e-maili) */}
+      <Card className="border-cyan-500/20 bg-cyan-500/[0.01]">
+        <CardHeader>
+          <CardTitle className="text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            Konfiguracja SMTP (Wysyłka e-maili)
+          </CardTitle>
+          <CardDescription>
+            Skonfiguruj serwer SMTP do wysyłania powiadomień e-mail z platformy.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="emailServerHost">Host SMTP</Label>
+              <Input
+                id="emailServerHost"
+                type="text"
+                value={emailServerHost}
+                onChange={(e) => setEmailServerHost(e.target.value)}
+                placeholder="np. smtp.gmail.com"
+              />
+              <p className="text-xs text-muted-foreground">
+                Adres serwera poczty wychodzącej SMTP.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="emailServerPort">Port SMTP</Label>
+              <Input
+                id="emailServerPort"
+                type="text"
+                value={emailServerPort}
+                onChange={(e) => setEmailServerPort(e.target.value)}
+                placeholder="np. 587"
+              />
+              <p className="text-xs text-muted-foreground">
+                Zazwyczaj 587 (STARTTLS) lub 465 (SSL).
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="emailServerUser">Użytkownik SMTP</Label>
+              <Input
+                id="emailServerUser"
+                type="text"
+                value={emailServerUser}
+                onChange={(e) => setEmailServerUser(e.target.value)}
+                placeholder="np. website@ps-dev.com.pl"
+              />
+              <p className="text-xs text-muted-foreground">
+                Login do konta pocztowego.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="emailServerPassword">Hasło SMTP</Label>
+              <Input
+                id="emailServerPassword"
+                type="password"
+                value={emailServerPassword}
+                onChange={(e) => setEmailServerPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+              <p className="text-xs text-muted-foreground">
+                Hasło do konta lub hasło aplikacji (dla Gmail).
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="emailFrom">Adres nadawcy (Od)</Label>
+            <Input
+              id="emailFrom"
+              type="email"
+              value={emailFrom}
+              onChange={(e) => setEmailFrom(e.target.value)}
+              placeholder="np. noreply@prostasprawa.pl"
+            />
+            <p className="text-xs text-muted-foreground">
+              Adres e-mail, z którego będą wysyłane wiadomości (powinien odpowiadać autoryzowanemu nadawcy w SMTP).
+            </p>
           </div>
         </CardContent>
       </Card>
