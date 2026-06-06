@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Eye } from "lucide-react"
 import Image from "next/image"
+import type { LawFirm } from "@/types"
 
 interface BlogPost {
   id: string
@@ -13,11 +14,6 @@ interface BlogPost {
   obrazekWyrozniajacy?: string
   dataPublikacji: string
   wyswietlenia: number
-}
-
-interface LawFirm {
-  id: string
-  blogPosts: BlogPost[]
 }
 
 interface BlogTabProps {
