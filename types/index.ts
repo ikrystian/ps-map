@@ -46,3 +46,9 @@ export type {
   OfferBase, OfferReference, OfferWithCase,
   OfferWithDetails, OffersResponse
 } from "./offers"
+
+// Review types
+export type {
+  Review, ReviewReport
+} from "./reviews"
+

@@ -49,7 +49,8 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
-import type { LawFirm } from "@/types"
+import type { LawFirm, Review } from "@/types"
+
 
 // Format date helper
 const formatDate = (date: Date | string) => {
@@ -61,33 +62,7 @@ const formatDate = (date: Date | string) => {
   })
 }
 
-interface Review {
-  id: string
-  lawFirmId: string
-  clientId: string
-  ocenaOgolna: number
-  profesjonalizm: number | null
-  komunikacja: number | null
-  terminowosc: number | null
-  stosunekJakosci: number | null
-  tytulOpinii: string
-  trescOpinii: string
-  polecam: boolean
-  anonimowa: boolean
-  odpowiedz: string | null
-  dataOdpowiedzi: Date | null
-  zweryfikowana: boolean
-  aktywna: boolean
-  createdAt: Date
-  updatedAt: Date
-  client: {
-    imie: string
-    nazwisko: string
-    user?: {
-      image?: string | null
-    }
-  }
-}
+
 
 interface ReviewsResponse {
   reviews: Review[]

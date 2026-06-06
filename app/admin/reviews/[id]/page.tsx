@@ -23,39 +23,10 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import type { Review } from "@/types"
 
-interface Review {
-  id: string
-  ocenaOgolna: number
-  profesjonalizm: number | null
-  komunikacja: number | null
-  terminowosc: number | null
-  stosunekJakosci: number | null
-  tytulOpinii: string
-  trescOpinii: string
-  polecam: boolean
-  anonimowa: boolean
-  zweryfikowana: boolean
-  aktywna: boolean
-  odpowiedz: string | null
-  dataOdpowiedzi: string | null
-  createdAt: string
-  updatedAt: string
-  lawFirm: {
-    id: string
-    nazwa: string
-    nazwaFirmy: string
-    email: string
-    telefon: string
-    miasto: string
-  }
-  client: {
-    id: string
-    imie: string
-    nazwisko: string
-    email: string
-  }
-}
+
+
 
 export default function ReviewDetailsPage() {
   const params = useParams()

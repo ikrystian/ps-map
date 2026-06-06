@@ -43,35 +43,13 @@ import {
 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-
-export interface Review {
-  id: string
-  ocenaOgolna: number
-  profesjonalizm?: number
-  komunikacja?: number
-  terminowosc?: number
-  stosunekJakosci?: number
-  tytulOpinii: string
-  trescOpinii: string
-  polecam: boolean
-  anonimowa: boolean
-  odpowiedz?: string
-  dataOdpowiedzi?: string
-  createdAt: string
-  client: {
-    imie: string
-    nazwisko: string
-    user?: {
-      image?: string | null
-    }
-  }
-}
+import type { Review } from "@/types"
 
 interface ReviewsSectionProps {
   reviews: Review[]
   lawFirmId: string
   lawFirmName: string
-  lawFirmLogo?: string
+  lawFirmLogo?: string | null | undefined
   session: any
   onReviewSubmitted: () => void
 }
@@ -205,8 +183,8 @@ export function ReviewsSection({
           <Star
             key={star}
             className={`${sizeClass} ${star <= roundedRating
-                ? "fill-amber-500/80 text-amber-500/80"
-                : "fill-muted text-muted-foreground/30"
+              ? "fill-amber-500/80 text-amber-500/80"
+              : "fill-muted text-muted-foreground/30"
               }`}
           />
         ))}
@@ -399,8 +377,8 @@ export function ReviewsSection({
                           >
                             <Star
                               className={`h-8 w-8 ${star <= reviewForm.ocenaOgolna
-                                  ? "fill-amber-500/80 text-amber-500/80"
-                                  : "fill-muted text-muted-foreground/30"
+                                ? "fill-amber-500/80 text-amber-500/80"
+                                : "fill-muted text-muted-foreground/30"
                                 }`}
                             />
                           </button>
@@ -442,8 +420,8 @@ export function ReviewsSection({
                                   >
                                     <Star
                                       className={`h-6 w-6 ${star <= val
-                                          ? "fill-amber-500/80 text-amber-500/80"
-                                          : "fill-muted text-muted-foreground/30"
+                                        ? "fill-amber-500/80 text-amber-500/80"
+                                        : "fill-muted text-muted-foreground/30"
                                         }`}
                                     />
                                   </button>

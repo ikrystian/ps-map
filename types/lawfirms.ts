@@ -4,6 +4,8 @@
  */
 
 import type { CategoryReference } from "./categories"
+import type { Review } from "./reviews"
+
 
 /**
  * Base law firm type with essential fields
@@ -149,28 +151,7 @@ export interface LawFirm extends LawFirmWithLocation {
     dataPublikacji: string
     wyswietlenia: number
   }>
-  reviews?: Array<{
-    id: string
-    ocenaOgolna: number
-    profesjonalizm?: number
-    komunikacja?: number
-    terminowosc?: number
-    stosunekJakosci?: number
-    tytulOpinii: string
-    trescOpinii: string
-    polecam: boolean
-    anonimowa: boolean
-    odpowiedz?: string
-    dataOdpowiedzi?: string
-    createdAt: string
-    client: {
-      imie: string
-      nazwisko: string
-      user?: {
-        image?: string | null
-      }
-    }
-  }>
+  reviews?: Review[]
   badges?: Array<{
     id: string
     badge: {

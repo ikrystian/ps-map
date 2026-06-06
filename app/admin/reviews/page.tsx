@@ -34,6 +34,8 @@ import { CheckCircle, Eye, Search, Star, Trash2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import type { Review, ReviewReport } from "@/types"
+
 
 const reasonLabels: Record<string, string> = {
   SPAM: "Spam lub reklama",
@@ -43,47 +45,7 @@ const reasonLabels: Record<string, string> = {
   INNY: "Inny powód",
 }
 
-interface ReviewReport {
-  id: string
-  reason: string
-  description: string | null
-  createdAt: string
-  user: {
-    name: string | null
-    email: string
-  }
-}
 
-interface Review {
-  id: string
-  ocenaOgolna: number
-  profesjonalizm: number | null
-  komunikacja: number | null
-  terminowosc: number | null
-  stosunekJakosci: number | null
-  tytulOpinii: string
-  trescOpinii: string
-  polecam: boolean
-  anonimowa: boolean
-  zweryfikowana: boolean
-  aktywna: boolean
-  odpowiedz: string | null
-  dataOdpowiedzi: string | null
-  createdAt: string
-  updatedAt: string
-  lawFirm: {
-    id: string
-    nazwa: string
-    nazwaFirmy: string
-  }
-  client: {
-    id: string
-    imie: string
-    nazwisko: string
-    email: string
-  }
-  reports?: ReviewReport[]
-}
 
 interface PaginationData {
   total: number
