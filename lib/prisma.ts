@@ -10,8 +10,7 @@ const getPrismaInstance = () => {
   if (dbUrl === 'file:./dev.db') {
     dbUrl = 'file:./prisma/dev.db'
   }
-  console.log("prisma.ts getPrismaInstance called. process.env.DATABASE_URL:", process.env.DATABASE_URL, "dbUrl:", dbUrl)
-  
+
   const adapter = new PrismaLibSql({
     url: dbUrl,
   })
