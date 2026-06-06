@@ -1,511 +1,873 @@
 <?php
-// ─── KONFIGURACJA ────────────────────────────────────────────────────────────
-define('SLACK_BOT_TOKEN', '');   // Bot User OAuth Token
-define('SLACK_CHANNEL_ID', 'L');             // ID kanału (nie nazwa!)
+require_once __DIR__ . '/helpers.php';
 
-define('OPENROUTER_API_KEY', ''); // UZUPEŁNIJ KLUCZ!
-define('OPENROUTER_MODEL', 'deepseek/deepseek-v4-flash:free');
 
-define('MAX_IMAGE_MB', 5);                             // Maks. rozmiar obrazka (MB)
-// ─────────────────────────────────────────────────────────────────────────────
-
-$success = false;
-$error = '';
-
-function logDebug(string $message): void
-{
-  $timestamp = date('[Y-m-d H:i:s]');
-  file_put_contents(__DIR__ . '/debug.log', "{$timestamp} {$message}\n", FILE_APPEND);
+// ─── OBSŁUGA ZAPYTANIA Z LINII POLECEŃ (CLI / CRON NAZWA.PL) ──────────────────
+if (php_sapi_name() === 'cli' || empty($_SERVER['REQUEST_METHOD'])) {
+  $db = getDbConnection();
+  $res = runCronJobs($db);
+  echo json_encode($res, JSON_UNESCAPED_UNICODE) . "\n";
+  exit;
 }
 
-// Logowanie szczegółów przychodzącego żądania
-logDebug("=== OTRZYMANO ŻĄDANIE ===");
-logDebug("Metoda: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
-logDebug("URI: " . ($_SERVER['REQUEST_URI'] ?? 'UNKNOWN'));
-logDebug("IP klienta: " . ($_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'));
+// ─── OBSŁUGA ZAPYTAŃ GET ORAZ AKCJI AJAX ──────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
+  $db = getDbConnection();
+  $action = $_GET['action'] ?? '';
+  $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $rawBody = file_get_contents('php://input');
-  if (!empty($rawBody)) {
-    logDebug("Raw POST Body: " . $rawBody);
-  }
-  if (!empty($_POST)) {
-    logDebug("POST Fields: " . json_encode($_POST, JSON_UNESCAPED_UNICODE));
-  }
-  if (!empty($_FILES)) {
-    logDebug("FILES: " . json_encode($_FILES, JSON_UNESCAPED_UNICODE));
-  }
-}
-
-function esc(string $v): string
-{
-  return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-}
-function slackEsc(string $v): string
-{
-  return str_replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], $v);
-}
-$old = fn(string $k) => esc($_POST[$k] ?? '');
-
-/** Podstawowa funkcja do wysyłania payloadu do Slacka */
-function sendSlackRaw(string $token, array $payload): array
-{
-  logDebug("sendSlackRaw: Wysyłanie raw payloadu do Slacka: " . json_encode($payload, JSON_UNESCAPED_UNICODE));
-  $ch = curl_init('https://slack.com/api/chat.postMessage');
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/json',
-      'Authorization: Bearer ' . $token,
-    ],
-  ]);
-
-  $response = curl_exec($ch);
-  $errno = curl_errno($ch);
-  curl_close($ch);
-
-  if ($errno) {
-    $errStr = 'Błąd cURL: ' . curl_strerror($errno);
-    logDebug("sendSlackRaw: Slack cURL Error: " . $errStr);
-    return ['ok' => false, 'error' => $errStr];
+  // 1. AJAX: Wyślij teraz
+  if ($action === 'send_now' && $id > 0) {
+    $res = sendMessageFromDb($db, $id);
+    header('Content-Type: application/json');
+    echo json_encode($res, JSON_UNESCAPED_UNICODE);
+    exit;
   }
 
-  logDebug("sendSlackRaw: Odpowiedź ze Slacka: " . $response);
-  $result = json_decode($response, true);
-  if (!($result['ok'] ?? false)) {
-    $msg = $result['error'] ?? 'nieznany błąd';
-    if (!empty($result['response_metadata']['messages'])) {
-      $msg .= ' (' . implode(', ', $result['response_metadata']['messages']) . ')';
+  // 2. AJAX: Zaplanuj wysyłkę
+  if ($action === 'schedule' && $id > 0) {
+    $time = $_POST['scheduled_at'] ?? $_GET['scheduled_at'] ?? '';
+    if ($time) {
+      $formattedTime = date('Y-m-d H:i:s', strtotime($time));
+      $stmt = $db->prepare("UPDATE messages SET scheduled_at = :time, status = 'pending', error = NULL WHERE id = :id");
+      $stmt->execute(['time' => $formattedTime, 'id' => $id]);
+      header('Content-Type: application/json');
+      echo json_encode(['ok' => true, 'scheduled_at' => $formattedTime], JSON_UNESCAPED_UNICODE);
+      exit;
+    } else {
+      header('Content-Type: application/json');
+      echo json_encode(['ok' => false, 'error' => 'Brak podanej daty i godziny.'], JSON_UNESCAPED_UNICODE);
+      exit;
     }
-    logDebug("sendSlackRaw: Błąd wysyłania: " . $msg);
-    return ['ok' => false, 'error' => $msg];
   }
 
-  logDebug("sendSlackRaw: Wysyłanie zakończone sukcesem.");
-  return $result;
-}
-
-/** Generuje podsumowanie commitów przy użyciu AI (OpenRouter) */
-function getAiSummary(array $payload): string
-{
-  if (empty($payload['commits'])) {
-    logDebug("getAiSummary: Brak commits w payloadzie.");
-    return 'Brak nowych commitów.';
+  // 3. AJAX: Aktualizacja wiadomości
+  if ($action === 'update' && $id > 0) {
+    $content = $_POST['ai_response'] ?? '';
+    if ($content !== '') {
+      $stmt = $db->prepare("UPDATE messages SET ai_response = :ai_response WHERE id = :id");
+      $stmt->execute(['ai_response' => $content, 'id' => $id]);
+      header('Content-Type: application/json');
+      echo json_encode(['ok' => true, 'ai_response' => $content], JSON_UNESCAPED_UNICODE);
+      exit;
+    } else {
+      header('Content-Type: application/json');
+      echo json_encode(['ok' => false, 'error' => 'Treść wiadomości nie może być pusta.'], JSON_UNESCAPED_UNICODE);
+      exit;
+    }
   }
 
-  $commitsStr = "";
-  foreach ($payload['commits'] as $commit) {
-    $commitsStr .= "- " . ($commit['message'] ?? 'bez opisu') . " (autor: " . ($commit['author'] ?? 'anonim') . ")\n";
+  // 4. AJAX: Usuń wiadomość
+  if ($action === 'delete' && $id > 0) {
+    $stmt = $db->prepare("DELETE FROM messages WHERE id = :id");
+    $stmt->execute(['id' => $id]);
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    exit;
   }
 
-  $prompt = "Jesteś asystentem programisty. Podsumuj krótko ostatni build na podstawie poniższych commitów. Napisz co zostało zmienione i jaki jest cel tych zmian. Odpowiedz zwięźle, w punktach, używając emoji.\n\nRepozytorium: " . ($payload['repository'] ?? 'Nieznane') . "\nGałąź: " . ($payload['branch'] ?? 'main') . "\nAutor: " . ($payload['pusher'] ?? 'unknown') . "\n\nCommity:\n" . $commitsStr;
-  logDebug("getAiSummary: prompt AI: " . $prompt);
+  // 4. AJAX / URL: Uruchom Cron
+  if ($action === 'cron' || isset($_GET['cron'])) {
+    $res = runCronJobs($db);
+    if (isset($_GET['cron'])) {
+      // Dla wywołania np. przez systemowy Cron / curl:
+      header('Content-Type: application/json');
+      echo json_encode($res, JSON_UNESCAPED_UNICODE);
+      exit;
+    }
+    header('Content-Type: application/json');
+    echo json_encode($res, JSON_UNESCAPED_UNICODE);
+    exit;
+  }
 
-  $ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
-  $data = [
-    'model' => OPENROUTER_MODEL,
-    'messages' => [
-      ['role' => 'user', 'content' => $prompt]
-    ]
+  // Pobranie statystyk i listy wiadomości na potrzeby interfejsu panelu
+  $stats = [
+    'total' => $db->query("SELECT COUNT(*) FROM messages")->fetchColumn(),
+    'pending' => $db->query("SELECT COUNT(*) FROM messages WHERE status = 'pending'")->fetchColumn(),
+    'sent' => $db->query("SELECT COUNT(*) FROM messages WHERE status = 'sent'")->fetchColumn(),
+    'error' => $db->query("SELECT COUNT(*) FROM messages WHERE status = 'error'")->fetchColumn(),
   ];
 
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/json',
-      'Authorization: Bearer ' . OPENROUTER_API_KEY,
-    ],
-  ]);
+  $stmt = $db->query("SELECT * FROM messages ORDER BY id DESC");
+  $messages = $stmt->fetchAll();
+  ?>
+  <!DOCTYPE html>
+  <html lang="pl">
 
-  $response = curl_exec($ch);
-  $errno = curl_errno($ch);
-  curl_close($ch);
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Synchronizacji Slack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
 
-  if ($errno) {
-    logDebug("getAiSummary: błąd cURL: " . curl_strerror($errno));
-    return 'Nie udało się wygenerować podsumowania.';
-  }
+  <body>
 
-  logDebug("getAiSummary: Odpowiedź OpenRouter: " . $response);
-  $result = json_decode($response, true);
-  $summary = $result['choices'][0]['message']['content'] ?? '';
+    <header>
+      <div>
+        <h1>Slack Sync</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.2rem;">Kolejka wiadomości AI do wdrożeń i
+          powiadomień</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div class="refresh-indicator" id="auto-refresh-container">
+          <span class="refresh-dot active" id="auto-refresh-dot"></span>
+          <span>Autoodświeżanie: <strong id="auto-refresh-timer" style="color: white; font-family: 'DM Mono', monospace;">60s</strong></span>
+          <button onclick="toggleAutoRefresh()" class="btn-refresh-control" id="btn-auto-refresh-toggle">
+            ⏸️ Pauza
+          </button>
+        </div>
+        <button id="btn-cron" class="btn btn-secondary" onclick="triggerCron()">
+          ⚙️ Uruchom Cron
+        </button>
+      </div>
+    </header>
 
-  return !empty(trim($summary)) ? trim($summary) : 'Nie udało się wygenerować podsumowania.';
+    <div class="container">
+      <!-- STATYSTYKI -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-value"><?= $stats['total'] ?></div>
+          <div class="stat-label">Wszystkie</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-value" id="stat-pending"><?= $stats['pending'] ?></div>
+          <div class="stat-label">Oczekujące</div>
+        </div>
+        <div class="stat-card sent">
+          <div class="stat-value"><?= $stats['sent'] ?></div>
+          <div class="stat-label">Wysłane</div>
+        </div>
+        <div class="stat-card error">
+          <div class="stat-value"><?= $stats['error'] ?></div>
+          <div class="stat-label">Błędy</div>
+        </div>
+      </div>
+
+      <!-- KARTA GŁÓWNA - LISTA -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            📝 Ostatnio wygenerowane powiadomienia
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 60px;">ID</th>
+                <th style="width: 140px;">Typ</th>
+                <th>Treść wygenerowana przez AI</th>
+                <th style="width: 100px;">Status</th>
+                <th style="width: 180px;">Planowana wysyłka</th>
+                <th style="width: 150px;">Wysłano o</th>
+                <th style="width: 250px; text-align: right;">Akcje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php if (empty($messages)): ?>
+                <tr>
+                  <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                    Brak wiadomości w bazie danych. Przetestuj webhooki za pomocą poniższych poleceń cURL!
+                  </td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($messages as $msg): ?>
+                  <tr id="row-<?= $msg['id'] ?>" data-type="<?= esc($msg['type']) ?>" data-status="<?= esc($msg['status']) ?>" data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>">
+                    <td><?= $msg['id'] ?></td>
+                    <td>
+                      <span class="badge badge-type"><?= esc($msg['type']) ?></span>
+                    </td>
+                    <td class="response-cell">
+                      <div class="response-content" id="content-<?= $msg['id'] ?>" data-raw="<?= esc($msg['ai_response']) ?>"><?= esc($msg['ai_response']) ?>
+                        <div class="response-fade"></div>
+                      </div>
+                      <span class="toggle-expand" onclick="toggleExpand(<?= $msg['id'] ?>)"
+                        id="toggle-<?= $msg['id'] ?>">Rozwiń</span>
+                    </td>
+                    <td>
+                      <span class="badge badge-<?= $msg['status'] ?>" id="badge-status-<?= $msg['id'] ?>">
+                        <?= $msg['status'] === 'pending' ? 'Oczekuje' : ($msg['status'] === 'sent' ? 'Wysłano' : 'Błąd') ?>
+                      </span>
+                    </td>
+                    <td style="font-size: 0.85rem;" id="scheduled-at-<?= $msg['id'] ?>">
+                      <?= $msg['scheduled_at'] ? esc($msg['scheduled_at']) : '<span style="color:var(--text-muted);">Brak</span>' ?>
+                    </td>
+                    <td style="font-size: 0.85rem;" id="sent-at-<?= $msg['id'] ?>">
+                      <?= $msg['sent_at'] ? esc($msg['sent_at']) : '<span style="color:var(--text-muted);">—</span>' ?>
+                    </td>
+                    <td>
+                      <div class="action-group" style="justify-content: flex-end;">
+                        <!-- Podgląd JSON -->
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                          onclick="showPayload(<?= $msg['id'] ?>)" title="Pokaż surowe zapytanie JSON">
+                          🔍 JSON
+                        </button>
+
+                        <!-- Planowanie -->
+                        <div class="schedule-form">
+                          <input type="datetime-local" class="input-date" id="schedule-time-<?= $msg['id'] ?>"
+                            value="<?= $msg['scheduled_at'] ? date('Y-m-d\TH:i', strtotime($msg['scheduled_at'])) : '' ?>">
+                          <button class="btn btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                            onclick="scheduleMessage(<?= $msg['id'] ?>)" id="btn-sched-<?= $msg['id'] ?>"
+                            title="Zaplanuj wysyłkę">
+                            ⏰ Zapisz
+                          </button>
+                        </div>
+
+                        <!-- Edytuj treść -->
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                          onclick="openEditModal(<?= $msg['id'] ?>)" id="btn-edit-<?= $msg['id'] ?>"
+                          title="Edytuj treść wiadomości">
+                          ✏️ Edytuj
+                        </button>
+
+                        <!-- Wyślij natychmiast -->
+                        <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"
+                          onclick="sendNow(<?= $msg['id'] ?>)" id="btn-send-<?= $msg['id'] ?>">
+                          🚀 Wyślij teraz
+                        </button>
+
+                        <!-- Usuń -->
+                        <button class="btn btn-danger" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                          onclick="deleteMessage(<?= $msg['id'] ?>)">
+                          🗑️
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DOKUMENTACJA / CURL -->
+      <div class="panel-card curl-tab">
+        <div class="curl-title">
+          🔌 Przykładowe zapytania do testów (np. z GitHub Actions)
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Poniższe polecenia cURL symulują zapytania, które przychodzą bezpośrednio z akcji GitHub Actions. Uruchom je w
+          terminalu, aby dodać testowe powiadomienia do bazy.
+        </p>
+
+        <h4 style="margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600;">1. Webhook: Deployment / Slack Response
+          (`slack_response`)</h4>
+        <div class="code-block">
+          <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
+          <pre>curl -X POST http://localhost:8000/index.php \
+    -H "Content-Type: application/json" \
+    -d '{
+      "slack_response": {
+        "channel": "<?= esc(SLACK_CHANNEL_ID) ?>"
+      },
+      "deployment": {
+        "env": "production",
+        "status": "success",
+        "version": "v2.0.4",
+        "actor": "krystian-k",
+        "repository": "my-awesome-slack-app",
+        "workflow": "Production Deploy",
+        "commit_sha": "7f9c8d32b5b3a4a112233445566778899aabbcc"
+      }
+    }'</pre>
+        </div>
+
+        <h4 style="margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600;">2. Webhook: Zmiany w kodzie / Commity
+          (`commits`)</h4>
+        <div class="code-block">
+          <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
+          <pre>curl -X POST http://localhost:8000/index.php \
+    -H "Content-Type: application/json" \
+    -d '{
+      "repository": "slack-bot-integration",
+      "commits": [
+        {
+          "message": "fix: resolve SQLite connection issue in production"
+        },
+        {
+          "message": "feat: add beautiful dashboard for scheduled messages"
+        },
+        {
+          "message": "docs: update API testing commands"
+        }
+      ]
+    }'</pre>
+        </div>
+
+        <h4 style="margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600;">3. Zwykłe zapytanie POST z opisem i
+          opcjonalnym URL (np. standardowy formularz)</h4>
+        <div class="code-block">
+          <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
+          <pre>curl -X POST http://localhost:8000/index.php \
+    -d "description=Naprawiono krytyczny blad w module platnosci oraz zoptymalizowano zapytania SQL." \
+    -d "url=https://github.com/krystian-k/slack/commit/123456"</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal edycji wiadomości -->
+    <div id="edit-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="font-family: 'Syne', sans-serif; display: flex; align-items: center; gap: 0.5rem; color: white;">
+            ✏️ Edytuj wiadomość <span id="modal-msg-id" style="color: var(--primary);"></span>
+          </h3>
+          <button class="modal-close" onclick="closeEditModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-info-bar">
+            <span>Typ: <strong id="modal-msg-type" class="badge badge-type"></strong></span>
+            <span>Status: <strong id="modal-msg-status" class="badge"></strong></span>
+          </div>
+          
+          <div id="modal-warning-sent" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; padding: 0.8rem; border-radius: 8px; font-size: 0.85rem; align-items: center; gap: 0.5rem;">
+            ⚠️ Ta wiadomość została już wysłana. Edycja zmieni tylko treść lokalnej kopii w bazie danych.
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <label for="edit-textarea" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">
+              Treść wiadomości (obsługuje Markdown Slacka):
+            </label>
+            <textarea id="edit-textarea" placeholder="Wpisz treść wiadomości..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeEditModal()">Anuluj</button>
+          <button id="btn-modal-save" class="btn" onclick="saveEditedMessage()">
+            💾 Zapisz zmiany
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal podglądu JSON -->
+    <div id="payload-modal" class="modal">
+      <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+          <h3 style="font-family: 'Syne', sans-serif; display: flex; align-items: center; gap: 0.5rem; color: white;">
+            🔍 Surowe zapytanie JSON <span id="modal-payload-id" style="color: var(--primary);"></span>
+          </h3>
+          <button class="modal-close" onclick="closePayloadModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <pre id="payload-content" style="background: #1e293b; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #e2e8f0; font-family: 'DM Mono', monospace; font-size: 0.85rem; max-height: 60vh; border: 1px solid rgba(255,255,255,0.1);"></pre>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closePayloadModal()">Zamknij</button>
+          <button class="btn" onclick="copyPayload()">
+            📋 Kopiuj JSON
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+      function toggleExpand(id) {
+        const content = document.getElementById(`content-${id}`);
+        const toggle = document.getElementById(`toggle-${id}`);
+        if (content.classList.contains('expanded')) {
+          content.classList.remove('expanded');
+          toggle.innerText = 'Rozwiń';
+        } else {
+          content.classList.add('expanded');
+          toggle.innerText = 'Zwiń';
+        }
+      }
+
+      // Modal edycji wiadomości
+      let currentEditId = null;
+
+      function openEditModal(id) {
+        currentEditId = id;
+        const row = document.getElementById(`row-${id}`);
+        const contentEl = document.getElementById(`content-${id}`);
+        
+        const rawText = contentEl.getAttribute('data-raw') || '';
+        const type = row.getAttribute('data-type') || '';
+        const status = row.getAttribute('data-status') || '';
+        
+        document.getElementById('modal-msg-id').innerText = `#${id}`;
+        document.getElementById('modal-msg-type').innerText = type;
+        
+        const statusEl = document.getElementById('modal-msg-status');
+        statusEl.innerText = status === 'pending' ? 'Oczekuje' : (status === 'sent' ? 'Wysłano' : 'Błąd');
+        statusEl.className = `badge badge-${status}`;
+        
+        const warningSent = document.getElementById('modal-warning-sent');
+        if (status === 'sent') {
+          warningSent.style.display = 'flex';
+          warningSent.style.marginBottom = '0.5rem';
+        } else {
+          warningSent.style.display = 'none';
+          warningSent.style.marginBottom = '0';
+        }
+        
+        const textarea = document.getElementById('edit-textarea');
+        textarea.value = rawText;
+        
+        // Pokazanie modala z animacją
+        const modal = document.getElementById('edit-modal');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show');
+          textarea.focus();
+        }, 10);
+        
+        // Resetowanie timera autoodświeżania, aby nie przerwać edycji
+        if (!isAutoRefreshPaused) {
+          refreshTimeLeft = 60;
+        }
+      }
+
+      function closeEditModal() {
+        const modal = document.getElementById('edit-modal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 300);
+      }
+
+      async function saveEditedMessage() {
+        if (!currentEditId) return;
+        const id = currentEditId;
+        const textarea = document.getElementById('edit-textarea');
+        const newValue = textarea.value.trim();
+        
+        if (newValue === '') {
+          showToast('Treść wiadomości nie może być pusta!', 'warning');
+          return;
+        }
+        
+        const btn = document.getElementById('btn-modal-save');
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span> Zapisywanie...`;
+        
+        try {
+          const formData = new FormData();
+          formData.append('ai_response', newValue);
+          
+          const res = await fetch(`index.php?action=update&id=${id}`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          
+          if (data.ok) {
+            showToast('Wiadomość została zaktualizowana!', 'success');
+            
+            // Aktualizacja DOM
+            const contentEl = document.getElementById(`content-${id}`);
+            contentEl.setAttribute('data-raw', newValue);
+            
+            // Bezpieczne wstrzyknięcie tekstu w DOM (zabezpieczenie XSS)
+            const escapedText = newValue
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#039;");
+            contentEl.innerHTML = escapedText + '<div class="response-fade"></div>';
+            
+            closeEditModal();
+          } else {
+            showToast(`Błąd: ${data.error}`, 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      // Modal podglądu JSON
+      function showPayload(id) {
+        const row = document.getElementById(`row-${id}`);
+        const rawPayload = row.getAttribute('data-payload') || '';
+        const modal = document.getElementById('payload-modal');
+        const contentEl = document.getElementById('payload-content');
+        const idEl = document.getElementById('modal-payload-id');
+
+        idEl.innerText = `#${id}`;
+        
+        try {
+          // Próba sformatowania JSON
+          const jsonObj = JSON.parse(rawPayload);
+          contentEl.innerText = JSON.stringify(jsonObj, null, 2);
+        } catch (e) {
+          // Jeśli to nie JSON, pokaż jako zwykły tekst
+          contentEl.innerText = rawPayload;
+        }
+
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+      }
+
+      function closePayloadModal() {
+        const modal = document.getElementById('payload-modal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 300);
+      }
+
+      function copyPayload() {
+        const content = document.getElementById('payload-content').innerText;
+        navigator.clipboard.writeText(content).then(() => {
+          showToast('JSON skopiowany do schowka!', 'success');
+        }).catch(err => {
+          showToast('Nie udało się skopiować JSON.', 'error');
+        });
+      }
+
+      // Zamknięcie modala po kliknięciu poza obszarem zawartości
+      window.addEventListener('click', (e) => {
+        const editModal = document.getElementById('edit-modal');
+        const payloadModal = document.getElementById('payload-modal');
+        if (e.target === editModal) {
+          closeEditModal();
+        }
+        if (e.target === payloadModal) {
+          closePayloadModal();
+        }
+      });
+
+      function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      async function sendNow(id) {
+        const btn = document.getElementById(`btn-send-${id}`);
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span>`;
+        try {
+          const res = await fetch(`index.php?action=send_now&id=${id}`);
+          const data = await res.json();
+          if (data.ok) {
+            showToast('Wiadomość została wysłana na Slacka!', 'success');
+
+            // Aktualizacja UI
+            document.getElementById(`badge-status-${id}`).className = 'badge badge-sent';
+            document.getElementById(`badge-status-${id}`).innerText = 'Wysłano';
+
+            const now = new Date();
+            const timeString = now.getFullYear() + '-' +
+              String(now.getMonth() + 1).padStart(2, '0') + '-' +
+              String(now.getDate()).padStart(2, '0') + ' ' +
+              String(now.getHours()).padStart(2, '0') + ':' +
+              String(now.getMinutes()).padStart(2, '0') + ':' +
+              String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById(`sent-at-${id}`).innerText = timeString;
+          } else {
+            showToast(`Błąd: ${data.error}`, 'error');
+            document.getElementById(`badge-status-${id}`).className = 'badge badge-error';
+            document.getElementById(`badge-status-${id}`).innerText = 'Błąd';
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      async function scheduleMessage(id) {
+        const input = document.getElementById(`schedule-time-${id}`);
+        const time = input.value;
+        if (!time) {
+          showToast('Najpierw wybierz datę i godzinę!', 'warning');
+          return;
+        }
+        const btn = document.getElementById(`btn-sched-${id}`);
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `...`;
+        try {
+          const formData = new FormData();
+          formData.append('scheduled_at', time);
+          const res = await fetch(`index.php?action=schedule&id=${id}`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          if (data.ok) {
+            showToast(`Zaplanowano wysyłkę na: ${data.scheduled_at}`, 'success');
+
+            document.getElementById(`badge-status-${id}`).className = 'badge badge-pending';
+            document.getElementById(`badge-status-${id}`).innerText = 'Oczekuje';
+            document.getElementById(`scheduled-at-${id}`).innerText = data.scheduled_at;
+          } else {
+            showToast(`Błąd: ${data.error}`, 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      async function deleteMessage(id) {
+        if (!confirm('Czy na pewno chcesz usunąć tę wiadomość z bazy?')) return;
+        const row = document.getElementById(`row-${id}`);
+        row.style.opacity = '0.5';
+        try {
+          const res = await fetch(`index.php?action=delete&id=${id}`);
+          const data = await res.json();
+          if (data.ok) {
+            showToast('Usunięto wiadomość z bazy.', 'success');
+            row.style.transform = 'scale(0.95)';
+            row.style.opacity = '0';
+            setTimeout(() => {
+              row.remove();
+              location.reload(); // Prosta aktualizacja widoku i statystyk
+            }, 300);
+          } else {
+            row.style.opacity = '1';
+            showToast('Błąd usuwania.', 'error');
+          }
+        } catch (err) {
+          row.style.opacity = '1';
+          showToast('Błąd połączenia.', 'error');
+        }
+      }
+
+      async function triggerCron() {
+        const btn = document.getElementById('btn-cron');
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `⏳ Uruchamianie...`;
+        try {
+          const res = await fetch('index.php?action=cron');
+          const data = await res.json();
+          if (data.ok) {
+            showToast(`Cron przetworzył ${data.processed} wiadomości. Wysłano: ${data.sent}`, 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            showToast('Wystąpił błąd podczas pracy Crona.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      function copyCode(btn) {
+        const code = btn.nextElementSibling.innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          const oldText = btn.innerText;
+          btn.innerText = 'Skopiowano!';
+          setTimeout(() => btn.innerText = oldText, 2000);
+        }).catch(err => {
+          showToast('Nie udało się skopiować kodu.', 'error');
+        });
+      }
+
+      // Auto-refresh logic
+      let refreshTimeLeft = 60; // 60 seconds (1 minute)
+      let autoRefreshInterval = null;
+      let isAutoRefreshPaused = localStorage.getItem('autoRefreshPaused') === 'true';
+
+      function startAutoRefresh() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        
+        const dot = document.getElementById('auto-refresh-dot');
+        const timerEl = document.getElementById('auto-refresh-timer');
+        const btnToggle = document.getElementById('btn-auto-refresh-toggle');
+        
+        if (!dot || !timerEl || !btnToggle) return;
+
+        if (isAutoRefreshPaused) {
+          dot.className = 'refresh-dot paused';
+          timerEl.innerText = 'wstrzymane';
+          btnToggle.innerHTML = '▶️ Wznów';
+          return;
+        }
+
+        dot.className = 'refresh-dot active';
+        timerEl.innerText = `${refreshTimeLeft}s`;
+        btnToggle.innerHTML = '⏸️ Pauza';
+
+        autoRefreshInterval = setInterval(() => {
+          refreshTimeLeft--;
+          if (refreshTimeLeft <= 0) {
+            clearInterval(autoRefreshInterval);
+            showToast('Odświeżanie strony w celu pobrania najnowszych danych...', 'success');
+            setTimeout(() => {
+              location.reload();
+            }, 500);
+          } else {
+            timerEl.innerText = `${refreshTimeLeft}s`;
+          }
+        }, 1000);
+      }
+
+      function toggleAutoRefresh() {
+        isAutoRefreshPaused = !isAutoRefreshPaused;
+        localStorage.setItem('autoRefreshPaused', isAutoRefreshPaused ? 'true' : 'false');
+        if (!isAutoRefreshPaused) {
+          refreshTimeLeft = 60;
+        }
+        startAutoRefresh();
+        showToast(isAutoRefreshPaused ? 'Autoodświeżanie zostało wstrzymane.' : 'Autoodświeżanie zostało wznowione.', isAutoRefreshPaused ? 'warning' : 'success');
+      }
+
+      // Automatically reset timer when user is interacting with inputs, so they don't lose typed data
+      function setupInputActivityListeners() {
+        const resetTimer = () => {
+          if (!isAutoRefreshPaused && refreshTimeLeft < 55) {
+            refreshTimeLeft = 60;
+            const timerEl = document.getElementById('auto-refresh-timer');
+            if (timerEl) timerEl.innerText = '60s';
+          }
+        };
+
+        document.querySelectorAll('.input-date').forEach(input => {
+          input.addEventListener('focus', resetTimer);
+          input.addEventListener('input', resetTimer);
+        });
+
+        const textarea = document.getElementById('edit-textarea');
+        if (textarea) {
+          textarea.addEventListener('focus', resetTimer);
+          textarea.addEventListener('input', resetTimer);
+        }
+      }
+
+      // Start the auto refresh on load
+      setupInputActivityListeners();
+      startAutoRefresh();
+    </script>
+  </body>
+
+  </html>
+  <?php
+  exit;
 }
 
-/** Generuje poprawiony opis zgłoszenia przy użyciu AI (OpenRouter) */
-function getAiResponseForPost(string $description, string $url = ''): string
-{
-  if (empty($description)) {
-    logDebug("getAiResponseForPost: opis jest pusty.");
-    return '';
-  }
-
-  $prompt = "Jesteś pomocnym asystentem. Otrzymałeś zgłoszenie z formularza. Przeanalizuj poniższy opis i popraw go tak, aby był profesjonalny, czytelny, zwięzły, podzielony na punkty i zawierał odpowiednie emoji. Odpowiedz wyłącznie gotowym, poprawionym tekstem w języku polskim, bez żadnych dodatkowych komentarzy wstępnych czy podsumowań typu 'Oto poprawiony tekst:'.\n\n";
-  if ($url) {
-    $prompt .= "Adres URL powiązany ze zgłoszeniem: " . $url . "\n";
-  }
-  $prompt .= "Oryginalny opis zgłoszenia:\n" . $description;
-  logDebug("getAiResponseForPost: prompt AI: " . $prompt);
-
-  $ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
-  $data = [
-    'model' => OPENROUTER_MODEL,
-    'messages' => [
-      ['role' => 'user', 'content' => $prompt]
-    ]
-  ];
-
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/json',
-      'Authorization: Bearer ' . OPENROUTER_API_KEY,
-    ],
-  ]);
-
-  $response = curl_exec($ch);
-  $errno = curl_errno($ch);
-  curl_close($ch);
-
-  if ($errno) {
-    logDebug("getAiResponseForPost: błąd cURL: " . curl_strerror($errno));
-    return $description; // W razie błędu zwracamy oryginalny opis
-  }
-
-  logDebug("getAiResponseForPost: Odpowiedź OpenRouter: " . $response);
-  $result = json_decode($response, true);
-  $aiContent = $result['choices'][0]['message']['content'] ?? '';
-
-  return !empty(trim($aiContent)) ? trim($aiContent) : $description;
-}
-
-/** Generuje podsumowanie na podstawie odpowiedzi ze Slacka przy użyciu AI (OpenRouter) */
-function getAiResponseForSlackResponse(array $payload): string
-{
-  $jsonStr = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
-  $prompt = "Jesteś pomocnym asystentem. Otrzymałeś dane w formacie JSON opisujące wdrożenie lub odpowiedź ze Slacka. Przeanalizuj te dane i wygeneruj profesjonalne, czytelne i estetyczne podsumowanie/wiadomość w języku polskim, które wyślemy na Slack. Wiadomość powinna być zwięzła, podzielona na punkty jeśli to konieczne, i zawierać odpowiednie emoji. Formatuj tekst przy użyciu markdown obsługiwanego przez Slack (np. pogrubienia *tekst*, kod `tekst` itp.). Odpowiedz wyłącznie gotowym, poprawionym tekstem wiadomości w języku polskim, bez żadnych dodatkowych komentarzy wstępnych czy podsumowań typu 'Oto podsumowanie:'.\n\nDane JSON:\n" . $jsonStr;
-  logDebug("getAiResponseForSlackResponse: prompt AI: " . $prompt);
-
-  $ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
-  $data = [
-    'model' => OPENROUTER_MODEL,
-    'messages' => [
-      ['role' => 'user', 'content' => $prompt]
-    ]
-  ];
-
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/json',
-      'Authorization: Bearer ' . OPENROUTER_API_KEY,
-    ],
-  ]);
-
-  $response = curl_exec($ch);
-  $errno = curl_errno($ch);
-  curl_close($ch);
-
-  if ($errno) {
-    logDebug("getAiResponseForSlackResponse: błąd cURL: " . curl_strerror($errno));
-    return "Błąd podczas generowania podsumowania przez AI: " . curl_strerror($errno);
-  }
-
-  logDebug("getAiResponseForSlackResponse: Odpowiedź OpenRouter: " . $response);
-  $result = json_decode($response, true);
-  $aiContent = $result['choices'][0]['message']['content'] ?? '';
-
-  return !empty(trim($aiContent)) ? trim($aiContent) : 'Nie udało się wygenerować podsumowania AI.';
-}
-
-/** Wysyła wiadomość tekstową na Slack (opcjonalnie z obrazkiem) */
-function sendSlackMessage(string $token, string $channel, string $description, string $url = '', string $fileId = ''): array
-{
-  $urlEsc = slackEsc($url);
-  $descEsc = slackEsc($description);
-
-  if (mb_strlen($descEsc) > 2900) {
-    $descEsc = mb_substr($descEsc, 0, 2897) . '...';
-  }
-
-  $blocks = [
-    [
-      'type' => 'header',
-      'text' => ['type' => 'plain_text', 'text' => '📋 Nowa aktualizacja projektu', 'emoji' => true],
-    ],
-  ];
-
-  if ($url) {
-    $blocks[] = [
-      'type' => 'section',
-      'fields' => [
-        ['type' => 'mrkdwn', 'text' => "*Adres URL:*\n<{$urlEsc}|{$urlEsc}>"],
-      ],
-    ];
-  }
-
-  $blocks[] = [
-    'type' => 'section',
-    'text' => ['type' => 'mrkdwn', 'text' => "*Opis:*\n{$descEsc}"],
-  ];
-
-  if ($fileId) {
-    $blocks[] = [
-      'type' => 'image',
-      'slack_file' => ['id' => $fileId],
-      'alt_text' => 'Załączony obrazek do zgłoszenia'
-    ];
-  }
-
-  $blocks[] = ['type' => 'divider'];
-
-  $payload = [
-    'channel' => $channel,
-    'text' => $url ? "Nowe zgłoszenie: {$urlEsc}" : "Nowe zgłoszenie",
-    'blocks' => $blocks,
-    'username' => 'FormularzoBot',
-    'icon_emoji' => ':clipboard:',
-  ];
-
-  return sendSlackRaw($token, $payload);
-}
-
-/** Wysyła plik (obrazek) na Slack i zwraca jego ID (bez publikowania na kanale) */
-function uploadSlackImage(string $token, array $file): array
-{
-  logDebug("uploadSlackImage: Rozpoczęcie wgrywania obrazka: " . $file['name']);
-  // 1. files.getUploadURLExternal
-  $ch = curl_init('https://slack.com/api/files.getUploadURLExternal');
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => http_build_query([
-      'filename' => $file['name'],
-      'length' => $file['size'],
-    ]),
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/x-www-form-urlencoded',
-      'Authorization: Bearer ' . $token,
-    ],
-  ]);
-  $res1 = json_decode(curl_exec($ch), true);
-  if (curl_errno($ch) || !($res1['ok'] ?? false)) {
-    $err = $res1['error'] ?? curl_error($ch);
-    curl_close($ch);
-    logDebug("uploadSlackImage: getUploadURLExternal error: " . $err);
-    return ['ok' => false, 'error' => 'getUploadURLExternal: ' . $err];
-  }
-  curl_close($ch);
-
-  $uploadUrl = $res1['upload_url'];
-  $fileId = $res1['file_id'];
-  logDebug("uploadSlackImage: Otrzymano upload_url i file_id: " . $fileId);
-
-  // 2. Upload pliku do otrzymanego URL
-  $fileData = file_get_contents($file['tmp_name']);
-  $ch = curl_init($uploadUrl);
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => $fileData,
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: ' . $file['type'],
-    ],
-  ]);
-  $res2 = curl_exec($ch);
-  if (curl_errno($ch)) {
-    $err = curl_error($ch);
-    curl_close($ch);
-    logDebug("uploadSlackImage: upload pliku error: " . $err);
-    return ['ok' => false, 'error' => 'Upload to URL: ' . $err];
-  }
-  curl_close($ch);
-  logDebug("uploadSlackImage: Pomyślnie przesłano plik binarny.");
-
-  // 3. files.completeUploadExternal
-  $ch = curl_init('https://slack.com/api/files.completeUploadExternal');
-  $payload = json_encode([
-    'files' => [['id' => $fileId, 'title' => $file['name']]],
-  ]);
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => $payload,
-    CURLOPT_HTTPHEADER => [
-      'Content-Type: application/json; charset=utf-8',
-      'Authorization: Bearer ' . $token,
-    ],
-  ]);
-  $res3 = json_decode(curl_exec($ch), true);
-  if (curl_errno($ch) || !($res3['ok'] ?? false)) {
-    $err = $res3['error'] ?? curl_error($ch);
-    curl_close($ch);
-    logDebug("uploadSlackImage: completeUploadExternal error: " . $err);
-    return ['ok' => false, 'error' => 'completeUploadExternal: ' . $err];
-  }
-  curl_close($ch);
-  logDebug("uploadSlackImage: Zakończono sukcesem. file_id: " . $fileId);
-
-  return ['ok' => true, 'file_id' => $fileId];
-}
-
-// ─── OBSŁUGA ŻĄDAŃ ───────────────────────────────────────────────────────────
-
-// 1. Sprawdzenie czy to webhook JSON (np. z GitHub Actions)
+// ─── OBSŁUGA ZAPYTAŃ POST (API Webhooki / Zgłoszenia) ─────────────────────────
 $jsonInput = file_get_contents('php://input');
-$webhookData = json_decode($jsonInput, true);
+$webhookData = json_decode($jsonInput, true) ?? [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($webhookData['slack_response'])) {
-  logDebug("Obsługa webhooka slack_response...");
+// 1. Sprawdzenie czy to webhook JSON: slack_response
+if (isset($webhookData['slack_response'])) {
+  logDebug("Obsługa webhooka slack_response (zapis do bazy)...");
   $aiResponse = getAiResponseForSlackResponse($webhookData);
 
-  $channel = $webhookData['slack_response']['channel'] ?? SLACK_CHANNEL_ID;
-  $payload = [
-    'channel' => $channel,
-    'text' => $aiResponse,
-    'blocks' => [
-      [
-        'type' => 'section',
-        'text' => [
-          'type' => 'mrkdwn',
-          'text' => $aiResponse
-        ]
-      ]
-    ],
-    'username' => 'BuildBot',
-    'icon_emoji' => ':rocket:'
-  ];
+  $db = getDbConnection();
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt->execute([
+    'type' => 'slack_response',
+    'original_data' => json_encode($webhookData, JSON_UNESCAPED_UNICODE),
+    'raw_payload' => $jsonInput,
+    'ai_response' => $aiResponse
+  ]);
+  $insertedId = $db->lastInsertId();
 
-  logDebug("Wysyłanie wyniku slack_response do Slacka...");
-  $result = sendSlackRaw(SLACK_BOT_TOKEN, $payload);
-  logDebug("Wynik wysyłki slack_response: " . json_encode($result, JSON_UNESCAPED_UNICODE));
+  logDebug("Zapisano slack_response w bazie. ID: " . $insertedId);
 
   header('Content-Type: application/json');
   echo json_encode([
     'ok' => true,
-    'ai_response' => $aiResponse,
-    'slack_response' => $result
-  ]);
+    'message' => 'Otrzymano odpowiedź z AI i zapisano w bazie danych.',
+    'id' => $insertedId,
+    'ai_response' => $aiResponse
+  ], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($webhookData['commits'])) {
-  logDebug("Obsługa webhooka commits...");
+// 2. Sprawdzenie czy to webhook JSON: commits
+if (isset($webhookData['commits'])) {
+  logDebug("Obsługa webhooka commits (zapis do bazy)...");
   $summary = getAiSummary($webhookData);
 
-  $blocks = [
-    [
-      'type' => 'header',
-      'text' => ['type' => 'plain_text', 'text' => '🚀 Udane wdrożenie nowej zmiany na produkcje'],
-    ],
-    [
-      'type' => 'section',
-      'fields' => [
-        ['type' => 'mrkdwn', 'text' => "*Gałąź:*\n`" . ($webhookData['branch'] ?? 'main') . "`"],
-      ],
-    ],
-    [
-      'type' => 'section',
-      'text' => ['type' => 'mrkdwn', 'text' => "*Podsumowanie zmian:*\n" . $summary],
-    ],
-    ['type' => 'divider'],
-  ];
+  $db = getDbConnection();
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt->execute([
+    'type' => 'commits',
+    'original_data' => json_encode($webhookData, JSON_UNESCAPED_UNICODE),
+    'raw_payload' => $jsonInput,
+    'ai_response' => $summary
+  ]);
+  $insertedId = $db->lastInsertId();
 
-  $payload = [
-    'channel' => SLACK_CHANNEL_ID,
-    'text' => "🚀 Nowy build: " . ($webhookData['repository'] ?? ''),
-    'blocks' => $blocks,
-    'username' => 'BuildBot',
-    'icon_emoji' => ':rocket:',
-  ];
-
-  logDebug("Wysyłanie wyniku commits do Slacka...");
-  $result = sendSlackRaw(SLACK_BOT_TOKEN, $payload);
-  logDebug("Wynik wysyłki commits: " . json_encode($result, JSON_UNESCAPED_UNICODE));
+  logDebug("Zapisano commits w bazie. ID: " . $insertedId);
 
   header('Content-Type: application/json');
-  echo json_encode(['ok' => true, 'slack_response' => $result]);
+  echo json_encode([
+    'ok' => true,
+    'message' => 'Podsumowanie commits wygenerowane i zapisane w bazie.',
+    'id' => $insertedId,
+    'ai_response' => $summary
+  ], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
-// 2. Obsługa tradycyjnego formularza (multipart/form-data)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  logDebug("Obsługa tradycyjnego formularza (multipart/form-data)...");
-  $description = trim($_POST['description'] ?? '');
-  $url = trim($_POST['url'] ?? '');
-  $hasImage = isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE;
+// 3. Obsługa zapytania POST z opisem (zastępuje dawny formularz)
+$description = trim($webhookData['description'] ?? $_POST['description'] ?? '');
+$url = trim($webhookData['url'] ?? $_POST['url'] ?? '');
 
-  // ── walidacja ──
-  if (!$description) {
-    $error = 'Pole „Opis" jest wymagane.';
-  } elseif ($url && !filter_var($url, FILTER_VALIDATE_URL)) {
-    $error = 'Podaj prawidłowy adres URL (np. https://przykład.pl).';
-  } elseif ($hasImage) {
-    $img = $_FILES['image'];
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $maxBytes = MAX_IMAGE_MB * 1024 * 1024;
+if ($description !== '') {
+  logDebug("Obsługa zapytania POST z opisem (zapis do bazy)...");
 
-    if ($img['error'] !== UPLOAD_ERR_OK) {
-      $error = 'Błąd przesyłania pliku (kod: ' . $img['error'] . ').';
-    } elseif (!in_array($img['type'], $allowedTypes, true)) {
-      $error = 'Dozwolone formaty obrazka: JPEG, PNG, GIF, WebP.';
-    } elseif ($img['size'] > $maxBytes) {
-      $error = 'Obrazek jest zbyt duży. Maksymalny rozmiar to ' . MAX_IMAGE_MB . ' MB.';
-    }
+  if ($url && !filter_var($url, FILTER_VALIDATE_URL)) {
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => false, 'error' => 'Podaj prawidłowy adres URL (np. https://przykład.pl).'], JSON_UNESCAPED_UNICODE);
+    exit;
   }
 
-  if (!$error) {
-    $fileId = '';
+  logDebug("Zapytanie POST: generowanie AI odpowiedzi...");
+  $aiDescription = getAiResponseForPost($description, $url);
 
-    // Jeśli jest obrazek, najpierw go wgraj
-    if ($hasImage) {
-      $imgResult = uploadSlackImage(SLACK_BOT_TOKEN, $_FILES['image']);
-      if (!$imgResult['ok']) {
-        $error = 'Błąd uploadu obrazka: ' . ($imgResult['error'] ?? 'nieznany');
-      } else {
-        $fileId = $imgResult['file_id'];
-        sleep(1);
-      }
-    }
+  $db = getDbConnection();
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt->execute([
+    'type' => 'general_post',
+    'original_data' => json_encode(array_merge($webhookData, $_POST), JSON_UNESCAPED_UNICODE),
+    'raw_payload' => $jsonInput ?: json_encode($_POST, JSON_UNESCAPED_UNICODE),
+    'ai_response' => $aiDescription
+  ]);
+  $insertedId = $db->lastInsertId();
 
-    // Wyślij wiadomość
-    if (!$error) {
-      logDebug("Formularz: generowanie AI odpowiedzi...");
-      $aiDescription = getAiResponseForPost($description, $url);
-      logDebug("Formularz: wysyłanie na Slacka...");
-      $msgResult = sendSlackMessage(SLACK_BOT_TOKEN, SLACK_CHANNEL_ID, $aiDescription, $url, $fileId);
-      logDebug("Formularz: Wynik wysyłki: " . json_encode($msgResult, JSON_UNESCAPED_UNICODE));
-      if (!$msgResult['ok']) {
-        $error = 'Błąd wysyłki wiadomości: ' . ($msgResult['error'] ?? 'nieznany');
-      } else {
-        $success = true;
-      }
-    }
-  } else {
-    logDebug("Formularz: błędy walidacji: " . $error);
-  }
+  logDebug("Zapisano general_post w bazie. ID: " . $insertedId);
+
+  header('Content-Type: application/json');
+  echo json_encode([
+    'ok' => true,
+    'message' => 'Opis wdrożenia przetworzony i zapisany w bazie.',
+    'id' => $insertedId,
+    'ai_response' => $aiDescription
+  ], JSON_UNESCAPED_UNICODE);
+  exit;
 }
-?>
-<!DOCTYPE html>
-<html lang="pl">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zgłoszenie — wyślij na Slack</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap"
-    rel="stylesheet">
-  <style>
-    </head><body></body></html>
+// 4. Jeśli nie pasuje do żadnego z powyższych
+header('Content-Type: application/json');
+echo json_encode(['ok' => false, 'error' => 'Nieprawidłowe zapytanie POST (brak wymaganych danych).'], JSON_UNESCAPED_UNICODE);
+exit;
