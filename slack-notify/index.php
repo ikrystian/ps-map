@@ -16,11 +16,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
   $action = $_GET['action'] ?? '';
   $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-  // 1. AJAX: Wyślij teraz
-  if ($action === 'send_now' && $id > 0) {
+  // 1. AJAX: Wyślij do Slacka
+  if (($action === 'send_now' || $action === 'send_slack') && $id > 0) {
     $res = sendMessageFromDb($db, $id);
     header('Content-Type: application/json');
     echo json_encode($res, JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+
+  // 1b. AJAX: Wyślij do Trello
+  if ($action === 'send_trello' && $id > 0) {
+    $res = sendTrelloTaskFromDb($db, $id);
+    header('Content-Type: application/json');
+    echo json_encode($res, JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+
+  // 1c. AJAX: Wyślij do obu (Slack i Trello)
+  if ($action === 'send_all' && $id > 0) {
+    $slackRes = sendMessageFromDb($db, $id);
+    $trelloRes = sendTrelloTaskFromDb($db, $id);
+
+    header('Content-Type: application/json');
+    if ($slackRes['ok'] && $trelloRes['ok']) {
+      echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    } else {
+      $errors = [];
+      if (!$slackRes['ok'])
+        $errors[] = 'Slack: ' . ($slackRes['error'] ?? 'błąd');
+      if (!$trelloRes['ok'])
+        $errors[] = 'Trello: ' . ($trelloRes['error'] ?? 'błąd');
+      echo json_encode(['ok' => false, 'error' => implode(' | ', $errors)], JSON_UNESCAPED_UNICODE);
+    }
     exit;
   }
 
@@ -116,7 +143,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
       <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
         <div class="refresh-indicator" id="auto-refresh-container">
           <span class="refresh-dot active" id="auto-refresh-dot"></span>
-          <span>Autoodświeżanie: <strong id="auto-refresh-timer" style="color: white; font-family: 'DM Mono', monospace;">60s</strong></span>
+          <span>Autoodświeżanie: <strong id="auto-refresh-timer"
+              style="color: white; font-family: 'DM Mono', monospace;">60s</strong></span>
           <button onclick="toggleAutoRefresh()" class="btn-refresh-control" id="btn-auto-refresh-toggle">
             ⏸️ Pauza
           </button>
@@ -161,45 +189,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
             <thead>
               <tr>
                 <th style="width: 60px;">ID</th>
-                <th style="width: 140px;">Typ</th>
+                <th style="width: 120px;">Typ</th>
                 <th>Treść wygenerowana przez AI</th>
-                <th style="width: 100px;">Status</th>
-                <th style="width: 180px;">Planowana wysyłka</th>
-                <th style="width: 150px;">Wysłano o</th>
-                <th style="width: 250px; text-align: right;">Akcje</th>
+                <th style="width: 250px;">Zadanie Trello</th>
+                <th style="width: 150px;">Status</th>
+                <th style="width: 160px;">Planowana wysyłka</th>
+                <th style="width: 180px;">Wysłano o</th>
+                <th style="width: 320px; text-align: right;">Akcje</th>
               </tr>
             </thead>
             <tbody>
               <?php if (empty($messages)): ?>
                 <tr>
-                  <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                  <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;">
                     Brak wiadomości w bazie danych. Przetestuj webhooki za pomocą poniższych poleceń cURL!
                   </td>
                 </tr>
               <?php else: ?>
                 <?php foreach ($messages as $msg): ?>
-                  <tr id="row-<?= $msg['id'] ?>" data-type="<?= esc($msg['type']) ?>" data-status="<?= esc($msg['status']) ?>" data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>">
+                  <tr id="row-<?= $msg['id'] ?>" data-type="<?= esc($msg['type']) ?>" data-status="<?= esc($msg['status']) ?>"
+                    data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>">
                     <td><?= $msg['id'] ?></td>
                     <td>
                       <span class="badge badge-type"><?= esc($msg['type']) ?></span>
                     </td>
                     <td class="response-cell">
-                      <div class="response-content" id="content-<?= $msg['id'] ?>" data-raw="<?= esc($msg['ai_response']) ?>"><?= esc($msg['ai_response']) ?>
+                      <div class="response-content" id="content-<?= $msg['id'] ?>" data-raw="<?= esc($msg['ai_response']) ?>">
+                        <?= esc($msg['ai_response']) ?>
                         <div class="response-fade"></div>
                       </div>
                       <span class="toggle-expand" onclick="toggleExpand(<?= $msg['id'] ?>)"
                         id="toggle-<?= $msg['id'] ?>">Rozwiń</span>
                     </td>
+                    <td class="trello-cell">
+                      <?php if (!empty($msg['trello_name'])): ?>
+                        <div class="trello-task">
+                          <span class="trello-name"><?= esc($msg['trello_name']) ?></span>
+                          <span class="trello-time">
+                            ⏱️ <?= esc(formatMinutesToTrelloTime((int) $msg['trello_time'])) ?>
+                          </span>
+                          <?php if (!empty($msg['trello_desc'])): ?>
+                            <div class="trello-desc-wrapper">
+                              <details class="trello-desc-details">
+                                <summary class="trello-desc-summary">Opis zadania</summary>
+                                <div class="trello-desc-content"><?= esc($msg['trello_desc']) ?></div>
+                              </details>
+                            </div>
+                          <?php endif; ?>
+                        </div>
+                      <?php else: ?>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
+                      <?php endif; ?>
+                    </td>
                     <td>
-                      <span class="badge badge-<?= $msg['status'] ?>" id="badge-status-<?= $msg['id'] ?>">
-                        <?= $msg['status'] === 'pending' ? 'Oczekuje' : ($msg['status'] === 'sent' ? 'Wysłano' : 'Błąd') ?>
-                      </span>
+                      <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        <span class="badge badge-<?= $msg['status'] ?>" id="badge-status-slack-<?= $msg['id'] ?>"
+                          style="white-space: nowrap;">
+                          Slack:
+                          <?= $msg['status'] === 'pending' ? 'Oczekuje' : ($msg['status'] === 'sent' ? 'Wysłano' : 'Błąd') ?>
+                        </span>
+                        <span class="badge badge-<?= $msg['trello_status'] ?? 'pending' ?>"
+                          id="badge-status-trello-<?= $msg['id'] ?>" style="white-space: nowrap;">
+                          Trello:
+                          <?= ($msg['trello_status'] ?? 'pending') === 'pending' ? 'Oczekuje' : (($msg['trello_status'] ?? 'pending') === 'sent' ? 'Wysłano' : 'Błąd') ?>
+                        </span>
+                      </div>
                     </td>
                     <td style="font-size: 0.85rem;" id="scheduled-at-<?= $msg['id'] ?>">
                       <?= $msg['scheduled_at'] ? esc($msg['scheduled_at']) : '<span style="color:var(--text-muted);">Brak</span>' ?>
                     </td>
-                    <td style="font-size: 0.85rem;" id="sent-at-<?= $msg['id'] ?>">
-                      <?= $msg['sent_at'] ? esc($msg['sent_at']) : '<span style="color:var(--text-muted);">—</span>' ?>
+                    <td style="font-size: 0.8rem; line-height: 1.4;">
+                      <div id="sent-at-slack-<?= $msg['id'] ?>">
+                        Slack:
+                        <?= $msg['sent_at'] ? esc($msg['sent_at']) : '<span style="color:var(--text-muted);">—</span>' ?>
+                      </div>
+                      <div id="sent-at-trello-<?= $msg['id'] ?>" style="margin-top: 0.25rem;">
+                        Trello:
+                        <?= !empty($msg['trello_sent_at']) ? esc($msg['trello_sent_at']) : '<span style="color:var(--text-muted);">—</span>' ?>
+                      </div>
                     </td>
                     <td>
                       <div class="action-group" style="justify-content: flex-end;">
@@ -227,10 +294,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
                           ✏️ Edytuj
                         </button>
 
-                        <!-- Wyślij natychmiast -->
+                        <!-- Wyślij do Slacka -->
+                        <button class="btn btn-slack" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                          onclick="sendSlack(<?= $msg['id'] ?>)" id="btn-slack-<?= $msg['id'] ?>" title="Wyślij do Slacka">
+                          💬 Slack
+                        </button>
+
+                        <!-- Wyślij do Trello -->
+                        <button class="btn btn-trello" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;"
+                          onclick="sendTrello(<?= $msg['id'] ?>)" id="btn-trello-<?= $msg['id'] ?>" title="Wyślij do Trello">
+                          📋 Trello
+                        </button>
+
+                        <!-- Wyślij do obu -->
                         <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"
-                          onclick="sendNow(<?= $msg['id'] ?>)" id="btn-send-<?= $msg['id'] ?>">
-                          🚀 Wyślij teraz
+                          onclick="sendAll(<?= $msg['id'] ?>)" id="btn-all-<?= $msg['id'] ?>"
+                          title="Wyślij do Slacka i Trello">
+                          🚀 Wyślij
                         </button>
 
                         <!-- Usuń -->
@@ -263,21 +343,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         <div class="code-block">
           <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
           <pre>curl -X POST http://localhost:8000/index.php \
-    -H "Content-Type: application/json" \
-    -d '{
-      "slack_response": {
-        "channel": "<?= esc(SLACK_CHANNEL_ID) ?>"
-      },
-      "deployment": {
-        "env": "production",
-        "status": "success",
-        "version": "v2.0.4",
-        "actor": "krystian-k",
-        "repository": "my-awesome-slack-app",
-        "workflow": "Production Deploy",
-        "commit_sha": "7f9c8d32b5b3a4a112233445566778899aabbcc"
-      }
-    }'</pre>
+        -H "Content-Type: application/json" \
+        -d '{
+          "slack_response": {
+            "channel": "<?= esc(SLACK_CHANNEL_ID) ?>"
+          },
+          "deployment": {
+            "env": "production",
+            "status": "success",
+            "version": "v2.0.4",
+            "actor": "krystian-k",
+            "repository": "my-awesome-slack-app",
+            "workflow": "Production Deploy",
+            "commit_sha": "7f9c8d32b5b3a4a112233445566778899aabbcc"
+          }
+        }'</pre>
         </div>
 
         <h4 style="margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600;">2. Webhook: Zmiany w kodzie / Commity
@@ -285,21 +365,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         <div class="code-block">
           <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
           <pre>curl -X POST http://localhost:8000/index.php \
-    -H "Content-Type: application/json" \
-    -d '{
-      "repository": "slack-bot-integration",
-      "commits": [
-        {
-          "message": "fix: resolve SQLite connection issue in production"
-        },
-        {
-          "message": "feat: add beautiful dashboard for scheduled messages"
-        },
-        {
-          "message": "docs: update API testing commands"
-        }
-      ]
-    }'</pre>
+        -H "Content-Type: application/json" \
+        -d '{
+          "repository": "slack-bot-integration",
+          "commits": [
+            {
+              "message": "fix: resolve SQLite connection issue in production"
+            },
+            {
+              "message": "feat: add beautiful dashboard for scheduled messages"
+            },
+            {
+              "message": "docs: update API testing commands"
+            }
+          ]
+        }'</pre>
         </div>
 
         <h4 style="margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600;">3. Zwykłe zapytanie POST z opisem i
@@ -307,8 +387,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         <div class="code-block">
           <button class="btn-copy" onclick="copyCode(this)">Kopiuj</button>
           <pre>curl -X POST http://localhost:8000/index.php \
-    -d "description=Naprawiono krytyczny blad w module platnosci oraz zoptymalizowano zapytania SQL." \
-    -d "url=https://github.com/krystian-k/slack/commit/123456"</pre>
+        -d "description=Naprawiono krytyczny blad w module platnosci oraz zoptymalizowano zapytania SQL." \
+        -d "url=https://github.com/krystian-k/slack/commit/123456"</pre>
         </div>
       </div>
     </div>
@@ -327,8 +407,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
             <span>Typ: <strong id="modal-msg-type" class="badge badge-type"></strong></span>
             <span>Status: <strong id="modal-msg-status" class="badge"></strong></span>
           </div>
-          
-          <div id="modal-warning-sent" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; padding: 0.8rem; border-radius: 8px; font-size: 0.85rem; align-items: center; gap: 0.5rem;">
+
+          <div id="modal-warning-sent"
+            style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; padding: 0.8rem; border-radius: 8px; font-size: 0.85rem; align-items: center; gap: 0.5rem;">
             ⚠️ Ta wiadomość została już wysłana. Edycja zmieni tylko treść lokalnej kopii w bazie danych.
           </div>
 
@@ -358,7 +439,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
           <button class="modal-close" onclick="closePayloadModal()">&times;</button>
         </div>
         <div class="modal-body">
-          <pre id="payload-content" style="background: #1e293b; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #e2e8f0; font-family: 'DM Mono', monospace; font-size: 0.85rem; max-height: 60vh; border: 1px solid rgba(255,255,255,0.1);"></pre>
+          <pre id="payload-content"
+            style="background: #1e293b; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #e2e8f0; font-family: 'DM Mono', monospace; font-size: 0.85rem; max-height: 60vh; border: 1px solid rgba(255,255,255,0.1);"></pre>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" onclick="closePayloadModal()">Zamknij</button>
@@ -391,18 +473,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         currentEditId = id;
         const row = document.getElementById(`row-${id}`);
         const contentEl = document.getElementById(`content-${id}`);
-        
+
         const rawText = contentEl.getAttribute('data-raw') || '';
         const type = row.getAttribute('data-type') || '';
         const status = row.getAttribute('data-status') || '';
-        
+
         document.getElementById('modal-msg-id').innerText = `#${id}`;
         document.getElementById('modal-msg-type').innerText = type;
-        
+
         const statusEl = document.getElementById('modal-msg-status');
         statusEl.innerText = status === 'pending' ? 'Oczekuje' : (status === 'sent' ? 'Wysłano' : 'Błąd');
         statusEl.className = `badge badge-${status}`;
-        
+
         const warningSent = document.getElementById('modal-warning-sent');
         if (status === 'sent') {
           warningSent.style.display = 'flex';
@@ -411,10 +493,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
           warningSent.style.display = 'none';
           warningSent.style.marginBottom = '0';
         }
-        
+
         const textarea = document.getElementById('edit-textarea');
         textarea.value = rawText;
-        
+
         // Pokazanie modala z animacją
         const modal = document.getElementById('edit-modal');
         modal.style.display = 'flex';
@@ -422,7 +504,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
           modal.classList.add('show');
           textarea.focus();
         }, 10);
-        
+
         // Resetowanie timera autoodświeżania, aby nie przerwać edycji
         if (!isAutoRefreshPaused) {
           refreshTimeLeft = 60;
@@ -442,34 +524,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         const id = currentEditId;
         const textarea = document.getElementById('edit-textarea');
         const newValue = textarea.value.trim();
-        
+
         if (newValue === '') {
           showToast('Treść wiadomości nie może być pusta!', 'warning');
           return;
         }
-        
+
         const btn = document.getElementById('btn-modal-save');
         const oldHtml = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = `<span class="spinner"></span> Zapisywanie...`;
-        
+
         try {
           const formData = new FormData();
           formData.append('ai_response', newValue);
-          
+
           const res = await fetch(`index.php?action=update&id=${id}`, {
             method: 'POST',
             body: formData
           });
           const data = await res.json();
-          
+
           if (data.ok) {
             showToast('Wiadomość została zaktualizowana!', 'success');
-            
+
             // Aktualizacja DOM
             const contentEl = document.getElementById(`content-${id}`);
             contentEl.setAttribute('data-raw', newValue);
-            
+
             // Bezpieczne wstrzyknięcie tekstu w DOM (zabezpieczenie XSS)
             const escapedText = newValue
               .replace(/&/g, "&amp;")
@@ -478,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
               .replace(/"/g, "&quot;")
               .replace(/'/g, "&#039;");
             contentEl.innerHTML = escapedText + '<div class="response-fade"></div>';
-            
+
             closeEditModal();
           } else {
             showToast(`Błąd: ${data.error}`, 'error');
@@ -500,7 +582,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         const idEl = document.getElementById('modal-payload-id');
 
         idEl.innerText = `#${id}`;
-        
+
         try {
           // Próba sformatowania JSON
           const jsonObj = JSON.parse(rawPayload);
@@ -558,34 +640,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
         }, 4000);
       }
 
-      async function sendNow(id) {
-        const btn = document.getElementById(`btn-send-${id}`);
+      function formatDateTime(date) {
+        return date.getFullYear() + '-' +
+          String(date.getMonth() + 1).padStart(2, '0') + '-' +
+          String(date.getDate()).padStart(2, '0') + ' ' +
+          String(date.getHours()).padStart(2, '0') + ':' +
+          String(date.getMinutes()).padStart(2, '0') + ':' +
+          String(date.getSeconds()).padStart(2, '0');
+      }
+
+      async function sendSlack(id) {
+        const btn = document.getElementById(`btn-slack-${id}`);
         const oldHtml = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = `<span class="spinner"></span>`;
         try {
-          const res = await fetch(`index.php?action=send_now&id=${id}`);
+          const res = await fetch(`index.php?action=send_slack&id=${id}`);
           const data = await res.json();
           if (data.ok) {
             showToast('Wiadomość została wysłana na Slacka!', 'success');
 
             // Aktualizacja UI
-            document.getElementById(`badge-status-${id}`).className = 'badge badge-sent';
-            document.getElementById(`badge-status-${id}`).innerText = 'Wysłano';
+            const badge = document.getElementById(`badge-status-slack-${id}`);
+            if (badge) {
+              badge.className = 'badge badge-sent';
+              badge.innerText = 'Slack: Wysłano';
+            }
 
             const now = new Date();
-            const timeString = now.getFullYear() + '-' +
-              String(now.getMonth() + 1).padStart(2, '0') + '-' +
-              String(now.getDate()).padStart(2, '0') + ' ' +
-              String(now.getHours()).padStart(2, '0') + ':' +
-              String(now.getMinutes()).padStart(2, '0') + ':' +
-              String(now.getSeconds()).padStart(2, '0');
-
-            document.getElementById(`sent-at-${id}`).innerText = timeString;
+            const timeString = formatDateTime(now);
+            const timeEl = document.getElementById(`sent-at-slack-${id}`);
+            if (timeEl) {
+              timeEl.innerHTML = `Slack: ${timeString}`;
+            }
           } else {
             showToast(`Błąd: ${data.error}`, 'error');
-            document.getElementById(`badge-status-${id}`).className = 'badge badge-error';
-            document.getElementById(`badge-status-${id}`).innerText = 'Błąd';
+            const badge = document.getElementById(`badge-status-slack-${id}`);
+            if (badge) {
+              badge.className = 'badge badge-error';
+              badge.innerText = 'Slack: Błąd';
+            }
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      async function sendTrello(id) {
+        const btn = document.getElementById(`btn-trello-${id}`);
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span>`;
+        try {
+          const res = await fetch(`index.php?action=send_trello&id=${id}`);
+          const data = await res.json();
+          if (data.ok) {
+            showToast('Zadanie zostało wysłane do Trello!', 'success');
+
+            // Aktualizacja UI
+            const badge = document.getElementById(`badge-status-trello-${id}`);
+            if (badge) {
+              badge.className = 'badge badge-sent';
+              badge.innerText = 'Trello: Wysłano';
+            }
+
+            const now = new Date();
+            const timeString = formatDateTime(now);
+            const timeEl = document.getElementById(`sent-at-trello-${id}`);
+            if (timeEl) {
+              timeEl.innerHTML = `Trello: ${timeString}`;
+            }
+          } else {
+            showToast(`Błąd: ${data.error}`, 'error');
+            const badge = document.getElementById(`badge-status-trello-${id}`);
+            if (badge) {
+              badge.className = 'badge badge-error';
+              badge.innerText = 'Trello: Błąd';
+            }
+          }
+        } catch (err) {
+          showToast('Błąd połączenia.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
+      }
+
+      async function sendAll(id) {
+        const btn = document.getElementById(`btn-all-${id}`);
+        const oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span>`;
+        try {
+          const res = await fetch(`index.php?action=send_all&id=${id}`);
+          const data = await res.json();
+          if (data.ok) {
+            showToast('Wysłano do Slacka i Trello!', 'success');
+
+            // Aktualizacja UI
+            const badgeSlack = document.getElementById(`badge-status-slack-${id}`);
+            if (badgeSlack) {
+              badgeSlack.className = 'badge badge-sent';
+              badgeSlack.innerText = 'Slack: Wysłano';
+            }
+
+            const badgeTrello = document.getElementById(`badge-status-trello-${id}`);
+            if (badgeTrello) {
+              badgeTrello.className = 'badge badge-sent';
+              badgeTrello.innerText = 'Trello: Wysłano';
+            }
+
+            const now = new Date();
+            const timeString = formatDateTime(now);
+            const timeSlackEl = document.getElementById(`sent-at-slack-${id}`);
+            if (timeSlackEl) {
+              timeSlackEl.innerHTML = `Slack: ${timeString}`;
+            }
+            const timeTrelloEl = document.getElementById(`sent-at-trello-${id}`);
+            if (timeTrelloEl) {
+              timeTrelloEl.innerHTML = `Trello: ${timeString}`;
+            }
+          } else {
+            showToast(`Błąd: ${data.error}`, 'error');
+            // W razie częściowego błędu odświeżamy stronę, by pokazać dokładne statusy z bazy
+            setTimeout(() => {
+              location.reload();
+            }, 2000);
           }
         } catch (err) {
           showToast('Błąd połączenia.', 'error');
@@ -616,9 +799,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
           const data = await res.json();
           if (data.ok) {
             showToast(`Zaplanowano wysyłkę na: ${data.scheduled_at}`, 'success');
-
-            document.getElementById(`badge-status-${id}`).className = 'badge badge-pending';
-            document.getElementById(`badge-status-${id}`).innerText = 'Oczekuje';
+            const badgeSlack = document.getElementById(`badge-status-slack-${id}`);
+            if (badgeSlack) {
+              badgeSlack.className = 'badge badge-pending';
+              badgeSlack.innerText = 'Slack: Oczekuje';
+            }
             document.getElementById(`scheduled-at-${id}`).innerText = data.scheduled_at;
           } else {
             showToast(`Błąd: ${data.error}`, 'error');
@@ -696,11 +881,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !empty($_GET['action'])) {
 
       function startAutoRefresh() {
         if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-        
+
         const dot = document.getElementById('auto-refresh-dot');
         const timerEl = document.getElementById('auto-refresh-timer');
         const btnToggle = document.getElementById('btn-auto-refresh-toggle');
-        
+
         if (!dot || !timerEl || !btnToggle) return;
 
         if (isAutoRefreshPaused) {
@@ -779,14 +964,18 @@ $webhookData = json_decode($jsonInput, true) ?? [];
 if (isset($webhookData['slack_response'])) {
   logDebug("Obsługa webhooka slack_response (zapis do bazy)...");
   $aiResponse = getAiResponseForSlackResponse($webhookData);
+  $parsed = parseAiResponse($aiResponse);
 
   $db = getDbConnection();
-  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, trello_time, trello_name, trello_desc, status) VALUES (:type, :original_data, :raw_payload, :ai_response, :trello_time, :trello_name, :trello_desc, 'pending')");
   $stmt->execute([
     'type' => 'slack_response',
     'original_data' => json_encode($webhookData, JSON_UNESCAPED_UNICODE),
     'raw_payload' => $jsonInput,
-    'ai_response' => $aiResponse
+    'ai_response' => $parsed['slack'],
+    'trello_time' => $parsed['trello_time'],
+    'trello_name' => $parsed['trello_name'],
+    'trello_desc' => $parsed['trello_desc']
   ]);
   $insertedId = $db->lastInsertId();
 
@@ -797,7 +986,7 @@ if (isset($webhookData['slack_response'])) {
     'ok' => true,
     'message' => 'Otrzymano odpowiedź z AI i zapisano w bazie danych.',
     'id' => $insertedId,
-    'ai_response' => $aiResponse
+    'ai_response' => $parsed['slack']
   ], JSON_UNESCAPED_UNICODE);
   exit;
 }
@@ -806,14 +995,18 @@ if (isset($webhookData['slack_response'])) {
 if (isset($webhookData['commits'])) {
   logDebug("Obsługa webhooka commits (zapis do bazy)...");
   $summary = getAiSummary($webhookData);
+  $parsed = parseAiResponse($summary);
 
   $db = getDbConnection();
-  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, trello_time, trello_name, trello_desc, status) VALUES (:type, :original_data, :raw_payload, :ai_response, :trello_time, :trello_name, :trello_desc, 'pending')");
   $stmt->execute([
     'type' => 'commits',
     'original_data' => json_encode($webhookData, JSON_UNESCAPED_UNICODE),
     'raw_payload' => $jsonInput,
-    'ai_response' => $summary
+    'ai_response' => $parsed['slack'],
+    'trello_time' => $parsed['trello_time'],
+    'trello_name' => $parsed['trello_name'],
+    'trello_desc' => $parsed['trello_desc']
   ]);
   $insertedId = $db->lastInsertId();
 
@@ -824,7 +1017,7 @@ if (isset($webhookData['commits'])) {
     'ok' => true,
     'message' => 'Podsumowanie commits wygenerowane i zapisane w bazie.',
     'id' => $insertedId,
-    'ai_response' => $summary
+    'ai_response' => $parsed['slack']
   ], JSON_UNESCAPED_UNICODE);
   exit;
 }
@@ -844,14 +1037,18 @@ if ($description !== '') {
 
   logDebug("Zapytanie POST: generowanie AI odpowiedzi...");
   $aiDescription = getAiResponseForPost($description, $url);
+  $parsed = parseAiResponse($aiDescription);
 
   $db = getDbConnection();
-  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, status) VALUES (:type, :original_data, :raw_payload, :ai_response, 'pending')");
+  $stmt = $db->prepare("INSERT INTO messages (type, original_data, raw_payload, ai_response, trello_time, trello_name, trello_desc, status) VALUES (:type, :original_data, :raw_payload, :ai_response, :trello_time, :trello_name, :trello_desc, 'pending')");
   $stmt->execute([
     'type' => 'general_post',
     'original_data' => json_encode(array_merge($webhookData, $_POST), JSON_UNESCAPED_UNICODE),
     'raw_payload' => $jsonInput ?: json_encode($_POST, JSON_UNESCAPED_UNICODE),
-    'ai_response' => $aiDescription
+    'ai_response' => $parsed['slack'],
+    'trello_time' => $parsed['trello_time'],
+    'trello_name' => $parsed['trello_name'],
+    'trello_desc' => $parsed['trello_desc']
   ]);
   $insertedId = $db->lastInsertId();
 
@@ -862,7 +1059,7 @@ if ($description !== '') {
     'ok' => true,
     'message' => 'Opis wdrożenia przetworzony i zapisany w bazie.',
     'id' => $insertedId,
-    'ai_response' => $aiDescription
+    'ai_response' => $parsed['slack']
   ], JSON_UNESCAPED_UNICODE);
   exit;
 }
