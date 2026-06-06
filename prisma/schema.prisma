@@ -100,7 +100,7 @@ model VerificationToken {
 
 enum UserRole {
   CLIENT      // Klient
-  LAW_FIRM    // Kancelaria
+  LAW_FIRM    // Ekspert
   ADMIN       // Administrator
 }
 
@@ -271,7 +271,7 @@ model LawFirm {
   zweryfikowana         Boolean  @default(false)
   aktywna               Boolean  @default(true)
 
-  // Opiekun kancelarii
+  // Opiekun eksperta
   accountManagerId      String?
   accountManager        AccountManager? @relation(fields: [accountManagerId], references: [id])
 
@@ -675,7 +675,7 @@ model Message {
 model Conversation {
   id                String   @id @default(uuid())
 
-  // Uczestnicy konwersacji (klient i kancelaria)
+  // Uczestnicy konwersacji (klient i ekspert)
   clientUserId      String
   clientUser        User     @relation("ClientConversations", fields: [clientUserId], references: [id], onDelete: Cascade)
 
@@ -833,7 +833,7 @@ model Review {
   polecam             Boolean  @default(true)
   anonimowa           Boolean  @default(false)
 
-  // Odpowiedź kancelarii
+  // Odpowiedź eksperta
   odpowiedz           String?
   dataOdpowiedzi      DateTime?
 
@@ -1860,14 +1860,14 @@ model EmailTemplate {
 }
 
 enum EmailType {
-  NOWA_SPRAWA              // Email do kancelarii o nowej sprawie
+  NOWA_SPRAWA              // Email do ekspercie o nowej sprawie
   NOWA_OFERTA              // Email do klienta o nowej ofercie
-  AKCEPTACJA_OFERTY        // Email do kancelarii o akceptacji oferty
-  ODRZUCENIE_OFERTY        // Email do kancelarii o odrzuceniu oferty
+  AKCEPTACJA_OFERTY        // Email do ekspercie o akceptacji oferty
+  ODRZUCENIE_OFERTY        // Email do ekspercie o odrzuceniu oferty
   NOWA_WIADOMOSC           // Email o nowej wiadomości
   NOWA_OPINIA              // Email o nowej opinii
   REJESTRACJA_KLIENT       // Email powitalny dla klienta
-  REJESTRACJA_KANCELARIA   // Email powitalny dla kancelarii
+  REJESTRACJA_KANCELARIA   // Email powitalny dla ekspertów
   RESET_HASLA              // Email z linkiem do resetu hasła
   POTWIERDZENIE_EMAIL      // Email z linkiem do potwierdzenia adresu email
   PLATNOSC_POTWIERDZONA    // Email o potwierdzeniu płatności

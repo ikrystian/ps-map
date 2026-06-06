@@ -10,21 +10,21 @@
       "questions": [
         {
           "pytanie": "Jak działa serwis Prosta Sprawa?",
-          "odpowiedz": "Serwis Prosta Sprawa łączy klientów poszukujących pomocy prawnej z kancelariami prawnymi. Klienci mogą dodawać sprawy, a kancelarie składać oferty. Serwis umożliwia również wyszukiwanie prawników i przeglądanie ich profili.",
+          "odpowiedz": "Serwis Prosta Sprawa łączy klientów poszukujących pomocy prawnej z ekspertami prawnymi. Klienci mogą dodawać sprawy, a eksperci składać oferty. Serwis umożliwia również wyszukiwanie prawników i przeglądanie ich profili.",
           "slug": "jak-dziala-serwis",
           "kolejnosc": 1,
           "aktywna": true
         },
         {
           "pytanie": "Czy korzystanie z serwisu jest płatne dla klientów?",
-          "odpowiedz": "Dla klientów dodawanie spraw i przeglądanie ofert jest całkowicie bezpłatne. Opłaty pobierane są jedynie od kancelarii prawnych za dostęp do systemu i składanie ofert.",
+          "odpowiedz": "Dla klientów dodawanie spraw i przeglądanie ofert jest całkowicie bezpłatne. Opłaty pobierane są jedynie od ekspertów prawnych za dostęp do systemu i składanie ofert.",
           "slug": "czy-korzystanie-jest-platne",
           "kolejnosc": 2,
           "aktywna": true
         },
         {
           "pytanie": "Jak mogę znaleźć odpowiedniego prawnika?",
-          "odpowiedz": "Możesz skorzystać z wyszukiwarki prawników, filtrując wyniki według specjalizacji, lokalizacji lub innych kryteriów. Możesz również dodać swoją sprawę, a kancelarie same złożą Ci oferty.",
+          "odpowiedz": "Możesz skorzystać z wyszukiwarki prawników, filtrując wyniki według specjalizacji, lokalizacji lub innych kryteriów. Możesz również dodać swoją sprawę, a eksperci sami złożą Ci oferty.",
           "slug": "jak-znalezc-prawnika",
           "kolejnosc": 3,
           "aktywna": true
@@ -41,14 +41,14 @@
       "questions": [
         {
           "pytanie": "Jak założyć konto w serwisie?",
-          "odpowiedz": "Aby założyć konto, kliknij przycisk \"Zarejestruj się\" i postępuj zgodnie z instrukcjami. Możesz zarejestrować się jako klient lub jako kancelaria prawna.",
+          "odpowiedz": "Aby założyć konto, kliknij przycisk \"Zarejestruj się\" i postępuj zgodnie z instrukcjami. Możesz zarejestrować się jako klient lub jako ekspert prawny.",
           "slug": "jak-zalozyc-konto",
           "kolejnosc": 1,
           "aktywna": true
         },
         {
-          "pytanie": "Jak mogę opłacić pakiet dla kancelarii?",
-          "odpowiedz": "Pakiety dla kancelarii można opłacić za pomocą dostępnych metod płatności, takich jak przelew bankowy, PayU lub Przelewy24. Szczegóły znajdziesz w panelu kancelarii w sekcji \"Pakiety\".",
+          "pytanie": "Jak mogę opłacić pakiet dla ekspertów?",
+          "odpowiedz": "Pakiety dla ekspertów można opłacić za pomocą dostępnych metod płatności, takich jak przelew bankowy, PayU lub Przelewy24. Szczegóły znajdziesz w panelu eksperta w sekcji \"Pakiety\".",
           "slug": "jak-oplacic-pakiet",
           "kolejnosc": 2,
           "aktywna": true

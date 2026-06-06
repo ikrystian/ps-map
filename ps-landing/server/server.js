@@ -11,7 +11,7 @@ const dataDir = path.join(ROOT, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
 // CSV header (includes Województwo after Miasto)
-const CSV_HEADER = 'Data,Profil,Kod Pocztowy,Miasto,Województwo,Sprawy Firmowe,Sprawy Prywatne,Pozostale,Imie i Nazwisko,Telefon,Nazwa Kancelarii,Adres,Zgoda\n';
+const CSV_HEADER = 'Data,Profil,Kod Pocztowy,Miasto,Województwo,Sprawy Firmowe,Sprawy Prywatne,Pozostale,Imie i Nazwisko,Telefon,Nazwa Eksperta,Adres,Zgoda\n';
 
 // Migration and Initialization of registrations.csv
 if (!fs.existsSync(CSV_FILE)) {
@@ -173,7 +173,7 @@ const server = http.createServer((req, res) => {
                     data.pozostale,
                     data.imieNazwisko,
                     data.telefon,
-                    data.nazwaKancelarii,
+                    data.nazwaEksperta,
                     data.adres,
                     data.consent
                 ].map(escapeCSV).join(',') + '\n';
