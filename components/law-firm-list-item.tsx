@@ -316,7 +316,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
-          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[280px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
+          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
               {lawFirm.zdjecieGlowne || lawFirm.logo ? (
                 <Image

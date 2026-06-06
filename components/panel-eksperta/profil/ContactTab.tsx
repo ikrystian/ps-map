@@ -299,7 +299,7 @@ export function ContactTab({
             </CardHeader>
             <CardContent className="space-y-4 pt-6 flex-grow flex flex-col justify-center">
               <div className="grid gap-4">
-                
+
                 {/* Row 1: Ulica and Kod Pocztowy */}
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="grid gap-2 md:col-span-2">
@@ -382,7 +382,7 @@ export function ContactTab({
                                 const displayValue = matchedPostal
                                   ? `${city.nazwa} (${matchedPostal.code})`
                                   : city.nazwa
- 
+
                                 return (
                                   <CommandItem
                                     key={city.id}
@@ -460,7 +460,7 @@ export function ContactTab({
             </CardHeader>
             <CardContent className="space-y-4 pt-6 flex-grow flex flex-col justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
+
                 {/* LinkedIn */}
                 <div className="grid gap-2">
                   <Label htmlFor="linkLinkedIn" className="text-zinc-300 font-medium text-xs">LinkedIn URL</Label>
@@ -636,7 +636,7 @@ export function ContactTab({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                 <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
                 <div className="flex gap-3 text-xs">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
                     Województwa:{" "}
                     <span className={cn(
                       "font-semibold",
@@ -647,7 +647,7 @@ export function ContactTab({
                     <span className="text-zinc-500">/</span>
                     <span className="text-zinc-400">{maxVoivodeships}</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
                     Miasta:{" "}
                     <span className={cn(
                       "font-semibold",

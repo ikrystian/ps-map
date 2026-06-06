@@ -152,7 +152,7 @@ export function AboutTab({
                     <p className="text-xs text-zinc-400">Wydawca: <span className="font-medium text-zinc-300">{cert.wydawca}</span></p>
                     <p className="text-xs text-zinc-400">Uzyskano: <span className="font-medium text-zinc-300">{formatDate(cert.dataUzyskania)}</span></p>
                     {cert.numerCertyfikatu && (
-                      <p className="text-[10px] text-zinc-400 font-mono bg-zinc-900/60 border border-border/15 px-2 py-0.5 rounded w-fit">Nr: {cert.numerCertyfikatu}</p>
+                      <p className="text-[10px] text-zinc-400 font-mono bg-zinc-700 border border-border/15 px-2 py-0.5 rounded w-fit">Nr: {cert.numerCertyfikatu}</p>
                     )}
                     {cert.skanCertyfikatu && (
                       <a

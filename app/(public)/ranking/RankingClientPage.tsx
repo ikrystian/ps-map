@@ -106,11 +106,11 @@ export default function RankingClientPage() {
               Zestawienie top 100 najbardziej aktywnych i najwyżej ocenianych ekspertów prawnych w Polsce w oparciu o rzetelne statystyki aktywności.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3 text-xs">
-              <div className="flex items-center gap-2 bg-zinc-900/60 border border-border/10 px-4 py-2.5 rounded-full text-zinc-300">
+              <div className="flex items-center gap-2 bg-zinc-700 border border-border/10 px-4 py-2.5 rounded-full text-zinc-300">
                 <TrendingUp className="h-4 w-4 text-[#0da192]" />
                 <span>Aktualizowany automatycznie w czasie rzeczywistym</span>
               </div>
-              <div className="flex items-center gap-2 bg-zinc-900/60 border border-border/10 px-4 py-2.5 rounded-full text-zinc-300">
+              <div className="flex items-center gap-2 bg-zinc-700 border border-border/10 px-4 py-2.5 rounded-full text-zinc-300">
                 <Coins className="h-4 w-4 text-[#d7b56d]" />
                 <span>Kryterium rankingu: Aktywność i Punkty Salda</span>
               </div>
@@ -126,13 +126,13 @@ export default function RankingClientPage() {
             {[...Array(5)].map((_, i) => (
               <Card key={i} className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl p-6">
                 <CardContent className="p-0 flex gap-4">
-                  <Skeleton className="h-12 w-12 rounded-full bg-zinc-900/60" />
+                  <Skeleton className="h-12 w-12 rounded-full bg-zinc-700" />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-64 bg-zinc-900/60" />
-                    <Skeleton className="h-4 w-48 bg-zinc-900/60" />
+                    <Skeleton className="h-5 w-64 bg-zinc-700" />
+                    <Skeleton className="h-4 w-48 bg-zinc-700" />
                     <div className="flex gap-2 pt-2">
-                      <Skeleton className="h-6 w-20 bg-zinc-900/60" />
-                      <Skeleton className="h-6 w-24 bg-zinc-900/60" />
+                      <Skeleton className="h-6 w-20 bg-zinc-700" />
+                      <Skeleton className="h-6 w-24 bg-zinc-700" />
                     </div>
                   </div>
                 </CardContent>
@@ -179,7 +179,7 @@ export default function RankingClientPage() {
                                   firm.rank === 1 && "bg-gradient-to-r from-amber-400 via-[#d7b56d] to-yellow-600 text-zinc-950 shadow-[0_0_15px_rgba(215,181,109,0.3)] border border-[#d7b56d]/40",
                                   firm.rank === 2 && "bg-gradient-to-r from-zinc-300 via-zinc-400 to-zinc-500 text-zinc-950 shadow-[0_0_15px_rgba(156,163,175,0.2)] border border-zinc-400/40",
                                   firm.rank === 3 && "bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white shadow-[0_0_15px_rgba(180,83,9,0.2)] border border-amber-700/40",
-                                  firm.rank && firm.rank > 3 && "bg-zinc-900/60 border border-border/10 text-zinc-300"
+                                  firm.rank && firm.rank > 3 && "bg-zinc-700 border border-border/10 text-zinc-300"
                                 )}
                               >
                                 {getRankIcon(firm.rank || 0) || `#${firm.rank}`}

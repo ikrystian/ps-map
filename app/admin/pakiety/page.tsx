@@ -86,7 +86,7 @@ export default function AdminSubscriptionPlansPage() {
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "-"
-    return `${price} zł`
+    return `${price} pkt`
   }
 
   if (loading) {
@@ -229,10 +229,7 @@ export default function AdminSubscriptionPlansPage() {
                   <div>
                     <h4 className="font-semibold mb-3">Inne</h4>
                     <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Punkty gratis:</span>
-                        <span>{plan.punktyGratis}</span>
-                      </div>
+
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Opiekun:</span>
                         <span>{plan.osobistyOpiekun}</span>

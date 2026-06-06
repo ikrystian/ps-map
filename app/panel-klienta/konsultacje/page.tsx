@@ -383,10 +383,10 @@ export default function ClientConsultationsPage() {
               ) : (
                 <Tabs defaultValue="upcoming" className="w-full space-y-6">
                   <TabsList className="bg-zinc-950/40 border border-border/10 p-1 rounded-xl flex w-full max-w-md">
-                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-900/60 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
                       Nadchodzące ({upcomingBookings.length})
                     </TabsTrigger>
-                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-900/60 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
                       Minione ({pastBookings.length})
                     </TabsTrigger>
                   </TabsList>

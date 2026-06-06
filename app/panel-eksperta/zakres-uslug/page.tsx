@@ -77,11 +77,10 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${
-        isMainCategory
+      className={`flex items-center justify-between p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
           ? "border-[#0da192]/60 shadow-lg shadow-[#0da192]/5 bg-[#0da192]/5"
           : "border-border/30 hover:border-[#0da192]/20 hover:bg-zinc-800/10"
-      }`}
+        }`}
     >
       <div className="flex items-center gap-3">
         <div
@@ -525,11 +524,10 @@ export default function LawFirmServicesPage() {
 
     return (
       <div key={category.id} className="mb-1">
-        <div className={`flex items-center p-2 rounded-xl transition-all duration-200 ${
-          selected
+        <div className={`flex items-center p-2 rounded-xl transition-all duration-200 ${selected
             ? "bg-[#0da192]/5 border border-[#0da192]/20 text-[#0da192]"
             : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
-        } ${level > 0 ? 'ml-6 border-l border-border/10 pl-4' : ''}`}>
+          } ${level > 0 ? 'ml-6 border-l border-border/10 pl-4' : ''}`}>
           {hasChildren ? (
             <Button
               variant="ghost"
@@ -554,9 +552,8 @@ export default function LawFirmServicesPage() {
             <div className="grid gap-1.5 leading-none flex-1">
               <label
                 htmlFor={`cat-${category.id}`}
-                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${
-                  isMain ? "text-[#0da192] font-bold" : "text-zinc-200"
-                }`}
+                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-[#0da192] font-bold" : "text-zinc-200"
+                  }`}
               >
                 {category.nazwa}
                 {isMain ? (
@@ -794,7 +791,7 @@ export default function LawFirmServicesPage() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                     <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
                     <div className="flex gap-3 text-xs">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
                         Województwa:{" "}
                         <span className={cn(
                           "font-semibold",
@@ -805,7 +802,7 @@ export default function LawFirmServicesPage() {
                         <span className="text-zinc-500">/</span>
                         <span className="text-zinc-400">{areaData.maxVoivodeships}</span>
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
                         Miasta:{" "}
                         <span className={cn(
                           "font-semibold",

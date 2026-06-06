@@ -32,7 +32,7 @@ export default function AdminTestimonialsPage() {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null)
-  
+
   // Form fields
   const [name, setName] = useState("")
   const [designation, setDesignation] = useState("")
@@ -40,7 +40,7 @@ export default function AdminTestimonialsPage() {
   const [src, setSrc] = useState("")
   const [active, setActive] = useState(true)
   const [order, setOrder] = useState(0)
-  
+
   const [submitting, setSubmitting] = useState(false)
 
   const fetchTestimonials = async () => {
@@ -96,10 +96,10 @@ export default function AdminTestimonialsPage() {
     setSubmitting(true)
     try {
       const payload = { name, designation, quote, src, active, order }
-      const url = editingTestimonial 
-        ? `/api/admin/testimonials/${editingTestimonial.id}` 
+      const url = editingTestimonial
+        ? `/api/admin/testimonials/${editingTestimonial.id}`
         : "/api/admin/testimonials"
-      
+
       const res = await fetch(url, {
         method: editingTestimonial ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -139,7 +139,7 @@ export default function AdminTestimonialsPage() {
   const handleToggleActive = async (t: Testimonial) => {
     const updatedStatus = !t.active
     // Optimistic update
-    setTestimonials(prev => 
+    setTestimonials(prev =>
       prev.map(item => item.id === t.id ? { ...item, active: updatedStatus } : item)
     )
 
@@ -152,7 +152,7 @@ export default function AdminTestimonialsPage() {
     } catch (err) {
       console.error("Status update error:", err)
       // Rollback
-      setTestimonials(prev => 
+      setTestimonials(prev =>
         prev.map(item => item.id === t.id ? { ...item, active: t.active } : item)
       )
     }
@@ -208,7 +208,7 @@ export default function AdminTestimonialsPage() {
       </div>
 
       {/* Main content table */}
-      <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
+      <div className="bg-zinc-700 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
         {loading ? (
           <div className="py-20 text-center text-zinc-400">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />

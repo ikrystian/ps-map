@@ -59,6 +59,8 @@
   .dark {
     --background-sec: #191918;
     --background: #20201d;
+    --bg-darker: #212121;
+
     --foreground: white;
     --card: #363431;
     --card-foreground: #faf9f5;
@@ -112,7 +114,7 @@
 
   @theme inline {
     --spacing-content: calc(100vh-30rem);
-
+    --color-bg-darker: var(--bg-darker);
     --color-background-sec: var(--background-sec);
     --color-background: var(--background);
     --color-foreground: var(--foreground);

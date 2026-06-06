@@ -169,7 +169,7 @@ export function BasicTab({
                     <div className="flex flex-col gap-2 w-full">
                       <label
                         htmlFor="logo-upload"
-                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
                       >
                         {isUploading ? (
                           <>
@@ -262,7 +262,7 @@ export function BasicTab({
                     <div className="flex gap-2">
                       <label
                         htmlFor="main-image-upload"
-                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
                       >
                         {isUploading ? (
                           <>

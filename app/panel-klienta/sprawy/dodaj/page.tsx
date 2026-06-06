@@ -492,7 +492,7 @@ export default function ClientAddCasePage() {
                       "h-10 w-10 rounded-xl flex items-center justify-center border transition-all duration-300",
                       isSelected
                         ? "bg-[#0da192]/10 border-[#0da192]/30 text-[#0da192]"
-                        : "bg-zinc-900/60 border-border/10 text-zinc-400 group-hover:text-zinc-300"
+                        : "bg-zinc-700 border-border/10 text-zinc-400 group-hover:text-zinc-300"
                     )}>
                       <OptionIcon className="h-5 w-5" />
                     </div>
@@ -564,7 +564,7 @@ export default function ClientAddCasePage() {
                   type="button"
                   className="w-full flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-border/20 hover:border-[#0da192]/40 rounded-2xl hover:bg-zinc-950/20 transition-all text-center group"
                 >
-                  <div className="h-11 w-11 rounded-xl bg-zinc-900/60 border border-border/10 group-hover:bg-[#0da192]/10 group-hover:text-[#0da192] group-hover:border-[#0da192]/20 flex items-center justify-center text-zinc-400 transition-all mb-3">
+                  <div className="h-11 w-11 rounded-xl bg-zinc-700 border border-border/10 group-hover:bg-[#0da192]/10 group-hover:text-[#0da192] group-hover:border-[#0da192]/20 flex items-center justify-center text-zinc-400 transition-all mb-3">
                     <Search className="h-5 w-5" />
                   </div>
                   <span className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Wybierz kategorię sprawy</span>
@@ -889,7 +889,7 @@ export default function ClientAddCasePage() {
                 }}
               >
                 <div className={cn(
-                  "mx-auto h-9 w-9 rounded-lg bg-zinc-900/60 border border-border/10 flex items-center justify-center text-zinc-400 transition-all mb-2.5",
+                  "mx-auto h-9 w-9 rounded-lg bg-zinc-700 border border-border/10 flex items-center justify-center text-zinc-400 transition-all mb-2.5",
                   !isUploading && "group-hover:bg-[#0da192]/10 group-hover:text-[#0da192] group-hover:border-[#0da192]/20"
                 )}>
                   {isUploading ? (

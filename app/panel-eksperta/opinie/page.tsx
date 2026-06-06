@@ -580,11 +580,10 @@ export default function LawFirmReviewsPage() {
             variant={selectedRating === "all" ? "default" : "ghost"}
             size="sm"
             onClick={() => { setSelectedRating("all"); setCurrentPage(1); }}
-            className={`rounded-lg text-xs font-semibold px-4 transition-all ${
-              selectedRating === "all"
+            className={`rounded-lg text-xs font-semibold px-4 transition-all ${selectedRating === "all"
                 ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
                 : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-            }`}
+              }`}
           >
             Wszystkie opinie
           </Button>
@@ -594,11 +593,10 @@ export default function LawFirmReviewsPage() {
               variant={selectedRating === rating.toString() ? "default" : "ghost"}
               size="sm"
               onClick={() => { setSelectedRating(rating.toString()); setCurrentPage(1); }}
-              className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 px-3.5 transition-all ${
-                selectedRating === rating.toString()
+              className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 px-3.5 transition-all ${selectedRating === rating.toString()
                   ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
                   : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
-              }`}
+                }`}
             >
               <span>{rating}</span>
               <Star className={`h-3 w-3 ${selectedRating === rating.toString() ? "fill-current" : "fill-zinc-600 text-zinc-600"}`} />
@@ -815,7 +813,7 @@ export default function LawFirmReviewsPage() {
                                   transition={{ duration: 0.25, ease: "easeInOut" }}
                                   className="overflow-hidden mt-3"
                                 >
-                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-900/60 border border-border/20 rounded-xl">
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-700 border border-border/20 rounded-xl">
                                     {review.profesjonalizm && (
                                       <div className="space-y-1">
                                         <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
@@ -990,7 +988,7 @@ export default function LawFirmReviewsPage() {
 
           {/* Podgląd opinii klienta */}
           {selectedReview && (
-            <div className="bg-zinc-900/60 border border-border/20 rounded-xl p-3.5 space-y-2 max-h-40 overflow-y-auto">
+            <div className="bg-zinc-700 border border-border/20 rounded-xl p-3.5 space-y-2 max-h-40 overflow-y-auto">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-white">
                   {selectedReview.anonimowa ? "Klient anonimowy" : `${selectedReview.client.imie} ${selectedReview.client.nazwisko}`}
@@ -1106,7 +1104,7 @@ export default function LawFirmReviewsPage() {
               </div>
 
               {/* Informacje o punktach */}
-              <div className="bg-zinc-900/60 border border-border/20 rounded-xl p-4 space-y-3">
+              <div className="bg-zinc-700 border border-border/20 rounded-xl p-4 space-y-3">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-zinc-400">Twoje obecne saldo:</span>
                   <span className="font-bold text-white">{lawFirm?.punktySaldo ?? 0} pkt</span>

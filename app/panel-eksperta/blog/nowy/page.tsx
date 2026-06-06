@@ -262,7 +262,7 @@ export default function LawFirmNewBlogPostPage() {
                         <FormItem>
                           <FormLabel className="text-xs font-semibold text-zinc-300">Treść artykułu *</FormLabel>
                           <FormControl>
-                            <div className="rounded-xl overflow-hidden border border-border/40 bg-zinc-950/40 focus-within:border-[#0da192]/60 transition-all [&_.ql-toolbar]:bg-zinc-900/60 [&_.ql-toolbar]:border-border/20 [&_.ql-container]:border-none [&_.ql-editor]:text-zinc-200 [&_.ql-editor]:min-h-[400px]">
+                            <div className="rounded-xl overflow-hidden border border-border/40 bg-zinc-950/40 focus-within:border-[#0da192]/60 transition-all [&_.ql-toolbar]:bg-zinc-700 [&_.ql-toolbar]:border-border/20 [&_.ql-container]:border-none [&_.ql-editor]:text-zinc-200 [&_.ql-editor]:min-h-[400px]">
                               <RichTextEditor
                                 value={field.value}
                                 onChange={field.onChange}
