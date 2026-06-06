@@ -38,7 +38,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-6xl sm:text-7xl md:text-9xl tracking-tight font-medium mb-8 font-playfair text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
+            className="text-5xl sm:text-7xl md:text-9xl tracking-tight font-medium mb-8 font-playfair text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
           >
             Prosta Sprawa
           </motion.h1>
