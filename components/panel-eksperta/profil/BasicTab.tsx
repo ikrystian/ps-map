@@ -158,7 +158,7 @@ export function BasicTab({
 
                 {formData.logo ? (
                   <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                    <div className="relative h-28 w-28 rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shrink-0">
+                    <div className="relative h-36 w-36 rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shrink-0">
                       <Image
                         src={formData.logo}
                         alt="Logo"
@@ -256,7 +256,7 @@ export function BasicTab({
                         src={formData.zdjecieGlowne}
                         alt="Zdjęcie główne"
                         fill
-                        className="object-contain relative "
+                        className="object-contain relative!"
                       />
                     </div>
                     <div className="flex gap-2">

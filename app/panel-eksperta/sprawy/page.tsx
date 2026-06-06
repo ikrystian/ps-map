@@ -131,6 +131,7 @@ const SprawyPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedType, setSelectedType] = useState<string>("all")
   const [selectedCity, setSelectedCity] = useState<string>("")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // Favorites
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
@@ -159,7 +160,7 @@ const SprawyPage = () => {
 
   useEffect(() => {
     filterCases()
-  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity])
+  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity, statusFilter, favorites])
 
   const fetchCases = async () => {
     setLoading(true)
@@ -291,6 +292,26 @@ const SprawyPage = () => {
       )
     }
 
+    if (statusFilter !== "all") {
+      if (statusFilter === "NOWA") {
+        filtered = filtered.filter((c) => c.status === "NOWA")
+      } else if (statusFilter === "FAVORITES") {
+        filtered = filtered.filter((c) => favorites.has(c.id))
+      } else if (statusFilter === "PENDING") {
+        filtered = filtered.filter((c) =>
+          c.status === "OFERTY_OTRZYMANE" ||
+          c.status === "W_TRAKCIE" ||
+          c.offers?.some(o => o.status === "ZLOZONA" || o.status === "NEGOCJACJE")
+        )
+      } else if (statusFilter === "CLOSED") {
+        filtered = filtered.filter((c) =>
+          c.status === "ZAKONCZONA" ||
+          c.status === "ANULOWANA" ||
+          c.offers?.some(o => o.status === "ODRZUCONA" || o.status === "WYGASLA")
+        )
+      }
+    }
+
     setFilteredCases(filtered)
   }
 
@@ -342,18 +363,73 @@ const SprawyPage = () => {
     return "Nie określono"
   }
 
-  const newCasesCount = filteredCases.filter((c) => c.status === "NOWA").length
-  const observedCasesCount = filteredCases.filter((c) => favorites.has(c.id)).length
-  const pendingCasesCount = filteredCases.filter((c) =>
-    c.status === "OFERTY_OTRZYMANE" ||
-    c.status === "W_TRAKCIE" ||
-    c.offers?.some(o => o.status === "ZLOZONA" || o.status === "NEGOCJACJE")
-  ).length
-  const closedCasesCount = filteredCases.filter((c) =>
-    c.status === "ZAKONCZONA" ||
-    c.status === "ANULOWANA" ||
-    c.offers?.some(o => o.status === "ODRZUCONA" || o.status === "WYGASLA")
-  ).length
+  const getStatusCounts = () => {
+    return {
+      all: cases.length,
+      NOWA: cases.filter((c) => c.status === "NOWA").length,
+      FAVORITES: cases.filter((c) => favorites.has(c.id)).length,
+      PENDING: cases.filter((c) =>
+        c.status === "OFERTY_OTRZYMANE" ||
+        c.status === "W_TRAKCIE" ||
+        c.offers?.some(o => o.status === "ZLOZONA" || o.status === "NEGOCJACJE")
+      ).length,
+      CLOSED: cases.filter((c) =>
+        c.status === "ZAKONCZONA" ||
+        c.status === "ANULOWANA" ||
+        c.offers?.some(o => o.status === "ODRZUCONA" || o.status === "WYGASLA")
+      ).length,
+    }
+  }
+
+  const statusCounts = getStatusCounts()
+
+  const filterCards = [
+    {
+      id: "all",
+      label: "Wszystkie",
+      count: statusCounts.all,
+      icon: Briefcase,
+      activeClass: "bg-gradient-to-br from-[#0da192]/15 to-transparent border-[#0da192]/20 text-white shadow-lg shadow-[#0da192]/5",
+      labelColor: "text-[#0da192]",
+      iconContainerClass: "bg-[#0da192]/10 border-[#0da192]/20 text-[#0da192]"
+    },
+    {
+      id: "NOWA",
+      label: "Nowe",
+      count: statusCounts.NOWA,
+      icon: Sparkles,
+      activeClass: "bg-gradient-to-br from-cyan-500/15 to-transparent border-cyan-500/20 text-white shadow-lg shadow-cyan-500/5",
+      labelColor: "text-cyan-400",
+      iconContainerClass: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+    },
+    {
+      id: "FAVORITES",
+      label: "Obserwowane",
+      count: statusCounts.FAVORITES,
+      icon: Heart,
+      activeClass: "bg-gradient-to-br from-[#d7b56d]/15 to-transparent border-[#d7b56d]/20 text-white shadow-lg shadow-[#d7b56d]/5",
+      labelColor: "text-[#d7b56d]",
+      iconContainerClass: "bg-[#d7b56d]/10 border-[#d7b56d]/20 text-[#d7b56d]"
+    },
+    {
+      id: "PENDING",
+      label: "Oczekujące",
+      count: statusCounts.PENDING,
+      icon: Clock,
+      activeClass: "bg-gradient-to-br from-indigo-500/15 to-transparent border-indigo-500/20 text-white shadow-lg shadow-indigo-500/5",
+      labelColor: "text-indigo-400",
+      iconContainerClass: "bg-indigo-500/10 border-indigo-500/20 text-indigo-400"
+    },
+    {
+      id: "CLOSED",
+      label: "Zamknięte",
+      count: statusCounts.CLOSED,
+      icon: Archive,
+      activeClass: "bg-gradient-to-br from-zinc-500/15 to-transparent border-zinc-700/30 text-white shadow-lg shadow-zinc-500/5",
+      labelColor: "text-zinc-400",
+      iconContainerClass: "bg-zinc-800/40 border-border/50 text-zinc-400"
+    }
+  ]
 
   if (loading) {
     return (
@@ -379,74 +455,73 @@ const SprawyPage = () => {
 
 
       {/* Grid Stats Redesigned for Premium Look */}
-      <div id="tour-sprawy-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
-        {/* Stat card: Nowe */}
-        <motion.div
-          whileHover={{ y: -3 }}
-          className="rounded-2xl bg-gradient-to-br from-[#0da192]/15 to-transparent border border-[#0da192]/20 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-lg shadow-[#0da192]/5 group overflow-hidden"
-        >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-[#0da192]/10 blur-xl rounded-full pointer-events-none" />
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#0da192]">Nowe sprawy</span>
-            <div className="h-8 w-8 rounded-lg bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20">
-              <Sparkles className="h-4 w-4 text-[#0da192]" />
-            </div>
-          </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
-            {newCasesCount}
-          </div>
-        </motion.div>
+      <div id="tour-sprawy-stats cases-stats-boxes" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
+        {filterCards.map((card) => {
+          const isSelected = statusFilter === card.id
+          const Icon = card.icon
 
-        {/* Stat card: Obserwowane */}
-        <motion.div
-          whileHover={{ y: -3 }}
-          className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
-        >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-[#d7b56d]/5 blur-xl rounded-full pointer-events-none" />
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Obserwowane</span>
-            <div className="h-8 w-8 rounded-lg bg-[#d7b56d]/10 flex items-center justify-center border border-[#d7b56d]/20">
-              <Heart className="h-4 w-4 text-[#d7b56d] fill-[#d7b56d]/20" />
-            </div>
-          </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
-            {observedCasesCount}
-          </div>
-        </motion.div>
+          return (
+            <motion.button
+              key={card.id}
+              whileHover={{ y: -3 }}
+              onClick={() => {
+                setStatusFilter(card.id)
+                toast.info(`Filtrowanie: ${card.label}`)
+              }}
+              className={cn(
+                "rounded-2xl p-6 relative flex flex-col justify-between h-[130px] shadow-lg group overflow-hidden transition-all duration-300 w-full border text-left",
+                isSelected
+                  ? card.activeClass
+                  : "bg-card/30 backdrop-blur-sm border-border/40 text-white shadow-md hover:border-[#0da192]/20"
+              )}
+            >
+              {/* Glow effect */}
+              <div className={cn(
+                "absolute -right-6 -bottom-6 w-24 h-24 blur-xl rounded-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40",
+                card.id === "all" && "bg-[#0da192]",
+                card.id === "NOWA" && "bg-cyan-500",
+                card.id === "FAVORITES" && "bg-[#d7b56d]",
+                card.id === "PENDING" && "bg-indigo-500",
+                card.id === "CLOSED" && "bg-zinc-500"
+              )} />
 
-        {/* Stat card: Oczekujące */}
-        <motion.div
-          whileHover={{ y: -3 }}
-          className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
-        >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/5 blur-xl rounded-full pointer-events-none" />
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Oczekujące</span>
-            <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-              <Clock className="h-4 w-4 text-indigo-400" />
-            </div>
-          </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
-            {pendingCasesCount}
-          </div>
-        </motion.div>
+              {/* Top indicator line */}
+              {isSelected && (
+                <div className={cn(
+                  "absolute top-0 left-0 right-0 h-[3px]",
+                  card.id === "all" && "bg-[#0da192]",
+                  card.id === "NOWA" && "bg-cyan-500",
+                  card.id === "FAVORITES" && "bg-[#d7b56d]",
+                  card.id === "PENDING" && "bg-indigo-500",
+                  card.id === "CLOSED" && "bg-zinc-500"
+                )} />
+              )}
 
-        {/* Stat card: Zamknięte */}
-        <motion.div
-          whileHover={{ y: -3 }}
-          className="rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
-        >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-zinc-500/5 blur-xl rounded-full pointer-events-none" />
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Zamknięte</span>
-            <div className="h-8 w-8 rounded-lg bg-zinc-800/40 flex items-center justify-center border border-border/50">
-              <Archive className="h-4 w-4 text-zinc-500" />
-            </div>
-          </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
-            {closedCasesCount}
-          </div>
-        </motion.div>
+              <div className="flex items-center justify-between w-full">
+                <span className={cn(
+                  "text-sm font-medium transition-colors",
+                  isSelected
+                    ? card.labelColor
+                    : "text-zinc-400 group-hover:text-white"
+                )}>
+                  {card.label}
+                </span>
+                <div className={cn(
+                  "h-8 w-8 rounded-lg flex items-center justify-center border transition-colors",
+                  isSelected
+                    ? card.iconContainerClass
+                    : "bg-zinc-800/40 border-border/50 text-zinc-400 group-hover:text-white group-hover:border-[#0da192]/30"
+                )}>
+                  <Icon className="h-4 w-4" />
+                </div>
+              </div>
+
+              <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+                {card.count}
+              </div>
+            </motion.button>
+          )
+        })}
       </div>
 
       {/* Redesigned Glassmorphic Filters Component */}
@@ -459,7 +534,7 @@ const SprawyPage = () => {
             <Filter className="h-4 w-4" />
             <span>Panel wyszukiwania i filtrów</span>
           </div>
-          {(searchQuery || selectedCity || selectedCategory !== "all" || selectedType !== "all") && (
+          {(searchQuery || selectedCity || selectedCategory !== "all" || selectedType !== "all" || statusFilter !== "all") && (
             <Button
               variant="ghost"
               size="sm"
@@ -468,6 +543,7 @@ const SprawyPage = () => {
                 setSelectedCity("")
                 setSelectedCategory("all")
                 setSelectedType("all")
+                setStatusFilter("all")
                 toast.info("Filtry zostały wyczyszczone")
               }}
               className="text-xs h-7 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 gap-1.5 rounded-lg"
@@ -551,6 +627,7 @@ const SprawyPage = () => {
               setSelectedCity("")
               setSelectedCategory("all")
               setSelectedType("all")
+              setStatusFilter("all")
             }}
             className="border-border/50 hover:bg-muted text-white rounded-xl h-10 px-5"
           >

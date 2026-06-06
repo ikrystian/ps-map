@@ -353,7 +353,7 @@ export default function LawFirmOffersPage() {
       />
 
       {/* Grid Stats Redesigned for Premium Look */}
-      <div id="tour-oferty-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
+      <div id="tour-oferty-stats offer-stats-boxes" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
         {filterCards.map((card) => {
           const isSelected = statusFilter === card.id
           const Icon = card.icon
