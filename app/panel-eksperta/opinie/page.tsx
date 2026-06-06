@@ -49,6 +49,7 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
+import type { LawFirm } from "@/types"
 
 // Format date helper
 const formatDate = (date: Date | string) => {
@@ -104,13 +105,6 @@ interface ReviewsResponse {
     avgStosunekJakosci: number
     total: number
   }
-}
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  logo: string | null
-  punktySaldo: number
 }
 
 export default function LawFirmReviewsPage() {
