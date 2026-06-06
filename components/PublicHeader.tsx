@@ -36,6 +36,22 @@ interface PublicHeaderProps {
   userId?: string
 }
 
+interface BlogCategory {
+  id: string
+  nazwa: string
+  slug: string
+  opis?: string | null
+}
+
+interface BlogPost {
+  id: string
+  tytul: string
+  slug: string
+  obrazekWyrozniajacy: string | null
+  tresc: string
+  dataPublikacji?: string | null
+}
+
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
@@ -50,6 +66,8 @@ export default function PublicHeader({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
+  const [blogCategories, setBlogCategories] = useState<BlogCategory[]>([])
+  const [latestPost, setLatestPost] = useState<BlogPost | null>(null)
   const [searchFormOpen, setSearchFormOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -77,6 +95,31 @@ export default function PublicHeader({
     }
 
     fetchCategories()
+  }, [])
+
+  // Fetch blog categories and latest post on mount
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      try {
+        const catResponse = await fetch("/api/blog/categories")
+        if (catResponse.ok) {
+          const catData = await catResponse.json()
+          setBlogCategories(catData.slice(0, 4))
+        }
+
+        const postResponse = await fetch("/api/blog/posts?limit=1")
+        if (postResponse.ok) {
+          const postData = await postResponse.json()
+          if (postData.posts && postData.posts.length > 0) {
+            setLatestPost(postData.posts[0])
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching blog data:", error)
+      }
+    }
+
+    fetchBlogData()
   }, [])
 
   // Dynamic fetch and caching for cities and postal codes
@@ -165,6 +208,8 @@ export default function PublicHeader({
   const isDlaPrawnikaActive = pathname.startsWith("/dla-prawnika")
   const isZNamiWygrywaszActive = pathname === "/z-nami-wygrywasz"
   const isKontaktActive = pathname === "/kontakt"
+  const isBlogActive = pathname.startsWith("/blog")
+  const isONasActive = pathname === "/o-nas"
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -190,7 +235,7 @@ export default function PublicHeader({
 
           {/* Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList className="flex gap-0">
+            <NavigationMenuList className="flex gap-6 lg:gap-6">
               {/* Szukaj / Zamknij Animated Button */}
               <NavigationMenuItem>
                 <AnimatePresence mode="wait">
@@ -247,7 +292,7 @@ export default function PublicHeader({
                   Sprawy firmowe
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
                     <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {firmoweCat.map((category) => (
                         <div key={category.id} className="mb-6">
@@ -261,7 +306,7 @@ export default function PublicHeader({
                             >
                               <span>{category.nazwa}</span>
                               {category._count?.lawFirms !== undefined && (
-                                <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
                                   {category._count.lawFirms}
                                 </span>
                               )}
@@ -318,7 +363,7 @@ export default function PublicHeader({
                   Sprawy prywatne
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
                     <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {prywatneCat.map((category) => (
                         <div key={category.id} className="mb-6">
@@ -379,6 +424,174 @@ export default function PublicHeader({
               </NavigationMenuItem>
 
 
+              {/* Blog - Mega Menu */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger
+                  className={cn(
+                    "bg-transparent hover:bg-[#121212]",
+                    isBlogActive && "text-primary font-semibold"
+                  )}
+                >
+                  Aktualności
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-[700px] xl:w-[850px] p-6 bg-[#212121] text-white">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                      {/* Left Column: Categories and Topics */}
+                      <div className="md:col-span-7 flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">
+                            Poradniki i kategorie
+                          </h4>
+
+                          {/* Grid of categories & top topics */}
+                          <div className="grid grid-cols-2 gap-x-6 gap-y-3.5">
+                            {blogCategories.length > 0 ? (
+                              blogCategories.map((category) => (
+                                <NavigationMenuLink key={category.id} asChild>
+                                  <Link
+                                    href={`/blog?category=${category.slug}`}
+                                    className="group/blog-cat flex flex-col gap-0.5"
+                                  >
+                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                      {category.nazwa}
+                                      <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
+                                    </span>
+                                    {category.opis && (
+                                      <span className="text-[11px] text-neutral-400 line-clamp-1 font-light leading-snug">
+                                        {category.opis}
+                                      </span>
+                                    )}
+                                  </Link>
+                                </NavigationMenuLink>
+                              ))
+                            ) : (
+                              <>
+                                <NavigationMenuLink asChild>
+                                  <Link href="/blog" className="group/blog-cat flex flex-col gap-0.5">
+                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                      Porady Prawne
+                                      <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
+                                    </span>
+                                    <span className="text-[11px] text-neutral-405 font-light">
+                                      Artykuły i porady z różnych dziedzin prawa
+                                    </span>
+                                  </Link>
+                                </NavigationMenuLink>
+                                <NavigationMenuLink asChild>
+                                  <Link href="/blog" className="group/blog-cat flex flex-col gap-0.5">
+                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                      Prawo w Biznesie
+                                      <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
+                                    </span>
+                                    <span className="text-[11px] text-neutral-405 font-light">
+                                      Wskazówki prawne dla przedsiębiorców
+                                    </span>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </>
+                            )}
+
+                            <div className="col-span-2 my-2 border-t border-neutral-800/80 pt-3">
+                              <h5 className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2.5">
+                                Popularne zagadnienia
+                              </h5>
+                              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                                {[
+                                  { label: "Rozwód i alimenty", search: "rozwód" },
+                                  { label: "Kredyty frankowe", search: "frankowe" },
+                                  { label: "Prawo pracy", search: "pracy" },
+                                  { label: "Odszkodowania", search: "odszkodowanie" },
+                                ].map((topic, i) => (
+                                  <NavigationMenuLink key={i} asChild>
+                                    <Link
+                                      href={`/blog?search=${encodeURIComponent(topic.search)}`}
+                                      className="group/topic-item flex items-center gap-1 text-[13px] text-neutral-300 hover:text-primary transition-colors font-medium"
+                                    >
+                                      <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover/topic-item:bg-primary transition-colors" />
+                                      <span>{topic.label}</span>
+                                    </Link>
+                                  </NavigationMenuLink>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-neutral-800/60">
+                          <NavigationMenuLink asChild>
+                            <Link href="/blog" className="group/all-blog text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                              Wszystkie artykuły i porady <span className="translate-x-0 transition-transform group-hover/all-blog:translate-x-1">→</span>
+                            </Link>
+                          </NavigationMenuLink>
+                        </div>
+                      </div>
+
+                      {/* Right Column: Featured Banner */}
+                      <div className="md:col-span-5">
+                        {latestPost ? (
+                          <Link href={`/blog/${latestPost.slug}`} className="group/featured-card block h-full">
+                            <div className="relative h-full min-h-[200px] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-xl transition-all duration-300 group-hover/featured-card:border-primary/30 flex flex-col justify-end p-4">
+                              {latestPost.obrazekWyrozniajacy ? (
+                                <img
+                                  src={latestPost.obrazekWyrozniajacy}
+                                  alt={latestPost.tytul}
+                                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover/featured-card:scale-105"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#0da192]/20 via-neutral-950 to-neutral-900" />
+                              )}
+
+                              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 transition-opacity duration-300" />
+
+                              <div className="relative z-10 text-white flex flex-col h-full justify-between">
+                                <span className="text-[10px] px-2 py-0.5 rounded bg-[#0da192] text-white font-semibold tracking-wider uppercase w-fit mb-4">
+                                  Najnowszy wpis
+                                </span>
+                                <div>
+                                  <h4 className="font-semibold text-sm leading-tight text-white mb-2 line-clamp-2 group-hover/featured-card:text-primary transition-colors">
+                                    {latestPost.tytul}
+                                  </h4>
+                                  <span className="text-[11px] text-primary group-hover/featured-card:translate-x-1 transition-transform flex items-center gap-1 font-semibold">
+                                    Czytaj artykuł <ChevronRight className="h-3 w-3" />
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        ) : (
+                          <Link href="/blog" className="group/fallback-card block h-full">
+                            <div className="relative h-full min-h-[220px] overflow-hidden rounded-xl border border-neutral-800 bg-gradient-to-br from-[#0da192]/20 via-neutral-950 to-neutral-900 shadow-xl transition-all duration-300 group-hover/fallback-card:border-primary/30 flex flex-col justify-between p-5">
+                              <div className="absolute -top-12 -right-12 w-28 h-28 bg-[#0da192]/10 rounded-full blur-2xl group-hover/fallback-card:bg-[#0da192]/20 transition-all duration-500" />
+
+                              <div className="relative z-10 flex flex-col gap-1.5">
+                                <span className="text-[10px] text-primary font-bold uppercase tracking-widest">
+                                  Baza Wiedzy
+                                </span>
+                                <h4 className="font-playfair font-semibold text-base text-neutral-100 group-hover/fallback-card:text-white transition-colors leading-snug">
+                                  Ekspercka wiedza w zasięgu ręki
+                                </h4>
+                                <p className="text-[11px] text-neutral-400 font-light leading-relaxed">
+                                  Dowiedz się więcej o swoich prawach i obowiązkach z artykułów pisanych przez profesjonalistów.
+                                </p>
+                              </div>
+
+                              <div className="relative z-10">
+                                <span className="text-xs font-semibold text-white group-hover/fallback-card:text-primary transition-colors flex items-center gap-1">
+                                  Przejdź do bloga
+                                  <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/fallback-card:translate-x-1" />
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+
               {/* Dla prawnika */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -391,6 +604,22 @@ export default function PublicHeader({
                     )}
                   >
                     Dla prawnika
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              {/* O nas */}
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/o-nas"
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent hover:bg-[#121212]",
+                      isONasActive && "text-primary font-semibold"
+                    )}
+                  >
+                    O nas
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -605,6 +834,17 @@ export default function PublicHeader({
 
 
                       <Link
+                        href="/blog"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isBlogActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        Aktualności
+                      </Link>
+
+                      <Link
                         href="/dla-prawnika"
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
@@ -613,6 +853,17 @@ export default function PublicHeader({
                         )}
                       >
                         Dla prawnika
+                      </Link>
+
+                      <Link
+                        href="/o-nas"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isONasActive ? "text-primary font-semibold" : "text-neutral-200"
+                        )}
+                      >
+                        O nas
                       </Link>
 
                       <Link

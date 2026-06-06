@@ -112,7 +112,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
   ];
 
   return (
-    <section className="py-8 bg-[#121212]">
+    <section className="py-8 lg:py-16 bg-[#121212]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

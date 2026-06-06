@@ -337,7 +337,7 @@ export default function ForLawyersPage() {
           <p className="text-base font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3 text-center">
             ZNAJDŹ NOWYCH KLIENTÓW
           </p>
-          <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-10 max-w-4xl font-sans">
+          <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-10 max-w-4xl ">
             Załóż konto eksperta i dodaj ogłoszenie
           </h1>
 

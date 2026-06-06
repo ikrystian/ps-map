@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="fixed inset-0 z-[9999] w-screen h-screen flex items-center justify-center overflow-hidden bg-black text-white font-sans selection:bg-white/20 selection:text-white">
+    <div className="fixed inset-0 z-[9999] w-screen h-screen flex items-center justify-center overflow-hidden bg-black text-white  selection:bg-white/20 selection:text-white">
       {/* Background Image with Zoom and Grayscale/Brightness filters */}
       <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
