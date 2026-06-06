@@ -39,7 +39,8 @@ import {
   Search,
   XCircle,
   Clock,
-  Archive
+  Archive,
+  AlertCircle
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -503,13 +504,13 @@ const SprawyPage = () => {
           {/* Category Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192]">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium">
                 <SelectValue placeholder="Kategoria" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie kategorie</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie kategorie</SelectItem>
                 {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
+                  <SelectItem key={cat.id} value={cat.id} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
                     {cat.nazwa}
                   </SelectItem>
                 ))}
@@ -520,14 +521,14 @@ const SprawyPage = () => {
           {/* Client Type Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192]">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium">
                 <SelectValue placeholder="Typ klienta" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie typy</SelectItem>
-                <SelectItem value="OSOBA_PRYWATNA">Osoba prywatna</SelectItem>
-                <SelectItem value="FIRMA">Firma</SelectItem>
-                <SelectItem value="ORGANIZACJA">Organizacja</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie typy</SelectItem>
+                <SelectItem value="OSOBA_PRYWATNA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Osoba prywatna</SelectItem>
+                <SelectItem value="FIRMA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Firma</SelectItem>
+                <SelectItem value="ORGANIZACJA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Organizacja</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -747,25 +748,31 @@ const SprawyPage = () => {
 
       {/* Reject Modal */}
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="bg-card border border-border/40 max-w-md rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold font-playfair text-white">Czy na pewno chcesz ukryć tę sprawę?</DialogTitle>
-            <DialogDescription className="text-muted-foreground text-sm pt-2">
-              Ta akcja usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych eksperta, ale Ty nie będziesz jej już oglądać w tym panelu.
+        <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+          <BorderBeam lightColor="#e11d48" lightWidth={350} duration={8} borderWidth={1} />
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
+              <AlertCircle className="h-5 w-5 animate-pulse text-red-500" />
+              <span>Ukryj sprawę</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Ta akcja trwale usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych ekspertów, ale nie pojawi się już w tym panelu.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 pt-4">
+          <DialogFooter className="pt-2 border-t border-border/20 flex flex-row items-center justify-end gap-2.5">
             <Button
-              variant="outline"
+              type="button"
+              variant="ghost"
               onClick={() => setRejectModalOpen(false)}
-              className="border-border/50 hover:bg-muted text-white rounded-xl"
+              className="rounded-xl text-xs font-semibold px-4 h-9 text-zinc-400 hover:text-white"
             >
               Anuluj
             </Button>
             <Button
+              type="button"
               variant="destructive"
               onClick={handleReject}
-              className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl border-t border-white/10"
+              className="rounded-xl text-xs font-semibold px-5 h-9 bg-red-600 hover:bg-red-700 text-white"
             >
               Ukryj sprawę
             </Button>

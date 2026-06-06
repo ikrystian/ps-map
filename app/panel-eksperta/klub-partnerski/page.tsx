@@ -1,5 +1,6 @@
 "use client"
 
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -84,6 +85,9 @@ interface PartnerStatus {
   lawFirmName?: string
   websiteUrl?: string
   hasWebsite?: boolean
+  hasValidAddress?: boolean
+  nip?: string | null
+  regon?: string | null
 }
 
 const MONTH_NAMES = [
@@ -230,16 +234,17 @@ export default function KlubPartnerskiPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative z-10"
+          className="relative z-10 animate-fade-in"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Klub Partnerski</h1>
-          <p className="text-sm text-zinc-400 mt-1.5 font-light">
-            Dołącz do programu partnerskiego i zarabiaj punkty za promowanie ProstaSprawa.pl
-          </p>
-          <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-xs font-semibold tracking-wide">
-            <Award className="h-3 w-3 animate-pulse" />
-            PROGRAM PARTNERSKI DLA EKSPERTÓW
-          </div>
+          <PageHeader
+            title="Klub Partnerski"
+            subtitle="Dołącz do programu partnerskiego i zarabiaj punkty za promowanie ProstaSprawa.pl"
+          >
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-xs font-semibold tracking-wide">
+              <Award className="h-3 w-3 animate-pulse" />
+              PROGRAM PARTNERSKI DLA EKSPERTÓW
+            </div>
+          </PageHeader>
         </motion.div>
 
         <motion.div
@@ -388,11 +393,10 @@ export default function KlubPartnerskiPage() {
         transition={{ duration: 0.4 }}
         className="relative z-10"
       >
-        <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Klub Partnerski</h1>
-        <p className="text-sm text-zinc-400 mt-1.5 font-light">
-          Zarządzaj swoim udziałem w programie partnerskim i śledź zgromadzone punkty promocyjne
-        </p>
-
+        <PageHeader
+          title="Klub Partnerski"
+          subtitle="Zarządzaj swoim udziałem w programie partnerskim i śledź zgromadzone punkty promocyjne"
+        />
       </motion.div>
 
       {/* Status Cards */}

@@ -447,7 +447,8 @@ export default function DocumentsPage() {
                 Dodaj dokument
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-900 border border-border/40 max-w-lg rounded-2xl p-6 shadow-2xl overflow-hidden">
+            <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 relative overflow-hidden">
+              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
@@ -551,20 +552,20 @@ export default function DocumentsPage() {
                         <FormLabel className="text-xs font-semibold text-zinc-300">Typ dokumentu</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
-                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-white text-sm">
+                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-sm">
                               <SelectValue placeholder="Wybierz typ dokumentu" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="umowa">Umowa</SelectItem>
-                            <SelectItem value="regulamin">Regulamin</SelectItem>
-                            <SelectItem value="wzor-pisma">Wzór pisma</SelectItem>
-                            <SelectItem value="pelnomocnictwo">Pełnomocnictwo</SelectItem>
-                            <SelectItem value="oswiadczenie">Oświadczenie</SelectItem>
-                            <SelectItem value="procedura">Procedura</SelectItem>
-                            <SelectItem value="polityka">Polityka</SelectItem>
-                            <SelectItem value="instrukcja">Instrukcja</SelectItem>
-                            <SelectItem value="inny">Inny</SelectItem>
+                          <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                            <SelectItem value="umowa" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Umowa</SelectItem>
+                            <SelectItem value="regulamin" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Regulamin</SelectItem>
+                            <SelectItem value="wzor-pisma" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wzór pisma</SelectItem>
+                            <SelectItem value="pelnomocnictwo" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Pełnomocnictwo</SelectItem>
+                            <SelectItem value="oswiadczenie" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Oświadczenie</SelectItem>
+                            <SelectItem value="procedura" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Procedura</SelectItem>
+                            <SelectItem value="polityka" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Polityka</SelectItem>
+                            <SelectItem value="instrukcja" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Instrukcja</SelectItem>
+                            <SelectItem value="inny" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Inny</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -707,32 +708,32 @@ export default function DocumentsPage() {
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             {/* Typ dokumentu */}
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl text-white text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Typ dokumentu" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Wszystkie typy</SelectItem>
-                <SelectItem value="umowa">Umowa</SelectItem>
-                <SelectItem value="regulamin">Regulamin</SelectItem>
-                <SelectItem value="wzor-pisma">Wzór pisma</SelectItem>
-                <SelectItem value="pelnomocnictwo">Pełnomocnictwo</SelectItem>
-                <SelectItem value="oswiadczenie">Oświadczenie</SelectItem>
-                <SelectItem value="procedura">Procedura</SelectItem>
-                <SelectItem value="polityka">Polityka</SelectItem>
-                <SelectItem value="instrukcja">Instrukcja</SelectItem>
-                <SelectItem value="inny">Inny</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="ALL" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie typy</SelectItem>
+                <SelectItem value="umowa" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Umowa</SelectItem>
+                <SelectItem value="regulamin" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Regulamin</SelectItem>
+                <SelectItem value="wzor-pisma" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wzór pisma</SelectItem>
+                <SelectItem value="pelnomocnictwo" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Pełnomocnictwo</SelectItem>
+                <SelectItem value="oswiadczenie" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Oświadczenie</SelectItem>
+                <SelectItem value="procedura" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Procedura</SelectItem>
+                <SelectItem value="polityka" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Polityka</SelectItem>
+                <SelectItem value="instrukcja" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Instrukcja</SelectItem>
+                <SelectItem value="inny" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Inny</SelectItem>
               </SelectContent>
             </Select>
 
             {/* Źródło */}
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl text-white text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Źródło dokumentu" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Wszystkie źródła</SelectItem>
-                <SelectItem value="EKSPERT">Od eksperta</SelectItem>
-                <SelectItem value="KLIENT">Od klienta</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="ALL" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie źródła</SelectItem>
+                <SelectItem value="EKSPERT" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Od eksperta</SelectItem>
+                <SelectItem value="KLIENT" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Od klienta</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1024,7 +1025,8 @@ export default function DocumentsPage() {
       <Dialog open={isPreviewDialogOpen} onOpenChange={(open) => {
         if (!open) closePreviewDialog()
       }}>
-        <DialogContent className="bg-zinc-900 border border-border/40 max-w-4xl w-[95vw] rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <DialogContent className="max-w-4xl w-[95vw] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[90vh] relative">
+          <BorderBeam lightColor="#0da192" lightWidth={450} duration={8} borderWidth={1} />
           <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
 
           <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/20 shrink-0">

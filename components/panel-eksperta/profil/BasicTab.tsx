@@ -268,7 +268,7 @@ export function BasicTab({
         </CardHeader>
         <CardContent className="pt-6">
           <div className="grid lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Logo Upload (Avatar) */}
             <div className="lg:col-span-5 space-y-4">
               <div>
@@ -378,12 +378,12 @@ export function BasicTab({
 
               {formData.zdjecieGlowne ? (
                 <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-border/30">
+                  <div className="relative w-full min-h-32 rounded-xl overflow-hidden border border-border/30">
                     <Image
                       src={formData.zdjecieGlowne}
                       alt="Zdjęcie główne"
                       fill
-                      className="object-cover"
+                      className="object-contain relative "
                     />
                   </div>
                   <div className="flex gap-2">

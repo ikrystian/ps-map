@@ -1,6 +1,7 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { BorderBeam } from "@/components/ui/border-beam"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -80,6 +81,29 @@ interface ReviewsResponse {
     avgStosunekJakosci: number
     total: number
   }
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 300,
+      damping: 24,
+    },
+  },
 }
 
 export default function LawFirmReviewsPage() {
@@ -372,14 +396,22 @@ export default function LawFirmReviewsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      <PageHeader
-        title="Opinie Klientów"
-        subtitle="Śledź opinie o swoim profilu publicznym, analizuj wskaźniki satysfakcji i odpowiadaj profesjonalnie, aby budować zaufanie klientów."
-      >
-        <div className="absolute top-4 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-        <div className="relative flex flex-col md:flex-row items-center gap-4">
+    <div className="relative space-y-8 min-h-screen overflow-hidden pb-12">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <PageHeader
+          title="Opinie Klientów"
+          subtitle="Śledź opinie o swoim profilu publicznym, analizuj wskaźniki satysfakcji i odpowiadaj profesjonalnie, aby budować zaufanie klientów."
+        >
           {stats && (
             <div className="flex items-center gap-3 bg-zinc-900/50 border border-border/60 rounded-xl px-4 py-3 self-start md:self-auto shadow-inner">
               <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
@@ -391,16 +423,16 @@ export default function LawFirmReviewsPage() {
               </div>
             </div>
           )}
-        </div>
-      </PageHeader>
+        </PageHeader>
+      </motion.div>
 
       {error && (
-        <Card className="border-destructive/50 bg-destructive/5">
+        <Card className="border-destructive/30 bg-destructive/10 backdrop-blur-md rounded-2xl relative z-10">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3 text-destructive">
               <AlertCircle className="h-5 w-5" />
               <div>
-                <p className="font-medium text-sm">Wystąpił błąd podczas komunikacji z serwerem</p>
+                <p className="font-semibold text-sm">Wystąpił błąd podczas komunikacji z serwerem</p>
                 <p className="text-xs opacity-85 mt-0.5">{error}</p>
               </div>
             </div>
@@ -410,130 +442,149 @@ export default function LawFirmReviewsPage() {
 
       {/* Modern Dashboard Statystyk */}
       {stats && (
-        <div className="grid gap-6 md:grid-cols-5 mt-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid gap-6 md:grid-cols-5 mt-4 relative z-10"
+        >
           {/* Główna ocena i statystyka */}
-          <Card className="md:col-span-2 bg-gradient-to-br from-card to-zinc-900/40 border border-border/80 flex flex-col justify-between overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10" />
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
-                Ogólna reputacja
-              </CardTitle>
-              <CardDescription>Średnia ze wszystkich zweryfikowanych ocen</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4 flex-1 flex flex-col justify-center items-center text-center gap-2">
-              <div className="relative flex items-center justify-center">
-                <span className="text-6xl font-extrabold tracking-tighter text-foreground filter drop-shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                  {stats.avgRating.toFixed(2)}
-                </span>
-                <span className="text-lg font-semibold text-muted-foreground self-end mb-1 ml-1">/5</span>
-              </div>
-              <div className="mt-2">
-                {renderStars(Math.round(stats.avgRating), "h-5 w-5")}
-              </div>
-              <p className="text-xs text-muted-foreground mt-3 bg-zinc-900 border border-border/40 rounded-full px-3 py-1 font-medium">
-                Razem opinii: <span className="text-foreground font-bold">{stats.total}</span>
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants} className="md:col-span-2">
+            <Card className="h-full border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg flex flex-col justify-between overflow-hidden relative group">
+              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10" />
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
+                  Ogólna reputacja
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500 font-light mt-1">Średnia ze wszystkich zweryfikowanych ocen</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-4 flex-1 flex flex-col justify-center items-center text-center gap-2">
+                <div className="relative flex items-center justify-center">
+                  <span className="text-6xl font-extrabold tracking-tighter text-white filter drop-shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                    {stats.avgRating.toFixed(2)}
+                  </span>
+                  <span className="text-lg font-semibold text-zinc-500 self-end mb-1 ml-1">/5</span>
+                </div>
+                <div className="mt-2">
+                  {renderStars(Math.round(stats.avgRating), "h-5 w-5")}
+                </div>
+                <p className="text-xs text-zinc-400 mt-3 bg-zinc-950/40 border border-border/30 rounded-full px-3.5 py-1.5 font-medium">
+                  Razem opinii: <span className="text-white font-bold">{stats.total}</span>
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Analityka Atrybutów */}
-          <Card className="md:col-span-3 bg-card border border-border/80">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
-                Analiza kryteriów oceny
-              </CardTitle>
-              <CardDescription>Szczegółowy rozkład ocen w poszczególnych atrybutach</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-1">
-              {/* Profesjonalizm */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <UserCheck className="h-4 w-4 text-amber-500" />
-                    <span>Profesjonalizm</span>
+          <motion.div variants={itemVariants} className="md:col-span-3">
+            <Card className="h-full border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
+                  Analiza kryteriów oceny
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-500 font-light mt-1">Szczegółowy rozkład ocen w poszczególnych atrybutach</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-1">
+                {/* Profesjonalizm */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-zinc-300 font-medium">
+                      <UserCheck className="h-4 w-4 text-amber-500" />
+                      <span>Profesjonalizm</span>
+                    </div>
+                    <span className="font-bold text-white">{stats.avgProfesjonalizm.toFixed(1)} / 5.0</span>
                   </div>
-                  <span className="font-bold text-foreground">{stats.avgProfesjonalizm.toFixed(1)} / 5.0</span>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-950 border border-border/20">
+                    <motion.div
+                      className="h-full rounded-full bg-amber-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(stats.avgProfesjonalizm / 5) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                    />
+                  </div>
                 </div>
-                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-900 border border-zinc-800/60">
-                  <motion.div
-                    className="h-full rounded-full bg-amber-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(stats.avgProfesjonalizm / 5) * 100}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
 
-              {/* Komunikacja */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <MessageCircle className="h-4 w-4 text-emerald-500" />
-                    <span>Komunikacja</span>
+                {/* Komunikacja */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-zinc-300 font-medium">
+                      <MessageCircle className="h-4 w-4 text-emerald-500" />
+                      <span>Komunikacja</span>
+                    </div>
+                    <span className="font-bold text-white">{stats.avgKomunikacja.toFixed(1)} / 5.0</span>
                   </div>
-                  <span className="font-bold text-foreground">{stats.avgKomunikacja.toFixed(1)} / 5.0</span>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-950 border border-border/20">
+                    <motion.div
+                      className="h-full rounded-full bg-emerald-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(stats.avgKomunikacja / 5) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                    />
+                  </div>
                 </div>
-                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-900 border border-zinc-800/60">
-                  <motion.div
-                    className="h-full rounded-full bg-emerald-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(stats.avgKomunikacja / 5) * 100}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-                  />
-                </div>
-              </div>
 
-              {/* Terminowość */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <Calendar className="h-4 w-4 text-indigo-500" />
-                    <span>Terminowość</span>
+                {/* Terminowość */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-zinc-300 font-medium">
+                      <Calendar className="h-4 w-4 text-indigo-500" />
+                      <span>Terminowość</span>
+                    </div>
+                    <span className="font-bold text-white">{stats.avgTerminowosc.toFixed(1)} / 5.0</span>
                   </div>
-                  <span className="font-bold text-foreground">{stats.avgTerminowosc.toFixed(1)} / 5.0</span>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-950 border border-border/20">
+                    <motion.div
+                      className="h-full rounded-full bg-indigo-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(stats.avgTerminowosc / 5) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                    />
+                  </div>
                 </div>
-                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-900 border border-zinc-800/60">
-                  <motion.div
-                    className="h-full rounded-full bg-indigo-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(stats.avgTerminowosc / 5) * 100}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                  />
-                </div>
-              </div>
 
-              {/* Stosunek jakości do ceny */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <TrendingUp className="h-4 w-4 text-purple-500" />
-                    <span>Stosunek jakości do ceny</span>
+                {/* Stosunek jakości do ceny */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2 text-zinc-300 font-medium">
+                      <TrendingUp className="h-4 w-4 text-purple-500" />
+                      <span>Stosunek jakości do ceny</span>
+                    </div>
+                    <span className="font-bold text-white">{stats.avgStosunekJakosci.toFixed(1)} / 5.0</span>
                   </div>
-                  <span className="font-bold text-foreground">{stats.avgStosunekJakosci.toFixed(1)} / 5.0</span>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-950 border border-border/20">
+                    <motion.div
+                      className="h-full rounded-full bg-purple-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(stats.avgStosunekJakosci / 5) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+                    />
+                  </div>
                 </div>
-                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-900 border border-zinc-800/60">
-                  <motion.div
-                    className="h-full rounded-full bg-purple-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(stats.avgStosunekJakosci / 5) * 100}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Zaawansowany Toolbar - Filtry, Szukaj, Sortowanie */}
-      <div className="space-y-4">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+        className="space-y-5 relative z-10"
+      >
         {/* Filtry szybkich gwiazdek */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 bg-zinc-900/40 border border-border/60 rounded-xl max-w-fit">
+        <div className="flex flex-wrap items-center gap-2 p-1.5 bg-zinc-900/40 border border-border/30 rounded-xl max-w-fit backdrop-blur-sm">
           <Button
             variant={selectedRating === "all" ? "default" : "ghost"}
             size="sm"
             onClick={() => { setSelectedRating("all"); setCurrentPage(1); }}
-            className={`rounded-lg text-xs font-semibold ${selectedRating === "all" ? "shadow-sm shadow-primary/20" : "text-muted-foreground"}`}
+            className={`rounded-lg text-xs font-semibold px-4 transition-all ${
+              selectedRating === "all"
+                ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+            }`}
           >
             Wszystkie opinie
           </Button>
@@ -543,7 +594,11 @@ export default function LawFirmReviewsPage() {
               variant={selectedRating === rating.toString() ? "default" : "ghost"}
               size="sm"
               onClick={() => { setSelectedRating(rating.toString()); setCurrentPage(1); }}
-              className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 ${selectedRating === rating.toString() ? "shadow-sm shadow-primary/20" : "text-muted-foreground"}`}
+              className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 px-3.5 transition-all ${
+                selectedRating === rating.toString()
+                  ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+              }`}
             >
               <span>{rating}</span>
               <Star className={`h-3 w-3 ${selectedRating === rating.toString() ? "fill-current" : "fill-zinc-600 text-zinc-600"}`} />
@@ -555,28 +610,28 @@ export default function LawFirmReviewsPage() {
         <div className="grid gap-3 md:grid-cols-12">
           {/* Wyszukiwarka tekstowa */}
           <div className="relative md:col-span-6">
-            <Search className="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-zinc-500" />
             <Input
               placeholder="Wyszukaj po tytule, treści opinii lub kliencie..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-card border-border/80 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 h-10.5 rounded-xl text-sm"
+              className="pl-10 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm h-11"
             />
           </div>
 
           {/* Status odpowiedzi */}
           <div className="md:col-span-3">
             <Select value={replyFilter} onValueChange={setReplyFilter}>
-              <SelectTrigger className="bg-card border-border/80 h-10.5 rounded-xl text-sm font-medium">
+              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 font-medium">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-primary" />
+                  <Filter className="h-4 w-4 text-[#0da192]" />
                   <SelectValue placeholder="Status odpowiedzi" />
                 </div>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie statusy</SelectItem>
-                <SelectItem value="unreplied">Brak mojej odpowiedzi</SelectItem>
-                <SelectItem value="replied">Odpowiedziane</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie statusy</SelectItem>
+                <SelectItem value="unreplied" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Brak mojej odpowiedzi</SelectItem>
+                <SelectItem value="replied" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Odpowiedziane</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -584,51 +639,57 @@ export default function LawFirmReviewsPage() {
           {/* Sortowanie */}
           <div className="md:col-span-3">
             <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="bg-card border-border/80 h-10.5 rounded-xl text-sm font-medium">
+              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 font-medium">
                 <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-4 w-4 text-primary" />
+                  <ArrowUpDown className="h-4 w-4 text-[#0da192]" />
                   <SelectValue placeholder="Sortuj według" />
                 </div>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Najnowsze opinie</SelectItem>
-                <SelectItem value="oldest">Najstarsze opinie</SelectItem>
-                <SelectItem value="rating-desc">Najwyższa ocena</SelectItem>
-                <SelectItem value="rating-asc">Najniższa ocena</SelectItem>
+              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectItem value="newest" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najnowsze opinie</SelectItem>
+                <SelectItem value="oldest" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najstarsze opinie</SelectItem>
+                <SelectItem value="rating-desc" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najwyższa ocena</SelectItem>
+                <SelectItem value="rating-asc" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najniższa ocena</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Lista opinii */}
-      <div className="space-y-6">
+      <div className="space-y-6 relative z-10">
         {filteredAndSortedReviews.length === 0 ? (
-          <Card className="border-dashed border-2 border-border/60 bg-card/40 backdrop-blur-sm">
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="h-12 w-12 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 mb-4 border border-zinc-800">
-                <MessageSquare className="h-6 w-6" />
-              </div>
-              <h3 className="text-base font-semibold text-foreground">Brak opinii do wyświetlenia</h3>
-              <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-                Nie znaleźliśmy opinii pasujących do wybranego zestawu filtrów oraz zapytania wyszukiwania.
-              </p>
-              {(searchQuery || replyFilter !== "all" || selectedRating !== "all") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearchQuery("")
-                    setReplyFilter("all")
-                    setSelectedRating("all")
-                  }}
-                  className="mt-4 rounded-xl text-xs font-semibold"
-                >
-                  Wyczyść filtry i wyszukiwanie
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="border-dashed border-2 border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="h-12 w-12 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 mb-4 border border-zinc-800">
+                  <MessageSquare className="h-6 w-6" />
+                </div>
+                <h3 className="text-base font-semibold text-white">Brak opinii do wyświetlenia</h3>
+                <p className="text-sm text-zinc-400 mt-1 max-w-sm font-light">
+                  Nie znaleźliśmy opinii pasujących do wybranego zestawu filtrów oraz zapytania wyszukiwania.
+                </p>
+                {(searchQuery || replyFilter !== "all" || selectedRating !== "all") && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setReplyFilter("all")
+                      setSelectedRating("all")
+                    }}
+                    className="mt-4 rounded-xl text-xs font-semibold border-border/40 hover:bg-muted text-white"
+                  >
+                    Wyczyść filtry i wyszukiwanie
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : (
           <div className="space-y-4">
             <AnimatePresence mode="popLayout">
@@ -645,13 +706,13 @@ export default function LawFirmReviewsPage() {
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <Card className="bg-card/40 backdrop-blur-sm border border-border/80 hover:border-primary/20 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+                    <Card className="bg-card/25 backdrop-blur-md border border-border/30 hover:border-[#0da192]/40 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group rounded-2xl relative">
                       <CardHeader className="pb-3">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                           <div className="flex items-start gap-4">
                             {/* Avatar klienta z gradientowym ringiem */}
                             <div className="relative">
-                              <Avatar className="h-12 w-12 border-2 border-zinc-950 flex-shrink-0 shadow-md ring-2 ring-primary/20">
+                              <Avatar className="h-12 w-12 border-2 border-zinc-950 flex-shrink-0 shadow-md ring-2 ring-[#0da192]/20">
                                 {!review.anonimowa && review.client.user?.image ? (
                                   <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
                                 ) : null}
@@ -671,7 +732,7 @@ export default function LawFirmReviewsPage() {
                             {/* Dane opinii */}
                             <div className="space-y-1.5">
                               <div className="flex flex-wrap items-center gap-2">
-                                <h3 className="font-semibold text-base text-foreground leading-tight">
+                                <h3 className="font-semibold text-base text-white leading-tight">
                                   {review.tytulOpinii}
                                 </h3>
 
@@ -690,7 +751,7 @@ export default function LawFirmReviewsPage() {
 
                                 {/* Zweryfikowana badge */}
                                 {review.zweryfikowana && (
-                                  <Badge className="bg-primary/10 hover:bg-primary/10 text-primary border border-primary/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
+                                  <Badge className="bg-[#0da192]/10 hover:bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
                                     Zweryfikowana
                                   </Badge>
                                 )}
@@ -703,7 +764,7 @@ export default function LawFirmReviewsPage() {
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                              <div className="flex items-center gap-2 text-xs text-zinc-400 font-light">
                                 <span>{review.anonimowa ? "Anonimowy klient" : `${review.client.imie} ${review.client.nazwisko}`}</span>
                                 <span className="text-zinc-700">•</span>
                                 <span className="flex items-center gap-1">
@@ -717,7 +778,7 @@ export default function LawFirmReviewsPage() {
                           {/* Wskaźnik Oceny */}
                           <div className="flex flex-col items-end gap-1.5 self-start md:self-auto ml-16 md:ml-0">
                             {renderStars(review.ocenaOgolna)}
-                            <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
+                            <div className="flex items-center gap-1 text-xs font-semibold text-zinc-300">
                               <span>Ocena ogólna:</span>
                               <span className="text-amber-500 font-bold">{review.ocenaOgolna.toFixed(1)}/5</span>
                             </div>
@@ -739,7 +800,7 @@ export default function LawFirmReviewsPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => toggleDetails(review.id)}
-                              className="text-xs text-zinc-400 hover:text-foreground font-semibold px-0 hover:bg-transparent flex items-center gap-1 mt-1 transition-colors"
+                              className="text-xs text-zinc-400 hover:text-white font-semibold px-0 hover:bg-transparent flex items-center gap-1 mt-1 transition-colors"
                             >
                               <span>{isExpanded ? "Ukryj oceny składowe" : "Pokaż oceny składowe"}</span>
                               {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -754,40 +815,40 @@ export default function LawFirmReviewsPage() {
                                   transition={{ duration: 0.25, ease: "easeInOut" }}
                                   className="overflow-hidden mt-3"
                                 >
-                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-900/60 border border-border/40 rounded-xl">
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-zinc-900/60 border border-border/20 rounded-xl">
                                     {review.profesjonalizm && (
                                       <div className="space-y-1">
-                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                                           Profesjonalizm
                                         </p>
-                                        <p className="text-xs font-bold text-foreground mb-1">{review.profesjonalizm}.0 / 5.0</p>
+                                        <p className="text-xs font-bold text-white mb-1">{review.profesjonalizm}.0 / 5.0</p>
                                         {renderStars(review.profesjonalizm, "h-3.5 w-3.5")}
                                       </div>
                                     )}
                                     {review.komunikacja && (
                                       <div className="space-y-1">
-                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                                           Komunikacja
                                         </p>
-                                        <p className="text-xs font-bold text-foreground mb-1">{review.komunikacja}.0 / 5.0</p>
+                                        <p className="text-xs font-bold text-white mb-1">{review.komunikacja}.0 / 5.0</p>
                                         {renderStars(review.komunikacja, "h-3.5 w-3.5")}
                                       </div>
                                     )}
                                     {review.terminowosc && (
                                       <div className="space-y-1">
-                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                                           Terminowość
                                         </p>
-                                        <p className="text-xs font-bold text-foreground mb-1">{review.terminowosc}.0 / 5.0</p>
+                                        <p className="text-xs font-bold text-white mb-1">{review.terminowosc}.0 / 5.0</p>
                                         {renderStars(review.terminowosc, "h-3.5 w-3.5")}
                                       </div>
                                     )}
                                     {review.stosunekJakosci && (
                                       <div className="space-y-1">
-                                        <p className="text-sm uppercase font-bold text-zinc-500 tracking-wider">
+                                        <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                                           Jakość/Cena
                                         </p>
-                                        <p className="text-xs font-bold text-foreground mb-1">{review.stosunekJakosci}.0 / 5.0</p>
+                                        <p className="text-xs font-bold text-white mb-1">{review.stosunekJakosci}.0 / 5.0</p>
                                         {renderStars(review.stosunekJakosci, "h-3.5 w-3.5")}
                                       </div>
                                     )}
@@ -804,14 +865,14 @@ export default function LawFirmReviewsPage() {
                             {/* Linia łącząca wątek odpowiedzi */}
                             <div className="absolute left-6 md:left-8 -top-8 w-0.5 bg-border/40 bottom-1/2 pointer-events-none hidden md:block" />
 
-                            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 mt-2 shadow-sm relative group/reply">
+                            <div className="bg-[#0da192]/5 border border-[#0da192]/10 rounded-2xl p-4 mt-2 shadow-sm relative group/reply">
                               <div className="flex items-start gap-3">
                                 {/* Logo ekspercie */}
-                                <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
+                                <Avatar className="h-9 w-9 border border-[#0da192]/20 shadow-sm flex-shrink-0 ring-1 ring-[#0da192]/10">
                                   {lawFirm.logo ? (
                                     <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
                                   ) : null}
-                                  <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
+                                  <AvatarFallback className="bg-gradient-to-br from-[#0da192]/10 to-[#0da192]/20 text-[#0da192] font-bold text-xs">
                                     {lawFirm.nazwa.substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
@@ -819,11 +880,11 @@ export default function LawFirmReviewsPage() {
                                 <div className="flex-1">
                                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                                     <div className="flex items-center gap-1.5">
-                                      <MessageSquare className="h-3.5 w-3.5 text-primary" />
-                                      <p className="text-xs font-bold text-foreground">Odpowiedź eksperta ({lawFirm.nazwa})</p>
+                                      <MessageSquare className="h-3.5 w-3.5 text-[#0da192]" />
+                                      <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwa})</p>
                                     </div>
                                     {review.dataOdpowiedzi && (
-                                      <span className="text-sm font-semibold text-muted-foreground">
+                                      <span className="text-xs font-semibold text-zinc-400">
                                         Napisano {formatDate(review.dataOdpowiedzi)}
                                       </span>
                                     )}
@@ -838,9 +899,10 @@ export default function LawFirmReviewsPage() {
                         )}
 
                         {/* Przyciski akcji (Odpowiedz / Edytuj / Usuń za punkty) */}
-                        <div className="flex flex-wrap justify-end items-center gap-2 pt-2 border-t border-border/40 pl-0 md:pl-16">
+                        <div className="flex flex-wrap justify-end items-center gap-2 pt-2 border-t border-border/20 pl-0 md:pl-16">
                           {review.ocenaOgolna <= 3 && (
                             <Button
+                              type="button"
                               variant="destructive"
                               size="sm"
                               onClick={() => handleDeleteReviewClick(review)}
@@ -851,6 +913,7 @@ export default function LawFirmReviewsPage() {
                             </Button>
                           )}
                           <Button
+                            type="button"
                             variant={review.odpowiedz ? "outline" : "default"}
                             size="sm"
                             onClick={() => handleReply(review)}
@@ -858,7 +921,7 @@ export default function LawFirmReviewsPage() {
                           >
                             {review.odpowiedz ? (
                               <>
-                                <Edit2 className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                                <Edit2 className="h-3.5 w-3.5 mr-1.5 text-[#0da192]" />
                                 Edytuj odpowiedź
                               </>
                             ) : (
@@ -881,22 +944,22 @@ export default function LawFirmReviewsPage() {
 
       {/* Paginacja z nowoczesnym designem */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-6">
+        <div className="flex items-center justify-center gap-2 pt-6 relative z-10">
           <Button
             variant="outline"
             size="sm"
             disabled={currentPage === 1}
             onClick={() => { setCurrentPage((prev) => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="rounded-xl text-xs font-semibold"
+            className="rounded-xl text-xs font-semibold border-border/40 hover:bg-muted text-white"
           >
             Poprzednia
           </Button>
 
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900 border border-border/40 rounded-xl text-xs font-bold text-zinc-300">
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-zinc-950/40 border border-border/30 rounded-xl text-xs font-bold text-zinc-300 backdrop-blur-md">
             <span>Strona</span>
-            <span className="text-foreground">{currentPage}</span>
+            <span className="text-white">{currentPage}</span>
             <span>z</span>
-            <span className="text-foreground">{pagination.totalPages}</span>
+            <span className="text-white">{pagination.totalPages}</span>
           </div>
 
           <Button
@@ -904,7 +967,7 @@ export default function LawFirmReviewsPage() {
             size="sm"
             disabled={currentPage === pagination.totalPages}
             onClick={() => { setCurrentPage((prev) => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="rounded-xl text-xs font-semibold"
+            className="rounded-xl text-xs font-semibold border-border/40 hover:bg-muted text-white"
           >
             Następna
           </Button>
@@ -913,22 +976,23 @@ export default function LawFirmReviewsPage() {
 
       {/* Modern Dialog Odpowiedzi z Podglądem Opinii i Szablonami */}
       <Dialog open={replyDialogOpen} onOpenChange={setReplyDialogOpen}>
-        <DialogContent className="sm:max-w-[620px] bg-card border border-border/80 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-[620px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+          <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
+            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
+              <Sparkles className="h-5 w-5 text-[#0da192]" />
               <span>{selectedReview?.odpowiedz ? "Edytuj odpowiedź na opinię" : "Odpowiedz na opinię"}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription className="text-xs text-zinc-400">
               Twoja odpowiedź będzie wyświetlana publicznie bezpośrednio pod opinią klienta.
             </DialogDescription>
           </DialogHeader>
 
           {/* Podgląd opinii klienta */}
           {selectedReview && (
-            <div className="bg-zinc-900/60 border border-border/40 rounded-xl p-3.5 space-y-2 max-h-40 overflow-y-auto">
+            <div className="bg-zinc-900/60 border border-border/20 rounded-xl p-3.5 space-y-2 max-h-40 overflow-y-auto">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-white">
                   {selectedReview.anonimowa ? "Klient anonimowy" : `${selectedReview.client.imie} ${selectedReview.client.nazwisko}`}
                 </span>
                 <span className="flex items-center gap-1 text-amber-500 font-semibold">
@@ -958,7 +1022,7 @@ export default function LawFirmReviewsPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => applyTemplate(template.text)}
-                    className="text-xs rounded-xl bg-zinc-900/50 hover:bg-zinc-900 border-border/40 hover:border-primary/40 font-semibold py-1 px-3"
+                    className="text-xs rounded-xl bg-zinc-900/50 hover:bg-zinc-900 border-border/30 hover:border-[#0da192]/40 font-semibold py-1 px-3 text-zinc-300"
                   >
                     {template.label}
                   </Button>
@@ -970,7 +1034,7 @@ export default function LawFirmReviewsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="reply" className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Treść Twojej odpowiedzi</Label>
-                <span className={`text-sm font-bold uppercase tracking-wider ${replyText.length < 10 ? "text-amber-500" : "text-emerald-500"}`}>
+                <span className={`text-xs font-bold uppercase tracking-wider ${replyText.length < 10 ? "text-amber-500" : "text-emerald-500"}`}>
                   Znaki: {replyText.length}
                 </span>
               </div>
@@ -980,26 +1044,28 @@ export default function LawFirmReviewsPage() {
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Wpisz profesjonalną odpowiedź na opinię lub skorzystaj z jednego z gotowych szablonów powyżej..."
                 rows={6}
-                className="mt-1.5 bg-zinc-950 border-border/60 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 text-sm leading-relaxed rounded-xl"
+                className="mt-1.5 bg-background/50 border-border/50 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 text-white text-sm leading-relaxed rounded-xl"
               />
             </div>
           </div>
 
-          <DialogFooter className="pt-2 border-t border-border/40 flex flex-row items-center justify-end gap-2.5">
+          <DialogFooter className="pt-2 border-t border-border/20 flex flex-row items-center justify-end gap-2.5">
             <Button
+              type="button"
               variant="ghost"
               onClick={() => setReplyDialogOpen(false)}
               disabled={submitting}
-              className="rounded-xl text-xs font-semibold px-4 h-9"
+              className="rounded-xl text-xs font-semibold px-4 h-9 text-zinc-400 hover:text-white"
             >
               Anuluj
             </Button>
             <Button
+              type="button"
               onClick={handleSubmitReply}
               disabled={submitting || !replyText.trim()}
-              className="rounded-xl text-xs font-semibold px-5 h-9"
+              className="rounded-xl text-xs font-semibold px-5 h-9 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white"
             >
-              {submitting && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />}
+              {submitting && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin text-white" />}
               {selectedReview?.odpowiedz ? "Zaktualizuj odpowiedź" : "Wyślij odpowiedź"}
             </Button>
           </DialogFooter>
@@ -1008,13 +1074,14 @@ export default function LawFirmReviewsPage() {
 
       {/* Dialog Potwierdzenia Usunięcia Negatywnej Opinii */}
       <Dialog open={deleteConfirmDialogOpen} onOpenChange={setDeleteConfirmDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-card border border-border/80 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+          <BorderBeam lightColor="#e11d48" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-red-500">
               <AlertCircle className="h-5 w-5 animate-pulse text-red-500" />
               <span>Usuń negatywną opinię za punkty</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription className="text-xs text-zinc-400">
               Ta operacja trwale usunie opinię z Twojego profilu publicznego i przestanie ona wpływać na Twoją średnią ocenę.
             </DialogDescription>
           </DialogHeader>
@@ -1024,7 +1091,7 @@ export default function LawFirmReviewsPage() {
               {/* Podgląd usuwanej opinii */}
               <div className="bg-zinc-950 border border-red-900/20 rounded-xl p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-foreground">
+                  <span className="font-bold text-white">
                     {reviewToDelete.anonimowa ? "Klient anonimowy" : `${reviewToDelete.client.imie} ${reviewToDelete.client.nazwisko}`}
                   </span>
                   <span className="flex items-center gap-1 text-red-400 font-semibold bg-red-950/40 px-2 py-0.5 rounded-full border border-red-900/30">
@@ -1039,18 +1106,18 @@ export default function LawFirmReviewsPage() {
               </div>
 
               {/* Informacje o punktach */}
-              <div className="bg-zinc-900/60 border border-border/40 rounded-xl p-4 space-y-3">
+              <div className="bg-zinc-900/60 border border-border/20 rounded-xl p-4 space-y-3">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-zinc-400">Twoje obecne saldo:</span>
-                  <span className="font-bold text-foreground">{lawFirm?.punktySaldo ?? 0} pkt</span>
+                  <span className="font-bold text-white">{lawFirm?.punktySaldo ?? 0} pkt</span>
                 </div>
 
-                <div className="flex justify-between items-center text-sm border-t border-border/20 pt-2">
+                <div className="flex justify-between items-center text-sm border-t border-border/10 pt-2">
                   <span className="text-zinc-400">Koszt usunięcia tej opinii:</span>
                   <span className="font-bold text-red-400">-{deleteCosts[reviewToDelete.ocenaOgolna] || 500} pkt</span>
                 </div>
 
-                <div className="flex justify-between items-center text-sm border-t border-border/20 pt-2">
+                <div className="flex justify-between items-center text-sm border-t border-border/10 pt-2">
                   <span className="text-zinc-400">Prognozowane saldo po operacji:</span>
                   <span className={`font-bold ${((lawFirm?.punktySaldo ?? 0) - (deleteCosts[reviewToDelete.ocenaOgolna] || 500)) < 0 ? "text-red-500" : "text-emerald-400"}`}>
                     {((lawFirm?.punktySaldo ?? 0) - (deleteCosts[reviewToDelete.ocenaOgolna] || 500))} pkt
@@ -1072,19 +1139,21 @@ export default function LawFirmReviewsPage() {
             </div>
           )}
 
-          <DialogFooter className="pt-2 border-t border-border/40 flex flex-row items-center justify-end gap-2.5">
+          <DialogFooter className="pt-2 border-t border-border/20 flex flex-row items-center justify-end gap-2.5">
             <Button
+              type="button"
               variant="ghost"
               onClick={() => {
                 setDeleteConfirmDialogOpen(false)
                 setReviewToDelete(null)
               }}
               disabled={deletingReview}
-              className="rounded-xl text-xs font-semibold px-4 h-9"
+              className="rounded-xl text-xs font-semibold px-4 h-9 text-zinc-400 hover:text-white"
             >
               Anuluj
             </Button>
             <Button
+              type="button"
               variant="destructive"
               onClick={handleConfirmDeleteReview}
               disabled={
@@ -1094,7 +1163,7 @@ export default function LawFirmReviewsPage() {
               }
               className="rounded-xl text-xs font-semibold px-5 h-9 bg-red-600 hover:bg-red-700 text-white"
             >
-              {deletingReview && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />}
+              {deletingReview && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin text-white" />}
               Potwierdź usunięcie
             </Button>
           </DialogFooter>

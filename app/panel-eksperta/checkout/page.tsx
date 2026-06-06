@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
+import { motion } from "framer-motion"
 import {
   AlertCircle,
   ArrowLeft,
@@ -354,8 +355,11 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <p className="text-muted-foreground text-sm font-light">Inicjowanie zamówienia...</p>
+        </div>
       </div>
     )
   }
@@ -372,66 +376,91 @@ export default function CheckoutPage() {
   const anyPaymentMethodEnabled = isTestEnabled || isP24Enabled || isPayUEnabled || isTpayEnabled || isPrzelewEnabled
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => router.push(orderData.type === "PACKAGE" ? "/panel-eksperta/ustawienia" : "/panel-eksperta/punkty")}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <PageHeader
-          title="Finalizacja zamówienia"
-          subtitle="Dokończ płatność, aby aktywować pakiet lub punkty"
-          className="mb-0 flex-1"
-        />
-      </div>
+    <div className="relative space-y-8 min-h-screen overflow-hidden pb-12">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      <Separator />
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10"
+      >
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.push(orderData.type === "PACKAGE" ? "/panel-eksperta/ustawienia" : "/panel-eksperta/punkty")}
+            className="bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white rounded-xl transition-all"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <PageHeader
+            title="Finalizacja zamówienia"
+            subtitle="Dokończ płatność, aby aktywować pakiet lub punkty"
+            className="mb-0 flex-1"
+          />
+        </div>
+      </motion.div>
 
       {error && (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex items-start gap-3 pt-6 text-destructive">
-            <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
-            <div className="space-y-1">
-              <p className="font-medium">Wystąpił błąd</p>
-              <p className="text-sm text-muted-foreground">{error}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10"
+        >
+          <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl">
+            <CardContent className="flex items-start gap-3 pt-6 text-rose-400">
+              <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+              <div className="space-y-1">
+                <p className="font-semibold text-white">Wystąpił błąd</p>
+                <p className="text-xs text-zinc-400 font-light">{error}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="grid gap-6 lg:grid-cols-3 relative z-10"
+      >
         {/* Główna kolumna - Metoda płatności */}
         <div className="lg:col-span-2 space-y-6">
           {/* Metoda płatności */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="border-b border-border/20 py-5 px-6">
+              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-[#0da192]" />
                 Metoda płatności
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-zinc-400 text-xs font-light">
                 Wybierz sposób płatności {orderData.type === "PACKAGE" ? "za pakiet" : "za punkty"}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               {anyPaymentMethodEnabled ? (
                 <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                   <div className="space-y-3">
                     {isTestEnabled && (
-                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent border-primary/40 bg-primary/5 dark:bg-primary/10">
-                        <RadioGroupItem value="TEST" id="test" />
+                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                        paymentMethod === "TEST"
+                          ? "border-[#0da192] bg-[#0da192]/10"
+                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                      }`}>
+                        <RadioGroupItem value="TEST" id="test" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
                         <Label htmlFor="test" className="flex-1 cursor-pointer">
-                          <div className="font-medium flex items-center gap-2">
+                          <div className="font-semibold text-white flex items-center gap-2 text-sm">
                             Płatność Testowa
-                            <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">
+                            <span className="text-[10px] bg-[#0da192]/20 text-[#0da192] border border-[#0da192]/30 px-2 py-0.5 rounded-full font-mono font-medium uppercase tracking-wider">
                               Auto-akceptacja
                             </span>
                           </div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-xs text-zinc-400 font-light mt-0.5">
                             Natychmiastowe opłacenie i aktywacja zamówienia (symulacja płatności)
                           </div>
                         </Label>
@@ -439,11 +468,15 @@ export default function CheckoutPage() {
                     )}
 
                     {isP24Enabled && (
-                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" />
+                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                        paymentMethod === "PRZELEWY24"
+                          ? "border-[#0da192] bg-[#0da192]/10"
+                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                      }`}>
+                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
                         <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
-                          <div className="font-medium">Przelewy24</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-semibold text-white text-sm">Przelewy24</div>
+                          <div className="text-xs text-zinc-400 font-light mt-0.5">
                             Szybka płatność online (przelew, BLIK, karty)
                           </div>
                         </Label>
@@ -451,11 +484,15 @@ export default function CheckoutPage() {
                     )}
 
                     {isTpayEnabled && (
-                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                        <RadioGroupItem value="TPAY" id="tpay" />
+                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                        paymentMethod === "TPAY"
+                          ? "border-[#0da192] bg-[#0da192]/10"
+                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                      }`}>
+                        <RadioGroupItem value="TPAY" id="tpay" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
                         <Label htmlFor="tpay" className="flex-1 cursor-pointer">
-                          <div className="font-medium">Tpay</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-semibold text-white text-sm">Tpay</div>
+                          <div className="text-xs text-zinc-400 font-light mt-0.5">
                             Szybka płatność online przez Tpay
                           </div>
                         </Label>
@@ -463,11 +500,15 @@ export default function CheckoutPage() {
                     )}
 
                     {isPayUEnabled && (
-                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                        <RadioGroupItem value="PAYU" id="payu" />
+                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                        paymentMethod === "PAYU"
+                          ? "border-[#0da192] bg-[#0da192]/10"
+                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                      }`}>
+                        <RadioGroupItem value="PAYU" id="payu" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
                         <Label htmlFor="payu" className="flex-1 cursor-pointer">
-                          <div className="font-medium">PayU</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-semibold text-white text-sm">PayU</div>
+                          <div className="text-xs text-zinc-400 font-light mt-0.5">
                             Płatność online przez PayU
                           </div>
                         </Label>
@@ -475,11 +516,15 @@ export default function CheckoutPage() {
                     )}
 
                     {isPrzelewEnabled && (
-                      <div className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent">
-                        <RadioGroupItem value="PRZELEW" id="przelew" />
+                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                        paymentMethod === "PRZELEW"
+                          ? "border-[#0da192] bg-[#0da192]/10"
+                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                      }`}>
+                        <RadioGroupItem value="PRZELEW" id="przelew" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
                         <Label htmlFor="przelew" className="flex-1 cursor-pointer">
-                          <div className="font-medium">Przelew tradycyjny</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-semibold text-white text-sm">Przelew tradycyjny</div>
+                          <div className="text-xs text-zinc-400 font-light mt-0.5">
                             Punkty zostaną przyznane po zaksięgowaniu przelewu
                           </div>
                         </Label>
@@ -488,11 +533,11 @@ export default function CheckoutPage() {
                   </div>
                 </RadioGroup>
               ) : (
-                <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-destructive">
+                <div className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 text-rose-400">
                   <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
                   <div className="space-y-1">
-                    <p className="font-medium">Brak dostępnych metod płatności</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-semibold text-white">Brak dostępnych metod płatności</p>
+                    <p className="text-xs text-zinc-400 font-light">
                       Wszystkie metody płatności są obecnie wyłączone w systemie. Skontaktuj się ze wsparciem technicznym w celu sfinalizowania zamówienia.
                     </p>
                   </div>
@@ -506,82 +551,82 @@ export default function CheckoutPage() {
         <div className="space-y-6">
           {/* Aktualny stan punktów */}
           {lawFirm && (
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Aktualny stan</CardTitle>
+            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+              <CardHeader className="pb-3 pt-5 px-6">
+                <CardTitle className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Aktualny stan</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-6 pb-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Twój bilans:</span>
-                  <span className="font-semibold text-primary">{lawFirm.punktySaldo} pkt</span>
+                  <span className="text-sm text-zinc-400 font-light">Twój bilans:</span>
+                  <span className="font-bold text-[#0da192]">{lawFirm.punktySaldo} pkt</span>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Podsumowanie płatności */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4" />
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <CardHeader className="pb-3 pt-5 px-6 border-b border-border/20">
+              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+                <ShoppingCart className="h-4 w-4 text-[#0da192]" />
                 Podsumowanie
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-6 space-y-4">
               {orderData.type === "PACKAGE" ? (
                 <>
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Pakiet:</span>
-                      <span className="font-semibold">{orderData.planName}</span>
+                      <span className="text-zinc-400 font-light">Pakiet:</span>
+                      <span className="font-semibold text-white">{orderData.planName}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Okres:</span>
-                      <span className="font-medium">{orderData.periodLabel}</span>
+                      <span className="text-zinc-400 font-light">Okres:</span>
+                      <span className="font-medium text-zinc-300">{orderData.periodLabel}</span>
                     </div>
                     {orderData.punktyGratis && orderData.punktyGratis > 0 ? (
-                      <div className="flex items-center justify-between text-sm text-green-600 font-medium">
+                      <div className="flex items-center justify-between text-sm text-emerald-400 font-medium">
                         <span>Punkty gratis:</span>
                         <span>+{orderData.punktyGratis} pkt</span>
                       </div>
                     ) : null}
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-border/20" />
 
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Do zapłaty:</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="font-semibold text-white">Do zapłaty:</span>
+                    <span className="text-2xl font-bold text-[#0da192] font-playfair">
                       {formatCurrency(orderData.price || 0)}
                     </span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Pakiet:</span>
-                      <span className="font-medium">{orderData.pakietLabel}</span>
+                      <span className="text-zinc-400 font-light">Pakiet:</span>
+                      <span className="font-medium text-white">{orderData.pakietLabel}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Punkty:</span>
-                      <span className="font-medium">+{orderData.liczbaPunktow} pkt</span>
+                      <span className="text-zinc-400 font-light">Punkty:</span>
+                      <span className="font-medium text-white">+{orderData.liczbaPunktow} pkt</span>
                     </div>
                     {lawFirm && orderData.liczbaPunktow && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Stan po zakupie:</span>
-                        <span className="font-medium text-green-600">
+                        <span className="text-zinc-400 font-light">Stan po zakupie:</span>
+                        <span className="font-semibold text-emerald-400">
                           {lawFirm.punktySaldo + orderData.liczbaPunktow} pkt
                         </span>
                       </div>
                     )}
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-border/20" />
 
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Do zapłaty:</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="font-semibold text-white">Do zapłaty:</span>
+                    <span className="text-2xl font-bold text-[#0da192] font-playfair">
                       {formatCurrency(orderData.kwota || 0)}
                     </span>
                   </div>
@@ -594,14 +639,15 @@ export default function CheckoutPage() {
                     id="terms"
                     checked={termsAccepted}
                     onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+                    className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]"
                   />
-                  <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight">
+                  <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight text-zinc-400 font-light">
                     Akceptuję{" "}
-                    <a href="/regulamin" target="_blank" className="underline text-primary">
+                    <a href="/regulamin" target="_blank" className="underline text-[#0da192] hover:text-[#0a8276] transition-colors">
                       regulamin
                     </a>
                     {" "}i{" "}
-                    <a href="/polityka-prywatnosci" target="_blank" className="underline text-primary">
+                    <a href="/polityka-prywatnosci" target="_blank" className="underline text-[#0da192] hover:text-[#0a8276] transition-colors">
                       politykę prywatności
                     </a>
                     {" "}*
@@ -609,7 +655,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <Button
-                  className="w-full"
+                  className="w-full bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 border-t border-white/10"
                   size="lg"
                   onClick={handleSubmitOrder}
                   disabled={submitting || !termsAccepted || !anyPaymentMethodEnabled}
@@ -630,7 +676,7 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
