@@ -16,6 +16,12 @@ app.prepare().then(() => {
 
   const server = createServer(async (req, res) => {
     try {
+      // Skip Next.js handling for Socket.IO requests
+      if (req.url?.includes("/api/socket")) {
+        // console.log(`[Server] Socket.IO request: ${req.url}`)
+        return
+      }
+
       // In modern Next.js, the request handler can parse the URL internally.
       // This avoids using the deprecated `url.parse()` API.
       await handle(req, res)

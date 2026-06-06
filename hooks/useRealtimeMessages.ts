@@ -18,15 +18,24 @@ export function useRealtimeMessages({
   const [lastUpdate, setLastUpdate] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const socketRef = useRef<Socket | null>(null)
+  
+  // Use refs for callbacks to avoid re-initializing socket when they change
+  const onUpdateRef = useRef(onUpdate)
+  const onNewMessageRef = useRef(onNewMessage)
+  
+  useEffect(() => {
+    onUpdateRef.current = onUpdate
+    onNewMessageRef.current = onNewMessage
+  }, [onUpdate, onNewMessage])
 
   const connect = useCallback(() => {
     if (!session?.user?.id || !enabled || status !== "authenticated") {
       return
     }
 
-    // Close existing connection
+    // Don't reconnect if already connecting or connected
     if (socketRef.current) {
-      socketRef.current.disconnect()
+      return
     }
 
     try {
@@ -34,7 +43,8 @@ export function useRealtimeMessages({
 
       const socket = io({
         path: "/api/socket",
-        transports: ["websocket", "polling"],
+        addTrailingSlash: false,
+        transports: ["websocket"],
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
@@ -71,22 +81,22 @@ export function useRealtimeMessages({
       socket.on("conversation_update", (data: any) => {
         console.log("[Socket.IO] Conversation update:", data)
         setLastUpdate(new Date().toISOString())
-        onUpdate?.()
+        onUpdateRef.current?.()
       })
 
       // Listen for new messages
       socket.on("new_message", (data: any) => {
         console.log("[Socket.IO] New message:", data)
         setLastUpdate(new Date().toISOString())
-        onNewMessage?.(data)
-        onUpdate?.()
+        onNewMessageRef.current?.(data)
+        onUpdateRef.current?.()
       })
 
     } catch (error) {
       console.error("[Socket.IO] Error creating socket:", error)
       setIsConnected(false)
     }
-  }, [session, enabled, status, onUpdate, onNewMessage])
+  }, [session, enabled, status])
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {

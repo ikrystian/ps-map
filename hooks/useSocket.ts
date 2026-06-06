@@ -18,7 +18,8 @@ export function useSocket(conversationId?: string) {
 
       const socket = io({
         path: "/api/socket",
-        transports: ["websocket", "polling"],
+        addTrailingSlash: false,
+        transports: ["websocket"],
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,

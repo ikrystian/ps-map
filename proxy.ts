@@ -25,6 +25,7 @@ export default auth((req) => {
     nextUrl.pathname.startsWith("/szukaj-prawnika") ||
     nextUrl.pathname.startsWith("/sklep") ||
     nextUrl.pathname.startsWith("/api/auth") ||
+    nextUrl.pathname.startsWith("/api/socket") ||
     nextUrl.pathname.startsWith("/_next") ||
     nextUrl.pathname.startsWith("/favicon")
 
