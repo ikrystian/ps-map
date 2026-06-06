@@ -57,7 +57,13 @@ export type {
   Voivodeship
 } from "./voivodeships"
 
+// City types
+export type {
+  City
+} from "./cities"
+
 // Blog types
 export type {
   BlogCategory
 } from "./blog"
+

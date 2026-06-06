@@ -12,13 +12,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { Globe, Loader2, MapPin } from "lucide-react"
 import Link from "next/link"
-import { Category, Voivodeship } from "@/types"
+import { Category, Voivodeship, City } from "@/types"
 
-interface City {
-  id: string
-  nazwa: string
-  voivodeshipId: string
-}
 
 interface SpecializationTabProps {
   formData: {

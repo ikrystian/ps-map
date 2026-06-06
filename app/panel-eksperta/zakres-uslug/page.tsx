@@ -37,14 +37,8 @@ interface LawFirmCategory {
   kolejnosc: number
   category: Category
 }
-import type { Voivodeship } from "@/types"
+import type { Voivodeship, City } from "@/types"
 
-interface City {
-  id: string
-  nazwa: string
-  voivodeshipId: string
-  voivodeship?: Voivodeship
-}
 
 interface AreaData {
   callaPolska: boolean

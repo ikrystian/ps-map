@@ -16,13 +16,8 @@ import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
 
-import type { Voivodeship } from "@/types"
+import type { Voivodeship, City } from "@/types"
 
-interface City {
-  id: string
-  nazwa: string
-  voivodeshipId: string
-}
 
 import { Category } from "@/types/categories"
 

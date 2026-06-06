@@ -31,15 +31,8 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import type { Voivodeship } from "@/types"
+import type { Voivodeship, City } from "@/types"
 
-interface City {
-  id: string
-  nazwa: string
-  voivodeshipId: string
-  voivodeship: Voivodeship
-  postalCodes?: Array<{ id: string; code: string }>
-}
 
 export default function AdminLocationsPage() {
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
@@ -366,7 +359,7 @@ export default function AdminLocationsPage() {
                               )}
                             </div>
                           </TableCell>
-                          <TableCell>{city.voivodeship.nazwa}</TableCell>
+                          <TableCell>{city.voivodeship?.nazwa}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button 

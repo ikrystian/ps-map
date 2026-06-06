@@ -32,8 +32,8 @@ export async function checkExpiredSubscriptions(): Promise<number> {
 
   for (const lf of expiredLawFirms) {
     const packageType = lf.pakietSubskrypcji || ""
-    const dataWygasnieciaStr = lf.dataPakietuDo 
-      ? format(new Date(lf.dataPakietuDo), "dd.MM.yyyy") 
+    const dataWygasnieciaStr = lf.dataPakietuDo
+      ? format(new Date(lf.dataPakietuDo), "dd.MM.yyyy")
       : format(now, "dd.MM.yyyy")
 
     // 1. Send the expiration email

@@ -333,7 +333,7 @@ export default function AdminLawFirmsPage() {
                     </TableCell>
                     <TableCell className="font-mono text-sm">{lawFirm.nip}</TableCell>
                     <TableCell>
-                      <span className="text-sm">{formatType(lawFirm.typ, lawFirm.typInny)}</span>
+                      <span className="text-sm">{formatType((lawFirm.typ ?? "INNY") as LawFirmType, lawFirm.typInny)}</span>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
@@ -344,12 +344,12 @@ export default function AdminLawFirmsPage() {
                     <TableCell>
                       <div className="text-sm">
                         <div>{lawFirm.miasto}</div>
-                        <div className="text-xs text-muted-foreground">{lawFirm.voivodeship.nazwa}</div>
+                        <div className="text-xs text-muted-foreground">{lawFirm.voivodeship?.nazwa}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getSubscriptionBadgeVariant(lawFirm.pakietSubskrypcji)}>
-                        {formatSubscription(lawFirm.pakietSubskrypcji)}
+                      <Badge variant={getSubscriptionBadgeVariant((lawFirm.pakietSubskrypcji ?? "PODSTAWOWY") as SubscriptionPackage)}>
+                        {formatSubscription((lawFirm.pakietSubskrypcji ?? "PODSTAWOWY") as SubscriptionPackage)}
                       </Badge>
                     </TableCell>
                     <TableCell>
