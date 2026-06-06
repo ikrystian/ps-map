@@ -18,35 +18,29 @@ const CategoryCard = memo(
     index,
     hovered,
     setHovered,
-    gridArea,
     imageUrl,
-    aspectRatio,
-    titleClassName = "text-white text-xl font-bold text-center",
+    dataArea,
   }: {
     category: Category;
     index: number;
     hovered: number | null;
     setHovered: (index: number | null) => void;
-    gridArea?: string;
-    imageUrl: string;
-    aspectRatio?: string;
-    titleClassName?: string;
+    imageUrl: string | undefined | null;
+    dataArea?: string;
   }) => {
     return (
       <Link
         href={`/kategorie/${category.slug}`}
         onMouseEnter={() => setHovered(index)}
         onMouseLeave={() => setHovered(null)}
-        style={{ gridArea: gridArea ?? undefined }}
+        data-area={dataArea}
         className={cn(
           "relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
-          gridArea && `[grid-area:${gridArea}]`,
-          aspectRatio,
-          hovered !== null && hovered !== index && "blur-sm scale-[0.98]",
+          hovered !== null && hovered !== index && "md:blur-sm md:scale-[0.98]",
         )}
       >
         <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-300 md:group-hover:scale-110"
           style={{
             backgroundImage: `url(${category.backgroundImageUrl || imageUrl})`,
           }}
@@ -57,20 +51,20 @@ const CategoryCard = memo(
             hovered === index ? "bg-black/50" : "bg-black/60",
           )}
         />
-        <div className="relative h-full flex flex-col items-center justify-center p-6 gap-3">
+        <div className="relative h-full flex flex-col items-center justify-end md:justify-center p-3 md:p-6 gap-3">
           {category.ikonaUrl ? (
             <img
               src={category.ikonaUrl}
               alt=""
-              className="h-16 w-16 md:h-10  md:w-10 object-contain brightness-0 invert"
+              className="h-10 w-10 object-contain brightness-0 invert hidden md:block"
             />
           ) : category.ikona ? (
             (() => {
               const Icon = icons[category.ikona as keyof typeof icons];
-              return Icon ? <Icon className="h-10 w-10 text-white" /> : null;
+              return Icon ? <Icon className="h-10 w-10 text-white hidden md:block" /> : null;
             })()
           ) : null}
-          <h3 className={titleClassName}>{category.nazwa}</h3>
+          <h3 className="text-white text-md md:text-xl font-bold text-center">{category.nazwa}</h3>
         </div>
       </Link>
     );
@@ -87,17 +81,6 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
     .sort((a, b) => (a.kolejnosc ?? 0) - (b.kolejnosc ?? 0))
     .slice(0, 9);
 
-  const desktopImages = [
-    "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
-    "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&q=80",
-    "https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800&q=80",
-    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
-    "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80",
-    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80",
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
-    "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=800&q=80",
-  ];
 
   const gridAreas = [
     "first",
@@ -156,18 +139,8 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
               <div className="flex-grow border-t border-zinc-800/80" />
             </div>
           </div>
-          {/* Desktop Grid Layout */}
-          <div
-            className="hidden lg:grid grid-cols-6 grid-rows-2 gap-4 max-w-full mx-auto mb-8 min-h-[500px]"
-            style={{
-              display: undefined, // let Tailwind handle display
-              gridTemplateColumns: "repeat(6, 1fr)",
-              gridTemplateRows: "repeat(2, 1fr)",
-              gridTemplateAreas:
-                '"first second fourth sixth eighth nineth" ' +
-                '"first third fourth seventh eighth tenth"',
-            }}
-          >
+          {/* Unified responsive grid — layout handled via CSS (.categories-grid in globals.css) */}
+          <div className="categories-grid">
             {activeCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
@@ -175,72 +148,10 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
                 index={index}
                 hovered={hovered}
                 setHovered={setHovered}
-                gridArea={gridAreas[index]}
-                imageUrl={desktopImages[index]}
-                titleClassName={
-                  index === 0 || index === 3 || index === 6
-                    ? "text-white text-xl font-bold text-center"
-                    : "text-white text-xl font-bold text-center"
-                }
+                imageUrl={category.backgroundImageUrl}
+                dataArea={gridAreas[index]}
               />
             ))}
-          </div>
-
-          {/* Tablet Grid Layout (3 columns) */}
-          <div className="hidden md:grid lg:hidden grid-cols-3 gap-4 mb-8">
-            {activeCategories.map((category, index) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                index={index + 10} // Different index range to avoid conflicts if needed, but separate grids
-                hovered={hovered}
-                setHovered={setHovered}
-                imageUrl={`https://images.unsplash.com/photo-${index % 2 === 0 ? "1589829545856-d10d557cf95f" : "1450101499163-c8848c66ca85"}?w=800&q=80`}
-                aspectRatio="aspect-video"
-              />
-            ))}
-          </div>
-
-          {/* Mobile Grid Layout (1 left + 2 right repeating) */}
-          <div className="md:hidden mb-8 flex flex-col gap-4">
-            {Array.from({ length: Math.ceil(activeCategories.length / 3) }, (_, groupIdx) => {
-              const group = activeCategories.slice(groupIdx * 3, groupIdx * 3 + 3);
-              const areaName = (i: number) => `g${groupIdx}i${i}`;
-              const areas =
-                group.length === 1
-                  ? `"${areaName(0)}"`
-                  : group.length === 2
-                    ? `"${areaName(0)} ${areaName(1)}"`
-                    : `"${areaName(0)} ${areaName(1)}" "${areaName(0)} ${areaName(2)}"`;
-              return (
-                <div
-                  key={groupIdx}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gridTemplateAreas: areas,
-                    gap: "1rem",
-                  }}
-                >
-                  {group.map((category, i) => {
-                    const globalIndex = groupIdx * 3 + i + 20;
-                    return (
-                      <CategoryCard
-                        key={category.id}
-                        category={category}
-                        index={globalIndex}
-                        hovered={hovered}
-                        setHovered={setHovered}
-                        gridArea={areaName(i)}
-                        imageUrl={`https://images.unsplash.com/photo-${globalIndex % 2 === 0 ? "1589829545856-d10d557cf95f" : "1450101499163-c8848c66ca85"}?w=800&q=80`}
-                        aspectRatio={i === 0 && group.length === 3 ? "" : "aspect-video"}
-                        titleClassName="text-white text-xl font-bold text-center"
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
           </div>
 
           <div className="text-right">
