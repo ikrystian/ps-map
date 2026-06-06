@@ -10,6 +10,7 @@ import {
 import { Mail, Phone } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useState, useEffect, Fragment } from "react"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (
@@ -25,6 +26,23 @@ const GoldCheck = () => (
 )
 
 export default function PublicFooter() {
+  const [blogCategories, setBlogCategories] = useState<{ id: string; nazwa: string; slug: string }[]>([])
+
+  useEffect(() => {
+    const fetchBlogCategories = async () => {
+      try {
+        const response = await fetch("/api/blog/categories")
+        if (response.ok) {
+          const data = await response.json()
+          setBlogCategories(data)
+        }
+      } catch (error) {
+        console.error("Error fetching blog categories for footer:", error)
+      }
+    }
+    fetchBlogCategories()
+  }, [])
+
   return (
     <footer id="public-footer" className="relative overflow-hidden bg-[#141414] text-neutral-300 border-t border-neutral-900">
       {/* Labyrinth background pattern overlay */}
@@ -165,22 +183,23 @@ export default function PublicFooter() {
         </div>
 
         {/* Horizontal Category Tag Ribbon ("Artykuły branżowe") */}
-        <div className="mt-12 pt-6 border-t border-neutral-900">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-xs text-neutral-500 justify-start items-center">
-            <span className="font-medium text-neutral-400 mr-1">Artykuły branżowe:</span>
-            <Link href="/blog?category=dofinansowania" className="hover:text-[#d7b56d] transition-colors">Dofinansowania</Link>
-            <span className="text-neutral-700 select-none">·</span>
-            <Link href="/blog?category=kredyty-frankowe" className="hover:text-[#d7b56d] transition-colors">Kredyty frankowe</Link>
-            <span className="text-neutral-700 select-none">·</span>
-            <Link href="/blog?category=podatki" className="hover:text-[#d7b56d] transition-colors">Podatki</Link>
-            <span className="text-neutral-700 select-none">·</span>
-            <Link href="/blog?category=rodzina" className="hover:text-[#d7b56d] transition-colors">Rodzina</Link>
-            <span className="text-neutral-700 select-none">·</span>
-            <Link href="/blog?category=prawo-spadkowe" className="hover:text-[#d7b56d] transition-colors">Prawo spadkowe</Link>
-            <span className="text-neutral-700 select-none">·</span>
-            <Link href="/blog?category=akty-notarialne" className="hover:text-[#d7b56d] transition-colors">Akty notarialne</Link>
+        {blogCategories.length > 0 && (
+          <div className="mt-12 pt-6 border-t border-neutral-900">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-xs text-neutral-500 justify-start items-center">
+              <span className="font-medium text-neutral-400 mr-1">Artykuły branżowe:</span>
+              {blogCategories.map((category, index) => (
+                <Fragment key={category.id}>
+                  <Link href={`/blog?category=${category.slug}`} className="hover:text-[#d7b56d] transition-colors">
+                    {category.nazwa}
+                  </Link>
+                  {index < blogCategories.length - 1 && (
+                    <span className="text-neutral-700 select-none">·</span>
+                  )}
+                </Fragment>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Sub-footer bottom bar */}
         <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
@@ -232,6 +251,6 @@ export default function PublicFooter() {
         </div>
 
       </div>
-    </footer >
+    </footer>
   )
 }

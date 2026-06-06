@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface BlogPost {
   id: string;
@@ -60,6 +61,10 @@ interface PaginationData {
 }
 
 export default function BlogPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categorySlug = searchParams.get("category");
+
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -86,6 +91,22 @@ export default function BlogPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Sync selectedCategory with query param category (slug) on mount or URL changes
+  useEffect(() => {
+    if (categories.length > 0) {
+      if (categorySlug) {
+        const found = categories.find((c) => c.slug === categorySlug);
+        if (found) {
+          setSelectedCategory(found.id);
+        } else {
+          setSelectedCategory(null);
+        }
+      } else {
+        setSelectedCategory(null);
+      }
+    }
+  }, [categorySlug, categories]);
 
   useEffect(() => {
     fetchPosts();
@@ -135,12 +156,22 @@ export default function BlogPage() {
   const handleCategoryChange = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
     setPagination((prev) => ({ ...prev, page: 1 }));
+
+    if (categoryId === null) {
+      router.push("/blog", { scroll: false });
+    } else {
+      const cat = categories.find((c) => c.id === categoryId);
+      if (cat) {
+        router.push(`/blog?category=${cat.slug}`, { scroll: false });
+      }
+    }
   };
 
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedCategory(null);
     setPagination((prev) => ({ ...prev, page: 1 }));
+    router.push("/blog", { scroll: false });
   };
 
   const formatDate = (dateString: string) => {
