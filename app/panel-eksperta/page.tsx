@@ -35,20 +35,7 @@ import {
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  punktySaldo: number
-  pakietSubskrypcji: string
-  dataPakietuOd: Date | null
-  dataPakietuDo: Date | null
-  wyswietleniaProfilu: number
-  zlozoneOferty: number
-  wygraneOferty: number
-  konwersja: number
-  pozycjaRanking: number | null
-}
+import type { LawFirm } from "@/types"
 
 interface Case {
   id: string
