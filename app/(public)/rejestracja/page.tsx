@@ -26,7 +26,7 @@ export default function RegistrationPage() {
           <h2 className="text-3xl font-bold tracking-tight">
             Wybierz typ konta
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             Już masz konto?{" "}
             <Link
               href="/logowanie"

@@ -308,7 +308,7 @@ export default function LawFirmRegistrationPage() {
   // Dynamic fetch and caching for cities and postal codes
   useEffect(() => {
     const query = locationSearch.trim().toLowerCase()
-    
+
     // If search query is short/empty, check if we can show cities for the postal code
     if (query.length < 2) {
       if (formData.kodPocztowy && formData.kodPocztowy.length === 6) {
@@ -320,7 +320,7 @@ export default function LawFirmRegistrationPage() {
               const data = await response.json()
               if (Array.isArray(data)) {
                 setCities(data)
-                
+
                 // If exactly 1 city matches and is different from current form data
                 if (data.length === 1) {
                   const matchedCity = data[0]
@@ -334,7 +334,7 @@ export default function LawFirmRegistrationPage() {
                       voivodeshipId: matchedCity.voivodeshipId
                     }
                   })
-                  
+
                   // Clear errors
                   setFieldErrors(prev => {
                     const newErrors = { ...prev }
@@ -408,7 +408,7 @@ export default function LawFirmRegistrationPage() {
   const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/[^\d]/g, "")
     if (val.length > 5) val = val.slice(0, 5)
-    
+
     let formatted = val
     if (val.length > 2) {
       formatted = `${val.slice(0, 2)}-${val.slice(2)}`
@@ -1383,7 +1383,7 @@ export default function LawFirmRegistrationPage() {
         <CardHeader className="space-y-2 px-0 pt-0">
           <div className="flex justify-between items-center">
             <CardTitle className="text-3xl font-extrabold tracking-tight">Rejestracja</CardTitle>
-            <span className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="text-xs font-light bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
               Krok {currentStep} / {totalSteps}
             </span>
           </div>
@@ -1424,7 +1424,7 @@ export default function LawFirmRegistrationPage() {
                     <Icon className="w-5 h-5" />
                   </motion.div>
                   <span className={cn(
-                    "absolute -bottom-8 text-sm font-bold uppercase tracking-tighter whitespace-nowrap transition-all duration-300 hidden md:block",
+                    "absolute -bottom-8 text-sm font-light tracking-tighter whitespace-nowrap transition-all duration-300 hidden md:block",
                     isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-60",
                     isCurrent ? "scale-110" : "scale-100"
                   )}>
@@ -1487,7 +1487,7 @@ export default function LawFirmRegistrationPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 h-12 rounded-xl text-base font-bold shadow-xl shadow-primary/20 group"
+                className="flex-1 h-12 rounded-xl text-base font-light shadow-xl shadow-primary/20 group"
               >
                 {currentStep === totalSteps
                   ? isLoading

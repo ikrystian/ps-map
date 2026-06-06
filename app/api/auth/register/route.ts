@@ -149,6 +149,7 @@ export async function POST(request: NextRequest) {
           krs: clientType === "BUSINESS" ? (clientData.krs || null) : null,
           voivodeshipId: clientData.voivodeshipId || null,
           miasto: clientData.miasto || null,
+          kodPocztowy: clientData.kodPocztowy || null,
           zgodaRegulamin: clientData.zgodaRegulamin || false,
           zgodaNewsletter: clientData.zgodaNewsletter || false,
           zgodaMarketing: clientData.zgodaMarketing || false,
