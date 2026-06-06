@@ -205,19 +205,19 @@ export function getBrandEmailLayout(
       let finalHtml = template.replace('<!-- content here-->', contentHtml)
 
       // Dynamiczne podmienianie linków w szablonie prosta_sprawa_email.html dla poprawności działania systemu
-      const nextAuthUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+      const domainUrl = process.env.URL || 'https://ps-dev.com.pl/'
 
       // Podmień logo i link "Client Portal" na rzeczywiste linki
-      finalHtml = finalHtml.replace('href="#" class="logo"', `href="${nextAuthUrl}" class="logo"`)
-      finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${nextAuthUrl}/panel-klienta" class="header-link"`)
+      finalHtml = finalHtml.replace('href="#" class="logo"', `href="${domainUrl}" class="logo"`)
+      finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${domainUrl}/panel-klienta" class="header-link"`)
 
       // Podmień linki w stopce na poprawne URL-e systemowe
-      finalHtml = finalHtml.replace('href="#">Terms of Service</a>', `href="${nextAuthUrl}/terms">Terms of Service</a>`)
-      finalHtml = finalHtml.replace('href="#">Privacy Policy</a>', `href="${nextAuthUrl}/privacy">Privacy Policy</a>`)
-      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${nextAuthUrl}/cookies">Ciasteczka</a>`)
-
+      finalHtml = finalHtml.replace('href="#">Terms of Service</a>', `href="${domainUrl}/terms">Terms of Service</a>`)
+      finalHtml = finalHtml.replace('href="#">Privacy Policy</a>', `href="${domainUrl}/privacy">Privacy Policy</a>`)
+      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${domainUrl}/cookies">Ciasteczka</a>`)
+      finalHtml = finalHtml.replace('src="', `src="${domainUrl}`)
       // Podmień ikony w stopce na poprawne odnośniki
-      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${nextAuthUrl}" class="footer-icon" aria-label="Website"`)
+      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${domainUrl}" class="footer-icon" aria-label="Website"`)
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostaspawa.pl" class="footer-icon" aria-label="Email"`)
 
       // Dodaj preheader jeśli jest podany
