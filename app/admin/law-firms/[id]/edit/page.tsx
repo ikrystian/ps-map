@@ -41,7 +41,6 @@ import {
   ShieldCheck,
   BookOpen,
   FileCheck2,
-  Bell,
   Sparkles,
   MapPin,
   CheckCircle2,

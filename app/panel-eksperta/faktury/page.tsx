@@ -24,10 +24,8 @@ import {
   Loader2,
   Send,
   XCircle,
-  Sparkles,
   Coins,
-  ShieldCheck,
-  AlertCircle
+  ShieldCheck
 } from "lucide-react"
 import { useEffect, useState } from "react"
 

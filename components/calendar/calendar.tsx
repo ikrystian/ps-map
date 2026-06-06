@@ -45,7 +45,6 @@ import { AgendaView } from "./agenda-view";
 import { DayView } from "./day-view";
 import { detectBrowserTimezone } from "./helpers";
 import { MonthView } from "./month-view";
-import { TimezoneSelect } from "./timezone-selector";
 import { ALL_TIMEZONES } from "./timezones";
 import type { CalendarSchedulerProps, ViewType } from "./types";
 import { ViewSwitcher } from "./view-switcher";

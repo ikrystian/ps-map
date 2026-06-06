@@ -26,9 +26,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { usePermissions } from "@/hooks/usePermissions"
-import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { BookOpen, Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar, ShieldAlert, Sparkles } from "lucide-react"
+import { BookOpen, Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar, ShieldAlert } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"

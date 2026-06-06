@@ -23,7 +23,6 @@ import {
   X,
   Loader2,
   User,
-  ShieldAlert,
   MessageCircle,
 } from "lucide-react"
 import { useSession } from "next-auth/react"

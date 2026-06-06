@@ -21,7 +21,6 @@ import {
   Loader2,
   Search,
   Sparkles,
-  User,
   XCircle,
   Filter,
   ArrowRight,

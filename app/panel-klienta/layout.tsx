@@ -1,7 +1,6 @@
 "use client"
 import Image from "next/image"
 
-import { MessagesBell } from "@/components/MessagesBell"
 import { NotificationBell } from "@/components/NotificationBell"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"

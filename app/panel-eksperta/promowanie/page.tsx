@@ -13,17 +13,14 @@ import {
   Clock,
   Loader2,
   Plus,
-  Sparkle,
   TrendingUp,
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 import { LawFirm, Promotion, Category, Voivodeship } from "./types"
-import {
-  getFutureMonths,
-  formatDate,
-} from "./utils"
+
+
 
 import { CancelPromotionDialog } from "./components/CancelPromotionDialog"
 import { PromotionHistoryDialog } from "./components/PromotionHistoryDialog"

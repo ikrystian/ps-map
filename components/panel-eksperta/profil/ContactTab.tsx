@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 

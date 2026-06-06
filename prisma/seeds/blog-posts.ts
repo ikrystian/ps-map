@@ -29,7 +29,7 @@ export async function seedBlogPosts(prisma: PrismaClient) {
     return
   }
 
-  let categories: BlogCategoryType[] = await prisma.blogCategory.findMany({
+  const categories: BlogCategoryType[] = await prisma.blogCategory.findMany({
     select: {
       id: true,
       nazwa: true,

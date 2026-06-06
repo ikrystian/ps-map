@@ -17,31 +17,26 @@ import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
 import {
-  AlertCircle,
   Building,
   Check,
   ChevronDown,
-  Globe,
   Image as ImageIcon,
   Loader2,
   Lock,
   Mail,
   MapPin,
-  Phone,
   Save,
   ShieldCheck,
-  Sparkles,
   Trash2,
   Upload,
   User,
-  X,
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"

@@ -1,7 +1,6 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
-import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -40,8 +39,7 @@ import {
   Search,
   XCircle,
   Clock,
-  Archive,
-  User
+  Archive
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"

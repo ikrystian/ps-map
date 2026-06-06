@@ -113,7 +113,7 @@ export const authOptions: NextAuthConfig = {
         token.picture = user.image
 
         // Fetch lawFirm or client data
-        let dbUser = await prisma.user.findUnique({
+        const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           include: {
             lawFirm: { select: { id: true } },
@@ -176,7 +176,7 @@ export const authOptions: NextAuthConfig = {
 
       if (shouldRefresh && token.id) {
         try {
-          let freshUser = await prisma.user.findUnique({
+          const freshUser = await prisma.user.findUnique({
             where: { id: token.id as string },
             select: {
               id: true,

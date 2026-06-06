@@ -9,7 +9,6 @@ import {
   Eye,
   EyeOff,
   Image as ImageIcon,
-  MessageSquare,
   Plus,
   Sparkles,
   Trash2,

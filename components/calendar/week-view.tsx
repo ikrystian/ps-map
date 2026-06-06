@@ -23,7 +23,7 @@ import {
 import { pl } from "date-fns/locale";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   formatInAdmin,
   formatInViewer,

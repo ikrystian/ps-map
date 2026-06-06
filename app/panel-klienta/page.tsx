@@ -2,23 +2,18 @@
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { cn } from "@/lib/utils"
-import { AnimatePresence, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import {
-  Archive,
   ArrowRight,
   BookOpen,
   Briefcase,
-  CheckCircle,
-  Clock,
   FileText,
   Loader2,
-  Mail,
   MapPin,
   MessageSquare,
   Phone,

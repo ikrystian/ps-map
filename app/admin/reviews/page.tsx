@@ -34,7 +34,7 @@ import { CheckCircle, Eye, Search, Star, Trash2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import type { Review, ReviewReport } from "@/types"
+import type { Review } from "@/types"
 
 
 const reasonLabels: Record<string, string> = {

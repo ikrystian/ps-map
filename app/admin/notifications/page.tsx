@@ -31,7 +31,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import {
   Activity,
-  Bell,
   CheckCircle2,
   ChevronsUpDown,
   Info,

@@ -216,7 +216,7 @@ export function getBrandEmailLayout(
   try {
     const templatePath = path.join(process.cwd(), 'prosta_sprawa_email.html')
     if (fs.existsSync(templatePath)) {
-      let template = fs.readFileSync(templatePath, 'utf8')
+      const template = fs.readFileSync(templatePath, 'utf8')
 
       // Wstawianie treści w miejsce <!-- content here-->
       let finalHtml = template.replace('<!-- content here-->', contentHtml)

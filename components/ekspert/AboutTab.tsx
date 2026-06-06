@@ -3,7 +3,7 @@
 import { BadgesSection } from "@/components/law-firm/BadgesSection"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Award, GraduationCap, ZoomIn, FileText, CheckCircle2, Star, Sparkles } from "lucide-react"
+import { Award, GraduationCap, ZoomIn, FileText, Sparkles } from "lucide-react"
 import Image from "next/image"
 import type { LawFirm } from "@/types"
 

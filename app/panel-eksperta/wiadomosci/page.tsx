@@ -3,7 +3,6 @@
 import { EnhancedMessengerLayout } from "@/components/messages/EnhancedMessengerLayout"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
 
 export default function LawFirmMessagesPage() {
   return (

@@ -2,7 +2,7 @@
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import {
   NavigationMenu,
   NavigationMenuContent,

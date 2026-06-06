@@ -21,10 +21,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowRight,
   Loader2,
-  Sparkles,
-  Trophy,
   ShieldAlert,
   Coins,
   Rocket,

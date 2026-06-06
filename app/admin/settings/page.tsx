@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Settings2, Upload, Globe, Image as ImageIcon, Mail } from "lucide-react"
+import { Loader2, Save, Upload, Mail } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 

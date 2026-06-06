@@ -3,7 +3,6 @@
  * Used across the application for law firm data
  */
 
-import type { CategoryReference } from "./categories"
 import type { Review } from "./reviews"
 
 

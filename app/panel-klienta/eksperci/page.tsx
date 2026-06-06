@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
 import {
   Briefcase,
@@ -26,14 +26,12 @@ import {
   Star,
   Trash2,
   Loader2,
-  Sparkles,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
 
 interface FavoriteLawFirm {
   id: string

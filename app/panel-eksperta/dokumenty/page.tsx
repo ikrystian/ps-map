@@ -1,10 +1,9 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
-import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -37,7 +36,7 @@ import {
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnimatePresence, motion } from "framer-motion"
-import { Download, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, User, HardDrive, Clock, ShieldAlert, Eye } from "lucide-react"
+import { Download, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, HardDrive, Clock, ShieldAlert, Eye } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"

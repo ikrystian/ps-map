@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
   AlertCircle,
   ArrowRight,
@@ -33,10 +33,8 @@ import {
   TrendingUp,
   XCircle,
   Zap,
-  Sparkles,
 } from "lucide-react"
 import { useSession } from "next-auth/react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 

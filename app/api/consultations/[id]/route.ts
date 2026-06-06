@@ -1,5 +1,4 @@
 import { auth } from "@/auth"
-import { createGoogleMeetLink } from "@/lib/google-meet"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"

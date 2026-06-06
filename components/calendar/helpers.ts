@@ -11,7 +11,7 @@
  */
 
 import { format, isBefore, startOfDay } from "date-fns";
-import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { pl } from "date-fns/locale";
 import type { Availability, BookedSlot, Slot } from "./types";
 

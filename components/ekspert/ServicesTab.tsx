@@ -1,7 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, User, Tag } from "lucide-react"
 import type { LawFirm } from "@/types"
 

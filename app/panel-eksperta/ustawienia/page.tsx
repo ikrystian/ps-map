@@ -36,11 +36,9 @@ import {
   Mail,
   Save,
   ShieldCheck,
-  Sparkles,
   Trash2,
   Upload,
   User,
-  X,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"

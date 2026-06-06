@@ -2,9 +2,8 @@
 
 import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import { motion } from "framer-motion"
-import { ArrowRight, Briefcase, ChevronDown, ShieldCheck, Users } from "lucide-react"
+import { ArrowRight, ShieldCheck, Users } from "lucide-react"
 import Link from "next/link"
 
 export function HeroSection() {

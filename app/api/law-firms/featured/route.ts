@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type") || "all" // "featured", "top", or "all"
     const limit = parseInt(searchParams.get("limit") || "10")
 
-    let result: any = {}
+    const result: any = {}
 
     if (type === "featured" || type === "all") {
       const featuredFirms = await getFeaturedLawFirms(type === "featured" ? limit : 5)

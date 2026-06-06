@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
-import { AnimatePresence, motion } from "framer-motion"
 import {
   AlertCircle,
   ArrowLeft,

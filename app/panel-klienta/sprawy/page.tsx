@@ -3,7 +3,6 @@
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AvatarGroup } from "@/components/ui/avatar-group"
-import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,11 +17,8 @@ import {
   ArrowRight,
   Briefcase,
   Calendar,
-  CheckCircle,
   Clock,
   Euro,
-  Eye,
-  FileText,
   Filter,
   Loader2,
   MapPin,

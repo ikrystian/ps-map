@@ -25,8 +25,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
-import { Award, Download, Edit, Plus, Trash2, Loader2, Calendar, Clock, ShieldAlert, Sparkles } from "lucide-react"
+import { motion } from "framer-motion"
+import { Award, Download, Edit, Plus, Trash2, Loader2, Calendar, Clock, ShieldAlert } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"

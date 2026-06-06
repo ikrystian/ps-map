@@ -41,7 +41,7 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
 
   // Mapowanie typu powiadomienia na flagę e-mail
   let shouldSendEmail = force || false
-  let shouldSendInApp = true // In-app wysyłamy prawie zawsze, chyba że dojdzie flaga to blokująca w ustawieniach
+  const shouldSendInApp = true // In-app wysyłamy prawie zawsze, chyba że dojdzie flaga to blokująca w ustawieniach
 
   if (settings && !force) {
     // Tryb urlopowy ogranicza powiadomienia e-mail (przepuszcza tylko SYSTEM i NOWA_WIADOMOSC)

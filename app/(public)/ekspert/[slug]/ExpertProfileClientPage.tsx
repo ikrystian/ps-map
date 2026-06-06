@@ -2,7 +2,6 @@
 
 import { ConsultationBooking } from "@/components/ekspert/ConsultationBooking"
 import { ReviewsSection } from "@/components/ekspert/ReviewsSection"
-import { BadgesSection } from "@/components/law-firm/BadgesSection"
 import { PackageBadge } from "@/components/permissions"
 import { AboutTab } from "@/components/ekspert/AboutTab"
 import { ServicesTab } from "@/components/ekspert/ServicesTab"
@@ -29,7 +28,6 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
@@ -42,12 +40,8 @@ import {
 } from "react-icons/fa"
 import {
   Award,
-  Calendar,
-  CheckCircle2,
   Clock,
-  Eye,
   Globe,
-  GraduationCap,
   Heart,
   Mail,
   MapPin,
@@ -55,8 +49,7 @@ import {
   Phone,
   Send,
   Share2,
-  Star,
-  ZoomIn
+  Star
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -66,7 +59,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, ChevronDown } from "lucide-react"
 import { TooltipPreview } from "@/components/unlumen-ui/tooltip-preview"
 import type { LawFirm } from "@/types"

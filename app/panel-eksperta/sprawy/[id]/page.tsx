@@ -1,7 +1,6 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
-import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +12,6 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
 import {
   AlertCircle,
   Calendar,
