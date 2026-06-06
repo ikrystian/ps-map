@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     })
 
     const settingsMap = new Map(settings.map(s => [s.key, s.value]))
-    
+
     if (settingsMap.has("siteName")) siteName = settingsMap.get("siteName")!
     if (settingsMap.has("favicon")) favicon = settingsMap.get("favicon")!
     if (settingsMap.has("ogTitle")) ogTitle = settingsMap.get("ogTitle")!
@@ -96,7 +96,7 @@ export default async function RootLayout({
   return (
     <html lang="pl" suppressHydrationWarning className="dark">
       <body
-        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased`}
+        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased font-poppins`}
         suppressHydrationWarning
       >
         <Providers session={session}>
