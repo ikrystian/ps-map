@@ -60,7 +60,7 @@ export default function HomePage() {
         }
 
         // Fetch recent blog posts
-        const blogResponse = await fetch("/api/blog/posts?limit=3")
+        const blogResponse = await fetch("/api/blog/posts?limit=4")
         if (blogResponse.ok) {
           const blogData = await blogResponse.json()
           setBlogPosts(blogData.posts || [])

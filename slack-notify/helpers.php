@@ -198,7 +198,7 @@ function getAiSummary(array $payload): string
 
   $prompt = buildAiPrompt(
     "Jesteś asystentem programisty. Przeanalizuj poniższe commity z wdrożenia (builda).",
-    "Podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz w punktach. ",
+    "Podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz w punktach. Uzywaj emoji.",
     "Treść zadania (nazwa zadania), które Twoim zdaniem powinno zostać utworzone, aby dany commit/grupa commitów była zgodna z jego treścią. ",
     $commitsStr
   );
