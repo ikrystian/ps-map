@@ -203,6 +203,12 @@ function openEditModal(id) {
     const textarea = document.getElementById('edit-textarea');
     textarea.value = contentEl.getAttribute('data-raw') || '';
 
+    // Trello fields
+    document.getElementById('edit-trello-name').value = row.getAttribute('data-trello-name') || '';
+    document.getElementById('edit-trello-desc').value = row.getAttribute('data-trello-desc') || '';
+    const rawTime = parseInt(row.getAttribute('data-trello-time') || '0', 10);
+    document.getElementById('edit-trello-time').value = rawTime > 0 ? rawTime : '';
+
     openModal('edit-modal');
     setTimeout(() => textarea.focus(), 50);
 
@@ -220,23 +226,49 @@ async function saveEditedMessage() {
 
     if (!value) { showToast('Treść wiadomości nie może być pusta!', 'warning'); return; }
 
+    const trelloName = document.getElementById('edit-trello-name').value.trim();
+    const trelloDesc = document.getElementById('edit-trello-desc').value.trim();
+    const trelloTimeRaw = document.getElementById('edit-trello-time').value.trim();
+    const trelloTime = trelloTimeRaw !== '' ? parseInt(trelloTimeRaw, 10) : '';
+
     const btn = document.getElementById('btn-modal-save');
     const restore = setBtnLoading(btn, '<span class="spinner"></span> Zapisywanie...');
     const body = new FormData();
     body.append('ai_response', value);
+    if (trelloName !== '') body.append('trello_name', trelloName);
+    if (trelloDesc !== '') body.append('trello_desc', trelloDesc);
+    if (trelloTime !== '') body.append('trello_time', trelloTime);
 
     try {
         const data = await apiFetch(`index.php?action=update&id=${id}`, { method: 'POST', body });
         if (data.ok) {
             showToast('Wiadomość została zaktualizowana!', 'success');
+
+            // Update Slack content in table
             const contentEl = document.getElementById(`content-${id}`);
             contentEl.setAttribute('data-raw', value);
-            const escaped = value.replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-            contentEl.innerHTML = escaped + '<div class="response-fade"></div>';
+            const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            contentEl.innerHTML = esc(value) + '<div class="response-fade"></div>';
+
+            // Update row data attributes
+            const row = document.getElementById(`row-${id}`);
+            if (trelloName !== '') row.setAttribute('data-trello-name', trelloName);
+            if (trelloDesc !== '') row.setAttribute('data-trello-desc', trelloDesc);
+            if (trelloTime !== '') row.setAttribute('data-trello-time', trelloTime);
+
+            // Update Trello cell in table
+            const trelloCell = row.querySelector('.trello-cell');
+            if (trelloCell && trelloName) {
+                const mins = trelloTime !== '' ? trelloTime : parseInt(row.getAttribute('data-trello-time') || '0', 10);
+                const h = Math.floor(mins / 60), m = mins % 60;
+                const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                trelloCell.innerHTML = `<div class="trello-task">
+                    <span class="trello-name">${esc(trelloName)}</span>
+                    <span class="trello-time">⏱️ ${timeStr}</span>
+                    ${trelloDesc ? `<div class="trello-desc-wrapper"><details class="trello-desc-details"><summary class="trello-desc-summary">Opis zadania</summary><div class="trello-desc-content">${esc(trelloDesc)}</div></details></div>` : ''}
+                </div>`;
+            }
+
             closeEditModal();
         } else {
             showToast(`Błąd: ${data.error}`, 'error');

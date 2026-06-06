@@ -165,10 +165,29 @@ function handleUpdate(PDO $db, int $id): void
     jsonResponse(['ok' => false, 'error' => 'Treść wiadomości nie może być pusta.']);
   }
 
-  $stmt = $db->prepare("UPDATE messages SET ai_response = :ai_response WHERE id = :id");
-  $stmt->execute(['ai_response' => $content, 'id' => $id]);
+  $trelloName = $_POST['trello_name'] ?? null;
+  $trelloDesc = $_POST['trello_desc'] ?? null;
+  $trelloTime = isset($_POST['trello_time']) && $_POST['trello_time'] !== ''
+    ? (int) $_POST['trello_time']
+    : null;
 
-  jsonResponse(['ok' => true, 'ai_response' => $content]);
+  $stmt = $db->prepare("
+    UPDATE messages
+    SET ai_response  = :ai_response,
+        trello_name  = COALESCE(:trello_name,  trello_name),
+        trello_desc  = COALESCE(:trello_desc,  trello_desc),
+        trello_time  = COALESCE(:trello_time,  trello_time)
+    WHERE id = :id
+  ");
+  $stmt->execute([
+    'ai_response' => $content,
+    'trello_name' => $trelloName,
+    'trello_desc' => $trelloDesc,
+    'trello_time' => $trelloTime,
+    'id'          => $id,
+  ]);
+
+  jsonResponse(['ok' => true, 'ai_response' => $content, 'trello_name' => $trelloName, 'trello_desc' => $trelloDesc, 'trello_time' => $trelloTime]);
 }
 
 function handleDelete(PDO $db, int $id): void
@@ -355,7 +374,10 @@ function renderMessageRow(array $msg): void
   $statusLabel = fn(string $s) => match ($s) { 'sent' => 'Wysłano', 'error' => 'Błąd', default => 'Oczekuje'};
   ?>
   <tr id="row-<?= $id ?>" data-type="<?= esc($msg['type']) ?>" data-status="<?= $status ?>"
-    data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>">
+    data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>"
+    data-trello-name="<?= esc($msg['trello_name'] ?? '') ?>"
+    data-trello-desc="<?= esc($msg['trello_desc'] ?? '') ?>"
+    data-trello-time="<?= (int)($msg['trello_time'] ?? 0) ?>">
 
     <td><?= $id ?></td>
 
@@ -450,7 +472,7 @@ function renderMessageRow(array $msg): void
 function renderEditModal(): void
 { ?>
   <div id="edit-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width:760px;">
       <div class="modal-header">
         <h3 style="font-family:'Syne',sans-serif;display:flex;align-items:center;gap:.5rem;color:white;">
           ✏️ Edytuj wiadomość <span id="modal-msg-id" style="color:var(--primary);"></span>
@@ -466,12 +488,35 @@ function renderEditModal(): void
           style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171;padding:.8rem;border-radius:8px;font-size:.85rem;align-items:center;gap:.5rem;">
           ⚠️ Ta wiadomość została już wysłana. Edycja zmieni tylko treść lokalnej kopii w bazie danych.
         </div>
+
+        <!-- Slack -->
         <div style="display:flex;flex-direction:column;gap:.4rem;">
           <label for="edit-textarea" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">
-            Treść wiadomości (obsługuje Markdown Slacka):
+            💬 Treść wiadomości Slack (obsługuje Markdown Slacka):
           </label>
           <textarea id="edit-textarea" placeholder="Wpisz treść wiadomości..."></textarea>
         </div>
+
+        <!-- Trello -->
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.85rem;">
+          <div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;">📋 Zadanie Trello</div>
+
+          <div style="display:flex;flex-direction:column;gap:.35rem;">
+            <label for="edit-trello-name" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Nazwa zadania:</label>
+            <input type="text" id="edit-trello-name" class="input-date" style="width:100%;" placeholder="Nazwa zadania Trello...">
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:.35rem;">
+            <label for="edit-trello-desc" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Opis zadania:</label>
+            <textarea id="edit-trello-desc" style="min-height:90px;" placeholder="Opis zadania Trello..."></textarea>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:.35rem;">
+            <label for="edit-trello-time" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Czas pracy (minuty):</label>
+            <input type="number" id="edit-trello-time" class="input-date" style="width:160px;" placeholder="np. 90" min="0">
+          </div>
+        </div>
+
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeEditModal()">Anuluj</button>
