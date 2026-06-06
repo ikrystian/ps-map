@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { BorderBeam } from "@/components/ui/border-beam"
 import {
   closestCenter,
   DndContext,
@@ -76,31 +77,34 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors group ${isMainCategory ? "border-2 border-primary shadow-md" : ""
-        }`}
+      className={`flex items-center justify-between p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${
+        isMainCategory
+          ? "border-[#0da192]/60 shadow-lg shadow-[#0da192]/5 bg-[#0da192]/5"
+          : "border-border/30 hover:border-[#0da192]/20 hover:bg-zinc-800/10"
+      }`}
     >
       <div className="flex items-center gap-3">
         <div
           {...listeners}
           {...attributes}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1"
+          className="cursor-grab active:cursor-grabbing text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
         >
           <GripVertical className="h-4 w-4" />
         </div>
         <div className="flex items-center gap-2">
           {isMainCategory && (
-            <Star className="h-4 w-4 text-primary fill-primary" />
+            <Star className="h-4 w-4 text-[#0da192] fill-[#0da192]" />
           )}
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-medium">{item.category.nazwa}</p>
+              <p className="font-semibold text-sm text-white">{item.category.nazwa}</p>
               {isMainCategory && (
-                <Badge variant="default" className="text-sm">
+                <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-[#0da192] hover:bg-[#0da192]/90 text-white rounded-md border-none">
                   Główna
                 </Badge>
               )}
             </div>
-            <Badge variant="outline" className="text-sm mt-1">
+            <Badge variant="outline" className="text-[10px] mt-1 text-zinc-400 border-border/40 rounded-md">
               {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
             </Badge>
           </div>
@@ -111,7 +115,7 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg"
             onClick={onRemove}
           >
             <span className="sr-only">Usuń</span>
@@ -521,12 +525,16 @@ export default function LawFirmServicesPage() {
 
     return (
       <div key={category.id} className="mb-1">
-        <div className={`flex items-center p-2 rounded-md hover:bg-accent/50 transition-colors ${level > 0 ? 'ml-6 border-l pl-4' : ''}`}>
+        <div className={`flex items-center p-2 rounded-xl transition-all duration-200 ${
+          selected
+            ? "bg-[#0da192]/5 border border-[#0da192]/20 text-[#0da192]"
+            : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
+        } ${level > 0 ? 'ml-6 border-l border-border/10 pl-4' : ''}`}>
           {hasChildren ? (
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 mr-2 p-0"
+              className="h-6 w-6 mr-2 p-0 text-zinc-400 hover:text-white hover:bg-transparent"
               onClick={() => toggleExpanded(category.id)}
             >
               {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -541,16 +549,18 @@ export default function LawFirmServicesPage() {
               checked={selected}
               onCheckedChange={() => toggleCategory(category)}
               disabled={isMain}
+              className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
             />
             <div className="grid gap-1.5 leading-none flex-1">
               <label
                 htmlFor={`cat-${category.id}`}
-                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-primary font-bold" : ""
-                  }`}
+                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${
+                  isMain ? "text-[#0da192] font-bold" : "text-zinc-200"
+                }`}
               >
                 {category.nazwa}
                 {isMain ? (
-                  <Badge variant="default" className="text-sm bg-primary text-white">
+                  <Badge variant="default" className="text-xs bg-[#0da192] hover:bg-[#0da192]/90 text-white border-none rounded-lg">
                     Główna
                   </Badge>
                 ) : (
@@ -558,7 +568,7 @@ export default function LawFirmServicesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded transition-all ml-1"
+                      className="h-6 text-xs text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 px-2 py-0.5 rounded-lg transition-all ml-1"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
@@ -571,7 +581,7 @@ export default function LawFirmServicesPage() {
                 )}
               </label>
               {category.opis && (
-                <p className="text-[0.8rem] text-muted-foreground line-clamp-1">
+                <p className="text-xs text-zinc-500 line-clamp-1">
                   {category.opis}
                 </p>
               )}
@@ -604,57 +614,70 @@ export default function LawFirmServicesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-8">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+
       <PageHeader
         title="Zakres i obszar usług"
         subtitle="Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi."
+        titleClassName="text-white text-3xl sm:text-4xl"
       >
-        <div className="flex items-center gap-4">
-          <Button onClick={handleSave} disabled={saving} size="lg" className="px-8 shadow-md hover:shadow-lg transition-all bg-primary hover:bg-primary/90 text-white font-semibold">
-            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <Save className="mr-2 h-4 w-4" />
+        <div className="flex items-center gap-4 relative z-10">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+          >
+            {saving ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Zapisz wszystkie zmiany
           </Button>
         </div>
       </PageHeader>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start relative z-10">
         {/* Lewa kolumna: Konfiguracja */}
         <div className="lg:col-span-2 space-y-8">
 
           {/* Sekcja 1: Specjalizacje */}
-          <Card id="tour-zakres-specializations" className="shadow-sm border-muted/60">
-            <CardHeader className="pb-4">
+          <Card id="tour-zakres-specializations" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+            <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                  <Star className="h-5 w-5 fill-primary text-primary" />
+                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                  <Star className="h-5 w-5 fill-[#0da192] text-[#0da192]" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Dostępne specjalizacje</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-xl text-white font-playfair">Dostępne specjalizacje</CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm">
                     Zaznacz dziedziny prawa, w których świadczysz pomoc. Klienci znajdą Cię po tych kategoriach.
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {/* Search & Collapse/Expand Toolbar */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b border-muted">
+              <div className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b border-border/10">
                 <div className="relative flex-1 group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-[#0da192] transition-colors" />
                   <Input
                     type="text"
                     placeholder="Wyszukaj specjalizację..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-10 border border-muted/60 bg-background focus-visible:ring-primary focus-visible:border-primary"
+                    className="pl-9 h-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
                   />
                   {searchQuery && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-zinc-400 hover:text-white"
                     >
                       ✕
                     </Button>
@@ -665,7 +688,7 @@ export default function LawFirmServicesPage() {
                     variant="outline"
                     size="sm"
                     onClick={expandAll}
-                    className="h-10 text-xs px-3 font-medium flex items-center gap-1.5 hover:bg-primary/5 hover:text-primary transition-colors"
+                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-white transition-all duration-200"
                   >
                     Rozwiń wszystkie
                   </Button>
@@ -673,7 +696,7 @@ export default function LawFirmServicesPage() {
                     variant="outline"
                     size="sm"
                     onClick={collapseAll}
-                    className="h-10 text-xs px-3 font-medium flex items-center gap-1.5 hover:bg-destructive/5 hover:text-destructive transition-colors"
+                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-white transition-all duration-200"
                   >
                     Zwiń wszystkie
                   </Button>
@@ -682,29 +705,29 @@ export default function LawFirmServicesPage() {
 
               <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center text-primary border-b pb-2">
-                    <span className="bg-primary/10 p-1.5 rounded-lg mr-2 text-lg">🏢</span>
+                  <h3 className="font-semibold flex items-center text-[#d7b56d] border-b border-border/10 pb-2">
+                    <span className="bg-[#d7b56d]/10 p-1.5 rounded-lg mr-2 text-lg">🏢</span>
                     Sprawy Firmowe
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
                     {filteredFirmowe.length > 0 ? (
                       filteredFirmowe.map(cat => renderCategoryTree(cat))
                     ) : (
-                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
+                      <p className="text-sm text-zinc-500 italic py-4">Brak specjalizacji</p>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center text-primary border-b pb-2">
-                    <span className="bg-primary/10 p-1.5 rounded-lg mr-2 text-lg">👤</span>
+                  <h3 className="font-semibold flex items-center text-[#d7b56d] border-b border-border/10 pb-2">
+                    <span className="bg-[#d7b56d]/10 p-1.5 rounded-lg mr-2 text-lg">👤</span>
                     Sprawy Prywatne
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
                     {filteredPrywatne.length > 0 ? (
                       filteredPrywatne.map(cat => renderCategoryTree(cat))
                     ) : (
-                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
+                      <p className="text-sm text-zinc-500 italic py-4">Brak specjalizacji</p>
                     )}
                   </div>
                 </div>
@@ -713,30 +736,31 @@ export default function LawFirmServicesPage() {
           </Card>
 
           {/* Sekcja 2: Obszar działania */}
-          <Card id="tour-zakres-area" className="shadow-sm border-muted/60">
-            <CardHeader className="pb-4">
+          <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
+            <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Obszar działania</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-xl text-white font-playfair">Obszar działania</CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm">
                     Zdefiniuj, gdzie i w jaki sposób świadczysz pomoc prawną.
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 pt-6">
               <div className="hidden">
                 <h4 className="text-sm font-semibold mb-3">Tryb świadczenia usług</h4>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
+                    areaData.callaPolska ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
                     <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                      <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-[#0da192] text-white" : "bg-muted text-muted-foreground")}>
                         <Globe className="h-5 w-5" />
                       </div>
                       <div>
@@ -749,10 +773,10 @@ export default function LawFirmServicesPage() {
 
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-muted bg-card hover:bg-accent/30"
+                    areaData.onlineOnly ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, onlineOnly: !prev.onlineOnly }))}>
                     <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                      <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-[#0da192] text-white" : "bg-muted text-muted-foreground")}>
                         <div className="h-5 w-5 flex items-center justify-center font-bold text-sm">WEB</div>
                       </div>
                       <div>
@@ -766,27 +790,51 @@ export default function LawFirmServicesPage() {
               </div>
 
               {!areaData.callaPolska && (
-                <div className="pt-4 border-t border-muted">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold">Lokalizacje stacjonarne</h4>
-                    <div className="flex gap-4 text-xs text-muted-foreground">
-                      <span>Województwa: <span className={areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "text-destructive font-bold" : "font-bold"}>{areaData.selectedVoivodeships.length}</span> / {areaData.maxVoivodeships}</span>
-                      <span>Miasta: <span className={areaData.selectedCities.length >= areaData.maxCities ? "text-destructive font-bold" : "font-bold"}>{areaData.selectedCities.length}</span> / {areaData.maxCities}</span>
+                <div className="pt-4 border-t border-border/10">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                    <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
+                    <div className="flex gap-3 text-xs">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                        Województwa:{" "}
+                        <span className={cn(
+                          "font-semibold",
+                          areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "text-amber-400 font-bold" : "text-[#0da192] font-bold"
+                        )}>
+                          {areaData.selectedVoivodeships.length}
+                        </span>
+                        <span className="text-zinc-500">/</span>
+                        <span className="text-zinc-400">{areaData.maxVoivodeships}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/60 border border-zinc-800/50 text-zinc-300">
+                        Miasta:{" "}
+                        <span className={cn(
+                          "font-semibold",
+                          areaData.selectedCities.length >= areaData.maxCities ? "text-amber-400 font-bold" : "text-[#0da192] font-bold"
+                        )}>
+                          {areaData.selectedCities.length}
+                        </span>
+                        <span className="text-zinc-500">/</span>
+                        <span className="text-zinc-400">{areaData.maxCities}</span>
+                      </span>
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Województwa</h5>
-                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
+                      <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Województwa</h5>
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
                         {allVoivodeships.map(v => (
                           <div key={v.id} className={cn(
-                            "flex items-center gap-3 p-2 rounded-lg border transition-all cursor-pointer",
+                            "flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer",
                             areaData.selectedVoivodeships.includes(v.id)
-                              ? "bg-primary/5 border-primary/30 text-primary font-medium"
-                              : "border-transparent bg-card hover:bg-muted/50"
+                              ? "bg-[#0da192]/5 border-[#0da192]/30 text-[#0da192] font-medium"
+                              : "border-transparent bg-transparent hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
                           )} onClick={() => toggleVoivodeship(v.id)}>
-                            <Checkbox checked={areaData.selectedVoivodeships.includes(v.id)} onCheckedChange={() => toggleVoivodeship(v.id)} />
+                            <Checkbox
+                              checked={areaData.selectedVoivodeships.includes(v.id)}
+                              onCheckedChange={() => toggleVoivodeship(v.id)}
+                              className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
+                            />
                             <span className="text-sm">{v.nazwa}</span>
                           </div>
                         ))}
@@ -795,20 +843,20 @@ export default function LawFirmServicesPage() {
 
                     <div className="space-y-3">
                       <div className="flex flex-col gap-2">
-                        <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Miasta w wybranych województwach</h5>
+                        <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Miasta w wybranych województwach</h5>
                         {areaData.selectedVoivodeships.length > 0 && (
                           <Input
                             placeholder="Wyszukaj miasto..."
                             value={citySearch}
                             onChange={(e) => setCitySearch(e.target.value)}
-                            className="h-9 w-full bg-[#1b1b18] border-border/30 rounded-xl text-zinc-300 text-xs focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-[#20201d]/60 transition-all placeholder:text-zinc-500"
+                            className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
                           />
                         )}
                       </div>
-                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border rounded-xl p-3 bg-muted/10">
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
                         {areaData.selectedVoivodeships.length === 0 ? (
-                          <div className="h-full min-h-[150px] flex flex-col items-center justify-center text-muted-foreground py-10 opacity-60">
-                            <MapPin className="h-8 w-8 mb-2 text-muted-foreground/55 animate-pulse" />
+                          <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-zinc-500 py-16 opacity-60">
+                            <MapPin className="h-8 w-8 mb-2 text-zinc-600 animate-pulse" />
                             <p className="text-xs font-medium">Wybierz województwo po lewej stronie</p>
                           </div>
                         ) : (
@@ -822,29 +870,33 @@ export default function LawFirmServicesPage() {
 
                             return (
                               <div key={vId} className="mb-4 last:mb-0">
-                                <div className="text-sm font-bold text-muted-foreground mb-2 flex items-center gap-2">
-                                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                <div className="text-xs font-bold text-[#d7b56d] mb-2 flex items-center gap-2 uppercase tracking-wide">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-[#d7b56d]" />
                                   {vName}
                                 </div>
                                 <div className="grid grid-cols-1 gap-1">
                                   {isLoading ? (
-                                    <div className="py-2 flex items-center gap-2 text-xs text-muted-foreground">
-                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
+                                      <Loader2 className="h-3 w-3 animate-spin text-[#0da192]" />
                                       Ładowanie miast...
                                     </div>
                                   ) : cities.length === 0 ? (
-                                    <div className="py-2 text-sm italic text-muted-foreground">Brak miast w bazie.</div>
+                                    <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
                                   ) : filteredCities.length === 0 ? (
-                                    <div className="py-2 text-xs italic text-muted-foreground">Brak pasujących miast.</div>
+                                    <div className="py-2 text-xs italic text-zinc-500">Brak pasujących miast.</div>
                                   ) : (
                                     filteredCities.map(city => (
                                       <div key={city.id} className={cn(
-                                        "flex items-center gap-2 p-1.5 rounded-md transition-all cursor-pointer",
+                                        "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
                                         areaData.selectedCities.includes(city.id)
-                                          ? "bg-primary/10 text-primary font-medium"
-                                          : "hover:bg-muted"
+                                          ? "bg-[#0da192]/10 text-[#0da192] font-medium border border-[#0da192]/20"
+                                          : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
                                       )} onClick={() => toggleCity(city.id)}>
-                                        <Checkbox checked={areaData.selectedCities.includes(city.id)} onCheckedChange={() => toggleCity(city.id)} />
+                                        <Checkbox
+                                          checked={areaData.selectedCities.includes(city.id)}
+                                          onCheckedChange={() => toggleCity(city.id)}
+                                          className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
+                                        />
                                         <span className="text-xs">{city.nazwa}</span>
                                       </div>
                                     ))
@@ -867,27 +919,28 @@ export default function LawFirmServicesPage() {
         <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
 
           {/* Twór pakiet i limity */}
-          <Card className="shadow-sm border-primary/20 bg-gradient-to-b from-primary/[0.02] to-transparent">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2 font-bold">
-                <Info className="h-4 w-4 text-primary" />
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="#0da192" lightWidth={200} duration={8} borderWidth={1} />
+            <CardHeader className="border-b border-border/10 pb-3">
+              <CardTitle className="text-base flex items-center gap-2 font-bold text-white">
+                <Info className="h-4 w-4 text-[#0da192]" />
                 Twój pakiet i limity
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-5 pt-4">
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <div className="flex justify-between text-base font-medium">
-                    <span className="text-muted-foreground flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 text-primary fill-primary" /> Specjalizacje
+                  <div className="flex justify-between text-sm font-medium text-white">
+                    <span className="text-zinc-400 flex items-center gap-1.5">
+                      <Star className="h-3.5 w-3.5 text-[#0da192] fill-[#0da192]" /> Specjalizacje
                     </span>
                     <span>{selectedCategories.length} / {maxCategories}</span>
                   </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-300",
-                        selectedCategories.length >= maxCategories ? "bg-destructive" : "bg-primary"
+                        selectedCategories.length >= maxCategories ? "bg-rose-500" : "bg-[#0da192]"
                       )}
                       style={{ width: `${Math.min(100, (selectedCategories.length / maxCategories) * 100)}%` }}
                     />
@@ -895,24 +948,24 @@ export default function LawFirmServicesPage() {
                 </div>
 
                 {areaData.callaPolska ? (
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 flex items-center gap-2 text-xs text-primary font-medium">
+                  <div className="bg-[#0da192]/5 border border-[#0da192]/20 rounded-xl p-2.5 flex items-center gap-2 text-xs text-[#0da192] font-medium">
                     <Globe className="h-4 w-4 shrink-0" />
                     <span>Nielimitowany zasięg (Cała Polska)</span>
                   </div>
                 ) : (
                   <>
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-base font-medium">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-primary" /> Województwa
+                      <div className="flex justify-between text-sm font-medium text-white">
+                        <span className="text-zinc-400 flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-[#d7b56d]" /> Województwa
                         </span>
                         <span>{areaData.selectedVoivodeships.length} / {areaData.maxVoivodeships}</span>
                       </div>
-                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
-                            areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "bg-destructive" : "bg-primary"
+                            areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "bg-rose-500" : "bg-[#d7b56d]"
                           )}
                           style={{ width: `${Math.min(100, (areaData.selectedVoivodeships.length / areaData.maxVoivodeships) * 100)}%` }}
                         />
@@ -920,17 +973,17 @@ export default function LawFirmServicesPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-base font-medium">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-primary" /> Miasta
+                      <div className="flex justify-between text-sm font-medium text-white">
+                        <span className="text-zinc-400 flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-[#d7b56d]" /> Miasta
                         </span>
                         <span>{areaData.selectedCities.length} / {areaData.maxCities}</span>
                       </div>
-                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
-                            areaData.selectedCities.length >= areaData.maxCities ? "bg-destructive" : "bg-primary"
+                            areaData.selectedCities.length >= areaData.maxCities ? "bg-rose-500" : "bg-[#d7b56d]"
                           )}
                           style={{ width: `${Math.min(100, (areaData.selectedCities.length / areaData.maxCities) * 100)}%` }}
                         />
@@ -939,33 +992,32 @@ export default function LawFirmServicesPage() {
                   </>
                 )}
               </div>
-
-
             </CardContent>
           </Card>
 
           {/* Kolejność specjalizacji */}
-          <Card className="shadow-sm border-muted/60">
-            <CardHeader className="pb-3">
+          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="#d7b56d" lightWidth={200} duration={8} borderWidth={1} />
+            <CardHeader className="border-b border-border/10 pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <Star className="h-4 w-4 text-primary" />
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
+                  <Star className="h-4 w-4 text-[#0da192]" />
                   Kolejność
                 </CardTitle>
-                <Badge variant="secondary" className="text-base">
+                <Badge variant="secondary" className="text-xs bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border-none rounded-lg">
                   {selectedCategories.length} / {maxCategories}
                 </Badge>
               </div>
-              <CardDescription className="text-sm">
+              <CardDescription className="text-zinc-400 text-xs">
                 Przeciągnij elementy, aby ustalić ich kolejność. Główna specjalizacja (oznaczona gwiazdką) musi pozostać na pierwszym miejscu.
               </CardDescription>
             </CardHeader>
-            <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar">
+            <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar pt-4">
               {selectedCategories.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl bg-muted/20">
-                  <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-primary" />
-                  <p className="font-semibold text-xs">Brak specjalizacji</p>
-                  <p className="text-sm text-center px-4 mt-1">Wybierz je z listy po lewej stronie</p>
+                <div className="flex flex-col items-center justify-center py-12 text-zinc-500 border-2 border-dashed border-border/20 rounded-2xl bg-zinc-950/10">
+                  <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-[#0da192]" />
+                  <p className="font-semibold text-xs text-white">Brak specjalizacji</p>
+                  <p className="text-xs text-center px-4 mt-1 text-zinc-400">Wybierz je z listy po lewej stronie</p>
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

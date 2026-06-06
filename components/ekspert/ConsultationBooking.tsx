@@ -154,12 +154,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             exit={{ opacity: 0, y: -15 }}
             className="flex flex-col items-center justify-center p-12 text-center border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-[#d7b56d]/5 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-[#0da192]/5 blur-[80px] rounded-full pointer-events-none" />
             <div className="h-16 w-16 bg-zinc-800/40 rounded-2xl flex items-center justify-center border border-border/50 mb-4">
-              <Info className="h-8 w-8 text-[#d7b56d] opacity-80" />
+              <Info className="h-8 w-8 text-[#0da192] opacity-80" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2 font-playfair">Konsultacje niedostępne</h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
+            <p className="text-sm text-zinc-400 max-w-sm">
               Ekspert nie oferuje obecnie konsultacji online przez naszą platformę. Skontaktuj się bezpośrednio z ekspertem.
             </p>
           </motion.div>
@@ -199,7 +199,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                     <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20 group-hover:border-[#0da192]/30 transition-colors">
                       <Clock className="h-6 w-6 text-[#0da192]" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-xs font-semibold tracking-wide">
+                    <span className="px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
                       15 MINUT
                     </span>
                   </div>
@@ -207,7 +207,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                   <h3 className="text-xl font-bold text-white mb-2 font-playfair group-hover:text-[#0da192] transition-colors">
                     Szybka Konsultacja
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
                     Idealna do wstępnego omówienia problemu prawnego, szybkiej porady lub analizy kolejnych kroków działania.
                   </p>
 
@@ -227,7 +227,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-sm text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
+                    <span className="text-sm text-zinc-450 uppercase tracking-wider">CENA BRUTTO</span>
                     <span className="text-2xl font-bold font-playfair text-white">
                       {price15} <span className="text-sm font-medium">PLN</span>
                     </span>
@@ -242,23 +242,23 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
               <motion.div
                 whileHover={{ y: -6, scale: 1.02 }}
                 onClick={() => setDuration(30)}
-                className="relative overflow-hidden group cursor-pointer rounded-2xl border border-[#d7b56d]/30 bg-card/25 backdrop-blur-md p-6 flex flex-col justify-between hover:border-[#d7b56d]/50 hover:bg-card/35 transition-all duration-300 shadow-lg shadow-black/10"
+                className="relative overflow-hidden group cursor-pointer rounded-2xl border border-border/30 bg-card/25 backdrop-blur-md p-6 flex flex-col justify-between hover:border-[#0da192]/40 hover:bg-card/35 transition-all duration-300 shadow-lg shadow-black/10"
               >
-                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-[#d7b56d]/5 blur-2xl rounded-full group-hover:bg-[#d7b56d]/10 transition-colors pointer-events-none" />
+                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-[#0da192]/5 blur-2xl rounded-full group-hover:bg-[#0da192]/10 transition-colors pointer-events-none" />
                 <div>
                   <div className="flex justify-between items-start mb-6">
-                    <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 flex items-center justify-center border border-[#d7b56d]/20 group-hover:border-[#d7b56d]/30 transition-colors">
-                      <Video className="h-6 w-6 text-[#d7b56d]" />
+                    <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20 group-hover:border-[#0da192]/30 transition-colors">
+                      <Video className="h-6 w-6 text-[#0da192]" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#d7b56d]/20 border border-[#d7b56d]/40 text-[#d7b56d] text-xs font-semibold tracking-wide">
+                    <span className="px-3 py-1 rounded-full bg-[#0da192]/20 border border-[#0da192]/40 text-[#0da192] text-xs font-semibold tracking-wide">
                       30 MINUT
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2 font-playfair group-hover:text-[#d7b56d] transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-2 font-playfair group-hover:text-[#0da192] transition-colors">
                     Pełna Konsultacja
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
                     Szczegółowe omówienie Twojej sprawy z ekspertem. Czas na głęboką analizę dokumentów i opracowanie strategii.
                   </p>
 
@@ -270,7 +270,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                       "Rekomendacje dalszych kroków",
                     ].map((item) => (
                       <li key={item} className="flex items-center gap-2 text-xs text-zinc-300">
-                        <CheckCircle2 className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[#0da192] flex-shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -279,12 +279,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
 
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-sm text-zinc-400 uppercase tracking-wider">CENA BRUTTO</span>
-                    <span className="text-2xl font-bold font-playfair text-[#d7b56d]">
+                    <span className="text-sm text-zinc-450 uppercase tracking-wider">CENA BRUTTO</span>
+                    <span className="text-2xl font-bold font-playfair text-white">
                       {price30} <span className="text-sm font-medium">PLN</span>
                     </span>
                   </div>
-                  <div className="h-9 w-9 rounded-xl bg-zinc-800 flex items-center justify-center border border-border group-hover:bg-[#d7b56d] group-hover:border-transparent transition-all duration-300">
+                  <div className="h-9 w-9 rounded-xl bg-zinc-800 flex items-center justify-center border border-border group-hover:bg-[#0da192] group-hover:border-transparent transition-all duration-300">
                     <ArrowRight className="h-4 w-4 text-white transition-transform group-hover:translate-x-0.5" />
                   </div>
                 </div>
@@ -318,13 +318,13 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                     <span className="text-[11px] text-[#0da192] bg-[#0da192]/10 px-2 py-0.5 rounded-full font-medium">
                       {duration} min
                     </span>
-                    <span className="text-[11px] text-[#d7b56d] bg-[#d7b56d]/10 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-[11px] text-zinc-300 bg-zinc-800 border border-border/10 px-2 py-0.5 rounded-full font-medium">
                       {price} PLN
                     </span>
                   </div>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground sm:text-right">
+              <span className="text-xs text-zinc-400 sm:text-right">
                 Prawidłowy czas zostanie automatycznie przeliczony na Twoją strefę czasową.
               </span>
             </div>
@@ -353,31 +353,31 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
         <DialogContent className="bg-card border border-border/40 max-w-lg rounded-2xl text-white">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-playfair">Zgłoszenie rezerwacji</DialogTitle>
-            <DialogDescription className="text-muted-foreground text-xs pt-1">
+            <DialogDescription className="text-zinc-400 text-xs pt-1">
               Podaj szczegóły swojej sprawy, aby ekspert mógł odpowiednio przygotować się do rozmowy.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-5 py-4">
             {/* Appointment Summary Box */}
-            <div className="grid grid-cols-2 gap-3.5 bg-zinc-800/40 border border-border/40 p-4 rounded-xl text-xs">
+            <div className="grid grid-cols-2 gap-3.5 bg-zinc-850 border border-border/40 p-4 rounded-xl text-xs">
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-sm">DATA KONSULTACJI</span>
+                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">DATA KONSULTACJI</span>
                 <span className="font-semibold text-white flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-[#0da192]" />
                   {selectedDate ? format(selectedDate, "PPP", { locale: pl }) : ""}
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-sm">GODZINA I TRWANIE</span>
+                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">GODZINA I TRWANIE</span>
                 <span className="font-semibold text-white flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 text-[#d7b56d]" />
+                  <Clock className="h-3.5 w-3.5 text-[#0da192]" />
                   {selectedSlot} ({duration} min)
                 </span>
               </div>
               <div className="space-y-1 col-span-2 pt-2 border-t border-zinc-800">
-                <span className="text-zinc-400 block uppercase tracking-wider text-sm">SZACUNKOWY KOSZT</span>
-                <span className="text-sm font-bold text-[#d7b56d]">
+                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">SZACUNKOWY KOSZT</span>
+                <span className="text-sm font-bold text-[#0da192]">
                   {price} PLN
                 </span>
               </div>
@@ -392,7 +392,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="Opisz krótko z jakim problemem się zwracasz oraz co chcesz osiągnąć podczas konsultacji..."
-                  className="min-h-[100px] bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+                  className="min-h-[100px] bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/45 focus-visible:border-[#0da192]"
                 />
               </div>
 
@@ -403,7 +403,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
                   placeholder="Imię, nazwisko, adres e-mail, numer telefonu"
-                  className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+                  className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/45 focus-visible:border-[#0da192]"
                 />
               </div>
             </div>
