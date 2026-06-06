@@ -153,8 +153,9 @@ export default function ReviewDetailsPage() {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("pl-PL", {
+  const formatDate = (date: string | Date | undefined) => {
+    if (!date) return ""
+    return new Date(date).toLocaleString("pl-PL", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -459,23 +460,23 @@ export default function ReviewDetailsPage() {
             <CardContent className="space-y-2">
               <div>
                 <Label className="text-muted-foreground">Nazwa</Label>
-                <p className="font-medium">{review.lawFirm.nazwa}</p>
+                <p className="font-medium">{review.lawFirm?.nazwa || "Brak"}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Firma</Label>
-                <p className="font-medium">{review.lawFirm.nazwaFirmy}</p>
+                <p className="font-medium">{review.lawFirm?.nazwaFirmy || ""}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Email</Label>
-                <p className="text-sm">{review.lawFirm.email}</p>
+                <p className="text-sm">{review.lawFirm?.email || ""}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Telefon</Label>
-                <p className="text-sm">{review.lawFirm.telefon}</p>
+                <p className="text-sm">{review.lawFirm?.telefon || ""}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Miasto</Label>
-                <p className="text-sm">{review.lawFirm.miasto}</p>
+                <p className="text-sm">{review.lawFirm?.miasto || ""}</p>
               </div>
             </CardContent>
           </Card>

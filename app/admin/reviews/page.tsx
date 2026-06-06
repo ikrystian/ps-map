@@ -163,8 +163,9 @@ export default function AdminReviewsPage() {
     setIsDeleteDialogOpen(true)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
+  const formatDate = (date: string | Date | undefined) => {
+    if (!date) return ""
+    return new Date(date).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -346,9 +347,9 @@ export default function AdminReviewsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div className="font-medium">{review.lawFirm.nazwa}</div>
+                        <div className="font-medium">{review.lawFirm?.nazwa || "Brak"}</div>
                         <div className="text-muted-foreground text-xs">
-                          {review.lawFirm.nazwaFirmy}
+                          {review.lawFirm?.nazwaFirmy || ""}
                         </div>
                       </div>
                     </TableCell>
@@ -395,7 +396,7 @@ export default function AdminReviewsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleToggleStatus(review.id, "zweryfikowana", review.zweryfikowana)}
+                          onClick={() => handleToggleStatus(review.id, "zweryfikowana", review.zweryfikowana ?? false)}
                           title={review.zweryfikowana ? "Oznacz jako niezweryfikowaną" : "Zweryfikuj"}
                         >
                           <CheckCircle
@@ -406,7 +407,7 @@ export default function AdminReviewsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleToggleStatus(review.id, "aktywna", review.aktywna)}
+                          onClick={() => handleToggleStatus(review.id, "aktywna", review.aktywna ?? false)}
                           title={review.aktywna ? "Dezaktywuj" : "Aktywuj"}
                         >
                           {review.aktywna ? (
