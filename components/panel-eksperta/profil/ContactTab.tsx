@@ -122,315 +122,426 @@ export function ContactTab({
 
   return (
     <div className="space-y-6">
-      {/* Osoba kontaktowa */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
-        <CardHeader className="border-b border-border/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
-              <User className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-xl text-white font-playfair">Osoba kontaktowa</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Przedstawiciel profilu eksperta</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="imieKontakt" className="text-zinc-300 font-medium">Imię *</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <User className="h-4 w-4" />
-                </div>
-                <Input
-                  id="imieKontakt"
-                  value={formData.imieKontakt}
-                  onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
-                  required
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
+      {/* Rząd 1: Osoba kontaktowa oraz Dane teleadresowe */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Osoba kontaktowa */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+          <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+          <CardHeader className="border-b border-border/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <User className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-white font-playfair">Osoba kontaktowa</CardTitle>
+                <CardDescription className="text-zinc-400 text-sm">Przedstawiciel profilu eksperta</CardDescription>
               </div>
             </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="nazwiskoKontakt" className="text-zinc-300 font-medium">Nazwisko *</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <User className="h-4 w-4" />
-                </div>
-                <Input
-                  id="nazwiskoKontakt"
-                  value={formData.nazwiskoKontakt}
-                  onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
-                  required
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="stanowisko" className="text-zinc-300 font-medium">Stanowisko / Tytuł</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Briefcase className="h-4 w-4" />
-                </div>
-                <Input
-                  id="stanowisko"
-                  placeholder="np. Adwokat / Partner"
-                  value={formData.stanowisko || ""}
-                  onChange={(e) => handleInputChange("stanowisko", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Dane kontaktowe i WWW */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={9} borderWidth={1} />
-        <CardHeader className="border-b border-border/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
-              <Phone className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-xl text-white font-playfair">Dane teleadresowe</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Główne drogi kontaktu dla klientów</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="numerTelefonu" className="text-zinc-300 font-medium">Telefon główny *</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <Input
-                  id="numerTelefonu"
-                  value={formData.numerTelefonu}
-                  onChange={(e) => handleInputChange("numerTelefonu", e.target.value)}
-                  required
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="numerTelefonu2" className="text-zinc-300 font-medium">Telefon dodatkowy</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <Input
-                  id="numerTelefonu2"
-                  value={formData.numerTelefonu2}
-                  onChange={(e) => handleInputChange("numerTelefonu2", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="emailKontakt" className="text-zinc-300 font-medium">Email *</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <Input
-                  id="emailKontakt"
-                  type="email"
-                  value={formData.emailKontakt}
-                  onChange={(e) => handleInputChange("emailKontakt", e.target.value)}
-                  required
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="stronaWww" className="text-zinc-300 font-medium">Strona WWW</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Globe className="h-4 w-4" />
-                </div>
-                <Input
-                  id="stronaWww"
-                  placeholder="https://..."
-                  value={formData.stronaWww}
-                  onChange={(e) => handleInputChange("stronaWww", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Adres stacjonarny */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
-        <CardHeader className="border-b border-border/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
-              <MapPin className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-xl text-white font-playfair">Adres stacjonarny biura</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Główna lokalizacja fizyczna</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid gap-4">
-            
-            {/* Row 1: Ulica and Kod Pocztowy */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="grid gap-2 md:col-span-2">
-                <Label htmlFor="adres" className="text-zinc-300 font-medium">Ulica i numer *</Label>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="imieKontakt" className="text-zinc-300 font-medium">Imię *</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                    <MapPin className="h-4 w-4" />
+                    <User className="h-4 w-4" />
                   </div>
                   <Input
-                    id="adres"
-                    placeholder="np. Al. Jerozolimskie 12/3"
-                    value={formData.adres}
-                    onChange={(e) => handleInputChange("adres", e.target.value)}
+                    id="imieKontakt"
+                    value={formData.imieKontakt}
+                    onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
                     required
                     className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
                   />
                 </div>
               </div>
 
-              <div className="grid gap-2 md:col-span-1">
-                <Label htmlFor="kodPocztowy" className="text-zinc-300 font-medium">Kod pocztowy *</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="nazwiskoKontakt" className="text-zinc-300 font-medium">Nazwisko *</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                    <MapPin className="h-4 w-4" />
+                    <User className="h-4 w-4" />
                   </div>
                   <Input
-                    id="kodPocztowy"
-                    value={formData.kodPocztowy}
-                    readOnly
-                    className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl"
+                    id="nazwiskoKontakt"
+                    value={formData.nazwiskoKontakt}
+                    onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
                     required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="stanowisko" className="text-zinc-300 font-medium">Stanowisko / Tytuł</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Briefcase className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="stanowisko"
+                    placeholder="np. Adwokat / Partner"
+                    value={formData.stanowisko || ""}
+                    onChange={(e) => handleInputChange("stanowisko", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
                   />
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            {/* Row 2: Miasto and Województwo */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="grid gap-2 md:col-span-2">
-                <Label htmlFor="miasto" className="text-zinc-300 font-medium">Miasto *</Label>
-                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full text-left justify-between font-normal bg-zinc-950/20 border-border/30 text-white rounded-xl hover:bg-zinc-900 h-10 px-3"
-                    >
-                      <span className="truncate flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-zinc-500" />
-                        {formData.miasto || "Wybierz miasto..."}
-                      </span>
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[#0da192]" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0 bg-zinc-950 border border-border/30 rounded-xl" align="start">
-                    <Command shouldFilter={false} className="bg-transparent text-white">
-                      <CommandInput
-                        placeholder="Wyszukaj miasto..."
-                        value={locationSearch}
-                        onValueChange={setLocationSearch}
-                        className="border-none text-white focus:ring-0"
-                      />
-                      <CommandList className="max-h-60 overflow-y-auto custom-scrollbar">
-                        {isLoadingCities && (
-                          <div className="text-zinc-500 py-3 text-center text-xs">Wyszukiwanie...</div>
-                        )}
-                        {!isLoadingCities && locationSearch.trim().length < 2 && (
-                          <div className="text-zinc-500 py-3 text-center text-xs px-3">
-                            Wpisz co najmniej 2 znaki...
-                          </div>
-                        )}
-                        {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                          <div className="text-zinc-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
-                        )}
-                        <CommandGroup>
-                          {cities.map((city) => {
-                            const matchedPostal = city.postalCodes?.find((p: any) =>
-                              p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
-                            )
-                            const displayValue = matchedPostal
-                              ? `${city.nazwa} (${matchedPostal.code})`
-                              : city.nazwa
-
-                            return (
-                              <CommandItem
-                                key={city.id}
-                                value={city.nazwa}
-                                onSelect={() => {
-                                  handleInputChange("miasto", city.nazwa)
-                                  const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || ""
-                                  handleInputChange("kodPocztowy", selectedPostalCode)
-                                  handleInputChange("voivodeshipId", city.voivodeshipId)
-                                  setLocationOpen(false)
-                                }}
-                                className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm hover:bg-zinc-900 rounded-lg text-zinc-300 hover:text-white"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Check
-                                    className={cn(
-                                      "h-4 w-4 text-[#0da192]",
-                                      formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  <span>{displayValue}</span>
-                                </div>
-                                <span className="text-xs text-zinc-500 ml-2">
-                                  {city.voivodeship?.nazwa}
-                                </span>
-                              </CommandItem>
-                            )
-                          })}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+        {/* Dane kontaktowe i WWW */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+          <BorderBeam lightColor="#0da192" lightWidth={350} duration={9} borderWidth={1} />
+          <CardHeader className="border-b border-border/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <Phone className="h-5 w-5" />
               </div>
-
-              <div className="grid gap-2 md:col-span-1">
-                <Label htmlFor="voivodeshipId" className="text-zinc-300 font-medium">Województwo *</Label>
-                <Select
-                  value={formData.voivodeshipId}
-                  onValueChange={(value) => handleInputChange("voivodeshipId", value)}
-                  disabled
-                >
-                  <SelectTrigger className="bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl h-10">
-                    <SelectValue placeholder="Wybierz województwo" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
-                    {voivodeships.map((v) => (
-                      <SelectItem key={v.id} value={v.id} className="text-zinc-300 focus:text-white">
-                        {v.nazwa}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div>
+                <CardTitle className="text-xl text-white font-playfair">Dane teleadresowe</CardTitle>
+                <CardDescription className="text-zinc-400 text-sm">Główne drogi kontaktu dla klientów</CardDescription>
               </div>
             </div>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="numerTelefonu" className="text-zinc-300 font-medium">Telefon główny *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="numerTelefonu"
+                    value={formData.numerTelefonu}
+                    onChange={(e) => handleInputChange("numerTelefonu", e.target.value)}
+                    required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
 
-          </div>
-        </CardContent>
-      </Card>
+              <div className="grid gap-2">
+                <Label htmlFor="numerTelefonu2" className="text-zinc-300 font-medium">Telefon dodatkowy</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="numerTelefonu2"
+                    value={formData.numerTelefonu2}
+                    onChange={(e) => handleInputChange("numerTelefonu2", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="emailKontakt" className="text-zinc-300 font-medium">Email *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="emailKontakt"
+                    type="email"
+                    value={formData.emailKontakt}
+                    onChange={(e) => handleInputChange("emailKontakt", e.target.value)}
+                    required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="stronaWww" className="text-zinc-300 font-medium">Strona WWW</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Globe className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="stronaWww"
+                    placeholder="https://..."
+                    value={formData.stronaWww}
+                    onChange={(e) => handleInputChange("stronaWww", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Rząd 2: Adres stacjonarny biura oraz Profile społecznościowe */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Adres stacjonarny */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+          <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
+          <CardHeader className="border-b border-border/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-white font-playfair">Adres stacjonarny biura</CardTitle>
+                <CardDescription className="text-zinc-400 text-sm">Główna lokalizacja fizyczna</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <div className="grid gap-4">
+              
+              {/* Row 1: Ulica and Kod Pocztowy */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid gap-2 md:col-span-2">
+                  <Label htmlFor="adres" className="text-zinc-300 font-medium">Ulica i numer *</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                      <MapPin className="h-4 w-4" />
+                    </div>
+                    <Input
+                      id="adres"
+                      placeholder="np. Al. Jerozolimskie 12/3"
+                      value={formData.adres}
+                      onChange={(e) => handleInputChange("adres", e.target.value)}
+                      required
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-2 md:col-span-1">
+                  <Label htmlFor="kodPocztowy" className="text-zinc-300 font-medium">Kod pocztowy *</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                      <MapPin className="h-4 w-4" />
+                    </div>
+                    <Input
+                      id="kodPocztowy"
+                      value={formData.kodPocztowy}
+                      readOnly
+                      className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: Miasto and Województwo */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid gap-2 md:col-span-2">
+                  <Label htmlFor="miasto" className="text-zinc-300 font-medium">Miasto *</Label>
+                  <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full text-left justify-between font-normal bg-zinc-950/20 border-border/30 text-white rounded-xl hover:bg-zinc-900 h-10 px-3"
+                      >
+                        <span className="truncate flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-zinc-500" />
+                          {formData.miasto || "Wybierz miasto..."}
+                        </span>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[#0da192]" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0 bg-zinc-950 border border-border/30 rounded-xl" align="start">
+                      <Command shouldFilter={false} className="bg-transparent text-white">
+                        <CommandInput
+                          placeholder="Wyszukaj miasto..."
+                          value={locationSearch}
+                          onValueChange={setLocationSearch}
+                          className="border-none text-white focus:ring-0"
+                        />
+                        <CommandList className="max-h-60 overflow-y-auto custom-scrollbar">
+                          {isLoadingCities && (
+                            <div className="text-zinc-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                          )}
+                          {!isLoadingCities && locationSearch.trim().length < 2 && (
+                            <div className="text-zinc-500 py-3 text-center text-xs px-3">
+                              Wpisz co najmniej 2 znaki...
+                            </div>
+                          )}
+                          {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                            <div className="text-zinc-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                          )}
+                          <CommandGroup>
+                            {cities.map((city) => {
+                              const matchedPostal = city.postalCodes?.find((p: any) =>
+                                p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                              )
+                              const displayValue = matchedPostal
+                                ? `${city.nazwa} (${matchedPostal.code})`
+                                : city.nazwa
+ 
+                              return (
+                                <CommandItem
+                                  key={city.id}
+                                  value={city.nazwa}
+                                  onSelect={() => {
+                                    handleInputChange("miasto", city.nazwa)
+                                    const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || ""
+                                    handleInputChange("kodPocztowy", selectedPostalCode)
+                                    handleInputChange("voivodeshipId", city.voivodeshipId)
+                                    setLocationOpen(false)
+                                  }}
+                                  className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm hover:bg-zinc-900 rounded-lg text-zinc-300 hover:text-white"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Check
+                                      className={cn(
+                                        "h-4 w-4 text-[#0da192]",
+                                        formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    <span>{displayValue}</span>
+                                  </div>
+                                  <span className="text-xs text-zinc-500 ml-2">
+                                    {city.voivodeship?.nazwa}
+                                  </span>
+                                </CommandItem>
+                              )
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="grid gap-2 md:col-span-1">
+                  <Label htmlFor="voivodeshipId" className="text-zinc-300 font-medium">Województwo *</Label>
+                  <Select
+                    value={formData.voivodeshipId}
+                    onValueChange={(value) => handleInputChange("voivodeshipId", value)}
+                    disabled
+                  >
+                    <SelectTrigger className="bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl h-10">
+                      <SelectValue placeholder="Wybierz województwo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
+                      {voivodeships.map((v) => (
+                        <SelectItem key={v.id} value={v.id} className="text-zinc-300 focus:text-white">
+                          {v.nazwa}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Social Media */}
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+          <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+          <CardHeader className="border-b border-border/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <Share2 className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-white font-playfair">Profile społecznościowe</CardTitle>
+                <CardDescription className="text-zinc-400 text-sm">Linki do profili społecznościowych</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              {/* LinkedIn */}
+              <div className="grid gap-2">
+                <Label htmlFor="linkLinkedIn" className="text-zinc-300 font-medium">LinkedIn URL</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Linkedin className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="linkLinkedIn"
+                    placeholder="https://linkedin.com/in/..."
+                    value={formData.linkLinkedIn}
+                    onChange={(e) => handleInputChange("linkLinkedIn", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              {/* Facebook */}
+              <div className="grid gap-2">
+                <Label htmlFor="linkFacebook" className="text-zinc-300 font-medium">Facebook URL</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Facebook className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="linkFacebook"
+                    placeholder="https://facebook.com/..."
+                    value={formData.linkFacebook}
+                    onChange={(e) => handleInputChange("linkFacebook", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              {/* Instagram */}
+              <div className="grid gap-2">
+                <Label htmlFor="linkInstagram" className="text-zinc-300 font-medium">Instagram URL</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Instagram className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="linkInstagram"
+                    placeholder="https://instagram.com/..."
+                    value={formData.linkInstagram}
+                    onChange={(e) => handleInputChange("linkInstagram", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              {/* Twitter */}
+              <div className="grid gap-2">
+                <Label htmlFor="linkTwitter" className="text-zinc-300 font-medium">Twitter / X URL</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Twitter className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="linkTwitter"
+                    placeholder="https://x.com/..."
+                    value={formData.linkTwitter}
+                    onChange={(e) => handleInputChange("linkTwitter", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              {/* TikTok */}
+              <div className="grid gap-2">
+                <Label htmlFor="linkTikTok" className="text-zinc-300 font-medium">TikTok URL</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Tiktok className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="linkTikTok"
+                    placeholder="https://tiktok.com/@..."
+                    value={formData.linkTikTok}
+                    onChange={(e) => handleInputChange("linkTikTok", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
+              </div>
+
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Obszar działania */}
       <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
@@ -630,112 +741,6 @@ export function ContactTab({
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Social Media */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
-        <CardHeader className="border-b border-border/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
-              <Share2 className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-xl text-white font-playfair">Profile społecznościowe</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Linki do profili społecznościowych</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            
-            {/* LinkedIn */}
-            <div className="grid gap-2">
-              <Label htmlFor="linkLinkedIn" className="text-zinc-300 font-medium">LinkedIn URL</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Linkedin className="h-4 w-4" />
-                </div>
-                <Input
-                  id="linkLinkedIn"
-                  placeholder="https://linkedin.com/in/..."
-                  value={formData.linkLinkedIn}
-                  onChange={(e) => handleInputChange("linkLinkedIn", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            {/* Facebook */}
-            <div className="grid gap-2">
-              <Label htmlFor="linkFacebook" className="text-zinc-300 font-medium">Facebook URL</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Facebook className="h-4 w-4" />
-                </div>
-                <Input
-                  id="linkFacebook"
-                  placeholder="https://facebook.com/..."
-                  value={formData.linkFacebook}
-                  onChange={(e) => handleInputChange("linkFacebook", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            {/* Instagram */}
-            <div className="grid gap-2">
-              <Label htmlFor="linkInstagram" className="text-zinc-300 font-medium">Instagram URL</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Instagram className="h-4 w-4" />
-                </div>
-                <Input
-                  id="linkInstagram"
-                  placeholder="https://instagram.com/..."
-                  value={formData.linkInstagram}
-                  onChange={(e) => handleInputChange("linkInstagram", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            {/* Twitter */}
-            <div className="grid gap-2">
-              <Label htmlFor="linkTwitter" className="text-zinc-300 font-medium">Twitter / X URL</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Twitter className="h-4 w-4" />
-                </div>
-                <Input
-                  id="linkTwitter"
-                  placeholder="https://x.com/..."
-                  value={formData.linkTwitter}
-                  onChange={(e) => handleInputChange("linkTwitter", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-            {/* TikTok */}
-            <div className="grid gap-2">
-              <Label htmlFor="linkTikTok" className="text-zinc-300 font-medium">TikTok URL</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <Tiktok className="h-4 w-4" />
-                </div>
-                <Input
-                  id="linkTikTok"
-                  placeholder="https://tiktok.com/@..."
-                  value={formData.linkTikTok}
-                  onChange={(e) => handleInputChange("linkTikTok", e.target.value)}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                />
-              </div>
-            </div>
-
-          </div>
         </CardContent>
       </Card>
     </div>
