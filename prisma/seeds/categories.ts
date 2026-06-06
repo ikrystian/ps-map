@@ -32,7 +32,8 @@ export async function seedCategories(prisma: PrismaClient) {
         kolejnosc: category.kolejnosc,
         aktywna: true,
         wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
-        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe
+        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
+        backgroundImageUrl: category.backgroundImageUrl || null,
       },
       create: {
         nazwa: category.nazwa,
@@ -41,7 +42,8 @@ export async function seedCategories(prisma: PrismaClient) {
         kolejnosc: category.kolejnosc,
         aktywna: true,
         wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
-        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe
+        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
+        backgroundImageUrl: category.backgroundImageUrl || null,
       },
     })
 

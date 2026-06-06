@@ -13,12 +13,15 @@ interface Category {
   opisDodatkowy?: string | null
   ikona?: string | null
   ikonaUrl?: string | null
+  backgroundImageUrl?: string | null
   typ: "SPRAWY_FIRMOWE" | "SPRAWY_PRYWATNE"
   parentId?: string | null
   metaTitle?: string | null
   metaDescription?: string | null
   aktywna: boolean
   kolejnosc: number
+  wyswietlajNaGlownejPrywatne?: boolean
+  wyswietlajNaGlownejFirmowe?: boolean
 }
 
 interface EditCategoryPageProps {

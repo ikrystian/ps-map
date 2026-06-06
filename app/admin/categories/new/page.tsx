@@ -13,6 +13,9 @@ interface Category {
   parentId?: string | null
   aktywna: boolean
   kolejnosc: number
+  backgroundImageUrl?: string | null
+  wyswietlajNaGlownejPrywatne?: boolean
+  wyswietlajNaGlownejFirmowe?: boolean
 }
 
 export default function NewCategoryPage() {

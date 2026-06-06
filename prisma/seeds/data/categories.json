@@ -7,7 +7,8 @@
     "children": [
       "RODO",
       "Ochrona danych osobowych"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Działalność gospodarcza",
@@ -17,7 +18,8 @@
     "children": [
       "Zakładanie firmy",
       "Obsługa działalności"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Ochrona środowiska",
@@ -26,7 +28,8 @@
     "children": [
       "Gospodarowanie odpadami",
       "Regulacje środowiskowe"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Podatki",
@@ -36,7 +39,8 @@
     "children": [
       "Obowiązki podatkowe dla firm",
       "Ulgi i zwolnienia podatkowe"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo pracy",
@@ -48,7 +52,8 @@
       "Spory pracownicze",
       "ZUS i składki",
       "prawa pracownika"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawa autorskie",
@@ -58,7 +63,8 @@
       "Ochrona i licencjonowanie",
       "Naruszenia praw autorskich",
       "Umowy dotyczące praw autorskich"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Przestępstwa skarbowe",
@@ -68,7 +74,8 @@
     "children": [
       "Wykroczenia skarbowe",
       "Kontrole i spory z fiskusem"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Przetargi",
@@ -79,7 +86,8 @@
       "Postępowania przetargowe",
       "Skargi i odwołania",
       "Umowy w ramach procedur przetargowych"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Spółki",
@@ -89,7 +97,8 @@
     "children": [
       "Zakładanie spółek",
       "Obsługa i zarządzanie"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Umowy",
@@ -109,7 +118,8 @@
     "children": [
       "Windykacja i egzekucja",
       "Pozwy sądowe"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Inne kwestie firmowe",
@@ -118,7 +128,8 @@
     "children": [
       "Regulacje branżowe",
       "Kwestie międzynarodowe"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Technologie i innowacje",
@@ -128,7 +139,8 @@
       "Ochrona własności intelektualnej",
       "Cyfrowa transformacja",
       "Bezpieczeństwo IT"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Dotacje i finansowanie zewnętrrzne",
@@ -138,7 +150,8 @@
       "Dotacje unijne",
       "Wsparcie rządowe",
       "Proces aplikacyjny i rozliczenie"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Finanse i inwestycje",
@@ -148,7 +161,8 @@
       "Zarządzanie kapitałem",
       "Pozyskiwanie finansowania",
       "Analiza ryzyka inwestycyjnego"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Nieruchomości komercyjne",
@@ -159,7 +173,8 @@
       "Zarządzanie nieruchomościami",
       "Inwestycje w nieruchomości",
       "Obrót nieruchomościami (zbycie, dzierżawa, najem)"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Marketing i reklama",
@@ -168,7 +183,8 @@
     "children": [
       "Promocja w internecie",
       "Zarządzanie marką"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zdrowie i bezpieczeństwo w pracy",
@@ -177,7 +193,8 @@
     "children": [
       "Ochrona pracowników",
       "Przepisy BHP"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zarządzanie zasobami ludzkimi",
@@ -186,7 +203,8 @@
     "children": [
       "Szkolenia i rozwój",
       "Ocena pracownika i rekrutacja"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zarządzanie kryzysowe",
@@ -195,7 +213,8 @@
     "children": [
       "Planowanie awaryjne",
       "Komunikacja w czasie kryzysu"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Odnawialne Źródła Energii (OZE)",
@@ -205,7 +224,8 @@
       "Umowy instalacyjne",
       "Wsparcie prawne w uzyskiwaniu dotacji",
       "Prawne aspekty użytkowania"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo upadłościowe",
@@ -214,7 +234,8 @@
     "children": [
       "Upadłośći",
       "Likwidacja (sprzedaż majątku)"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zobowiązania finansowe",
@@ -224,7 +245,8 @@
     "children": [
       "Długi, windykacja, egzekucje",
       "Pożyczki i kredyty"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Rodzina",
@@ -235,7 +257,8 @@
       "Adopcje i opieka nad dziećmi",
       "Alimenty i rozwody",
       "Podział majątku, kontakty z dziećmi"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Majątek osobisty",
@@ -245,7 +268,8 @@
     "children": [
       "Zarządzanie majątkiem",
       "Dziedziczenie, spadki, testamenty"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Mediacje",
@@ -255,7 +279,8 @@
     "children": [
       "Mediacje rodzinne",
       "Mediacje gospodarcze"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Nieruchomości",
@@ -265,7 +290,8 @@
     "children": [
       "Kupno/sprzedaż",
       "Wynajem"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Podatki osobiste",
@@ -274,7 +300,8 @@
     "children": [
       "Rozliczenia PIT",
       "Ulgi podatkowe"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zatrudnienie",
@@ -283,7 +310,8 @@
     "children": [
       "Prawa pracownika",
       "Spory pracownicze"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Ubezpieczenia",
@@ -293,7 +321,8 @@
     "children": [
       "Ubezpieczenia majątkowe",
       "Ubezpieczenia na życie"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo karne",
@@ -303,7 +332,8 @@
     "children": [
       "Wykroczenia",
       "Przestępstwa"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Zdrowie i wypadki",
@@ -313,7 +343,8 @@
     "children": [
       "Odszkodowania",
       "Rehabilitacja"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo konsumenckie",
@@ -324,7 +355,8 @@
       "Reklamacje i zwroty",
       "Problemy z zakupami online",
       "Umowy z dostawcami usług"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo medyczne",
@@ -333,7 +365,8 @@
     "children": [
       "Błędy medyczne",
       "Prawa pacjenta"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo cyfrowe i internetowe",
@@ -342,7 +375,8 @@
     "children": [
       "Ochrona danych osobowych w sieci",
       "Problemy z umowami cyfrowymi (np. subskrypcje)"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawa lokatora i najemcy",
@@ -352,7 +386,8 @@
       "Problemy z wynajmem mieszkania",
       "Konflikty z wynajmującym",
       "Umowy"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo administracyjne",
@@ -361,7 +396,8 @@
     "children": [
       "Sprawy związane z decyzjami administracyjnymi",
       "Odwołania od decyzji urzędów"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80"
   },
   {
     "nazwa": "Prawo OZE",
@@ -371,6 +407,7 @@
       "Regulacje i licencjonowanie",
       "Umowy i transakcje",
       "Kwestie środowiskowe, zezwolenia"
-    ]
+    ],
+    "backgroundImageUrl": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=600&q=80"
   }
 ]
