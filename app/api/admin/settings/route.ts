@@ -27,6 +27,30 @@ export async function GET(request: NextRequest) {
     }, {} as Record<string, { value: string; description: string | null }>)
 
     // Dodaj domyślne wartości, jeśli nie istnieją
+    if (!settingsObject.favicon) {
+      settingsObject.favicon = {
+        value: "/favicon.png",
+        description: "Adres URL lub ścieżka do faviconu strony",
+      }
+    }
+    if (!settingsObject.ogTitle) {
+      settingsObject.ogTitle = {
+        value: "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi",
+        description: "Domyślny tytuł Open Graph dla strony głównej i stron publicznych",
+      }
+    }
+    if (!settingsObject.ogDescription) {
+      settingsObject.ogDescription = {
+        value: "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych.",
+        description: "Domyślny opis Open Graph dla strony głównej i stron publicznych",
+      }
+    }
+    if (!settingsObject.ogImage) {
+      settingsObject.ogImage = {
+        value: "/images/og-image.png",
+        description: "Adres URL lub ścieżka do domyślnego obrazka Open Graph (zalecane 1200x630)",
+      }
+    }
     if (!settingsObject.maxLawFirmCategories) {
       settingsObject.maxLawFirmCategories = {
         value: "10",

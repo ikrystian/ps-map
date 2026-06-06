@@ -3,7 +3,7 @@ import CategoriesClientPage from "./CategoriesClientPage"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  title: "Kategorie Spraw Prawnych - Specjalizacje | Prosta Sprawa",
+  title: "Kategorie Spraw Prawnych - Specjalizacje",
   description: "Przeglądaj wszystkie specjalizacje prawne. Znajdź ekspertów od prawa cywilnego, rodzinnego, karnego, pracy, gospodarczego i wielu innych.",
 }
 

@@ -49,8 +49,8 @@ const BusinessCategoryCard = memo(({
         style={{ backgroundImage: `url(${category.backgroundImageUrl || imageUrl})` }}
       />
       <div className={cn(
-        "absolute inset-0 bg-[var(--primary)] transition-opacity duration-300",
-        hovered === index ? "opacity-0" : "opacity-60"
+        "absolute inset-0 bg-[#002c22] transition-opacity duration-300",
+        hovered === index ? "opacity-50" : "opacity-70"
       )} />
       <div className="relative h-full flex flex-col items-center justify-center p-6 gap-3">
         {category.ikonaUrl ? (

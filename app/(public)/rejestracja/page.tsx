@@ -5,7 +5,7 @@ import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Załóż bezpłatne konto | Prosta Sprawa",
+  title: "Załóż bezpłatne konto",
   description: "Wybierz rodzaj konta (Klient lub Kancelaria) i dołącz do platformy Prosta Sprawa już dziś.",
 }
 

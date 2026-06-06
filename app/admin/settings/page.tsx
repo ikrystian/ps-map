@@ -7,10 +7,27 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Save, Settings2 } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Loader2, Save, Settings2, Upload, Globe, Image as ImageIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 
 interface Settings {
+  favicon?: {
+    value: string
+    description: string | null
+  }
+  ogTitle?: {
+    value: string
+    description: string | null
+  }
+  ogDescription?: {
+    value: string
+    description: string | null
+  }
+  ogImage?: {
+    value: string
+    description: string | null
+  }
   maxLawFirmCategories: {
     value: string
     description: string | null
@@ -144,6 +161,14 @@ export default function AdminSettingsPage() {
   const [showChatAssistant, setShowChatAssistant] = useState("true")
   const [autoGrantBusinessPackage, setAutoGrantBusinessPackage] = useState("false")
 
+  // Favicon i Open Graph (SEO)
+  const [favicon, setFavicon] = useState("/favicon.png")
+  const [ogTitle, setOgTitle] = useState("Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi")
+  const [ogDescription, setOgDescription] = useState("Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych.")
+  const [ogImage, setOgImage] = useState("/favicon.png")
+  const [isUploadingFavicon, setIsUploadingFavicon] = useState(false)
+  const [isUploadingOgImage, setIsUploadingOgImage] = useState(false)
+
 
   useEffect(() => {
     fetchSettings()
@@ -161,6 +186,10 @@ export default function AdminSettingsPage() {
         setSupportEmail(data.supportEmail?.value || "pomoc@prostasprawa.pl")
         setReviewsPerPage(data.reviewsPerPage?.value || "10")
         setMinReviewLength(data.minReviewLength?.value || "50")
+        setFavicon(data.favicon?.value || "/favicon.png")
+        setOgTitle(data.ogTitle?.value || "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi")
+        setOgDescription(data.ogDescription?.value || "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych.")
+        setOgImage(data.ogImage?.value || "/favicon.png")
         setFeaturedCategoriesLimit(data.featuredCategoriesLimit?.value || "8")
         setMaxTags(data.maxLawFirmTags?.value || "5")
         setShowExpertTutorial(data.showExpertTutorial?.value || "true")
@@ -355,6 +384,22 @@ export default function AdminSettingsPage() {
               value: autoGrantBusinessPackage,
               description: "Czy automatycznie przyznawać nowo zarejestrowanym ekspertom darmowy 3-miesięczny pakiet Biznes",
             },
+            favicon: {
+              value: favicon,
+              description: "Adres URL lub ścieżka do faviconu strony",
+            },
+            ogTitle: {
+              value: ogTitle,
+              description: "Domyślny tytuł Open Graph dla strony głównej i stron publicznych",
+            },
+            ogDescription: {
+              value: ogDescription,
+              description: "Domyślny opis Open Graph dla strony głównej i stron publicznych",
+            },
+            ogImage: {
+              value: ogImage,
+              description: "Adres URL lub ścieżka do domyślnego obrazka Open Graph (zalecane 1200x630)",
+            },
           },
         }),
       })
@@ -370,6 +415,68 @@ export default function AdminSettingsPage() {
       toast.error("Nie udało się zapisać ustawień")
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingFavicon(true)
+    const formDataToSend = new FormData()
+    formDataToSend.append("file", file)
+
+    try {
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload favicon")
+      }
+
+      const data = await response.json()
+      setFavicon(data.url)
+      toast.success("Favicon został przesłany pomyślnie!")
+    } catch (error) {
+      console.error("Error uploading favicon:", error)
+      toast.error(error instanceof Error ? error.message : "Błąd podczas przesyłania faviconu")
+    } finally {
+      setIsUploadingFavicon(false)
+      e.target.value = ""
+    }
+  }
+
+  const handleOgImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingOgImage(true)
+    const formDataToSend = new FormData()
+    formDataToSend.append("file", file)
+
+    try {
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to upload Open Graph image")
+      }
+
+      const data = await response.json()
+      setOgImage(data.url)
+      toast.success("Obraz Open Graph został przesłany pomyślnie!")
+    } catch (error) {
+      console.error("Error uploading Open Graph image:", error)
+      toast.error(error instanceof Error ? error.message : "Błąd podczas przesyłania obrazu Open Graph")
+    } finally {
+      setIsUploadingOgImage(false)
+      e.target.value = ""
     }
   }
 
@@ -451,6 +558,169 @@ export default function AdminSettingsPage() {
               <p className="text-sm text-muted-foreground">
                 Email wsparcia technicznego
               </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Favicon i Open Graph (SEO) */}
+      <Card className="border-teal-500/20 bg-teal-500/[0.01]">
+        <CardHeader>
+          <CardTitle className="text-teal-600 dark:text-teal-400 flex items-center gap-2">
+            Favicon i Open Graph (SEO)
+          </CardTitle>
+          <CardDescription>
+            Zarządzaj faviconem serwisu oraz domyślnymi tagami Open Graph dla strony głównej i podstron publicznych.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Favicon Section */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+            <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
+              <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Favicon Podgląd</Label>
+              <div className="w-16 h-16 rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden p-1 shadow-sm">
+                {favicon ? (
+                  <img src={favicon} alt="Favicon preview" className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">Brak</span>
+                )}
+              </div>
+              <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany format PNG lub ICO</p>
+            </div>
+            
+            <div className="md:col-span-3 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="favicon-url">URL Faviconu</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="favicon-url"
+                    type="text"
+                    value={favicon}
+                    onChange={(e) => setFavicon(e.target.value)}
+                    placeholder="/favicon.png"
+                  />
+                  <div className="relative">
+                    <input
+                      id="favicon-file"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFaviconUpload}
+                      className="hidden"
+                      disabled={isUploadingFavicon}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById("favicon-file")?.click()}
+                      disabled={isUploadingFavicon}
+                      className="whitespace-nowrap flex gap-2"
+                    >
+                      {isUploadingFavicon ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4" />
+                          Wgraj plik
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Ścieżka relatywna (np. /favicon.png) lub pełny adres URL.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Open Graph Title */}
+          <div className="space-y-2">
+            <Label htmlFor="ogTitle">Domyślny Tytuł Open Graph (og:title)</Label>
+            <Input
+              id="ogTitle"
+              type="text"
+              value={ogTitle}
+              onChange={(e) => setOgTitle(e.target.value)}
+              placeholder="Prosta Sprawa - ..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Używany jako domyślny tytuł przy udostępnianiu strony w mediach społecznościowych (np. Facebook, Twitter, Slack).
+            </p>
+          </div>
+
+          {/* Open Graph Description */}
+          <div className="space-y-2">
+            <Label htmlFor="ogDescription">Domyślny Opis Open Graph (og:description)</Label>
+            <Textarea
+              id="ogDescription"
+              value={ogDescription}
+              onChange={(e) => setOgDescription(e.target.value)}
+              placeholder="Znajdź prawnika..."
+              className="min-h-[80px]"
+            />
+            <p className="text-xs text-muted-foreground">
+              Opis wyświetlany pod tytułem udostępnionej karty w mediach społecznościowych. Zalecane max. 155-160 znaków.
+            </p>
+          </div>
+
+          {/* Open Graph Image */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+            <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
+              <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Obraz OG Podgląd</Label>
+              <div className="w-full aspect-[1.91/1] rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden shadow-sm">
+                {ogImage ? (
+                  <img src={ogImage} alt="OG Image preview" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">Brak</span>
+                )}
+              </div>
+              <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany rozmiar 1200x630 (1.91:1)</p>
+            </div>
+            
+            <div className="md:col-span-3 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="ogImage-url">URL Obrazu Open Graph (og:image)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="ogImage-url"
+                    type="text"
+                    value={ogImage}
+                    onChange={(e) => setOgImage(e.target.value)}
+                    placeholder="/favicon.png"
+                  />
+                  <div className="relative">
+                    <input
+                      id="ogImage-file"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleOgImageUpload}
+                      className="hidden"
+                      disabled={isUploadingOgImage}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById("ogImage-file")?.click()}
+                      disabled={isUploadingOgImage}
+                      className="whitespace-nowrap flex gap-2"
+                    >
+                      {isUploadingOgImage ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4" />
+                          Wgraj plik
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Główny obraz reprezentujący witrynę po udostępnieniu. Powinien mieć wymiary 1200x630px dla optymalnego wyglądu.
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>

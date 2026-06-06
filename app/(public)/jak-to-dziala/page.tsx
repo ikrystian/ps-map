@@ -18,7 +18,7 @@ import {
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Jak to działa? Przewodnik po Platformie | Prosta Sprawa",
+  title: "Jak to działa? Przewodnik po Platformie",
   description: "Dowiedz się, jak w prosty i bezpieczny sposób opublikować sprawę prawną lub dołączyć jako kancelaria i zdobywać zlecenia.",
 }
 

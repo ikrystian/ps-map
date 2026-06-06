@@ -54,7 +54,7 @@ const CategoryCard = memo(
         <div
           className={cn(
             "absolute inset-0 bg-black/60 transition-all duration-300",
-            hovered === index ? "bg-black/20" : "bg-black/60",
+            hovered === index ? "bg-black/50" : "bg-black/60",
           )}
         />
         <div className="relative h-full flex flex-col items-center justify-center p-6 gap-3">

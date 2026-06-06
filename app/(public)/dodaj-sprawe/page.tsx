@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Dodaj Sprawę - Opisz Swój Problem Prawny | Prosta Sprawa",
+  title: "Dodaj Sprawę - Opisz Swój Problem Prawny",
   description: "Opisz swoją sprawę prawną bezpłatnie i bez zobowiązań. Otrzymaj oferty od dopasowanych kancelarii prawnych i ekspertów.",
 }
 

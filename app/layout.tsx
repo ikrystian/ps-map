@@ -26,10 +26,53 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi",
-  description: "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let siteName = "Prosta Sprawa"
+  let favicon = "/favicon.png"
+  let ogTitle = "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi"
+  let ogDescription = "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych."
+  let ogImage = "/favicon.png"
+
+  try {
+    const settings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: ["siteName", "favicon", "ogTitle", "ogDescription", "ogImage"]
+        }
+      }
+    })
+
+    const settingsMap = new Map(settings.map(s => [s.key, s.value]))
+    
+    if (settingsMap.has("siteName")) siteName = settingsMap.get("siteName")!
+    if (settingsMap.has("favicon")) favicon = settingsMap.get("favicon")!
+    if (settingsMap.has("ogTitle")) ogTitle = settingsMap.get("ogTitle")!
+    if (settingsMap.has("ogDescription")) ogDescription = settingsMap.get("ogDescription")!
+    if (settingsMap.has("ogImage")) ogImage = settingsMap.get("ogImage")!
+  } catch (error) {
+    console.error("Error fetching settings for metadata:", error)
+  }
+
+  return {
+    title: {
+      default: ogTitle,
+      template: `%s | ${siteName}`,
+    },
+    description: ogDescription,
+    icons: {
+      icon: favicon,
+      shortcut: favicon,
+      apple: favicon,
+    },
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      siteName: siteName,
+      images: ogImage ? [{ url: ogImage }] : [],
+      type: "website",
+    },
+  }
+}
 
 export default async function RootLayout({
   children,
