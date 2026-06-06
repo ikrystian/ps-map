@@ -190,7 +190,7 @@ export default function PublicHeader({
 
           {/* Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList className="flex gap-6">
+            <NavigationMenuList className="flex gap-0">
               {/* Szukaj / Zamknij Animated Button */}
               <NavigationMenuItem>
                 <AnimatePresence mode="wait">
@@ -730,7 +730,7 @@ export default function PublicHeader({
                         )}
                         <CommandGroup>
                           {cities.map((city) => {
-                             const matchedPostal = city.postalCodes?.find((p: any) =>
+                            const matchedPostal = city.postalCodes?.find((p: any) =>
                               p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
                             )
                             const displayValue = matchedPostal

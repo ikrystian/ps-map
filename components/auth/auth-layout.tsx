@@ -15,6 +15,7 @@ interface AuthLayoutProps {
   heroTitle?: string;
   heroDescription?: string;
   heroStats?: HeroStat[];
+  containerClassName?: string;
 }
 
 export function AuthLayout({
@@ -26,6 +27,7 @@ export function AuthLayout({
     { value: 500, unit: "+", label: "Spraw" },
     { value: 98, unit: "%", label: "Zadowolenia" },
   ],
+  containerClassName,
 }: AuthLayoutProps) {
   return (
     <div className="min-h-[calc(100dvh-65px)] grid lg:grid-cols-2 bg-background">
@@ -50,7 +52,7 @@ export function AuthLayout({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full max-w-xl space-y-8 relative z-10 py-12"
+          className={`w-full space-y-8 relative z-10 py-12 ${containerClassName || "max-w-xl"}`}
         >
           {/* Form Content */}
           <div className="space-y-6">{children}</div>
