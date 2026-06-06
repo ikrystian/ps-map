@@ -460,7 +460,7 @@ function sendMessageFromDb(PDO $db, int $id): array
     return ['ok' => false, 'error' => 'Wiadomość o podanym ID nie istnieje.'];
   }
 
-  $aiResponse = $msg['ai_response'];
+  $aiResponse = str_replace('**', '*', $msg['ai_response']);
   $originalData = json_decode($msg['original_data'] ?? '', true) ?? [];
   $channel = $originalData['slack_response']['channel'] ?? $originalData['channel'] ?? SLACK_CHANNEL_ID;
 
