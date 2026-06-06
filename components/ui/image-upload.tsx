@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Link as LinkIcon, Loader2, Upload, X } from "lucide-react"
 import Image from "next/image"
 import { useId, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface ImageUploadProps {
   value?: string
@@ -18,14 +19,12 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, label, description }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
+  const [isDragActive, setIsDragActive] = useState(false)
   const [urlInput, setUrlInput] = useState(value || "")
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uniqueId = useId()
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
+  const uploadFile = async (file: File) => {
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
     if (!allowedTypes.includes(file.type)) {
@@ -67,6 +66,33 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
+    }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    await uploadFile(file)
+  }
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragActive(true)
+    } else if (e.type === "dragleave") {
+      setIsDragActive(false)
+    }
+  }
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragActive(false)
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0]
+      await uploadFile(file)
     }
   }
 
@@ -130,7 +156,18 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
           </TabsList>
 
           <TabsContent value="upload" className="space-y-4">
-            <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors">
+            <div
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+              className={cn(
+                "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200",
+                isDragActive
+                  ? "border-primary bg-primary/10 scale-[0.99]"
+                  : "border-muted-foreground/30 hover:border-primary hover:bg-muted/5"
+              )}
+            >
               <input
                 ref={fileInputRef}
                 type="file"
@@ -142,7 +179,10 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
               />
               <label
                 htmlFor={uniqueId}
-                className={`cursor-pointer ${isUploading ? "pointer-events-none opacity-50" : ""}`}
+                className={cn(
+                  "cursor-pointer block w-full h-full",
+                  isUploading ? "pointer-events-none opacity-50" : ""
+                )}
               >
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-2">
@@ -151,8 +191,10 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-12 w-12 text-muted-foreground" />
-                    <p className="text-sm font-medium">Kliknij, aby wybrać plik</p>
+                    <Upload className="h-12 w-12 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-1" />
+                    <p className="text-sm font-medium">
+                      {isDragActive ? "Upuść plik tutaj" : "Kliknij lub przeciągnij plik, aby go wybrać"}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       JPEG, PNG, WebP lub GIF (max 5MB)
                     </p>

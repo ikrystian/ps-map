@@ -226,6 +226,7 @@ export default function AdminCategoriesPage() {
                 {category._count?.lawFirms || 0} kancelarii
               </span>
               <Button
+
                 variant="outline"
                 size="sm"
                 onClick={() => router.push(`/admin/categories/${category.id}/edit`)}
