@@ -28,6 +28,7 @@ import {
   Zap
 } from "lucide-react"
 import Link from "next/link"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
 interface Category {
@@ -88,14 +89,38 @@ const IconRenderer = ({ iconName, iconUrl, fallback: Fallback, className = "h-8 
 }
 
 export default function CategoriesPage() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+
+  const activeTabFromUrl = searchParams.get("tab") || "all"
+  const [activeTab, setActiveTab] = useState(activeTabFromUrl)
 
   useEffect(() => {
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") || "all"
+    if (tab !== activeTab) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  const handleTabChange = (val: string) => {
+    setActiveTab(val)
+    const params = new URLSearchParams(searchParams.toString())
+    if (val === "all") {
+      params.delete("tab")
+    } else {
+      params.set("tab", val)
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
 
   const fetchCategories = async () => {
     try {
@@ -229,7 +254,7 @@ export default function CategoriesPage() {
 
       {/* Categories Content */}
       <div className="container mx-auto px-4 py-12 max-w-7xl">
-        <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+        <Tabs value={activeTab} className="w-full" onValueChange={handleTabChange}>
           <div className="mb-12 flex flex-col items-center justify-between gap-8 md:flex-row">
             <div className="text-center md:text-left">
               <h2 className="text-3xl font-bold tracking-tight">Obszary Prawa</h2>
@@ -274,7 +299,10 @@ export default function CategoriesPage() {
               Nie znaleźliśmy kategorii pasujących do hasła <span className="text-foreground font-semibold">"{searchQuery}"</span>.
             </p>
             <button
-              onClick={() => { setSearchQuery(""); setActiveTab("all") }}
+              onClick={() => {
+                setSearchQuery("")
+                handleTabChange("all")
+              }}
               className="mt-8 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
             >
               Pokaż wszystkie kategorie
