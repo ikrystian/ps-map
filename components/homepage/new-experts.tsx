@@ -17,27 +17,6 @@ const getFirmImage = (firm: LawFirm, index: number) => {
   }
 }
 
-const getVoivodeshipForCity = (city: string): string => {
-  const c = city.toLowerCase().trim()
-  if (c.includes("mikołajk")) return "Warmińsko-Mazurskie"
-  if (c.includes("kielce")) return "Świętokrzyskie"
-  if (c.includes("kraków") || c.includes("krakow")) return "Małopolskie"
-  if (c.includes("warszaw")) return "Mazowieckie"
-  if (c.includes("pozna") || c.includes("wielkopolsk")) return "Wielkopolskie"
-  if (c.includes("gdańsk") || c.includes("gdansk") || c.includes("gdyn") || c.includes("sopot")) return "Pomorskie"
-  if (c.includes("wrocław") || c.includes("wroclaw")) return "Dolnośląskie"
-  if (c.includes("łódź") || c.includes("lodz")) return "Łódzkie"
-  if (c.includes("szczecin")) return "Zachodniopomorskie"
-  if (c.includes("rzeszów") || c.includes("rzeszow")) return "Podkarpackie"
-  if (c.includes("katowic") || c.includes("gliwic") || c.includes("sosnow")) return "Śląskie"
-  if (c.includes("lublin")) return "Lubelskie"
-  if (c.includes("białystok") || c.includes("bialystok")) return "Podlaskie"
-  if (c.includes("bydgoszcz") || c.includes("toruń") || c.includes("torun")) return "Kujawsko-Pomorskie"
-  if (c.includes("opol")) return "Opolskie"
-  if (c.includes("zielona góra") || c.includes("zielonagora") || c.includes("gorzów") || c.includes("gorzow")) return "Lubuskie"
-  return "Świętokrzyskie" // default fallback
-}
-
 export function NewExperts({ newLawFirms }: NewExpertsProps) {
   const sliderRef = useRef<HTMLDivElement>(null)
 
@@ -68,11 +47,11 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
   const experts = newLawFirms && newLawFirms.length > 0 ? newLawFirms : []
 
   return (
-    <section className="py-20 bg-[#121212] text-white overflow-hidden border-t border-zinc-900/60">
+    <section className="py-8 lg:py-20 bg-[#121212] text-white overflow-hidden border-t border-zinc-900/60">
       <div className="container mx-auto px-4 max-w-7xl relative">
 
         {/* Title row with modern line design */}
-        <div className="flex items-center justify-between gap-6 mb-16 px-1">
+        <div className="flex items-center justify-between gap-6 mb-4 lg:mb-16 px-1">
           <h2 className="font-playfair text-2xl md:text-3xl lg:text-[34px] font-normal text-white tracking-wide whitespace-nowrap">
             Nowi eksperci już dostępni
           </h2>
@@ -100,15 +79,15 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
             >
               {experts.map((firm, index) => {
                 const profession = firm.categories?.[0]?.nazwa || "Prawnik"
-                const voivodeship = firm.voivodeship?.nazwa || getVoivodeshipForCity(firm.miasto)
+                const voivodeship = firm.voivodeship?.nazwa;
 
                 return (
                   <div
                     key={firm.id}
-                    className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
+                    className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
                   >
                     {/* Image Section */}
-                    <div className="relative h-[290px] w-full overflow-hidden bg-zinc-950">
+                    <div className="relative h-[120] md:h-[290px] w-full overflow-hidden bg-zinc-950">
                       {/* Gold emblem badge top-left */}
                       <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-[#161616]/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
                         <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
@@ -137,7 +116,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                     </Link>
 
                     {/* Content Section */}
-                    <div className="pt-8 pb-6 px-4 flex flex-col items-center text-center flex-grow">
+                    <div className="pt-3 md:pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
                       {/* Profession Subtitle */}
                       <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase mb-2 block">
                         {profession}
