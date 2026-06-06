@@ -1,6 +1,6 @@
 # ProstaSprawa.pl ⚖️
 
-Nowoczesna platforma łącząca klientów poszukujących pomocy prawnej z wykwalifikowanymi ekspertami i kancelariami prawnymi. Projekt został zbudowany przy użyciu najnowszych technologii webowych, zapewniając wysoką wydajność, bezpieczeństwo oraz świetne doświadczenia użytkownika (UX/UI).
+Nowoczesna platforma łącząca klientów poszukujących pomocy prawnej z wykwalifikowanymi ekspertami i ekspertami prawnymi. Projekt został zbudowany przy użyciu najnowszych technologii webowych, zapewniając wysoką wydajność, bezpieczeństwo oraz świetne doświadczenia użytkownika (UX/UI).
 
 ## 🛠 Stos Technologiczny
 
@@ -83,7 +83,7 @@ Aplikacja będzie dostępna pod adresem: [http://localhost:3000](http://localhos
 
 ## ✨ Funkcjonalności
 
-- **Rozbudowany system ról:** Podział na użytkowników (Klientów), Kancelarie/Ekspertów (Law Firm) oraz Administratorów.
+- **Rozbudowany system ról:** Podział na użytkowników (Klientów), Ekspertów (Law Firm) oraz Administratorów.
 - **Dynamiczne panele:** Responsywne dashboardy z nawigacją boczną, statystykami i zarządzaniem kontem.
 - **Chat Real-time:** Błyskawiczna komunikacja między ekspertami a klientami dzięki integracji z Socket.io.
 - **Pakiety i Promowanie:** System subskrypcji i punktów (np. monetyzacja przez promowanie ogłoszeń eksperckich).
