@@ -23,6 +23,7 @@ import {
 import ArrowUpLeftIcon from "@/components/ui/arrow-up-left-icon";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import type { LawFirm } from "@/types";
 import Link from "next/link";
 
 // Helper function to check if law firm is open (copied from pages)
@@ -69,39 +70,6 @@ const isLawFirmOpen = (
   return currentTime >= fromTime && currentTime <= toTime;
 };
 
-export interface LawFirm {
-  id: string;
-  slug: string;
-  nazwa: string;
-  nazwaFirmy: string;
-  logo?: string;
-  zdjecieGlowne?: string;
-  opis?: string;
-  miasto: string;
-  adres?: string;
-  kodPocztowy?: string;
-  voivodeship: {
-    nazwa: string;
-  };
-  zweryfikowana: boolean;
-  onlineOnly: boolean;
-  categories: Array<{
-    nazwa: string;
-    slug: string;
-  }>;
-  avgRating: number;
-  reviewCount: number;
-  pakietSubskrypcji?: string;
-  statusGodzinyOtwarcia?: boolean;
-  godzinyOtwarcia?: Record<string, string>;
-  telefon?: string;
-  email?: string;
-  stronaWww?: string;
-  oraStatus?: boolean;
-  oraMiasto?: string | null;
-  oirpStatus?: boolean;
-  oirpMiasto?: string | null;
-}
 interface LawFirmListItemProps {
   lawFirm: LawFirm;
 }
