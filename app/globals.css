@@ -315,7 +315,8 @@ a .bg-card {
 
 /* Premium typography for about-description */
 .about-description {
-  font-size: 1.0625rem; /* 17px for superior readability */
+  font-size: 1.0625rem;
+  /* 17px for superior readability */
   line-height: 1.8;
   color: hsl(var(--foreground) / 0.88);
   letter-spacing: -0.01em;
@@ -323,7 +324,8 @@ a .bg-card {
 
 .about-description p {
   margin-top: 0;
-  margin-bottom: 1.5rem; /* 24px spacing */
+  margin-bottom: 1.5rem;
+  /* 24px spacing */
 }
 
 .about-description h1,
@@ -360,10 +362,10 @@ a .bg-card {
 }
 
 /* Group headings closely with their subsequent paragraphs */
-.about-description h1 + p,
-.about-description h2 + p,
-.about-description h3 + p,
-.about-description h4 + p {
+.about-description h1+p,
+.about-description h2+p,
+.about-description h3+p,
+.about-description h4+p {
   margin-top: 0.5rem;
 }
 
@@ -1056,5 +1058,151 @@ a .bg-card {
   h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
+  }
+}
+
+/* ─── Categories Grid ────────────────────────────────────────────────────────
+   Single HTML structure, fully responsive via CSS only.
+   Mobile  : 2-col grid, every 1st item in a group of 3 spans 2 rows (left)
+   Tablet  : 3-col equal grid
+   Desktop : 6-col named-area grid
+──────────────────────────────────────────────────────────────────────────── */
+
+.categories-grid,
+.business-categories-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  /* ── Mobile: 2 columns, tall-left + 2-right pattern ── */
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: auto;
+}
+
+/* Each card fills its grid cell height */
+.categories-grid>*,
+.business-categories-grid>* {
+  min-height: 140px;
+}
+
+/*
+  Mobile pattern – repeats every 3 items:
+  item 1 (3n+1) → left column, spans 2 rows
+  item 2 (3n+2) → right column, row 1
+  item 3 (3n+3) → right column, row 2
+*/
+.categories-grid>*:nth-child(3n + 1),
+.business-categories-grid>*:nth-child(3n + 1) {
+  grid-column: 1;
+  grid-row: span 2;
+  aspect-ratio: unset;
+  /* let span-2 control height */
+  min-height: 300px;
+}
+
+.categories-grid>*:nth-child(3n + 2),
+.categories-grid>*:nth-child(3n + 3),
+.business-categories-grid>*:nth-child(3n + 2),
+.business-categories-grid>*:nth-child(3n + 3) {
+  grid-column: 2;
+}
+
+/* ── Tablet (≥ 768px): 3-col equal grid ── */
+@media (min-width: 768px) {
+
+  .categories-grid,
+  .business-categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+  }
+
+  .categories-grid>*:nth-child(3n + 1),
+  .business-categories-grid>*:nth-child(3n + 1) {
+    grid-column: unset;
+    grid-row: unset;
+    min-height: unset;
+    aspect-ratio: 16 / 9;
+  }
+
+  .categories-grid>*:nth-child(3n + 2),
+  .categories-grid>*:nth-child(3n + 3),
+  .business-categories-grid>*:nth-child(3n + 2),
+  .business-categories-grid>*:nth-child(3n + 3) {
+    grid-column: unset;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* ── Desktop (≥ 1024px): 6-col named-area grid ── */
+@media (min-width: 1024px) {
+
+  .categories-grid,
+  .business-categories-grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, minmax(240px, 1fr));
+    grid-auto-rows: unset;
+    min-height: 500px;
+    grid-template-areas:
+      "first  second  fourth  sixth   eighth  nineth"
+      "first  third   fourth  seventh eighth  tenth";
+  }
+
+  /* Reset mobile/tablet overrides */
+  .categories-grid>*:nth-child(3n + 1),
+  .categories-grid>*:nth-child(3n + 2),
+  .categories-grid>*:nth-child(3n + 3),
+  .business-categories-grid>*:nth-child(3n + 1),
+  .business-categories-grid>*:nth-child(3n + 2),
+  .business-categories-grid>*:nth-child(3n + 3) {
+    grid-column: unset;
+    grid-row: unset;
+    min-height: unset;
+    aspect-ratio: unset;
+  }
+
+  /* Named grid areas – assigned via data-area attribute */
+  .categories-grid>[data-area="first"],
+  .business-categories-grid>[data-area="first"] {
+    grid-area: first;
+  }
+
+  .categories-grid>[data-area="second"],
+  .business-categories-grid>[data-area="second"] {
+    grid-area: second;
+  }
+
+  .categories-grid>[data-area="third"],
+  .business-categories-grid>[data-area="third"] {
+    grid-area: third;
+  }
+
+  .categories-grid>[data-area="fourth"],
+  .business-categories-grid>[data-area="fourth"] {
+    grid-area: fourth;
+  }
+
+  .categories-grid>[data-area="sixth"],
+  .business-categories-grid>[data-area="sixth"] {
+    grid-area: sixth;
+  }
+
+  .categories-grid>[data-area="seventh"],
+  .business-categories-grid>[data-area="seventh"] {
+    grid-area: seventh;
+  }
+
+  .categories-grid>[data-area="eighth"],
+  .business-categories-grid>[data-area="eighth"] {
+    grid-area: eighth;
+  }
+
+  .categories-grid>[data-area="nineth"],
+  .business-categories-grid>[data-area="nineth"] {
+    grid-area: nineth;
+  }
+
+  .categories-grid>[data-area="tenth"],
+  .business-categories-grid>[data-area="tenth"] {
+    grid-area: tenth;
   }
 }
