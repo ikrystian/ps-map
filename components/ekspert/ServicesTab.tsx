@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, User, Tag } from "lucide-react"
+import type { LawFirm } from "@/types"
 
 interface Service {
   id: string
@@ -11,20 +12,6 @@ interface Service {
   cenaOd?: number | null
   cenaDo?: number | null
   jednostka: string
-}
-
-interface LawFirm {
-  categories: Array<{
-    id: string
-    category: {
-      nazwa: string
-      slug: string
-      opis?: string | null
-      opisDodatkowy?: string | null
-      typ: string
-    }
-  }>
-  services?: Service[]
 }
 
 interface ServicesTabProps {
