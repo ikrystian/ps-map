@@ -474,12 +474,7 @@ export default function ConsultationsPage() {
         <motion.div variants={itemVariants}>
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
             <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
-            <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white">Prośby o konsultacje</CardTitle>
-              <CardDescription className="text-zinc-400 text-base">
-                Tutaj znajdziesz listę wszystkich próśb o konsultacje. Możesz je akceptować, odrzucać oraz kontrolować statusy płatności.
-              </CardDescription>
-            </CardHeader>
+
             <CardContent className="p-6">
               {bookings.length === 0 ? (
                 <div className="text-center py-10 px-4 space-y-6 max-w-lg mx-auto">
