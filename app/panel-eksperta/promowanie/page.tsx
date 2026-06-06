@@ -481,7 +481,6 @@ export default function LawFirmPromotionPage() {
         <PageHeader
           title="Zwiększ Widoczność Profilu"
           subtitle="Wypromuj swój profil w kluczowych sekcjach serwisu. Wybierz odpowiedni format promowania, przyciągnij uwagę klientów poszukujących pomocy prawnej i zdobądź pozycję lidera w swojej lokalizacji."
-          titleClassName="text-white text-3xl sm:text-4xl"
         >
           <div className="flex flex-wrap items-center gap-3">
             <Button

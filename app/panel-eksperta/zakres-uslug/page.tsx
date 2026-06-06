@@ -629,7 +629,6 @@ export default function LawFirmServicesPage() {
       <PageHeader
         title="Zakres i obszar usług"
         subtitle="Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi."
-        className="border-b pb-4"
       >
         <div className="flex items-center gap-4">
           <Button onClick={handleSave} disabled={saving} size="lg" className="px-8 shadow-md hover:shadow-lg transition-all bg-primary hover:bg-primary/90 text-white font-semibold">

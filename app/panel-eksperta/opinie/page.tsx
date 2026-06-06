@@ -407,21 +407,10 @@ export default function LawFirmReviewsPage() {
       <PageHeader
         title="Opinie Klientów"
         subtitle="Śledź opinie o swoim profilu publicznym, analizuj wskaźniki satysfakcji i odpowiadaj profesjonalnie, aby budować zaufanie klientów."
-        className="relative overflow-hidden rounded-2xl bg-card border border-border/80 p-6 md:p-8 shadow-sm mb-0"
-        titleClassName="text-2xl md:text-3xl"
       >
         <div className="absolute top-4 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
         <div className="relative flex flex-col md:flex-row items-center gap-4">
-          <div className="flex flex-col items-start gap-2">
-            <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary hover:bg-primary/10 transition-colors">
-              Panel reputacji
-            </Badge>
-            {stats && (
-              <span className="text-xs text-muted-foreground">
-                Zaktualizowano przed chwilą
-              </span>
-            )}
-          </div>
+
           {stats && (
             <div className="flex items-center gap-3 bg-zinc-900/50 border border-border/60 rounded-xl px-4 py-3 self-start md:self-auto shadow-inner">
               <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">

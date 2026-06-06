@@ -146,7 +146,6 @@ export default function LawFirmAddCertificatePage() {
         <PageHeader
           title="Dodaj nowy certyfikat"
           subtitle="Wypełnij poniższe pola, aby załączyć nowy dokument potwierdzający kwalifikacje zawodowe."
-          titleClassName="text-white text-3xl sm:text-4xl"
         >
           <Button asChild variant="outline" className="h-11 px-5 border-border/50 hover:bg-muted text-white rounded-xl gap-2">
             <Link href="/panel-eksperta/certyfikaty">

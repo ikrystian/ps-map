@@ -169,7 +169,6 @@ export default function LawFirmCertificatesPage() {
         <PageHeader
           title="Certyfikaty i uprawnienia"
           subtitle="Zarządzaj swoimi certyfikatami, licencjami zawodowymi oraz osiągnięciami w jednym miejscu."
-          titleClassName="text-white text-3xl sm:text-4xl"
         >
           <Button asChild className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
             <Link href="/panel-eksperta/certyfikaty/dodaj">

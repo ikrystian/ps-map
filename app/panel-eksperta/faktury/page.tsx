@@ -180,7 +180,6 @@ export default function InvoicesPage() {
         <PageHeader
           title="Faktury VAT"
           subtitle="Zarządzaj swoimi fakturami, sprawdzaj status płatności oraz wysyłaj dokumenty do KSeF."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>

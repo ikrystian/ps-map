@@ -343,7 +343,6 @@ export default function LawFirmStatsPage() {
         <PageHeader
           title="Statystyki"
           subtitle="Pełna analiza i wgląd w skuteczność Twojego profilu w platformie."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>
@@ -462,8 +461,8 @@ export default function LawFirmStatsPage() {
                     >
                       <defs>
                         <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0da192" stopOpacity={0.4}/>
-                          <stop offset="95%" stopColor="#0da192" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#0da192" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="#0da192" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />

@@ -22,7 +22,6 @@ export default function LawFirmMessagesPage() {
         <PageHeader
           title="Wiadomości"
           subtitle="Zarządzaj konwersacjami z klientami oraz wymieniaj dokumenty w czasie rzeczywistym."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>

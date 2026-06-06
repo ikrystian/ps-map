@@ -472,7 +472,6 @@ export default function LawFirmPackagePage() {
       <PageHeader
         title="Pakiety subskrypcji"
         subtitle="Zwiększ widoczność w katalogu, zyskaj bezpośredni dostęp do nowych spraw od klientów oraz buduj status wiarygodnego eksperta na rynku."
-        titleClassName="text-3xl md:text-4xl"
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 self-start">
           <Sparkles className="h-3.5 w-3.5" />

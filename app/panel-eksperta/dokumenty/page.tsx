@@ -436,7 +436,6 @@ export default function DocumentsPage() {
         <PageHeader
           title="Dokumenty"
           subtitle="Biblioteka wzorów, umów, pełnomocnictw i plików przesłanych bezpośrednio przez Twoich klientów."
-          titleClassName="text-white text-3xl sm:text-4xl"
         >
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
@@ -1045,7 +1044,7 @@ export default function DocumentsPage() {
       }}>
         <DialogContent className="bg-zinc-900 border border-border/40 max-w-4xl w-[95vw] rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
           <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
-          
+
           <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/20 shrink-0">
             <div>
               <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
@@ -1073,7 +1072,7 @@ export default function DocumentsPage() {
                     title={selectedDocument?.nazwa}
                   />
                 )}
-                
+
                 {previewContent.type === "text" && (
                   <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-zinc-950 rounded-lg border border-border/20 overflow-auto p-4">
                     <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300 select-text">
@@ -1081,7 +1080,7 @@ export default function DocumentsPage() {
                     </pre>
                   </div>
                 )}
-                
+
                 {previewContent.type === "docx" && (
                   <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-white rounded-lg border border-border/20 overflow-auto p-4 md:p-8 shadow-inner select-text">
                     <div ref={containerRef} className="docx-preview-container text-black" />

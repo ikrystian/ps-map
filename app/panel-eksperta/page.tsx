@@ -409,19 +409,12 @@ export default function LawFirmDashboardPage() {
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Panel Eksperta"
-          subtitle={`Witaj, ${lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.`}
-          titleClassName="text-white text-3xl sm:text-4xl"
-        />
 
-      </motion.div>
+      <PageHeader
+        title="Panel Eksperta"
+        subtitle={`Witaj, ${lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.`}
+      />
+
 
       {/* Stats Grid */}
       <motion.div

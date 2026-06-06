@@ -307,7 +307,6 @@ export default function SubscriptionsAndPaymentsPage() {
         <PageHeader
           title="Subskrypcje i płatności"
           subtitle="Zarządzaj swoją subskrypcją, pakietem punktów oraz fakturami w jednym miejscu."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>

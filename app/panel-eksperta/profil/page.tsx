@@ -558,20 +558,12 @@ function LawFirmProfilePageContent() {
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Profil Eksperta"
-          subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
-          titleClassName="text-white text-3xl sm:text-4xl"
-        />
+      <PageHeader
+        title="Profil Eksperta"
+        subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
+        titleClassName="text-white text-3xl sm:text-4xl"
+      />
 
-      </motion.div>
 
       {/* Re-designed premium tab selector */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6 relative z-10">

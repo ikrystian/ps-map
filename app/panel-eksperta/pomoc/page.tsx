@@ -191,7 +191,6 @@ export default function HelpCenterPage() {
         <PageHeader
           title="Centrum pomocy"
           subtitle="Znajdź odpowiedzi na najczęściej zadawane pytania dotyczące funkcjonowania platformy."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>

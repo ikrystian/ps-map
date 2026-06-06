@@ -459,19 +459,10 @@ export default function ConsultationsPage() {
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Zarządzanie konsultacjami"
-          subtitle="Przeglądaj i zarządzaj prośbami o konsultacje od klientów."
-          titleClassName="text-white text-3xl sm:text-4xl"
-        />
-      </motion.div>
+      <PageHeader
+        title="Zarządzanie konsultacjami"
+        subtitle="Przeglądaj i zarządzaj prośbami o konsultacje od klientów."
+      />
 
       {/* Main Container */}
       <motion.div

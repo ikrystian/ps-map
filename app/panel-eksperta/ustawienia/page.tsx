@@ -448,7 +448,6 @@ export default function LawFirmSettingsPage() {
         <PageHeader
           title="Ustawienia"
           subtitle="Zarządzaj swoim kontem eksperta, preferencjami komunikacji oraz bezpieczeństwem sesji."
-          titleClassName="text-white text-3xl sm:text-4xl"
         />
 
       </motion.div>

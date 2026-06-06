@@ -178,8 +178,6 @@ export default function LawFirmNewBlogPostPage() {
           <PageHeader
             title="Nowy artykuł"
             subtitle="Utwórz nowy wpis na blogu swojego profilu i dziel się swoją wiedzą."
-            className="mb-0"
-            titleClassName="text-white text-3xl"
           />
         </div>
       </motion.div>

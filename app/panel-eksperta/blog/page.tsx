@@ -212,27 +212,19 @@ export default function LawFirmBlogPage() {
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Mój blog"
-          subtitle="Zarządzaj wpisami na blogu swojego profilu i publikuj profesjonalne artykuły."
-          titleClassName="text-white text-3xl sm:text-4xl"
-        >
-          <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
-            <Link href="/panel-eksperta/blog/nowy">
-              <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
-              Napisz artykuł
-            </Link>
-          </Button>
-        </PageHeader>
 
-      </motion.div>
+      <PageHeader
+        title="Mój blog"
+        subtitle="Zarządzaj wpisami na blogu swojego profilu i publikuj profesjonalne artykuły."
+      >
+        <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+          <Link href="/panel-eksperta/blog/nowy">
+            <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+            Napisz artykuł
+          </Link>
+        </Button>
+      </PageHeader>
+
 
       {/* Main Container */}
       <motion.div
