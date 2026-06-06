@@ -38,14 +38,7 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
-
-interface LawFirm {
-  id: string
-  nazwa: string
-  pozycjaRanking: number | null
-  punktySaldo: number
-  mainCategoryName?: string
-}
+import type { LawFirm } from "@/types"
 
 interface Competitor {
   id: string
