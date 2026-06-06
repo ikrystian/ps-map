@@ -223,7 +223,7 @@ export default function AdminCategoriesPage() {
           <TableCell className="text-right">
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm text-muted-foreground">
-                {category._count?.lawFirms || 0} kancelarii
+                {category._count?.lawFirms || 0} ekspertów
               </span>
               <Button
 
