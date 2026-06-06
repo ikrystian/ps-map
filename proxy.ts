@@ -19,7 +19,7 @@ export default auth((req) => {
     nextUrl.pathname.startsWith("/regulamin") ||
     nextUrl.pathname.startsWith("/polityka-prywatnosci") ||
     nextUrl.pathname.startsWith("/kategorie") ||
-    nextUrl.pathname.startsWith("/kancelaria") ||
+    nextUrl.pathname.startsWith("/ekspert") ||
     nextUrl.pathname.startsWith("/blog") ||
     nextUrl.pathname.startsWith("/dodaj-sprawe") ||
     nextUrl.pathname.startsWith("/szukaj-prawnika") ||
@@ -52,7 +52,7 @@ export default auth((req) => {
     }
   }
 
-  // Panel kancelarii - tylko dla LAW_FIRM
+  // Panel eksperta - tylko dla LAW_FIRM
   if (nextUrl.pathname.startsWith("/panel-eksperta")) {
     if (!isLoggedIn) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname)
