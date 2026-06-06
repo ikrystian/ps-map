@@ -19,6 +19,7 @@ import { pl } from "date-fns/locale/pl"
 import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { Pagination } from '@/types/pagination';
 
 interface SystemLog {
   id: string
@@ -32,12 +33,7 @@ interface SystemLog {
   createdAt: string
 }
 
-interface Pagination {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
+
 
 const levelIcons = {
   DEBUG: Bug,

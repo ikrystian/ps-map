@@ -5,15 +5,9 @@ import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { BlogPost } from '@/types/blog';
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  obrazekWyrozniajacy: string | null
-  dataPublikacji?: string
-  createdAt?: string
-}
+
 
 interface LatestArticlesProps {
   blogPosts: BlogPost[]

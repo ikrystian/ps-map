@@ -26,6 +26,7 @@ import { format } from "date-fns"
 import { pl } from "date-fns/locale/pl"
 import { AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Eye, Filter, Loader2, Mail, Search, Terminal } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Pagination } from '@/types/pagination';
 
 interface EmailLog {
   id: string
@@ -41,12 +42,7 @@ interface EmailLog {
   sentAt: string
 }
 
-interface Pagination {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
+
 
 export default function EmailLogsTab() {
   const [logs, setLogs] = useState<EmailLog[]>([])

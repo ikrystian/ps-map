@@ -44,6 +44,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { LawFirm } from "@/types"
+import { PaginationData } from '@/types/pagination';
 
 interface SubscriptionPlan {
   id: string
@@ -78,12 +79,7 @@ interface Order {
   invoice: Invoice | null
 }
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   OCZEKUJE: { label: "Oczekuje", variant: "secondary" },

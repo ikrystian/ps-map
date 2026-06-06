@@ -36,6 +36,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
+import { BlogPost } from '@/types/blog';
 
 interface Case {
   id: string
@@ -68,18 +69,7 @@ interface Promotion {
   aktywna: boolean
 }
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  tresc: string
-  createdAt: Date
-  opublikowany: boolean
-  obrazekWyrozniajacy?: string | null
-  category?: {
-    nazwa: string
-  }
-}
+
 
 interface DashboardData {
   lawFirm: LawFirm

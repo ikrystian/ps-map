@@ -29,21 +29,14 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { LawFirm } from "@/types"
+import { PaginatedResponse } from '@/types/pagination';
 
 // Enums from Prisma
 type LawFirmType = "OSOBA_FIZYCZNA" | "SPOLKA_CYWILNA" | "SPOLKA_PARTNERSKA" | "SPOLKA_KOMANDYTOWA" | "SPOLKA_JAWNA" | "SPOLKA_ZOO" | "INNY"
 type OfferType = "STALA_WSPOLPRACA" | "JEDNORAZOWA_USLUGA" | "KONSULTACJA" | "WSZYSTKIE"
 type SubscriptionPackage = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES"
 
-interface PaginatedResponse {
-  lawFirms: LawFirm[]
-  pagination: {
-    total: number
-    page: number
-    limit: number
-    pages: number
-  }
-}
+
 
 export default function AdminLawFirmsPage() {
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
@@ -80,7 +73,7 @@ export default function AdminLawFirmsPage() {
 
       const response = await fetch(`/api/admin/law-firms?${params.toString()}`)
       if (response.ok) {
-        const data: PaginatedResponse = await response.json()
+        const data: PaginatedResponse<'lawFirms', LawFirm> = await response.json()
         setLawFirms(data.lawFirms)
         setPagination(data.pagination)
       } else {

@@ -59,39 +59,12 @@ import {
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { BlogPost } from '@/types/blog';
+import { PaginationData } from '@/types/pagination';
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  tresc: string
-  opublikowany: boolean
-  dataPublikacji: string | null
-  wyswietlenia: number
-  createdAt: string
-  updatedAt: string
-  obrazekWyrozniajacy: string | null
-  tagi: string | null
-  metaTitle: string | null
-  metaDescription: string | null
-  categoryId: string | null
-  category: {
-    id: string
-    nazwa: string
-  } | null
-  lawFirm: {
-    id: string
-    nazwa: string
-    nazwaFirmy: string
-  }
-}
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  pages: number
-}
+
+
 
 export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])

@@ -49,6 +49,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { PaginatedResponse } from '@/types/pagination';
 
 const moduleSchema = z.object({
   name: z.string().min(1, "Nazwa jest wymagana"),
@@ -73,15 +74,7 @@ interface Module {
   }
 }
 
-interface PaginatedResponse {
-  modules: Module[]
-  pagination: {
-    total: number
-    page: number
-    limit: number
-    pages: number
-  }
-}
+
 
 function highlightHTML(code: string) {
   if (!code) return ""
@@ -165,7 +158,7 @@ export default function AdminModulesPage() {
         throw new Error("Failed to fetch modules")
       }
 
-      const data: PaginatedResponse = await response.json()
+      const data: PaginatedResponse<'modules', Module> = await response.json()
       setModules(data.modules)
       setPagination(data.pagination)
     } catch (error) {

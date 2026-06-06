@@ -31,28 +31,12 @@ import { BookOpen, Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar, ShieldA
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { PaginationData } from '@/types/pagination';
+import { BlogPost } from '@/types/blog';
 
-interface BlogPost {
-  id: string
-  tytul: string
-  slug: string
-  opublikowany: boolean
-  dataPublikacji: string | null
-  wyswietlenia: number
-  createdAt: string
-  updatedAt: string
-  category: {
-    id: string
-    nazwa: string
-  } | null
-}
 
-interface PaginationData {
-  total: number
-  page: number
-  limit: number
-  pages: number
-}
+
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
