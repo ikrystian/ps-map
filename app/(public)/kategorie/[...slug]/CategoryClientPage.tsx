@@ -70,30 +70,7 @@ const ICON_MAP: Record<string, any> = {
   MessageSquare
 }
 import { Category } from "@/types/categories"
-
-interface LawFirm {
-  id: string
-  slug: string
-  nazwa: string
-  nazwaFirmy: string
-  logo?: string
-  opis?: string
-  miasto: string
-  voivodeship: {
-    nazwa: string
-  }
-  zweryfikowana: boolean
-  onlineOnly: boolean
-  categories: Array<{
-    nazwa: string
-    slug: string
-  }>
-  avgRating: number
-  reviewCount: number
-  pakietSubskrypcji?: string
-  statusGodzinyOtwarcia?: boolean
-  godzinyOtwarcia?: Record<string, string>
-}
+import type { LawFirm } from "@/types"
 
 interface Voivodeship {
   id: string
