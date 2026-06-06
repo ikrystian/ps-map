@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/components/ui/use-toast"
+import { InfoDialog } from "@/components/ui/info-dialog"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -138,6 +139,7 @@ export default function RankingBoostPage() {
   const [currentRank, setCurrentRank] = useState(0)
   const [newRank, setNewRank] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,10 +199,7 @@ export default function RankingBoostPage() {
       const updatedLawFirm = await response.json()
       setLawFirm(updatedLawFirm)
       setPoints(0)
-      toast({
-        title: "Sukces",
-        description: "Twój ranking został pomyślnie zaktualizowany.",
-      })
+      setShowSuccessDialog(true)
     } catch (error) {
       toast({
         title: "Błąd",
@@ -214,7 +213,7 @@ export default function RankingBoostPage() {
 
   const handleAddPoints = (amount: number) => {
     if (!lawFirm) return
-    setPoints(prev => Math.min(lawFirm.punktySaldo, Math.max(0, prev + amount)))
+    setPoints(prev => Math.min(lawFirm.punktySaldo ?? 0, Math.max(0, prev + amount)))
   }
 
   if (loading) {
@@ -246,7 +245,7 @@ export default function RankingBoostPage() {
     )
   }
 
-  const hasPoints = lawFirm.punktySaldo > 0
+  const hasPoints = (lawFirm.punktySaldo ?? 0) > 0
 
   return (
     <div className="relative space-y-8">
@@ -399,7 +398,7 @@ export default function RankingBoostPage() {
                       Przeznacz punkty
                     </label>
                     <div className="text-xs text-zinc-500">
-                      Dostępne saldo: <strong className="text-white font-mono">{lawFirm.punktySaldo.toLocaleString()} pkt</strong>
+                      Dostępne saldo: <strong className="text-white font-mono">{(lawFirm.punktySaldo ?? 0).toLocaleString()} pkt</strong>
                     </div>
                   </div>
 
@@ -408,7 +407,7 @@ export default function RankingBoostPage() {
                     <Slider
                       value={[points]}
                       onValueChange={(value) => setPoints(value[0])}
-                      max={lawFirm.punktySaldo}
+                      max={lawFirm.punktySaldo ?? 0}
                       step={10}
                       disabled={!hasPoints}
                       className="flex-1 cursor-pointer [&_[role=slider]]:bg-[#0da192] [&_[role=slider]]:border-[#0da192]/60 [&_.bg-primary]:bg-[#0da192]"
@@ -420,10 +419,10 @@ export default function RankingBoostPage() {
                         type="number"
                         value={points}
                         onChange={(e) => {
-                          const val = Math.min(lawFirm.punktySaldo, Math.max(0, Number(e.target.value)))
+                          const val = Math.min(lawFirm.punktySaldo ?? 0, Math.max(0, Number(e.target.value)))
                           setPoints(val)
                         }}
-                        max={lawFirm.punktySaldo}
+                        max={lawFirm.punktySaldo ?? 0}
                         min={0}
                         disabled={!hasPoints}
                         className="w-28 h-11 bg-background/50 border-border/40 rounded-xl pr-7 text-center text-white text-sm font-semibold focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] transition-all font-mono"
@@ -440,7 +439,7 @@ export default function RankingBoostPage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        disabled={!hasPoints || lawFirm.punktySaldo < preset}
+                        disabled={!hasPoints || (lawFirm.punktySaldo ?? 0) < preset}
                         onClick={() => handleAddPoints(preset)}
                         className="h-8 rounded-lg text-xs font-semibold bg-zinc-900/40 border-border/20 hover:border-[#0da192]/40 hover:bg-[#0da192]/5 hover:text-white transition-all gap-1 text-zinc-300"
                       >
@@ -469,8 +468,8 @@ export default function RankingBoostPage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        disabled={!hasPoints || points === lawFirm.punktySaldo}
-                        onClick={() => setPoints(lawFirm.punktySaldo)}
+                        disabled={!hasPoints || points === (lawFirm.punktySaldo ?? 0)}
+                        onClick={() => setPoints(lawFirm.punktySaldo ?? 0)}
                         className="h-8 rounded-lg text-xs font-semibold border-[#0da192]/20 bg-[#0da192]/5 text-[#0da192] hover:text-white hover:bg-[#0da192] transition-all font-bold"
                       >
                         MAX
@@ -644,6 +643,15 @@ export default function RankingBoostPage() {
         </div>
 
       </div>
+
+      <InfoDialog
+        open={showSuccessDialog}
+        onOpenChange={setShowSuccessDialog}
+        title="Sukces!"
+        description="Twój ranking został pomyślnie zaktualizowany."
+        buttonText="Świetnie"
+        variant="success"
+      />
     </div>
   )
 }
