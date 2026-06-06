@@ -139,18 +139,9 @@ export function EnhancedMessengerLayout() {
   const themeColor = isClient ? "#d7b56d" : "#0da192"
 
   return (
-    <div className="h-[calc(100vh)] min-h-[500px]">
-      {/* Connection status indicator */}
-      <div className="mb-2 flex items-center justify-between text-xs text-zinc-400 font-light">
+    <div className="h-full flex flex-col">
 
-        {unreadCount > 0 && (
-          <Badge className={cn("h-5 text-sm font-bold text-white px-2 rounded-full border-t border-white/10 shadow-md", isClient ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352]" : "bg-gradient-to-r from-[#0da192] to-[#0a8276]")}>
-            {unreadCount} nieprzeczytanych
-          </Badge>
-        )}
-      </div>
-
-      <Card className="h-full flex flex-col md:flex-row overflow-hidden border border-border/30 bg-card/25 backdrop-blur-md shadow-2xl relative">
+      <Card className="h-full flex rounded-lg flex-col md:flex-row overflow-hidden border border-border/30 bg-card/25 backdrop-blur-md shadow-2xl relative">
         <BorderBeam lightColor={themeColor} lightWidth={450} duration={7} borderWidth={1} />
         {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
         <div

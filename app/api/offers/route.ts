@@ -377,7 +377,7 @@ export async function POST(request: NextRequest) {
             typ: "NOWA_OFERTA",
             tytul: "Otrzymałeś nową ofertę",
             tresc: `Ekspert ${lawFirm.nazwa} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
-            linkUrl: `/panel-klienta/oferty/${newOffer.id}`
+            linkUrl: `/panel-klienta/sprawy/${caseId}`
           }
         })
       }
@@ -416,7 +416,7 @@ export async function POST(request: NextRequest) {
             "{nazwaSprawi}": caseWithClient.nazwaSprawy,
             "{kwota}": formattedKwota,
             "{termin}": formattedTermin,
-            "{linkDoPanelu}": `${baseUrl}/panel-klienta/oferty/${offer.id}`,
+            "{linkDoPanelu}": `${baseUrl}/panel-klienta/sprawy/${caseId}`,
           }
         })
       }

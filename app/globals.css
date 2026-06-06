@@ -111,6 +111,8 @@
   }
 
   @theme inline {
+    --spacing-content: calc(100vh-30rem);
+
     --color-background-sec: var(--background-sec);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
