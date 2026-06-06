@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { Wrench, Award, Plus, X } from "lucide-react"
+import { Wrench, Award, Plus, X, Tag } from "lucide-react"
 import Link from "next/link"
 import { Category } from "@/types"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 interface SpecializationTabProps {
   formData: {
@@ -32,6 +33,7 @@ export function SpecializationTab({
     <div className="space-y-6">
       {/* Kategorie usług */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
@@ -43,7 +45,7 @@ export function SpecializationTab({
                 <CardDescription className="text-zinc-400 text-sm">Główne dziedziny prawa, w których świadczysz pomoc</CardDescription>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="rounded-xl border-border/30 hover:bg-zinc-800 text-white" asChild>
+            <Button variant="outline" size="sm" className="rounded-xl border-border/30 hover:bg-zinc-800 text-white shadow-sm" asChild>
               <Link href="/panel-eksperta/zakres-uslug">
                 Zarządzaj usługami
               </Link>
@@ -56,7 +58,7 @@ export function SpecializationTab({
               {formData.categoriesIds.map((id) => {
                 const category = categories.find((c) => c.id === id)
                 return category ? (
-                  <Badge key={id} variant="secondary" className="px-3.5 py-1.5 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-xs font-semibold rounded-lg">
+                  <Badge key={id} variant="secondary" className="px-3.5 py-1.5 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-xs font-semibold rounded-lg shadow-sm hover:bg-[#0da192]/15 transition-all">
                     {category.nazwa}
                   </Badge>
                 ) : null
@@ -65,7 +67,7 @@ export function SpecializationTab({
           ) : (
             <div className="text-center py-8 border border-dashed border-border/30 rounded-xl bg-zinc-950/5">
               <p className="text-zinc-400 mb-4 text-sm font-light">Nie wybrano jeszcze żadnych kategorii usług.</p>
-              <Button className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl" asChild>
+              <Button className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl shadow-md" asChild>
                 <Link href="/panel-eksperta/zakres-uslug">
                   Dodaj pierwsze usługi
                 </Link>
@@ -77,6 +79,7 @@ export function SpecializationTab({
 
       {/* Prezentacja oferty */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -91,7 +94,7 @@ export function SpecializationTab({
         <CardContent className="space-y-6 pt-6">
           {/* Unikalny opis */}
           <div className="grid gap-2">
-            <Label htmlFor="unikatowyOpisUslugi" className="text-zinc-300">Unikalny opis usługi</Label>
+            <Label htmlFor="unikatowyOpisUslugi" className="text-zinc-300 font-medium">Unikalny opis usługi</Label>
             <Textarea
               id="unikatowyOpisUslugi"
               value={formData.unikatowyOpisUslugi}
@@ -109,39 +112,44 @@ export function SpecializationTab({
 
           {/* Słowa kluczowe */}
           <div className="grid gap-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="slowoKluczowe" className="text-zinc-300">Słowa kluczowe</Label>
+            <div className="flex justify-between items-center mb-1">
+              <Label htmlFor="slowoKluczowe" className="text-zinc-300 font-medium">Słowa kluczowe</Label>
               <span className="text-xs text-zinc-500">
-                Dodano {formData.slowaKluczowe.length} z {limitSlowKluczowych} dostępnych
+                Dodano <span className="font-semibold text-white">{formData.slowaKluczowe.length}</span> z <span className="font-semibold text-white">{limitSlowKluczowych}</span> dostępnych
               </span>
             </div>
             <div className="flex gap-2">
-              <Input
-                id="slowoKluczowe"
-                placeholder={
-                  formData.slowaKluczowe.length >= limitSlowKluczowych
-                    ? "Osiągnięto limit słów kluczowych"
-                    : "Dodaj słowo kluczowe i kliknij enter lub przycisk obok..."
-                }
-                disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    if (formData.slowaKluczowe && formData.slowaKluczowe.length >= limitSlowKluczowych) {
-                      return
-                    }
-                    const value = e.currentTarget.value.trim()
-                    if (value && !formData.slowaKluczowe.includes(value)) {
-                      handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
-                      e.currentTarget.value = ""
-                    }
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Tag className="h-4 w-4" />
+                </div>
+                <Input
+                  id="slowoKluczowe"
+                  placeholder={
+                    formData.slowaKluczowe.length >= limitSlowKluczowych
+                      ? "Osiągnięto limit słów kluczowych"
+                      : "Wpisz słowo i zatwierdź Enterem..."
                   }
-                }}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+                  disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      if (formData.slowaKluczowe && formData.slowaKluczowe.length >= limitSlowKluczowych) {
+                        return
+                      }
+                      const value = e.currentTarget.value.trim()
+                      if (value && !formData.slowaKluczowe.includes(value)) {
+                        handleInputChange("slowaKluczowe", [...formData.slowaKluczowe, value])
+                        e.currentTarget.value = ""
+                      }
+                    }
+                  }}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
               <Button
                 type="button"
-                className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl gap-1"
+                className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl gap-1.5 shadow-sm transition-all duration-200"
                 disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
                 onClick={() => {
                   if (formData.slowaKluczowe.length >= limitSlowKluczowych) {
@@ -161,11 +169,11 @@ export function SpecializationTab({
             </div>
 
             {formData.slowaKluczowe.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2 p-3 border border-border/20 rounded-xl bg-zinc-950/10">
+              <div className="flex flex-wrap gap-2 mt-3 p-3 border border-border/20 rounded-xl bg-zinc-950/10">
                 {formData.slowaKluczowe.map((keyword, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-1.5 bg-zinc-900 border border-border/30 text-zinc-300 px-3 py-1 rounded-lg text-sm transition-all hover:bg-zinc-800 hover:border-zinc-700"
+                    className="flex items-center gap-1.5 bg-zinc-900 border border-border/30 text-zinc-300 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:bg-zinc-800 hover:border-zinc-700"
                   >
                     <span>{keyword}</span>
                     <button
@@ -176,9 +184,9 @@ export function SpecializationTab({
                           formData.slowaKluczowe.filter((_, i) => i !== index)
                         )
                       }}
-                      className="ml-1 text-zinc-500 hover:text-rose-400 font-semibold focus:outline-none"
+                      className="ml-1 text-zinc-500 hover:text-rose-400 font-semibold focus:outline-none transition-colors"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}

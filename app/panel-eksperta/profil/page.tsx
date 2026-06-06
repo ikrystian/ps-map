@@ -557,35 +557,35 @@ function LawFirmProfilePageContent() {
         <TabsList className="p-1.5 bg-zinc-950/40 backdrop-blur-md border border-border/30 rounded-xl flex gap-1.5 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none h-auto">
           <TabsTrigger
             value="basic"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
           >
             <User className="h-4 w-4 shrink-0" />
             <span>Dane podstawowe</span>
           </TabsTrigger>
           <TabsTrigger
             value="contact"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
           >
             <MapPin className="h-4 w-4 shrink-0" />
             <span>Kontakt i obszar</span>
           </TabsTrigger>
           <TabsTrigger
             value="specialization"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
           >
             <Award className="h-4 w-4 shrink-0" />
             <span>Oferta i zakres</span>
           </TabsTrigger>
           <TabsTrigger
             value="multimedia"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
           >
             <ImageIcon className="h-4 w-4 shrink-0" />
             <span>Galeria i wideo</span>
           </TabsTrigger>
           <TabsTrigger
             value="consultations"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#0da192] data-[state=active]:to-[#0a8276] data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
           >
             <Clock className="h-4 w-4 shrink-0" />
             <span>Godziny i dostępność</span>

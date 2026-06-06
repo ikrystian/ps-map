@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck } from "lucide-react"
+import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck, Building, MapPin, FileText } from "lucide-react"
 import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -55,10 +56,12 @@ export function BasicTab({
 }: BasicTabProps) {
   const [showLogoConfirm, setShowLogoConfirm] = useState(false)
   const [showCoverConfirm, setShowCoverConfirm] = useState(false)
+
   return (
     <div className="space-y-6">
       {/* Dane podstawowe */}
       <Card id="tour-profil-basic" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -70,32 +73,44 @@ export function BasicTab({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="nazwa" className="text-zinc-300">Nazwa wyświetlana *</Label>
-              <Input
-                id="nazwa"
-                value={formData.nazwa}
-                onChange={(e) => handleInputChange("nazwa", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
-              />
+        <CardContent className="space-y-6 pt-6">
+          <div className="grid gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="nazwa" className="text-zinc-300 font-medium">Nazwa wyświetlana *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="nazwa"
+                    value={formData.nazwa}
+                    onChange={(e) => handleInputChange("nazwa", e.target.value)}
+                    required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="nazwaFirmy" className="text-zinc-300 font-medium">Nazwa firmy *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Building className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="nazwaFirmy"
+                    value={formData.nazwaFirmy}
+                    onChange={(e) => handleInputChange("nazwaFirmy", e.target.value)}
+                    required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="nazwaFirmy" className="text-zinc-300">Nazwa firmy *</Label>
-              <Input
-                id="nazwaFirmy"
-                value={formData.nazwaFirmy}
-                onChange={(e) => handleInputChange("nazwaFirmy", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="opis" className="text-zinc-300">Opis profilu</Label>
+              <Label htmlFor="opis" className="text-zinc-300 font-medium">Opis profilu</Label>
               <div className="rounded-xl overflow-hidden border border-border/30 bg-zinc-950/20">
                 <RichTextEditor
                   value={formData.opis}
@@ -110,6 +125,7 @@ export function BasicTab({
 
       {/* Wpisy do rejestrów */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#d7b56d" lightWidth={400} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -122,86 +138,121 @@ export function BasicTab({
           </div>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3 p-3 rounded-xl border border-border/20 bg-zinc-950/10">
-              <Switch
-                id="oirpStatus"
-                checked={formData.oirpStatus}
-                onCheckedChange={(checked) => handleInputChange("oirpStatus", checked)}
-              />
-              <Label htmlFor="oirpStatus" className="text-white cursor-pointer font-medium">
-                Wpis do Okręgowej Izby Radców Prawnych (OIRP)
-              </Label>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* OIRP */}
+            <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-zinc-950/10 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Switch
+                    id="oirpStatus"
+                    checked={formData.oirpStatus}
+                    onCheckedChange={(checked) => handleInputChange("oirpStatus", checked)}
+                  />
+                  <Label htmlFor="oirpStatus" className="text-white cursor-pointer font-semibold text-sm">
+                    Radca Prawny (OIRP)
+                  </Label>
+                </div>
+                <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oirpStatus ? "bg-[#0da192] shadow-[0_0_8px_#0da192]" : "bg-zinc-800"}`} />
+              </div>
+
+              {formData.oirpStatus ? (
+                <div className="grid gap-3 pt-3 border-t border-border/15 animate-in slide-in-from-top-1 duration-200">
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="oirpMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">OIRP Miasto</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <MapPin className="h-3.5 w-3.5" />
+                      </div>
+                      <Input
+                        id="oirpMiasto"
+                        placeholder="np. Warszawa"
+                        value={formData.oirpMiasto}
+                        onChange={(e) => handleInputChange("oirpMiasto", e.target.value)}
+                        className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="oirpWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <FileText className="h-3.5 w-3.5" />
+                      </div>
+                      <Input
+                        id="oirpWpis"
+                        placeholder="np. WA-12345"
+                        value={formData.oirpWpis}
+                        onChange={(e) => handleInputChange("oirpWpis", e.target.value)}
+                        className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-500 italic pt-2">Zaznacz przełącznik, aby dodać wpis radcowski.</p>
+              )}
             </div>
 
-            {formData.oirpStatus && (
-              <div className="grid md:grid-cols-2 gap-4 pl-4 border-l-2 border-[#0da192]/30 animate-in slide-in-from-top-1 duration-200">
-                <div className="grid gap-2">
-                  <Label htmlFor="oirpMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">OIRP Miasto</Label>
-                  <Input
-                    id="oirpMiasto"
-                    placeholder="np. Warszawa"
-                    value={formData.oirpMiasto}
-                    onChange={(e) => handleInputChange("oirpMiasto", e.target.value)}
-                    className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+            {/* ORA */}
+            <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-zinc-950/10 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Switch
+                    id="oraStatus"
+                    checked={formData.oraStatus}
+                    onCheckedChange={(checked) => handleInputChange("oraStatus", checked)}
                   />
+                  <Label htmlFor="oraStatus" className="text-white cursor-pointer font-semibold text-sm">
+                    Adwokat (ORA)
+                  </Label>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="oirpWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
-                  <Input
-                    id="oirpWpis"
-                    placeholder="np. WA-12345"
-                    value={formData.oirpWpis}
-                    onChange={(e) => handleInputChange("oirpWpis", e.target.value)}
-                    className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-                  />
-                </div>
+                <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oraStatus ? "bg-[#d7b56d] shadow-[0_0_8px_#d7b56d]" : "bg-zinc-800"}`} />
               </div>
-            )}
-          </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3 p-3 rounded-xl border border-border/20 bg-zinc-950/10">
-              <Switch
-                id="oraStatus"
-                checked={formData.oraStatus}
-                onCheckedChange={(checked) => handleInputChange("oraStatus", checked)}
-              />
-              <Label htmlFor="oraStatus" className="text-white cursor-pointer font-medium">
-                Wpis do Okręgowej Rady Adwokackiej (ORA)
-              </Label>
+              {formData.oraStatus ? (
+                <div className="grid gap-3 pt-3 border-t border-border/15 animate-in slide-in-from-top-1 duration-200">
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="oraMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">ORA Miasto</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <MapPin className="h-3.5 w-3.5" />
+                      </div>
+                      <Input
+                        id="oraMiasto"
+                        placeholder="np. Kraków"
+                        value={formData.oraMiasto}
+                        onChange={(e) => handleInputChange("oraMiasto", e.target.value)}
+                        className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="oraWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <FileText className="h-3.5 w-3.5" />
+                      </div>
+                      <Input
+                        id="oraWpis"
+                        placeholder="np. KRA/Adw/1234"
+                        value={formData.oraWpis}
+                        onChange={(e) => handleInputChange("oraWpis", e.target.value)}
+                        className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-500 italic pt-2">Zaznacz przełącznik, aby dodać wpis adwokacki.</p>
+              )}
             </div>
-
-            {formData.oraStatus && (
-              <div className="grid md:grid-cols-2 gap-4 pl-4 border-l-2 border-[#d7b56d]/30 animate-in slide-in-from-top-1 duration-200">
-                <div className="grid gap-2">
-                  <Label htmlFor="oraMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">ORA Miasto</Label>
-                  <Input
-                    id="oraMiasto"
-                    placeholder="np. Kraków"
-                    value={formData.oraMiasto}
-                    onChange={(e) => handleInputChange("oraMiasto", e.target.value)}
-                    className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="oraWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
-                  <Input
-                    id="oraWpis"
-                    placeholder="np. KRA/Adw/1234"
-                    value={formData.oraWpis}
-                    onChange={(e) => handleInputChange("oraWpis", e.target.value)}
-                    className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Logo i zdjęcia główne */}
       <Card id="tour-profil-logo" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={400} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -215,191 +266,200 @@ export function BasicTab({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6 pt-6">
-          {/* Logo Upload */}
-          <div className="space-y-3">
-            <Label className="text-white font-medium text-base">Zdjęcie profilowe (Avatar)</Label>
-            <p className="text-sm text-zinc-400 font-light">
-              Zdjęcie będzie wyświetlane na Twojej stronie eksperta i w wynikach wyszukiwania.
-              Zalecany rozmiar: 400x400px (kwadratowe).
-            </p>
+        <CardContent className="pt-6">
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Logo Upload (Avatar) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div>
+                <Label className="text-white font-semibold text-base">Zdjęcie profilowe (Avatar)</Label>
+                <p className="text-xs text-zinc-400 font-light mt-1">
+                  Zdjęcie widoczne w wynikach wyszukiwania. Zalecany rozmiar: 400x400px (kwadratowe).
+                </p>
+              </div>
 
-            {formData.logo ? (
-              <div className="flex items-start gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                <div className="relative h-32 w-32 rounded-lg overflow-hidden border border-border/30 bg-zinc-900">
-                  <Image
-                    src={formData.logo}
-                    alt="Logo"
-                    fill
-                    className="object-contain p-2"
+              {formData.logo ? (
+                <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+                  <div className="relative h-28 w-28 rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shrink-0">
+                    <Image
+                      src={formData.logo}
+                      alt="Logo"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 w-full">
+                    <label
+                      htmlFor="logo-upload"
+                      className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                          Przesyłanie...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                          Zmień logo
+                        </>
+                      )}
+                    </label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowLogoConfirm(true)}
+                      disabled={isUploading}
+                      className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      Usuń logo
+                    </Button>
+                  </div>
+                  <input
+                    id="logo-upload"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleLogoFileSelect}
+                    disabled={isUploading}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+              ) : (
+                <div>
                   <label
                     htmlFor="logo-upload"
-                    className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer"
+                    className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
                   >
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
-                        Przesyłanie...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
-                        Zmień logo
-                      </>
-                    )}
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
+                          <p className="text-sm text-zinc-400">Przesyłanie...</p>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
+                          <p className="mb-1 text-sm text-zinc-300">
+                            <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span>
+                          </p>
+                          <p className="text-xs text-zinc-500">
+                            PNG, JPG, WEBP (max 5MB)
+                          </p>
+                        </>
+                      )}
+                    </div>
                   </label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowLogoConfirm(true)}
+                  <input
+                    id="logo-upload"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleLogoFileSelect}
                     disabled={isUploading}
-                    className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    Usuń logo
-                  </Button>
-                </div>
-                <input
-                  id="logo-upload"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleLogoFileSelect}
-                  disabled={isUploading}
-                />
-              </div>
-            ) : (
-              <div>
-                <label
-                  htmlFor="logo-upload"
-                  className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
-                        <p className="text-sm text-zinc-400">Przesyłanie...</p>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
-                        <p className="mb-2 text-sm text-zinc-300">
-                          <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span> logo
-                        </p>
-                        <p className="text-xs text-zinc-500">
-                          PNG, JPG, WEBP (max 5MB)
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </label>
-                <input
-                  id="logo-upload"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleLogoFileSelect}
-                  disabled={isUploading}
-                />
-              </div>
-            )}
-          </div>
-
-          <Separator className="bg-border/10" />
-
-          {/* Zdjęcie główne Upload */}
-          <div className="space-y-3">
-            <Label className="text-white font-medium text-base">Zdjęcie główne (Banner)</Label>
-            <p className="text-sm text-zinc-400 font-light">
-              Zdjęcie główne będzie wyświetlane jako banner na górze Twojej strony eksperta.
-              Zalecany rozmiar: 1920x600px (panoramiczne).
-            </p>
-
-            {formData.zdjecieGlowne ? (
-              <div className="space-y-3 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border/30">
-                  <Image
-                    src={formData.zdjecieGlowne}
-                    alt="Zdjęcie główne"
-                    fill
-                    className="object-cover"
                   />
                 </div>
-                <div className="flex gap-2">
+              )}
+            </div>
+
+            {/* Separator columns on larger screens */}
+            <div className="hidden lg:block lg:col-span-1 h-full min-h-[180px] relative">
+              <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-border/10" />
+            </div>
+
+            {/* Zdjęcie główne Upload (Banner) */}
+            <div className="lg:col-span-6 space-y-4">
+              <div>
+                <Label className="text-white font-semibold text-base">Zdjęcie główne (Banner)</Label>
+                <p className="text-xs text-zinc-400 font-light mt-1">
+                  Zdjęcie panoramiczne jako nagłówek profilu. Zalecany rozmiar: 1920x600px.
+                </p>
+              </div>
+
+              {formData.zdjecieGlowne ? (
+                <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-border/30">
+                    <Image
+                      src={formData.zdjecieGlowne}
+                      alt="Zdjęcie główne"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <label
+                      htmlFor="main-image-upload"
+                      className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                          Przesyłanie...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                          Zmień zdjęcie
+                        </>
+                      )}
+                    </label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowCoverConfirm(true)}
+                      disabled={isUploading}
+                      className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      Usuń banner
+                    </Button>
+                  </div>
+                  <input
+                    id="main-image-upload"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleMainImageFileSelect}
+                    disabled={isUploading}
+                  />
+                </div>
+              ) : (
+                <div>
                   <label
                     htmlFor="main-image-upload"
-                    className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-900/60 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer"
+                    className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
                   >
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
-                        Przesyłanie...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
-                        Zmień zdjęcie
-                      </>
-                    )}
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
+                          <p className="text-sm text-zinc-400">Przesyłanie...</p>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
+                          <p className="mb-1 text-sm text-zinc-300">
+                            <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span> banner
+                          </p>
+                          <p className="text-xs text-zinc-500">
+                            PNG, JPG, WEBP (max 5MB)
+                          </p>
+                        </>
+                      )}
+                    </div>
                   </label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowCoverConfirm(true)}
+                  <input
+                    id="main-image-upload"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleMainImageFileSelect}
                     disabled={isUploading}
-                    className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    Usuń zdjęcie
-                  </Button>
+                  />
                 </div>
-                <input
-                  id="main-image-upload"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleMainImageFileSelect}
-                  disabled={isUploading}
-                />
-              </div>
-            ) : (
-              <div>
-                <label
-                  htmlFor="main-image-upload"
-                  className="flex flex-col items-center justify-center w-full h-48 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
-                        <p className="text-sm text-zinc-400">Przesyłanie...</p>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
-                        <p className="mb-2 text-sm text-zinc-300">
-                          <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span> zdjęcie główne
-                        </p>
-                        <p className="text-xs text-zinc-500">
-                          PNG, JPG, WEBP (max 5MB)
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </label>
-                <input
-                  id="main-image-upload"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleMainImageFileSelect}
-                  disabled={isUploading}
-                />
-              </div>
-            )}
+              )}
+            </div>
+
           </div>
         </CardContent>
       </Card>

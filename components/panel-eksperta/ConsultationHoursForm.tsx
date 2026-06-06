@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
-import { AlertCircle, Loader2, Calendar, Clock, Save } from "lucide-react"
+import { AlertCircle, Loader2, Calendar, Clock, Save, Coins } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 const daysOfWeek = [
   { id: 1, name: "Poniedziałek" },
@@ -145,6 +146,7 @@ export function ConsultationHoursForm() {
 
   return (
     <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+      <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
       <CardHeader className="border-b border-border/10 pb-4">
         <div className="flex items-center gap-2.5">
           <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -162,26 +164,36 @@ export function ConsultationHoursForm() {
         {/* Cennik */}
         <div className="grid md:grid-cols-2 gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
           <div className="grid gap-2">
-            <Label htmlFor="price15min" className="text-zinc-300">Cena za konsultację 15 min (zł)</Label>
-            <Input
-              id="price15min"
-              type="number"
-              value={price15min}
-              onChange={(e) => setPrice15min(parseFloat(e.target.value))}
-              placeholder="np. 100"
-              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-            />
+            <Label htmlFor="price15min" className="text-zinc-300 font-medium">Cena za konsultację 15 min (zł)</Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                <Coins className="h-4 w-4" />
+              </div>
+              <Input
+                id="price15min"
+                type="number"
+                value={price15min}
+                onChange={(e) => setPrice15min(parseFloat(e.target.value))}
+                placeholder="np. 100"
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+              />
+            </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="price30min" className="text-zinc-300">Cena za konsultację 30 min (zł)</Label>
-            <Input
-              id="price30min"
-              type="number"
-              value={price30min}
-              onChange={(e) => setPrice30min(parseFloat(e.target.value))}
-              placeholder="np. 150"
-              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-            />
+            <Label htmlFor="price30min" className="text-zinc-300 font-medium">Cena za konsultację 30 min (zł)</Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                <Coins className="h-4 w-4" />
+              </div>
+              <Input
+                id="price30min"
+                type="number"
+                value={price30min}
+                onChange={(e) => setPrice30min(parseFloat(e.target.value))}
+                placeholder="np. 150"
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+              />
+            </div>
           </div>
         </div>
 

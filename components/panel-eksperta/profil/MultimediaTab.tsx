@@ -8,6 +8,7 @@ import { Loader2, Upload, X, Image as ImageIcon, Video } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 interface MultimediaTabProps {
   formData: {
@@ -30,10 +31,12 @@ export function MultimediaTab({
   handleRemoveImage,
 }: MultimediaTabProps) {
   const [imageIndexToDelete, setImageIndexToDelete] = useState<number | null>(null)
+
   return (
     <div className="space-y-6">
       {/* Galeria zdjęć */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -52,7 +55,7 @@ export function MultimediaTab({
           <div className="flex items-center gap-4">
             <label
               htmlFor="gallery-upload"
-              className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#0da192] hover:bg-[#0a8276] text-white h-10 px-4 py-2 cursor-pointer shadow-md"
+              className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#0da192] hover:bg-[#0a8276] text-white h-10 px-4 py-2 cursor-pointer shadow-md transition-all duration-200"
             >
               {isUploading ? (
                 <>
@@ -76,7 +79,7 @@ export function MultimediaTab({
               disabled={isUploading || formData.galeriaZdjec.length >= 10}
             />
             <span className="text-sm text-zinc-400 font-light">
-              Dodano {formData.galeriaZdjec.length} z 10 zdjęć
+              Dodano <span className="font-semibold text-white">{formData.galeriaZdjec.length}</span> z <span className="font-semibold text-white">10</span> zdjęć
             </span>
           </div>
 
@@ -85,12 +88,12 @@ export function MultimediaTab({
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
               {formData.galeriaZdjec.map((imageUrl, index) => (
                 <div key={index} className="relative group">
-                  <div className="relative aspect-square rounded-xl overflow-hidden border border-border/30 bg-zinc-900">
+                  <div className="relative aspect-square rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shadow-md">
                     <Image
                       src={imageUrl}
                       alt={`Galeria ${index + 1}`}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover transition-transform duration-350 group-hover:scale-105"
                     />
                     <button
                       type="button"
@@ -129,6 +132,7 @@ export function MultimediaTab({
 
       {/* Film YouTube */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -142,20 +146,25 @@ export function MultimediaTab({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 pt-6">
+        <CardContent className="space-y-5 pt-6">
           <div className="grid gap-2">
-            <Label htmlFor="filmYouTube" className="text-zinc-300">Link do filmu YouTube</Label>
-            <Input
-              id="filmYouTube"
-              value={formData.filmYouTube}
-              onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
-              placeholder="np. https://www.youtube.com/watch?v=..."
-              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-            />
+            <Label htmlFor="filmYouTube" className="text-zinc-300 font-medium">Link do filmu YouTube</Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                <Video className="h-4 w-4" />
+              </div>
+              <Input
+                id="filmYouTube"
+                value={formData.filmYouTube}
+                onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
+                placeholder="np. https://www.youtube.com/watch?v=..."
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+              />
+            </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="kolejnoscMultimedia" className="text-zinc-300">Kolejność wyświetlania na profilu</Label>
+            <Label htmlFor="kolejnoscMultimedia" className="text-zinc-300 font-medium">Kolejność wyświetlania na profilu</Label>
             <Select
               value={formData.kolejnoscMultimedia}
               onValueChange={(value) => handleInputChange("kolejnoscMultimedia", value)}

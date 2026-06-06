@@ -11,8 +11,16 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
-import { Check, ChevronDown, Phone, MapPin, Globe, Share2, Loader2, User } from "lucide-react"
+import { Check, ChevronDown, Phone, MapPin, Globe, Share2, Loader2, User, Mail, Briefcase } from "lucide-react"
+import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin,
+  FaTwitter as Twitter,
+  FaTiktok as Tiktok
+} from "react-icons/fa"
 import { cn } from "@/lib/utils"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 import type { Voivodeship, City } from "@/types"
 
@@ -116,6 +124,7 @@ export function ContactTab({
     <div className="space-y-6">
       {/* Osoba kontaktowa */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -130,36 +139,51 @@ export function ContactTab({
         <CardContent className="space-y-4 pt-6">
           <div className="grid md:grid-cols-3 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="imieKontakt" className="text-zinc-300">Imię *</Label>
-              <Input
-                id="imieKontakt"
-                value={formData.imieKontakt}
-                onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="imieKontakt" className="text-zinc-300 font-medium">Imię *</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <User className="h-4 w-4" />
+                </div>
+                <Input
+                  id="imieKontakt"
+                  value={formData.imieKontakt}
+                  onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
+                  required
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="nazwiskoKontakt" className="text-zinc-300">Nazwisko *</Label>
-              <Input
-                id="nazwiskoKontakt"
-                value={formData.nazwiskoKontakt}
-                onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="nazwiskoKontakt" className="text-zinc-300 font-medium">Nazwisko *</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <User className="h-4 w-4" />
+                </div>
+                <Input
+                  id="nazwiskoKontakt"
+                  value={formData.nazwiskoKontakt}
+                  onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
+                  required
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="stanowisko" className="text-zinc-300">Stanowisko / Tytuł</Label>
-              <Input
-                id="stanowisko"
-                placeholder="np. Adwokat / Partner"
-                value={formData.stanowisko || ""}
-                onChange={(e) => handleInputChange("stanowisko", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="stanowisko" className="text-zinc-300 font-medium">Stanowisko / Tytuł</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Briefcase className="h-4 w-4" />
+                </div>
+                <Input
+                  id="stanowisko"
+                  placeholder="np. Adwokat / Partner"
+                  value={formData.stanowisko || ""}
+                  onChange={(e) => handleInputChange("stanowisko", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -167,6 +191,7 @@ export function ContactTab({
 
       {/* Dane kontaktowe i WWW */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -181,47 +206,67 @@ export function ContactTab({
         <CardContent className="space-y-4 pt-6">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="numerTelefonu" className="text-zinc-300">Telefon główny *</Label>
-              <Input
-                id="numerTelefonu"
-                value={formData.numerTelefonu}
-                onChange={(e) => handleInputChange("numerTelefonu", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="numerTelefonu" className="text-zinc-300 font-medium">Telefon główny *</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <Input
+                  id="numerTelefonu"
+                  value={formData.numerTelefonu}
+                  onChange={(e) => handleInputChange("numerTelefonu", e.target.value)}
+                  required
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="numerTelefonu2" className="text-zinc-300">Telefon dodatkowy</Label>
-              <Input
-                id="numerTelefonu2"
-                value={formData.numerTelefonu2}
-                onChange={(e) => handleInputChange("numerTelefonu2", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="numerTelefonu2" className="text-zinc-300 font-medium">Telefon dodatkowy</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <Input
+                  id="numerTelefonu2"
+                  value={formData.numerTelefonu2}
+                  onChange={(e) => handleInputChange("numerTelefonu2", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="emailKontakt" className="text-zinc-300">Email *</Label>
-              <Input
-                id="emailKontakt"
-                type="email"
-                value={formData.emailKontakt}
-                onChange={(e) => handleInputChange("emailKontakt", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="emailKontakt" className="text-zinc-300 font-medium">Email *</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <Input
+                  id="emailKontakt"
+                  type="email"
+                  value={formData.emailKontakt}
+                  onChange={(e) => handleInputChange("emailKontakt", e.target.value)}
+                  required
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="stronaWww" className="text-zinc-300">Strona WWW</Label>
-              <Input
-                id="stronaWww"
-                placeholder="https://..."
-                value={formData.stronaWww}
-                onChange={(e) => handleInputChange("stronaWww", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="stronaWww" className="text-zinc-300 font-medium">Strona WWW</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Globe className="h-4 w-4" />
+                </div>
+                <Input
+                  id="stronaWww"
+                  placeholder="https://..."
+                  value={formData.stronaWww}
+                  onChange={(e) => handleInputChange("stronaWww", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -229,6 +274,7 @@ export function ContactTab({
 
       {/* Adres stacjonarny */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -242,40 +288,58 @@ export function ContactTab({
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="adres" className="text-zinc-300">Ulica i numer *</Label>
-              <Input
-                id="adres"
-                placeholder="np. Al. Jerozolimskie 12/3"
-                value={formData.adres}
-                onChange={(e) => handleInputChange("adres", e.target.value)}
-                required
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
-            </div>
-
+            
+            {/* Row 1: Ulica and Kod Pocztowy */}
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="kodPocztowy" className="text-zinc-300">Kod pocztowy *</Label>
-                <Input
-                  id="kodPocztowy"
-                  value={formData.kodPocztowy}
-                  readOnly
-                  className="bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl"
-                  required
-                />
+              <div className="grid gap-2 md:col-span-2">
+                <Label htmlFor="adres" className="text-zinc-300 font-medium">Ulica i numer *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="adres"
+                    placeholder="np. Al. Jerozolimskie 12/3"
+                    value={formData.adres}
+                    onChange={(e) => handleInputChange("adres", e.target.value)}
+                    required
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  />
+                </div>
               </div>
 
+              <div className="grid gap-2 md:col-span-1">
+                <Label htmlFor="kodPocztowy" className="text-zinc-300 font-medium">Kod pocztowy *</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="kodPocztowy"
+                    value={formData.kodPocztowy}
+                    readOnly
+                    className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Miasto and Województwo */}
+            <div className="grid md:grid-cols-3 gap-4">
               <div className="grid gap-2 md:col-span-2">
-                <Label htmlFor="miasto" className="text-zinc-300">Miasto *</Label>
+                <Label htmlFor="miasto" className="text-zinc-300 font-medium">Miasto *</Label>
                 <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       role="combobox"
-                      className="w-full text-left justify-between font-normal bg-zinc-950/20 border-border/30 text-white rounded-xl hover:bg-zinc-900"
+                      className="w-full text-left justify-between font-normal bg-zinc-950/20 border-border/30 text-white rounded-xl hover:bg-zinc-900 h-10 px-3"
                     >
-                      <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
+                      <span className="truncate flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-zinc-500" />
+                        {formData.miasto || "Wybierz miasto..."}
+                      </span>
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[#0da192]" />
                     </Button>
                   </PopoverTrigger>
@@ -342,33 +406,35 @@ export function ContactTab({
                   </PopoverContent>
                 </Popover>
               </div>
+
+              <div className="grid gap-2 md:col-span-1">
+                <Label htmlFor="voivodeshipId" className="text-zinc-300 font-medium">Województwo *</Label>
+                <Select
+                  value={formData.voivodeshipId}
+                  onValueChange={(value) => handleInputChange("voivodeshipId", value)}
+                  disabled
+                >
+                  <SelectTrigger className="bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl h-10">
+                    <SelectValue placeholder="Wybierz województwo" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
+                    {voivodeships.map((v) => (
+                      <SelectItem key={v.id} value={v.id} className="text-zinc-300 focus:text-white">
+                        {v.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="voivodeshipId" className="text-zinc-300">Województwo *</Label>
-              <Select
-                value={formData.voivodeshipId}
-                onValueChange={(value) => handleInputChange("voivodeshipId", value)}
-                disabled
-              >
-                <SelectTrigger className="bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl">
-                  <SelectValue placeholder="Wybierz województwo" />
-                </SelectTrigger>
-                <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
-                  {voivodeships.map((v) => (
-                    <SelectItem key={v.id} value={v.id} className="text-zinc-300 focus:text-white">
-                      {v.nazwa}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Obszar działania */}
       <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={10} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -569,6 +635,7 @@ export function ContactTab({
 
       {/* Social Media */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -581,57 +648,93 @@ export function ContactTab({
           </div>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            {/* LinkedIn */}
             <div className="grid gap-2">
-              <Label htmlFor="linkLinkedIn" className="text-zinc-300">LinkedIn URL</Label>
-              <Input
-                id="linkLinkedIn"
-                placeholder="https://linkedin.com/in/..."
-                value={formData.linkLinkedIn}
-                onChange={(e) => handleInputChange("linkLinkedIn", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="linkLinkedIn" className="text-zinc-300 font-medium">LinkedIn URL</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Linkedin className="h-4 w-4" />
+                </div>
+                <Input
+                  id="linkLinkedIn"
+                  placeholder="https://linkedin.com/in/..."
+                  value={formData.linkLinkedIn}
+                  onChange={(e) => handleInputChange("linkLinkedIn", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
+
+            {/* Facebook */}
             <div className="grid gap-2">
-              <Label htmlFor="linkFacebook" className="text-zinc-300">Facebook URL</Label>
-              <Input
-                id="linkFacebook"
-                placeholder="https://facebook.com/..."
-                value={formData.linkFacebook}
-                onChange={(e) => handleInputChange("linkFacebook", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="linkFacebook" className="text-zinc-300 font-medium">Facebook URL</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Facebook className="h-4 w-4" />
+                </div>
+                <Input
+                  id="linkFacebook"
+                  placeholder="https://facebook.com/..."
+                  value={formData.linkFacebook}
+                  onChange={(e) => handleInputChange("linkFacebook", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
+
+            {/* Instagram */}
             <div className="grid gap-2">
-              <Label htmlFor="linkInstagram" className="text-zinc-300">Instagram URL</Label>
-              <Input
-                id="linkInstagram"
-                placeholder="https://instagram.com/..."
-                value={formData.linkInstagram}
-                onChange={(e) => handleInputChange("linkInstagram", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="linkInstagram" className="text-zinc-300 font-medium">Instagram URL</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Instagram className="h-4 w-4" />
+                </div>
+                <Input
+                  id="linkInstagram"
+                  placeholder="https://instagram.com/..."
+                  value={formData.linkInstagram}
+                  onChange={(e) => handleInputChange("linkInstagram", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
+
+            {/* Twitter */}
             <div className="grid gap-2">
-              <Label htmlFor="linkTwitter" className="text-zinc-300">Twitter / X URL</Label>
-              <Input
-                id="linkTwitter"
-                placeholder="https://x.com/..."
-                value={formData.linkTwitter}
-                onChange={(e) => handleInputChange("linkTwitter", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+              <Label htmlFor="linkTwitter" className="text-zinc-300 font-medium">Twitter / X URL</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Twitter className="h-4 w-4" />
+                </div>
+                <Input
+                  id="linkTwitter"
+                  placeholder="https://x.com/..."
+                  value={formData.linkTwitter}
+                  onChange={(e) => handleInputChange("linkTwitter", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="linkTikTok" className="text-zinc-300">TikTok URL</Label>
-              <Input
-                id="linkTikTok"
-                placeholder="https://tiktok.com/@..."
-                value={formData.linkTikTok}
-                onChange={(e) => handleInputChange("linkTikTok", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
-              />
+
+            {/* TikTok */}
+            <div className="grid gap-2">
+              <Label htmlFor="linkTikTok" className="text-zinc-300 font-medium">TikTok URL</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <Tiktok className="h-4 w-4" />
+                </div>
+                <Input
+                  id="linkTikTok"
+                  placeholder="https://tiktok.com/@..."
+                  value={formData.linkTikTok}
+                  onChange={(e) => handleInputChange("linkTikTok", e.target.value)}
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                />
+              </div>
             </div>
+
           </div>
         </CardContent>
       </Card>

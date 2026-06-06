@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Building, Clock } from "lucide-react"
+import { BorderBeam } from "@/components/ui/border-beam"
 
 interface OfficeHoursCardProps {
   formData: {
@@ -38,6 +39,7 @@ export function OfficeHoursCard({
 }: OfficeHoursCardProps) {
   return (
     <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+      <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
       <CardHeader className="border-b border-border/10 pb-4">
         <div className="flex items-center gap-2.5">
           <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
@@ -69,7 +71,7 @@ export function OfficeHoursCard({
               const isClosed = currentValue.toLowerCase() === "zamknięte" || currentValue.toLowerCase() === "zamkniete"
 
               return (
-                <div key={day} className="grid grid-cols-1 sm:grid-cols-[140px_1fr_auto_1fr] gap-3 items-center p-2 rounded-xl border border-border/10 bg-zinc-950/5">
+                <div key={day} className="grid grid-cols-1 sm:grid-cols-[160px_1fr_auto_1fr] gap-3 items-center p-2.5 rounded-xl border border-border/10 bg-zinc-950/5">
                   <span className="font-semibold text-zinc-300 text-sm sm:pl-2">{dayNamesPolish[day] || day}</span>
                   
                   <Select
