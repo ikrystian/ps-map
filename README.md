@@ -13,7 +13,6 @@ Projekt oparty jest o nowoczesny i skalowalny stack technologiczny:
 - **Stylizacja:** [Tailwind CSS v4](https://tailwindcss.com/) + [Framer Motion](https://www.framer.com/motion/) dla płynnych animacji
 - **Komponenty UI:** [Radix UI](https://www.radix-ui.com/) (przez architekturę podobną do shadcn-ui), [Lucide React](https://lucide.dev/)
 - **Walidacja danych:** [Zod](https://zod.dev/) + [React Hook Form](https://react-hook-form.com/)
-- **Komunikacja Real-time:** [Socket.io](https://socket.io/) (wbudowany customowy serwer Node.js)
 - **Mapy i Lokalizacja:** `@react-google-maps/api`
 - **Edytor tekstu (Rich Text):** [Tiptap](https://tiptap.dev/)
 - **Dodatki:** 
@@ -35,7 +34,7 @@ Aplikacja korzysta ze struktury opartej o Next.js App Router i dzieli się na ki
 │   └── api/              # Rest API oraz endpointy NextAuth
 ├── components/           # Komponenty współdzielone (UI, layout, formularze)
 ├── lib/                  # Funkcje pomocnicze, konfiguracja Prisma, autoryzacja
-├── hooks/                # Własne hooki React (np. obsługa Socket.io, uprawnień)
+├── hooks/                # Własne hooki React (np. obsługa uprawnień)
 ├── prisma/               # Schemat bazy danych i skrypty seedujące
 ├── public/               # Zasoby statyczne (grafiki, fonty)
 └── types/                # Współdzielone definicje typów TypeScript
@@ -66,7 +65,7 @@ Aplikacja korzysta ze struktury opartej o Next.js App Router i dzieli się na ki
    ```
 
 5. **Uruchom serwer developerski:**
-   Projekt wykorzystuje niestandardowy serwer oparty na pliku `server.ts` w celu integracji WebSockets (Socket.io).
+   Projekt wykorzystuje niestandardowy serwer oparty na pliku `server.ts`.
    ```bash
    npm run dev
    ```
@@ -85,7 +84,7 @@ Aplikacja będzie dostępna pod adresem: [http://localhost:3000](http://localhos
 
 - **Rozbudowany system ról:** Podział na użytkowników (Klientów), Ekspertów (Law Firm) oraz Administratorów.
 - **Dynamiczne panele:** Responsywne dashboardy z nawigacją boczną, statystykami i zarządzaniem kontem.
-- **Chat Real-time:** Błyskawiczna komunikacja między ekspertami a klientami dzięki integracji z Socket.io.
+- **Chat:** Komunikacja między ekspertami a klientami.
 - **Pakiety i Promowanie:** System subskrypcji i punktów (np. monetyzacja przez promowanie ogłoszeń eksperckich).
 - **Zgody Marketingowe & RODO:** Pełna obsługa ustawień powiadomień oraz zgód prywatności.
 - **W pełni responsywny interfejs:** Adaptacyjne siatki, ukrywane menu mobilne (radix UI Sheet) oraz dopracowane animacje ładowania.

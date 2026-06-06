@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
-import { useSocket } from "@/hooks/useSocket"
+
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import {
@@ -98,8 +98,7 @@ export function EnhancedChatArea({
   // Audio for notifications
   const notificationSound = useRef<HTMLAudioElement | null>(null)
 
-  // Socket.IO connection
-  const { socket, isConnected: socketConnected } = useSocket(conversationId)
+
 
   useEffect(() => {
     // Initialize notification sound
@@ -108,58 +107,7 @@ export function EnhancedChatArea({
     }
   }, [])
 
-  // Socket.IO event listeners
-  useEffect(() => {
-    if (!socket || !conversationId) return
 
-    // Listen for new messages
-    const handleNewMessage = (message: EnhancedChatMessage) => {
-      console.log("[Chat] New message received:", message)
-
-      // Only add if it's not already in the list
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === message.id)) {
-          return prev
-        }
-        return [...prev, message]
-      })
-
-      // Play notification sound if message is from other user
-      if (message.senderId !== session?.user?.id && notificationSound.current) {
-        notificationSound.current.play().catch(() => { })
-      }
-    }
-
-    // Listen for messages read
-    const handleMessagesRead = (data: { messageIds: string[] }) => {
-      console.log("[Chat] Messages read:", data.messageIds)
-      setMessages((prev) =>
-        prev.map((msg) =>
-          data.messageIds.includes(msg.id)
-            ? { ...msg, isRead: true, status: "READ" as const }
-            : msg
-        )
-      )
-    }
-
-    // Listen for typing indicator
-    const handleUserTyping = (data: { userId: string; isTyping: boolean }) => {
-      console.log("[Chat] User typing:", data)
-      if (data.userId !== session?.user?.id) {
-        setOtherUserTyping(data.isTyping)
-      }
-    }
-
-    socket.on("new_message", handleNewMessage)
-    socket.on("messages_read", handleMessagesRead)
-    socket.on("user_typing", handleUserTyping)
-
-    return () => {
-      socket.off("new_message", handleNewMessage)
-      socket.off("messages_read", handleMessagesRead)
-      socket.off("user_typing", handleUserTyping)
-    }
-  }, [socket, conversationId, session])
 
   // Pobierz szczegóły konwersacji
   useEffect(() => {
@@ -259,32 +207,7 @@ export function EnhancedChatArea({
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageText(e.target.value)
 
-    // Update typing indicator via Socket.IO
-    if (socket && session?.user?.id) {
-      if (!isTyping) {
-        setIsTyping(true)
-        socket.emit("typing", {
-          conversationId,
-          userId: session?.user?.id,
-          isTyping: true,
-        })
-      }
 
-      // Clear previous timeout
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current)
-      }
-
-      // Set new timeout
-      typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false)
-        socket.emit("typing", {
-          conversationId,
-          userId: session?.user?.id,
-          isTyping: false,
-        })
-      }, 3000)
-    }
   }
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -294,14 +217,7 @@ export function EnhancedChatArea({
 
     setIsSending(true)
 
-    // Stop typing indicator
-    if (socket && session?.user?.id) {
-      socket.emit("typing", {
-        conversationId,
-        userId: session?.user?.id,
-        isTyping: false,
-      })
-    }
+
 
     try {
       const response = await fetch(

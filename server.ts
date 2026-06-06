@@ -1,7 +1,6 @@
 import { createServer } from "http"
 import next from "next"
 import { initScheduler } from "./lib/scheduler"
-import { initSocket } from "./lib/socket"
 
 const dev = process.env.NODE_ENV !== "production"
 const hostname = "localhost"
@@ -16,11 +15,7 @@ app.prepare().then(() => {
 
   const server = createServer(async (req, res) => {
     try {
-      // Skip Next.js handling for Socket.IO requests
-      if (req.url?.includes("/api/socket")) {
-        // console.log(`[Server] Socket.IO request: ${req.url}`)
-        return
-      }
+
 
       // In modern Next.js, the request handler can parse the URL internally.
       // This avoids using the deprecated `url.parse()` API.
@@ -32,8 +27,7 @@ app.prepare().then(() => {
     }
   })
 
-  // Inicjalizacja serwera Socket.IO na porcie HTTP serwera
-  initSocket(server)
+
 
   server.listen(port, () => {
     console.log(`> Ready on http://${hostname}:${port}`)

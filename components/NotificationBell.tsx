@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/sonner"
-import { useSocket } from "@/hooks/useSocket"
+
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
 import { Trash2 } from "lucide-react"
@@ -35,7 +35,7 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
-  const { socket, isConnected } = useSocket()
+
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -61,31 +61,7 @@ export function NotificationBell() {
     fetchNotifications()
   }, [])
 
-  // Socket.IO real-time updates
-  useEffect(() => {
-    if (!socket || !isConnected) return
 
-    // Listen for new notifications
-    socket.on("new_notification", (notification: Notification) => {
-      setNotifications((prev) => [notification, ...prev].slice(0, 20))
-      setUnreadCount((prev) => prev + 1)
-
-      // Show toast notification
-      toast.info(notification.tytul, {
-        description: notification.tresc,
-      })
-    })
-
-    // Listen for notification count updates
-    socket.on("notification_count", ({ unreadCount: count }: { unreadCount: number }) => {
-      setUnreadCount(count)
-    })
-
-    return () => {
-      socket.off("new_notification")
-      socket.off("notification_count")
-    }
-  }, [socket, isConnected])
 
   // Mark single notification as read
   const markAsRead = async (id: string) => {

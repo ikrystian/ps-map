@@ -1,6 +1,5 @@
 import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { io, Socket } from "socket.io-client"
 
 interface UseRealtimeMessagesOptions {
   onUpdate?: () => void
@@ -17,91 +16,55 @@ export function useRealtimeMessages({
   const [unreadCount, setUnreadCount] = useState(0)
   const [lastUpdate, setLastUpdate] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
-  const socketRef = useRef<Socket | null>(null)
   
-  // Use refs for callbacks to avoid re-initializing socket when they change
   const onUpdateRef = useRef(onUpdate)
   const onNewMessageRef = useRef(onNewMessage)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
   
   useEffect(() => {
     onUpdateRef.current = onUpdate
     onNewMessageRef.current = onNewMessage
   }, [onUpdate, onNewMessage])
 
-  const connect = useCallback(() => {
+  const fetchUnreadCount = useCallback(async () => {
     if (!session?.user?.id || !enabled || status !== "authenticated") {
       return
     }
 
-    // Don't reconnect if already connecting or connected
-    if (socketRef.current) {
-      return
-    }
-
     try {
-      console.log("[Socket.IO] Connecting to server...")
-
-      const socket = io({
-        path: "/api/socket",
-        addTrailingSlash: false,
-        transports: ["websocket"],
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-      })
-
-      socketRef.current = socket
-
-      socket.on("connect", () => {
-        console.log("[Socket.IO] Connected:", socket.id)
-        setIsConnected(true)
-
-        // Join user's personal room
-        socket.emit("join", session.user.id)
-      })
-
-      socket.on("disconnect", () => {
-        console.log("[Socket.IO] Disconnected")
-        setIsConnected(false)
-      })
-
-      socket.on("connect_error", (error) => {
-        console.error("[Socket.IO] Connection error:", error)
-        setIsConnected(false)
-      })
-
-      // Listen for unread count updates
-      socket.on("unread_count", (data: { unreadCount: number }) => {
-        console.log("[Socket.IO] Unread count update:", data.unreadCount)
-        setUnreadCount(data.unreadCount)
-        setLastUpdate(new Date().toISOString())
-      })
-
-      // Listen for conversation updates
-      socket.on("conversation_update", (data: any) => {
-        console.log("[Socket.IO] Conversation update:", data)
-        setLastUpdate(new Date().toISOString())
-        onUpdateRef.current?.()
-      })
-
-      // Listen for new messages
-      socket.on("new_message", (data: any) => {
-        console.log("[Socket.IO] New message:", data)
-        setLastUpdate(new Date().toISOString())
-        onNewMessageRef.current?.(data)
-        onUpdateRef.current?.()
-      })
-
+      const response = await fetch("/api/conversations/unread-count")
+      if (response.ok) {
+        const data = await response.json()
+        if (data.unreadCount !== undefined) {
+          setUnreadCount(data.unreadCount)
+          setLastUpdate(new Date().toISOString())
+        }
+      }
     } catch (error) {
-      console.error("[Socket.IO] Error creating socket:", error)
-      setIsConnected(false)
+      console.error("Error fetching unread count:", error)
     }
   }, [session, enabled, status])
 
+  const connect = useCallback(() => {
+    if (!session?.user?.id || !enabled || status !== "authenticated") {
+      return
+    }
+    
+    setIsConnected(true)
+    fetchUnreadCount()
+
+    // Poll every 30 seconds
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        fetchUnreadCount()
+      }, 30000)
+    }
+  }, [session, enabled, status, fetchUnreadCount])
+
   const disconnect = useCallback(() => {
-    if (socketRef.current) {
-      socketRef.current.disconnect()
-      socketRef.current = null
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
     }
     setIsConnected(false)
   }, [])
@@ -122,6 +85,6 @@ export function useRealtimeMessages({
     isConnected,
     reconnect: connect,
     disconnect,
-    socket: socketRef.current,
+    socket: null,
   }
 }
