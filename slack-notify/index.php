@@ -184,7 +184,7 @@ function handleUpdate(PDO $db, int $id): void
     'trello_name' => $trelloName,
     'trello_desc' => $trelloDesc,
     'trello_time' => $trelloTime,
-    'id'          => $id,
+    'id' => $id,
   ]);
 
   jsonResponse(['ok' => true, 'ai_response' => $content, 'trello_name' => $trelloName, 'trello_desc' => $trelloDesc, 'trello_time' => $trelloTime]);
@@ -324,14 +324,14 @@ function renderPanel(PDO $db): void
           <table>
             <thead>
               <tr>
-                <th style="width:60px;">ID</th>
-                <th style="width:120px;">Typ</th>
+                <th>ID</th>
+                <th>Utworzono</th>
                 <th>Treść wygenerowana przez AI</th>
-                <th style="width:250px;">Zadanie Trello</th>
-                <th style="width:150px;">Status</th>
-                <th style="width:160px;">Planowana wysyłka</th>
-                <th style="width:180px;">Wysłano o</th>
-                <th style="width:320px;text-align:right;">Akcje</th>
+                <th>Zadanie Trello</th>
+                <th>Status</th>
+                <th>wysyłka</th>
+                <th>Wysłano o</th>
+                <th>Akcje</th>
               </tr>
             </thead>
             <tbody>
@@ -373,22 +373,34 @@ function renderMessageRow(array $msg): void
   $trelloStatus = esc($msg['trello_status'] ?? 'pending');
   $statusLabel = fn(string $s) => match ($s) { 'sent' => 'Wysłano', 'error' => 'Błąd', default => 'Oczekuje'};
   ?>
+  <?php
+  $createdAt = $msg['created_at'] ?? '';
+  $displayTime = '—';
+  if ($createdAt) {
+    try {
+      $date = new DateTime($createdAt, new DateTimeZone('UTC'));
+      $date->setTimezone(new DateTimeZone('Europe/Warsaw'));
+      $displayTime = $date->format('Y-m-d H:i:s');
+    } catch (Exception $e) {
+      $displayTime = $createdAt;
+    }
+  }
+  ?>
   <tr id="row-<?= $id ?>" data-type="<?= esc($msg['type']) ?>" data-status="<?= $status ?>"
     data-payload="<?= esc($msg['raw_payload'] ?: $msg['original_data']) ?>"
-    data-trello-name="<?= esc($msg['trello_name'] ?? '') ?>"
-    data-trello-desc="<?= esc($msg['trello_desc'] ?? '') ?>"
-    data-trello-time="<?= (int)($msg['trello_time'] ?? 0) ?>">
+    data-trello-name="<?= esc($msg['trello_name'] ?? '') ?>" data-trello-desc="<?= esc($msg['trello_desc'] ?? '') ?>"
+    data-trello-time="<?= (int) ($msg['trello_time'] ?? 0) ?>" data-created-at="<?= esc($displayTime) ?>">
 
     <td><?= $id ?></td>
 
-    <td><span class="badge badge-type"><?= esc($msg['type']) ?></span></td>
+    <td><span class="badge badge-type"
+        style="font-family:'DM Mono',monospace;font-weight:normal;letter-spacing:0;"><?= esc($displayTime) ?></span></td>
 
     <td class="response-cell">
       <div class="response-content" id="content-<?= $id ?>" data-raw="<?= esc($msg['ai_response']) ?>">
         <?= esc($msg['ai_response']) ?>
         <div class="response-fade"></div>
       </div>
-      <span class="toggle-expand" onclick="toggleExpand(<?= $id ?>)" id="toggle-<?= $id ?>">Rozwiń</span>
     </td>
 
     <td class="trello-cell">
@@ -438,26 +450,26 @@ function renderMessageRow(array $msg): void
     <td>
       <div class="action-group" style="justify-content:flex-end;">
         <button class="btn btn-secondary" style="padding:.4rem .6rem;font-size:.8rem;" onclick="showPayload(<?= $id ?>)"
-          title="Pokaż surowe zapytanie JSON">🔍 JSON</button>
+          title="Pokaż surowe zapytanie JSON">🔍</button>
 
-        <div class="schedule-form">
+        <div class="schedule-form" <?= ($status === 'sent' && $trelloStatus === 'sent') ? 'style="display:none;"' : '' ?>>
           <input type="datetime-local" class="input-date" id="schedule-time-<?= $id ?>"
             value="<?= $msg['scheduled_at'] ? date('Y-m-d\TH:i', strtotime($msg['scheduled_at'])) : '' ?>">
           <button class="btn btn-secondary" style="padding:.4rem .6rem;font-size:.8rem;"
-            onclick="scheduleMessage(<?= $id ?>)" id="btn-sched-<?= $id ?>" title="Zaplanuj wysyłkę">⏰ Zapisz</button>
+            onclick="scheduleMessage(<?= $id ?>)" id="btn-sched-<?= $id ?>" title="Zaplanuj wysyłkę">⏰</button>
         </div>
 
         <button class="btn btn-secondary" style="padding:.4rem .6rem;font-size:.8rem;" onclick="openEditModal(<?= $id ?>)"
-          id="btn-edit-<?= $id ?>" title="Edytuj treść">✏️ Edytuj</button>
+          id="btn-edit-<?= $id ?>" title="Edytuj treść" <?= ($status === 'sent' && $trelloStatus === 'sent') ? 'style="display:none;"' : '' ?>>✏️</button>
 
         <button class="btn btn-slack" style="padding:.4rem .6rem;font-size:.8rem;" onclick="sendSlack(<?= $id ?>)"
-          id="btn-slack-<?= $id ?>" title="Wyślij do Slacka">💬 Slack</button>
+          id="btn-slack-<?= $id ?>" title="Wyślij do Slacka" <?= ($status === 'sent') ? 'style="display:none;"' : '' ?>>💬</button>
 
         <button class="btn btn-trello" style="padding:.4rem .6rem;font-size:.8rem;" onclick="sendTrello(<?= $id ?>)"
-          id="btn-trello-<?= $id ?>" title="Wyślij do Trello">📋 Trello</button>
+          id="btn-trello-<?= $id ?>" title="Wyślij do Trello" <?= ($trelloStatus === 'sent') ? 'style="display:none;"' : '' ?>>📋</button>
 
         <button class="btn" style="padding:.4rem .8rem;font-size:.8rem;" onclick="sendAll(<?= $id ?>)"
-          id="btn-all-<?= $id ?>" title="Wyślij do Slacka i Trello">🚀 Wyślij</button>
+          id="btn-all-<?= $id ?>" title="Wyślij do Slacka i Trello" <?= ($status === 'sent' && $trelloStatus === 'sent') ? 'style="display:none;"' : '' ?>>🚀</button>
 
         <button class="btn btn-danger" style="padding:.4rem .6rem;font-size:.8rem;"
           onclick="deleteMessage(<?= $id ?>)">🗑️</button>
@@ -498,22 +510,30 @@ function renderEditModal(): void
         </div>
 
         <!-- Trello -->
-        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.85rem;">
-          <div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;">📋 Zadanie Trello</div>
+        <div
+          style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.85rem;">
+          <div
+            style="font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;">
+            📋 Zadanie Trello</div>
 
           <div style="display:flex;flex-direction:column;gap:.35rem;">
-            <label for="edit-trello-name" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Nazwa zadania:</label>
-            <input type="text" id="edit-trello-name" class="input-date" style="width:100%;" placeholder="Nazwa zadania Trello...">
+            <label for="edit-trello-name" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Nazwa
+              zadania:</label>
+            <input type="text" id="edit-trello-name" class="input-date" style="width:100%;"
+              placeholder="Nazwa zadania Trello...">
           </div>
 
           <div style="display:flex;flex-direction:column;gap:.35rem;">
-            <label for="edit-trello-desc" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Opis zadania:</label>
+            <label for="edit-trello-desc" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Opis
+              zadania:</label>
             <textarea id="edit-trello-desc" style="min-height:90px;" placeholder="Opis zadania Trello..."></textarea>
           </div>
 
           <div style="display:flex;flex-direction:column;gap:.35rem;">
-            <label for="edit-trello-time" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Czas pracy (minuty):</label>
-            <input type="number" id="edit-trello-time" class="input-date" style="width:160px;" placeholder="np. 90" min="0">
+            <label for="edit-trello-time" style="font-size:.9rem;color:var(--text-muted);font-weight:500;">Czas pracy
+              (minuty):</label>
+            <input type="number" id="edit-trello-time" class="input-date" style="width:160px;" placeholder="np. 90"
+              min="0">
           </div>
         </div>
 

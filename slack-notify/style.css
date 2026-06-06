@@ -134,6 +134,7 @@ header h1 {
     transform: scale(0.8);
     opacity: 0.5;
   }
+
   100% {
     transform: scale(1.5);
     opacity: 0;
@@ -161,7 +162,6 @@ header h1 {
    CONTAINER
    ════════════════════════════════════════════════════════════════════════════════ */
 .container {
-  max-width: 1600px;
   margin: 0 auto;
   padding: 1.5rem 2rem;
 }
@@ -434,46 +434,13 @@ tbody tr:last-child td {
 
 .response-content {
   position: relative;
-  max-height: 5.5rem;
-  overflow: hidden;
   line-height: 1.6;
   font-size: 0.875rem;
   color: var(--text-muted);
-  transition: max-height 0.3s ease;
 }
 
 .response-content.expanded {
   max-height: none;
-}
-
-.response-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3rem;
-  background: linear-gradient(transparent, var(--bg-card));
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.response-content.expanded .response-fade {
-  opacity: 0;
-}
-
-.toggle-expand {
-  display: inline-block;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--primary);
-  cursor: pointer;
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-.toggle-expand:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════════
@@ -650,6 +617,7 @@ textarea {
     opacity: 0;
     transform: translateY(-20px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -771,6 +739,7 @@ textarea {
     opacity: 0;
     transform: translateX(40px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);

@@ -362,7 +362,7 @@ export default function ClientPanelLayout({
             {children}
             {/* Footer */}
             {pathname !== "/panel-klienta/wiadomosci" && (
-              <div className="mt-12 pb-4" id="client-footer">
+              <div className="mt-12 pb-4 none hidden" id="client-footer">
                 {/* Partners banner */}
                 <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
                   <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>

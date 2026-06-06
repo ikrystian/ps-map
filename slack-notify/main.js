@@ -38,6 +38,44 @@ function toggleExpand(id) {
 
 // ── Wysyłka ──────────────────────────────────────────────────────────────────
 
+function checkAndHideButtons(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (!row) return;
+
+    const slackBadge = document.getElementById(`badge-status-slack-${id}`);
+    const trelloBadge = document.getElementById(`badge-status-trello-${id}`);
+    if (!slackBadge || !trelloBadge) return;
+
+    const isSlackSent = slackBadge.classList.contains('badge-sent');
+    const isTrelloSent = trelloBadge.classList.contains('badge-sent');
+
+    if (isSlackSent) {
+        const slackBtn = document.getElementById(`btn-slack-${id}`);
+        if (slackBtn) slackBtn.style.display = 'none';
+    }
+    if (isTrelloSent) {
+        const trelloBtn = document.getElementById(`btn-trello-${id}`);
+        if (trelloBtn) trelloBtn.style.display = 'none';
+    }
+
+    if (isSlackSent && isTrelloSent) {
+        const editBtn = document.getElementById(`btn-edit-${id}`);
+        if (editBtn) editBtn.style.display = 'none';
+
+        const schedTime = document.getElementById(`schedule-time-${id}`);
+        if (schedTime) schedTime.style.display = 'none';
+
+        const schedBtn = document.getElementById(`btn-sched-${id}`);
+        if (schedBtn) schedBtn.style.display = 'none';
+
+        const schedForm = schedTime ? schedTime.closest('.schedule-form') : null;
+        if (schedForm) schedForm.style.display = 'none';
+
+        const allBtn = document.getElementById(`btn-all-${id}`);
+        if (allBtn) allBtn.style.display = 'none';
+    }
+}
+
 async function sendSlack(id) {
     const btn = document.getElementById(`btn-slack-${id}`);
     const restore = setBtnLoading(btn);
@@ -46,6 +84,7 @@ async function sendSlack(id) {
         if (data.ok) {
             showToast('Wiadomość została wysłana na Slacka!', 'success');
             updateSlackUI(id, 'sent', formatDateTime(new Date()));
+            checkAndHideButtons(id);
         } else {
             showToast(`Błąd: ${data.error}`, 'error');
             updateBadge(`badge-status-slack-${id}`, 'error', 'Slack: Błąd');
@@ -62,6 +101,7 @@ async function sendTrello(id) {
         if (data.ok) {
             showToast('Zadanie zostało wysłane do Trello!', 'success');
             updateTrelloUI(id, 'sent', formatDateTime(new Date()));
+            checkAndHideButtons(id);
         } else {
             showToast(`Błąd: ${data.error}`, 'error');
             updateBadge(`badge-status-trello-${id}`, 'error', 'Trello: Błąd');
@@ -80,6 +120,7 @@ async function sendAll(id) {
             const now = formatDateTime(new Date());
             updateSlackUI(id, 'sent', now);
             updateTrelloUI(id, 'sent', now);
+            checkAndHideButtons(id);
         } else {
             showToast(`Błąd: ${data.error}`, 'error');
             setTimeout(() => location.reload(), 2000);
@@ -369,3 +410,10 @@ function setupInputActivityListeners() {
 
 setupInputActivityListeners();
 startAutoRefresh();
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('tr[id^="row-"]').forEach(row => {
+        const id = row.id.replace('row-', '');
+        checkAndHideButtons(id);
+    });
+});
