@@ -165,7 +165,7 @@ function buildAiPrompt(string $systemRole, string $slackPrompt, string $trelloPr
     . "1. \"slack\": {$slackPrompt}\n"
     . "2. \"trello\": Obiekt zawierający:\n"
     . "   - \"name\": {$trelloPrompt}\n"
-    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 itp - interwał co 30min).\n"
+    . "   - \"time\": Szacowana liczba minut, jaką mogło zająć wykonanie tego zadania/wdrożenia (zwróć wyłącznie liczbę całkowitą reprezentującą minuty, np. 30 lub 60, 90 itp - interwał co 30min). Wez pod uwage prace taka jak kodowanie + konsultacje + testy\n"
     . "   - \"description\": Szczegółowy opis zadania Trello w języku polskim, opisujący co dokładnie należy zrobić. Nietechnicznym językiem. \n\n"
     . "Odpowiedz WYŁĄCZNIE poprawnym obiektem JSON w formacie:\n"
     . "{\n"
@@ -198,7 +198,7 @@ function getAiSummary(array $payload): string
 
   $prompt = buildAiPrompt(
     "Jesteś asystentem programisty. Przeanalizuj poniższe commity z wdrożenia (builda).",
-    "Krótkie podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz zwięźle, w punktach, używając emoji. Formatuj tekst przy użyciu markdown obsługiwanego przez Slack (np. pogrubienia *tekst*, kod `tekst` itp.).",
+    "Krótkie podsumowanie ostatniego buildu na podstawie commitów. Napisz co zostało zmienione i jaki jest cel zmian. Odpowiedz zwięźle, w punktach, używając emoji. ",
     "Treść zadania (nazwa zadania), które Twoim zdaniem powinno zostać utworzone, aby dany commit/grupa commitów była zgodna z jego treścią. Powinna być profesjonalna, zadanie ma być dobrze opisane i zawierać wszystkie informacje potrzebne do jego wykonania. Nietechnicznym językiem. 200-500 znaków",
     $commitsStr
   );
@@ -256,7 +256,7 @@ function getAiResponseForPost(string $description, string $url = ''): string
   $dataInput = ($url ? "Adres URL: " . $url . "\n" : "") . "Opis zgłoszenia:\n" . $description;
   $prompt = buildAiPrompt(
     "Jesteś pomocnym asystentem. Otrzymałeś opis wdrożenia lub zgłoszenie z formularza. Przeanalizuj poniższe informacje.",
-    "Poprawiony opis wdrożenia tak, aby był profesjonalny, czytelny, zwięzły, podzielony na punkty i zawierał odpowiednie emoji. Formatuj tekst przy użyciu markdown obsługiwanego przez Slack (np. pogrubienia *tekst*, kod `tekst` itp.).",
+    "Poprawiony opis wdrożenia tak, aby był profesjonalny, czytelny, zwięzły, podzielony na punkty i zawierał odpowiednie emoji. ",
     "Treść zadania (nazwa zadania), które powinno zostać utworzone na podstawie tego opisu. Nietechnicznym językiem.",
     $dataInput
   );
@@ -310,7 +310,7 @@ function getAiResponseForSlackResponse(array $payload): string
 
   $prompt = buildAiPrompt(
     "Jesteś pomocnym asystentem. Otrzymałeś dane w formacie JSON opisujące wdrożenie lub odpowiedź ze Slacka. Przeanalizuj te dane.",
-    "Profesjonalne, czytelne i estetyczne podsumowanie w języku polskim. Powinno być zwięzłe, podzielone na punkty i zawierać emoji. Formatuj tekst przy użyciu markdown obsługiwanego przez Slack (np. pogrubienia *tekst*, kod `tekst` itp.).",
+    "Profesjonalne, czytelne i estetyczne podsumowanie w języku polskim. Powinno być zwięzłe, podzielone na punkty i zawierać emoji. Formatuj tekst przy użyciu markdown obsługiwanego przez Slack (np. pogrubienia *tekst* pogrubienie ma jedna gwiazdke * a nie dwie **, kod `tekst` itp.).",
     "Treść zadania (nazwa zadania), które powinno zostać utworzone na podstawie tych danych.",
     $jsonStr
   );
