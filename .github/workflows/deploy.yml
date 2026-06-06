@@ -13,37 +13,87 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Generate commits payload
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_COMMITS: ${{ toJson(github.event.commits) }}
         run: |
-          echo "Creating commits.json..."
+          echo "Creating commits.json with git diff information..."
+          python3 -c '
+          import json, os, subprocess
+          
+          def run_git(cmd):
+              try:
+                  return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
+              except Exception:
+                  return ""
 
-          jq -n \
-            --arg repository "${{ github.repository }}" \
-            --arg pusher "${{ github.actor }}" \
-            --arg ref "${{ github.ref_name }}" \
-            --arg before "${{ github.event.before }}" \
-            --arg after "${{ github.sha }}" \
-            --argjson commits '${{ toJson(github.event.commits) }}' \
-            '{
-              repository: $repository,
-              branch: $ref,
-              pusher: $pusher,
-              before: $before,
-              after: $after,
-              commits: (
-                $commits | map({
-                  id: .id,
-                  message: .message,
-                  author: .author.name,
-                  timestamp: .timestamp,
-                  added: (.added // []),
-                  modified: (.modified // []),
-                  removed: (.removed // [])
-                })
-              )
-            }' > commits.json
+          before = os.environ.get("GITHUB_EVENT_BEFORE", "")
+          after = os.environ.get("GITHUB_SHA", "")
+          
+          diff_base = before
+          if not diff_base or diff_base == "0000000000000000000000000000000000000000":
+              diff_base = "HEAD~1"
+              
+          if diff_base != "HEAD~1":
+              if run_git(f"git rev-parse --verify {diff_base}").strip() == "":
+                  diff_base = "HEAD~1"
+                  
+          if run_git(f"git rev-parse --verify {diff_base}").strip() == "":
+              diff_base = run_git("git hash-object -t tree /dev/null").strip() or "4b825dc642cb6eb9a0ffaa2e54d2897fd356c834"
 
+          global_diff = run_git(f"git diff {diff_base} {after}")
+
+          commits_raw = os.environ.get("GITHUB_COMMITS", "[]")
+          try:
+              commits = json.loads(commits_raw)
+          except Exception:
+              commits = []
+
+          formatted_commits = []
+          for c in commits:
+              commit_id = c.get("id")
+              commit_diff = ""
+              if commit_id:
+                  if run_git(f"git rev-parse --verify {commit_id}").strip() != "":
+                      parent_exists = run_git(f"git rev-parse --verify {commit_id}~1").strip() != ""
+                      if parent_exists:
+                          commit_diff = run_git(f"git diff {commit_id}~1 {commit_id}")
+                      else:
+                          empty_tree = run_git("git hash-object -t tree /dev/null").strip() or "4b825dc642cb6eb9a0ffaa2e54d2897fd356c834"
+                          commit_diff = run_git(f"git diff {empty_tree} {commit_id}")
+                          
+              formatted_commits.append({
+                  "id": c.get("id"),
+                  "message": c.get("message"),
+                  "author": c.get("author", {}).get("name") if isinstance(c.get("author"), dict) else c.get("author"),
+                  "timestamp": c.get("timestamp"),
+                  "added": c.get("added", []),
+                  "modified": c.get("modified", []),
+                  "removed": c.get("removed", []),
+                  "diff": commit_diff
+              })
+
+          payload = {
+              "repository": os.environ.get("GITHUB_REPOSITORY", ""),
+              "branch": os.environ.get("GITHUB_REF_NAME", ""),
+              "pusher": os.environ.get("GITHUB_ACTOR", ""),
+              "before": before,
+              "after": after,
+              "diff": global_diff,
+              "commits": formatted_commits
+          }
+
+          with open("commits.json", "w") as f:
+              json.dump(payload, f, indent=2)
+          '
           cat commits.json
           
       - name: Send webhook with commits
