@@ -39,10 +39,10 @@ export function OfficeHoursCard({
 }: OfficeHoursCardProps) {
   return (
     <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-      <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+      <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
       <CardHeader className="border-b border-border/10 pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+          <div className="bg-primary/10 p-2 rounded-xl text-primary">
             <Building className="h-5 w-5" />
           </div>
           <div>

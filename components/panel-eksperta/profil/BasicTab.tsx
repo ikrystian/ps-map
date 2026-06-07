@@ -63,10 +63,10 @@ export function BasicTab({
       <div className="lg:col-span-7 space-y-6">
         {/* Dane podstawowe */}
         <Card id="tour-profil-basic" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-          <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <User className="h-5 w-5" />
               </div>
               <div>
@@ -89,7 +89,7 @@ export function BasicTab({
                       value={formData.nazwa}
                       onChange={(e) => handleInputChange("nazwa", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -105,7 +105,7 @@ export function BasicTab({
                       value={formData.nazwaFirmy}
                       onChange={(e) => handleInputChange("nazwaFirmy", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192] focus:ring-[#0da192]"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -130,10 +130,10 @@ export function BasicTab({
       <div className="lg:col-span-5 space-y-6">
         {/* Logo i zdjęcia główne */}
         <Card id="tour-profil-logo" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-          <BorderBeam lightColor="#0da192" lightWidth={400} duration={9} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={9} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <ImageIcon className="h-5 w-5" />
               </div>
               <div>
@@ -173,12 +173,12 @@ export function BasicTab({
                       >
                         {isUploading ? (
                           <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                             Przesyłanie...
                           </>
                         ) : (
                           <>
-                            <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                            <Upload className="mr-2 h-4 w-4 text-primary" />
                             Zmień logo
                           </>
                         )}
@@ -207,19 +207,19 @@ export function BasicTab({
                   <div>
                     <label
                       htmlFor="logo-upload"
-                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
+                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                         {isUploading ? (
                           <>
-                            <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
+                            <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
                             <p className="text-sm text-zinc-400">Przesyłanie...</p>
                           </>
                         ) : (
                           <>
                             <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
                             <p className="mb-1 text-sm text-zinc-300">
-                              <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span>
+                              <span className="font-semibold text-primary">Kliknij aby przesłać</span>
                             </p>
                             <p className="text-xs text-zinc-500">
                               PNG, JPG, WEBP (max 5MB)
@@ -266,12 +266,12 @@ export function BasicTab({
                       >
                         {isUploading ? (
                           <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                             Przesyłanie...
                           </>
                         ) : (
                           <>
-                            <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                            <Upload className="mr-2 h-4 w-4 text-primary" />
                             Zmień zdjęcie
                           </>
                         )}
@@ -300,19 +300,19 @@ export function BasicTab({
                   <div>
                     <label
                       htmlFor="main-image-upload"
-                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-[#0da192]/40 transition-colors"
+                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                         {isUploading ? (
                           <>
-                            <Loader2 className="h-10 w-10 mb-3 text-[#0da192] animate-spin" />
+                            <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
                             <p className="text-sm text-zinc-400">Przesyłanie...</p>
                           </>
                         ) : (
                           <>
                             <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
                             <p className="mb-1 text-sm text-zinc-300">
-                              <span className="font-semibold text-[#0da192]">Kliknij aby przesłać</span> banner
+                              <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
                             </p>
                             <p className="text-xs text-zinc-500">
                               PNG, JPG, WEBP (max 5MB)
@@ -339,10 +339,10 @@ export function BasicTab({
 
         {/* Wpisy do rejestrów */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-          <BorderBeam lightColor="#d7b56d" lightWidth={400} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--secondary)" lightWidth={400} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
@@ -366,7 +366,7 @@ export function BasicTab({
                       Radca Prawny (OIRP)
                     </Label>
                   </div>
-                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oirpStatus ? "bg-[#0da192] shadow-[0_0_8px_#0da192]" : "bg-zinc-800"}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oirpStatus ? "bg-primary shadow-[0_0_8px_var(--primary)]" : "bg-zinc-800"}`} />
                 </div>
 
                 {formData.oirpStatus ? (
@@ -382,7 +382,7 @@ export function BasicTab({
                           placeholder="np. Warszawa"
                           value={formData.oirpMiasto}
                           onChange={(e) => handleInputChange("oirpMiasto", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
                         />
                       </div>
                     </div>
@@ -397,7 +397,7 @@ export function BasicTab({
                           placeholder="np. WA-12345"
                           value={formData.oirpWpis}
                           onChange={(e) => handleInputChange("oirpWpis", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
                         />
                       </div>
                     </div>
@@ -420,7 +420,7 @@ export function BasicTab({
                       Adwokat (ORA)
                     </Label>
                   </div>
-                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oraStatus ? "bg-[#d7b56d] shadow-[0_0_8px_#d7b56d]" : "bg-zinc-800"}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oraStatus ? "bg-secondary shadow-[0_0_8px_var(--secondary)]" : "bg-zinc-800"}`} />
                 </div>
 
                 {formData.oraStatus ? (
@@ -436,7 +436,7 @@ export function BasicTab({
                           placeholder="np. Kraków"
                           value={formData.oraMiasto}
                           onChange={(e) => handleInputChange("oraMiasto", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
+                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-secondary"
                         />
                       </div>
                     </div>
@@ -451,7 +451,7 @@ export function BasicTab({
                           placeholder="np. KRA/Adw/1234"
                           value={formData.oraWpis}
                           onChange={(e) => handleInputChange("oraWpis", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#d7b56d]"
+                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-secondary"
                         />
                       </div>
                     </div>

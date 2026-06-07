@@ -195,14 +195,14 @@ export function PromotionSuccessDialog({
                           <div className="mt-1 px-3 py-2 bg-[#20201d]/60 border border-[#3e3e38] rounded-lg inline-flex items-center gap-1.5">
                             <span className="font-semibold text-white">Okres ważności:</span>
                             {isMonthly ? (
-                              <span className="text-[#0da192] font-semibold">
+                              <span className="text-primary font-semibold">
                                 {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
                                   "pl-PL",
                                   { month: "long", year: "numeric" }
                                 )}
                               </span>
                             ) : (
-                              <span className="text-[#0da192] font-semibold">
+                              <span className="text-primary font-semibold">
                                 {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
                                   "pl-PL"
                                 )}{" "}

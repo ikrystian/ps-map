@@ -465,8 +465,8 @@ export default function LawFirmPromotionPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -483,7 +483,7 @@ export default function LawFirmPromotionPage() {
             <Button
               variant="outline"
               onClick={() => setHistoryDialogOpen(true)}
-              className="bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
+              className="bg-zinc-800/60 border-border/60 text-white hover:bg-zinc-700/50 hover:text-white transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
             >
               <Clock className="h-4 w-4 text-muted-foreground" />
               Historia zakupów
@@ -494,7 +494,8 @@ export default function LawFirmPromotionPage() {
                 const element = document.getElementById("tour-promo-types")
                 element?.scrollIntoView({ behavior: "smooth" })
               }}
-              className="bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium px-6 h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 gap-2 text-sm border-t border-white/10"
+              variant="primary"
+              className="font-medium px-6 h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200 gap-2 text-sm border-t border-white/10"
             >
               <Plus className="h-4 w-4" />
               Nowa promocja

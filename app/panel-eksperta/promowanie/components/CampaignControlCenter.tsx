@@ -53,7 +53,7 @@ export function CampaignControlCenter({
     <div id="tour-promo-list" className="space-y-6 relative z-10">
       <div className="space-y-1">
         <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-[#0da192]" />
+          <TrendingUp className="h-5 w-5 text-primary" />
           Panel Kontrolny Kampanii
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -65,19 +65,19 @@ export function CampaignControlCenter({
         <TabsList className="grid w-full grid-cols-3 bg-[#20201d]/60 border border-[#3e3e38] rounded-xl p-1 max-w-md">
           <TabsTrigger
             value="active"
-            className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
+            className="rounded-lg text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-white transition-all py-2"
           >
             Aktywne ({activePromotions.length})
           </TabsTrigger>
           <TabsTrigger
             value="upcoming"
-            className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
+            className="rounded-lg text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-white transition-all py-2"
           >
             Zaplanowane ({upcomingPromotions.length})
           </TabsTrigger>
           <TabsTrigger
             value="past"
-            className="rounded-lg text-xs font-semibold data-[state=active]:bg-[#0da192] data-[state=active]:text-white transition-all py-2"
+            className="rounded-lg text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-white transition-all py-2"
           >
             Archiwalne ({pastPromotions.length})
           </TabsTrigger>
@@ -126,7 +126,7 @@ export function CampaignControlCenter({
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
-                        <TableCell className="text-right font-semibold text-sm text-[#d7b56d] py-4">
+                        <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
                         <TableCell className="py-4">{getPromotionStatusBadge(promo)}</TableCell>
@@ -191,7 +191,7 @@ export function CampaignControlCenter({
                     </div>
 
                     <div className="flex justify-between items-center pt-1">
-                      <span className="text-xs font-semibold text-[#d7b56d] flex items-center gap-1">
+                      <span className="text-xs font-semibold text-secondary flex items-center gap-1">
                         <Coins className="h-3.5 w-3.5" />
                         {promo.kosztPunktow} pkt
                       </span>
@@ -273,7 +273,7 @@ export function CampaignControlCenter({
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
-                        <TableCell className="text-right font-semibold text-sm text-[#d7b56d] py-4">
+                        <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
                         <TableCell className="py-4">{getPromotionStatusBadge(promo)}</TableCell>
@@ -338,7 +338,7 @@ export function CampaignControlCenter({
                     </div>
 
                     <div className="flex justify-between items-center pt-1">
-                      <span className="text-xs font-semibold text-[#d7b56d] flex items-center gap-1">
+                      <span className="text-xs font-semibold text-secondary flex items-center gap-1">
                         <Coins className="h-3.5 w-3.5" />
                         {promo.kosztPunktow} pkt
                       </span>
@@ -419,7 +419,7 @@ export function CampaignControlCenter({
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
-                        <TableCell className="text-right font-semibold text-sm text-[#d7b56d] py-4">
+                        <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
                         <TableCell className="py-4">{getPromotionStatusBadge(promo)}</TableCell>
