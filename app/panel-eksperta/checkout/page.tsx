@@ -357,7 +357,7 @@ export default function CheckoutPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Inicjowanie zamówienia...</p>
         </div>
       </div>
@@ -378,8 +378,8 @@ export default function CheckoutPage() {
   return (
     <div className="relative space-y-8 min-h-screen overflow-hidden pb-12">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -393,7 +393,7 @@ export default function CheckoutPage() {
             variant="outline"
             size="icon"
             onClick={() => router.push(orderData.type === "PACKAGE" ? "/panel-eksperta/ustawienia" : "/panel-eksperta/punkty")}
-            className="bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white rounded-xl transition-all"
+            className="bg-zinc-800/60 border-border/60 text-white hover:bg-zinc-700/50 hover:text-white rounded-xl transition-all"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -411,7 +411,7 @@ export default function CheckoutPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="relative z-10"
         >
-          <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl">
+          <Card variant="glass" className="border-rose-500/30 bg-rose-500/5 rounded-2xl">
             <CardContent className="flex items-start gap-3 pt-6 text-rose-400">
               <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
               <div className="space-y-1">
@@ -432,10 +432,10 @@ export default function CheckoutPage() {
         {/* Główna kolumna - Metoda płatności */}
         <div className="lg:col-span-2 space-y-6">
           {/* Metoda płatności */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl">
             <CardHeader className="border-b border-border/20 py-5 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-[#0da192]" />
+                <CreditCard className="h-5 w-5 text-primary" />
                 Metoda płatności
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs font-light">
@@ -449,14 +449,14 @@ export default function CheckoutPage() {
                     {isTestEnabled && (
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "TEST"
-                          ? "border-[#0da192] bg-[#0da192]/10"
+                          ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="TEST" id="test" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
+                        <RadioGroupItem value="TEST" id="test" className="border-zinc-700 text-primary focus:ring-primary" />
                         <Label htmlFor="test" className="flex-1 cursor-pointer">
                           <div className="font-semibold text-white flex items-center gap-2 text-sm">
                             Płatność Testowa
-                            <span className="text-[10px] bg-[#0da192]/20 text-[#0da192] border border-[#0da192]/30 px-2 py-0.5 rounded-full font-mono font-medium uppercase tracking-wider">
+                            <span className="text-[10px] bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded-full font-mono font-medium uppercase tracking-wider">
                               Auto-akceptacja
                             </span>
                           </div>
@@ -470,10 +470,10 @@ export default function CheckoutPage() {
                     {isP24Enabled && (
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PRZELEWY24"
-                          ? "border-[#0da192] bg-[#0da192]/10"
+                          ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
+                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-primary focus:ring-primary" />
                         <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
                           <div className="font-semibold text-white text-sm">Przelewy24</div>
                           <div className="text-xs text-zinc-400 font-light mt-0.5">
@@ -486,10 +486,10 @@ export default function CheckoutPage() {
                     {isTpayEnabled && (
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "TPAY"
-                          ? "border-[#0da192] bg-[#0da192]/10"
+                          ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="TPAY" id="tpay" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
+                        <RadioGroupItem value="TPAY" id="tpay" className="border-zinc-700 text-primary focus:ring-primary" />
                         <Label htmlFor="tpay" className="flex-1 cursor-pointer">
                           <div className="font-semibold text-white text-sm">Tpay</div>
                           <div className="text-xs text-zinc-400 font-light mt-0.5">
@@ -502,10 +502,10 @@ export default function CheckoutPage() {
                     {isPayUEnabled && (
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PAYU"
-                          ? "border-[#0da192] bg-[#0da192]/10"
+                          ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="PAYU" id="payu" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
+                        <RadioGroupItem value="PAYU" id="payu" className="border-zinc-700 text-primary focus:ring-primary" />
                         <Label htmlFor="payu" className="flex-1 cursor-pointer">
                           <div className="font-semibold text-white text-sm">PayU</div>
                           <div className="text-xs text-zinc-400 font-light mt-0.5">
@@ -518,10 +518,10 @@ export default function CheckoutPage() {
                     {isPrzelewEnabled && (
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PRZELEW"
-                          ? "border-[#0da192] bg-[#0da192]/10"
+                          ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="PRZELEW" id="przelew" className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]" />
+                        <RadioGroupItem value="PRZELEW" id="przelew" className="border-zinc-700 text-primary focus:ring-primary" />
                         <Label htmlFor="przelew" className="flex-1 cursor-pointer">
                           <div className="font-semibold text-white text-sm">Przelew tradycyjny</div>
                           <div className="text-xs text-zinc-400 font-light mt-0.5">
@@ -551,24 +551,24 @@ export default function CheckoutPage() {
         <div className="space-y-6">
           {/* Aktualny stan punktów */}
           {lawFirm && (
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <Card variant="glass" className="rounded-2xl">
               <CardHeader className="pb-3 pt-5 px-6">
                 <CardTitle className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Aktualny stan</CardTitle>
               </CardHeader>
               <CardContent className="px-6 pb-5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-zinc-400 font-light">Twój bilans:</span>
-                  <span className="font-bold text-[#0da192]">{lawFirm.punktySaldo} pkt</span>
+                  <span className="font-bold text-primary">{lawFirm.punktySaldo} pkt</span>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Podsumowanie płatności */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl">
             <CardHeader className="pb-3 pt-5 px-6 border-b border-border/20">
               <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4 text-[#0da192]" />
+                <ShoppingCart className="h-4 w-4 text-primary" />
                 Podsumowanie
               </CardTitle>
             </CardHeader>
@@ -596,7 +596,7 @@ export default function CheckoutPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-white">Do zapłaty:</span>
-                    <span className="text-2xl font-bold text-[#0da192] font-playfair">
+                    <span className="text-2xl font-bold text-primary font-playfair">
                       {formatCurrency(orderData.price || 0)}
                     </span>
                   </div>
@@ -626,7 +626,7 @@ export default function CheckoutPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-white">Do zapłaty:</span>
-                    <span className="text-2xl font-bold text-[#0da192] font-playfair">
+                    <span className="text-2xl font-bold text-primary font-playfair">
                       {formatCurrency(orderData.kwota || 0)}
                     </span>
                   </div>
@@ -639,15 +639,15 @@ export default function CheckoutPage() {
                     id="terms"
                     checked={termsAccepted}
                     onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-                    className="border-zinc-700 text-[#0da192] focus:ring-[#0da192]"
+                    className="border-zinc-700 text-primary focus:ring-primary"
                   />
                   <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight text-zinc-400 font-light">
                     Akceptuję{" "}
-                    <a href="/regulamin" target="_blank" className="underline text-[#0da192] hover:text-[#0a8276] transition-colors">
+                    <a href="/regulamin" target="_blank" className="underline text-primary hover:text-primary-hover transition-colors">
                       regulamin
                     </a>
                     {" "}i{" "}
-                    <a href="/polityka-prywatnosci" target="_blank" className="underline text-[#0da192] hover:text-[#0a8276] transition-colors">
+                    <a href="/polityka-prywatnosci" target="_blank" className="underline text-primary hover:text-primary-hover transition-colors">
                       politykę prywatności
                     </a>
                     {" "}*
@@ -655,7 +655,8 @@ export default function CheckoutPage() {
                 </div>
 
                 <Button
-                  className="w-full bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 border-t border-white/10"
+                  variant="primary"
+                  className="w-full font-medium h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200 border-t border-white/10"
                   size="lg"
                   onClick={handleSubmitOrder}
                   disabled={submitting || !termsAccepted || !anyPaymentMethodEnabled}

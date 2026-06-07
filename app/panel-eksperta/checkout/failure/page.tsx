@@ -35,9 +35,9 @@ export default function CheckoutFailurePage() {
         className="space-y-6 relative z-10"
       >
         {/* Status płatności */}
-        <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg">
+        <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl overflow-hidden shadow-lg">
           <CardContent className="pt-10 pb-8 flex flex-col items-center text-center space-y-4">
-            <div className="p-4 bg-rose-500/10 rounded-full border border-rose-500/20 text-rose-400">
+            <div className="p-4 bg-error/10 rounded-full border border-error/20 text-error">
               <XCircle className="h-12 w-12" />
             </div>
             <div>
@@ -50,10 +50,10 @@ export default function CheckoutFailurePage() {
         </Card>
 
         {/* Informacje */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+        <Card variant="glass" className="rounded-2xl shadow-lg">
           <CardContent className="pt-6 pb-6">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-[#d7b56d] mt-0.5 shrink-0" />
+              <AlertCircle className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
               <div className="space-y-2 text-sm">
                 <p className="font-semibold text-white">Co dalej?</p>
                 <ul className="list-disc list-inside space-y-1 text-zinc-400 font-light">
@@ -71,14 +71,15 @@ export default function CheckoutFailurePage() {
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Button
             variant="outline"
-            className="flex-1 bg-[#20201d]/60 border-[#3e3e38] text-[#f5f4ee] hover:bg-[#363431] hover:text-white rounded-xl transition-all h-11 text-sm font-medium"
+            className="flex-1 rounded-xl transition-all h-11 text-sm font-medium"
             onClick={() => router.push("/panel-eksperta/punkty")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Spróbuj ponownie
           </Button>
           <Button
-            className="flex-1 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium h-11 rounded-xl shadow-lg shadow-[#0da192]/15 hover:shadow-[#0da192]/25 transition-all duration-200 border-t border-white/10"
+            variant="primary"
+            className="flex-1 font-medium h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200"
             onClick={() => router.push("/panel-eksperta")}
           >
             <Home className="h-4 w-4 mr-2" />

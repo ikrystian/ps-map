@@ -297,7 +297,7 @@ export default function LawFirmPanelLayout({
                   "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
                   isActive
                     ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "bg-[#0da192]/15 text-[#0da192] border border-[#0da192]/30 dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/50",
+                    : "bg-primary/15 text-primary border border-primary/30 dark:bg-background-sec/60 dark:text-muted-foreground dark:border-border/30",
                   !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
                 )}>
                   {count}
@@ -441,7 +441,7 @@ export default function LawFirmPanelLayout({
     <div className="flex h-screen bg-background-sec">
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
-        "hidden md:block border-border transition-all duration-300 ease-in-out",
+        "hidden md:block border-border transition-all duration-300 ease-in-out bg-card",
         isCollapsed ? "" : "w-72",
         getBorderColorClass(subscriptionType)
       )}>

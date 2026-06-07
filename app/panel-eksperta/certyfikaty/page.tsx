@@ -137,7 +137,7 @@ export default function LawFirmCertificatesPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie uprawnień i certyfikatów...</p>
         </div>
       </div>
@@ -147,8 +147,8 @@ export default function LawFirmCertificatesPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -161,7 +161,7 @@ export default function LawFirmCertificatesPage() {
           title="Certyfikaty i uprawnienia"
           subtitle="Zarządzaj swoimi certyfikatami, licencjami zawodowymi oraz osiągnięciami w jednym miejscu."
         >
-          <Button asChild className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+          <Button asChild variant="primary" className="h-11 px-6 rounded-xl shadow-md border-t border-white/10 group gap-2">
             <Link href="/panel-eksperta/certyfikaty/dodaj">
               <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
               Dodaj certyfikat
@@ -179,8 +179,8 @@ export default function LawFirmCertificatesPage() {
         className="relative z-10"
       >
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+            <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white">Lista certyfikatów</CardTitle>
               <CardDescription className="text-zinc-400 text-xs">
@@ -228,7 +228,7 @@ export default function LawFirmCertificatesPage() {
                             <TableRow key={certificate.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
                               <TableCell className="py-4 px-6 font-semibold text-white">
                                 <div className="flex items-center gap-2.5">
-                                  <Award className="h-4.5 w-4.5 text-[#d7b56d]" />
+                                  <Award className="h-4.5 w-4.5 text-secondary" />
                                   <span>{certificate.nazwaCertyfikatu}</span>
                                 </div>
                               </TableCell>
@@ -242,8 +242,8 @@ export default function LawFirmCertificatesPage() {
                               <TableCell className="py-4 px-6 text-xs font-light text-zinc-400">
                                 {certificate.dataWaznosci ? (
                                   <div className="flex items-center gap-1.5">
-                                    <Clock className={cn("h-3.5 w-3.5", expired ? "text-rose-400" : "text-zinc-500")} />
-                                    <span className={cn(expired ? "text-rose-400 font-medium" : "")}>
+                                    <Clock className={cn("h-3.5 w-3.5", expired ? "text-error" : "text-zinc-500")} />
+                                    <span className={cn(expired ? "text-error font-medium" : "")}>
                                       {formatDate(certificate.dataWaznosci)}
                                     </span>
                                   </div>
@@ -253,9 +253,9 @@ export default function LawFirmCertificatesPage() {
                               </TableCell>
                               <TableCell className="py-4 px-6">
                                 {certificate.dataWaznosci && expired ? (
-                                  <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-md font-medium">Wygasł</Badge>
+                                  <Badge className="bg-error/10 text-error border border-error/30 px-2 py-0.5 rounded-md font-medium">Wygasł</Badge>
                                 ) : (
-                                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-medium">Aktywny</Badge>
+                                  <Badge className="bg-success/10 text-success border border-success/30 px-2 py-0.5 rounded-md font-medium">Aktywny</Badge>
                                 )}
                               </TableCell>
                               <TableCell className="py-4 px-6 text-right">
@@ -264,7 +264,7 @@ export default function LawFirmCertificatesPage() {
                                     variant="outline"
                                     size="icon"
                                     asChild
-                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-blue-400 hover:bg-blue-500/5 hover:border-blue-500/30 transition-all shrink-0"
+                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-info hover:bg-info/5 hover:border-info/30 transition-all shrink-0"
                                     title="Pobierz plik certyfikatu"
                                   >
                                     <a href={certificate.skanCertyfikatu} target="_blank" rel="noopener noreferrer">
@@ -275,7 +275,7 @@ export default function LawFirmCertificatesPage() {
                                     variant="outline"
                                     size="icon"
                                     asChild
-                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
+                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                     title="Edytuj certyfikat"
                                   >
                                     <Link href={`/panel-eksperta/certyfikaty/${certificate.id}`}>
@@ -286,7 +286,7 @@ export default function LawFirmCertificatesPage() {
                                     variant="outline"
                                     size="icon"
                                     onClick={() => openDeleteDialog(certificate)}
-                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
+                                    className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-error hover:bg-error/5 hover:border-error/30 transition-all shrink-0"
                                     title="Usuń certyfikat"
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -303,21 +303,21 @@ export default function LawFirmCertificatesPage() {
                   {/* Mobile Card List View */}
                   <div className="block md:hidden p-4 space-y-3">
                     {certificates.map((certificate) => {
-                      const expired = isExpired(certificate.dataWaznosci)
+                       const expired = isExpired(certificate.dataWaznosci)
                       return (
-                        <div key={certificate.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-[#0da192]/30 transition-all">
+                        <div key={certificate.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-primary/30 transition-all">
                           <div className="flex justify-between items-start gap-2">
                             <div className="min-w-0">
                               <h4 className="font-semibold text-white text-sm truncate flex items-center gap-1.5">
-                                <Award className="h-4 w-4 text-[#d7b56d] shrink-0" />
+                                <Award className="h-4 w-4 text-secondary shrink-0" />
                                 {certificate.nazwaCertyfikatu}
                               </h4>
                               <p className="text-sm text-zinc-500 font-light mt-0.5">{certificate.wydawca}</p>
                             </div>
                             {certificate.dataWaznosci && expired ? (
-                              <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 shrink-0">Wygasł</Badge>
+                              <Badge className="bg-error/10 text-error border border-error/30 shrink-0">Wygasł</Badge>
                             ) : (
-                              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">Aktywny</Badge>
+                              <Badge className="bg-success/10 text-success border border-success/30 shrink-0">Aktywny</Badge>
                             )}
                           </div>
 
@@ -328,7 +328,7 @@ export default function LawFirmCertificatesPage() {
                             </div>
                             <div className="text-right">
                               <span className="text-zinc-500 block font-light">Ważność</span>
-                              <span className={cn("font-medium", expired ? "text-rose-400" : "text-zinc-300")}>
+                              <span className={cn("font-medium", expired ? "text-error" : "text-zinc-300")}>
                                 {certificate.dataWaznosci ? formatDate(certificate.dataWaznosci) : "Bezterminowy"}
                               </span>
                             </div>
@@ -339,7 +339,7 @@ export default function LawFirmCertificatesPage() {
                               variant="outline"
                               size="sm"
                               asChild
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-blue-400 hover:bg-blue-500/5 hover:border-blue-500/30 gap-1.5 text-sm"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-info hover:bg-info/5 hover:border-info/30 gap-1.5 text-sm"
                             >
                               <a href={certificate.skanCertyfikatu} target="_blank" rel="noopener noreferrer">
                                 <Download className="h-3.5 w-3.5" />
@@ -350,7 +350,7 @@ export default function LawFirmCertificatesPage() {
                               variant="outline"
                               size="sm"
                               asChild
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-sm"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1.5 text-sm"
                             >
                               <Link href={`/panel-eksperta/certyfikaty/${certificate.id}`}>
                                 <Edit className="h-3.5 w-3.5" />
@@ -361,7 +361,7 @@ export default function LawFirmCertificatesPage() {
                               variant="outline"
                               size="icon"
                               onClick={() => openDeleteDialog(certificate)}
-                              className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
+                              className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-error hover:bg-error/5 hover:border-error/30 transition-all shrink-0"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>

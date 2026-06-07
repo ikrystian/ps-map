@@ -180,7 +180,7 @@ export default function LawFirmEditCertificatePage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie danych certyfikatu...</p>
         </div>
       </div>
@@ -190,8 +190,8 @@ export default function LawFirmEditCertificatePage() {
   return (
     <div className="relative space-y-8 min-h-screen overflow-hidden pb-12">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -221,11 +221,11 @@ export default function LawFirmEditCertificatePage() {
         className="z-10 relative"
       >
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+            <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/20 py-5 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <Award className="h-5 w-5 text-[#0da192]" />
+                <Award className="h-5 w-5 text-primary" />
                 Dane certyfikatu
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs">
@@ -246,7 +246,7 @@ export default function LawFirmEditCertificatePage() {
                       value={formData.nazwaCertyfikatu}
                       onChange={(e) => handleInputChange("nazwaCertyfikatu", e.target.value)}
                       required
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
                     />
                   </div>
 
@@ -261,7 +261,7 @@ export default function LawFirmEditCertificatePage() {
                       value={formData.wydawca}
                       onChange={(e) => handleInputChange("wydawca", e.target.value)}
                       required
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
                     />
                   </div>
 
@@ -277,7 +277,7 @@ export default function LawFirmEditCertificatePage() {
                         value={formData.dataUzyskania}
                         onChange={(e) => handleInputChange("dataUzyskania", e.target.value)}
                         required
-                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
+                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
                       />
                     </div>
 
@@ -290,7 +290,7 @@ export default function LawFirmEditCertificatePage() {
                         type="date"
                         value={formData.dataWaznosci}
                         onChange={(e) => handleInputChange("dataWaznosci", e.target.value)}
-                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
+                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
                       />
                       <p className="text-sm text-zinc-500 mt-1.5 leading-relaxed">
                         Pozostaw to pole puste, jeśli certyfikat jest wydany bezterminowo.
@@ -308,7 +308,7 @@ export default function LawFirmEditCertificatePage() {
                       placeholder="np. CERT/2024/12345"
                       value={formData.numerCertyfikatu}
                       onChange={(e) => handleInputChange("numerCertyfikatu", e.target.value)}
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
                     />
                   </div>
 
@@ -324,7 +324,7 @@ export default function LawFirmEditCertificatePage() {
                               href={uploadedFileUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[11px] text-[#0da192] hover:text-[#0fbaa8] hover:underline transition-colors mt-0.5"
+                              className="text-[11px] text-primary hover:text-primary-hover hover:underline transition-colors mt-0.5"
                             >
                               Podgląd aktualnego pliku
                             </a>
@@ -366,8 +366,9 @@ export default function LawFirmEditCertificatePage() {
                 <div className="flex items-center gap-3 pt-4 border-t border-border/10">
                   <Button
                     type="submit"
+                    variant="primary"
                     disabled={isSubmitting || isUploading || !uploadedFileUrl}
-                    className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2"
+                    className="h-11 px-6 rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
