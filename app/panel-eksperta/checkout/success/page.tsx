@@ -228,11 +228,11 @@ export default function CheckoutSuccessPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="border-destructive/40 bg-destructive/5 dark:bg-destructive/10">
+      <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl">
             <CardContent className="pt-8 pb-8">
               <div className="flex flex-col items-center text-center space-y-4">
-                <div className="p-3 bg-destructive/10 rounded-full">
-                  <XCircle className="h-12 w-12 text-destructive" />
+                <div className="p-3 bg-error/10 rounded-full">
+                  <XCircle className="h-12 w-12 text-error" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Coś poszło nie tak</h2>
@@ -240,7 +240,7 @@ export default function CheckoutSuccessPage() {
                     {error || "Nie udało się pobrać informacji o zamówieniu. Spróbuj odświeżyć stronę lub wróć do panelu."}
                   </p>
                 </div>
-                <Button onClick={() => router.push("/panel-eksperta/punkty")} variant="destructive">
+                <Button onClick={() => router.push("/panel-eksperta/punkty")} variant="destructive" className="rounded-xl">
                   Powrót do punktów
                 </Button>
               </div>
@@ -270,7 +270,7 @@ export default function CheckoutSuccessPage() {
             className="space-y-6"
           >
             {/* Main Celebration Card */}
-            <Card className="overflow-hidden border-primary/20 bg-gradient-to-b from-primary/5 via-transparent to-transparent shadow-xl relative backdrop-blur-sm">
+            <Card variant="glass" className="overflow-hidden border-primary/20 bg-gradient-to-b from-primary/5 via-transparent to-transparent shadow-xl relative backdrop-blur-sm rounded-2xl">
               {/* Glowing Background Glows */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-10" />
 
@@ -384,7 +384,7 @@ export default function CheckoutSuccessPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <Card className="border-border/60">
+                <Card variant="glass" className="border-border/40 rounded-2xl">
                   <CardHeader className="pb-3 pt-5 px-5">
                     <CardTitle className="text-sm font-semibold flex items-center gap-2">
                       <Receipt className="h-4 w-4 text-muted-foreground" />
@@ -449,8 +449,9 @@ export default function CheckoutSuccessPage() {
                 )}
               </Button>
               <Button
+                variant="primary"
                 size="lg"
-                className="flex-1 bg-gradient-to-r from-primary to-primary/95 text-primary-foreground shadow-md rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="flex-1 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => router.push("/panel-eksperta")}
               >
                 <Home className="h-5 w-5 mr-2" />
@@ -468,7 +469,7 @@ export default function CheckoutSuccessPage() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-border">
+            <Card variant="glass" className="border-border/40 rounded-2xl">
               <CardContent className="pt-12 pb-12 text-center flex flex-col items-center">
                 <div className="relative mb-6">
                   <div className="p-4 bg-muted rounded-full">
@@ -499,7 +500,7 @@ export default function CheckoutSuccessPage() {
                   </div>
                 )}
 
-                <Button variant="outline" size="sm" onClick={() => router.push("/panel-eksperta/punkty")} className="rounded-lg">
+                <Button variant="outline" size="sm" onClick={() => router.push("/panel-eksperta/punkty")} className="rounded-xl">
                   Wróc do panelu punktów
                 </Button>
               </CardContent>
@@ -514,17 +515,17 @@ export default function CheckoutSuccessPage() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-destructive/40 bg-destructive/5 dark:bg-destructive/10">
+            <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl">
               <CardContent className="pt-10 pb-10 text-center flex flex-col items-center">
-                <div className="p-3 bg-destructive/10 rounded-full mb-4">
-                  <XCircle className="h-12 w-12 text-destructive" />
+                <div className="p-3 bg-error/10 rounded-full mb-4">
+                  <XCircle className="h-12 w-12 text-error" />
                 </div>
                 <h2 className="text-xl font-bold mb-2">Transakcja nie powiodła się</h2>
                 <p className="text-muted-foreground text-sm max-w-xs mb-6">
                   Twoja płatność została odrzucona lub anulowana. Spróbuj dokonać zakupu ponownie.
                 </p>
                 <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => router.push("/panel-eksperta/punkty")}>
+                  <Button variant="outline" onClick={() => router.push("/panel-eksperta/punkty")} className="rounded-xl">
                     Powrót do punktów
                   </Button>
                 </div>

@@ -36,10 +36,10 @@ export function MultimediaTab({
     <div className="space-y-6">
       {/* Galeria zdjęć */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+            <div className="bg-primary/10 p-2 rounded-xl text-primary">
               <ImageIcon className="h-5 w-5" />
             </div>
             <div>
@@ -55,7 +55,7 @@ export function MultimediaTab({
           <div className="flex items-center gap-4">
             <label
               htmlFor="gallery-upload"
-              className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#0da192] hover:bg-[#0a8276] text-white h-10 px-4 py-2 cursor-pointer shadow-md transition-all duration-200"
+              className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary-dark text-white h-10 px-4 py-2 cursor-pointer shadow-md transition-all duration-200"
             >
               {isUploading ? (
                 <>
@@ -121,7 +121,7 @@ export function MultimediaTab({
           )}
 
           {formData.galeriaZdjec.length > 0 && (
-            <div className="bg-[#0da192]/5 border border-[#0da192]/20 p-4 rounded-xl">
+            <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
               <p className="text-xs text-zinc-400 leading-relaxed">
                 <strong className="text-white font-medium">Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twoim profilu publicznym. Najedź kursorem na wybrane zdjęcie i kliknij przycisk z ikoną kosza (X), aby je usunąć z galerii.
               </p>
@@ -132,10 +132,10 @@ export function MultimediaTab({
 
       {/* Film YouTube */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
+        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+            <div className="bg-primary/10 p-2 rounded-xl text-primary">
               <Video className="h-5 w-5" />
             </div>
             <div>
@@ -158,7 +158,7 @@ export function MultimediaTab({
                 value={formData.filmYouTube}
                 onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
                 placeholder="np. https://www.youtube.com/watch?v=..."
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
               />
             </div>
           </div>

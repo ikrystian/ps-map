@@ -70,7 +70,7 @@ export function PackageBadge({
       label: "Standard",
       icon: Star,
       variant: "outline" as const,
-      className: "border-[#0da192]/30 bg-[#0da192]/5 text-[#0da192]/80 font-medium",
+      className: "border-primary/30 bg-primary/5 text-primary/80 font-medium",
     },
     PREMIUM: {
       label: "Premium",
@@ -82,7 +82,7 @@ export function PackageBadge({
       label: "Biznes",
       icon: Crown,
       variant: "outline" as const,
-      className: "border-[#e2b13c]/40 bg-[#e2b13c]/10 text-[#e2b13c] shadow-[0_0_15px_rgba(226,177,60,0.2)] font-bold tracking-wide uppercase",
+      className: "border-secondary/40 bg-secondary/10 text-secondary shadow-secondary/20 shadow-[0_0_15px_var(--tw-shadow-color)] font-bold tracking-wide uppercase",
     },
   };
 

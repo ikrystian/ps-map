@@ -33,11 +33,11 @@ export function SpecializationTab({
     <div className="space-y-6">
       {/* Kategorie usług */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <Wrench className="h-5 w-5" />
               </div>
               <div>
@@ -58,7 +58,7 @@ export function SpecializationTab({
               {formData.categoriesIds.map((id) => {
                 const category = categories.find((c) => c.id === id)
                 return category ? (
-                  <Badge key={id} variant="secondary" className="px-3.5 py-1.5 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-xs font-semibold rounded-lg shadow-sm hover:bg-[#0da192]/15 transition-all">
+                  <Badge key={id} variant="secondary" className="px-3.5 py-1.5 bg-primary/10 border border-primary/30 text-primary text-xs font-semibold rounded-lg shadow-sm hover:bg-primary/15 transition-all">
                     {category.nazwa}
                   </Badge>
                 ) : null
@@ -67,7 +67,7 @@ export function SpecializationTab({
           ) : (
             <div className="text-center py-8 border border-dashed border-border/30 rounded-xl bg-zinc-950/5">
               <p className="text-zinc-400 mb-4 text-sm font-light">Nie wybrano jeszcze żadnych kategorii usług.</p>
-              <Button className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl shadow-md" asChild>
+              <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl shadow-md" asChild>
                 <Link href="/panel-eksperta/zakres-uslug">
                   Dodaj pierwsze usługi
                 </Link>
@@ -79,10 +79,10 @@ export function SpecializationTab({
 
       {/* Prezentacja oferty */}
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
+        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+            <div className="bg-primary/10 p-2 rounded-xl text-primary">
               <Award className="h-5 w-5" />
             </div>
             <div>
@@ -101,7 +101,7 @@ export function SpecializationTab({
               onChange={(e) => handleInputChange("unikatowyOpisUslugi", e.target.value)}
               rows={5}
               placeholder="Opisz swoje unikalne podejście do świadczenia usług, zalety i warunki współpracy..."
-              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
             />
             <p className="text-xs text-zinc-500 font-light">
               Ten opis będzie widoczny na Twoim publicznym profilu w sekcji "Zakres usług".
@@ -144,12 +144,12 @@ export function SpecializationTab({
                       }
                     }
                   }}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
                 />
               </div>
               <Button
                 type="button"
-                className="bg-[#0da192] hover:bg-[#0a8276] text-white rounded-xl gap-1.5 shadow-sm transition-all duration-200"
+                className="bg-primary hover:bg-primary-dark text-white rounded-xl gap-1.5 shadow-sm transition-all duration-200"
                 disabled={formData.slowaKluczowe.length >= limitSlowKluczowych}
                 onClick={() => {
                   if (formData.slowaKluczowe.length >= limitSlowKluczowych) {
