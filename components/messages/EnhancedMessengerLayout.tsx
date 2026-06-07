@@ -126,7 +126,7 @@ export function EnhancedMessengerLayout() {
     return (
       <div className="flex items-center justify-center min-h-[400px] h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="mt-4 text-muted-foreground text-sm font-light">Ładowanie wiadomości...</p>
         </div>
       </div>
@@ -134,12 +134,12 @@ export function EnhancedMessengerLayout() {
   }
 
   const isClient = session?.user?.role === "CLIENT"
-  const themeColor = isClient ? "#d7b56d" : "#0da192"
+  const themeColor = isClient ? "var(--secondary)" : "var(--primary)"
 
   return (
     <div className="h-full flex flex-col">
 
-      <Card className="h-full flex rounded-lg flex-col md:flex-row overflow-hidden border border-border/30 bg-card/25 backdrop-blur-md shadow-2xl relative">
+      <Card variant="glass" className="h-full flex rounded-lg flex-col md:flex-row overflow-hidden shadow-2xl relative">
         <BorderBeam lightColor={themeColor} lightWidth={450} duration={7} borderWidth={1} />
         {/* Lista konwersacji - lewa strona (hidden on mobile when chat is selected) */}
         <div

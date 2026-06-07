@@ -118,7 +118,7 @@ export function ConsultationHoursForm() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0da192]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -146,10 +146,10 @@ export function ConsultationHoursForm() {
 
   return (
     <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-      <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
+      <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
       <CardHeader className="border-b border-border/10 pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+          <div className="bg-primary/10 p-2 rounded-xl text-primary">
             <Calendar className="h-5 w-5" />
           </div>
           <div>
@@ -175,7 +175,7 @@ export function ConsultationHoursForm() {
                 value={price15min}
                 onChange={(e) => setPrice15min(parseFloat(e.target.value))}
                 placeholder="np. 100"
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
               />
             </div>
           </div>
@@ -191,7 +191,7 @@ export function ConsultationHoursForm() {
                 value={price30min}
                 onChange={(e) => setPrice30min(parseFloat(e.target.value))}
                 placeholder="np. 150"
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-[#0da192]"
+                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
               />
             </div>
           </div>
@@ -267,7 +267,7 @@ export function ConsultationHoursForm() {
             type="button" 
             onClick={handleSubmit} 
             disabled={isSaving}
-            className="h-10 px-5 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md transition-all duration-200 gap-1.5"
+            className="h-10 px-5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-semibold rounded-xl shadow-md transition-all duration-200 gap-1.5"
           >
             {isSaving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

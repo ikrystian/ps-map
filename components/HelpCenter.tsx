@@ -259,7 +259,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
 
         {/* FAQ Accordion Section */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-lg shadow-lg relative overflow-hidden">
+          <Card variant="glass" className="rounded-lg shadow-lg relative overflow-hidden">
             <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/20 py-5 px-6">
               <CardTitle className="text-lg font-playfair text-white">Najczęstsze pytania i odpowiedzi</CardTitle>
@@ -345,7 +345,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
 
         {/* Contact Support Section */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-lg shadow-lg relative overflow-hidden">
+          <Card variant="glass" className="rounded-lg shadow-lg relative overflow-hidden">
             <CardHeader className="py-5 px-6 border-b border-border/20">
               <CardTitle className="text-lg font-playfair text-white">Nadal potrzebujesz pomocy?</CardTitle>
               <CardDescription className="text-zinc-400 text-xs">

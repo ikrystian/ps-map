@@ -35,7 +35,7 @@ export function EnhancedConversationList({
   const [activeTab, setActiveTab] = useState<"active" | "archived" | "deleted">("active")
 
   const isClient = session?.user?.role === "CLIENT"
-  const themeColor = isClient ? "#0da192" : "#0da192"
+  const themeColor = isClient ? "var(--secondary)" : "var(--primary)"
 
   const filterConversations = (convs: Conversation[]) =>
     convs.filter((conv) =>
@@ -145,8 +145,8 @@ export function EnhancedConversationList({
           "w-full p-4 flex items-start gap-3 border-b border-border/10 text-left transition-all duration-300 relative",
           selectedConversationId === conversation.id
             ? isClient
-              ? "bg-gradient-to-r from-[#0da192]/10 via-[#0da192]/5 to-transparent border-l-4 border-l-[#0da192]"
-              : "bg-gradient-to-r from-[#0da192]/10 via-[#0da192]/5 to-transparent border-l-4 border-l-[#0da192]"
+              ? "bg-gradient-to-r from-secondary/10 via-secondary/5 to-transparent border-l-4 border-l-secondary"
+              : "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-l-4 border-l-primary"
             : "hover:bg-white/[0.02]"
         )}
       >
@@ -195,14 +195,14 @@ export function EnhancedConversationList({
                   {truncateMessage(conversation.lastMessage.content)}
                 </>
               ) : (
-                <span className="text-[#0da192]/70 italic text-[11px]">Rozpocznij konwersację</span>
+                <span className={cn("italic text-[11px]", isClient ? "text-secondary/70" : "text-primary/70")}>Rozpocznij konwersację</span>
               )}
             </p>
             {conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe && (
               <Badge
                 className={cn(
                   "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-sm font-bold text-white shadow-md border-t border-white/10 animate-pulse shrink-0",
-                  isClient ? "bg-[#0da192]" : "bg-[#0da192]"
+                  isClient ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground"
                 )}
               >
                 {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
@@ -246,7 +246,7 @@ export function EnhancedConversationList({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 rounded-md"
+            className={cn("h-7 w-7 text-zinc-400 rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, true)
@@ -260,7 +260,7 @@ export function EnhancedConversationList({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 rounded-md"
+            className={cn("h-7 w-7 text-zinc-400 rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, false)
@@ -314,7 +314,10 @@ export function EnhancedConversationList({
             placeholder="Szukaj konwersacji..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] text-xs transition-all"
+            className={cn(
+              "pl-10 h-10 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 text-xs transition-all",
+              isClient ? "focus-visible:ring-secondary/40 focus-visible:border-secondary" : "focus-visible:ring-primary/40 focus-visible:border-primary"
+            )}
           />
         </div>
       </div>
@@ -330,12 +333,12 @@ export function EnhancedConversationList({
             value="active"
             className={cn(
               "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
-              activeTab === "active" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
+              activeTab === "active" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Czaty
             {conversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {conversations.length}
               </Badge>
             )}
@@ -344,12 +347,12 @@ export function EnhancedConversationList({
             value="archived"
             className={cn(
               "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
-              activeTab === "archived" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
+              activeTab === "archived" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Archiwum
             {archivedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {archivedConversations.length}
               </Badge>
             )}
@@ -358,12 +361,12 @@ export function EnhancedConversationList({
             value="deleted"
             className={cn(
               "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
-              activeTab === "deleted" && (isClient ? "border-b-[#0da192] !text-[#0da192]" : "border-b-[#0da192] !text-[#0da192]")
+              activeTab === "deleted" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Kosz
             {deletedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30" : "bg-[#0da192]/20 text-[#0da192] border-[#0da192]/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {deletedConversations.length}
               </Badge>
             )}

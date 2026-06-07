@@ -126,11 +126,11 @@ export function ContactTab({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         {/* Osoba kontaktowa */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
-          <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
@@ -152,7 +152,7 @@ export function ContactTab({
                       value={formData.imieKontakt}
                       onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export function ContactTab({
                       value={formData.nazwiskoKontakt}
                       onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export function ContactTab({
                       placeholder="np. Adwokat / Partner"
                       value={formData.stanowisko || ""}
                       onChange={(e) => handleInputChange("stanowisko", e.target.value)}
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -195,11 +195,11 @@ export function ContactTab({
 
         {/* Dane kontaktowe i WWW */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
-          <BorderBeam lightColor="#0da192" lightWidth={350} duration={9} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={9} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
@@ -221,7 +221,7 @@ export function ContactTab({
                       value={formData.numerTelefonu}
                       onChange={(e) => handleInputChange("numerTelefonu", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -236,7 +236,7 @@ export function ContactTab({
                       id="numerTelefonu2"
                       value={formData.numerTelefonu2}
                       onChange={(e) => handleInputChange("numerTelefonu2", e.target.value)}
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export function ContactTab({
                       value={formData.emailKontakt}
                       onChange={(e) => handleInputChange("emailKontakt", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export function ContactTab({
                       placeholder="https://..."
                       value={formData.stronaWww}
                       onChange={(e) => handleInputChange("stronaWww", e.target.value)}
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -284,11 +284,11 @@ export function ContactTab({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         {/* Adres stacjonarny */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
-          <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
@@ -314,7 +314,7 @@ export function ContactTab({
                         value={formData.adres}
                         onChange={(e) => handleInputChange("adres", e.target.value)}
                         required
-                        className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                        className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -349,9 +349,9 @@ export function ContactTab({
                         >
                           <span className="truncate flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-zinc-500" />
-                            {formData.miasto || "Wybierz miasto..."}
+                           {formData.miasto || "Wybierz miasto..."}
                           </span>
-                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[#0da192]" />
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-primary" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[300px] p-0 bg-zinc-950 border border-border/30 rounded-xl" align="start">
@@ -399,7 +399,7 @@ export function ContactTab({
                                     <div className="flex items-center gap-2">
                                       <Check
                                         className={cn(
-                                          "h-4 w-4 text-[#0da192]",
+                                          "h-4 w-4 text-primary",
                                           formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
                                         )}
                                       />
@@ -445,11 +445,11 @@ export function ContactTab({
 
         {/* Social Media */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
-          <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <Share2 className="h-5 w-5" />
                 </div>
                 <div>
@@ -554,10 +554,10 @@ export function ContactTab({
 
       {/* Obszar działania */}
       <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="#0da192" lightWidth={350} duration={10} borderWidth={1} />
+        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={10} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+            <div className="bg-primary/10 p-2 rounded-xl text-primary">
               <Globe className="h-5 w-5" />
             </div>
             <div>
@@ -573,7 +573,7 @@ export function ContactTab({
             <div
               className={cn(
                 "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300",
-                formData.callaPolska ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
+                formData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
               )}
             >
               <Label
@@ -583,7 +583,7 @@ export function ContactTab({
                 <div
                   className={cn(
                     "p-2 rounded-lg transition-colors duration-300",
-                    formData.callaPolska ? "bg-[#0da192] text-white" : "bg-zinc-900 text-zinc-500"
+                    formData.callaPolska ? "bg-primary text-white" : "bg-zinc-900 text-zinc-500"
                   )}
                 >
                   <Globe className="h-5 w-5" />
@@ -603,7 +603,7 @@ export function ContactTab({
             <div
               className={cn(
                 "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300",
-                formData.onlineOnly ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
+                formData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
               )}
             >
               <Label
@@ -613,7 +613,7 @@ export function ContactTab({
                 <div
                   className={cn(
                     "p-2 rounded-lg transition-colors duration-300",
-                    formData.onlineOnly ? "bg-[#0da192] text-white" : "bg-zinc-900 text-zinc-500"
+                    formData.onlineOnly ? "bg-primary text-white" : "bg-zinc-900 text-zinc-500"
                   )}
                 >
                   <div className="h-5 w-5 flex items-center justify-center font-bold text-xs">WEB</div>
@@ -640,7 +640,7 @@ export function ContactTab({
                     Województwa:{" "}
                     <span className={cn(
                       "font-semibold",
-                      formData.voivodeshipsIds.length >= maxVoivodeships ? "text-amber-400" : "text-[#0da192]"
+                      formData.voivodeshipsIds.length >= maxVoivodeships ? "text-amber-400" : "text-primary"
                     )}>
                       {formData.voivodeshipsIds.length}
                     </span>
@@ -651,7 +651,7 @@ export function ContactTab({
                     Miasta:{" "}
                     <span className={cn(
                       "font-semibold",
-                      formData.citiesIds.length >= maxCities ? "text-amber-400" : "text-[#0da192]"
+                      formData.citiesIds.length >= maxCities ? "text-amber-400" : "text-primary"
                     )}>
                       {formData.citiesIds.length}
                     </span>
@@ -672,7 +672,7 @@ export function ContactTab({
                         className={cn(
                           "flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200",
                           formData.voivodeshipsIds.includes(v.id)
-                            ? "bg-[#0da192]/5 border-[#0da192]/30 text-[#0da192] font-medium"
+                            ? "bg-primary/5 border-primary/30 text-primary font-medium"
                             : "border-transparent bg-transparent hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
                         )}
                       >
@@ -711,14 +711,14 @@ export function ContactTab({
 
                         return (
                           <div key={vId} className="mb-4 last:mb-0">
-                            <div className="text-xs font-bold text-[#d7b56d] mb-2 flex items-center gap-2 uppercase tracking-wide">
-                              <div className="h-1.5 w-1.5 rounded-full bg-[#d7b56d]" />
+                            <div className="text-xs font-bold text-secondary mb-2 flex items-center gap-2 uppercase tracking-wide">
+                              <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
                               {vName}
                             </div>
                             <div className="grid grid-cols-1 gap-1">
                               {isLoading ? (
                                 <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
-                                  <Loader2 className="h-3 w-3 animate-spin text-[#0da192]" />
+                                  <Loader2 className="h-3 w-3 animate-spin text-primary" />
                                   Ładowanie miast...
                                 </div>
                               ) : cities.length === 0 ? (
@@ -730,7 +730,7 @@ export function ContactTab({
                                     className={cn(
                                       "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200",
                                       formData.citiesIds.includes(city.id)
-                                        ? "bg-[#0da192]/10 text-[#0da192] font-medium border border-[#0da192]/20"
+                                        ? "bg-primary/10 text-primary font-medium border border-primary/20"
                                         : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
                                     )}
                                   >
