@@ -255,28 +255,28 @@ export default function LawFirmPointsPage() {
     switch (status) {
       case "ZAPLACONE":
         return (
-          <Badge variant="default" className="gap-1 bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
+          <Badge variant="outline" className="gap-1 bg-success/15 text-success border border-success/30 hover:bg-success/20">
             <CheckCircle2 className="h-3 w-3" />
             Opłacone
           </Badge>
         )
       case "OCZEKUJE":
         return (
-          <Badge variant="secondary" className="gap-1">
+          <Badge variant="outline" className="gap-1 bg-warning/15 text-warning border border-warning/30 hover:bg-warning/20">
             <Clock className="h-3 w-3" />
             Oczekuje
           </Badge>
         )
       case "ANULOWANE":
         return (
-          <Badge variant="destructive" className="gap-1">
+          <Badge variant="outline" className="gap-1 bg-error/15 text-error border border-error/30 hover:bg-error/20">
             <XCircle className="h-3 w-3" />
             Anulowane
           </Badge>
         )
       case "ZWROT":
         return (
-          <Badge variant="outline" className="gap-1">
+          <Badge variant="outline" className="gap-1 bg-zinc-500/15 text-zinc-400 border border-zinc-500/30 hover:bg-zinc-500/20">
             <RefreshCw className="h-3 w-3" />
             Zwrot
           </Badge>
@@ -308,7 +308,11 @@ export default function LawFirmPointsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="relative space-y-8">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
+
       <PageHeader
         title="Punkty"
         subtitle="Zarządzaj swoim saldem i dokonuj zakupów pakietów punktów"
@@ -332,7 +336,7 @@ export default function LawFirmPointsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+        <Card variant="glass" className="relative overflow-hidden">
           {/* Decorative blobs */}
           <div className="pointer-events-none absolute -top-10 -right-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-primary/8 blur-2xl" />
@@ -362,6 +366,7 @@ export default function LawFirmPointsPage() {
               <div className="flex-shrink-0">
                 <Button
                   size="lg"
+                  variant="primary"
                   onClick={() => handleOpenPurchaseDialog()}
                   className="gap-2 shadow-lg shadow-primary/20"
                 >
@@ -406,11 +411,12 @@ export default function LawFirmPointsPage() {
                   </div>
                 )}
                 <Card
+                  variant="glass"
                   className={cn(
                     "relative overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5",
                     pkg.highlight
                       ? "border-primary/50 shadow-md shadow-primary/10 ring-1 ring-primary/20 pt-2"
-                      : `border ${pkg.borderColor} hover:border-primary/40`
+                      : `border-border/30 hover:border-primary/45`
                   )}
                   onClick={() => handleOpenPurchaseDialog(pkg)}
                 >
@@ -444,8 +450,8 @@ export default function LawFirmPointsPage() {
 
                     {/* CTA Button */}
                     <Button
-                      className={cn("w-full h-9 text-sm", pkg.highlight ? "" : "variant-outline")}
-                      variant={pkg.highlight ? "default" : "outline"}
+                      className="w-full h-9 text-sm"
+                      variant={pkg.highlight ? "primary" : "outline"}
                       onClick={(e) => { e.stopPropagation(); handleOpenPurchaseDialog(pkg) }}
                     >
                       Wybierz pakiet
@@ -495,7 +501,7 @@ export default function LawFirmPointsPage() {
         </div>
 
         {orders.length === 0 ? (
-          <Card className="border-dashed">
+          <Card className="border-dashed bg-card/25 backdrop-blur-md">
             <CardContent className="py-12 flex flex-col items-center gap-3">
               <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
                 <History className="h-6 w-6 text-muted-foreground" />
@@ -512,24 +518,24 @@ export default function LawFirmPointsPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="overflow-hidden">
+          <Card variant="glass" className="overflow-hidden">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/40 hover:bg-muted/40">
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide">Data</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide">ID Transakcji</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide">Pakiet</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide text-right">Punkty</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide text-right">Kwota</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide">Płatność</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase tracking-wide">Status</TableHead>
+                  <TableRow className="border-b border-border/20 hover:bg-transparent">
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">ID Transakcji</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Pakiet</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Punkty</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Kwota</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Płatność</TableHead>
+                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {orders.map((order) => (
-                    <TableRow key={order.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                    <TableRow key={order.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
+                      <TableCell className="py-4 px-6 text-sm text-zinc-400 whitespace-nowrap">
                         {formatDate(order.createdAt)}
                       </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
@@ -577,13 +583,13 @@ export default function LawFirmPointsPage() {
                           {order.liczbaPunktow} pkt
                         </span>
                       </TableCell>
-                      <TableCell className="text-right font-semibold text-sm">
+                      <TableCell className="py-4 px-6 text-right font-semibold text-sm">
                         {formatCurrency(order.kwota)}
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="py-4 px-6 text-sm text-zinc-400">
                         {getPaymentMethodLabel(order.metodaPlatnosci)}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-4 px-6">
                         {getStatusBadge(order.statusPlatnosci)}
                       </TableCell>
                     </TableRow>
@@ -697,6 +703,7 @@ export default function LawFirmPointsPage() {
             <Button
               onClick={handleSubmitPurchase}
               disabled={!selectedPackage && !customPoints}
+              variant="primary"
               className="gap-2"
             >
               <ShoppingCart className="h-4 w-4" />

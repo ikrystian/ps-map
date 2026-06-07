@@ -434,7 +434,7 @@ export default function LawFirmSettingsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie ustawień...</p>
         </div>
       </div>
@@ -444,8 +444,8 @@ export default function LawFirmSettingsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -465,10 +465,10 @@ export default function LawFirmSettingsPage() {
         {/* Left Column: Personal info & Account Details */}
         <div className="space-y-6">
           {/* Dane osobowe */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <User className="h-5 w-5 text-[#0da192]" />
+                <User className="h-5 w-5 text-primary" />
                 Dane administratora konta
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs">Uaktualnij podstawowe informacje o swojej tożsamości.</CardDescription>
@@ -484,7 +484,7 @@ export default function LawFirmSettingsPage() {
 
                   {userData.image ? (
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-[#0da192]/10 shrink-0">
+                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
                         <Image
                           src={userData.image}
                           alt="Avatar"
@@ -501,12 +501,12 @@ export default function LawFirmSettingsPage() {
                         >
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                               Przesyłanie...
                             </>
                           ) : (
                             <>
-                              <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                              <Upload className="mr-2 h-4 w-4 text-primary" />
                               Zmień avatar
                             </>
                           )}
@@ -535,19 +535,19 @@ export default function LawFirmSettingsPage() {
                     <div className="w-full">
                       <label
                         htmlFor="avatar-upload"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border/40 rounded-xl cursor-pointer hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border/40 rounded-xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="h-9 w-9 mb-2 text-[#0da192] animate-spin" />
+                              <Loader2 className="h-9 w-9 mb-2 text-primary animate-spin" />
                               <p className="text-xs text-muted-foreground">Przesyłanie...</p>
                             </>
                           ) : (
                             <>
-                              <ImageIcon className="h-9 w-9 mb-2 text-[#0da192]" />
+                              <ImageIcon className="h-9 w-9 mb-2 text-primary" />
                               <p className="mb-1 text-xs text-zinc-300">
-                                <span className="font-semibold text-[#0da192]">Prześlij</span> avatar
+                                <span className="font-semibold text-primary">Prześlij</span> avatar
                               </p>
                               <p className="text-sm text-zinc-500">
                                 PNG, JPG, WEBP (max 5MB)
@@ -577,7 +577,7 @@ export default function LawFirmSettingsPage() {
                     value={userData.name || ""}
                     onChange={(e) => handleUserDataChange("name", e.target.value)}
                     placeholder="Wpisz swoje imię i nazwisko"
-                    className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                    className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                   />
                 </div>
 
@@ -597,7 +597,8 @@ export default function LawFirmSettingsPage() {
                   <Button
                     type="submit"
                     disabled={isSavingUser}
-                    className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
+                    variant="primary"
+                    className="h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
                   >
                     {isSavingUser ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -612,10 +613,10 @@ export default function LawFirmSettingsPage() {
           </Card>
 
           {/* Zarządzanie kontem */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-[#0da192]" />
+                <ShieldCheck className="h-5 w-5 text-primary" />
                 Zarządzanie kontem
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs">Informacje o bezpieczeństwie i akcje systemowe.</CardDescription>
@@ -625,7 +626,7 @@ export default function LawFirmSettingsPage() {
               {accountInfo && (
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
-                    <Calendar className="h-4 w-4 text-[#0da192]" />
+                    <Calendar className="h-4 w-4 text-primary" />
                     Bezpieczeństwo logowania
                   </Label>
                   <div className="space-y-2 text-xs">
@@ -671,7 +672,7 @@ export default function LawFirmSettingsPage() {
               <div className="space-y-2.5">
                 <Label className="text-xs font-semibold text-zinc-300">Status konta</Label>
                 <div className="flex items-center gap-2.5">
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
+                  <Badge className="bg-success/10 text-success border border-success/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
                     <CheckCircle2 className="h-3 w-3" />
                     W pełni aktywne
                   </Badge>
@@ -689,7 +690,7 @@ export default function LawFirmSettingsPage() {
 
                 <div className="space-y-3">
                   {/* Wyloguj */}
-                  <div className="flex items-center justify-between p-4 rounded-xl border border-border/30 bg-background/20 group hover:border-[#0da192]/30 transition-all duration-200">
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-border/30 bg-background/20 group hover:border-primary/30 transition-all duration-200">
                     <div className="min-w-0">
                       <h4 className="font-semibold text-white text-sm">Wyloguj się</h4>
                       <p className="text-xs text-muted-foreground font-light mt-0.5">
@@ -726,7 +727,7 @@ export default function LawFirmSettingsPage() {
                 </div>
               </div>
 
-              <Alert className="bg-[#d7b56d]/5 border-[#d7b56d]/20 text-[#d7b56d] rounded-xl flex items-start gap-2.5">
+              <Alert className="bg-secondary/5 border-secondary/20 text-secondary rounded-xl flex items-start gap-2.5">
                 <Info className="h-4 w-4 shrink-0 mt-0.5" />
                 <AlertDescription className="text-xs leading-relaxed font-light">
                   Przed trwałym usunięciem konta upewnij się, że zrealizowałeś wszystkie opłacone punkty w portalu.
@@ -736,10 +737,10 @@ export default function LawFirmSettingsPage() {
           </Card>
 
           {/* Login history wrapped in glass card */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-[#0da192]" />
+                <ShieldCheck className="h-5 w-5 text-primary" />
                 Historia logowania
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs">Historia sesji oraz prób autoryzacji na tym koncie.</CardDescription>
@@ -753,7 +754,7 @@ export default function LawFirmSettingsPage() {
         {/* Right Column: Powiadomienia & Ustawienia ogłoszenia */}
         <div className="space-y-6">
           {/* Ustawienia powiadomień */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white">Preferencje powiadomień</CardTitle>
               <CardDescription className="text-zinc-400 text-xs">Dostosuj formy powiadomień e-mail, SMS oraz dźwiękowych.</CardDescription>
@@ -1051,7 +1052,8 @@ export default function LawFirmSettingsPage() {
                   <Button
                     type="submit"
                     disabled={isSavingSettings}
-                    className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
+                    variant="primary"
+                    className="h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
                   >
                     {isSavingSettings ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -1066,7 +1068,7 @@ export default function LawFirmSettingsPage() {
           </Card>
 
           {/* Box ustawienia ogłoszenia */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white">Ustawienia ogłoszeń & URLOP</CardTitle>
               <CardDescription className="text-zinc-400 text-xs">Skonfiguruj statusy wyświetlania ofert i powiadomień SMS.</CardDescription>
@@ -1154,15 +1156,15 @@ export default function LawFirmSettingsPage() {
                 {/* Tryb urlopowy */}
                 <div className="space-y-4">
                   <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Tryb urlopowy</h4>
-                  <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-[#d7b56d]/30 bg-[#d7b56d]/5 hover:bg-[#d7b56d]/10 transition-all duration-200">
+                  <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-secondary/30 bg-secondary/5 hover:bg-secondary/10 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="urlop"
-                        className="cursor-pointer font-semibold text-[#d7b56d] text-xs"
+                        className="cursor-pointer font-semibold text-secondary text-xs"
                       >
                         Tryb urlopowy (Status zawieszony)
                       </Label>
-                      <p className="text-sm text-[#d7b56d]/80 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-secondary/80 mt-1 font-light leading-relaxed">
                         Wyłącz widoczność w katalogu na czas nieobecności i zablokuj powiadomienia e-mail/SMS.
                       </p>
                     </div>

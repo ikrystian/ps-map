@@ -389,9 +389,9 @@ const SprawyPage = () => {
       label: "Wszystkie",
       count: statusCounts.all,
       icon: Briefcase,
-      activeClass: "bg-gradient-to-br from-[#0da192]/15 to-transparent border-[#0da192]/20 text-white shadow-lg shadow-[#0da192]/5",
-      labelColor: "text-[#0da192]",
-      iconContainerClass: "bg-[#0da192]/10 border-[#0da192]/20 text-[#0da192]"
+      activeClass: "bg-gradient-to-br from-primary/15 to-transparent border-primary/20 text-white shadow-lg shadow-primary/5",
+      labelColor: "text-primary",
+      iconContainerClass: "bg-primary/10 border-primary/20 text-primary"
     },
     {
       id: "NOWA",
@@ -407,9 +407,9 @@ const SprawyPage = () => {
       label: "Obserwowane",
       count: statusCounts.FAVORITES,
       icon: Heart,
-      activeClass: "bg-gradient-to-br from-[#d7b56d]/15 to-transparent border-[#d7b56d]/20 text-white shadow-lg shadow-[#d7b56d]/5",
-      labelColor: "text-[#d7b56d]",
-      iconContainerClass: "bg-[#d7b56d]/10 border-[#d7b56d]/20 text-[#d7b56d]"
+      activeClass: "bg-gradient-to-br from-secondary/15 to-transparent border-secondary/20 text-white shadow-lg shadow-secondary/5",
+      labelColor: "text-secondary",
+      iconContainerClass: "bg-secondary/10 border-secondary/20 text-secondary"
     },
     {
       id: "PENDING",
@@ -435,7 +435,7 @@ const SprawyPage = () => {
     return (
       <div className="container relative min-h-[400px]">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-[#0da192]" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
     )
@@ -444,13 +444,13 @@ const SprawyPage = () => {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows consistent with system style */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
 
       <PageHeader
         title="Wszystkie Sprawy"
-        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta są wyróżnione na górze listy."
+        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta are wyróżnione na górze listy."
       />
 
 
@@ -472,15 +472,15 @@ const SprawyPage = () => {
                 "rounded-2xl p-6 relative flex flex-col justify-between h-[130px] shadow-lg group overflow-hidden transition-all duration-300 w-full border text-left",
                 isSelected
                   ? card.activeClass
-                  : "bg-card/30 backdrop-blur-sm border-border/40 text-white shadow-md hover:border-[#0da192]/20"
+                  : "bg-card/30 backdrop-blur-sm border-border/40 text-white shadow-md hover:border-primary/20"
               )}
             >
               {/* Glow effect */}
               <div className={cn(
                 "absolute -right-6 -bottom-6 w-24 h-24 blur-xl rounded-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40",
-                card.id === "all" && "bg-[#0da192]",
+                card.id === "all" && "bg-primary",
                 card.id === "NOWA" && "bg-cyan-500",
-                card.id === "FAVORITES" && "bg-[#d7b56d]",
+                card.id === "FAVORITES" && "bg-secondary",
                 card.id === "PENDING" && "bg-indigo-500",
                 card.id === "CLOSED" && "bg-zinc-500"
               )} />
@@ -489,9 +489,9 @@ const SprawyPage = () => {
               {isSelected && (
                 <div className={cn(
                   "absolute top-0 left-0 right-0 h-[3px]",
-                  card.id === "all" && "bg-[#0da192]",
+                  card.id === "all" && "bg-primary",
                   card.id === "NOWA" && "bg-cyan-500",
-                  card.id === "FAVORITES" && "bg-[#d7b56d]",
+                  card.id === "FAVORITES" && "bg-secondary",
                   card.id === "PENDING" && "bg-indigo-500",
                   card.id === "CLOSED" && "bg-zinc-500"
                 )} />
@@ -510,7 +510,7 @@ const SprawyPage = () => {
                   "h-8 w-8 rounded-lg flex items-center justify-center border transition-colors",
                   isSelected
                     ? card.iconContainerClass
-                    : "bg-zinc-800/40 border-border/50 text-zinc-400 group-hover:text-white group-hover:border-[#0da192]/30"
+                    : "bg-zinc-800/40 border-border/50 text-zinc-400 group-hover:text-white group-hover:border-primary/30"
                 )}>
                   <Icon className="h-4 w-4" />
                 </div>
@@ -530,7 +530,7 @@ const SprawyPage = () => {
         className="p-5 rounded-2xl bg-card/20 backdrop-blur-md border border-border/30 space-y-4 relative z-10"
       >
         <div className="flex items-center justify-between border-b border-border/20 pb-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#0da192]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
             <Filter className="h-4 w-4" />
             <span>Panel wyszukiwania i filtrów</span>
           </div>
@@ -557,10 +557,10 @@ const SprawyPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3.5">
           {/* Keyword Search */}
           <div className="lg:col-span-4 relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-[#0da192] transition-colors" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               placeholder="Szukaj po nazwie lub opisie sprawy..."
-              className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+              className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -571,7 +571,7 @@ const SprawyPage = () => {
             <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Miasto..."
-              className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+              className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
             />
@@ -580,13 +580,13 @@ const SprawyPage = () => {
           {/* Category Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
                 <SelectValue placeholder="Kategoria" />
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie kategorie</SelectItem>
+                <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie kategorie</SelectItem>
                 {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
+                  <SelectItem key={cat.id} value={cat.id} className="hover:bg-primary/10 focus:bg-primary/10">
                     {cat.nazwa}
                   </SelectItem>
                 ))}
@@ -597,14 +597,14 @@ const SprawyPage = () => {
           {/* Client Type Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
                 <SelectValue placeholder="Typ klienta" />
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie typy</SelectItem>
-                <SelectItem value="OSOBA_PRYWATNA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Osoba prywatna</SelectItem>
-                <SelectItem value="FIRMA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Firma</SelectItem>
-                <SelectItem value="ORGANIZACJA" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Organizacja</SelectItem>
+                <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie typy</SelectItem>
+                <SelectItem value="OSOBA_PRYWATNA" className="hover:bg-primary/10 focus:bg-primary/10">Osoba prywatna</SelectItem>
+                <SelectItem value="FIRMA" className="hover:bg-primary/10 focus:bg-primary/10">Firma</SelectItem>
+                <SelectItem value="ORGANIZACJA" className="hover:bg-primary/10 focus:bg-primary/10">Organizacja</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -614,7 +614,7 @@ const SprawyPage = () => {
       {/* Main Cases List redesigned */}
       {filteredCases.length === 0 ? (
         <div className="text-center py-16 px-6 rounded-2xl bg-card/10 border border-border/30 max-w-lg mx-auto relative overflow-hidden z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0da192]/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
           <Briefcase className="mx-auto h-14 w-14 text-muted-foreground/60 mb-4 animate-pulse" />
           <h3 className="text-xl font-bold text-white mb-2 font-playfair">Brak spraw w bazie</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
@@ -657,24 +657,25 @@ const SprawyPage = () => {
                   className="relative"
                 >
                   <Card
+                    variant="glass"
                     className={cn(
-                      "overflow-hidden relative border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl transition-all duration-300 group hover:border-[#0da192]/40 hover:bg-card/35 shadow-lg shadow-black/10 hover:shadow-black/20",
-                      isAccepted && "border-[#0da192]/45 bg-gradient-to-br from-[#0da192]/5 via-transparent to-transparent shadow-[#0da192]/5"
+                      "overflow-hidden relative rounded-2xl transition-all duration-300 group hover:border-primary/40 hover:bg-card/35 shadow-lg shadow-black/10 hover:shadow-black/20",
+                      isAccepted && "border-primary/45 bg-gradient-to-br from-primary/5 via-transparent to-transparent shadow-primary/5"
                     )}
                   >
                     {/* Glowing beam border for accepted case */}
-                    {isAccepted && <BorderBeam lightColor="#0da192" lightWidth={450} duration={4.5} borderWidth={1.5} />}
+                    {isAccepted && <BorderBeam lightColor="var(--primary)" lightWidth={450} duration={4.5} borderWidth={1.5} />}
 
                     {/* Top Glow bar for accepted status */}
                     {isAccepted && (
-                      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#0da192] to-transparent pointer-events-none" />
+                      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent pointer-events-none" />
                     )}
 
                     <CardHeader className="flex flex-row items-center justify-between px-6 py-4 border-b border-border/20">
                       {/* Elegant Badges */}
                       <div className="flex flex-wrap items-center gap-2">
                         {isAccepted && (
-                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold tracking-wide animate-pulse">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-success/10 text-success border border-success/30 text-xs font-semibold tracking-wide animate-pulse">
                             <CheckCircle className="h-3 w-3" />
                             Zaakceptowana
                           </span>
@@ -695,7 +696,7 @@ const SprawyPage = () => {
                             Pilne
                           </span>
                         )}
-                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 text-xs font-medium">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-medium">
                           {getStatusLabel(sprawa.status)}
                         </span>
                       </div>
@@ -742,7 +743,7 @@ const SprawyPage = () => {
                       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                         <div className="flex-grow space-y-4 w-full">
                           {/* Case Title */}
-                          <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-white group-hover:text-[#0da192] transition-colors leading-tight">
+                          <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-white group-hover:text-primary transition-colors leading-tight">
                             {sprawa.nazwaSprawy}
                           </h3>
 
@@ -755,7 +756,7 @@ const SprawyPage = () => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 pt-2">
                             {/* Lokalizacja */}
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
-                              <MapPin className="h-4 w-4 mr-2.5 text-[#0da192] flex-shrink-0" />
+                              <MapPin className="h-4 w-4 mr-2.5 text-primary flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
                                 <span className="font-medium text-white text-xs leading-none truncate">
@@ -779,7 +780,7 @@ const SprawyPage = () => {
 
                             {/* Budżet */}
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
-                              <Euro className="h-4 w-4 mr-2.5 text-emerald-400 flex-shrink-0" />
+                              <Euro className="h-4 w-4 mr-2.5 text-success flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
                                 <span className="font-medium text-white text-xs leading-none">
@@ -790,7 +791,7 @@ const SprawyPage = () => {
 
                             {/* Klient Avatar and Details */}
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
-                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 text-xs font-semibold mr-2.5 flex-shrink-0">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-semibold mr-2.5 flex-shrink-0">
                                 {sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}
                               </div>
                               <div className="flex flex-col min-w-0">
@@ -807,7 +808,7 @@ const SprawyPage = () => {
                         <div className="flex-shrink-0 w-full lg:w-auto pt-4 lg:pt-0">
                           <Button
                             onClick={() => router.push(`/panel-eksperta/sprawy/${sprawa.id}`)}
-                            className="w-full lg:w-auto h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 group/btn gap-2"
+                            className="w-full lg:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-white/10 group/btn gap-2"
                           >
                             <span>Zobacz szczegóły</span>
                             <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
@@ -826,10 +827,10 @@ const SprawyPage = () => {
       {/* Reject Modal */}
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
-          <BorderBeam lightColor="#e11d48" lightWidth={350} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--error)" lightWidth={350} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
-              <AlertCircle className="h-5 w-5 animate-pulse text-red-500" />
+              <AlertCircle className="h-5 w-5 animate-pulse text-error" />
               <span>Ukryj sprawę</span>
             </DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
@@ -849,7 +850,7 @@ const SprawyPage = () => {
               type="button"
               variant="destructive"
               onClick={handleReject}
-              className="rounded-xl text-xs font-semibold px-5 h-9 bg-red-600 hover:bg-red-700 text-white"
+              className="rounded-xl text-xs font-semibold px-5 h-9 bg-error hover:bg-error/90 text-white"
             >
               Ukryj sprawę
             </Button>

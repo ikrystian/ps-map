@@ -100,7 +100,7 @@ const formatDate = (dateString: string) => {
 const viewsChartConfig = {
   views: {
     label: "Wyświetlenia",
-    color: "#0da192",
+    color: "hsl(var(--primary))",
   },
 }
 
@@ -118,11 +118,11 @@ const offersChartConfig = {
 const categoriesChartConfig = {
   offers: {
     label: "Złożone oferty",
-    color: "#d7b56d",
+    color: "hsl(var(--secondary))",
   },
   won: {
     label: "Wygrane oferty",
-    color: "#0da192",
+    color: "hsl(var(--primary))",
   },
 }
 
@@ -139,11 +139,11 @@ const clientTypeChartConfig = {
   },
   Indywidualni: {
     label: "Klienci indywidualni",
-    color: "#0da192",
+    color: "hsl(var(--primary))",
   },
   Biznesowi: {
     label: "Klienci biznesowi",
-    color: "#d7b56d",
+    color: "hsl(var(--secondary))",
   },
 }
 
@@ -241,7 +241,7 @@ export default function LawFirmStatsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Sprawdzanie uprawnień...</p>
         </div>
       </div>
@@ -253,8 +253,8 @@ export default function LawFirmStatsPage() {
     return (
       <div className="relative space-y-6 pb-12 overflow-hidden min-h-screen">
         {/* Ambient Background Glows */}
-        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -299,7 +299,7 @@ export default function LawFirmStatsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie analizy profilu...</p>
         </div>
       </div>
@@ -330,8 +330,8 @@ export default function LawFirmStatsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -364,7 +364,7 @@ export default function LawFirmStatsPage() {
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.wyswietleniaProfilu}</h3>
                 <p className="text-sm text-emerald-400 font-medium">+{stats.viewsThisMonth} w tym miesiącu</p>
               </div>
-              <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 transition-transform duration-300">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
                 <Eye className="h-6 w-6" />
               </div>
             </CardContent>
@@ -396,7 +396,7 @@ export default function LawFirmStatsPage() {
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.konwersja.toFixed(1)}%</h3>
                 <p className="text-sm text-zinc-500 font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
               </div>
-              <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
+              <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-6 w-6" />
               </div>
             </CardContent>
@@ -434,15 +434,15 @@ export default function LawFirmStatsPage() {
       >
         <Tabs id="tour-stats-tabs" defaultValue="views" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 border border-border/30 bg-zinc-950/20 rounded-xl p-1 h-12">
-            <TabsTrigger value="views" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Wyświetlenia</TabsTrigger>
-            <TabsTrigger value="offers" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Oferty</TabsTrigger>
-            <TabsTrigger value="categories" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Kategorie</TabsTrigger>
+            <TabsTrigger value="views" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Wyświetlenia</TabsTrigger>
+            <TabsTrigger value="offers" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Oferty</TabsTrigger>
+            <TabsTrigger value="categories" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Kategorie</TabsTrigger>
           </TabsList>
 
           {/* Views Tab */}
           <TabsContent value="views" className="space-y-4">
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
                 <CardTitle className="text-lg font-playfair text-white">Wyświetlenia profilu w czasie</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
@@ -461,8 +461,8 @@ export default function LawFirmStatsPage() {
                     >
                       <defs>
                         <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0da192" stopOpacity={0.4} />
-                          <stop offset="95%" stopColor="#0da192" stopOpacity={0} />
+                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
@@ -483,7 +483,7 @@ export default function LawFirmStatsPage() {
                       <Area
                         type="monotone"
                         dataKey="views"
-                        stroke="#0da192"
+                        stroke="var(--primary)"
                         strokeWidth={2}
                         fillOpacity={1}
                         fill="url(#colorViews)"
@@ -494,7 +494,7 @@ export default function LawFirmStatsPage() {
 
                 <div className="mt-8 pt-6 border-t border-border/20 grid grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
-                    <div className="text-2xl font-bold text-[#0da192]">
+                    <div className="text-2xl font-bold text-primary">
                       {monthlyViews.reduce((sum, m) => sum + m.views, 0)}
                     </div>
                     <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
@@ -502,7 +502,7 @@ export default function LawFirmStatsPage() {
                     </div>
                   </div>
                   <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
-                    <div className="text-2xl font-bold text-[#0da192]">
+                    <div className="text-2xl font-bold text-primary">
                       {monthlyViews.length > 0
                         ? Math.round(monthlyViews.reduce((sum, m) => sum + m.views, 0) / monthlyViews.length)
                         : 0}
@@ -512,7 +512,7 @@ export default function LawFirmStatsPage() {
                     </div>
                   </div>
                   <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
-                    <div className="text-2xl font-bold text-[#0da192]">
+                    <div className="text-2xl font-bold text-primary">
                       {maxViews}
                     </div>
                     <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
@@ -527,7 +527,7 @@ export default function LawFirmStatsPage() {
           {/* Offers Tab */}
           <TabsContent value="offers" className="space-y-4">
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
                 <CardTitle className="text-lg font-playfair text-white">Statystyki ofert</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
@@ -604,7 +604,7 @@ export default function LawFirmStatsPage() {
           {/* Categories Tab */}
           <TabsContent value="categories" className="space-y-4">
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
                 <CardTitle className="text-lg font-playfair text-white">Statystyki według kategorii</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
@@ -705,12 +705,12 @@ export default function LawFirmStatsPage() {
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
-              <Target className="h-5 w-5 text-[#0da192]" />
+              <Target className="h-5 w-5 text-primary" />
               Pozycja w rankingu
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 h-[250px] flex flex-col items-center justify-center space-y-2">
-            <div className="text-6xl font-black bg-gradient-to-r from-[#d7b56d] to-[#b39352] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(215,181,109,0.15)] font-playfair">
+            <div className="text-6xl font-black bg-gradient-to-r from-secondary to-secondary/80 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(215,181,109,0.15)] font-playfair">
               {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
             </div>
             <div className="text-xs text-zinc-400 font-light text-center">
@@ -767,7 +767,7 @@ export default function LawFirmStatsPage() {
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
-              <Users className="h-5 w-5 text-[#0da192]" />
+              <Users className="h-5 w-5 text-primary" />
               Typy klientów
             </CardTitle>
           </CardHeader>

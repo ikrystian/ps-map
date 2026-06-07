@@ -257,16 +257,16 @@ export default function LawFirmCaseDetailsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0da192]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   if (error || !caseData) {
     return (
-      <Card className="border-rose-500/30 bg-card/40 backdrop-blur-md rounded-2xl max-w-lg mx-auto mt-12">
+      <Card variant="glass" className="border-error/30 bg-card/40 rounded-2xl max-w-lg mx-auto mt-12">
         <CardContent className="pt-8 text-center space-y-4">
-          <AlertCircle className="h-12 w-12 text-rose-500 mx-auto" />
+          <AlertCircle className="h-12 w-12 text-error mx-auto" />
           <h3 className="text-xl font-bold text-white font-playfair">Wystąpił błąd</h3>
           <p className="text-sm text-muted-foreground">{error || "Nie znaleziono sprawy o podanym identyfikatorze."}</p>
           <Button
@@ -284,8 +284,8 @@ export default function LawFirmCaseDetailsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header and Back navigation */}
       <div className="relative z-10 space-y-4">
@@ -304,7 +304,7 @@ export default function LawFirmCaseDetailsPage() {
           titleClassName="text-white text-2xl sm:text-3xl font-playfair tracking-tight"
         >
           <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 text-xs font-semibold">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-semibold">
               {getCaseStatusLabel(caseData.status)}
             </span>
             {caseData.trybPilny && (
@@ -317,9 +317,9 @@ export default function LawFirmCaseDetailsPage() {
       </div>
 
       {error && (
-        <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl relative z-10">
+        <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl relative z-10">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-rose-400">
+            <div className="flex items-center gap-2 text-error">
               <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
@@ -331,7 +331,7 @@ export default function LawFirmCaseDetailsPage() {
       <div className="grid md:grid-cols-3 gap-6 relative z-10">
         {/* Main Details Panel */}
         <div className="md:col-span-2 space-y-6">
-          <Card className="border-border/30 bg-card/20 backdrop-blur-md rounded-2xl">
+          <Card variant="glass" className="rounded-2xl">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-bold font-playfair text-white">Opis sprawy</CardTitle>
             </CardHeader>
@@ -342,10 +342,10 @@ export default function LawFirmCaseDetailsPage() {
 
           {/* Załączniki */}
           {caseData.zalaczniki && Array.isArray(caseData.zalaczniki) && caseData.zalaczniki.length > 0 && (
-            <Card className="border-border/30 bg-card/20 backdrop-blur-md rounded-2xl">
+            <Card variant="glass" className="rounded-2xl">
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-bold font-playfair text-white flex items-center gap-2">
-                  <Paperclip className="h-4 w-4 text-[#0da192]" />
+                  <Paperclip className="h-4 w-4 text-primary" />
                   <span>Załączniki ({caseData.zalaczniki.length})</span>
                 </CardTitle>
               </CardHeader>
@@ -361,7 +361,7 @@ export default function LawFirmCaseDetailsPage() {
                         className="flex flex-col justify-between p-4 border border-border/30 bg-zinc-800/20 hover:bg-zinc-800/40 rounded-xl transition-colors gap-3.5"
                       >
                         <div className="flex items-start gap-3 min-w-0">
-                          <div className="h-9 w-9 rounded-lg bg-zinc-800 border border-border/50 flex items-center justify-center flex-shrink-0 text-[#0da192] font-semibold text-xs uppercase">
+                          <div className="h-9 w-9 rounded-lg bg-zinc-800 border border-border/50 flex items-center justify-center flex-shrink-0 text-primary font-semibold text-xs uppercase">
                             {fileExtension.slice(0, 3)}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -409,8 +409,8 @@ export default function LawFirmCaseDetailsPage() {
 
             if (hasAcceptedOffer) {
               return (
-                <Card className="border-[#0da192]/40 bg-gradient-to-br from-[#0da192]/5 via-transparent to-transparent backdrop-blur-md rounded-2xl relative overflow-hidden">
-                  <BorderBeam lightColor="#0da192" lightWidth={400} duration={4} borderWidth={1.5} />
+                <Card variant="glass" className="border-primary/40 bg-gradient-to-br from-primary/5 via-transparent to-transparent rounded-2xl relative overflow-hidden">
+                  <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={4} borderWidth={1.5} />
                   <CardHeader className="border-b border-border/20 py-4 px-6">
                     <CardTitle className="text-lg font-bold font-playfair text-white flex items-center gap-2">
                       <ShieldCheck className="h-5 w-5 text-emerald-400" />
@@ -423,7 +423,7 @@ export default function LawFirmCaseDetailsPage() {
                   <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Imie Nazwisko */}
                     <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30">
-                      <User className="h-4.5 w-4.5 mr-3 text-[#d7b56d] flex-shrink-0" />
+                      <User className="h-4.5 w-4.5 mr-3 text-secondary flex-shrink-0" />
                       <div className="flex flex-col min-w-0">
                         <span className="text-sm text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
                         <span className="font-semibold text-white text-xs leading-none truncate">
@@ -435,12 +435,12 @@ export default function LawFirmCaseDetailsPage() {
                     {/* Email */}
                     <a
                       href={`mailto:${caseData.emailKontakt}`}
-                      className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-[#0da192]/30 transition-colors group"
+                      className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-primary/30 transition-colors group"
                     >
-                      <Mail className="h-4.5 w-4.5 mr-3 text-[#0da192] flex-shrink-0 group-hover:scale-105 transition-transform" />
+                      <Mail className="h-4.5 w-4.5 mr-3 text-primary flex-shrink-0 group-hover:scale-105 transition-transform" />
                       <div className="flex flex-col min-w-0">
                         <span className="text-sm text-muted-foreground/75 leading-none mb-1">Adres email</span>
-                        <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-[#0da192] transition-colors">
+                        <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-primary transition-colors">
                           {caseData.emailKontakt}
                         </span>
                       </div>
@@ -449,12 +449,12 @@ export default function LawFirmCaseDetailsPage() {
                     {/* Telefon */}
                     <a
                       href={`tel:${caseData.telefonKontakt}`}
-                      className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-[#0da192]/30 transition-colors group"
+                      className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-primary/30 transition-colors group"
                     >
-                      <Phone className="h-4.5 w-4.5 mr-3 text-[#0da192] flex-shrink-0 group-hover:scale-105 transition-transform" />
+                      <Phone className="h-4.5 w-4.5 mr-3 text-primary flex-shrink-0 group-hover:scale-105 transition-transform" />
                       <div className="flex flex-col min-w-0">
                         <span className="text-sm text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
-                        <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-[#0da192] transition-colors">
+                        <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-primary transition-colors">
                           {caseData.telefonKontakt}
                         </span>
                       </div>
@@ -466,10 +466,10 @@ export default function LawFirmCaseDetailsPage() {
 
             // Standardowa sekcja dla spraw bez zaakceptowanej oferty
             return (
-              <Card className="border-border/30 bg-card/20 backdrop-blur-md rounded-2xl">
+              <Card variant="glass" className="rounded-2xl">
                 <CardHeader className="border-b border-border/20 py-4 px-6">
                   <CardTitle className="text-lg font-bold font-playfair text-white flex items-center gap-2">
-                    <User className="h-4.5 w-4.5 text-[#0da192]" />
+                    <User className="h-4.5 w-4.5 text-primary" />
                     <span>Dane kontaktowe</span>
                   </CardTitle>
                 </CardHeader>
@@ -513,7 +513,7 @@ export default function LawFirmCaseDetailsPage() {
 
           {/* Formularz składania oferty */}
           {!hasExistingOffer && caseData.status !== "W_TRAKCIE" && caseData.status !== "ZAKONCZONA" && (
-            <Card className="border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+            <Card variant="glass" className="rounded-2xl">
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-bold font-playfair text-white">Złóż ofertę eksperta</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs font-light">
@@ -525,7 +525,8 @@ export default function LawFirmCaseDetailsPage() {
                   <Button
                     onClick={() => setShowOfferForm(true)}
                     size="lg"
-                    className="w-full sm:w-auto h-12 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 flex items-center justify-center gap-2"
+                    variant="primary"
+                    className="w-full sm:w-auto h-12 px-6 text-white font-medium rounded-xl shadow-md shadow-primary/10 transition-all duration-200 border-t border-white/10 flex items-center justify-center gap-2"
                   >
                     <Send className="h-4 w-4" />
                     <span>Rozpocznij składanie oferty</span>
@@ -534,7 +535,7 @@ export default function LawFirmCaseDetailsPage() {
                   <form onSubmit={handleSubmitOffer} className="space-y-6">
                     {/* Wycena */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-sm text-[#0da192] flex items-center gap-1.5">
+                      <h3 className="font-semibold text-sm text-primary flex items-center gap-1.5">
                         <DollarSign className="h-4 w-4" />
                         <span>Wycena oferty</span>
                       </h3>
@@ -546,7 +547,7 @@ export default function LawFirmCaseDetailsPage() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
                             value={offerForm.kwotaNetto}
                             onChange={(e) => handleOfferFormChange("kwotaNetto", e.target.value)}
                             required
@@ -559,7 +560,7 @@ export default function LawFirmCaseDetailsPage() {
                             value={offerForm.vat}
                             onValueChange={(value) => handleOfferFormChange("vat", value)}
                           >
-                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192]">
+                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -571,8 +572,8 @@ export default function LawFirmCaseDetailsPage() {
                           </Select>
                         </div>
                       </div>
-                      <div className="p-4 bg-[#0da192]/10 border border-[#0da192]/20 rounded-xl flex flex-col justify-between">
-                        <span className="text-sm text-[#0da192] uppercase font-bold tracking-wider">Szacowana kwota brutto</span>
+                      <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl flex flex-col justify-between">
+                        <span className="text-sm text-primary uppercase font-bold tracking-wider">Szacowana kwota brutto</span>
                         <span className="text-2xl font-black text-white mt-1">
                           {formatCurrency(calculateBrutto())}
                         </span>
@@ -589,7 +590,7 @@ export default function LawFirmCaseDetailsPage() {
                           id="terminRealizacjiDni"
                           type="number"
                           min="1"
-                          className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192]"
+                          className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
                           value={offerForm.terminRealizacjiDni}
                           onChange={(e) => handleOfferFormChange("terminRealizacjiDni", e.target.value)}
                           required
@@ -602,7 +603,7 @@ export default function LawFirmCaseDetailsPage() {
                           value={offerForm.warunkiPlatnosci}
                           onValueChange={(value) => handleOfferFormChange("warunkiPlatnosci", value)}
                         >
-                          <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192]">
+                          <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -627,7 +628,7 @@ export default function LawFirmCaseDetailsPage() {
                         value={offerForm.opisOferty}
                         onChange={(e) => handleOfferFormChange("opisOferty", e.target.value)}
                         rows={6}
-                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] placeholder:text-zinc-600 text-sm font-light leading-relaxed"
+                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary placeholder:text-zinc-600 text-sm font-light leading-relaxed"
                         placeholder="Opisz szczegółowo swoją ofertę, swoje doświadczenie w tego typu sprawach, proponowane podejście oraz to, jak możesz pomóc klientowi..."
                         required
                       />
@@ -647,7 +648,7 @@ export default function LawFirmCaseDetailsPage() {
                         value={offerForm.zakresUslug}
                         onChange={(e) => handleOfferFormChange("zakresUslug", e.target.value)}
                         rows={4}
-                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] placeholder:text-zinc-600 text-sm font-light leading-relaxed"
+                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary placeholder:text-zinc-600 text-sm font-light leading-relaxed"
                         placeholder="np. Analiza dokumentacji, przygotowanie pism procesowych, reprezentacja przed Sądem..."
                         required
                       />
@@ -661,19 +662,19 @@ export default function LawFirmCaseDetailsPage() {
                         value={offerForm.dodatkoweWarunki}
                         onChange={(e) => handleOfferFormChange("dodatkoweWarunki", e.target.value)}
                         rows={3}
-                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] placeholder:text-zinc-600 text-sm font-light leading-relaxed"
+                        className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary placeholder:text-zinc-600 text-sm font-light leading-relaxed"
                         placeholder="Wpisz wszelkie inne kwestie, o których klient powinien wiedzieć..."
                       />
                     </div>
 
                     {/* Wyróżnienie */}
-                    <div className="flex items-center space-x-3.5 p-4 border border-[#d7b56d]/30 bg-[#d7b56d]/5 rounded-xl">
+                    <div className="flex items-center space-x-3.5 p-4 border border-secondary/30 bg-secondary/5 rounded-xl">
                       <Switch
                         id="wyroznienie"
                         checked={offerForm.wyroznienie}
                         onCheckedChange={(checked) => handleOfferFormChange("wyroznienie", checked)}
                         disabled={lawFirmPoints !== null && lawFirmPoints < 50}
-                        className="data-[state=checked]:bg-[#d7b56d]"
+                        className="data-[state=checked]:bg-secondary"
                       />
                       <div className="flex-grow min-w-0">
                         <Label
@@ -691,7 +692,7 @@ export default function LawFirmCaseDetailsPage() {
                         {lawFirmPoints !== null && lawFirmPoints < 50 && (
                           <p className="text-xs text-rose-400 mt-2 font-medium">
                             Niewystarczające saldo punktów (masz: {lawFirmPoints} pkt).{" "}
-                            <Link href="/panel-eksperta/punkty" className="underline text-[#d7b56d] hover:text-[#d7b56d]/85">
+                            <Link href="/panel-eksperta/punkty" className="underline text-secondary hover:text-secondary/85">
                               Doładuj punkty w profilu
                             </Link>
                           </p>
@@ -711,8 +712,9 @@ export default function LawFirmCaseDetailsPage() {
                       </Button>
                       <Button
                         type="submit"
+                        variant="primary"
                         disabled={submitting}
-                        className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md border-t border-white/10 flex items-center gap-2"
+                        className="h-11 px-6 text-white font-medium rounded-xl shadow-md border-t border-white/10 flex items-center gap-2"
                       >
                         {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                         <span>Wyślij ofertę</span>
@@ -725,11 +727,11 @@ export default function LawFirmCaseDetailsPage() {
           )}
 
           {hasExistingOffer && (
-            <Card className="border-[#0da192]/40 bg-[#0da192]/5 backdrop-blur-md rounded-2xl relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={300} duration={5} />
+            <Card variant="glass" className="border-primary/40 bg-primary/5 rounded-2xl relative overflow-hidden">
+              <BorderBeam lightColor="var(--primary)" lightWidth={300} duration={5} />
               <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-[#0da192]/20 border border-[#0da192]/30 flex items-center justify-center text-[#0da192]">
+                  <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                   <div>
@@ -753,7 +755,7 @@ export default function LawFirmCaseDetailsPage() {
           <Card className="border-border/30 bg-card/20 backdrop-blur-md rounded-2xl">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-base font-bold text-white font-playfair flex items-center gap-2">
-                <FileText className="h-4.5 w-4.5 text-[#0da192]" />
+                <FileText className="h-4.5 w-4.5 text-primary" />
                 <span>Informacje o zleceniu</span>
               </CardTitle>
             </CardHeader>
@@ -763,7 +765,7 @@ export default function LawFirmCaseDetailsPage() {
                 <p className="font-bold text-sm text-white flex items-center gap-1.5">
                   <Euro className="h-4 w-4 text-emerald-400" />
                   {caseData.doNegocjacji ? (
-                    <span className="text-[#d7b56d]">Do negocjacji</span>
+                    <span className="text-secondary">Do negocjacji</span>
                   ) : caseData.budzetOd && caseData.budzetDo ? (
                     <span>{formatCurrency(caseData.budzetOd)} - {formatCurrency(caseData.budzetDo)}</span>
                   ) : caseData.budzetOd ? (
@@ -793,7 +795,7 @@ export default function LawFirmCaseDetailsPage() {
               <div>
                 <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Obszar realizacji</p>
                 <p className="font-bold text-sm text-white flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#0da192]" />
+                  <MapPin className="h-4 w-4 text-primary" />
                   <span className="truncate">
                     {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
                   </span>
@@ -815,7 +817,7 @@ export default function LawFirmCaseDetailsPage() {
               <div>
                 <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Liczba złożonych ofert</p>
                 <p className="font-bold text-sm text-white flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-[#d7b56d]" />
+                  <Briefcase className="h-4 w-4 text-secondary" />
                   <span>{caseData._count.offers}</span>
                 </p>
               </div>
@@ -826,12 +828,12 @@ export default function LawFirmCaseDetailsPage() {
           <Card className="border-border/30 bg-card/20 backdrop-blur-md rounded-2xl">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-base font-bold text-white font-playfair flex items-center gap-2">
-                <User className="h-4.5 w-4.5 text-[#0da192]" />
+                <User className="h-4.5 w-4.5 text-primary" />
                 <span>Profil Klienta</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 text-sm font-bold flex-shrink-0">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary/10 text-secondary border border-secondary/20 text-sm font-bold flex-shrink-0">
                 {caseData.client.imie[0]}{caseData.client.nazwisko[0]}
               </div>
               <div className="min-w-0">
