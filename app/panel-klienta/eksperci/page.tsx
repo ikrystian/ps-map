@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
 import {
   Briefcase,
@@ -150,7 +151,7 @@ export default function ClientFavoritesPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-[#0da192]" />
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <p className="text-zinc-400 text-sm font-light">Ładowanie ulubionych ekspertów...</p>
       </div>
     )
@@ -181,8 +182,8 @@ export default function ClientFavoritesPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -191,7 +192,7 @@ export default function ClientFavoritesPage() {
         transition={{ duration: 0.4 }}
         className="relative z-10"
       >
-        <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Wybrani Eksperci</h1>
+        <Heading level="h1">Wybrani Eksperci</Heading>
         <p className="text-sm text-zinc-400 mt-1.5 font-light">
           Lista Twoich ulubionych ekspertów i ekspertów prawnych, z którymi chcesz pozostać w kontakcie.
         </p>
@@ -205,21 +206,23 @@ export default function ClientFavoritesPage() {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="relative z-10"
         >
-          <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+          <Card variant="glass" className="relative overflow-hidden">
             <CardContent className="py-16 px-4">
               <div className="text-center max-w-md mx-auto space-y-5">
                 <div className="h-16 w-16 rounded-full bg-zinc-950/40 border border-border/10 flex items-center justify-center mx-auto text-zinc-500 shadow-inner">
                   <Heart className="h-8 w-8 text-zinc-500" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-white">Brak ulubionych ekspertów</h3>
+                  <Heading level="h3" size="h3" className="text-lg">Brak ulubionych ekspertów</Heading>
                   <p className="text-zinc-400 text-sm font-light leading-relaxed">
                     Przeglądaj profile ekspertów w naszym katalogu i dodaj ich do ulubionych, aby mieć do nich szybki dostęp w przyszłości.
                   </p>
                 </div>
                 <Button
+                  variant="primary"
+                  size="lg"
                   onClick={() => router.push("/szukaj-prawnika")}
-                  className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all"
+                  className="shadow-md border-t border-white/10 transition-all"
                 >
                   Szukaj prawnika
                 </Button>
@@ -238,12 +241,12 @@ export default function ClientFavoritesPage() {
             const { lawFirm } = favorite
             return (
               <motion.div key={favorite.id} variants={itemVariants}>
-                <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden hover:border-[#0da192]/30 hover:bg-zinc-950/20 transition-all duration-300">
+                <Card variant="glass" className="relative overflow-hidden hover:border-primary/30 hover:bg-zinc-950/20 transition-all duration-300">
                   <CardHeader className="p-6 pb-4">
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
                       <div className="flex flex-col sm:flex-row items-start gap-4 flex-1">
                         {/* Logo */}
-                        <div className="relative h-20 w-20 rounded-2xl overflow-hidden border border-border/30 bg-zinc-950/60 flex-shrink-0 flex items-center justify-center p-2">
+                        <div className="relative h-20 w-20 rounded-lg overflow-hidden border border-border/30 bg-zinc-950/60 flex-shrink-0 flex items-center justify-center p-2">
                           {lawFirm.logo ? (
                             <Image
                               src={lawFirm.logo}
@@ -259,16 +262,16 @@ export default function ClientFavoritesPage() {
                         {/* Info */}
                         <div className="flex-1 min-w-0 space-y-1.5">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-xl font-bold text-white leading-tight">
+                            <Heading level="h3" size="h3" className="text-xl leading-tight">
                               <Link
                                 href={`/ekspert/${lawFirm.slug}`}
-                                className="hover:text-[#0da192] transition-colors"
+                                className="hover:text-primary transition-colors"
                               >
                                 {lawFirm.nazwa}
                               </Link>
-                            </h3>
+                            </Heading>
                             {lawFirm.zweryfikowana && (
-                              <Badge className="bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-sm font-semibold tracking-wider uppercase py-0.5 rounded-full flex items-center gap-1">
+                              <Badge className="bg-primary/10 border border-primary/30 text-primary text-sm font-semibold tracking-wider uppercase py-0.5 rounded-full flex items-center gap-1">
                                 <CheckCircle2 className="h-3 w-3" />
                                 Zweryfikowana
                               </Badge>
@@ -296,13 +299,13 @@ export default function ClientFavoritesPage() {
                           {/* Location & Type */}
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-zinc-400 pt-0.5 font-light">
                             <div className="flex items-center gap-1.5">
-                              <MapPin className="h-3.5 w-3.5 text-[#0da192]" />
+                              <MapPin className="h-3.5 w-3.5 text-primary" />
                               <span>
                                 {lawFirm.miasto}, {lawFirm.voivodeship.nazwa}
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Briefcase className="h-3.5 w-3.5 text-[#d7b56d]" />
+                              <Briefcase className="h-3.5 w-3.5 text-secondary" />
                               <span>{lawFirmTypeLabels[lawFirm.typ] || lawFirm.typ}</span>
                             </div>
                           </div>
@@ -311,7 +314,7 @@ export default function ClientFavoritesPage() {
 
                       {/* Actions */}
                       <div className="flex sm:flex-row md:flex-col gap-2 shrink-0 self-end sm:self-auto w-full sm:w-auto md:w-[150px]">
-                        <Button asChild size="sm" className="h-9 w-full rounded-xl bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold shadow-sm border-t border-white/5 transition-all text-xs">
+                        <Button asChild variant="primary" size="sm" className="w-full border-t border-white/5 shadow-sm text-xs">
                           <Link href={`/ekspert/${lawFirm.slug}`}>
                             Zobacz profil
                           </Link>
@@ -323,13 +326,13 @@ export default function ClientFavoritesPage() {
                               variant="outline"
                               size="sm"
                               disabled={removingId === lawFirm.id}
-                              className="h-9 w-full rounded-xl border-border/40 hover:bg-rose-500/5 hover:text-rose-400 hover:border-rose-500/20 text-zinc-400 text-xs font-semibold"
+                              className="h-9 w-full rounded-md border-border/40 hover:bg-rose-500/5 hover:text-rose-400 hover:border-rose-500/20 text-zinc-400 text-xs font-semibold"
                             >
                               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                               Usuń
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-zinc-900 border border-border/40 text-white rounded-2xl p-6 shadow-2xl overflow-hidden max-w-md w-[calc(100%-2rem)] mx-auto">
+                          <AlertDialogContent className="bg-background/95 backdrop-blur-md border border-border/30 text-white rounded-lg p-6 shadow-2xl overflow-hidden max-w-md w-[calc(100%-2rem)] mx-auto">
                             <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-rose-500/5 blur-[80px] rounded-full pointer-events-none" />
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-lg font-bold text-white">Usunąć z ulubionych?</AlertDialogTitle>
@@ -338,10 +341,10 @@ export default function ClientFavoritesPage() {
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter className="mt-4 gap-2">
-                              <AlertDialogCancel className="h-9 rounded-xl border-border/50 bg-transparent text-zinc-400 hover:text-white hover:bg-white/5 text-xs font-semibold">Anuluj</AlertDialogCancel>
+                              <AlertDialogCancel className="h-9 rounded-md border-border/50 bg-transparent text-zinc-400 hover:text-white hover:bg-white/5 text-xs font-semibold">Anuluj</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleRemoveFavorite(lawFirm.id)}
-                                className="h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold"
+                                className="h-9 rounded-md bg-error hover:bg-error/90 text-error-foreground text-xs font-semibold"
                               >
                                 Usuń
                               </AlertDialogAction>
@@ -360,7 +363,7 @@ export default function ClientFavoritesPage() {
                           </Badge>
                         ))}
                         {lawFirm.categories.length > 4 && (
-                          <Badge className="bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-sm font-normal px-2.5 py-0.5 rounded-lg">
+                          <Badge className="bg-secondary/10 border border-secondary/20 text-secondary text-sm font-normal px-2.5 py-0.5 rounded-lg">
                             +{lawFirm.categories.length - 4} więcej
                           </Badge>
                         )}
@@ -378,16 +381,16 @@ export default function ClientFavoritesPage() {
 
                     <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs pt-4 border-t border-border/10">
                       <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                        <Phone className="h-3.5 w-3.5 text-[#0da192] shrink-0" />
+                        <Phone className="h-3.5 w-3.5 text-primary shrink-0" />
                         <span className="font-light">{lawFirm.numerTelefonu}</span>
                       </div>
                       <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                        <Mail className="h-3.5 w-3.5 text-[#0da192] shrink-0" />
+                        <Mail className="h-3.5 w-3.5 text-primary shrink-0" />
                         <span className="font-light">{lawFirm.emailKontakt}</span>
                       </div>
                       {lawFirm.stronaWww && (
                         <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                          <Globe className="h-3.5 w-3.5 text-[#0da192] shrink-0" />
+                          <Globe className="h-3.5 w-3.5 text-primary shrink-0" />
                           <a
                             href={lawFirm.stronaWww}
                             target="_blank"

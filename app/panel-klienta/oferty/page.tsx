@@ -2,7 +2,9 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import {
   Dialog,
   DialogContent,
@@ -201,17 +203,19 @@ export default function ClientOffersPage() {
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="relative w-full space-y-8">
+      {/* Ambient Background Glows */}
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
+
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold font-playfair tracking-tight">Oferty</h1>
-        <p className="text-sm text-muted-foreground mt-1.5">
-          Przeglądaj i zarządzaj ofertami otrzymanymi od ekspertów
-        </p>
-      </div>
+      <PageHeader
+        title="Oferty"
+        subtitle="Przeglądaj i zarządzaj ofertami otrzymanymi od ekspertów"
+      />
 
       {error && (
-        <Card className="border-destructive">
+        <Card variant="glass" className="border-destructive/30 bg-destructive/5 relative z-10">
           <CardContent className="pt-6">
             <div className="flex items-center gap-2 text-destructive">
               <AlertCircle className="h-5 w-5" />
@@ -222,9 +226,9 @@ export default function ClientOffersPage() {
       )}
 
       {/* Lista ofert */}
-      <div className="space-y-4">
+      <div className="space-y-4 relative z-10">
         {offers.length === 0 ? (
-          <Card>
+          <Card variant="glass">
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -239,18 +243,25 @@ export default function ClientOffersPage() {
           </Card>
         ) : (
           offers.map((offer) => (
-            <Card key={offer.id} className={offer.wyroznienie ? "border-primary" : ""}>
+            <Card
+              key={offer.id}
+              variant="glass"
+              className={cn(
+                "transition-all",
+                offer.wyroznienie ? "border-primary/50 bg-primary/5 shadow-primary/5" : ""
+              )}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{offer.case.nazwaSprawy}</CardTitle>
+                      <Heading level="h3" size="h3" className="text-xl text-white">{offer.case.nazwaSprawy}</Heading>
                       {offer.wyroznienie && (
-                        <Badge variant="default">Wyróżniona</Badge>
+                        <Badge variant="default" className="bg-primary hover:bg-primary-hover text-white">Wyróżniona</Badge>
                       )}
                     </div>
-                    <CardDescription className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
+                    <CardDescription className="flex items-center gap-2 text-zinc-400">
+                      <FileText className="h-4 w-4 text-zinc-500" />
                       {offer.case.category.nazwa}
                     </CardDescription>
                   </div>
@@ -263,7 +274,7 @@ export default function ClientOffersPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     {offer.lawFirm.logo && (
-                      <div className="relative h-6 w-6 rounded overflow-hidden border flex-shrink-0">
+                      <div className="relative h-6 w-6 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
                         <Image
                           src={offer.lawFirm.logo}
                           alt={offer.lawFirm.nazwa}
@@ -272,42 +283,42 @@ export default function ClientOffersPage() {
                         />
                       </div>
                     )}
-                    <p className="font-semibold flex items-center gap-2">
+                    <p className="font-semibold flex items-center gap-2 text-white">
                       {offer.lawFirm.nazwa}
                     </p>
                   </div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-2 ml-8">
-                    <MapPin className="h-3 w-3" />
+                  <p className="text-sm text-zinc-400 flex items-center gap-2 ml-8">
+                    <MapPin className="h-3 w-3 text-zinc-500" />
                     {offer.lawFirm.miasto}, {offer.lawFirm.voivodeship.nazwa}
                   </p>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/20" />
 
                 {/* Szczegóły oferty */}
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Cena</p>
+                    <p className="text-sm text-zinc-400 mb-1">Cena</p>
                     <p className="text-2xl font-bold text-primary">
                       {formatCurrency(offer.kwotaBrutto)}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-zinc-500">
                       {formatCurrency(offer.kwotaNetto)} netto + VAT {offer.vat === -1 ? "zwolniony" : `${offer.vat}%`}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Termin realizacji</p>
-                    <p className="text-lg font-semibold flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
+                    <p className="text-sm text-zinc-400 mb-1">Termin realizacji</p>
+                    <p className="text-lg font-semibold flex items-center gap-2 text-white">
+                      <Clock className="h-4 w-4 text-primary" />
                       {offer.terminRealizacjiDni} dni roboczych
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Warunki płatności</p>
-                    <p className="text-lg font-semibold flex items-center gap-2">
-                      <Euro className="h-4 w-4" />
+                    <p className="text-sm text-zinc-400 mb-1">Warunki płatności</p>
+                    <p className="text-lg font-semibold flex items-center gap-2 text-white">
+                      <Euro className="h-4 w-4 text-secondary" />
                       {getPaymentTermsLabel(offer.warunkiPlatnosci)}
                     </p>
                   </div>
@@ -320,19 +331,19 @@ export default function ClientOffersPage() {
                     !expandedOffers.has(offer.id) && "max-h-20 overflow-hidden"
                   )}>
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Opis oferty</p>
-                      <p className="text-sm whitespace-pre-wrap">{offer.opisOferty}</p>
+                      <p className="text-sm text-zinc-400 mb-1">Opis oferty</p>
+                      <p className="text-sm whitespace-pre-wrap text-zinc-300 leading-relaxed font-light">{offer.opisOferty}</p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Zakres usług</p>
-                      <p className="text-sm whitespace-pre-wrap">{offer.zakresUslug}</p>
+                      <p className="text-sm text-zinc-400 mb-1">Zakres usług</p>
+                      <p className="text-sm whitespace-pre-wrap text-zinc-300 leading-relaxed font-light">{offer.zakresUslug}</p>
                     </div>
 
                     {offer.dodatkoweWarunki && (
                       <div>
-                        <p className="text-sm text-muted-foreground mb-1">Warunki płatności</p>
-                        <p className="text-sm whitespace-pre-wrap">{offer.dodatkoweWarunki}</p>
+                        <p className="text-sm text-zinc-400 mb-1">Warunki płatności</p>
+                        <p className="text-sm whitespace-pre-wrap text-zinc-300 leading-relaxed font-light">{offer.dodatkoweWarunki}</p>
                       </div>
                     )}
                   </div>
@@ -342,23 +353,23 @@ export default function ClientOffersPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleOfferExpansion(offer.id)}
-                      className="text-xs h-7"
+                      className="text-xs h-7 hover:bg-white/5"
                     >
                       {expandedOffers.has(offer.id) ? "Mniej" : "Więcej"}
                     </Button>
                   </div>
                 </div>
 
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-zinc-500">
                   Złożona: {formatDate(offer.createdAt.toString())}
                 </div>
               </CardContent>
 
-              <CardFooter className="flex gap-2">
+              <CardFooter className="flex gap-2 border-t border-border/10 pt-4">
                 <Button
                   variant="outline"
                   onClick={() => handleViewDetails(offer)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
                 >
                   <Eye className="h-4 w-4" />
                   Zobacz szczegóły
@@ -367,7 +378,7 @@ export default function ClientOffersPage() {
                 {offer.status === "ZLOZONA" && (
                   <>
                     <Button
-                      variant="default"
+                      variant="primary"
                       onClick={() => handleAcceptOffer(offer)}
                       className="flex items-center gap-2"
                     >
@@ -377,7 +388,7 @@ export default function ClientOffersPage() {
                     <Button
                       variant="outline"
                       onClick={() => handleRejectOffer(offer)}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
                     >
                       <ThumbsDown className="h-4 w-4" />
                       Odrzuć
@@ -387,7 +398,7 @@ export default function ClientOffersPage() {
 
                 {offer.status === "ZAAKCEPTOWANA" && (
                   <Link href={`/ekspert/${offer.lawFirm.slug}`}>
-                    <Button variant="outline">
+                    <Button variant="outline" className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5">
                       Zobacz profil eksperta
                     </Button>
                   </Link>
@@ -400,21 +411,23 @@ export default function ClientOffersPage() {
 
       {/* Paginacja */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2 relative z-10">
           <Button
             variant="outline"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
           >
             Poprzednia
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-zinc-400">
             Strona {currentPage} z {pagination.totalPages}
           </span>
           <Button
             variant="outline"
             disabled={currentPage === pagination.totalPages}
             onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
           >
             Następna
           </Button>
@@ -423,10 +436,10 @@ export default function ClientOffersPage() {
 
       {/* Dialog szczegółów oferty */}
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto border border-border/30 bg-card/95 backdrop-blur-md rounded-lg shadow-2xl text-white">
           <DialogHeader>
-            <DialogTitle>Szczegóły oferty</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl text-white font-playfair">Szczegóły oferty</DialogTitle>
+            <DialogDescription className="text-zinc-400">
               Pełne informacje o ofercie od {selectedOffer?.lawFirm.nazwa}
             </DialogDescription>
           </DialogHeader>
@@ -435,11 +448,11 @@ export default function ClientOffersPage() {
             <div className="space-y-6">
               {/* Informacje o ekspercie */}
               <div>
-                <h3 className="font-semibold mb-2">Ekspert</h3>
-                <div className="p-4 border rounded-lg">
+                <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Ekspert</h3>
+                <div className="p-4 border border-border/30 bg-zinc-950/20 backdrop-blur-md rounded-lg">
                   <div className="flex items-center gap-2 mb-1">
                     {selectedOffer.lawFirm.logo && (
-                      <div className="relative h-8 w-8 rounded overflow-hidden border flex-shrink-0">
+                      <div className="relative h-8 w-8 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
                         <Image
                           src={selectedOffer.lawFirm.logo}
                           alt={selectedOffer.lawFirm.nazwa}
@@ -448,9 +461,9 @@ export default function ClientOffersPage() {
                         />
                       </div>
                     )}
-                    <p className="font-semibold text-lg">{selectedOffer.lawFirm.nazwa}</p>
+                    <p className="font-semibold text-lg text-white">{selectedOffer.lawFirm.nazwa}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground ml-10">
+                  <p className="text-sm text-zinc-400 ml-10">
                     {selectedOffer.lawFirm.miasto}, {selectedOffer.lawFirm.voivodeship.nazwa}
                   </p>
                 </div>
@@ -458,21 +471,21 @@ export default function ClientOffersPage() {
 
               {/* Wycena */}
               <div>
-                <h3 className="font-semibold mb-2">Wycena</h3>
-                <div className="p-4 border rounded-lg space-y-2">
+                <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Wycena</h3>
+                <div className="p-4 border border-border/30 bg-zinc-950/20 backdrop-blur-md rounded-lg space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Kwota netto:</span>
-                    <span className="font-semibold">{formatCurrency(selectedOffer.kwotaNetto)}</span>
+                    <span className="text-zinc-400 text-sm">Kwota netto:</span>
+                    <span className="font-semibold text-white">{formatCurrency(selectedOffer.kwotaNetto)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">VAT ({selectedOffer.vat === -1 ? "zwolniony" : `${selectedOffer.vat}%`}):</span>
-                    <span className="font-semibold">
+                    <span className="text-zinc-400 text-sm">VAT ({selectedOffer.vat === -1 ? "zwolniony" : `${selectedOffer.vat}%`}):</span>
+                    <span className="font-semibold text-white">
                       {selectedOffer.vat === -1 ? "0,00 zł" : formatCurrency(selectedOffer.kwotaBrutto - selectedOffer.kwotaNetto)}
                     </span>
                   </div>
-                  <Separator />
+                  <Separator className="bg-border/20" />
                   <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Kwota brutto:</span>
+                    <span className="font-semibold text-white">Kwota brutto:</span>
                     <span className="font-bold text-primary">{formatCurrency(selectedOffer.kwotaBrutto)}</span>
                   </div>
                 </div>
@@ -481,27 +494,27 @@ export default function ClientOffersPage() {
               {/* Termin i warunki */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Termin realizacji</h3>
-                  <p className="text-2xl font-bold">{selectedOffer.terminRealizacjiDni} dni roboczych</p>
+                  <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Termin realizacji</h3>
+                  <p className="text-2xl font-bold text-white">{selectedOffer.terminRealizacjiDni} dni roboczych</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Warunki płatności</h3>
-                  <p className="text-lg font-semibold">{getPaymentTermsLabel(selectedOffer.warunkiPlatnosci)}</p>
+                  <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Warunki płatności</h3>
+                  <p className="text-lg font-semibold text-white">{getPaymentTermsLabel(selectedOffer.warunkiPlatnosci)}</p>
                 </div>
               </div>
 
               {/* Opis oferty */}
               <div>
-                <h3 className="font-semibold mb-2">Opis oferty</h3>
-                <p className="whitespace-pre-wrap text-sm p-4 border rounded-lg bg-muted/30">
+                <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Opis oferty</h3>
+                <p className="whitespace-pre-wrap text-sm p-4 border border-border/30 rounded-lg bg-zinc-950/30 text-zinc-300 font-light leading-relaxed">
                   {selectedOffer.opisOferty}
                 </p>
               </div>
 
               {/* Zakres usług */}
               <div>
-                <h3 className="font-semibold mb-2">Zakres usług</h3>
-                <p className="whitespace-pre-wrap text-sm p-4 border rounded-lg bg-muted/30">
+                <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Zakres usług</h3>
+                <p className="whitespace-pre-wrap text-sm p-4 border border-border/30 rounded-lg bg-zinc-950/30 text-zinc-300 font-light leading-relaxed">
                   {selectedOffer.zakresUslug}
                 </p>
               </div>
@@ -509,8 +522,8 @@ export default function ClientOffersPage() {
               {/* Dodatkowe warunki */}
               {selectedOffer.dodatkoweWarunki && (
                 <div>
-                  <h3 className="font-semibold mb-2">Dodatkowe warunki</h3>
-                  <p className="whitespace-pre-wrap text-sm p-4 border rounded-lg bg-muted/30">
+                  <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Dodatkowe warunki</h3>
+                  <p className="whitespace-pre-wrap text-sm p-4 border border-border/30 rounded-lg bg-zinc-950/30 text-zinc-300 font-light leading-relaxed">
                     {selectedOffer.dodatkoweWarunki}
                   </p>
                 </div>
@@ -518,14 +531,14 @@ export default function ClientOffersPage() {
             </div>
           )}
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailsDialogOpen(false)}>
+          <DialogFooter className="border-t border-border/10 pt-4">
+            <Button variant="outline" onClick={() => setDetailsDialogOpen(false)} className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5">
               Zamknij
             </Button>
             {selectedOffer?.status === "ZLOZONA" && (
               <>
                 <Button
-                  variant="default"
+                  variant="primary"
                   onClick={() => {
                     setDetailsDialogOpen(false)
                     handleAcceptOffer(selectedOffer)
@@ -540,6 +553,7 @@ export default function ClientOffersPage() {
                     setDetailsDialogOpen(false)
                     handleRejectOffer(selectedOffer)
                   }}
+                  className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
                 >
                   <ThumbsDown className="h-4 w-4 mr-2" />
                   Odrzuć ofertę
@@ -552,12 +566,12 @@ export default function ClientOffersPage() {
 
       {/* Dialog potwierdzenia akcji */}
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border border-border/30 bg-card/95 backdrop-blur-md rounded-lg shadow-2xl text-white">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg text-white font-playfair">
               {actionType === "accept" ? "Akceptacja oferty" : "Odrzucenie oferty"}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-zinc-400">
               {actionType === "accept"
                 ? "Czy na pewno chcesz zaakceptować tę ofertę? Wszystkie pozostałe oferty do tej sprawy zostaną automatycznie odrzucone."
                 : "Czy na pewno chcesz odrzucić tę ofertę? Tej operacji nie można cofnąć."}
@@ -565,27 +579,28 @@ export default function ClientOffersPage() {
           </DialogHeader>
 
           {selectedOffer && (
-            <div className="p-4 border rounded-lg bg-muted/30">
-              <p className="font-semibold">{selectedOffer.lawFirm.nazwa}</p>
+            <div className="p-4 border border-border/30 rounded-lg bg-zinc-950/20">
+              <p className="font-semibold text-white">{selectedOffer.lawFirm.nazwa}</p>
               <p className="text-2xl font-bold text-primary mt-2">
                 {formatCurrency(selectedOffer.kwotaBrutto)}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-zinc-400 mt-1">
                 Termin: {selectedOffer.terminRealizacjiDni} dni roboczych
               </p>
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="border-t border-border/10 pt-4">
             <Button
               variant="outline"
               onClick={() => setConfirmDialogOpen(false)}
               disabled={submitting}
+              className="border-border/50 text-zinc-300 hover:text-white hover:bg-white/5"
             >
               Anuluj
             </Button>
             <Button
-              variant={actionType === "accept" ? "default" : "destructive"}
+              variant={actionType === "accept" ? "primary" : "destructive"}
               onClick={confirmAction}
               disabled={submitting}
             >

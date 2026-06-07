@@ -76,13 +76,13 @@ export function PackageBadge({
       label: "Premium",
       icon: Zap,
       variant: "outline" as const,
-      className: "border-[#0da192]/60 bg-gradient-to-r from-[#0da192]/15 to-[#0da192]/10 text-[#0da192] shadow-[0_0_10px_rgba(13,161,146,0.15)] font-semibold",
+      className: "border-purple-500/30 bg-purple-500/5 text-purple-600 dark:text-purple-400 font-semibold shadow-[0_0_10px_rgba(168,85,247,0.15)]",
     },
     BIZNES: {
       label: "Biznes",
       icon: Crown,
       variant: "outline" as const,
-      className: "border-primary bg-gradient-to-r from-primary/25 via-[#12c2b1]/30 to-primary/25 text-[#12c2b1] shadow-[0_0_15px_rgba(13,161,146,0.3)] animate-pulse font-bold tracking-wide uppercase",
+      className: "border-[#e2b13c]/40 bg-[#e2b13c]/10 text-[#e2b13c] shadow-[0_0_15px_rgba(226,177,60,0.2)] font-bold tracking-wide uppercase",
     },
   };
 

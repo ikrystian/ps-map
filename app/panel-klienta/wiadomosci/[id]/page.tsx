@@ -16,7 +16,7 @@ export default function ClientMessageDetailsPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[400px]">
-      <Loader2 className="h-8 w-8 animate-spin text-[#d7b56d]" />
+      <Loader2 className="h-8 w-8 animate-spin text-secondary" />
     </div>
   )
 }

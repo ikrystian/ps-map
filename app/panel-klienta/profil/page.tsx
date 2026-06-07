@@ -383,7 +383,7 @@ export default function ClientProfilePage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie profilu...</p>
         </div>
       </div>
@@ -397,8 +397,8 @@ export default function ClientProfilePage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -422,39 +422,39 @@ export default function ClientProfilePage() {
             {/* Left Side: Photo, account type, and consents */}
             <div className="space-y-6">
               {/* Avatar Section */}
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10">
+              <Card variant="glass">
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-base">Zdjęcie profilowe (Avatar)</CardTitle>
-                  <CardDescription className="text-zinc-400 text-xs">
+                  <CardDescription className="text-muted-foreground text-xs">
                     Avatar będzie wyświetlany w górnym menu i widoczny dla ekspertów.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center">
                   {clientData?.user.image ? (
                     <div className="w-full flex flex-col items-center gap-4">
-                      <div className="relative h-28 w-28 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-[#0da192]/10 shrink-0">
+                      <div className="relative h-28 w-28 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
                         <Image
-                          src={clientData.user.image}
-                          alt="Avatar"
-                          fill
-                          className="object-cover"
+                           src={clientData.user.image}
+                           alt="Avatar"
+                           fill
+                           className="object-cover"
                         />
                       </div>
                       <div className="flex flex-col gap-2 w-full">
                         <label
                           htmlFor="avatar-upload"
                           className={cn(
-                            "inline-flex items-center justify-center rounded-xl text-sm font-semibold h-10 px-4 py-2 w-full transition-all border border-border/50 text-white bg-background/50 hover:bg-zinc-800/30 cursor-pointer"
+                            "inline-flex items-center justify-center rounded-lg text-sm font-semibold h-10 px-4 py-2 w-full transition-all border border-border/30 text-white bg-background-sec/50 hover:bg-background-sec/30 cursor-pointer"
                           )}
                         >
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                               Przesyłanie...
                             </>
                           ) : (
                             <>
-                              <Upload className="mr-2 h-4 w-4 text-[#0da192]" />
+                              <Upload className="mr-2 h-4 w-4 text-primary" />
                               Zmień avatar
                             </>
                           )}
@@ -462,7 +462,7 @@ export default function ClientProfilePage() {
                         <Button
                           type="button"
                           variant="ghost"
-                          className="w-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl"
+                          className="w-full text-error hover:text-error hover:bg-error/10"
                           onClick={() => setShowDeleteConfirm(true)}
                           disabled={isUploadingAvatar || isRemovingAvatar}
                         >
@@ -475,21 +475,21 @@ export default function ClientProfilePage() {
                     <div className="w-full">
                       <label
                         htmlFor="avatar-upload"
-                        className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-border/40 rounded-xl cursor-pointer hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
+                        className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-border/30 rounded-lg cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                           {isUploadingAvatar ? (
                             <>
-                              <Loader2 className="h-9 w-9 mb-2 text-[#0da192] animate-spin" />
+                              <Loader2 className="h-9 w-9 mb-2 text-primary animate-spin" />
                               <p className="text-xs text-muted-foreground">Przesyłanie...</p>
                             </>
                           ) : (
                             <>
-                              <ImageIcon className="h-9 w-9 mb-2 text-[#0da192]" />
-                              <p className="mb-1 text-xs text-zinc-300">
-                                <span className="font-semibold text-[#0da192]">Prześlij</span> avatar
+                              <ImageIcon className="h-9 w-9 mb-2 text-primary" />
+                              <p className="mb-1 text-xs text-muted-foreground">
+                                <span className="font-semibold text-primary">Prześlij</span> avatar
                               </p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-muted-foreground/70">
                                 PNG, JPG, WEBP (max 5MB)
                               </p>
                             </>
@@ -510,10 +510,10 @@ export default function ClientProfilePage() {
               </Card>
 
               {/* Typ konta selector */}
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10">
+              <Card variant="glass">
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-base">Typ konta</CardTitle>
-                  <CardDescription className="text-zinc-400 text-xs">
+                  <CardDescription className="text-muted-foreground text-xs">
                     Wybierz czy korzystasz z serwisu prywatnie czy firmowo.
                   </CardDescription>
                 </CardHeader>
@@ -524,14 +524,14 @@ export default function ClientProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <div className="flex flex-col gap-2 p-1 bg-background/50 rounded-xl w-full border border-border/40">
+                          <div className="flex flex-col gap-2 p-1 bg-background-sec/50 rounded-lg w-full border border-border/40">
                             <button
                               type="button"
                               className={cn(
                                 "py-2.5 px-4 rounded-lg text-xs font-semibold transition-all duration-200 text-left flex items-center justify-between",
                                 field.value === "INDIVIDUAL"
-                                  ? "bg-gradient-to-r from-[#0da192] to-[#0a8276] text-white shadow-md"
-                                  : "text-muted-foreground hover:text-white hover:bg-zinc-800/20"
+                                  ? "bg-primary text-primary-foreground shadow-md"
+                                  : "text-muted-foreground hover:text-white hover:bg-background-sec/20"
                               )}
                               onClick={() => field.onChange("INDIVIDUAL")}
                             >
@@ -543,8 +543,8 @@ export default function ClientProfilePage() {
                               className={cn(
                                 "py-2.5 px-4 rounded-lg text-xs font-semibold transition-all duration-200 text-left flex items-center justify-between",
                                 field.value === "BUSINESS"
-                                  ? "bg-gradient-to-r from-[#0da192] to-[#0a8276] text-white shadow-md"
-                                  : "text-muted-foreground hover:text-white hover:bg-zinc-800/20"
+                                  ? "bg-primary text-primary-foreground shadow-md"
+                                  : "text-muted-foreground hover:text-white hover:bg-background-sec/20"
                               )}
                               onClick={() => field.onChange("BUSINESS")}
                             >
@@ -561,10 +561,10 @@ export default function ClientProfilePage() {
               </Card>
 
               {/* Zgody marketingowe */}
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10">
+              <Card variant="glass">
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-base">Zgody marketingowe</CardTitle>
-                  <CardDescription className="text-zinc-400 text-xs">
+                  <CardDescription className="text-muted-foreground text-xs">
                     Zarządzaj ustawieniami komunikacji.
                   </CardDescription>
                 </CardHeader>
@@ -574,10 +574,10 @@ export default function ClientProfilePage() {
                     control={form.control}
                     name="zgodaNewsletter"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/30 bg-background/20 p-3 gap-3">
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
                         <div className="space-y-0.5">
                           <FormLabel className="text-xs text-white">Newsletter</FormLabel>
-                          <FormDescription className="text-sm text-zinc-400">
+                          <FormDescription className="text-sm text-muted-foreground">
                             Porady prawne i nowości.
                           </FormDescription>
                         </div>
@@ -596,10 +596,10 @@ export default function ClientProfilePage() {
                     control={form.control}
                     name="zgodaMarketing"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/30 bg-background/20 p-3 gap-3">
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
                         <div className="space-y-0.5">
                           <FormLabel className="text-xs text-white">Komunikacja marketingowa</FormLabel>
-                          <FormDescription className="text-sm text-zinc-400">
+                          <FormDescription className="text-sm text-muted-foreground">
                             Promocje i oferty specjalne.
                           </FormDescription>
                         </div>
@@ -620,13 +620,13 @@ export default function ClientProfilePage() {
             <div className="lg:col-span-2 space-y-6">
               {/* Dane firmowe (B2B) */}
               {form.watch("clientType") === "BUSINESS" && (
-                <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10 animate-in fade-in slide-in-from-top-4 duration-300">
+                <Card variant="glass" className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <CardHeader>
                     <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
-                      <Building className="h-5 w-5 text-[#0da192]" />
+                      <Building className="h-5 w-5 text-primary" />
                       Dane firmy
                     </CardTitle>
-                    <CardDescription className="text-zinc-400 text-xs">Uzupełnij dane rejestrowe firmy.</CardDescription>
+                    <CardDescription className="text-muted-foreground text-xs">Uzupełnij dane rejestrowe firmy.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -635,11 +635,11 @@ export default function ClientProfilePage() {
                         name="nazwaFirmy"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs font-semibold text-zinc-300">Pełna nazwa firmy (opcjonalnie)</FormLabel>
+                            <FormLabel className="text-xs font-semibold text-muted-foreground">Pełna nazwa firmy (opcjonalnie)</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="ACME Sp. z o.o."
-                                className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                                className="h-11"
                                 {...field}
                                 value={field.value || ""}
                               />
@@ -654,11 +654,11 @@ export default function ClientProfilePage() {
                         name="nip"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs font-semibold text-zinc-300">NIP (opcjonalnie)</FormLabel>
+                            <FormLabel className="text-xs font-semibold text-muted-foreground">NIP (opcjonalnie)</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="1234567890"
-                                className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                                className="h-11"
                                 {...field}
                                 value={field.value || ""}
                               />
@@ -675,11 +675,11 @@ export default function ClientProfilePage() {
                         name="regon"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs font-semibold text-zinc-300">REGON (opcjonalnie)</FormLabel>
+                            <FormLabel className="text-xs font-semibold text-muted-foreground">REGON (opcjonalnie)</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="123456789"
-                                className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                                className="h-11"
                                 {...field}
                                 value={field.value || ""}
                               />
@@ -694,11 +694,11 @@ export default function ClientProfilePage() {
                         name="krs"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs font-semibold text-zinc-300">KRS (opcjonalnie)</FormLabel>
+                            <FormLabel className="text-xs font-semibold text-muted-foreground">KRS (opcjonalnie)</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="0000123456"
-                                className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                                className="h-11"
                                 {...field}
                                 value={field.value || ""}
                               />
@@ -713,13 +713,13 @@ export default function ClientProfilePage() {
               )}
 
               {/* Dane osobowe / reprezentanta */}
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10">
+              <Card variant="glass">
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
-                    <User className="h-5 w-5 text-[#0da192]" />
+                    <User className="h-5 w-5 text-primary" />
                     {form.watch("clientType") === "BUSINESS" ? "Dane reprezentanta" : "Dane osobowe"}
                   </CardTitle>
-                  <CardDescription className="text-zinc-400 text-xs">
+                  <CardDescription className="text-muted-foreground text-xs">
                     {form.watch("clientType") === "BUSINESS"
                       ? "Informacje o osobie reprezentującej firmę w kontaktach z ekspertami."
                       : "Podstawowe informacje o Tobie."}
@@ -732,11 +732,11 @@ export default function ClientProfilePage() {
                       name="imie"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Imię *</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Imię *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Jan"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              className="h-11"
                               {...field}
                             />
                           </FormControl>
@@ -750,11 +750,11 @@ export default function ClientProfilePage() {
                       name="nazwisko"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Nazwisko *</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Nazwisko *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Kowalski"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              className="h-11"
                               {...field}
                             />
                           </FormControl>
@@ -769,11 +769,11 @@ export default function ClientProfilePage() {
                     name="telefon"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold text-zinc-300">Telefon kontaktowy</FormLabel>
+                        <FormLabel className="text-xs font-semibold text-muted-foreground">Telefon kontaktowy</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="+48 123 456 789"
-                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                            className="h-11"
                             {...field}
                           />
                         </FormControl>
@@ -783,27 +783,27 @@ export default function ClientProfilePage() {
                   />
 
                   {/* Informacja o emailu (Zablokowana edycja) */}
-                  <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
+                  <div className="p-4 rounded-lg bg-background-sec/20 border border-border/30 flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-primary shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail konta</span>
+                      <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Adres e-mail konta</span>
                       <span className="text-sm font-semibold text-white truncate block">{clientData?.user.email}</span>
                     </div>
                     <div title="Zablokowane edytowanie" className="ml-auto shrink-0 flex items-center justify-center">
-                      <Lock className="h-4 w-4 text-zinc-500" />
+                      <Lock className="h-4 w-4 text-muted-foreground/50" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Adres do korespondencji */}
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10">
+              <Card variant="glass">
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-[#0da192]" />
+                    <MapPin className="h-5 w-5 text-primary" />
                     Adres korespondencyjny
                   </CardTitle>
-                  <CardDescription className="text-zinc-400 text-xs">Uzupełnij swój adres zamieszkania lub siedziby.</CardDescription>
+                  <CardDescription className="text-muted-foreground text-xs">Uzupełnij swój adres zamieszkania lub siedziby.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -811,11 +811,11 @@ export default function ClientProfilePage() {
                     name="adres"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold text-zinc-300">Ulica i numer</FormLabel>
+                        <FormLabel className="text-xs font-semibold text-muted-foreground">Ulica i numer</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="ul. Przykładowa 12/3"
-                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                            className="h-11"
                             {...field}
                           />
                         </FormControl>
@@ -832,27 +832,26 @@ export default function ClientProfilePage() {
                       name="miasto"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Miasto</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Miasto</FormLabel>
                           <Popover open={locationOpen} onOpenChange={setLocationOpen}>
                             <PopoverTrigger asChild>
                               <FormControl>
                                 <Button
                                   variant="outline"
                                   role="combobox"
-                                  className="h-11 w-full bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-white text-sm font-normal text-left justify-between"
+                                  className="h-11 w-full bg-background-sec/20 border-border/30 rounded-lg text-white text-sm font-normal text-left justify-between"
                                 >
                                   <span className="truncate">{field.value || "Wybierz miasto..."}</span>
                                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
-                              <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                            <PopoverContent className="w-64 p-0" align="start">
+                              <Command shouldFilter={false}>
                                 <CommandInput
                                   placeholder="Wyszukaj miasto..."
                                   value={locationSearch}
                                   onValueChange={setLocationSearch}
-                                  className="text-white bg-transparent border-neutral-800"
                                 />
                                 <CommandList className="max-h-60 overflow-y-auto">
                                   {isLoadingCities && (
@@ -886,12 +885,12 @@ export default function ClientProfilePage() {
                                             form.setValue("voivodeshipId", city.voivodeshipId)
                                             setLocationOpen(false)
                                           }}
-                                          className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                          className="text-white cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-lg data-[selected=true]:bg-background-sec"
                                         >
                                           <div className="flex items-center gap-2">
                                             <Check
                                               className={cn(
-                                                "h-4 w-4 text-teal-400",
+                                                "h-4 w-4 text-primary",
                                                 field.value === city.nazwa ? "opacity-100" : "opacity-0"
                                               )}
                                             />
@@ -918,11 +917,11 @@ export default function ClientProfilePage() {
                       name="kodPocztowy"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Kod pocztowy</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Kod pocztowy</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="00-000"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              className="h-11 bg-background-sec/10 text-muted-foreground cursor-not-allowed border-none"
                               readOnly
                               {...field}
                             />
@@ -938,14 +937,14 @@ export default function ClientProfilePage() {
                       name="voivodeshipId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Województwo</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Województwo</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
                             disabled={true}
                           >
                             <FormControl>
-                              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] text-white text-sm">
+                              <SelectTrigger className="h-11 bg-background-sec/10 text-muted-foreground cursor-not-allowed border-none">
                                 <SelectValue placeholder="Wybierz" />
                               </SelectTrigger>
                             </FormControl>
@@ -969,8 +968,9 @@ export default function ClientProfilePage() {
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   type="submit"
+                  variant="primary"
                   disabled={submitting}
-                  className="w-full sm:flex-1 h-11 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 group gap-2"
+                  className="w-full sm:flex-1 h-11 shadow-md shadow-primary/20 group gap-2"
                 >
                   {submitting ? (
                     <>
@@ -987,7 +987,7 @@ export default function ClientProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full sm:w-auto h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl transition-all duration-200"
+                  className="w-full sm:w-auto h-11 px-6 transition-all duration-200"
                   onClick={() => router.push("/panel-klienta")}
                   disabled={submitting}
                 >
@@ -1001,13 +1001,13 @@ export default function ClientProfilePage() {
 
       {/* Login History (noCard prop to match glassmorphic structure) */}
       <div className="relative z-10 pt-4">
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg shadow-black/10 overflow-hidden">
+        <Card variant="glass" className="overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-[#0da192]" />
+              <ShieldCheck className="h-5 w-5 text-primary" />
               Historia logowania
             </CardTitle>
-            <CardDescription className="text-zinc-400 text-xs">
+            <CardDescription className="text-muted-foreground text-xs">
               Historia sesji oraz prób autoryzacji na Twoim koncie klienta.
             </CardDescription>
           </CardHeader>

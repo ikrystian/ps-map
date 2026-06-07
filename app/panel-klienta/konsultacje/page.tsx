@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
@@ -73,15 +74,15 @@ function ConsultationTimer({ targetDate }: { targetDate: string }) {
   if (!timeLeft) return null
   if (timeLeft.isOver) {
     return (
-      <span className="text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+      <Badge variant="outline" className="text-xs text-emerald-400 font-medium bg-emerald-500/10 border-emerald-500/20 py-1 px-2.5">
         Konsultacja w toku / zakończona
-      </span>
+      </Badge>
     )
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-[#d7b56d] font-medium bg-[#d7b56d]/10 px-2.5 py-1 rounded-md border border-[#d7b56d]/20">
-      <Clock className="h-3.5 w-3.5 text-[#d7b56d]" />
+    <Badge variant="secondary" className="flex items-center gap-1.5 text-xs text-secondary font-medium bg-secondary/10 border-secondary/20 py-1 px-2.5">
+      <Clock className="h-3.5 w-3.5 text-secondary" />
       <span>Do konsultacji:</span>
       <span className="font-bold font-mono">
         {timeLeft.days > 0 && `${timeLeft.days}d `}
@@ -89,7 +90,7 @@ function ConsultationTimer({ targetDate }: { targetDate: string }) {
         {timeLeft.minutes.toString().padStart(2, "0")}m:
         {timeLeft.seconds.toString().padStart(2, "0")}s
       </span>
-    </div>
+    </Badge>
   )
 }
 
@@ -173,7 +174,7 @@ export default function ClientConsultationsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie Twoich konsultacji...</p>
         </div>
       </div>
@@ -201,12 +202,12 @@ export default function ClientConsultationsPage() {
         {bookingsList.map((booking) => (
           <div
             key={booking.id}
-            className="border border-border/10 bg-zinc-950/20 hover:border-[#0da192]/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
+            className="border border-border/10 bg-zinc-950/20 hover:border-primary/30 hover:bg-zinc-950/30 transition-all p-5 rounded-lg relative overflow-hidden group"
           >
             <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
               <div className="flex gap-4 flex-1 min-w-0">
                 <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
-                  <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-xl border border-border/40">
+                  <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-md border border-border/40">
                     {booking.lawFirm?.logo && (
                       <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
                     )}
@@ -216,12 +217,12 @@ export default function ClientConsultationsPage() {
                   </Avatar>
                 </Link>
                 <div className="flex flex-col gap-2.5 min-w-0">
-                  <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-xl font-fairplay text-white hover:text-[#0da192] transition-colors truncate">
+                  <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-xl font-playfair text-white hover:text-primary transition-colors truncate">
                     {booking.lawFirm.nazwa}
                   </Link>
 
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                    <Badge className="bg-primary/10 text-primary border border-primary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Calendar className="h-3 w-3" />
                       {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
                     </Badge>
@@ -233,7 +234,7 @@ export default function ClientConsultationsPage() {
                       <FileText className="h-3 w-3" />
                       {booking.topic}
                     </Badge>
-                    <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
+                    <Badge className="bg-secondary/10 text-secondary border border-secondary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
                       <CreditCard className="h-3 w-3" />
                       {booking.price.toFixed(2)} zł
                     </Badge>
@@ -262,7 +263,7 @@ export default function ClientConsultationsPage() {
                   {booking.status === "ACCEPTED" && !booking.isArchived && new Date(booking.consultationDate) >= now && (
                     <div className="mt-1">
                       {booking.googleMeetUrl ? (
-                        <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">
+                        <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-md">
                           <Video className="h-4 w-4 text-blue-400 shrink-0" />
                           <span className="text-zinc-500 text-xs font-light pr-1">Link do pokoju:</span>
                           <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline truncate">
@@ -270,7 +271,7 @@ export default function ClientConsultationsPage() {
                           </a>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-xl">
+                        <div className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-md">
                           <Video className="h-4 w-4 text-amber-400 shrink-0 animate-pulse" />
                           <p className="text-xs text-zinc-400 font-light">
                             Link do Google Meet pojawi się na 5 minut przed planowaną konsultacją.
@@ -287,8 +288,9 @@ export default function ClientConsultationsPage() {
               <div className="flex items-center gap-2.5 shrink-0 self-end md:self-center">
                 <Button
                   asChild
+                  variant="primary"
                   size="sm"
-                  className="h-9 px-4 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
+                  className="shadow-md border-t border-white/10 transition-all text-xs font-semibold"
                 >
                   <Link href={`/ekspert/${booking.lawFirm.slug}`}>
                     Przejdź do strony eksperta
@@ -300,21 +302,21 @@ export default function ClientConsultationsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-9 w-9 border border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      className="h-9 w-9 border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
                     >
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border border-border/20 text-zinc-300 rounded-xl p-1.5 shadow-xl">
+                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border border-border/30 text-zinc-300 rounded-md p-1.5 shadow-xl">
                     <DropdownMenuItem
                       disabled={isChatLoading === booking.id}
                       onClick={() => handleGoToChat(booking)}
                       className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors"
                     >
                       {isChatLoading === booking.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
                       ) : (
-                        <MessageCircle className="h-4 w-4 text-[#0da192]" />
+                        <MessageCircle className="h-4 w-4 text-primary" />
                       )}
                       <span>Napisz wiadomość</span>
                     </DropdownMenuItem>
@@ -341,8 +343,8 @@ export default function ClientConsultationsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -351,7 +353,7 @@ export default function ClientConsultationsPage() {
         transition={{ duration: 0.4 }}
         className="relative z-10"
       >
-        <h1 className="text-3xl sm:text-4xl font-bold font-playfair tracking-tight text-white">Moje Konsultacje</h1>
+        <Heading level="h1">Moje Konsultacje</Heading>
         <p className="text-sm text-zinc-400 mt-1.5 font-light">
           Przeglądaj status swoich umówionych konsultacji, dołączaj do spotkań wideo oraz zarządzaj rezerwacjami.
         </p>
@@ -366,7 +368,7 @@ export default function ClientConsultationsPage() {
         className="relative z-10"
       >
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+          <Card variant="glass" className="relative overflow-hidden">
             <CardContent className="p-6">
               {bookings.length === 0 ? (
                 <div className="text-center py-16 flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
@@ -374,7 +376,7 @@ export default function ClientConsultationsPage() {
                     <Calendar className="h-6 w-6 text-zinc-500 animate-pulse" />
                   </div>
                   <div>
-                    <h4 className="text-base font-semibold text-white">Brak rezerwacji</h4>
+                    <Heading level="h4" size="h4" className="text-base">Brak rezerwacji</Heading>
                     <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed font-light">
                       Nie masz obecnie żadnych umówionych konsultacji prawnych. Możesz umówić się na rozmowę bezpośrednio na profilu wybranego eksperta.
                     </p>
@@ -382,7 +384,7 @@ export default function ClientConsultationsPage() {
                 </div>
               ) : (
                 <Tabs defaultValue="upcoming" className="w-full space-y-6">
-                  <TabsList className="bg-zinc-950/40 border border-border/10 p-1 rounded-xl flex w-full max-w-md">
+                  <TabsList className="bg-zinc-950/40 border border-border/10 p-1 rounded-md flex w-full max-w-md">
                     <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
                       Nadchodzące ({upcomingBookings.length})
                     </TabsTrigger>

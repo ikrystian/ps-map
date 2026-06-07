@@ -9,8 +9,11 @@
     --popover: #ffffff;
     --popover-foreground: #28261b;
     --primary: #c96442;
+    --primary-hover: #d87553;
+    --primary-dark: #b05730;
     --primary-foreground: #ffffff;
     --secondary: #e9e6dc;
+    --secondary-hover: #dfdbcc;
     --secondary-foreground: #535146;
     --muted: #ede9de;
     --muted-foreground: #83827d;
@@ -18,6 +21,12 @@
     --accent-foreground: #28261b;
     --destructive: #141413;
     --destructive-foreground: #ffffff;
+    --success: #10b981;
+    --success-foreground: #ffffff;
+    --warning: #f59e0b;
+    --warning-foreground: #ffffff;
+    --error: #dc2626;
+    --error-foreground: #ffffff;
     --border: #dad9d4;
     --input: #b4b2a7;
     --ring: #c96442;
@@ -54,6 +63,7 @@
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
     --tracking-normal: 0em;
     --spacing: 0.25rem;
+    --background-sec: #f5f4ee;
   }
 
   .dark {
@@ -67,8 +77,11 @@
     --popover: #30302e;
     --popover-foreground: #e5e5e2;
     --primary: #0da192;
+    --primary-hover: #0fbaa8;
+    --primary-dark: #0a8276;
     --primary-foreground: #ffffff;
     --secondary: #d7b56d;
+    --secondary-hover: #e3c583;
     --secondary-foreground: #30302e;
     --muted: #1b1b19;
     --muted-foreground: #b7b5a9;
@@ -76,6 +89,12 @@
     --accent-foreground: #f5f4ee;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
+    --success: #34d399;
+    --success-foreground: #141413;
+    --warning: #fbbf24;
+    --warning-foreground: #141413;
+    --error: #ef4444;
+    --error-foreground: #ffffff;
     --border: #3e3e38;
     --input: #52514a;
     --ring: #d97757;
@@ -123,8 +142,11 @@
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
     --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-dark: var(--primary-dark);
     --color-primary-foreground: var(--primary-foreground);
     --color-secondary: var(--secondary);
+    --color-secondary-hover: var(--secondary-hover);
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
@@ -132,6 +154,12 @@
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-error: var(--error);
+    --color-error-foreground: var(--error-foreground);
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);

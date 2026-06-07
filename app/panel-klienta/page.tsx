@@ -3,7 +3,9 @@
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
+import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { cn } from "@/lib/utils"
@@ -72,31 +74,6 @@ interface Case {
 }
 
 
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-}
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 15, scale: 0.98 },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: "spring" as const,
-      stiffness: 300,
-      damping: 25,
-    },
-  },
-}
-
 export default function ClientDashboardPage() {
   const router = useRouter()
   const { data: session } = useSession()
@@ -153,7 +130,7 @@ export default function ClientDashboardPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie pulpitu...</p>
         </div>
       </div>
@@ -174,8 +151,8 @@ export default function ClientDashboardPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -190,8 +167,10 @@ export default function ClientDashboardPage() {
           titleClassName="text-white text-3xl sm:text-4xl"
         >
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
-            className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-[#0da192]/10 transition-all duration-200 border-t border-white/10 group gap-2"
+            className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-white/10 group gap-2"
           >
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             Dodaj nową sprawę
@@ -206,7 +185,7 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="cursor-pointer rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-zinc-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
@@ -224,13 +203,13 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="cursor-pointer rounded-2xl bg-gradient-to-br from-[#0da192]/15 to-transparent border border-[#0da192]/20 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-lg shadow-[#0da192]/5 group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-gradient-to-br from-primary/15 to-transparent border border-primary/20 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-lg shadow-primary/5 group overflow-hidden"
         >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-[#0da192]/10 blur-xl rounded-full pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-primary/10 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#0da192]">Aktywne sprawy</span>
-            <div className="h-8 w-8 rounded-lg bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20">
-              <Sparkles className="h-4 w-4 text-[#0da192]" />
+            <span className="text-sm font-medium text-primary">Aktywne sprawy</span>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
           </div>
           <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
@@ -242,19 +221,19 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="cursor-pointer rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-[#d7b56d]/5 blur-xl rounded-full pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Otrzymane oferty</span>
-            <div className="h-8 w-8 rounded-lg bg-[#d7b56d]/10 flex items-center justify-center border border-[#d7b56d]/20">
-              <MessageSquare className="h-4 w-4 text-[#d7b56d]" />
+            <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
+              <MessageSquare className="h-4 w-4 text-secondary" />
             </div>
           </div>
           <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair flex items-baseline gap-2">
             <span>{totalOffersCount}</span>
             {totalOffersCount > 0 && activeCasesCount > 0 && (
-              <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-[#d7b56d] text-zinc-950">Nowe</span>
+              <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground">Nowe</span>
             )}
           </div>
         </motion.div>
@@ -263,7 +242,7 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/wiadomosci")}
-          className="cursor-pointer rounded-2xl bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
@@ -286,17 +265,17 @@ export default function ClientDashboardPage() {
         {/* Left column (recent cases & blog) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Cases Widget */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+          <Card variant="glass">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <FileText className="h-5 w-5 text-[#0da192]" />
+              <Heading level="h3" size="h4" className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
                 Ostatnio dodane sprawy
-              </CardTitle>
+              </Heading>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => router.push("/panel-klienta/sprawy")}
-                className="text-xs text-[#0da192] hover:text-[#0fbaa8] hover:bg-[#0da192]/5 rounded-lg"
+                className="text-xs text-primary hover:text-primary-hover hover:bg-primary/5"
               >
                 Zobacz wszystkie
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
@@ -315,25 +294,25 @@ export default function ClientDashboardPage() {
                         key={caseItem.id}
                         onClick={() => router.push(`/panel-klienta/sprawy/${caseItem.id}`)}
                         className={cn(
-                          "p-4 rounded-xl border border-border/30 bg-background/30 hover:bg-background/50 hover:border-[#0da192]/30 cursor-pointer transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative",
-                          hasActiveOffers && "border-[#d7b56d]/30 bg-[#d7b56d]/5 hover:border-[#d7b56d]/50"
+                          "p-4 rounded-md border border-border/30 bg-background/30 hover:bg-background/50 hover:border-primary/30 cursor-pointer transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative",
+                          hasActiveOffers && "border-secondary/30 bg-secondary/5 hover:border-secondary/50"
                         )}
                       >
                         {hasActiveOffers && (
-                          <div className="absolute top-0 bottom-0 left-0 w-1 bg-[#d7b56d] rounded-l-xl" />
+                          <div className="absolute top-0 bottom-0 left-0 w-1 bg-secondary rounded-l-md" />
                         )}
                         <div className="space-y-1.5 min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-semibold text-white group-hover:text-[#0da192] transition-colors truncate text-sm">
+                            <Heading level="h4" size="h4" className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
                               {caseItem.nazwaSprawy}
-                            </h4>
-                            <span className="text-sm px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700/50">
+                            </Heading>
+                            <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700/50 text-xs">
                               {caseItem.category.nazwa}
-                            </span>
+                            </Badge>
                             {caseItem.trybPilny && (
-                              <span className="text-sm px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse">
+                              <Badge variant="destructive" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse text-xs">
                                 Pilne
-                              </span>
+                              </Badge>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground line-clamp-1 font-light">
@@ -342,15 +321,16 @@ export default function ClientDashboardPage() {
                         </div>
                         <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                           {caseItem.offers.length > 0 && (
-                            <span className="text-sm font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20">
+                            <Badge variant="secondary" className="bg-secondary/10 text-secondary border border-secondary/20 text-xs font-semibold">
                               {caseItem.offers.length} {caseItem.offers.length === 1 ? "oferta" : "oferty"}
-                            </span>
+                            </Badge>
                           )}
-                          <span
+                          <Badge
+                            variant="outline"
                             className={cn(
-                              "text-sm px-2 py-0.5 rounded-md border font-medium",
+                              "text-xs font-medium",
                               caseItem.status === "NOWA" && "bg-teal-500/10 text-teal-400 border-teal-500/20",
-                              caseItem.status === "OFERTY_OTRZYMANE" && "bg-[#d7b56d]/15 text-[#d7b56d] border-[#d7b56d]/20",
+                              caseItem.status === "OFERTY_OTRZYMANE" && "bg-secondary/15 text-secondary border-secondary/20",
                               caseItem.status === "W_TRAKCIE" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
                               caseItem.status === "ZAKONCZONA" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
                               caseItem.status === "ANULOWANA" && "bg-rose-500/10 text-rose-400 border-rose-500/20"
@@ -365,7 +345,7 @@ export default function ClientDashboardPage() {
                                   : caseItem.status === "ZAKONCZONA"
                                     ? "Zakończona"
                                     : "Anulowana"}
-                          </span>
+                          </Badge>
                           <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5 duration-200" />
                         </div>
                       </div>
@@ -376,8 +356,9 @@ export default function ClientDashboardPage() {
                 <div className="text-center py-10">
                   <p className="text-sm text-muted-foreground font-light mb-4">Nie dodałeś jeszcze żadnych spraw.</p>
                   <Button
+                    variant="primary"
                     onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
-                    className="h-10 px-5 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl shadow-md gap-2"
+                    className="shadow-md gap-2"
                   >
                     <Plus className="h-4 w-4" />
                     Dodaj pierwszą sprawę
@@ -388,17 +369,17 @@ export default function ClientDashboardPage() {
           </Card>
 
           {/* Legal Knowledge & Articles Widget */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+          <Card variant="glass">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-[#d7b56d]" />
+              <Heading level="h3" size="h4" className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-secondary" />
                 Baza wiedzy i artykuły prawne
-              </CardTitle>
+              </Heading>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => router.push("/(public)/blog")}
-                className="text-xs text-[#d7b56d] hover:text-[#e5c57f] hover:bg-[#d7b56d]/5 rounded-lg"
+                className="text-xs text-secondary hover:text-secondary-hover hover:bg-secondary/5"
               >
                 Więcej artykułów
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
@@ -411,7 +392,7 @@ export default function ClientDashboardPage() {
                     <Link
                       key={post.id}
                       href={`/blog/${post.slug}`}
-                      className="group flex flex-col bg-background/20 rounded-xl overflow-hidden border border-border/30 hover:border-[#d7b56d]/40 transition-all duration-300"
+                      className="group flex flex-col bg-background/20 rounded-md overflow-hidden border border-border/30 hover:border-secondary/40 transition-all duration-300"
                     >
                       <div className="relative aspect-video w-full bg-muted overflow-hidden">
                         <Image
@@ -422,13 +403,13 @@ export default function ClientDashboardPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         {post.category && (
-                          <span className="absolute bottom-2 left-2 text-sm font-semibold px-2 py-0.5 rounded-md bg-[#d7b56d] text-zinc-950">
+                          <span className="absolute bottom-2 left-2 text-sm font-semibold px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground">
                             {post.category.nazwa}
                           </span>
                         )}
                       </div>
                       <div className="p-4 flex-1 flex flex-col justify-between space-y-2">
-                        <h4 className="text-xs font-semibold text-white group-hover:text-[#d7b56d] transition-colors line-clamp-2 leading-relaxed">
+                        <h4 className="text-xs font-semibold text-white group-hover:text-secondary transition-colors line-clamp-2 leading-relaxed">
                           {post.tytul}
                         </h4>
                         <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
@@ -451,16 +432,16 @@ export default function ClientDashboardPage() {
         {/* Right column (user profile & shortcuts) */}
         <div className="space-y-6">
           {/* User Profile Widget */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl relative overflow-hidden group">
-            <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-[#0da192] to-[#d7b56d]" />
+          <Card variant="glass" className="relative overflow-hidden group">
+            <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-primary to-secondary" />
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-playfair text-white">Mój Profil</CardTitle>
+              <Heading level="h3" size="h4">Mój Profil</Heading>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 border border-border/50 ring-2 ring-primary/20">
                   <AvatarImage src={clientData?.user.image || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-[#0da192] to-[#0a8276] text-white text-lg font-bold">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary-dark text-white text-lg font-bold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -478,20 +459,20 @@ export default function ClientDashboardPage() {
 
               <div className="space-y-3 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2.5">
-                  <User className="h-4 w-4 text-[#0da192] shrink-0" />
+                  <User className="h-4 w-4 text-primary shrink-0" />
                   <span className="text-white">
                     Typ konta: {clientData?.clientType === "BUSINESS" ? "Biznesowe" : "Indywidualne"}
                   </span>
                 </div>
                 {clientData?.telefon && (
                   <div className="flex items-center gap-2.5">
-                    <Phone className="h-4 w-4 text-[#0da192] shrink-0" />
+                    <Phone className="h-4 w-4 text-primary shrink-0" />
                     <span className="text-white">{clientData.telefon}</span>
                   </div>
                 )}
                 {clientData?.miasto && (
                   <div className="flex items-center gap-2.5">
-                    <MapPin className="h-4 w-4 text-[#0da192] shrink-0" />
+                    <MapPin className="h-4 w-4 text-primary shrink-0" />
                     <span className="text-white">
                       {clientData.miasto}
                       {clientData.voivodeship ? `, ${clientData.voivodeship.nazwa}` : ""}
@@ -501,8 +482,9 @@ export default function ClientDashboardPage() {
               </div>
 
               <Button
+                variant="secondary"
                 onClick={() => router.push("/panel-klienta/profil")}
-                className="w-full h-10 bg-gradient-to-r from-zinc-800 to-zinc-700 hover:from-zinc-700 hover:to-zinc-600 text-white font-medium rounded-xl transition-all duration-200 border-t border-white/5 gap-2"
+                className="w-full border-t border-white/5 gap-2 shadow-sm"
               >
                 <Settings className="h-4 w-4" />
                 Zarządzaj profilem
@@ -511,19 +493,19 @@ export default function ClientDashboardPage() {
           </Card>
 
           {/* Quick Links Shortcut Widget */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+          <Card variant="glass">
             <CardHeader>
-              <CardTitle className="text-lg font-playfair text-white">Szybkie skróty</CardTitle>
+              <Heading level="h3" size="h4">Szybkie skróty</Heading>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Shortcut: Sprawy */}
               <div
                 onClick={() => router.push("/panel-klienta/sprawy")}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-background/20 border border-border/30 hover:border-[#0da192]/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
+                className="flex items-center justify-between p-3.5 rounded-md bg-background/20 border border-border/30 hover:border-primary/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-lg bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20">
-                    <Briefcase className="h-4 w-4 text-[#0da192]" />
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                    <Briefcase className="h-4 w-4 text-primary" />
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Zarządzaj sprawami</h5>
@@ -536,7 +518,7 @@ export default function ClientDashboardPage() {
               {/* Shortcut: Wiadomosci */}
               <div
                 onClick={() => router.push("/panel-klienta/wiadomosci")}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-background/20 border border-border/30 hover:border-[#0da192]/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
+                className="flex items-center justify-between p-3.5 rounded-md bg-background/20 border border-border/30 hover:border-primary/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-9 w-9 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
@@ -553,11 +535,11 @@ export default function ClientDashboardPage() {
               {/* Shortcut: Eksperci */}
               <div
                 onClick={() => router.push("/panel-klienta/eksperci")}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-background/20 border border-border/30 hover:border-[#0da192]/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
+                className="flex items-center justify-between p-3.5 rounded-md bg-background/20 border border-border/30 hover:border-primary/40 hover:bg-background/40 cursor-pointer transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-lg bg-[#d7b56d]/10 flex items-center justify-center border border-[#d7b56d]/20">
-                    <Star className="h-4 w-4 text-[#d7b56d] fill-[#d7b56d]/10" />
+                  <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
+                    <Star className="h-4 w-4 text-secondary fill-secondary/10" />
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Wybrani eksperci</h5>
@@ -570,24 +552,24 @@ export default function ClientDashboardPage() {
           </Card>
 
           {/* Benefits/Guide Checklist Widget */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl relative overflow-hidden">
+          <Card variant="glass" className="relative overflow-hidden">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-playfair text-white flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[#d7b56d]" />
+              <Heading level="h3" size="h4" className="text-sm flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-secondary" />
                 Jak działa ProstaSprawa?
-              </CardTitle>
+              </Heading>
             </CardHeader>
             <CardContent className="space-y-3.5 text-xs text-muted-foreground font-light">
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">1</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-sm font-bold">1</span>
                 <p>Opisujesz swój problem prawny za pomocą prostego formularza online.</p>
               </div>
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">2</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-sm font-bold">2</span>
                 <p>Sprawa trafia do ekspertów spełniających Twoje kryteria lokalizacyjne i tematyczne.</p>
               </div>
               <div className="flex gap-2.5 items-start">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0da192]/20 text-[#0da192] text-sm font-bold">3</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-sm font-bold">3</span>
                 <p>Otrzymujesz wyceny, porównujesz warunki i bezpiecznie wybierasz najlepszego eksperta.</p>
               </div>
             </CardContent>

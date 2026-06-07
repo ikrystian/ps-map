@@ -137,7 +137,7 @@ export default function ClientPanelLayout({
             href={item.href}
             onMouseEnter={() => setHoveredIndex(index)}
             className={cn(
-              "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none",
+              "relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors outline-none",
               isActive
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                 : "text-muted-foreground hover:text-foreground",
@@ -145,12 +145,11 @@ export default function ClientPanelLayout({
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
           >
-            {/* Sliding/Fading Hover Background Pill */}
             <AnimatePresence>
               {hoveredIndex === index && !isActive && (
                 <motion.span
                   layoutId="client-sidebar-hover-pill"
-                  className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+                  className="absolute inset-0 -z-10 rounded-md bg-accent/80 border-l-[3px] border-primary/60"
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
@@ -182,7 +181,7 @@ export default function ClientPanelLayout({
 
             {showBadge && (
               <span className={cn(
-                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
+                "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-error px-1.5 text-xs font-semibold text-error-foreground transition-all duration-300",
                 !inSheet && isCollapsed && "absolute -right-1 -top-1"
               )}>
                 {unreadCount > 99 ? "99+" : unreadCount}
@@ -194,7 +193,7 @@ export default function ClientPanelLayout({
                 "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
                 isActive
                   ? "bg-primary-foreground/20 text-primary-foreground"
-                  : "bg-[#0da192]/15 text-[#0da192] border border-[#0da192]/30 dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/50",
+                  : "bg-primary/15 text-primary border border-primary/30 dark:bg-background-sec/60 dark:text-muted-foreground dark:border-border/30",
                 !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
               )}>
                 {count}
@@ -216,7 +215,7 @@ export default function ClientPanelLayout({
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length)}
         className={cn(
-          "w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
+          "w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
@@ -226,7 +225,7 @@ export default function ClientPanelLayout({
           {hoveredIndex === navigation.length && (
             <motion.span
               layoutId="client-sidebar-hover-pill"
-              className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
+              className="absolute inset-0 -z-10 rounded-md bg-accent/80 border-l-[3px] border-primary/60"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
@@ -312,7 +311,7 @@ export default function ClientPanelLayout({
                   <Button variant="ghost" size="icon" className="md:hidden">
                     <Menu className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white">
+                      <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-error px-1.5 text-xs font-semibold text-error-foreground">
                         {unreadCount > 99 ? "99+" : unreadCount}
                       </span>
                     )}
@@ -337,7 +336,7 @@ export default function ClientPanelLayout({
             <Link href="/panel-klienta/sprawy/dodaj">
 
 
-              <Button variant="outline">Dodaj sprawę<Plus className="h-4 w-4" /></Button>
+              <Button variant="primary" size="sm" className="gap-1.5">Dodaj sprawę<Plus className="h-4 w-4" /></Button>
             </Link>
 
             <NotificationBell />

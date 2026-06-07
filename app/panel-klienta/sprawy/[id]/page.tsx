@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
@@ -102,11 +103,11 @@ interface Case {
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
-  NOWA: { label: "Nowa", className: "bg-teal-500/10 text-teal-400 border border-teal-500/30" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-[#d7b56d]/15 text-[#d7b56d] border border-[#d7b56d]/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
-  ZAKONCZONA: { label: "Zakończona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" },
-  ANULOWANA: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/30" },
+  NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
+  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
+  W_TRAKCIE: { label: "W toku", className: "bg-primary/10 text-primary border border-primary/30" },
+  ZAKONCZONA: { label: "Zakończona", className: "bg-success/10 text-success border border-success/30" },
+  ANULOWANA: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30" },
 }
 
 const caseTypeLabels: Record<string, string> = {
@@ -234,7 +235,7 @@ export default function ClientCaseDetailsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie szczegółów sprawy...</p>
         </div>
       </div>
@@ -244,16 +245,16 @@ export default function ClientCaseDetailsPage() {
   if (error || !caseData) {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
-        <Card className="max-w-md border-rose-500/30 bg-card/25 backdrop-blur-md">
+        <Card variant="glass" className="max-w-md border-error/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-rose-400 font-playfair">
-              <AlertCircle className="h-5 w-5 text-rose-500" />
+            <CardTitle className="flex items-center gap-2 text-error font-playfair">
+              <AlertCircle className="h-5 w-5 text-error" />
               Błąd
             </CardTitle>
             <CardDescription className="text-muted-foreground">{error || "Nie znaleziono sprawy"}</CardDescription>
           </CardHeader>
           <CardContent className="pt-2">
-            <Button onClick={() => router.push("/panel-klienta/sprawy")} className="w-full rounded-xl bg-muted border border-border/50 text-white hover:bg-muted/80 gap-2">
+            <Button variant="outline" onClick={() => router.push("/panel-klienta/sprawy")} className="w-full gap-2">
               <ArrowLeft className="h-4 w-4" />
               Powrót do spraw
             </Button>
@@ -283,8 +284,8 @@ export default function ClientCaseDetailsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header & Back Action */}
       <div className="relative z-10 space-y-3">
@@ -292,7 +293,7 @@ export default function ClientCaseDetailsPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="-ml-2 text-muted-foreground hover:text-white hover:bg-zinc-800/30 rounded-lg gap-1.5"
+          className="-ml-2 text-muted-foreground hover:text-white gap-1.5"
         >
           <ArrowLeft className="h-4 w-4" />
           Powrót do listy spraw
@@ -305,13 +306,13 @@ export default function ClientCaseDetailsPage() {
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide border",
-                statusLabels[caseData.status]?.className || "bg-zinc-800/40 text-zinc-400 border-zinc-700/30"
+                statusLabels[caseData.status]?.className || "bg-background-sec/40 text-muted-foreground border-border/30"
               )}
             >
               {statusLabels[caseData.status]?.label || caseData.status}
             </span>
             {caseData.trybPilny && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-bold uppercase tracking-wider animate-pulse">
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-error/10 text-error border border-error/30 text-xs font-bold uppercase tracking-wider animate-pulse">
                 Pilne
               </span>
             )}
@@ -325,33 +326,33 @@ export default function ClientCaseDetailsPage() {
         if (!acceptedOffer) return null
 
         return (
-          <Card className="border-[#0da192] bg-gradient-to-br from-[#0da192]/10 via-transparent to-transparent shadow-lg shadow-[#0da192]/5 relative overflow-hidden rounded-2xl z-10 animate-in fade-in duration-300">
-            <BorderBeam lightColor="#0da192" duration={4.5} borderWidth={1.5} />
+          <Card variant="glass" className="border-primary bg-gradient-to-br from-primary/10 via-transparent to-transparent shadow-lg shadow-primary/5 relative overflow-hidden z-10 animate-in fade-in duration-300">
+            <BorderBeam lightColor="var(--primary)" duration={4.5} borderWidth={1.5} />
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <CheckCircle2 className="h-5 w-5 text-success" />
                 Twój wybrany ekspert prawny
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 Oferta tego eksperta została przez Ciebie zaakceptowana. Skontaktuj się z ekspertem, aby rozpocząć realizację.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold font-playfair text-white">{acceptedOffer.lawFirm.nazwa}</h3>
+                  <Heading level="h3" className="text-xl font-bold text-white">{acceptedOffer.lawFirm.nazwa}</Heading>
                   {acceptedOffer.lawFirm.nazwaFirmy && (
-                    <p className="text-sm text-zinc-400 mt-1">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{acceptedOffer.lawFirm.nazwaFirmy}</p>
                   )}
                 </div>
-                <div className="flex items-center gap-4 bg-zinc-800/30 p-4 rounded-xl border border-border/30">
+                <div className="flex items-center gap-4 bg-background-sec/30 p-4 rounded-lg border border-border/30">
                   <div className="text-right">
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">Ustalony Budżet</span>
-                    <span className="text-lg font-bold text-[#d7b56d]">{formatCurrency(acceptedOffer.kwotaBrutto)}</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">Ustalony Budżet</span>
+                    <span className="text-lg font-bold text-secondary">{formatCurrency(acceptedOffer.kwotaBrutto)}</span>
                   </div>
                   <Separator orientation="vertical" className="h-8" />
                   <div>
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">Czas realizacji</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">Czas realizacji</span>
                     <span className="text-lg font-bold text-white">{acceptedOffer.terminRealizacjiDni} dni</span>
                   </div>
                 </div>
@@ -359,11 +360,11 @@ export default function ClientCaseDetailsPage() {
 
               <Separator className="bg-border/20" />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-zinc-300">
-                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
-                  <User className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
+                  <User className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">Osoba kontaktowa</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">Osoba kontaktowa</span>
                     <span className="font-semibold text-white truncate block">
                       {acceptedOffer.lawFirm.imieKontakt} {acceptedOffer.lawFirm.nazwiskoKontakt}
                     </span>
@@ -373,33 +374,33 @@ export default function ClientCaseDetailsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
-                  <Mail className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
+                  <Mail className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">E-mail</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">E-mail</span>
                     <a
-                      href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
-                      className="font-semibold text-[#0da192] hover:underline truncate block"
+                       href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
+                       className="font-semibold text-primary hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.emailKontakt}
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
-                  <Phone className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
+                  <Phone className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">Telefon</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">Telefon</span>
                     <a
-                      href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
-                      className="font-semibold text-[#0da192] hover:underline truncate block"
+                       href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
+                       className="font-semibold text-primary hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.numerTelefonu}
                     </a>
                     {acceptedOffer.lawFirm.numerTelefonu2 && (
                       <a
-                        href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
-                        className="font-semibold text-[#0da192] hover:underline truncate block mt-0.5"
+                         href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
+                         className="font-semibold text-primary hover:underline truncate block mt-0.5"
                       >
                         {acceptedOffer.lawFirm.numerTelefonu2}
                       </a>
@@ -407,14 +408,14 @@ export default function ClientCaseDetailsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-background/20 rounded-xl border border-border/30">
-                  <MapPin className="h-4 w-4 text-[#0da192] mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
+                  <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <span className="text-sm text-zinc-400 block uppercase font-medium">Adres</span>
+                    <span className="text-sm text-muted-foreground block uppercase font-medium">Adres</span>
                     <span className="font-semibold text-white block">
                       {acceptedOffer.lawFirm.adres}
                     </span>
-                    <span className="text-xs text-zinc-400 block mt-0.5">
+                    <span className="text-xs text-muted-foreground block mt-0.5">
                       {acceptedOffer.lawFirm.kodPocztowy} {acceptedOffer.lawFirm.miasto}
                     </span>
                   </div>
@@ -430,27 +431,26 @@ export default function ClientCaseDetailsPage() {
         {/* Left column: Case description, Offers, Message Logs */}
         <div className="lg:col-span-2 space-y-6">
           {/* Case description */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass">
             <CardHeader className="border-b border-border/20 py-4 px-6">
               <CardTitle className="text-lg font-playfair text-white">Opis sprawy</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed font-light">{caseData.opisSprawy}</p>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed font-light">{caseData.opisSprawy}</p>
             </CardContent>
           </Card>
 
           {/* Otrzymane Oferty */}
           {caseData.offers && caseData.offers.length > 0 && (
-            <Card className={cn(
-              "border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg",
+            <Card variant="glass" className={cn(
               caseData.status !== "OFERTY_OTRZYMANE" && "hidden"
             )}>
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-[#d7b56d] animate-pulse" />
+                  <Sparkles className="h-5 w-5 text-secondary animate-pulse" />
                   Otrzymane oferty od ekspertów ({caseData.offers.length})
                 </CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardDescription className="text-muted-foreground text-xs">
                   Porównaj warunki, terminy oraz szczegółowe opisy ofert przed podjęciem ostatecznej decyzji.
                 </CardDescription>
               </CardHeader>
@@ -461,23 +461,25 @@ export default function ClientCaseDetailsPage() {
 
                     return (
                       <Card key={offer.id} className={cn(
-                        "border border-border/30 bg-background/30 rounded-xl overflow-hidden shadow-md group transition-all duration-300",
-                        isOfferPending && "hover:border-[#d7b56d]/50 hover:bg-background/40"
+                        "border border-border/30 bg-background-sec/30 rounded-lg overflow-hidden shadow-md group transition-all duration-300",
+                        isOfferPending && "hover:border-secondary/50 hover:bg-background-sec/45"
                       )}>
                         <CardHeader className="py-4 px-6 border-b border-border/20">
                           <div className="flex items-center justify-between gap-4">
                             <div>
-                              <CardTitle className="text-base text-white font-playfair group-hover:text-[#d7b56d] transition-colors">{offer.lawFirm.nazwa}</CardTitle>
-                              <CardDescription className="text-zinc-400 text-xs mt-0.5">
+                              <CardTitle className="text-base text-white font-playfair group-hover:text-secondary transition-colors">{offer.lawFirm.nazwa}</CardTitle>
+                              <CardDescription className="text-muted-foreground text-xs mt-0.5">
                                 Lokalizacja: {offer.lawFirm.miasto} • Złożono {formatDate(offer.createdAt)}
                               </CardDescription>
                             </div>
                             <Badge
-                              variant={offerStatusLabels[offer.status]?.variant || "default"}
+                              variant="outline"
                               className={cn(
-                                offer.status === "ZLOZONA" && "bg-blue-500/10 text-blue-400 border-blue-500/20 border",
-                                offer.status === "ZAAKCEPTOWANA" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 border",
-                                offer.status === "ODRZUCONA" && "bg-rose-500/10 text-rose-400 border-rose-500/20 border"
+                                offer.status === "ZLOZONA" && "bg-primary/10 text-primary border-primary/20",
+                                offer.status === "ZAAKCEPTOWANA" && "bg-success/10 text-success border-success/20",
+                                offer.status === "ODRZUCONA" && "bg-error/10 text-error border-error/20",
+                                offer.status === "NEGOCJACJE" && "bg-warning/10 text-warning border-warning/20",
+                                offer.status === "WYGASLA" && "bg-muted text-muted-foreground border-muted-foreground/20"
                               )}
                             >
                               {offerStatusLabels[offer.status]?.label || offer.status}
@@ -485,20 +487,20 @@ export default function ClientCaseDetailsPage() {
                           </div>
                         </CardHeader>
                         <CardContent className="p-6 space-y-4">
-                          <div className="grid grid-cols-2 gap-4 p-4 bg-zinc-800/20 rounded-xl border border-border/30">
+                          <div className="grid grid-cols-2 gap-4 p-4 bg-background-sec/20 rounded-lg border border-border/30">
                             <div>
-                              <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Kwota brutto</span>
+                              <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Kwota brutto</span>
                               <span className="text-2xl font-bold text-white">{formatCurrency(offer.kwotaBrutto)}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Termin realizacji</span>
+                              <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Termin realizacji</span>
                               <span className="text-2xl font-bold text-white">{offer.terminRealizacjiDni} dni</span>
                             </div>
                           </div>
 
                           <div className="space-y-1.5">
-                            <span className="text-xs font-semibold text-zinc-300 block">Opis i warunki oferty:</span>
-                            <p className="text-sm text-zinc-400 whitespace-pre-wrap font-light leading-relaxed">
+                            <span className="text-xs font-semibold text-muted-foreground block">Opis i warunki oferty:</span>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap font-light leading-relaxed">
                               {offer.opisOferty}
                             </p>
                           </div>
@@ -506,7 +508,7 @@ export default function ClientCaseDetailsPage() {
                           {offer.status === "ZLOZONA" && (
                             <div className="flex flex-col sm:flex-row gap-2 pt-2">
                               <Button
-                                className="flex-1 h-10 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-medium rounded-xl border-t border-white/10 shadow-sm gap-2"
+                                className="flex-1 bg-success hover:bg-success/90 text-success-foreground font-medium gap-2"
                                 onClick={() => handleAcceptOffer(offer.id)}
                                 disabled={processingOfferId === offer.id}
                               >
@@ -519,7 +521,7 @@ export default function ClientCaseDetailsPage() {
                               </Button>
                               <Button
                                 variant="outline"
-                                className="flex-1 h-10 border-rose-500/20 hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 rounded-xl gap-2"
+                                className="flex-1 border-error/20 hover:bg-error/10 text-error hover:text-error/90 gap-2"
                                 onClick={() => handleRejectOffer(offer.id)}
                                 disabled={processingOfferId === offer.id}
                               >
@@ -543,34 +545,34 @@ export default function ClientCaseDetailsPage() {
 
           {/* Wiadomości */}
           {caseData.messages && caseData.messages.length > 0 && (
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <Card variant="glass">
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-indigo-400" />
+                  <MessageSquare className="h-5 w-5 text-primary" />
                   Wymiana wiadomości ({caseData.messages.length})
                 </CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">Historia korespondencji z ekspertami dotycząca sprawy.</CardDescription>
+                <CardDescription className="text-muted-foreground text-xs">Historia korespondencji z ekspertami dotycząca sprawy.</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {caseData.messages.map((message) => (
                     <Card key={message.id} className={cn(
-                      "border border-border/30 bg-background/20 rounded-xl overflow-hidden shadow-sm transition-all duration-200",
-                      !message.przeczytana && "border-indigo-500/40 bg-indigo-500/5"
+                      "border border-border/30 bg-background-sec/20 rounded-lg overflow-hidden shadow-sm transition-all duration-200",
+                      !message.przeczytana && "border-primary/40 bg-primary/5"
                     )}>
                       <CardHeader className="py-3 px-5 border-b border-border/20 flex flex-row items-center justify-between">
                         <div>
                           <CardTitle className="text-sm font-semibold text-white">{message.temat}</CardTitle>
-                          <CardDescription className="text-sm text-zinc-400 mt-0.5">
+                          <CardDescription className="text-sm text-muted-foreground mt-0.5">
                             Nadawca: {message.sender.name || message.sender.email} • {formatDate(message.createdAt)}
                           </CardDescription>
                         </div>
                         {!message.przeczytana && (
-                          <Badge className="bg-indigo-500 text-white text-sm px-2 py-0.5 animate-pulse">Nowa</Badge>
+                          <Badge className="bg-primary text-primary-foreground text-sm px-2 py-0.5 animate-pulse">Nowa</Badge>
                         )}
                       </CardHeader>
                       <CardContent className="p-5">
-                        <p className="text-xs text-zinc-300 whitespace-pre-wrap font-light leading-relaxed">{message.tresc}</p>
+                        <p className="text-xs text-muted-foreground whitespace-pre-wrap font-light leading-relaxed">{message.tresc}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -583,32 +585,32 @@ export default function ClientCaseDetailsPage() {
         {/* Right column: Details info sidebar */}
         <div className="space-y-6">
           {/* Podsumowanie sprawy */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass">
             <CardHeader className="border-b border-border/20 py-3.5 px-6">
               <CardTitle className="text-base font-playfair text-white">Podsumowanie</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+            <CardContent className="p-6 space-y-4 text-xs text-muted-foreground">
               <div className="flex gap-3">
-                <Briefcase className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <Briefcase className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Typ klienta</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Typ klienta</span>
                   <span className="font-medium text-white">{caseTypeLabels[caseData.typSprawy] || caseData.typSprawy}</span>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <FileText className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Kategoria główna</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Kategoria główna</span>
                   <span className="font-medium text-white">{caseData.category.nazwa}</span>
                 </div>
               </div>
 
               {caseData.wybranadziedzinaPrawa && (
                 <div className="flex gap-3">
-                  <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                  <FileText className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-sm text-zinc-500 block uppercase font-semibold">Dziedzina prawa</span>
+                    <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Dziedzina prawa</span>
                     <span className="font-medium text-white">{caseData.wybranadziedzinaPrawa}</span>
                   </div>
                 </div>
@@ -616,18 +618,18 @@ export default function ClientCaseDetailsPage() {
 
               {caseData.wybranaSpecyfikacja && (
                 <div className="flex gap-3">
-                  <FileText className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                  <FileText className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-sm text-zinc-500 block uppercase font-semibold">Zakres / Specyfikacja</span>
+                    <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Zakres / Specyfikacja</span>
                     <span className="font-medium text-white">{caseData.wybranaSpecyfikacja}</span>
                   </div>
                 </div>
               )}
 
               <div className="flex gap-3">
-                <MapPin className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Lokalizacja</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Lokalizacja</span>
                   <span className="font-medium text-white">
                     {caseData.city ? `${caseData.city.nazwa}, ${caseData.voivodeship.nazwa}` : caseData.voivodeship.nazwa}
                   </span>
@@ -635,9 +637,9 @@ export default function ClientCaseDetailsPage() {
               </div>
 
               <div className="flex gap-3">
-                <Clock className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <Clock className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Dodano dnia</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Dodano dnia</span>
                   <span className="font-medium text-white">{formatDate(caseData.createdAt)}</span>
                 </div>
               </div>
@@ -645,15 +647,15 @@ export default function ClientCaseDetailsPage() {
           </Card>
 
           {/* Wymagania i Budżet */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass">
             <CardHeader className="border-b border-border/20 py-3.5 px-6">
               <CardTitle className="text-base font-playfair text-white">Wymagania i Budżet</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+            <CardContent className="p-6 space-y-4 text-xs text-muted-foreground">
               <div className="flex gap-3">
-                <Calendar className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+                <Calendar className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Oczekiwany termin</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Oczekiwany termin</span>
                   <span className="font-medium text-white">
                     {caseData.oczekiwanyTerminRealizacji
                       ? new Date(caseData.oczekiwanyTerminRealizacji).toLocaleDateString("pl-PL")
@@ -663,9 +665,9 @@ export default function ClientCaseDetailsPage() {
               </div>
 
               <div className="flex gap-3">
-                <Euro className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                <Euro className="h-4 w-4 text-success shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Szacowany budżet</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Szacowany budżet</span>
                   <span className="font-medium text-white">
                     {caseData.budzetOd || caseData.budzetDo
                       ? `${caseData.budzetOd ? `Od ${formatCurrency(caseData.budzetOd)}` : ""} ${caseData.budzetDo ? `Do ${formatCurrency(caseData.budzetDo)}` : ""}`
@@ -678,39 +680,39 @@ export default function ClientCaseDetailsPage() {
           </Card>
 
           {/* Dane kontaktowe */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+          <Card variant="glass">
             <CardHeader className="border-b border-border/20 py-3.5 px-6">
               <CardTitle className="text-base font-playfair text-white">Moje dane kontaktowe</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4 text-xs text-zinc-300">
+            <CardContent className="p-6 space-y-4 text-xs text-muted-foreground">
               <div className="flex gap-3">
-                <User className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <User className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Osoba kontaktowa</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Osoba kontaktowa</span>
                   <span className="font-medium text-white">{caseData.imieNazwisko}</span>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Mail className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <Mail className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Email</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Email</span>
                   <span className="font-medium text-white truncate block">{caseData.emailKontakt}</span>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Phone className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <Phone className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Telefon</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Telefon</span>
                   <span className="font-medium text-white">{caseData.telefonKontakt}</span>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <MessageSquare className="h-4 w-4 text-[#0da192] shrink-0 mt-0.5" />
+                <MessageSquare className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-zinc-500 block uppercase font-semibold">Preferowany kontakt</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Preferowany kontakt</span>
                   <span className="font-medium text-white">
                     {contactTypeLabels[caseData.preferowanyKontakt] || caseData.preferowanyKontakt}
                   </span>
@@ -721,10 +723,10 @@ export default function ClientCaseDetailsPage() {
 
           {/* Załączniki */}
           {caseData.zalaczniki && caseData.zalaczniki.length > 0 && (
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <Card variant="glass">
               <CardHeader className="border-b border-border/20 py-3.5 px-6">
                 <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
-                  <Paperclip className="h-4 w-4 text-[#0da192]" />
+                  <Paperclip className="h-4 w-4 text-primary" />
                   Załączone pliki ({caseData.zalaczniki.length})
                 </CardTitle>
               </CardHeader>
@@ -734,20 +736,20 @@ export default function ClientCaseDetailsPage() {
                   const extension = filename.split('.').pop()?.toLowerCase()
 
                   return (
-                    <div key={index} className="flex items-center justify-between p-2.5 rounded-xl border border-border/30 bg-background/20 group hover:border-[#0da192]/30 transition-all duration-200">
+                    <div key={index} className="flex items-center justify-between p-2.5 rounded-lg border border-border/30 bg-background-sec/20 group hover:border-primary/30 transition-all duration-200">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <FileText className="h-4 w-4 text-zinc-500 group-hover:text-[#0da192] transition-colors shrink-0" />
+                        <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                         <div className="min-w-0">
                           <span className="text-xs font-medium text-white truncate block max-w-[120px] sm:max-w-[150px]">{filename}</span>
                           {extension && (
-                            <span className="text-sm text-zinc-500 uppercase font-semibold block">{extension}</span>
+                            <span className="text-sm text-muted-foreground uppercase font-semibold block">{extension}</span>
                           )}
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-zinc-800/30 rounded-lg shrink-0"
+                        className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-background-sec/30 rounded-lg shrink-0"
                         asChild
                       >
                         <a href={fileUrl} download target="_blank" rel="noopener noreferrer">
