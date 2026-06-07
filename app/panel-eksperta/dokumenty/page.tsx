@@ -416,7 +416,7 @@ export default function DocumentsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie biblioteki dokumentów...</p>
         </div>
       </div>
@@ -426,8 +426,8 @@ export default function DocumentsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -442,17 +442,17 @@ export default function DocumentsPage() {
         >
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+              <Button className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
                 Dodaj dokument
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
-              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-                  <Upload className="h-5 w-5 text-[#0da192]" />
+                  <Upload className="h-5 w-5 text-primary" />
                   Dodaj nowy dokument
                 </DialogTitle>
                 <DialogDescription className="text-zinc-400 text-xs">
@@ -472,7 +472,7 @@ export default function DocumentsPage() {
                         <FormItem>
                           <FormLabel className="text-xs font-semibold text-zinc-300">Prześlij plik</FormLabel>
                           <FormControl>
-                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/50 hover:border-[#0da192]/50 hover:bg-[#0da192]/5 bg-background/30 rounded-xl p-6 cursor-pointer transition-all duration-300 group">
+                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/50 hover:border-primary/50 hover:bg-primary/5 bg-background/30 rounded-xl p-6 cursor-pointer transition-all duration-300 group">
                               <input
                                 type="file"
                                 accept=".pdf,.doc,.docx,.txt,.rtf,.odt"
@@ -490,18 +490,18 @@ export default function DocumentsPage() {
                                 }}
                                 {...field}
                               />
-                              <div className="h-12 w-12 rounded-full bg-zinc-800/50 group-hover:bg-[#0da192]/10 border border-border/40 group-hover:border-[#0da192]/30 flex items-center justify-center transition-all duration-300 mb-3">
+                              <div className="h-12 w-12 rounded-full bg-zinc-800/50 group-hover:bg-primary/10 border border-border/40 group-hover:border-primary/30 flex items-center justify-center transition-all duration-300 mb-3">
                                 {fileSelected ? (
-                                  <FileText className="h-6 w-6 text-[#0da192]" />
+                                  <FileText className="h-6 w-6 text-primary" />
                                 ) : (
-                                  <Upload className="h-6 w-6 text-zinc-400 group-hover:text-[#0da192] transition-colors duration-300" />
+                                  <Upload className="h-6 w-6 text-zinc-400 group-hover:text-primary transition-colors duration-300" />
                                 )}
                               </div>
                               {fileSelected ? (
                                 <div className="text-center">
                                   <p className="text-sm font-semibold text-white max-w-[280px] truncate">{fileSelected.name}</p>
                                   <p className="text-[11px] text-zinc-400 mt-1">{formatFileSize(fileSelected.size)}</p>
-                                  <span className="inline-flex text-sm text-[#0da192] font-semibold bg-[#0da192]/10 px-2.5 py-0.5 rounded-full mt-2.5 border border-[#0da192]/20">
+                                  <span className="inline-flex text-sm text-primary font-semibold bg-primary/10 px-2.5 py-0.5 rounded-full mt-2.5 border border-primary/20">
                                     Wybrano plik
                                   </span>
                                 </div>
@@ -535,7 +535,7 @@ export default function DocumentsPage() {
                         <FormControl>
                           <Input
                             placeholder="np. Umowa ramowa zlecenia"
-                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                             {...field}
                           />
                         </FormControl>
@@ -552,20 +552,20 @@ export default function DocumentsPage() {
                         <FormLabel className="text-xs font-semibold text-zinc-300">Typ dokumentu</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
-                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-sm">
+                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-sm">
                               <SelectValue placeholder="Wybierz typ dokumentu" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                            <SelectItem value="umowa" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Umowa</SelectItem>
-                            <SelectItem value="regulamin" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Regulamin</SelectItem>
-                            <SelectItem value="wzor-pisma" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wzór pisma</SelectItem>
-                            <SelectItem value="pelnomocnictwo" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Pełnomocnictwo</SelectItem>
-                            <SelectItem value="oswiadczenie" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Oświadczenie</SelectItem>
-                            <SelectItem value="procedura" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Procedura</SelectItem>
-                            <SelectItem value="polityka" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Polityka</SelectItem>
-                            <SelectItem value="instrukcja" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Instrukcja</SelectItem>
-                            <SelectItem value="inny" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Inny</SelectItem>
+                            <SelectItem value="umowa" className="hover:bg-primary/10 focus:bg-primary/10">Umowa</SelectItem>
+                            <SelectItem value="regulamin" className="hover:bg-primary/10 focus:bg-primary/10">Regulamin</SelectItem>
+                            <SelectItem value="wzor-pisma" className="hover:bg-primary/10 focus:bg-primary/10">Wzór pisma</SelectItem>
+                            <SelectItem value="pelnomocnictwo" className="hover:bg-primary/10 focus:bg-primary/10">Pełnomocnictwo</SelectItem>
+                            <SelectItem value="oswiadczenie" className="hover:bg-primary/10 focus:bg-primary/10">Oświadczenie</SelectItem>
+                            <SelectItem value="procedura" className="hover:bg-primary/10 focus:bg-primary/10">Procedura</SelectItem>
+                            <SelectItem value="polityka" className="hover:bg-primary/10 focus:bg-primary/10">Polityka</SelectItem>
+                            <SelectItem value="instrukcja" className="hover:bg-primary/10 focus:bg-primary/10">Instrukcja</SelectItem>
+                            <SelectItem value="inny" className="hover:bg-primary/10 focus:bg-primary/10">Inny</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -582,7 +582,7 @@ export default function DocumentsPage() {
                     >
                       Anuluj
                     </Button>
-                    <Button type="submit" disabled={uploadProgress} className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <Button type="submit" disabled={uploadProgress} className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 w-full sm:w-auto">
                       {uploadProgress ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin text-white" />
@@ -601,7 +601,6 @@ export default function DocumentsPage() {
             </DialogContent>
           </Dialog>
         </PageHeader>
-
       </motion.div>
 
       {/* Stats Grid */}
@@ -620,7 +619,7 @@ export default function DocumentsPage() {
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{totalDocsCount}</h3>
                 <p className="text-sm text-zinc-500">Suma rozmiarów: {totalSizeFormatted}</p>
               </div>
-              <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 transition-transform duration-300">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-6 w-6" />
               </div>
             </CardContent>
@@ -636,7 +635,7 @@ export default function DocumentsPage() {
                 <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{expertDocsCount}</h3>
                 <p className="text-sm text-zinc-500">Przesłane wzory i umowy</p>
               </div>
-              <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
+              <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-300">
                 <Sparkles className="h-6 w-6" />
               </div>
             </CardContent>
@@ -668,14 +667,14 @@ export default function DocumentsPage() {
                   <p className="text-xs text-zinc-400 font-light tracking-wide">Użycie dysku</p>
                   <h3 className="text-xl font-semibold text-white tracking-tight mt-1">{totalSizeFormatted} <span className="text-sm text-zinc-500 font-light">/ 100 MB</span></h3>
                 </div>
-                <div className="h-10 w-10 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192]">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                   <HardDrive className="h-5 w-5" />
                 </div>
               </div>
               <div className="w-full mt-2">
                 <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#0da192] to-[#d7b56d] transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
                     style={{ width: `${diskPercentage}%` }}
                   />
                 </div>
@@ -701,39 +700,39 @@ export default function DocumentsPage() {
               placeholder="Szukaj dokumentu po nazwie..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] transition-all"
+              className="pl-10 h-11 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 focus-visible:ring-primary/40 focus-visible:border-primary transition-all"
             />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             {/* Typ dokumentu */}
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Typ dokumentu" />
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="ALL" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie typy</SelectItem>
-                <SelectItem value="umowa" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Umowa</SelectItem>
-                <SelectItem value="regulamin" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Regulamin</SelectItem>
-                <SelectItem value="wzor-pisma" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wzór pisma</SelectItem>
-                <SelectItem value="pelnomocnictwo" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Pełnomocnictwo</SelectItem>
-                <SelectItem value="oswiadczenie" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Oświadczenie</SelectItem>
-                <SelectItem value="procedura" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Procedura</SelectItem>
-                <SelectItem value="polityka" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Polityka</SelectItem>
-                <SelectItem value="instrukcja" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Instrukcja</SelectItem>
-                <SelectItem value="inny" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Inny</SelectItem>
+                <SelectItem value="ALL" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie typy</SelectItem>
+                <SelectItem value="umowa" className="hover:bg-primary/10 focus:bg-primary/10">Umowa</SelectItem>
+                <SelectItem value="regulamin" className="hover:bg-primary/10 focus:bg-primary/10">Regulamin</SelectItem>
+                <SelectItem value="wzor-pisma" className="hover:bg-primary/10 focus:bg-primary/10">Wzór pisma</SelectItem>
+                <SelectItem value="pelnomocnictwo" className="hover:bg-primary/10 focus:bg-primary/10">Pełnomocnictwo</SelectItem>
+                <SelectItem value="oswiadczenie" className="hover:bg-primary/10 focus:bg-primary/10">Oświadczenie</SelectItem>
+                <SelectItem value="procedura" className="hover:bg-primary/10 focus:bg-primary/10">Procedura</SelectItem>
+                <SelectItem value="polityka" className="hover:bg-primary/10 focus:bg-primary/10">Polityka</SelectItem>
+                <SelectItem value="instrukcja" className="hover:bg-primary/10 focus:bg-primary/10">Instrukcja</SelectItem>
+                <SelectItem value="inny" className="hover:bg-primary/10 focus:bg-primary/10">Inny</SelectItem>
               </SelectContent>
             </Select>
 
             {/* Źródło */}
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Źródło dokumentu" />
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="ALL" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie źródła</SelectItem>
-                <SelectItem value="EKSPERT" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Od eksperta</SelectItem>
-                <SelectItem value="KLIENT" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Od klienta</SelectItem>
+                <SelectItem value="ALL" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie źródła</SelectItem>
+                <SelectItem value="EKSPERT" className="hover:bg-primary/10 focus:bg-primary/10">Od eksperta</SelectItem>
+                <SelectItem value="KLIENT" className="hover:bg-primary/10 focus:bg-primary/10">Od klienta</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -748,7 +747,7 @@ export default function DocumentsPage() {
         className="relative z-10"
       >
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-          <BorderBeam lightColor="#0da192" lightWidth={400} duration={6} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={6} borderWidth={1} />
           <CardHeader className="border-b border-border/20 py-4 px-6 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-lg font-playfair text-white">Wszystkie pliki</CardTitle>
@@ -859,7 +858,7 @@ export default function DocumentsPage() {
                                   )}
                                 </div>
                               ) : (
-                                <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
+                                <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 uppercase tracking-wide">
                                   Ekspert (Ty)
                                 </span>
                               )}
@@ -871,7 +870,7 @@ export default function DocumentsPage() {
                                   variant="outline"
                                   size="icon"
                                   onClick={() => handlePreviewDocument(document)}
-                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                   title="Podgląd dokumentu"
                                 >
                                   <Eye className="h-4 w-4" />
@@ -880,7 +879,7 @@ export default function DocumentsPage() {
                                   variant="outline"
                                   size="icon"
                                   onClick={() => handleDownloadDocument(document)}
-                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                   title="Pobierz dokument"
                                 >
                                   <Download className="h-4 w-4" />
@@ -938,7 +937,7 @@ export default function DocumentsPage() {
                           animate="show"
                           exit="hidden"
                           layoutId={`doc-card-${document.id}`}
-                          className="bg-zinc-900/40 border border-border/20 rounded-xl p-4 flex flex-col gap-3 relative hover:border-[#0da192]/30 transition-all"
+                          className="bg-zinc-900/40 border border-border/20 rounded-xl p-4 flex flex-col gap-3 relative hover:border-primary/30 transition-all"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
@@ -956,7 +955,7 @@ export default function DocumentsPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => handlePreviewDocument(document)}
-                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
+                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
                                 title="Podgląd dokumentu"
                               >
                                 <Eye className="h-3.5 w-3.5" />
@@ -965,7 +964,7 @@ export default function DocumentsPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => handleDownloadDocument(document)}
-                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all"
+                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
                               >
                                 <Download className="h-3.5 w-3.5" />
                               </Button>
@@ -989,7 +988,7 @@ export default function DocumentsPage() {
                                 Od: {clientName || "Klient"}
                               </span>
                             ) : (
-                              <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 uppercase tracking-wide">
+                              <span className="inline-flex text-sm font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 uppercase tracking-wide">
                                 Moje (Ekspert)
                               </span>
                             )}
@@ -1026,13 +1025,13 @@ export default function DocumentsPage() {
         if (!open) closePreviewDialog()
       }}>
         <DialogContent className="max-w-4xl w-[95vw] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[90vh] relative">
-          <BorderBeam lightColor="#0da192" lightWidth={450} duration={8} borderWidth={1} />
-          <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[#0da192]/5 blur-[60px] rounded-full pointer-events-none" />
+          <BorderBeam lightColor="var(--primary)" lightWidth={450} duration={8} borderWidth={1} />
+          <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
 
           <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/20 shrink-0">
             <div>
               <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-                <FileText className="h-5 w-5 text-[#0da192]" />
+                <FileText className="h-5 w-5 text-primary" />
                 {selectedDocument?.nazwa}
               </DialogTitle>
               <DialogDescription className="text-zinc-400 text-xs mt-1">
@@ -1044,7 +1043,7 @@ export default function DocumentsPage() {
           <div className="flex-1 overflow-hidden py-4 flex flex-col items-center justify-center min-h-[300px]">
             {previewLoading ? (
               <div className="text-center space-y-4">
-                <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+                <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
                 <p className="text-muted-foreground text-sm font-light">Wczytywanie podglądu...</p>
               </div>
             ) : previewContent ? (
@@ -1084,7 +1083,7 @@ export default function DocumentsPage() {
                     </div>
                     <Button
                       onClick={() => selectedDocument && handleDownloadDocument(selectedDocument)}
-                      className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
+                      className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
                     >
                       <Download className="h-4 w-4" />
                       Pobierz plik
@@ -1108,7 +1107,7 @@ export default function DocumentsPage() {
             {selectedDocument && (
               <Button
                 onClick={() => handleDownloadDocument(selectedDocument)}
-                className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2 w-full sm:w-auto"
+                className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2 w-full sm:w-auto"
               >
                 <Download className="h-4 w-4" />
                 Pobierz

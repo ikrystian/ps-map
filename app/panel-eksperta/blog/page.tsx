@@ -143,7 +143,7 @@ export default function LawFirmBlogPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie uprawnień i artykułów...</p>
         </div>
       </div>
@@ -154,8 +154,8 @@ export default function LawFirmBlogPage() {
   if (!canAccessBlog) {
     return (
       <div className="relative space-y-6 pb-12 min-h-screen">
-        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10">
           <h1 className="text-2xl font-bold font-playfair text-white">Blog eksperta</h1>
@@ -187,15 +187,15 @@ export default function LawFirmBlogPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
 
       <PageHeader
         title="Mój blog"
         subtitle="Zarządzaj wpisami na blogu swojego profilu i publikuj profesjonalne artykuły."
       >
-        <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+        <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
           <Link href="/panel-eksperta/blog/nowy">
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             Napisz artykuł
@@ -214,7 +214,7 @@ export default function LawFirmBlogPage() {
         <motion.div variants={itemVariants}>
           {posts.length === 0 ? (
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardContent className="flex flex-col items-center justify-center py-16 max-w-md mx-auto text-center space-y-4">
                 <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
                   <FileText className="h-8 w-8 text-zinc-500 animate-pulse" />
@@ -225,7 +225,7 @@ export default function LawFirmBlogPage() {
                     Nie masz jeszcze żadnych artykułów na blogu. Zacznij dzielić się swoją wiedzą i doświadczeniem, aby przyciągać nowych klientów.
                   </p>
                 </div>
-                <Button asChild className="h-10 px-5 bg-[#0da192] hover:bg-[#0da192]/95 text-white rounded-xl gap-2 mt-2">
+                <Button asChild className="h-10 px-5 bg-primary hover:bg-primary/95 text-white rounded-xl gap-2 mt-2">
                   <Link href="/panel-eksperta/blog/nowy">
                     <Plus className="h-4 w-4" />
                     Napisz pierwszy artykuł
@@ -235,7 +235,7 @@ export default function LawFirmBlogPage() {
             </Card>
           ) : (
             <Card id="tour-blog-list" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-lg font-playfair text-white">Twoje artykuły ({pagination.total})</CardTitle>
                 <CardDescription className="text-zinc-400 text-xs">
@@ -264,7 +264,7 @@ export default function LawFirmBlogPage() {
                           </TableCell>
                           <TableCell className="py-4 px-6">
                             {post.category ? (
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 px-2.5 py-0.5 rounded-md font-medium">
+                              <Badge className="bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-md font-medium">
                                 {post.category.nazwa}
                               </Badge>
                             ) : (
@@ -300,7 +300,7 @@ export default function LawFirmBlogPage() {
                                 variant="outline"
                                 size="icon"
                                 asChild
-                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all shrink-0"
+                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                 title="Edytuj wpis"
                               >
                                 <Link href={`/panel-eksperta/blog/${post.id}`}>
@@ -327,7 +327,7 @@ export default function LawFirmBlogPage() {
                 {/* Mobile Card List View */}
                 <div className="block md:hidden p-4 space-y-3">
                   {posts.map((post) => (
-                    <div key={post.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-[#0da192]/30 transition-all">
+                    <div key={post.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-primary/30 transition-all">
                       <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0">
                           <h4 className="font-semibold text-white text-sm truncate" title={post.tytul}>
@@ -335,7 +335,7 @@ export default function LawFirmBlogPage() {
                           </h4>
                           <div className="flex items-center gap-1.5 mt-1">
                             {post.category ? (
-                              <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 text-sm px-1.5 py-0">
+                              <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm px-1.5 py-0">
                                 {post.category.nazwa}
                               </Badge>
                             ) : (
@@ -369,7 +369,7 @@ export default function LawFirmBlogPage() {
                           variant="outline"
                           size="sm"
                           asChild
-                          className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1.5 text-sm"
+                          className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1.5 text-sm"
                         >
                           <Link href={`/panel-eksperta/blog/${post.id}`}>
                             <Edit className="h-3.5 w-3.5" />

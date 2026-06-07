@@ -151,13 +151,13 @@ const getSubscriptionBadge = (pkg: string) => {
   switch (pkg) {
     case "BIZNES":
     case "ENTERPRISE":
-      return <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Biznes</Badge>
+      return <Badge className="bg-secondary/15 text-secondary border border-secondary/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Biznes</Badge>
     case "PREMIUM":
-      return <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/30 px-2.5 py-0.5 rounded-md font-medium text-xs">Premium</Badge>
+      return <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Premium</Badge>
     case "STANDARD":
-      return <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Standard</Badge>
+      return <Badge className="bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Standard</Badge>
     default:
-      return <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 px-2.5 py-0.5 rounded-md font-medium text-xs">Podstawowy</Badge>
+      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Podstawowy</Badge>
   }
 }
 
@@ -181,32 +181,32 @@ const getCaseStatusLabel = (status: string) => {
 const getCaseStatusBadge = (status: string) => {
   switch (status) {
     case "NOWA":
-      return <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 px-2 py-0">Nowa</Badge>
+      return <Badge className="bg-primary/10 text-primary border border-primary/20 px-2 py-0">Nowa</Badge>
     case "OFERTY_OTRZYMANE":
-      return <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0">Oferty otrzymane</Badge>
+      return <Badge className="bg-warning/10 text-warning border border-warning/20 px-2 py-0">Oferty otrzymane</Badge>
     case "W_TRAKCIE":
-      return <Badge className="bg-sky-500/10 text-sky-400 border border-sky-500/30 px-2 py-0">W toku</Badge>
+      return <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0">W toku</Badge>
     case "ZAKONCZONA":
-      return <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0">Zakończona</Badge>
+      return <Badge className="bg-success/10 text-success border border-success/20 px-2 py-0">Zakończona</Badge>
     default:
-      return <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 px-2 py-0">{status}</Badge>
+      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2 py-0">{status}</Badge>
   }
 }
 
 const getOfferStatusBadge = (status: string) => {
   switch (status) {
     case "ZAAKCEPTOWANA":
-      return <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 gap-1.5 px-2.5 py-0.5 rounded-md"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
+      return <Badge className="bg-success/10 text-success border border-success/20 gap-1.5 px-2.5 py-0.5 rounded-md"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
     case "ZLOZONA":
-      return <Badge className="bg-sky-500/10 text-sky-400 border border-sky-500/30 gap-1.5 px-2.5 py-0.5 rounded-md"><Clock className="h-3 w-3" />Złożona</Badge>
+      return <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1.5 px-2.5 py-0.5 rounded-md"><Clock className="h-3 w-3" />Złożona</Badge>
     case "NEGOCJACJE":
-      return <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 gap-1.5 px-2.5 py-0.5 rounded-md"><FileText className="h-3 w-3" />Negocjacje</Badge>
+      return <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1.5 px-2.5 py-0.5 rounded-md"><FileText className="h-3 w-3" />Negocjacje</Badge>
     case "ODRZUCONA":
-      return <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2.5 py-0.5 rounded-md">Odrzucona</Badge>
+      return <Badge className="bg-error/10 text-error border border-error/20 px-2.5 py-0.5 rounded-md">Odrzucona</Badge>
     case "WYGASLA":
-      return <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 px-2.5 py-0.5 rounded-md">Wygasła</Badge>
+      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2.5 py-0.5 rounded-md">Wygasła</Badge>
     default:
-      return <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 px-2.5 py-0.5 rounded-md">{status}</Badge>
+      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2.5 py-0.5 rounded-md">{status}</Badge>
   }
 }
 
@@ -214,10 +214,10 @@ const getBannerStyles = (packageType: string | null) => {
   switch (packageType) {
     case "BIZNES":
       return {
-        bg: "bg-gradient-to-r from-[#d7b56d]/15 via-amber-500/5 to-orange-500/10 border-b border-[#d7b56d]/20",
+        bg: "bg-gradient-to-r from-secondary/15 via-secondary/5 to-secondary/10 border-b border-secondary/20",
         glow: "shadow-[inset_0_1px_0_0_rgba(215,181,109,0.15)]",
-        iconColor: "text-[#d7b56d]/5",
-        titleColor: "text-[#d7b56d] font-playfair font-bold text-xl md:text-2xl",
+        iconColor: "text-secondary/5",
+        titleColor: "text-secondary font-playfair font-bold text-xl md:text-2xl",
         desc: "Pakiet Biznes - Najwyższa widoczność, brak limitów spraw oraz dedykowany opiekun."
       }
     case "PREMIUM":
@@ -230,18 +230,18 @@ const getBannerStyles = (packageType: string | null) => {
       }
     case "STANDARD":
       return {
-        bg: "bg-gradient-to-r from-[#0da192]/15 via-[#0da192]/5 to-[#0da192]/10 border-b border-[#0da192]/20",
+        bg: "bg-gradient-to-r from-primary/15 via-primary/5 to-primary/10 border-b border-primary/20",
         glow: "shadow-[inset_0_1px_0_0_rgba(13,161,146,0.15)]",
-        iconColor: "text-[#0da192]/5",
-        titleColor: "text-[#0da192] font-bold text-xl md:text-2xl",
+        iconColor: "text-primary/5",
+        titleColor: "text-primary font-bold text-xl md:text-2xl",
         desc: "Pakiet Standard - Profesjonalny profil, większe limity i dostęp do spraw."
       }
     default:
       return {
-        bg: "bg-gradient-to-r from-zinc-800/40 via-zinc-900/20 to-zinc-800/40 border-b border-zinc-700/30",
+        bg: "bg-gradient-to-r from-muted/40 via-muted/20 to-muted/40 border-b border-border/30",
         glow: "",
-        iconColor: "text-zinc-600/5",
-        titleColor: "text-zinc-300 text-xl md:text-2xl",
+        iconColor: "text-muted-foreground/5",
+        titleColor: "text-muted-foreground text-xl md:text-2xl",
         desc: "Pakiet Podstawowy - Podstawowy profil w katalogu i standardowy kontakt z klientami."
       }
   }
@@ -348,7 +348,7 @@ export default function LawFirmDashboardPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie pulpitu eksperta...</p>
         </div>
       </div>
@@ -357,12 +357,12 @@ export default function LawFirmDashboardPage() {
 
   if (error || !data) {
     return (
-      <Card className="border-rose-500/30 bg-rose-500/5 backdrop-blur-md rounded-2xl p-6">
-        <div className="flex items-center gap-3 text-rose-400">
+      <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl p-6">
+        <div className="flex items-center gap-3 text-error">
           <AlertCircle className="h-6 w-6 shrink-0 animate-bounce" />
           <div>
             <h4 className="font-semibold">Błąd wczytywania</h4>
-            <p className="text-xs text-rose-400/80 mt-0.5">{error || "Nie udało się pobrać danych"}</p>
+            <p className="text-xs text-error/80 mt-0.5">{error || "Nie udało się pobrać danych"}</p>
           </div>
         </div>
       </Card>
@@ -371,7 +371,7 @@ export default function LawFirmDashboardPage() {
 
   const { lawFirm, recentCases, recentOffers, activePromotions, stats } = data
 
-  const bannerStyle = getBannerStyles(lawFirm.pakietSubskrypcji)
+  const bannerStyle = getBannerStyles(lawFirm.pakietSubskrypcji ?? null)
   const WatermarkIcon = {
     BIZNES: Crown,
     PREMIUM: Zap,
@@ -382,8 +382,8 @@ export default function LawFirmDashboardPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
 
@@ -403,12 +403,12 @@ export default function LawFirmDashboardPage() {
       >
         {/* Wyświetlenia profilu */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group hover:border-[#0da192]/40 transition-all duration-300">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Wyświetlenia profilu
               </CardTitle>
-              <div className="p-2 bg-[#0da192]/10 rounded-xl text-[#0da192] group-hover:scale-110 transition-transform duration-300">
+              <div className="p-2 bg-primary/10 rounded-xl text-primary group-hover:scale-110 transition-transform duration-300">
                 <Eye className="h-4 w-4" />
               </div>
             </CardHeader>
@@ -430,12 +430,12 @@ export default function LawFirmDashboardPage() {
 
         {/* Złożone oferty */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group hover:border-[#0da192]/40 transition-all duration-300">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Złożone oferty
               </CardTitle>
-              <div className="p-2 bg-[#d7b56d]/10 rounded-xl text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
+              <div className="p-2 bg-secondary/10 rounded-xl text-secondary group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-4 w-4" />
               </div>
             </CardHeader>
@@ -457,17 +457,17 @@ export default function LawFirmDashboardPage() {
 
         {/* Konwersja */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group hover:border-[#0da192]/40 transition-all duration-300">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Skuteczność (Konwersja)
               </CardTitle>
-              <div className="p-2 bg-[#0da192]/10 rounded-xl text-[#0da192] group-hover:scale-110 transition-transform duration-300">
+              <div className="p-2 bg-primary/10 rounded-xl text-primary group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-4 w-4" />
               </div>
             </CardHeader>
             <CardContent className="pt-2">
-              <div className="text-3xl font-bold tracking-tight text-white">{lawFirm.konwersja.toFixed(1)}%</div>
+              <div className="text-3xl font-bold tracking-tight text-white">{(lawFirm.konwersja ?? 0).toFixed(1)}%</div>
               <p className="text-sm text-zinc-500 mt-1 font-light">
                 <span className="text-white font-medium">{lawFirm.wygraneOferty}</span> wygranych z <span className="text-white font-medium">{lawFirm.zlozoneOferty}</span> ofert
               </p>
@@ -477,12 +477,12 @@ export default function LawFirmDashboardPage() {
 
         {/* Pozycja w rankingu */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group hover:border-[#0da192]/40 transition-all duration-300">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Pozycja w rankingu
               </CardTitle>
-              <div className="p-2 bg-[#d7b56d]/10 rounded-xl text-[#d7b56d] group-hover:scale-110 transition-transform duration-300">
+              <div className="p-2 bg-secondary/10 rounded-xl text-secondary group-hover:scale-110 transition-transform duration-300">
                 <Trophy className="h-4 w-4" />
               </div>
             </CardHeader>
@@ -492,7 +492,7 @@ export default function LawFirmDashboardPage() {
               </div>
               <div className="mt-1">
                 <Link href="/panel-eksperta/pozycja-ogloszenia">
-                  <Button variant="link" className="p-0 h-auto text-sm text-[#0da192] hover:text-[#0fbaa8] font-medium">
+                  <Button variant="link" className="p-0 h-auto text-sm text-primary hover:text-primary-hover font-medium">
                     Szczegóły rankingu &rarr;
                   </Button>
                 </Link>
@@ -511,8 +511,8 @@ export default function LawFirmDashboardPage() {
           id="tour-pakiet"
           className="relative z-10"
         >
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor={lawFirm.pakietSubskrypcji === "BIZNES" ? "#d7b56d" : "#0da192"} lightWidth={400} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden">
+            <BorderBeam lightColor={lawFirm.pakietSubskrypcji === "BIZNES" ? "var(--secondary)" : "var(--primary)"} lightWidth={400} duration={8} borderWidth={1} />
             <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
               {/* Watermark Icon */}
               <WatermarkIcon className={cn("absolute right-6 -bottom-6 h-32 w-32 pointer-events-none transform rotate-12 transition-transform duration-500", bannerStyle.iconColor)} />
@@ -523,9 +523,9 @@ export default function LawFirmDashboardPage() {
                     {packageName || "Pakiet Podstawowy"}
                   </h3>
                   {packageExpired && packageName ? (
-                    <Badge variant="destructive" className="animate-pulse bg-rose-500/10 text-rose-400 border border-rose-500/30">Wygasł!</Badge>
+                    <Badge variant="destructive" className="animate-pulse bg-error/10 text-error border border-error/30">Wygasł!</Badge>
                   ) : (
-                    <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20">
+                    <Badge className="bg-primary/10 text-primary border border-primary/20">
                       Aktywny
                     </Badge>
                   )}
@@ -537,7 +537,7 @@ export default function LawFirmDashboardPage() {
                   <p className="text-sm md:text-xs text-zinc-400 mt-1">
                     Ważność pakietu: <span className="text-white font-semibold">{formatDate(expiryDate)}</span>
                     {daysUntilExpiry !== null && (
-                      <span className={cn("ml-2 font-semibold", daysUntilExpiry <= 5 ? "text-rose-400" : daysUntilExpiry <= 14 ? "text-amber-400" : "text-emerald-400")}>
+                      <span className={cn("ml-2 font-semibold", daysUntilExpiry <= 5 ? "text-error" : daysUntilExpiry <= 14 ? "text-warning" : "text-emerald-400")}>
                         ({daysUntilExpiry === 0 ? "Wygasa dzisiaj" : daysUntilExpiry < 0 ? "Wygasł" : `Pozostało dni: ${daysUntilExpiry}`})
                       </span>
                     )}
@@ -574,16 +574,16 @@ export default function LawFirmDashboardPage() {
               </div>
 
               {packageExpired && packageName && (
-                <div className="mt-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl">
+                <div className="mt-6 p-4 bg-error/10 border border-error/30 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-rose-400 mt-0.5 flex-shrink-0" />
+                    <AlertCircle className="h-5 w-5 text-error mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold text-rose-400">Twój pakiet wygasł</p>
-                      <p className="text-xs text-rose-400/80 mt-1 leading-relaxed">
+                      <p className="text-sm font-semibold text-error">Twój pakiet wygasł</p>
+                      <p className="text-xs text-error/80 mt-1 leading-relaxed">
                         Odnów pakiet subskrypcyjny, aby zachować możliwość składania ofert w sprawach klientów oraz dostęp do rozszerzonych funkcji.
                       </p>
                       <Link href="/panel-eksperta/pakiet">
-                        <Button className="mt-3 h-9 px-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium text-xs">
+                        <Button className="mt-3 h-9 px-4 bg-error hover:bg-error/90 text-white rounded-xl font-medium text-xs">
                           Odnów pakiet
                         </Button>
                       </Link>
@@ -606,13 +606,13 @@ export default function LawFirmDashboardPage() {
       >
         <motion.div variants={itemVariants}>
           <Link href="/panel-eksperta/profil">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden cursor-pointer hover:border-[#0da192]/40 hover:bg-card/35 transition-all duration-300 group h-full">
+            <Card variant="glass" className="rounded-2xl relative overflow-hidden cursor-pointer hover:border-primary/40 hover:bg-card/35 transition-all duration-300 group h-full">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 group-hover:bg-[#0da192]/20 transition-all duration-300">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
                   <Edit className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Edycja profilu</h3>
+                  <h3 className="font-semibold text-sm text-white group-hover:text-primary transition-colors">Edycja profilu</h3>
                   <p className="text-sm text-zinc-500 leading-normal font-light">
                     Zaktualizuj swoje dane i opis w wizytówce
                   </p>
@@ -624,13 +624,13 @@ export default function LawFirmDashboardPage() {
 
         <motion.div variants={itemVariants}>
           <Link href="/panel-eksperta/sprawy">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden cursor-pointer hover:border-[#d7b56d]/40 hover:bg-card/35 transition-all duration-300 group h-full">
+            <Card variant="glass" className="rounded-2xl relative overflow-hidden cursor-pointer hover:border-secondary/40 hover:bg-card/35 transition-all duration-300 group h-full">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 group-hover:bg-[#d7b56d]/20 transition-all duration-300">
+                <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 group-hover:bg-secondary/20 transition-all duration-300">
                   <Briefcase className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-white group-hover:text-[#d7b56d] transition-colors">Dostępne sprawy</h3>
+                  <h3 className="font-semibold text-sm text-white group-hover:text-secondary transition-colors">Dostępne sprawy</h3>
                   <p className="text-sm text-zinc-500 leading-normal font-light">
                     Przeglądaj zlecenia klientów i składaj oferty
                   </p>
@@ -642,13 +642,13 @@ export default function LawFirmDashboardPage() {
 
         <motion.div variants={itemVariants}>
           <Link href="/panel-eksperta/pozycja-ogloszenia">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden cursor-pointer hover:border-[#0da192]/40 hover:bg-card/35 transition-all duration-300 group h-full">
+            <Card variant="glass" className="rounded-2xl relative overflow-hidden cursor-pointer hover:border-primary/40 hover:bg-card/35 transition-all duration-300 group h-full">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 flex items-center justify-center text-[#0da192] group-hover:scale-110 group-hover:bg-[#0da192]/20 transition-all duration-300">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
                   <Target className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-white group-hover:text-[#0da192] transition-colors">Pozycja rankingu</h3>
+                  <h3 className="font-semibold text-sm text-white group-hover:text-primary transition-colors">Pozycja rankingu</h3>
                   <p className="text-sm text-zinc-500 leading-normal font-light">
                     Monitoruj widoczność swojej eksperta
                   </p>
@@ -660,13 +660,13 @@ export default function LawFirmDashboardPage() {
 
         <motion.div variants={itemVariants}>
           <Link href="/panel-eksperta/zakres-uslug">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden cursor-pointer hover:border-[#d7b56d]/40 hover:bg-card/35 transition-all duration-300 group h-full">
+            <Card variant="glass" className="rounded-2xl relative overflow-hidden cursor-pointer hover:border-secondary/40 hover:bg-card/35 transition-all duration-300 group h-full">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                <div className="h-12 w-12 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d] group-hover:scale-110 group-hover:bg-[#d7b56d]/20 transition-all duration-300">
+                <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 group-hover:bg-secondary/20 transition-all duration-300">
                   <Settings className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-white group-hover:text-[#d7b56d] transition-colors">Zakres usług</h3>
+                  <h3 className="font-semibold text-sm text-white group-hover:text-secondary transition-colors">Zakres usług</h3>
                   <p className="text-sm text-zinc-500 leading-normal font-light">
                     Skonfiguruj dziedziny prawa i obszar działania
                   </p>
@@ -685,11 +685,11 @@ export default function LawFirmDashboardPage() {
         className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
       >
         {/* Wykres wyświetleń */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-[#0da192]/10 text-[#0da192] rounded-xl">
+                <div className="p-2 bg-primary/10 text-primary rounded-xl">
                   <Eye className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -736,7 +736,7 @@ export default function LawFirmDashboardPage() {
                       <span className="text-xs font-semibold w-10 text-zinc-400">{item.day}</span>
                       <div className="flex-1 h-3.5 bg-zinc-950/40 border border-border/10 rounded-full overflow-hidden relative">
                         <div
-                          className="h-full bg-gradient-to-r from-[#0da192] to-[#0a8276] rounded-full transition-all duration-1000 ease-out"
+                          className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000 ease-out"
                           style={{
                             width: `${item.percentage}%`,
                             transitionDelay: `${index * 75}ms`
@@ -761,10 +761,10 @@ export default function LawFirmDashboardPage() {
               <div className="pt-4 border-t border-border/10 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-zinc-400 flex items-center gap-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-[#0da192]" />
+                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
                     Średnio dziennie
                   </span>
-                  <span className="font-bold text-[#0da192]">
+                  <span className="font-bold text-primary">
                     {Math.max(1, Math.floor(stats.viewsThisMonth / 30))} wyświetleń
                   </span>
                 </div>
@@ -778,11 +778,11 @@ export default function LawFirmDashboardPage() {
         </Card>
 
         {/* Wykres ofert */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-[#d7b56d]/10 text-[#d7b56d] rounded-xl">
+                <div className="p-2 bg-secondary/10 text-secondary rounded-xl">
                   <FileText className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -807,10 +807,10 @@ export default function LawFirmDashboardPage() {
                       cy="80"
                       r="65"
                       fill="none"
-                      stroke="#0da192"
+                      stroke="var(--primary)"
                       strokeWidth="16"
                       className="drop-shadow-[0_0_8px_rgba(13,161,146,0.2)]"
-                      strokeDasharray={`${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 408} 408`}
+                      strokeDasharray={`${((lawFirm.wygraneOferty ?? 0) / (lawFirm.zlozoneOferty || 1)) * 408} 408`}
                       strokeLinecap="round"
                     />
                     <circle
@@ -820,28 +820,28 @@ export default function LawFirmDashboardPage() {
                       fill="none"
                       stroke="#27272a"
                       strokeWidth="16"
-                      strokeDasharray={`${((lawFirm.zlozoneOferty - lawFirm.wygraneOferty) / (lawFirm.zlozoneOferty || 1)) * 408} 408`}
-                      strokeDashoffset={`-${(lawFirm.wygraneOferty / (lawFirm.zlozoneOferty || 1)) * 408}`}
+                      strokeDasharray={`${(((lawFirm.zlozoneOferty ?? 0) - (lawFirm.wygraneOferty ?? 0)) / (lawFirm.zlozoneOferty || 1)) * 408} 408`}
+                      strokeDashoffset={`-${((lawFirm.wygraneOferty ?? 0) / (lawFirm.zlozoneOferty || 1)) * 408}`}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <span className="text-3xl font-bold text-[#0da192] tracking-tight">{lawFirm.konwersja.toFixed(0)}%</span>
+                    <span className="text-3xl font-bold text-primary tracking-tight">{(lawFirm.konwersja ?? 0).toFixed(0)}%</span>
                     <span className="text-sm text-zinc-500 font-medium uppercase tracking-wider mt-0.5">sukces</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2.5 pt-2 border-t border-border/10">
-                <div className="flex items-center justify-between p-2.5 bg-[#0da192]/5 border border-[#0da192]/20 rounded-xl">
+                <div className="flex items-center justify-between p-2.5 bg-primary/5 border border-primary/20 rounded-xl">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#0da192]"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
                     <div>
                       <span className="text-xs font-semibold text-white">Zaakceptowane</span>
                       <p className="text-sm text-zinc-400 font-light">Oferty wybrane przez klientów</p>
                     </div>
                   </div>
-                  <span className="text-base font-bold text-[#0da192]">{lawFirm.wygraneOferty}</span>
+                  <span className="text-base font-bold text-primary">{lawFirm.wygraneOferty ?? 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-zinc-950/20 border border-border/10 rounded-xl">
                   <div className="flex items-center gap-2.5">
@@ -851,7 +851,7 @@ export default function LawFirmDashboardPage() {
                       <p className="text-sm text-zinc-500 font-light">W toku, negocjacje lub odrzucone</p>
                     </div>
                   </div>
-                  <span className="text-base font-bold text-zinc-300">{lawFirm.zlozoneOferty - lawFirm.wygraneOferty}</span>
+                  <span className="text-base font-bold text-zinc-300">{(lawFirm.zlozoneOferty ?? 0) - (lawFirm.wygraneOferty ?? 0)}</span>
                 </div>
               </div>
             </div>
@@ -867,11 +867,11 @@ export default function LawFirmDashboardPage() {
         id="dashboard-my-articles"
         className="relative z-10"
       >
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-[#0da192]/10 text-[#0da192] rounded-xl">
+                <div className="p-2 bg-primary/10 text-primary rounded-xl">
                   <FileText className="h-4.5 w-4.5" />
                 </div>
                 <div>
@@ -894,7 +894,7 @@ export default function LawFirmDashboardPage() {
                   Nie opublikowałeś jeszcze żadnego artykułu.
                 </p>
                 <Link href="/panel-eksperta/blog/nowy">
-                  <Button size="sm" className="h-10 px-5 bg-[#0da192] hover:bg-[#0da192]/95 text-white rounded-xl gap-2 font-medium">
+                  <Button variant="primary" size="sm" className="h-10 px-5 rounded-xl gap-2 font-medium">
                     <FileText className="h-4 w-4" />
                     Napisz pierwszy artykuł
                   </Button>
@@ -924,23 +924,23 @@ export default function LawFirmDashboardPage() {
                         </p>
                         <div className="flex items-center gap-4 text-sm mt-2 font-medium">
                           {post.category?.nazwa ? (
-                            <span className="text-[#0da192]">
+                            <span className="text-primary">
                               {post.category.nazwa}
                             </span>
                           ) : (
-                            <span className="text-[#0da192]">
+                            <span className="text-primary">
                               Ogólna
                             </span>
                           )}
                           <span className="text-zinc-500 font-light flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatDotDate(post.createdAt)}
+                            {formatDotDate(post.createdAt ?? new Date())}
                           </span>
                           <span className="text-zinc-500 font-light">
                             {post.opublikowany ? (
-                              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[8px] py-0 px-1.5 leading-none">Opublikowany</Badge>
+                              <Badge className="bg-success/10 text-success border border-success/20 text-[8px] py-0 px-1.5 leading-none">Opublikowany</Badge>
                             ) : (
-                              <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[8px] py-0 px-1.5 leading-none">Szkic</Badge>
+                              <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 text-[8px] py-0 px-1.5 leading-none">Szkic</Badge>
                             )}
                           </span>
                         </div>
@@ -948,14 +948,14 @@ export default function LawFirmDashboardPage() {
                     </div>
                     <div className="flex sm:flex-col gap-2 flex-shrink-0 w-full sm:w-[110px]">
                       <Link href={`/panel-eksperta/blog/${post.id}`} className="flex-1 sm:flex-none">
-                        <Button className="w-full h-9 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white text-xs font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
+                        <Button className="w-full h-9 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white text-xs font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
                           Edycja
                         </Button>
                       </Link>
                       <Button
                         onClick={() => handleDeletePost(post.id)}
                         variant="outline"
-                        className="flex-1 sm:flex-none h-9 border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 rounded-xl text-xs font-semibold transition-all bg-transparent"
+                        className="flex-1 sm:flex-none h-9 border-border/50 text-zinc-400 hover:text-error hover:bg-error/5 hover:border-error/30 rounded-xl text-xs font-semibold transition-all bg-transparent"
                       >
                         Usuń
                       </Button>
@@ -977,10 +977,10 @@ export default function LawFirmDashboardPage() {
         className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
       >
         {/* Box Promowania */}
-        <Card className="border border-[#0da192]/30 bg-gradient-to-br from-[#0da192]/5 via-zinc-950/20 to-[#0da192]/10 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 via-zinc-950/20 to-primary/10 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
           <CardHeader className="py-5 px-6 border-b border-border/20 bg-zinc-950/15">
             <CardTitle className="flex items-center gap-2 text-white font-playfair text-lg">
-              <Zap className="h-5 w-5 text-[#0da192]" />
+              <Zap className="h-5 w-5 text-primary" />
               Promuj swoje usługi
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
@@ -990,7 +990,7 @@ export default function LawFirmDashboardPage() {
           <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
             <div className="space-y-3.5">
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#0da192]/10 rounded border border-[#0da192]/30 flex items-center justify-center text-[#0da192]">
+                <div className="mt-1 h-4.5 w-4.5 bg-primary/10 rounded border border-primary/30 flex items-center justify-center text-primary">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <div>
@@ -1001,7 +1001,7 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#0da192]/10 rounded border border-[#0da192]/30 flex items-center justify-center text-[#0da192]">
+                <div className="mt-1 h-4.5 w-4.5 bg-primary/10 rounded border border-primary/30 flex items-center justify-center text-primary">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <div>
@@ -1012,7 +1012,7 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#0da192]/10 rounded border border-[#0da192]/30 flex items-center justify-center text-[#0da192]">
+                <div className="mt-1 h-4.5 w-4.5 bg-primary/10 rounded border border-primary/30 flex items-center justify-center text-primary">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <div>
@@ -1027,14 +1027,14 @@ export default function LawFirmDashboardPage() {
             <div className="pt-4 border-t border-border/10 space-y-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-zinc-400 flex items-center gap-1.5">
-                  <Coins className="h-4.5 w-4.5 text-[#d7b56d]" />
+                  <Coins className="h-4.5 w-4.5 text-secondary" />
                   Dostępne punkty
                 </span>
                 <span className="font-bold text-white text-lg">{lawFirm.punktySaldo} pkt</span>
               </div>
               <div className="flex gap-2">
                 <Link href="/panel-eksperta/promowanie" className="flex-1">
-                  <Button className="w-full h-10 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl text-xs shadow-md border-t border-white/10 group gap-1.5 transition-all">
+                  <Button className="w-full h-10 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-semibold rounded-xl text-xs shadow-md border-t border-white/10 group gap-1.5 transition-all">
                     <Zap className="h-4 w-4" />
                     Rozpocznij promocję
                   </Button>
@@ -1050,10 +1050,10 @@ export default function LawFirmDashboardPage() {
         </Card>
 
         {/* Box Partnerski */}
-        <Card className="border border-[#d7b56d]/30 bg-gradient-to-br from-[#d7b56d]/5 via-zinc-950/20 to-[#d7b56d]/10 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <Card className="border border-secondary/30 bg-gradient-to-br from-secondary/5 via-zinc-950/20 to-secondary/10 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
           <CardHeader className="py-5 px-6 border-b border-border/20 bg-zinc-950/15">
             <CardTitle className="flex items-center gap-2 text-white font-playfair text-lg">
-              <Crown className="h-5 w-5 text-[#d7b56d]" />
+              <Crown className="h-5 w-5 text-secondary" />
               Program Partnerski
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
@@ -1063,8 +1063,8 @@ export default function LawFirmDashboardPage() {
           <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
             <div className="space-y-3.5">
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#d7b56d]/10 rounded border border-[#d7b56d]/30 flex items-center justify-center text-[#d7b56d]">
-                  <Star className="h-3.5 w-3.5 fill-[#d7b56d]" />
+                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
+                  <Star className="h-3.5 w-3.5 fill-secondary" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Złoty certyfikowany status</p>
@@ -1074,8 +1074,8 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#d7b56d]/10 rounded border border-[#d7b56d]/30 flex items-center justify-center text-[#d7b56d]">
-                  <Star className="h-3.5 w-3.5 fill-[#d7b56d]" />
+                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
+                  <Star className="h-3.5 w-3.5 fill-secondary" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Dedykowane wsparcie</p>
@@ -1085,8 +1085,8 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-[#d7b56d]/10 rounded border border-[#d7b56d]/30 flex items-center justify-center text-[#d7b56d]">
-                  <Star className="h-3.5 w-3.5 fill-[#d7b56d]" />
+                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
+                  <Star className="h-3.5 w-3.5 fill-secondary" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-white">Priorytet w poleceniach</p>
@@ -1101,12 +1101,12 @@ export default function LawFirmDashboardPage() {
               <div className="mb-4 p-3 bg-zinc-950/40 border border-border/10 rounded-xl flex items-center justify-between">
                 <span className="text-sm text-zinc-500 font-medium uppercase tracking-wider">Koszt aktywacji</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-[#d7b56d]">299 punktów</span>
+                  <span className="text-xl font-bold text-secondary">299 punktów</span>
                   <span className="text-sm text-zinc-400 font-light">/miesiąc</span>
                 </div>
               </div>
               <Link href="/panel-eksperta/pakiet">
-                <Button className="w-full h-10 bg-gradient-to-r from-[#d7b56d] to-[#bca061] hover:from-[#e5c47f] hover:to-[#d7b56d] text-white font-semibold rounded-xl text-xs shadow-md border-t border-white/10 group gap-1.5 transition-all">
+                <Button className="w-full h-10 bg-gradient-to-r from-secondary to-secondary-hover/90 hover:from-secondary-hover hover:to-secondary text-white font-semibold rounded-xl text-xs shadow-md border-t border-white/10 group gap-1.5 transition-all">
                   <Crown className="h-4 w-4" />
                   Zostań Partnerem Premium
                 </Button>
@@ -1123,10 +1123,10 @@ export default function LawFirmDashboardPage() {
         transition={{ delay: 0.24, duration: 0.4 }}
         className="relative z-10"
       >
-        <Card className="border border-border/30 bg-gradient-to-br from-[#0da192]/5 via-zinc-950/20 to-[#d7b56d]/5 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="border border-border/30 bg-gradient-to-br from-primary/5 via-zinc-950/20 to-secondary/5 rounded-2xl relative overflow-hidden">
           <CardHeader className="py-5 px-6 border-b border-border/20">
             <CardTitle className="flex items-center gap-2 text-white font-playfair text-lg">
-              <Users className="h-5 w-5 text-[#0da192]" />
+              <Users className="h-5 w-5 text-primary" />
               Klub Partnerski
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
@@ -1141,44 +1141,44 @@ export default function LawFirmDashboardPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                 <div className="p-4 bg-zinc-950/25 border border-border/10 rounded-xl space-y-3">
-                  <p className="font-semibold text-xs text-[#0da192] uppercase tracking-wider">Dla pakietów płatnych (Standard/Premium/Biznes):</p>
+                  <p className="font-semibold text-xs text-primary uppercase tracking-wider">Dla pakietów płatnych (Standard/Premium/Biznes):</p>
                   <ul className="space-y-2 text-xs ml-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#0da192] mt-0.5 flex-shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                       <span>Co miesiąc otrzymasz gratis 20 punktów (wartość 20 zł) dodawanych bezpośrednio do salda.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#0da192] mt-0.5 flex-shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                       <span>Dostęp do dodatkowych pakietów promocyjnych z rabatem do -30%.</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="p-4 bg-zinc-950/25 border border-border/10 rounded-xl space-y-3">
-                  <p className="font-semibold text-xs text-[#d7b56d] uppercase tracking-wider">Dla pakietu bezpłatnego (Podstawowego):</p>
+                  <p className="font-semibold text-xs text-secondary uppercase tracking-wider">Dla pakietu bezpłatnego (Podstawowego):</p>
                   <ul className="space-y-2 text-xs ml-1">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#d7b56d] mt-0.5 flex-shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
                       <span>Możliwość trwałego odsłonięcia bezpośredniego numeru kontaktowego.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#d7b56d] mt-0.5 flex-shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
                       <span>Darmowa opcja odpowiadania na zapytania w wiadomościach prywatnych.</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-[#0da192]/5 border border-[#0da192]/20 rounded-xl">
+              <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-xl">
                 <p className="text-xs font-medium text-zinc-300">
-                  <span className="text-[#0da192] font-semibold">Jak dołączyć:</span> wystarczy skopiować gotowy kod widgetu w zakładce programu partnerskiego i wkleić go na swojej stronie www.
+                  <span className="text-primary font-semibold">Jak dołączyć:</span> wystarczy skopiować gotowy kod widgetu w zakładce programu partnerskiego i wkleić go na swojej stronie www.
                 </p>
               </div>
             </div>
 
             <div className="pt-4 border-t border-border/10">
               <Link href="/panel-eksperta/klub-partnerski">
-                <Button className="w-full h-10 bg-[#0da192] hover:bg-[#0da192]/95 text-white font-semibold rounded-xl text-xs gap-1.5 transition-all">
+                <Button className="w-full h-10 bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl text-xs gap-1.5 transition-all">
                   <Users className="h-4 w-4" />
                   Przejdź do konfiguratora partnerskiego
                 </Button>
@@ -1196,10 +1196,10 @@ export default function LawFirmDashboardPage() {
         className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
       >
         {/* Stan punktów */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="py-5 px-6 border-b border-border/20 bg-zinc-950/15">
             <CardTitle className="flex items-center gap-2 text-white text-base">
-              <Coins className="h-4.5 w-4.5 text-[#d7b56d]" />
+              <Coins className="h-4.5 w-4.5 text-secondary" />
               Stan konta punktowego
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
@@ -1215,7 +1215,7 @@ export default function LawFirmDashboardPage() {
                 </Button>
               </Link>
               <Link href="/panel-eksperta/promowanie" className="flex-1">
-                <Button className="w-full h-10 bg-[#0da192] hover:bg-[#0da192]/95 text-white rounded-xl text-xs font-semibold gap-1.5 transition-all">
+                <Button className="w-full h-10 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-semibold gap-1.5 transition-all">
                   <Zap className="h-4 w-4" />
                   Promuj profile
                 </Button>
@@ -1225,10 +1225,10 @@ export default function LawFirmDashboardPage() {
         </Card>
 
         {/* Subskrypcja */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="py-5 px-6 border-b border-border/20 bg-zinc-950/15">
             <CardTitle className="flex items-center gap-2 text-white text-base">
-              <Package className="h-4.5 w-4.5 text-[#0da192]" />
+              <Package className="h-4.5 w-4.5 text-primary" />
               Aktywny pakiet usług
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs">
@@ -1238,7 +1238,7 @@ export default function LawFirmDashboardPage() {
           <CardContent className="p-6 flex flex-col justify-between h-[124px]">
             <div className="flex items-center justify-between">
               <div>
-                {getSubscriptionBadge(lawFirm.pakietSubskrypcji)}
+                {getSubscriptionBadge(lawFirm.pakietSubskrypcji ?? "")}
               </div>
               {lawFirm.dataPakietuDo && (
                 <p className="text-sm text-zinc-500 font-light">
@@ -1262,10 +1262,10 @@ export default function LawFirmDashboardPage() {
         transition={{ delay: 0.28, duration: 0.4 }}
         className="relative z-10"
       >
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
             <CardTitle className="flex items-center gap-2 text-white text-base">
-              <Star className="h-4.5 w-4.5 text-[#d7b56d] fill-[#d7b56d]" />
+              <Star className="h-4.5 w-4.5 text-secondary fill-secondary" />
               Oceny i opinie klientów
             </CardTitle>
           </CardHeader>
@@ -1275,11 +1275,11 @@ export default function LawFirmDashboardPage() {
                 <div className="text-4xl font-bold text-white tracking-tight">
                   {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "0.0"}
                 </div>
-                <div className="flex items-center gap-1 text-[#d7b56d] mt-1.5">
+                <div className="flex items-center gap-1 text-secondary mt-1.5">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-4.5 w-4.5 ${i < Math.round(stats.averageRating) ? "fill-current text-[#d7b56d]" : "text-zinc-700"
+                      className={`h-4.5 w-4.5 ${i < Math.round(stats.averageRating) ? "fill-current text-secondary" : "text-zinc-700"
                         }`}
                     />
                   ))}
@@ -1288,7 +1288,7 @@ export default function LawFirmDashboardPage() {
               <div className="text-xs text-zinc-400 font-light space-y-1">
                 <p>Ekspert otrzymała łącznie <span className="text-white font-semibold">{stats.reviewsCount}</span> {stats.reviewsCount === 1 ? "opinię" : "opinii"}.</p>
                 <Link href="/panel-eksperta/opinie">
-                  <Button variant="link" className="p-0 h-auto text-xs text-[#0da192] hover:text-[#0fbaa8] font-semibold">
+                  <Button variant="link" className="p-0 h-auto text-xs text-primary hover:text-primary-hover font-semibold">
                     Czytaj opinie klientów &rarr;
                   </Button>
                 </Link>
@@ -1306,11 +1306,11 @@ export default function LawFirmDashboardPage() {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="relative z-10"
         >
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden">
             <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-white text-base">
-                  <TrendingUp className="h-4.5 w-4.5 text-[#0da192]" />
+                  <TrendingUp className="h-4.5 w-4.5 text-primary" />
                   Aktywne promocje w katalogu
                 </CardTitle>
                 <Link href="/panel-eksperta/promowanie">
@@ -1326,7 +1326,7 @@ export default function LawFirmDashboardPage() {
                 {activePromotions.map((promo) => (
                   <div
                     key={promo.id}
-                    className="flex items-center justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-[#0da192]/20 transition-all duration-300"
+                    className="flex items-center justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/20 transition-all duration-300"
                   >
                     <div>
                       <p className="font-semibold text-sm text-white">
@@ -1338,9 +1338,9 @@ export default function LawFirmDashboardPage() {
                     </div>
                     <div>
                       {promo.aktywna ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-0.5 rounded-md">Aktywna</Badge>
+                        <Badge className="bg-success/10 text-success border border-success/20 text-xs px-2.5 py-0.5 rounded-md">Aktywna</Badge>
                       ) : (
-                        <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-xs px-2.5 py-0.5 rounded-md">Nieaktywna</Badge>
+                        <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 text-xs px-2.5 py-0.5 rounded-md">Nieaktywna</Badge>
                       )}
                     </div>
                   </div>
@@ -1359,11 +1359,11 @@ export default function LawFirmDashboardPage() {
         className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
       >
         {/* Nowe sprawy */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-white text-base">
-                <Briefcase className="h-4.5 w-4.5 text-[#0da192]" />
+                <Briefcase className="h-4.5 w-4.5 text-primary" />
                 Nowe sprawy w okolicy
               </CardTitle>
               <Link href="/panel-eksperta/sprawy">
@@ -1390,8 +1390,8 @@ export default function LawFirmDashboardPage() {
                     href={`/panel-eksperta/sprawy/${caseItem.id}`}
                     className="block"
                   >
-                    <div className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-[#0da192]/30 hover:bg-zinc-950/25 transition-all cursor-pointer">
-                      <div className="flex-1 min-w-0 pr-2">
+                    <div className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/30 hover:bg-zinc-950/25 transition-all cursor-pointer">
+                       <div className="flex-1 min-w-0 pr-2">
                         <p className="font-semibold text-sm text-white truncate" title={caseItem.nazwaSprawy}>
                           {caseItem.nazwaSprawy}
                         </p>
@@ -1413,11 +1413,11 @@ export default function LawFirmDashboardPage() {
         </Card>
 
         {/* Ostatnie oferty */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
           <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-white text-base">
-                <FileText className="h-4.5 w-4.5 text-[#0da192]" />
+                <FileText className="h-4.5 w-4.5 text-primary" />
                 Twoje ostatnie oferty
               </CardTitle>
               <Link href="/panel-eksperta/oferty">
@@ -1441,13 +1441,13 @@ export default function LawFirmDashboardPage() {
                 {recentOffers.slice(0, 5).map((offer) => (
                   <div
                     key={offer.id}
-                    className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-[#0da192]/20 transition-all duration-300"
+                    className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/20 transition-all duration-300"
                   >
                     <div className="flex-1 min-w-0 pr-2">
                       <p className="font-semibold text-sm text-white truncate" title={offer.case.nazwaSprawy}>
                         {offer.case.nazwaSprawy}
                       </p>
-                      <p className="text-xs font-bold text-[#0da192] mt-1">
+                      <p className="text-xs font-bold text-primary mt-1">
                         {formatCurrency(offer.kwotaBrutto)}
                       </p>
                     </div>

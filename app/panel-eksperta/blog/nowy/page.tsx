@@ -155,8 +155,8 @@ export default function LawFirmNewBlogPostPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -191,10 +191,10 @@ export default function LawFirmNewBlogPostPage() {
               {/* Podstawowe informacje */}
               <motion.div variants={itemVariants}>
                 <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-                  <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+                  <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
                   <CardHeader className="border-b border-border/20 py-5 px-6">
                     <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#d7b56d] animate-pulse" />
+                      <Sparkles className="h-4 w-4 text-secondary animate-pulse" />
                       Podstawowe informacje
                     </CardTitle>
                     <CardDescription className="text-zinc-400 text-xs">
@@ -211,7 +211,7 @@ export default function LawFirmNewBlogPostPage() {
                           <FormControl>
                             <Input
                               placeholder="np. Jak przygotować się do sprawy rozwodowej?"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                               {...field}
                             />
                           </FormControl>
@@ -235,13 +235,13 @@ export default function LawFirmNewBlogPostPage() {
                             disabled={loadingCategories}
                           >
                             <FormControl>
-                              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 text-zinc-300 text-sm">
+                              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 text-sm">
                                 <SelectValue placeholder="Wybierz kategorię" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
                               {categories.map((category) => (
-                                <SelectItem key={category.id} value={category.id} className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">
+                                <SelectItem key={category.id} value={category.id} className="hover:bg-primary/10 focus:bg-primary/10">
                                   {category.nazwa}
                                 </SelectItem>
                               ))}
@@ -262,7 +262,7 @@ export default function LawFirmNewBlogPostPage() {
                         <FormItem>
                           <FormLabel className="text-xs font-semibold text-zinc-300">Treść artykułu *</FormLabel>
                           <FormControl>
-                            <div className="rounded-xl overflow-hidden border border-border/40 bg-zinc-950/40 focus-within:border-[#0da192]/60 transition-all [&_.ql-toolbar]:bg-zinc-700 [&_.ql-toolbar]:border-border/20 [&_.ql-container]:border-none [&_.ql-editor]:text-zinc-200 [&_.ql-editor]:min-h-[400px]">
+                            <div className="rounded-xl overflow-hidden border border-border/40 bg-zinc-950/40 focus-within:border-primary/60 transition-all [&_.ql-toolbar]:bg-zinc-700 [&_.ql-toolbar]:border-border/20 [&_.ql-container]:border-none [&_.ql-editor]:text-zinc-200 [&_.ql-editor]:min-h-[400px]">
                               <RichTextEditor
                                 value={field.value}
                                 onChange={field.onChange}
@@ -307,7 +307,7 @@ export default function LawFirmNewBlogPostPage() {
 
               {/* Akcje formularza */}
               <motion.div variants={itemVariants} className="flex items-center gap-4 pt-2">
-                <Button type="submit" disabled={loading} className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2 transition-all">
+                <Button type="submit" disabled={loading} className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2 transition-all">
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin text-white" />
                   ) : (
@@ -350,7 +350,7 @@ export default function LawFirmNewBlogPostPage() {
                                 <Input
                                   id="tag-input"
                                   placeholder="Wpisz słowo kluczowe i zatwierdź Enterem..."
-                                  className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                                  className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
                                       e.preventDefault()
@@ -384,7 +384,7 @@ export default function LawFirmNewBlogPostPage() {
                                   {field.value.map((tag, index) => (
                                     <div
                                       key={index}
-                                      className="flex items-center gap-1.5 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] px-3.5 py-1.5 rounded-full text-xs font-medium transition-all hover:bg-[#0da192]/15"
+                                      className="flex items-center gap-1.5 bg-primary/10 border border-primary/30 text-primary px-3.5 py-1.5 rounded-full text-xs font-medium transition-all hover:bg-primary/15"
                                     >
                                       <span>{tag}</span>
                                       <button
@@ -393,7 +393,7 @@ export default function LawFirmNewBlogPostPage() {
                                           const currentTags = field.value || []
                                           field.onChange(currentTags.filter((_, i) => i !== index))
                                         }}
-                                        className="text-[#0da192]/70 hover:text-rose-400 transition-colors font-bold text-sm leading-none ml-0.5"
+                                        className="text-primary/70 hover:text-rose-400 transition-colors font-bold text-sm leading-none ml-0.5"
                                       >
                                         &times;
                                       </button>
@@ -420,7 +420,7 @@ export default function LawFirmNewBlogPostPage() {
                           <FormControl>
                             <Input
                               placeholder="Tytuł dla wyników wyszukiwania (Google)"
-                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm"
+                              className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                               {...field}
                             />
                           </FormControl>
@@ -441,7 +441,7 @@ export default function LawFirmNewBlogPostPage() {
                           <FormControl>
                             <Textarea
                               placeholder="Krótki, chwytliwy opis artykułu, który pojawi się w wynikach wyszukiwania..."
-                              className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm resize-none"
+                              className="bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm resize-none"
                               rows={3}
                               {...field}
                             />
@@ -482,7 +482,7 @@ export default function LawFirmNewBlogPostPage() {
                             <Switch
                               checked={field.value}
                               onCheckedChange={field.onChange}
-                              className="data-[state=checked]:bg-[#0da192]"
+                              className="data-[state=checked]:bg-primary"
                             />
                           </FormControl>
                         </FormItem>
