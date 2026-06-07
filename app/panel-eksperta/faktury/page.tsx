@@ -60,8 +60,8 @@ const statusConfig: Record<string, { label: string; className: string; icon: any
   DRAFT: { label: "Szkic", className: "bg-zinc-500/10 text-zinc-400 border border-zinc-500/30", icon: Clock },
   ISSUED: { label: "Wystawiona", className: "bg-sky-500/10 text-sky-400 border border-sky-500/30", icon: FileText },
   SENT: { label: "Wysłana", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30", icon: CheckCircle2 },
-  PAID: { label: "Opłacona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30", icon: CheckCircle2 },
-  CANCELLED: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/30", icon: XCircle },
+  PAID: { label: "Opłacona", className: "bg-success/10 text-success border border-success/30", icon: CheckCircle2 },
+  CANCELLED: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30", icon: XCircle },
 }
 
 const containerVariants = {
@@ -155,7 +155,7 @@ export default function InvoicesPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie faktur VAT...</p>
         </div>
       </div>
@@ -165,8 +165,8 @@ export default function InvoicesPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -191,8 +191,8 @@ export default function InvoicesPage() {
       >
         {invoices.length === 0 ? (
           <motion.div variants={itemVariants}>
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+            <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
               <CardContent className="flex flex-col items-center justify-center py-16 max-w-md mx-auto text-center space-y-4">
                 <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
                   <FileText className="h-8 w-8 text-zinc-500 animate-pulse" />
@@ -209,8 +209,8 @@ export default function InvoicesPage() {
         ) : (
           <>
             <motion.div variants={itemVariants}>
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-                <BorderBeam lightColor="#0da192" lightWidth={400} duration={7} borderWidth={1} />
+              <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+                <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
                 <CardHeader className="border-b border-border/20 py-4 px-6">
                   <CardTitle className="text-lg font-playfair text-white">Historia faktur</CardTitle>
                   <CardDescription className="text-zinc-400 text-xs">
@@ -288,8 +288,8 @@ export default function InvoicesPage() {
                               <TableCell className="py-4 px-6">
                                 {invoice.ksefStatus === "ACCEPTED" && (
                                   <div className="space-y-1">
-                                    <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 rounded-md">
-                                      <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                                    <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 rounded-md">
+                                      <CheckCircle2 className="h-3 w-3 text-success" />
                                       Zaakceptowano
                                     </Badge>
                                     {invoice.ksefNumber && (
@@ -309,20 +309,20 @@ export default function InvoicesPage() {
                                 )}
                                 {invoice.ksefStatus === "PENDING" && (
                                   <div className="space-y-1">
-                                    <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 rounded-md">
-                                      <Loader2 className="h-3 w-3 animate-spin text-amber-400" />
+                                    <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 rounded-md">
+                                      <Loader2 className="h-3 w-3 animate-spin text-warning" />
                                       Przetwarzanie
                                     </Badge>
                                   </div>
                                 )}
                                 {invoice.ksefStatus === "FAILED" && (
                                   <div className="space-y-1">
-                                    <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 rounded-md" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
+                                    <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 rounded-md" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
                                       <XCircle className="h-3 w-3" />
                                       Błąd wysyłki
                                     </Badge>
                                     {invoice.ksefDiagnostics && (
-                                      <div className="text-sm text-rose-400 max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
+                                      <div className="text-sm text-error max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
                                         {invoice.ksefDiagnostics}
                                       </div>
                                     )}
@@ -333,7 +333,7 @@ export default function InvoicesPage() {
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-xs text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-2 py-1 h-7 flex items-center gap-1"
+                                      className="text-xs text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-lg px-2 py-1 h-7 flex items-center gap-1"
                                       onClick={() => handleSendToKsef(invoice.id)}
                                       disabled={syncingId === invoice.id}
                                     >
@@ -353,7 +353,7 @@ export default function InvoicesPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleDownload(invoice)}
-                                    className="h-9 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 transition-all text-xs gap-1.5"
+                                    className="h-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all text-xs gap-1.5"
                                   >
                                     <Download className="h-3.5 w-3.5" />
                                     Pobierz PDF
@@ -374,7 +374,7 @@ export default function InvoicesPage() {
                       const StatusIcon = statusInfo.icon
 
                       return (
-                        <div key={invoice.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-[#0da192]/30 transition-all">
+                        <div key={invoice.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-primary/30 transition-all">
                           <div className="flex justify-between items-start gap-2">
                             <div>
                               <h4 className="font-semibold text-white text-sm">
@@ -406,7 +406,7 @@ export default function InvoicesPage() {
                             </div>
                             <div className="text-right">
                               <span className="text-zinc-500 block font-light">Kwota brutto</span>
-                              <span className="text-[#0da192] font-semibold text-sm">{formatCurrency(invoice.grossAmount)}</span>
+                              <span className="text-primary font-semibold text-sm">{formatCurrency(invoice.grossAmount)}</span>
                             </div>
                           </div>
 
@@ -416,7 +416,7 @@ export default function InvoicesPage() {
                               <span className="text-zinc-500 block font-light text-sm">Status KSeF</span>
                               <div className="mt-1">
                                 {invoice.ksefStatus === "ACCEPTED" && (
-                                  <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 gap-1 py-0.5 px-2 text-sm">
+                                  <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 px-2 text-sm">
                                     <CheckCircle2 className="h-3 w-3" />
                                     Zaakceptowano
                                   </Badge>
@@ -428,13 +428,13 @@ export default function InvoicesPage() {
                                   </Badge>
                                 )}
                                 {invoice.ksefStatus === "PENDING" && (
-                                  <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 gap-1 py-0.5 px-2 text-sm">
+                                  <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 px-2 text-sm">
                                     <Loader2 className="h-3 w-3 animate-spin" />
                                     Przetwarzanie
                                   </Badge>
                                 )}
                                 {invoice.ksefStatus === "FAILED" && (
-                                  <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 gap-1 py-0.5 px-2 text-sm">
+                                  <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 px-2 text-sm">
                                     <XCircle className="h-3 w-3" />
                                     Błąd wysyłki
                                   </Badge>
@@ -443,7 +443,7 @@ export default function InvoicesPage() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-sm text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 rounded-md p-1 h-auto flex items-center gap-1"
+                                    className="text-sm text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-md p-1 h-auto flex items-center gap-1"
                                     onClick={() => handleSendToKsef(invoice.id)}
                                     disabled={syncingId === invoice.id}
                                   >
@@ -462,7 +462,7 @@ export default function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleDownload(invoice)}
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/5 hover:border-[#0da192]/30 gap-1 text-sm"
+                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1 text-sm"
                             >
                               <Download className="h-3.5 w-3.5" />
                               Pobierz PDF
@@ -478,7 +478,7 @@ export default function InvoicesPage() {
 
             {/* Podsumowanie */}
             <motion.div variants={itemVariants}>
-              <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+              <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
                 <CardHeader className="border-b border-border/20 py-4 px-6">
                   <CardTitle className="text-lg font-playfair text-white">Podsumowanie finansowe</CardTitle>
                 </CardHeader>
@@ -495,19 +495,19 @@ export default function InvoicesPage() {
                     </div>
 
                     <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                      <div className="h-10 w-10 rounded-lg bg-success/10 border border-success/20 flex items-center justify-center text-success">
                         <ShieldCheck className="h-5 w-5" />
                       </div>
                       <div>
                         <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Opłacone faktury</div>
-                        <div className="text-2xl font-bold text-emerald-400 tracking-tight">
+                        <div className="text-2xl font-bold text-success tracking-tight">
                           {invoices.filter((inv) => inv.status === "PAID").length}
                         </div>
                       </div>
                     </div>
 
                     <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-[#d7b56d]/10 border border-[#d7b56d]/20 flex items-center justify-center text-[#d7b56d]">
+                      <div className="h-10 w-10 rounded-lg bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary">
                         <Coins className="h-5 w-5" />
                       </div>
                       <div>

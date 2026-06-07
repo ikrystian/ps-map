@@ -286,7 +286,7 @@ export default function InvoicePrintPage() {
             <div className="invoice-title">FAKTURA VAT</div>
             <div className="invoice-number">{invoice.invoiceNumber}</div>
             {invoice.ksefNumber && (
-              <div style={{ marginTop: "0.5rem", fontSize: "11px", color: "#4f46e5", fontWeight: "bold" }}>
+              <div style={{ marginTop: "0.5rem", fontSize: "11px", color: "var(--primary)", fontWeight: "bold" }}>
                 Faktura ustrukturyzowana (KSeF)
                 <div style={{ fontSize: "10px", fontFamily: "monospace", color: "#000", marginTop: "2px", fontWeight: "normal" }}>
                   Numer KSeF: {invoice.ksefNumber}
@@ -437,7 +437,7 @@ export default function InvoicePrintPage() {
           onClick={() => window.print()}
           style={{
             padding: "0.75rem 1.5rem",
-            backgroundColor: "#3b82f6",
+            backgroundColor: "var(--primary)",
             color: "white",
             border: "none",
             borderRadius: "0.5rem",

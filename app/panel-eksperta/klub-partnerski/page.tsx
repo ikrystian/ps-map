@@ -216,7 +216,7 @@ export default function KlubPartnerskiPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-[#0da192]" />
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <p className="text-zinc-400 text-sm font-light">Ładowanie programu partnerskiego...</p>
       </div>
     )
@@ -227,8 +227,8 @@ export default function KlubPartnerskiPage() {
     return (
       <div className="relative space-y-8">
         {/* Ambient Background Glows */}
-        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -240,7 +240,7 @@ export default function KlubPartnerskiPage() {
             title="Klub Partnerski"
             subtitle="Dołącz do programu partnerskiego i zarabiaj punkty za promowanie ProstaSprawa.pl"
           >
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-xs font-semibold tracking-wide">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-semibold tracking-wide">
               <Award className="h-3 w-3 animate-pulse" />
               PROGRAM PARTNERSKI DLA EKSPERTÓW
             </div>
@@ -253,11 +253,11 @@ export default function KlubPartnerskiPage() {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="relative z-10"
         >
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor="#d7b56d" lightWidth={400} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden">
+            <BorderBeam lightColor="var(--secondary)" lightWidth={400} duration={8} borderWidth={1} />
             <CardHeader className="p-6 pb-4">
               <CardTitle className="text-xl font-bold text-white flex items-center gap-2.5">
-                <Award className="h-5 w-5 text-[#d7b56d]" />
+                <Award className="h-5 w-5 text-secondary" />
                 Dołącz do Klubu Partnerskiego
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs font-light">
@@ -288,10 +288,10 @@ export default function KlubPartnerskiPage() {
                   <h3 className="font-bold text-base text-white">Korzyści programu</h3>
                   <div className="space-y-3.5">
                     {[
-                      { icon: Gift, color: "#d7b56d", title: "100 punktów miesięcznie", desc: "za umieszczenie i utrzymanie bannera na swojej witrynie internetowej." },
-                      { icon: TrendingUp, color: "#0da192", title: "Automatyczne naliczanie", desc: "punkty są automatycznie dopisywane do Twojego konta co 30 dni." },
-                      { icon: CheckCircle2, color: "#0da192", title: "Inteligentna weryfikacja", desc: "nasz system co miesiąc sam sprawdza obecność kodu na Twojej stronie." },
-                      { icon: Award, color: "#d7b56d", title: "Większa widoczność", desc: "dodatkowe punkty podnoszą pozycję Twoich ofert i przyciągają więcej klientów." }
+                      { icon: Gift, color: "var(--secondary)", title: "100 punktów miesięcznie", desc: "za umieszczenie i utrzymanie bannera na swojej witrynie internetowej." },
+                      { icon: TrendingUp, color: "var(--primary)", title: "Automatyczne naliczanie", desc: "punkty są automatycznie dopisywane do Twojego konta co 30 dni." },
+                      { icon: CheckCircle2, color: "var(--primary)", title: "Inteligentna weryfikacja", desc: "nasz system co miesiąc sam sprawdza obecność kodu na Twojej stronie." },
+                      { icon: Award, color: "var(--secondary)", title: "Większa widoczność", desc: "dodatkowe punkty podnoszą pozycję Twoich ofert i przyciągają więcej klientów." }
                     ].map((benefit, i) => {
                       const Icon = benefit.icon
                       return (
@@ -319,7 +319,7 @@ export default function KlubPartnerskiPage() {
                       { step: "3", title: "Szybka weryfikacja", desc: "Kliknij 'Weryfikuj', by aktywować program i zacząć zbierać punkty." }
                     ].map((step, i) => (
                       <div key={i} className="flex gap-3">
-                        <div className="h-8 w-8 rounded-full border-2 border-border/30 flex items-center justify-center font-bold text-xs text-[#0da192] bg-zinc-950/40 shrink-0">
+                        <div className="h-8 w-8 rounded-full border-2 border-border/30 flex items-center justify-center font-bold text-xs text-primary bg-zinc-950/40 shrink-0">
                           {step.step}
                         </div>
                         <div className="space-y-0.5">
@@ -351,7 +351,8 @@ export default function KlubPartnerskiPage() {
               <Button
                 onClick={handleJoinProgram}
                 disabled={joining || !partnerStatus?.hasWebsite}
-                className="w-full h-11 bg-gradient-to-r from-[#d7b56d] to-[#bfa360] hover:from-[#e3c17a] hover:to-[#d7b56d] text-zinc-950 font-bold rounded-xl shadow-md border-t border-white/20 transition-all text-sm mt-4 disabled:opacity-50"
+                variant="secondary"
+                className="w-full h-11 text-zinc-950 font-bold rounded-xl shadow-md border-t border-white/20 transition-all text-sm mt-4 disabled:opacity-50"
                 size="lg"
               >
                 {joining && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -383,8 +384,8 @@ export default function KlubPartnerskiPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -401,7 +402,7 @@ export default function KlubPartnerskiPage() {
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
-        <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#0da192]/30 transition-all duration-300">
+        <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-primary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Status programu</p>
@@ -428,7 +429,7 @@ export default function KlubPartnerskiPage() {
           </div>
         </Card>
 
-        <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#d7b56d]/30 transition-all duration-300">
+        <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-secondary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Miesięczna nagroda</p>
@@ -437,13 +438,13 @@ export default function KlubPartnerskiPage() {
                 <span className="text-xs text-zinc-400 font-light">pkt</span>
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-secondary/10 border border-secondary/20 text-secondary flex items-center justify-center">
               <Gift className="h-5 w-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden p-6 hover:border-[#0da192]/30 transition-all duration-300">
+        <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-primary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Łącznie zdobyte</p>
@@ -452,7 +453,7 @@ export default function KlubPartnerskiPage() {
                 <span className="text-xs text-zinc-400 font-light">pkt</span>
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
@@ -466,11 +467,11 @@ export default function KlubPartnerskiPage() {
         className="space-y-6 relative z-10"
       >
         {/* Verification Status */}
-        <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden">
+        <Card variant="glass" className="rounded-2xl overflow-hidden">
           <CardHeader className="p-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 space-y-0">
             <div>
               <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
-                <Globe className="h-5 w-5 text-[#0da192]" />
+                <Globe className="h-5 w-5 text-primary" />
                 Status weryfikacji bannera
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs font-light mt-1.5">
@@ -479,7 +480,7 @@ export default function KlubPartnerskiPage() {
                     href={partnerStatus.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#0da192] hover:text-[#0fbaa8] hover:underline flex items-center gap-1 mt-1"
+                    className="text-primary hover:text-primary-hover hover:underline flex items-center gap-1 mt-1"
                   >
                     {partnerStatus.websiteUrl}
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -522,10 +523,10 @@ export default function KlubPartnerskiPage() {
                 onClick={handleVerifyBanner}
                 disabled={verifying}
                 variant="outline"
-                className="border-[#0da192]/30 text-[#0da192] hover:bg-[#0da192]/10 hover:text-white rounded-xl h-9 px-4 text-xs font-semibold shrink-0 transition-colors"
+                className="border-primary/30 text-primary hover:bg-primary/10 hover:text-white rounded-xl h-9 px-4 text-xs font-semibold shrink-0 transition-colors"
               >
                 {verifying ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0da192]" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                 ) : (
                   <RefreshCw className="mr-2 h-4 w-4" />
                 )}
@@ -552,10 +553,10 @@ export default function KlubPartnerskiPage() {
         </Card>
 
         {/* Banner Code */}
-        <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden">
+        <Card variant="glass" className="rounded-2xl overflow-hidden">
           <CardHeader className="p-6 pb-4">
             <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
-              <Code className="h-5 w-5 text-[#d7b56d]" />
+              <Code className="h-5 w-5 text-secondary" />
               Kod bannera do umieszczenia
             </CardTitle>
             <CardDescription className="text-zinc-400 text-xs font-light">
@@ -579,7 +580,7 @@ export default function KlubPartnerskiPage() {
                     </>
                   ) : (
                     <>
-                      <Copy className="mr-1.5 h-3.5 w-3.5 text-[#d7b56d]" />
+                      <Copy className="mr-1.5 h-3.5 w-3.5 text-secondary" />
                       Kopiuj kod
                     </>
                   )}
@@ -606,7 +607,7 @@ export default function KlubPartnerskiPage() {
                     </>
                   ) : (
                     <>
-                      <Copy className="mr-1.5 h-3.5 w-3.5 text-[#d7b56d]" />
+                      <Copy className="mr-1.5 h-3.5 w-3.5 text-secondary" />
                       Kopiuj kod
                     </>
                   )}
@@ -618,10 +619,10 @@ export default function KlubPartnerskiPage() {
             </div>
 
             <Alert className="bg-zinc-950/30 border border-border/10 rounded-xl">
-              <AlertCircle className="h-4 w-4 text-[#d7b56d]" />
+              <AlertCircle className="h-4 w-4 text-secondary" />
               <AlertTitle className="font-semibold text-sm text-white">Ważne wskazówki instalacji</AlertTitle>
               <AlertDescription className="text-xs text-zinc-400 font-light mt-1.5 leading-relaxed">
-                Banner musi być fizycznie widoczny na Twojej stronie głównej lub podstronach. Zazwyczaj umieszcza się go w stopce (footer) lub na pasku bocznym (sidebar). Po osadzeniu kodu kliknij przycisk <strong className="text-white font-medium">Weryfikuj teraz</strong>, aby natychmiast sprawdzić poprawność instalacji.
+                Banner must be physically visible on your home page or subpages. Usually placed in footer or sidebar. After embedding the code click <strong className="text-white font-medium">Verify now</strong> to immediately verify installation.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -629,10 +630,10 @@ export default function KlubPartnerskiPage() {
 
         {/* Points History */}
         {partnerStatus.pointsHistory && partnerStatus.pointsHistory.length > 0 && (
-          <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden">
+          <Card variant="glass" className="rounded-2xl overflow-hidden">
             <CardHeader className="p-6 pb-4">
               <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
-                <Calendar className="h-5 w-5 text-[#0da192]" />
+                <Calendar className="h-5 w-5 text-primary" />
                 Historia przyznanych punktów
               </CardTitle>
               <CardDescription className="text-zinc-400 text-xs font-light">
@@ -658,7 +659,7 @@ export default function KlubPartnerskiPage() {
                           {MONTH_NAMES[history.month - 1]} {history.year}
                         </TableCell>
                         <TableCell>
-                          <Badge className="bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-xs font-semibold py-0.5 rounded-lg">
+                          <Badge className="bg-primary/10 border border-primary/20 text-primary text-xs font-semibold py-0.5 rounded-lg">
                             +{history.pointsAwarded} pkt
                           </Badge>
                         </TableCell>
@@ -692,7 +693,7 @@ export default function KlubPartnerskiPage() {
                       <span className="font-bold text-white text-sm">
                         {MONTH_NAMES[history.month - 1]} {history.year}
                       </span>
-                      <Badge className="bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] text-xs font-semibold py-0.5 rounded-lg">
+                      <Badge className="bg-primary/10 border border-primary/20 text-primary text-xs font-semibold py-0.5 rounded-lg">
                         +{history.pointsAwarded} pkt
                       </Badge>
                     </div>
@@ -722,28 +723,28 @@ export default function KlubPartnerskiPage() {
         )}
 
         {/* Info Card */}
-        <Card className="border border-[#0da192]/30 bg-[#0da192]/5 rounded-2xl shadow-lg overflow-hidden">
+        <Card variant="glass" className="border-primary/30 bg-primary/5 rounded-2xl shadow-lg overflow-hidden">
           <CardHeader className="p-6 pb-2">
             <CardTitle className="text-white text-base font-bold flex items-center gap-2.5">
-              <Sparkles className="h-5 w-5 text-[#0da192]" />
+              <Sparkles className="h-5 w-5 text-primary" />
               Jak zdobywać punkty w Klubie?
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 pt-0 space-y-2.5 text-xs text-zinc-300 font-light">
             <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0da192]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Upewnij się, że kod bannera jest umieszczony w widocznym miejscu na Twojej stronie WWW.
             </p>
             <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0da192]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Nasz system automatycznie weryfikuje obecność bannera co 30 dni w tle.
             </p>
             <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0da192]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               W przypadku pomyślnej weryfikacji, na Twoje konto trafi {partnerStatus.monthlyPoints} punktów.
             </p>
             <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0da192]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               W każdej chwili możesz wywołać ręczne sprawdzenie przyciskiem &quot;Weryfikuj teraz&quot;.
             </p>
             <div className="pt-2.5 flex items-start gap-2.5 text-rose-400 font-semibold mt-2.5 border-t border-border/10">

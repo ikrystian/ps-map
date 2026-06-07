@@ -398,8 +398,8 @@ export default function LawFirmReviewsPage() {
   return (
     <div className="relative space-y-8 min-h-screen overflow-hidden pb-12">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -450,14 +450,14 @@ export default function LawFirmReviewsPage() {
         >
           {/* Główna ocena i statystyka */}
           <motion.div variants={itemVariants} className="md:col-span-2">
-            <Card className="h-full border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg flex flex-col justify-between overflow-hidden relative group">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+            <Card variant="glass" className="h-full rounded-2xl shadow-lg flex flex-col justify-between overflow-hidden relative group">
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
               <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10" />
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
                   Ogólna reputacja
                 </CardTitle>
-                <CardDescription className="text-xs text-zinc-500 font-light mt-1">Średnia ze wszystkich zweryfikowanych ocen</CardDescription>
+                <CardDescription className="text-zinc-500 text-xs font-light mt-1">Średnia ze wszystkich zweryfikowanych ocen</CardDescription>
               </CardHeader>
               <CardContent className="pt-4 flex-1 flex flex-col justify-center items-center text-center gap-2">
                 <div className="relative flex items-center justify-center">
@@ -478,12 +478,12 @@ export default function LawFirmReviewsPage() {
 
           {/* Analityka Atrybutów */}
           <motion.div variants={itemVariants} className="md:col-span-3">
-            <Card className="h-full border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg">
+            <Card variant="glass" className="h-full rounded-2xl shadow-lg">
               <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-semibold uppercase tracking-wider text-zinc-400">
                   Analiza kryteriów oceny
                 </CardTitle>
-                <CardDescription className="text-xs text-zinc-500 font-light mt-1">Szczegółowy rozkład ocen w poszczególnych atrybutach</CardDescription>
+                <CardDescription className="text-zinc-500 text-xs font-light mt-1">Szczegółowy rozkład ocen w poszczególnych atrybutach</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 pt-1">
                 {/* Profesjonalizm */}
@@ -581,7 +581,7 @@ export default function LawFirmReviewsPage() {
             size="sm"
             onClick={() => { setSelectedRating("all"); setCurrentPage(1); }}
             className={`rounded-lg text-xs font-semibold px-4 transition-all ${selectedRating === "all"
-                ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
+                ? "bg-primary hover:bg-primary-hover text-white"
                 : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
               }`}
           >
@@ -594,7 +594,7 @@ export default function LawFirmReviewsPage() {
               size="sm"
               onClick={() => { setSelectedRating(rating.toString()); setCurrentPage(1); }}
               className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 px-3.5 transition-all ${selectedRating === rating.toString()
-                  ? "bg-[#0da192] hover:bg-[#0fbaa8] text-white"
+                  ? "bg-primary hover:bg-primary-hover text-white"
                   : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
                 }`}
             >
@@ -613,23 +613,23 @@ export default function LawFirmReviewsPage() {
               placeholder="Wyszukaj po tytule, treści opinii lub kliencie..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background/50 border-border/50 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 transition-all text-white text-sm h-11"
+              className="pl-10 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm h-11"
             />
           </div>
 
           {/* Status odpowiedzi */}
           <div className="md:col-span-3">
             <Select value={replyFilter} onValueChange={setReplyFilter}>
-              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 font-medium">
+              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-primary/40 focus:border-primary focus:bg-background/80 font-medium">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-[#0da192]" />
+                  <Filter className="h-4 w-4 text-primary" />
                   <SelectValue placeholder="Status odpowiedzi" />
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="all" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Wszystkie statusy</SelectItem>
-                <SelectItem value="unreplied" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Brak mojej odpowiedzi</SelectItem>
-                <SelectItem value="replied" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Odpowiedziane</SelectItem>
+                <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie statusy</SelectItem>
+                <SelectItem value="unreplied" className="hover:bg-primary/10 focus:bg-primary/10">Brak mojej odpowiedzi</SelectItem>
+                <SelectItem value="replied" className="hover:bg-primary/10 focus:bg-primary/10">Odpowiedziane</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -637,17 +637,17 @@ export default function LawFirmReviewsPage() {
           {/* Sortowanie */}
           <div className="md:col-span-3">
             <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-[#0da192]/40 focus:border-[#0da192] focus:bg-background/80 font-medium">
+              <SelectTrigger className="bg-background/50 border-border/50 h-11 rounded-xl text-zinc-300 text-sm focus:ring-primary/40 focus:border-primary focus:bg-background/80 font-medium">
                 <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-4 w-4 text-[#0da192]" />
+                  <ArrowUpDown className="h-4 w-4 text-primary" />
                   <SelectValue placeholder="Sortuj według" />
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                <SelectItem value="newest" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najnowsze opinie</SelectItem>
-                <SelectItem value="oldest" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najstarsze opinie</SelectItem>
-                <SelectItem value="rating-desc" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najwyższa ocena</SelectItem>
-                <SelectItem value="rating-asc" className="hover:bg-[#0da192]/10 focus:bg-[#0da192]/10">Najniższa ocena</SelectItem>
+                <SelectItem value="newest" className="hover:bg-primary/10 focus:bg-primary/10">Najnowsze opinie</SelectItem>
+                <SelectItem value="oldest" className="hover:bg-primary/10 focus:bg-primary/10">Najstarsze opinie</SelectItem>
+                <SelectItem value="rating-desc" className="hover:bg-primary/10 focus:bg-primary/10">Najwyższa ocena</SelectItem>
+                <SelectItem value="rating-asc" className="hover:bg-primary/10 focus:bg-primary/10">Najniższa ocena</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -662,7 +662,7 @@ export default function LawFirmReviewsPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-dashed border-2 border-border/30 bg-card/25 backdrop-blur-md rounded-2xl">
+            <Card variant="glass" className="border-dashed border-2 rounded-2xl">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="h-12 w-12 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 mb-4 border border-zinc-800">
                   <MessageSquare className="h-6 w-6" />
@@ -704,13 +704,13 @@ export default function LawFirmReviewsPage() {
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <Card className="bg-card/25 backdrop-blur-md border border-border/30 hover:border-[#0da192]/40 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group rounded-2xl relative">
+                    <Card variant="glass" className="hover:border-primary/40 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group rounded-2xl relative">
                       <CardHeader className="pb-3">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                           <div className="flex items-start gap-4">
                             {/* Avatar klienta z gradientowym ringiem */}
                             <div className="relative">
-                              <Avatar className="h-12 w-12 border-2 border-zinc-950 flex-shrink-0 shadow-md ring-2 ring-[#0da192]/20">
+                              <Avatar className="h-12 w-12 border-2 border-zinc-950 flex-shrink-0 shadow-md ring-2 ring-primary/20">
                                 {!review.anonimowa && review.client.user?.image ? (
                                   <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
                                 ) : null}
@@ -749,7 +749,7 @@ export default function LawFirmReviewsPage() {
 
                                 {/* Zweryfikowana badge */}
                                 {review.zweryfikowana && (
-                                  <Badge className="bg-[#0da192]/10 hover:bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
+                                  <Badge className="bg-primary/10 hover:bg-primary/10 text-primary border border-primary/20 font-medium py-0.5 px-2 gap-1 rounded-full text-sm">
                                     Zweryfikowana
                                   </Badge>
                                 )}
@@ -863,14 +863,14 @@ export default function LawFirmReviewsPage() {
                             {/* Linia łącząca wątek odpowiedzi */}
                             <div className="absolute left-6 md:left-8 -top-8 w-0.5 bg-border/40 bottom-1/2 pointer-events-none hidden md:block" />
 
-                            <div className="bg-[#0da192]/5 border border-[#0da192]/10 rounded-2xl p-4 mt-2 shadow-sm relative group/reply">
+                            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 mt-2 shadow-sm relative group/reply">
                               <div className="flex items-start gap-3">
                                 {/* Logo ekspercie */}
-                                <Avatar className="h-9 w-9 border border-[#0da192]/20 shadow-sm flex-shrink-0 ring-1 ring-[#0da192]/10">
+                                <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
                                   {lawFirm.logo ? (
                                     <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
                                   ) : null}
-                                  <AvatarFallback className="bg-gradient-to-br from-[#0da192]/10 to-[#0da192]/20 text-[#0da192] font-bold text-xs">
+                                  <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
                                     {lawFirm.nazwa.substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
@@ -878,7 +878,7 @@ export default function LawFirmReviewsPage() {
                                 <div className="flex-1">
                                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                                     <div className="flex items-center gap-1.5">
-                                      <MessageSquare className="h-3.5 w-3.5 text-[#0da192]" />
+                                      <MessageSquare className="h-3.5 w-3.5 text-primary" />
                                       <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwa})</p>
                                     </div>
                                     {review.dataOdpowiedzi && (
@@ -919,7 +919,7 @@ export default function LawFirmReviewsPage() {
                           >
                             {review.odpowiedz ? (
                               <>
-                                <Edit2 className="h-3.5 w-3.5 mr-1.5 text-[#0da192]" />
+                                <Edit2 className="h-3.5 w-3.5 mr-1.5 text-primary" />
                                 Edytuj odpowiedź
                               </>
                             ) : (
@@ -975,10 +975,10 @@ export default function LawFirmReviewsPage() {
       {/* Modern Dialog Odpowiedzi z Podglądem Opinii i Szablonami */}
       <Dialog open={replyDialogOpen} onOpenChange={setReplyDialogOpen}>
         <DialogContent className="sm:max-w-[620px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
-          <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+          <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
-              <Sparkles className="h-5 w-5 text-[#0da192]" />
+              <Sparkles className="h-5 w-5 text-primary" />
               <span>{selectedReview?.odpowiedz ? "Edytuj odpowiedź na opinię" : "Odpowiedz na opinię"}</span>
             </DialogTitle>
             <DialogDescription className="text-xs text-zinc-400">
@@ -1020,7 +1020,7 @@ export default function LawFirmReviewsPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => applyTemplate(template.text)}
-                    className="text-xs rounded-xl bg-zinc-900/50 hover:bg-zinc-900 border-border/30 hover:border-[#0da192]/40 font-semibold py-1 px-3 text-zinc-300"
+                    className="text-xs rounded-xl bg-zinc-900/50 hover:bg-zinc-900 border-border/30 hover:border-primary/40 font-semibold py-1 px-3 text-zinc-300"
                   >
                     {template.label}
                   </Button>
@@ -1042,7 +1042,7 @@ export default function LawFirmReviewsPage() {
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Wpisz profesjonalną odpowiedź na opinię lub skorzystaj z jednego z gotowych szablonów powyżej..."
                 rows={6}
-                className="mt-1.5 bg-background/50 border-border/50 focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] focus-visible:bg-background/80 text-white text-sm leading-relaxed rounded-xl"
+                className="mt-1.5 bg-background/50 border-border/50 focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 text-white text-sm leading-relaxed rounded-xl"
               />
             </div>
           </div>
@@ -1061,7 +1061,8 @@ export default function LawFirmReviewsPage() {
               type="button"
               onClick={handleSubmitReply}
               disabled={submitting || !replyText.trim()}
-              className="rounded-xl text-xs font-semibold px-5 h-9 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white"
+              variant="primary"
+              className="rounded-xl text-xs font-semibold px-5 h-9"
             >
               {submitting && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin text-white" />}
               {selectedReview?.odpowiedz ? "Zaktualizuj odpowiedź" : "Wyślij odpowiedź"}

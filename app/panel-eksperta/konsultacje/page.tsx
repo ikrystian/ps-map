@@ -76,15 +76,15 @@ function ConsultationTimer({ targetDate }: { targetDate: string }) {
   if (!timeLeft) return null
   if (timeLeft.isOver) {
     return (
-      <span className="text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+      <span className="text-xs text-success font-medium bg-success/10 px-2.5 py-1 rounded-md border border-success/20">
         Konsultacja w toku / zakończona
       </span>
     )
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-[#d7b56d] font-medium bg-[#d7b56d]/10 px-2.5 py-1 rounded-md border border-[#d7b56d]/20">
-      <Clock className="h-3.5 w-3.5 text-[#d7b56d]" />
+    <div className="flex items-center gap-1.5 text-xs text-secondary font-medium bg-secondary/10 px-2.5 py-1 rounded-md border border-secondary/20">
+      <Clock className="h-3.5 w-3.5 text-secondary" />
       <span>Do konsultacji:</span>
       <span className="font-bold font-mono">
         {timeLeft.days > 0 && `${timeLeft.days}d `}
@@ -236,7 +236,7 @@ export default function ConsultationsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie próśb o konsultacje...</p>
         </div>
       </div>
@@ -264,7 +264,7 @@ export default function ConsultationsPage() {
         {bookingsList.map((booking) => (
           <div
             key={booking.id}
-            className="border border-border/10 bg-zinc-950/20 hover:border-[#0da192]/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
+            className="border border-border/10 bg-zinc-950/20 hover:border-primary/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
           >
             <div className="flex flex-col gap-5 lg:flex-row lg:justify-between lg:items-center">
               <div className="flex gap-4 flex-1 min-w-0">
@@ -283,7 +283,7 @@ export default function ConsultationsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                    <Badge className="bg-primary/10 text-primary border border-primary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Calendar className="h-3 w-3" />
                       {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
                     </Badge>
@@ -295,7 +295,7 @@ export default function ConsultationsPage() {
                       <FileText className="h-3 w-3" />
                       {booking.topic}
                     </Badge>
-                    <Badge className="bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                    <Badge className="bg-secondary/10 text-secondary border border-secondary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Mail className="h-3 w-3" />
                       {booking.clientContact}
                     </Badge>
@@ -303,15 +303,15 @@ export default function ConsultationsPage() {
 
                   <div className="flex flex-wrap items-center gap-2">
                     {booking.status === 'ACCEPTED' ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zaakceptowana</Badge>
+                      <Badge className="bg-success/10 text-success border border-success/30 text-sm py-0 px-2 rounded-md">Zaakceptowana</Badge>
                     ) : booking.status === 'REJECTED' ? (
-                      <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-sm py-0 px-2 rounded-md">Odrzucona</Badge>
+                      <Badge className="bg-error/10 text-error border border-error/30 text-sm py-0 px-2 rounded-md">Odrzucona</Badge>
                     ) : (
-                      <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-sm py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
+                      <Badge className="bg-warning/10 text-warning border border-warning/30 text-sm py-0 px-2 rounded-md">Oczekuje na akceptację</Badge>
                     )}
 
                     {booking.paymentStatus === 'ZAPLACONE' ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
+                      <Badge className="bg-success/10 text-success border border-success/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
                     ) : (
                       <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
                     )}
@@ -350,8 +350,9 @@ export default function ConsultationsPage() {
                   <div className="flex gap-2">
                     <Button
                       size="sm"
+                      variant="primary"
                       onClick={() => handleStatusChange(booking.id, "ACCEPTED")}
-                      className="h-9 px-4 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
+                      className="h-9 px-4 text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
                     >
                       Akceptuj
                     </Button>
@@ -359,7 +360,7 @@ export default function ConsultationsPage() {
                       size="sm"
                       variant="destructive"
                       onClick={() => handleStatusChange(booking.id, "REJECTED")}
-                      className="h-9 px-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold transition-all"
+                      className="h-9 px-4 text-white rounded-xl text-xs font-semibold transition-all"
                     >
                       Odrzuć
                     </Button>
@@ -383,9 +384,9 @@ export default function ConsultationsPage() {
                       className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors"
                     >
                       {isChatLoading === booking.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
                       ) : (
-                        <MessageCircle className="h-4 w-4 text-[#0da192]" />
+                        <MessageCircle className="h-4 w-4 text-primary" />
                       )}
                       <span>Napisz wiadomość</span>
                     </DropdownMenuItem>
@@ -413,9 +414,9 @@ export default function ConsultationsPage() {
                     {!booking.isArchived ? (
                       <DropdownMenuItem
                         onClick={() => handleArchive(booking.id, true)}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-[#d7b56d] focus:text-[#e4c480]"
+                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-secondary focus:text-secondary-hover"
                       >
-                        <Archive className="h-4 w-4 text-[#d7b56d]" />
+                        <Archive className="h-4 w-4 text-secondary" />
                         <span>Archiwizuj</span>
                       </DropdownMenuItem>
                     ) : (
@@ -450,8 +451,8 @@ export default function ConsultationsPage() {
   return (
     <div className="relative space-y-8 overflow-hidden">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       <PageHeader
         title="Zarządzanie konsultacjami"
@@ -466,36 +467,36 @@ export default function ConsultationsPage() {
         className="space-y-6 relative z-10"
       >
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-            <BorderBeam lightColor="#0da192" lightWidth={400} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+            <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
 
             <CardContent className="p-6">
               {bookings.length === 0 ? (
                 <div className="text-center py-10 px-4 space-y-6 max-w-lg mx-auto">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" className="w-full max-w-[260px] h-auto mx-auto mb-2 opacity-90">
-                    <circle cx="120" cy="180" r="80" fill="#0da192" opacity="0.05" />
-                    <circle cx="360" cy="100" r="50" fill="#d7b56d" opacity="0.05" />
-                    <circle cx="250" cy="270" r="10" fill="#0da192" opacity="0.1" />
-                    <circle cx="90" cy="80" r="15" fill="#d7b56d" opacity="0.1" />
-                    <circle cx="410" cy="220" r="12" fill="#0da192" opacity="0.08" />
+                    <circle cx="120" cy="180" r="80" fill="var(--primary)" opacity="0.05" />
+                    <circle cx="360" cy="100" r="50" fill="var(--secondary)" opacity="0.05" />
+                    <circle cx="250" cy="270" r="10" fill="var(--primary)" opacity="0.1" />
+                    <circle cx="90" cy="80" r="15" fill="var(--secondary)" opacity="0.1" />
+                    <circle cx="410" cy="220" r="12" fill="var(--primary)" opacity="0.08" />
 
                     <rect x="80" y="60" width="160" height="220" rx="16" fill="#18181b" stroke="#27272a" strokeWidth="3" />
                     <path d="M130 50 h60 a10 10 0 0 1 10 10 v10 a0 0 0 0 1 0 0 h-80 a0 0 0 0 1 0 0 v-10 a10 10 0 0 1 10 -10 Z" fill="#3f3f46" />
-                    <circle cx="160" cy="42" r="6" fill="#0da192" />
+                    <circle cx="160" cy="42" r="6" fill="var(--primary)" />
 
-                    <rect x="108" y="100" width="20" height="20" rx="4" fill="#0da192" />
+                    <rect x="108" y="100" width="20" height="20" rx="4" fill="var(--primary)" />
                     <path d="M113 110 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <rect x="138" y="106" width="80" height="8" rx="4" fill="#27272a" />
 
-                    <rect x="108" y="145" width="20" height="20" rx="4" fill="#0da192" />
+                    <rect x="108" y="145" width="20" height="20" rx="4" fill="var(--primary)" />
                     <path d="M113 155 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <rect x="138" y="151" width="70" height="8" rx="4" fill="#27272a" />
 
-                    <rect x="108" y="190" width="20" height="20" rx="4" fill="#0da192" />
+                    <rect x="108" y="190" width="20" height="20" rx="4" fill="var(--primary)" />
                     <path d="M113 200 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <rect x="138" y="196" width="75" height="8" rx="4" fill="#27272a" />
 
-                    <rect x="108" y="235" width="20" height="20" rx="4" fill="#0da192" />
+                    <rect x="108" y="235" width="20" height="20" rx="4" fill="var(--primary)" />
                     <path d="M113 245 l3 3 l6 -6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <rect x="138" y="241" width="60" height="8" rx="4" fill="#27272a" />
 
@@ -503,14 +504,14 @@ export default function ConsultationsPage() {
                     <path d="M325 220 l5 80 h15 l-5 -80 Z" fill="#27272a" />
                     <path d="M280 300 h25 r4 v-8 Z" fill="#18181b" />
                     <path d="M335 300 h25 r4 v-8 Z" fill="#18181b" />
-                    <path d="M280 140 h60 l-10 90 h-40 Z" fill="#0da192" opacity="0.9" />
+                    <path d="M280 140 h60 l-10 90 h-40 Z" fill="var(--primary)" opacity="0.9" />
                     <path d="M305 125 h10 v20 h-10 Z" fill="#3f3f46" />
                     <circle cx="310" cy="115" r="22" fill="#52525b" />
                     <path d="M292 108 c0 -15 25 -25 35 -10 c5 15 -10 20 -20 20 Z" fill="#18181b" />
-                    <path d="M282 145 l-40 30 l5 15 l35 -35 Z" fill="#0da192" />
+                    <path d="M282 145 l-40 30 l5 15 l35 -35 Z" fill="var(--primary)" />
                     <circle cx="242" cy="177" r="8" fill="#52525b" />
-                    <path d="M338 145 l35 -10 l10 12 l-35 18 Z" fill="#0da192" />
-                    <path d="M380 115 l12 12 l25 -25" stroke="#d7b56d" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    <path d="M338 145 l35 -10 l10 12 l-35 18 Z" fill="var(--primary)" />
+                    <path d="M380 115 l12 12 l25 -25" stroke="var(--secondary)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     <circle cx="377" cy="138" r="8" fill="#52525b" />
 
                     <line x1="50" y1="300" x2="450" y2="300" stroke="#27272a" strokeWidth="3" strokeLinecap="round" />
@@ -528,7 +529,7 @@ export default function ConsultationsPage() {
                     </p>
 
                     <div className="pt-2 text-center">
-                      <Button asChild className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
+                      <Button asChild variant="primary" className="w-full sm:w-auto h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
                         <Link href="/panel-eksperta/profil?tab=consultations">
                           Skonfiguruj godziny konsultacji
                         </Link>
@@ -538,14 +539,14 @@ export default function ConsultationsPage() {
                 </div>
               ) : (
                 <Tabs defaultValue="upcoming" className="w-full space-y-6">
-                  <TabsList className="bg-zinc-950/40 border border-border/10 p-1 rounded-xl flex w-full max-w-md">
-                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                  <TabsList className="bg-zinc-950/20 border border-border/30 p-1 rounded-xl flex w-full max-w-md">
+                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Nadchodzące ({upcomingBookings.length})
                     </TabsTrigger>
-                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Minione ({pastBookings.length})
                     </TabsTrigger>
-                    <TabsTrigger value="archived" className="flex-1 text-zinc-400 data-[state=active]:bg-zinc-700 data-[state=active]:text-white rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="archived" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Zarchiwizowane ({archivedBookings.length})
                     </TabsTrigger>
                   </TabsList>
