@@ -17,7 +17,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
     <div id="tour-promo-types" className="space-y-6 relative z-10">
       <div className="space-y-1">
         <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-[#d7b56d]" />
+          <Sparkles className="h-5 w-5 text-secondary" />
           Dostępne Formaty Promowania
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -26,9 +26,9 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
       </div>
 
       {promotionTypes.length === 0 ? (
-        <Card className="border-[#3e3e38] bg-[#363431]/20">
+        <Card variant="glass">
           <CardContent className="py-16 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-[#3e3e38]/50 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-zinc-800/50 flex items-center justify-center mx-auto">
               <Info className="h-6 w-6 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground text-sm">
@@ -52,28 +52,29 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
                 className="h-full"
               >
                 <Card
+                  variant="glass"
                   className={cn(
-                    "h-full flex flex-col justify-between overflow-hidden relative border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431]/40 transition-all duration-300 rounded-2xl group shadow-md hover:shadow-lg hover:shadow-black/25",
-                    isHighValue && "border-[#d7b56d]/30 shadow-[#d7b56d]/2 hover:border-[#d7b56d]/60",
-                    isMainPage && "border-[#0da192]/30 shadow-[#0da192]/2 hover:border-[#0da192]/60"
+                    "h-full flex flex-col justify-between overflow-hidden relative transition-all duration-300 rounded-2xl group shadow-md hover:shadow-lg",
+                    isHighValue && "border-secondary/30 hover:border-secondary/60",
+                    isMainPage && "border-primary/30 hover:border-primary/60"
                   )}
                 >
                   {/* Glowing highlight orb */}
                   {isHighValue && (
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#d7b56d]/3 rounded-full blur-2xl group-hover:bg-[#d7b56d]/6 transition-all duration-300" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-all duration-300" />
                   )}
 
                   {/* Prestigous Badge */}
                   {isHighValue && (
                     <div className="absolute top-4 right-4 z-20">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#d7b56d]/10 border border-[#d7b56d]/20 text-[#d7b56d] text-sm font-bold uppercase tracking-wider">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-sm font-bold uppercase tracking-wider">
                         Rekomendowane
                       </span>
                     </div>
                   )}
                   {isMainPage && !isHighValue && (
                     <div className="absolute top-4 right-4 z-20">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-sm font-bold uppercase tracking-wider">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold uppercase tracking-wider">
                         Maksymalny Zasięg
                       </span>
                     </div>
@@ -104,15 +105,14 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
                       {promo.features.map((feature: string, fIdx: number) => (
                         <li key={fIdx} className="flex items-start gap-2.5 text-xs text-[#b7b5a9] leading-relaxed">
                           <CheckCircle2
-                            className="h-4 w-4 mt-0.5 flex-shrink-0"
-                            style={{ color: isHighValue ? '#d7b56d' : '#0da192' }}
+                            className={cn("h-4 w-4 mt-0.5 flex-shrink-0", isHighValue ? "text-secondary" : "text-primary")}
                           />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
 
-                    <div className="space-y-4 pt-4 border-t border-[#3e3e38]/40">
+                    <div className="space-y-4 pt-4 border-t border-border/30">
                       <div className="flex items-baseline justify-between">
                         <span className="text-xs text-muted-foreground">Koszt promocji</span>
                         <div className="flex items-baseline gap-1">
@@ -132,11 +132,10 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
 
                       <Button
                         onClick={() => handleOpenDialog(promo.type)}
+                        variant={isHighValue ? "secondary" : "outline"}
                         className={cn(
-                          "w-full h-10 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-t border-white/5",
-                          isHighValue
-                            ? "bg-gradient-to-r from-[#d7b56d] to-[#cba355] text-[#30302e] hover:from-[#dfbf7c] hover:to-[#d7b56d] hover:shadow-lg hover:shadow-[#d7b56d]/10"
-                            : "bg-[#363431] hover:bg-[#3e3e38] text-white border border-[#3e3e38]"
+                          "w-full h-10 font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2",
+                          isHighValue && "hover:shadow-lg hover:shadow-secondary/10 text-zinc-950"
                         )}
                       >
                         Skonfiguruj i włącz

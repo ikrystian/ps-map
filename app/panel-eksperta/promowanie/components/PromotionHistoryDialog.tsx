@@ -38,7 +38,7 @@ export function PromotionHistoryDialog({
       <DialogContent className="max-w-[768px] max-h-[85vh] overflow-y-auto bg-[#20201d] border-[#3e3e38] text-white rounded-2xl">
         <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
           <DialogTitle className="flex items-center gap-2 text-white font-bold">
-            <Clock className="h-5 w-5 text-[#0da192]" />
+            <Clock className="h-5 w-5 text-primary" />
             Historia Zamówień Promowań
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-1">
@@ -95,7 +95,7 @@ export function PromotionHistoryDialog({
                         <div>Od: {new Date(promo.startPromocji).toLocaleDateString("pl-PL")}</div>
                         <div>Do: {new Date(promo.koniecPromocji).toLocaleDateString("pl-PL")}</div>
                       </TableCell>
-                      <TableCell className="text-right font-semibold text-xs text-[#d7b56d] py-3">
+                      <TableCell className="text-right font-semibold text-xs text-secondary py-3">
                         {promo.kosztPunktow} pkt
                       </TableCell>
                       <TableCell className="py-3">{getPromotionStatusBadge(promo)}</TableCell>

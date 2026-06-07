@@ -54,7 +54,7 @@ export function ConfirmPromotionDialog({
       <DialogContent className="bg-[#20201d] border-[#3e3e38] text-white rounded-2xl sm:max-w-[480px]">
         <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
           <DialogTitle className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            <Coins className="h-5 w-5 text-[#d7b56d]" />
+            <Coins className="h-5 w-5 text-secondary" />
             Potwierdź Aktywację
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-1">
@@ -135,7 +135,7 @@ export function ConfirmPromotionDialog({
           <div className="bg-[#20201d]/60 border border-[#3e3e38] p-4 rounded-xl space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs text-muted-foreground">Pobierane punkty:</span>
-              <span className="font-extrabold text-lg text-[#0da192]">{cost} pkt</span>
+              <span className="font-extrabold text-lg text-primary">{cost} pkt</span>
             </div>
             <div className="flex justify-between items-center text-sm text-muted-foreground pt-1 border-t border-[#3e3e38]/40">
               <span>Twoje saldo po transakcji:</span>
@@ -146,7 +146,7 @@ export function ConfirmPromotionDialog({
           </div>
 
           <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-3.5 flex gap-2.5">
-            <AlertCircle className="h-4.5 w-4.5 text-[#d7b56d] flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-4.5 w-4.5 text-secondary flex-shrink-0 mt-0.5" />
             <div className="text-[11px] text-[#b7b5a9] leading-relaxed">
               <strong>Uwaga transakcji:</strong> Punkty zostaną bezzwrotnie pobrane z Twojego
               salda natychmiast po zatwierdzeniu. Aktywacja formatu nastąpi automatycznie
@@ -167,7 +167,7 @@ export function ConfirmPromotionDialog({
           <Button
             onClick={onSubmit}
             disabled={submitting}
-            className="bg-gradient-to-r from-[#d7b56d] to-[#cba355] hover:from-[#dfbf7c] hover:to-[#d7b56d] text-[#30302e] font-bold px-6 rounded-xl transition-all duration-200"
+            className="bg-gradient-to-r from-secondary to-[#cba355] hover:from-[var(--secondary-hover)] hover:to-secondary text-[#30302e] font-bold px-6 rounded-xl transition-all duration-200"
           >
             {submitting ? (
               <Loader2 className="h-4.5 w-4.5 animate-spin" />
