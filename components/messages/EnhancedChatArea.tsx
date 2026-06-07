@@ -72,6 +72,7 @@ export function EnhancedChatArea({
   onBack,
 }: ChatAreaProps) {
   const { data: session } = useSession()
+  const isClient = session?.user?.role === "CLIENT"
   const [conversation, setConversation] = useState<ConversationDetails | null>(null)
   const [messages, setMessages] = useState<EnhancedChatMessage[]>([])
   const [messageText, setMessageText] = useState("")
@@ -471,7 +472,7 @@ export function EnhancedChatArea({
       case "DELIVERED":
         return <CheckCheck className="h-3 w-3 text-zinc-400" />
       case "READ":
-        return <CheckCheck className="h-3 w-3 text-[#0da192]" />
+        return <CheckCheck className={cn("h-3 w-3", isClient ? "text-secondary" : "text-primary")} />
       case "ERROR":
         return <X className="h-3 w-3 text-rose-500" />
       default:
@@ -483,7 +484,7 @@ export function EnhancedChatArea({
     return (
       <div className="flex-1 flex items-center justify-center bg-zinc-950/10">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className={cn("h-10 w-10 animate-spin mx-auto", isClient ? "text-secondary" : "text-primary")} />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie rozmowy...</p>
         </div>
       </div>
@@ -498,7 +499,6 @@ export function EnhancedChatArea({
     )
   }
 
-  const isClient = session?.user?.role === "CLIENT"
   const themeColor = isClient ? "#d7b56d" : "#0da192"
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
@@ -595,7 +595,7 @@ export function EnhancedChatArea({
       >
         {isLoadingMore && (
           <div className="flex justify-center py-2">
-            <Loader2 className="h-5 w-5 animate-spin text-[#0da192]" />
+            <Loader2 className={cn("h-5 w-5 animate-spin", isClient ? "text-secondary" : "text-primary")} />
           </div>
         )}
 
@@ -653,8 +653,8 @@ export function EnhancedChatArea({
                             "max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 shadow-sm text-sm relative group",
                             isMyMessage
                               ? isClient
-                                ? "bg-gradient-to-br from-[#d7b56d] to-[#b39352] text-white rounded-br-none border-t border-white/10"
-                                : "bg-gradient-to-br from-[#0da192] to-[#0a8276] text-white rounded-br-none border-t border-white/10"
+                                ? "bg-gradient-to-br from-secondary to-[#b39352] text-white rounded-br-none border-t border-white/10"
+                                : "bg-gradient-to-br from-primary to-[var(--primary-dark)] text-white rounded-br-none border-t border-white/10"
                               : "bg-zinc-850 border border-zinc-750 text-zinc-100 rounded-bl-none"
                           )}
                         >
@@ -760,9 +760,12 @@ export function EnhancedChatArea({
             {attachments.map((attachment, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2 p-2 bg-[#0da192]/10 border border-[#0da192]/20 rounded-xl text-xs text-zinc-300"
+                className={cn(
+                  "flex items-center gap-2 p-2 rounded-xl text-xs text-zinc-300 border",
+                  isClient ? "bg-secondary/10 border-secondary/20" : "bg-primary/10 border-primary/20"
+                )}
               >
-                <Paperclip className="h-3.5 w-3.5 text-[#0da192]" />
+                <Paperclip className={cn("h-3.5 w-3.5", isClient ? "text-secondary" : "text-primary")} />
                 <span className="flex-1 truncate font-mono text-sm">{attachment.filename}</span>
                 <Button
                   type="button"
@@ -797,7 +800,7 @@ export function EnhancedChatArea({
             title="Dodaj plik PDF"
           >
             {isUploading ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#0da192]" />
+              <Loader2 className={cn("h-4 w-4 animate-spin", isClient ? "text-secondary" : "text-primary")} />
             ) : (
               <Paperclip className="h-4 w-4" />
             )}
@@ -829,7 +832,12 @@ export function EnhancedChatArea({
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            className="min-h-[44px] max-h-32 resize-none bg-background/40 border-border/30 rounded-xl focus-visible:ring-[#0da192]/40 focus-visible:border-[#0da192] text-white placeholder-zinc-500 text-sm py-3 px-4 transition-all"
+            className={cn(
+              "min-h-[44px] max-h-32 resize-none bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 text-sm py-3 px-4 transition-all",
+              isClient
+                ? "focus-visible:ring-secondary/40 focus-visible:border-secondary"
+                : "focus-visible:ring-primary/40 focus-visible:border-primary"
+            )}
             disabled={isSending}
           />
 
@@ -844,8 +852,8 @@ export function EnhancedChatArea({
               isSending
                 ? "bg-zinc-800"
                 : isClient
-                  ? "bg-gradient-to-r from-[#d7b56d] to-[#b39352] hover:from-[#e3c27b] hover:to-[#d7b56d]"
-                  : "bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192]"
+                  ? "bg-gradient-to-r from-secondary to-[#b39352] hover:from-[var(--secondary-hover)] hover:to-secondary"
+                  : "bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary"
             )}
           >
             {isSending ? (
@@ -863,12 +871,12 @@ export function EnhancedChatArea({
           <div
             className={cn(
               "absolute top-0 right-0 w-[120px] h-[120px] blur-[60px] rounded-full pointer-events-none",
-              isClient ? "bg-[#d7b56d]/5" : "bg-[#0da192]/5"
+              isClient ? "bg-secondary/5" : "bg-primary/5"
             )}
           />
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-              <User className={cn("h-5 w-5", isClient ? "text-[#d7b56d]" : "text-[#0da192]")} />
+              <User className={cn("h-5 w-5", isClient ? "text-secondary" : "text-primary")} />
               Profil rozmówcy
             </DialogTitle>
             <DialogDescription className="text-zinc-400 text-xs">
@@ -889,8 +897,8 @@ export function EnhancedChatArea({
               <span className={cn(
                 "inline-flex text-sm font-semibold px-2 py-0.5 rounded-full mt-1.5 uppercase tracking-wide",
                 isClient
-                  ? "bg-[#d7b56d]/10 text-[#d7b56d] border border-[#d7b56d]/20"
-                  : "bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20"
+                  ? "bg-secondary/10 text-secondary border border-secondary/20"
+                  : "bg-primary/10 text-primary border border-primary/20"
               )}>
                 {isClient ? "Ekspert prawny" : "Klient"}
               </span>

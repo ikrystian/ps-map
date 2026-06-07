@@ -78,8 +78,8 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
       ref={setNodeRef}
       style={style}
       className={`flex items-center justify-between p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
-          ? "border-[#0da192]/60 shadow-lg shadow-[#0da192]/5 bg-[#0da192]/5"
-          : "border-border/30 hover:border-[#0da192]/20 hover:bg-zinc-800/10"
+          ? "border-primary/60 shadow-lg shadow-primary/5 bg-primary/5"
+          : "border-border/30 hover:border-primary/20 hover:bg-zinc-800/10"
         }`}
     >
       <div className="flex items-center gap-3">
@@ -92,13 +92,13 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
         </div>
         <div className="flex items-center gap-2">
           {isMainCategory && (
-            <Star className="h-4 w-4 text-[#0da192] fill-[#0da192]" />
+            <Star className="h-4 w-4 text-primary fill-primary" />
           )}
           <div>
             <div className="flex items-center gap-2">
               <p className="font-semibold text-sm text-white">{item.category.nazwa}</p>
               {isMainCategory && (
-                <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-[#0da192] hover:bg-[#0da192]/90 text-white rounded-md border-none">
+                <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-primary hover:bg-primary-hover text-white rounded-md border-none">
                   Główna
                 </Badge>
               )}
@@ -525,7 +525,7 @@ export default function LawFirmServicesPage() {
     return (
       <div key={category.id} className="mb-1">
         <div className={`flex items-center p-2 rounded-xl transition-all duration-200 ${selected
-            ? "bg-[#0da192]/5 border border-[#0da192]/20 text-[#0da192]"
+            ? "bg-primary/5 border border-primary/20 text-primary"
             : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
           } ${level > 0 ? 'ml-6 border-l border-border/10 pl-4' : ''}`}>
           {hasChildren ? (
@@ -547,17 +547,17 @@ export default function LawFirmServicesPage() {
               checked={selected}
               onCheckedChange={() => toggleCategory(category)}
               disabled={isMain}
-              className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
+              className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <div className="grid gap-1.5 leading-none flex-1">
               <label
                 htmlFor={`cat-${category.id}`}
-                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-[#0da192] font-bold" : "text-zinc-200"
+                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-primary font-bold" : "text-zinc-200"
                   }`}
               >
                 {category.nazwa}
                 {isMain ? (
-                  <Badge variant="default" className="text-xs bg-[#0da192] hover:bg-[#0da192]/90 text-white border-none rounded-lg">
+                  <Badge variant="default" className="text-xs bg-primary hover:bg-primary-hover text-white border-none rounded-lg">
                     Główna
                   </Badge>
                 ) : (
@@ -565,7 +565,7 @@ export default function LawFirmServicesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 text-xs text-zinc-400 hover:text-[#0da192] hover:bg-[#0da192]/10 px-2 py-0.5 rounded-lg transition-all ml-1"
+                      className="h-6 text-xs text-zinc-400 hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded-lg transition-all ml-1"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
@@ -613,8 +613,8 @@ export default function LawFirmServicesPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       <PageHeader
         title="Zakres i obszar usług"
@@ -625,7 +625,8 @@ export default function LawFirmServicesPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+            variant="primary"
+            className="h-11 px-6 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -642,12 +643,12 @@ export default function LawFirmServicesPage() {
         <div className="lg:col-span-2 space-y-8">
 
           {/* Sekcja 1: Specjalizacje */}
-          <Card id="tour-zakres-specializations" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-            <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
+          <Card id="tour-zakres-specializations" variant="glass" className="rounded-2xl relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
-                  <Star className="h-5 w-5 fill-[#0da192] text-[#0da192]" />
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
+                  <Star className="h-5 w-5 fill-primary text-primary" />
                 </div>
                 <div>
                   <CardTitle className="text-xl text-white font-playfair">Dostępne specjalizacje</CardTitle>
@@ -661,13 +662,13 @@ export default function LawFirmServicesPage() {
               {/* Search & Collapse/Expand Toolbar */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b border-border/10">
                 <div className="relative flex-1 group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-[#0da192] transition-colors" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-primary transition-colors" />
                   <Input
                     type="text"
                     placeholder="Wyszukaj specjalizację..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                    className="pl-9 h-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                   />
                   {searchQuery && (
                     <Button
@@ -702,8 +703,8 @@ export default function LawFirmServicesPage() {
 
               <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center text-[#d7b56d] border-b border-border/10 pb-2">
-                    <span className="bg-[#d7b56d]/10 p-1.5 rounded-lg mr-2 text-lg">🏢</span>
+                  <h3 className="font-semibold flex items-center text-secondary border-b border-border/10 pb-2">
+                    <span className="bg-secondary/10 p-1.5 rounded-lg mr-2 text-lg">🏢</span>
                     Sprawy Firmowe
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
@@ -716,8 +717,8 @@ export default function LawFirmServicesPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-semibold flex items-center text-[#d7b56d] border-b border-border/10 pb-2">
-                    <span className="bg-[#d7b56d]/10 p-1.5 rounded-lg mr-2 text-lg">👤</span>
+                  <h3 className="font-semibold flex items-center text-secondary border-b border-border/10 pb-2">
+                    <span className="bg-secondary/10 p-1.5 rounded-lg mr-2 text-lg">👤</span>
                     Sprawy Prywatne
                   </h3>
                   <div className="space-y-1 pr-2 max-h-[500px] overflow-y-auto custom-scrollbar">
@@ -733,11 +734,11 @@ export default function LawFirmServicesPage() {
           </Card>
 
           {/* Sekcja 2: Obszar działania */}
-          <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-            <BorderBeam lightColor="#d7b56d" lightWidth={350} duration={9} borderWidth={1} />
+          <Card id="tour-zakres-area" variant="glass" className="rounded-2xl relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="var(--secondary)" lightWidth={350} duration={9} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
@@ -754,10 +755,10 @@ export default function LawFirmServicesPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.callaPolska ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
+                    areaData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
                     <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-[#0da192] text-white" : "bg-muted text-muted-foreground")}>
+                      <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
                         <Globe className="h-5 w-5" />
                       </div>
                       <div>
@@ -770,10 +771,10 @@ export default function LawFirmServicesPage() {
 
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.onlineOnly ? "bg-[#0da192]/5 border-[#0da192] shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
+                    areaData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, onlineOnly: !prev.onlineOnly }))}>
                     <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-[#0da192] text-white" : "bg-muted text-muted-foreground")}>
+                      <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
                         <div className="h-5 w-5 flex items-center justify-center font-bold text-sm">WEB</div>
                       </div>
                       <div>
@@ -795,7 +796,7 @@ export default function LawFirmServicesPage() {
                         Województwa:{" "}
                         <span className={cn(
                           "font-semibold",
-                          areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "text-amber-400 font-bold" : "text-[#0da192] font-bold"
+                          areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "text-amber-400 font-bold" : "text-primary font-bold"
                         )}>
                           {areaData.selectedVoivodeships.length}
                         </span>
@@ -806,7 +807,7 @@ export default function LawFirmServicesPage() {
                         Miasta:{" "}
                         <span className={cn(
                           "font-semibold",
-                          areaData.selectedCities.length >= areaData.maxCities ? "text-amber-400 font-bold" : "text-[#0da192] font-bold"
+                          areaData.selectedCities.length >= areaData.maxCities ? "text-amber-400 font-bold" : "text-primary font-bold"
                         )}>
                           {areaData.selectedCities.length}
                         </span>
@@ -824,13 +825,13 @@ export default function LawFirmServicesPage() {
                           <div key={v.id} className={cn(
                             "flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer",
                             areaData.selectedVoivodeships.includes(v.id)
-                              ? "bg-[#0da192]/5 border-[#0da192]/30 text-[#0da192] font-medium"
+                              ? "bg-primary/5 border-primary/30 text-primary font-medium"
                               : "border-transparent bg-transparent hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
                           )} onClick={() => toggleVoivodeship(v.id)}>
                             <Checkbox
                               checked={areaData.selectedVoivodeships.includes(v.id)}
                               onCheckedChange={() => toggleVoivodeship(v.id)}
-                              className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
+                              className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                             />
                             <span className="text-sm">{v.nazwa}</span>
                           </div>
@@ -846,7 +847,7 @@ export default function LawFirmServicesPage() {
                             placeholder="Wyszukaj miasto..."
                             value={citySearch}
                             onChange={(e) => setCitySearch(e.target.value)}
-                            className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-[#0da192]/20 focus-visible:border-[#0da192] transition-all duration-200"
+                            className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                           />
                         )}
                       </div>
@@ -867,14 +868,14 @@ export default function LawFirmServicesPage() {
 
                             return (
                               <div key={vId} className="mb-4 last:mb-0">
-                                <div className="text-xs font-bold text-[#d7b56d] mb-2 flex items-center gap-2 uppercase tracking-wide">
-                                  <div className="h-1.5 w-1.5 rounded-full bg-[#d7b56d]" />
+                                <div className="text-xs font-bold text-secondary mb-2 flex items-center gap-2 uppercase tracking-wide">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
                                   {vName}
                                 </div>
                                 <div className="grid grid-cols-1 gap-1">
                                   {isLoading ? (
                                     <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
-                                      <Loader2 className="h-3 w-3 animate-spin text-[#0da192]" />
+                                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
                                       Ładowanie miast...
                                     </div>
                                   ) : cities.length === 0 ? (
@@ -886,13 +887,13 @@ export default function LawFirmServicesPage() {
                                       <div key={city.id} className={cn(
                                         "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
                                         areaData.selectedCities.includes(city.id)
-                                          ? "bg-[#0da192]/10 text-[#0da192] font-medium border border-[#0da192]/20"
+                                          ? "bg-primary/10 text-primary border border-primary/20"
                                           : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
                                       )} onClick={() => toggleCity(city.id)}>
                                         <Checkbox
                                           checked={areaData.selectedCities.includes(city.id)}
                                           onCheckedChange={() => toggleCity(city.id)}
-                                          className="border-border/30 data-[state=checked]:bg-[#0da192] data-[state=checked]:border-[#0da192]"
+                                          className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                         />
                                         <span className="text-xs">{city.nazwa}</span>
                                       </div>
@@ -916,11 +917,11 @@ export default function LawFirmServicesPage() {
         <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6">
 
           {/* Twór pakiet i limity */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-            <BorderBeam lightColor="#0da192" lightWidth={200} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="var(--primary)" lightWidth={200} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-3">
               <CardTitle className="text-base flex items-center gap-2 font-bold text-white">
-                <Info className="h-4 w-4 text-[#0da192]" />
+                <Info className="h-4 w-4 text-primary" />
                 Twój pakiet i limity
               </CardTitle>
             </CardHeader>
@@ -929,7 +930,7 @@ export default function LawFirmServicesPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-sm font-medium text-white">
                     <span className="text-zinc-400 flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 text-[#0da192] fill-[#0da192]" /> Specjalizacje
+                      <Star className="h-3.5 w-3.5 text-primary fill-primary" /> Specjalizacje
                     </span>
                     <span>{selectedCategories.length} / {maxCategories}</span>
                   </div>
@@ -937,7 +938,7 @@ export default function LawFirmServicesPage() {
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-300",
-                        selectedCategories.length >= maxCategories ? "bg-rose-500" : "bg-[#0da192]"
+                        selectedCategories.length >= maxCategories ? "bg-rose-500" : "bg-primary"
                       )}
                       style={{ width: `${Math.min(100, (selectedCategories.length / maxCategories) * 100)}%` }}
                     />
@@ -945,7 +946,7 @@ export default function LawFirmServicesPage() {
                 </div>
 
                 {areaData.callaPolska ? (
-                  <div className="bg-[#0da192]/5 border border-[#0da192]/20 rounded-xl p-2.5 flex items-center gap-2 text-xs text-[#0da192] font-medium">
+                  <div className="bg-primary/5 border border-primary/20 text-primary font-medium">
                     <Globe className="h-4 w-4 shrink-0" />
                     <span>Nielimitowany zasięg (Cała Polska)</span>
                   </div>
@@ -954,7 +955,7 @@ export default function LawFirmServicesPage() {
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-sm font-medium text-white">
                         <span className="text-zinc-400 flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-[#d7b56d]" /> Województwa
+                          <MapPin className="h-3.5 w-3.5 text-secondary" /> Województwa
                         </span>
                         <span>{areaData.selectedVoivodeships.length} / {areaData.maxVoivodeships}</span>
                       </div>
@@ -962,7 +963,7 @@ export default function LawFirmServicesPage() {
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
-                            areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "bg-rose-500" : "bg-[#d7b56d]"
+                            areaData.selectedVoivodeships.length >= areaData.maxVoivodeships ? "bg-rose-500" : "bg-secondary"
                           )}
                           style={{ width: `${Math.min(100, (areaData.selectedVoivodeships.length / areaData.maxVoivodeships) * 100)}%` }}
                         />
@@ -972,7 +973,7 @@ export default function LawFirmServicesPage() {
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-sm font-medium text-white">
                         <span className="text-zinc-400 flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-[#d7b56d]" /> Miasta
+                          <MapPin className="h-3.5 w-3.5 text-secondary" /> Miasta
                         </span>
                         <span>{areaData.selectedCities.length} / {areaData.maxCities}</span>
                       </div>
@@ -980,7 +981,7 @@ export default function LawFirmServicesPage() {
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
-                            areaData.selectedCities.length >= areaData.maxCities ? "bg-rose-500" : "bg-[#d7b56d]"
+                            areaData.selectedCities.length >= areaData.maxCities ? "bg-rose-500" : "bg-secondary"
                           )}
                           style={{ width: `${Math.min(100, (areaData.selectedCities.length / areaData.maxCities) * 100)}%` }}
                         />
@@ -993,12 +994,12 @@ export default function LawFirmServicesPage() {
           </Card>
 
           {/* Kolejność specjalizacji */}
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-            <BorderBeam lightColor="#d7b56d" lightWidth={200} duration={8} borderWidth={1} />
+          <Card variant="glass" className="rounded-2xl overflow-hidden transition-all duration-300">
+            <BorderBeam lightColor="var(--secondary)" lightWidth={200} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
-                  <Star className="h-4 w-4 text-[#0da192]" />
+                  <Star className="h-4 w-4 text-primary" />
                   Kolejność
                 </CardTitle>
                 <Badge variant="secondary" className="text-xs bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border-none rounded-lg">
@@ -1012,7 +1013,7 @@ export default function LawFirmServicesPage() {
             <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar pt-4">
               {selectedCategories.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500 border-2 border-dashed border-border/20 rounded-2xl bg-zinc-950/10">
-                  <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-[#0da192]" />
+                  <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-primary" />
                   <p className="font-semibold text-xs text-white">Brak specjalizacji</p>
                   <p className="text-xs text-center px-4 mt-1 text-zinc-400">Wybierz je z listy po lewej stronie</p>
                 </div>

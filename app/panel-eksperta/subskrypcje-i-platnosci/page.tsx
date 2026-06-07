@@ -78,15 +78,15 @@ interface Invoice {
 const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
   DRAFT: { label: "Szkic", className: "bg-zinc-800/60 text-zinc-400 border border-zinc-700/50", icon: Clock },
   ISSUED: { label: "Wystawiona", className: "bg-blue-500/10 text-blue-400 border border-blue-500/20", icon: FileText },
-  SENT: { label: "Wysłana", className: "bg-[#0da192]/10 text-[#0da192] border border-[#0da192]/20", icon: CheckCircle2 },
-  PAID: { label: "Opłacona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", icon: CheckCircle2 },
-  CANCELLED: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/20", icon: XCircle },
+  SENT: { label: "Wysłana", className: "bg-primary/10 text-primary border border-primary/20", icon: CheckCircle2 },
+  PAID: { label: "Opłacona", className: "bg-success/10 text-success border border-success/20", icon: CheckCircle2 },
+  CANCELLED: { label: "Anulowana", className: "bg-error/10 text-error border border-error/20", icon: XCircle },
 }
 
 const orderStatusConfig: Record<string, { label: string; className: string; icon: any }> = {
-  OCZEKUJE: { label: "Oczekuje", className: "bg-amber-500/10 text-amber-400 border border-amber-500/20", icon: Clock },
-  ZAPLACONE: { label: "Zapłacone", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20", icon: CheckCircle2 },
-  ANULOWANE: { label: "Anulowane", className: "bg-rose-500/10 text-rose-400 border border-rose-500/20", icon: XCircle },
+  OCZEKUJE: { label: "Oczekuje", className: "bg-warning/10 text-warning border border-warning/20", icon: Clock },
+  ZAPLACONE: { label: "Zapłacone", className: "bg-success/10 text-success border border-success/20", icon: CheckCircle2 },
+  ANULOWANE: { label: "Anulowane", className: "bg-error/10 text-error border border-error/20", icon: XCircle },
   ZWROT: { label: "Zwrócone", className: "bg-zinc-800/60 text-zinc-400 border border-zinc-700/50", icon: XCircle },
 }
 
@@ -196,7 +196,7 @@ export default function SubscriptionsAndPaymentsPage() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie informacji rozliczeniowych...</p>
         </div>
       </div>
@@ -292,8 +292,8 @@ export default function SubscriptionsAndPaymentsPage() {
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header */}
       <motion.div
@@ -318,10 +318,10 @@ export default function SubscriptionsAndPaymentsPage() {
       >
         {/* Karta Pakietu */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
+          <Card variant="glass" className="hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
             <CardHeader className="pb-4">
               <CardTitle className="text-xs font-semibold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-[#0da192]" /> Twój pakiet
+                <CreditCard className="h-4 w-4 text-primary" /> Twój pakiet
               </CardTitle>
               <div className="mt-3 flex items-center gap-2.5">
                 <div className={cn("h-8 w-8 rounded-lg border flex items-center justify-center shrink-0 shadow-inner", planDetails.color)}>
@@ -342,7 +342,8 @@ export default function SubscriptionsAndPaymentsPage() {
             <CardContent className="pt-0">
               <Button
                 onClick={() => router.push("/panel-eksperta/pakiet")}
-                className="w-full h-10 px-5 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 group transition-all"
+                variant="primary"
+                className="w-full h-10 px-5 rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 group transition-all"
               >
                 Zmień pakiet
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -353,13 +354,13 @@ export default function SubscriptionsAndPaymentsPage() {
 
         {/* Karta Punktów */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
+          <Card variant="glass" className="hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
             <CardHeader className="pb-4">
               <CardTitle className="text-xs font-semibold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
-                <Coins className="h-4 w-4 text-[#d7b56d]" /> Saldo punktów
+                <Coins className="h-4 w-4 text-secondary" /> Saldo punktów
               </CardTitle>
               <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-3xl font-black tracking-tight text-[#d7b56d] drop-shadow-[0_0_10px_rgba(215,181,109,0.15)] font-mono">
+                <span className="text-3xl font-black tracking-tight text-secondary font-mono">
                   {lawFirm?.punktySaldo || 0}
                 </span>
                 <span className="text-xs font-semibold text-zinc-400 uppercase">pkt</span>
@@ -372,7 +373,7 @@ export default function SubscriptionsAndPaymentsPage() {
               <Button
                 onClick={() => router.push("/panel-eksperta/punkty")}
                 variant="outline"
-                className="w-full h-10 px-5 border-[#d7b56d]/30 hover:border-[#d7b56d]/60 text-[#d7b56d] hover:text-[#d7b56d] bg-[#d7b56d]/5 hover:bg-[#d7b56d]/10 font-semibold rounded-xl flex items-center justify-center gap-2 group transition-all"
+                className="w-full h-10 px-5 border-secondary/30 hover:border-secondary/60 text-secondary hover:text-secondary bg-secondary/5 hover:bg-secondary/10 font-semibold rounded-xl flex items-center justify-center gap-2 group transition-all"
               >
                 Doładuj punkty
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -383,10 +384,10 @@ export default function SubscriptionsAndPaymentsPage() {
 
         {/* Karta Faktur */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
+          <Card variant="glass" className="hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
             <CardHeader className="pb-4">
               <CardTitle className="text-xs font-semibold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[#0da192]" /> Faktury i rozliczenia
+                <FileText className="h-4 w-4 text-primary" /> Faktury i rozliczenia
               </CardTitle>
               <div className="mt-3 flex items-center">
                 <span className="text-2xl font-bold tracking-tight text-white">Faktury VAT</span>
@@ -418,15 +419,15 @@ export default function SubscriptionsAndPaymentsPage() {
       >
         <Tabs defaultValue="status" className="w-full">
           <TabsList className="grid w-full grid-cols-3 border border-border/30 bg-zinc-950/20 rounded-xl p-1 h-12 md:w-[450px]">
-            <TabsTrigger value="status" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Status pakietu</TabsTrigger>
-            <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Zamówienia</TabsTrigger>
-            <TabsTrigger value="invoices" className="rounded-lg data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all font-semibold text-xs tracking-wider uppercase">Faktury</TabsTrigger>
+            <TabsTrigger value="status" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Status pakietu</TabsTrigger>
+            <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Zamówienia</TabsTrigger>
+            <TabsTrigger value="invoices" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Faktury</TabsTrigger>
           </TabsList>
 
           {/* Zakładka 1: Status Pakietu */}
           <TabsContent value="status" className="space-y-4 mt-6">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={6} borderWidth={1} />
+            <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={6} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-4 px-6">
                 <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-emerald-400" />
@@ -451,12 +452,12 @@ export default function SubscriptionsAndPaymentsPage() {
 
           {/* Zakładka 2: Ostatnie zamówienia */}
           <TabsContent value="orders" className="space-y-4 mt-6">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={6} borderWidth={1} />
+            <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={6} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-4 px-6 flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
-                    <History className="h-5 w-5 text-[#0da192]" />
+                    <History className="h-5 w-5 text-primary" />
                     Historia ostatnich zamówień
                   </CardTitle>
                   <CardDescription className="text-zinc-400 text-xs">
@@ -576,12 +577,12 @@ export default function SubscriptionsAndPaymentsPage() {
 
           {/* Zakładka 3: Ostatnie faktury */}
           <TabsContent value="invoices" className="space-y-4 mt-6">
-            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
-              <BorderBeam lightColor="#0da192" lightWidth={400} duration={6} borderWidth={1} />
+            <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
+              <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={6} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-4 px-6 flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-[#0da192]" />
+                    <FileText className="h-5 w-5 text-primary" />
                     Ostatnio wystawione faktury
                   </CardTitle>
                   <CardDescription className="text-zinc-400 text-xs">
@@ -644,7 +645,7 @@ export default function SubscriptionsAndPaymentsPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleDownloadInvoice(invoice)}
-                                    className="h-9 rounded-lg border border-border/50 text-[#0da192] hover:text-white hover:bg-[#0da192] hover:border-[#0da192] transition-all gap-1.5"
+                                    className="h-9 rounded-lg border border-border/50 text-primary hover:text-white hover:bg-primary hover:border-primary transition-all gap-1.5"
                                   >
                                     <Download className="h-3.5 w-3.5" />
                                     Drukuj / Pobierz
@@ -685,7 +686,7 @@ export default function SubscriptionsAndPaymentsPage() {
                             <div className="pt-1">
                               <Button
                                 variant="outline"
-                                className="w-full h-9 rounded-lg border border-border/50 text-[#0da192] hover:text-white hover:bg-[#0da192] hover:border-[#0da192] transition-all gap-1.5 text-[11px]"
+                                className="w-full h-9 rounded-lg border border-border/50 text-primary hover:text-white hover:bg-primary hover:border-primary transition-all gap-1.5 text-[11px]"
                                 onClick={() => handleDownloadInvoice(invoice)}
                               >
                                 <Download className="h-3.5 w-3.5" />
