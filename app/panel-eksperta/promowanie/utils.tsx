@@ -156,7 +156,7 @@ export const getPromotionStatusBadge = (promotion: Promotion) => {
     return (
       <Badge
         variant="default"
-        className="gap-1 bg-[#0da192]/10 border border-[#0da192]/30 text-[#0da192] font-medium hover:bg-[#0da192]/15"
+        className="gap-1 bg-primary/10 border border-primary/30 text-primary font-medium hover:bg-primary/15"
       >
         <CheckCircle2 className="h-3 w-3" />
         Aktywna

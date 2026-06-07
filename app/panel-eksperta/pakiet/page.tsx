@@ -99,7 +99,7 @@ const planCosmetics: Record<string, {
   PODSTAWOWY: {
     tagline: "Podstawowa obecność w naszym katalogu",
     accentColor: "text-muted-foreground",
-    borderColor: "border-border",
+    borderColor: "border-border/40",
     bgGradient: "from-card to-card/50",
     icon: Package,
     bulletPoints: [
@@ -127,9 +127,9 @@ const planCosmetics: Record<string, {
   PREMIUM: {
     tagline: "Brak limitu spraw i wysoka widoczność",
     popular: true,
-    accentColor: "text-teal-600 dark:text-teal-400",
-    borderColor: "border-teal-500/40 shadow-teal-500/5 dark:shadow-teal-500/10",
-    bgGradient: "from-card via-card to-teal-500/[0.04] dark:to-teal-500/[0.08]",
+    accentColor: "text-primary",
+    borderColor: "border-primary/40 shadow-primary/5 dark:shadow-primary/10",
+    bgGradient: "from-card via-card to-primary/5",
     badgeText: "Najpopularniejszy",
     icon: Star,
     bulletPoints: [
@@ -143,9 +143,9 @@ const planCosmetics: Record<string, {
   BIZNES: {
     tagline: "Maksymalny zasięg, blog i wyróżnienie VIP",
     bestValue: true,
-    accentColor: "text-amber-600 dark:text-amber-400",
-    borderColor: "border-amber-500/40 shadow-amber-500/5 dark:shadow-amber-500/10",
-    bgGradient: "from-card via-card to-amber-500/[0.04] dark:to-amber-500/[0.08]",
+    accentColor: "text-secondary",
+    borderColor: "border-secondary/40 shadow-secondary/5 dark:shadow-secondary/10",
+    bgGradient: "from-card via-card to-secondary/5",
     badgeText: "Rekomendowany VIP",
     icon: Zap,
     bulletPoints: [
@@ -316,9 +316,9 @@ export default function LawFirmPackagePage() {
 
   if (error || !lawFirm) {
     return (
-      <Card className="border-destructive bg-destructive/5">
+      <Card variant="glass" className="border-error/30 bg-error/5 rounded-2xl">
         <CardContent className="pt-6">
-          <div className="flex items-center gap-3 text-destructive">
+          <div className="flex items-center gap-3 text-error">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <div>
               <h4 className="font-semibold">Błąd ładowania danych</h4>
@@ -383,10 +383,10 @@ export default function LawFirmPackagePage() {
     if (feature.type === "boolean") {
       return value ? (
         <CheckCircle2 className={`h-5 w-5 mx-auto ${plan.typ === "PREMIUM"
-          ? "text-teal-500"
+          ? "text-primary"
           : plan.typ === "BIZNES"
-            ? "text-amber-500"
-            : "text-green-500"
+            ? "text-secondary"
+            : "text-success"
           }`} />
       ) : (
         <Minus className="h-4 w-4 text-muted-foreground/20 mx-auto" />
@@ -395,7 +395,7 @@ export default function LawFirmPackagePage() {
 
     if (feature.type === "cases") {
       return value === null ? (
-        <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400 px-2 py-0.5 rounded-full text-xs font-bold border border-green-200 dark:border-green-900/30">
+        <span className="inline-flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full text-xs font-bold border border-success/20">
           Bez limitu
         </span>
       ) : (
@@ -405,7 +405,7 @@ export default function LawFirmPackagePage() {
 
     if (feature.type === "categories") {
       return value === null ? (
-        <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400 px-2 py-0.5 rounded-full text-xs font-bold border border-green-200 dark:border-green-900/30">
+        <span className="inline-flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full text-xs font-bold border border-success/20">
           Wszystkie
         </span>
       ) : (
@@ -430,8 +430,8 @@ export default function LawFirmPackagePage() {
       const isGold = value === "Rozszerzone"
       return (
         <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full border ${isGold
-          ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/30"
-          : "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/30"
+          ? "bg-secondary/15 text-secondary border border-secondary/20"
+          : "bg-primary/10 text-primary border border-primary/20"
           }`}>
           {value}
         </span>
@@ -442,15 +442,15 @@ export default function LawFirmPackagePage() {
       if (!value || value === 0) return <Minus className="h-4 w-4 text-muted-foreground/20 mx-auto" />
       if (value === 1) return <span className="text-xs font-medium text-muted-foreground">Podstawowy</span>
       if (value === 2) return <span className="text-xs font-medium">Standardowy</span>
-      if (value === 3) return <span className="text-xs font-semibold text-teal-600 dark:text-teal-400">Dedykowany</span>
-      if (value === 6) return <span className="text-xs font-bold text-amber-600 dark:text-amber-400">VIP (Dedykowany)</span>
+      if (value === 3) return <span className="text-xs font-semibold text-primary">Dedykowany</span>
+      if (value === 6) return <span className="text-xs font-bold text-secondary">VIP (Dedykowany)</span>
       return <span className="text-xs">{value}</span>
     }
 
     if (feature.type === "bonus") {
       if (!value || value === 0) return <Minus className="h-4 w-4 text-muted-foreground/20 mx-auto" />
       return (
-        <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full text-xs font-bold border border-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400">
+        <span className="inline-flex items-center gap-1 bg-secondary/15 text-secondary px-2 py-0.5 rounded-full text-xs font-bold border border-secondary/20">
           +{value} pkt
         </span>
       )
@@ -473,7 +473,7 @@ export default function LawFirmPackagePage() {
 
       {/* Current Status Dashboard */}
       <div id="tour-pakiet-current" className="grid gap-6 md:grid-cols-2">
-        <Card className="border-border/60 bg-gradient-to-br from-card to-muted/20 shadow-sm relative overflow-hidden group">
+        <Card variant="glass" className="relative overflow-hidden group rounded-2xl bg-gradient-to-br from-card to-muted/20">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full transition-all duration-300 group-hover:scale-110" />
           <CardHeader className="pb-4">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -489,19 +489,19 @@ export default function LawFirmPackagePage() {
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-xl font-bold tracking-tight text-foreground">
+                  <h3 className="text-xl font-bold tracking-tight text-white font-playfair">
                     {lawFirm.pakietSubskrypcji
                       ? (plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji)
                       : "Brak aktywnego pakietu"
                     }
                   </h3>
-                  <Badge variant={lawFirm.pakietSubskrypcji ? "default" : "secondary"} className={lawFirm.pakietSubskrypcji ? "bg-green-500 hover:bg-green-600" : ""}>
+                  <Badge className={lawFirm.pakietSubskrypcji ? "bg-success text-success-foreground" : "bg-muted text-muted-foreground"}>
                     {lawFirm.pakietSubskrypcji ? "Aktywny" : "Brak subskrypcji"}
                   </Badge>
                 </div>
                 {lawFirm.dataPakietuDo ? (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Ważny do: <strong className="text-foreground">{formatDate(lawFirm.dataPakietuDo)}</strong>
+                    Ważny do: <strong className="text-white">{formatDate(lawFirm.dataPakietuDo)}</strong>
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground mt-1">
@@ -512,11 +512,11 @@ export default function LawFirmPackagePage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/60 bg-gradient-to-br from-card to-amber-500/[0.02] shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full transition-all duration-300 group-hover:scale-110" />
+        <Card variant="glass" className="relative overflow-hidden group rounded-2xl bg-gradient-to-br from-card to-secondary/5">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-bl-full transition-all duration-300 group-hover:scale-110" />
           <CardHeader className="pb-4">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Coins className="h-5 w-5 text-amber-500" />
+              <Coins className="h-5 w-5 text-secondary" />
               Dostępne punkty
             </CardTitle>
             <CardDescription>Użyj punktów zgromadzonych na saldzie do opłacenia pakietu</CardDescription>
@@ -524,16 +524,16 @@ export default function LawFirmPackagePage() {
           <CardContent className="pt-0">
             <div className="flex items-center gap-4 justify-between">
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-xl bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-900/30">
-                  <Coins className="h-7 w-7 text-amber-500" />
+                <div className="h-14 w-14 rounded-xl bg-secondary/15 flex items-center justify-center shrink-0 border border-secondary/20">
+                  <Coins className="h-7 w-7 text-secondary" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold tracking-tight text-foreground">{lawFirm.punktySaldo} pkt</div>
+                  <div className="text-2xl font-bold tracking-tight text-white">{lawFirm.punktySaldo} pkt</div>
                   <p className="text-xs text-muted-foreground mt-0.5">Saldo punktowe Twojego profilu</p>
                 </div>
               </div>
               <Link href="/panel-eksperta/punkty" className="shrink-0">
-                <Button variant="outline" size="sm" className="border-amber-500/20 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold gap-1.5">
+                <Button variant="outline" size="sm" className="border-secondary/20 hover:bg-secondary/10 text-secondary font-semibold gap-1.5 rounded-xl">
                   Doładuj punkty <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
@@ -608,18 +608,18 @@ export default function LawFirmPackagePage() {
             return (
               <div
                 key={plan.id}
-                className={`relative rounded-2xl bg-card border p-6 flex flex-col justify-between transition-all duration-300 ${isDowngrade
-                  ? "border-muted-foreground/20 bg-muted/[0.02] dark:bg-muted/[0.01] opacity-75 grayscale-25"
+                className={`relative rounded-2xl bg-card/25 backdrop-blur-md border p-6 flex flex-col justify-between transition-all duration-300 ${isDowngrade
+                  ? "border-muted-foreground/20 bg-muted/[0.02] opacity-75 grayscale-25"
                   : cosmetic.popular
-                    ? "border-teal-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-teal-500/[0.02] dark:to-teal-500/[0.04]"
+                    ? "border-primary/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-primary/5"
                     : cosmetic.bestValue
-                      ? "border-amber-500/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-amber-500/[0.02] dark:to-amber-500/[0.04]"
+                      ? "border-secondary/50 shadow-md md:-translate-y-1.5 scale-[1.01] hover:shadow-lg hover:-translate-y-2.5 bg-gradient-to-b from-card via-card to-secondary/5"
                       : "border-border/70 hover:shadow-md hover:-translate-y-0.5"
                   }`}
               >
                 {/* Popularity or Value Badges */}
                 {cosmetic.badgeText && !isDowngrade && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-teal-500" : "bg-amber-500"
+                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-primary" : "bg-secondary"
                     }`}>
                     {cosmetic.badgeText}
                   </div>
@@ -635,7 +635,7 @@ export default function LawFirmPackagePage() {
                   {/* Top Section */}
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <div>
-                      <h3 className="text-xl font-bold  tracking-tight text-foreground">{plan.nazwa}</h3>
+                      <h3 className="text-xl font-bold tracking-tight text-white font-playfair">{plan.nazwa}</h3>
                       <p className="text-[11px] text-muted-foreground mt-1.5 min-h-[30px] leading-relaxed">
                         {cosmetic.tagline}
                       </p>
@@ -643,9 +643,9 @@ export default function LawFirmPackagePage() {
                     <div className={`p-2.5 rounded-xl shrink-0 ${isDowngrade
                       ? "bg-muted/50 text-muted-foreground/60 border border-border/50"
                       : cosmetic.popular
-                        ? "bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"
+                        ? "bg-primary/10 text-primary border border-primary/20"
                         : cosmetic.bestValue
-                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          ? "bg-secondary/10 text-secondary border border-secondary/20"
                           : "bg-muted text-muted-foreground border border-border"
                       }`}>
                       {isDowngrade ? <Lock className="h-5.5 w-5.5" /> : <PlanIcon className="h-5.5 w-5.5" />}
@@ -656,13 +656,13 @@ export default function LawFirmPackagePage() {
                   <div className="my-5">
                     {plan.typ === "FREE" ? (
                       <div>
-                        <span className="text-3xl font-extrabold text-foreground">Darmowy</span>
+                        <span className="text-3xl font-extrabold text-white">Darmowy</span>
                         <p className="text-xs text-muted-foreground mt-1">Podstawowe funkcje na zawsze</p>
                       </div>
                     ) : (
                       <div className="space-y-1.5">
                         <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-extrabold tracking-tight text-foreground">{pointsCost}</span>
+                          <span className="text-3xl font-extrabold tracking-tight text-white">{pointsCost}</span>
                           <span className="text-base font-semibold text-muted-foreground">pkt</span>
                           <span className="text-xs text-muted-foreground ml-1">
                             / {selectedPeriod === "1" ? "mies." : selectedPeriod === "6" ? "6 mies." : "rok"}
@@ -671,16 +671,16 @@ export default function LawFirmPackagePage() {
 
                         <div className="text-xs text-muted-foreground flex flex-col gap-0.5 leading-relaxed bg-muted/30 p-2 rounded-lg border border-border/40">
                           {selectedPeriod !== "1" && (
-                            <span>Średnio: <strong className="text-foreground font-semibold">{monthlyEquivPoints} pkt</strong> / mies.</span>
+                            <span>Średnio: <strong className="text-white font-semibold">{monthlyEquivPoints} pkt</strong> / mies.</span>
                           )}
-                          <span>Ekwiwalent: <strong className="text-foreground font-semibold">{priceVal} PLN</strong> {selectedPeriod !== "1" && `(~${monthlyEquivPLN} PLN / mies.)`}</span>
+                          <span>Ekwiwalent: <strong className="text-white font-semibold">{priceVal} PLN</strong> {selectedPeriod !== "1" && `(~${monthlyEquivPLN} PLN / mies.)`}</span>
                         </div>
                       </div>
                     )}
 
                     {/* Gratis points */}
                     {plan.punktyGratis > 0 && (
-                      <div className="mt-3.5 inline-flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2.5 py-0.5 rounded-full text-sm font-bold border border-amber-500/20 shadow-2xs">
+                      <div className="mt-3.5 inline-flex items-center gap-1 bg-secondary/15 text-secondary px-2.5 py-0.5 rounded-full text-sm font-bold border border-secondary/20 shadow-2xs">
                         <Gift className="h-3 w-3 shrink-0" />
                         <span>+{plan.punktyGratis} pkt GRATIS!</span>
                       </div>
@@ -695,15 +695,15 @@ export default function LawFirmPackagePage() {
                     {cosmetic.bulletPoints.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2.5 text-muted-foreground">
                         <CheckCircle2 className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${cosmetic.popular
-                          ? "text-teal-500"
+                          ? "text-primary"
                           : cosmetic.bestValue
-                            ? "text-amber-500"
+                            ? "text-secondary"
                             : "text-muted-foreground/60"
                           }`} />
                         <span
                           className="leading-snug"
                           dangerouslySetInnerHTML={{
-                            __html: point.replace(/\*\*(.*?)\*\*/g, "<strong class='text-foreground font-semibold'>$1</strong>")
+                            __html: point.replace(/\*\*(.*?)\*\*/g, "<strong class='text-white font-semibold'>$1</strong>")
                           }}
                         />
                       </li>
@@ -714,18 +714,18 @@ export default function LawFirmPackagePage() {
                 {/* Card Button CTA */}
                 <div className="mt-4">
                   {isCurrent ? (
-                    <Button variant="outline" className="w-full border-green-500/30 bg-green-500/5 text-green-600 dark:text-green-400 hover:bg-green-500/5 hover:text-green-600 font-semibold shadow-2xs" disabled>
+                    <Button variant="outline" className="w-full border-success/30 bg-success/5 text-success hover:bg-success/5 hover:text-success font-semibold shadow-2xs rounded-xl" disabled>
                       <Check className="mr-2 h-4 w-4" /> Twój obecny pakiet
                     </Button>
                   ) : isDowngrade ? (
                     <div className="space-y-3">
-                      <Button variant="outline" className="w-full bg-muted/40 text-muted-foreground border-border/85 cursor-not-allowed font-semibold flex items-center justify-center gap-1.5" disabled>
+                      <Button variant="outline" className="w-full bg-muted/40 text-muted-foreground border-border/85 cursor-not-allowed font-semibold flex items-center justify-center gap-1.5 rounded-xl" disabled>
                         <Lock className="h-4 w-4" /> Plan niedostępny
                       </Button>
 
-                      <div className="p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 text-left">
+                      <div className="p-3 rounded-xl bg-secondary/10 border border-secondary/20 text-left">
                         <p className="text-[10.5px] text-muted-foreground leading-normal flex items-start gap-1.5">
-                          <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                          <AlertCircle className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
                           <span>
                             Posiadasz obecnie wyższy aktywny plan <strong>{plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.nazwa || lawFirm.pakietSubskrypcji}</strong> ważny do <strong>{formatDate(lawFirm.dataPakietuDo!)}</strong>. Zmiana na niższy pakiet będzie dostępna po wygaśnięciu obecnego okresu.
                           </span>
@@ -733,18 +733,18 @@ export default function LawFirmPackagePage() {
                       </div>
                     </div>
                   ) : plan.typ === "FREE" ? (
-                    <Button variant="outline" className="w-full border-border/80 text-muted-foreground" disabled>
+                    <Button variant="outline" className="w-full border-border/80 text-muted-foreground rounded-xl" disabled>
                       Pakiet Darmowy
                     </Button>
                   ) : (
                     <Button
                       onClick={() => handlePurchaseClick(plan)}
                       disabled={purchasing || !canAfford}
-                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] shrink-0 shadow-sm ${cosmetic.popular
-                        ? "bg-teal-600 hover:bg-teal-700 text-white hover:shadow-teal-500/10"
+                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] shrink-0 shadow-sm rounded-xl ${cosmetic.popular
+                        ? "bg-primary hover:bg-primary-hover text-white hover:shadow-primary/10"
                         : cosmetic.bestValue
-                          ? "bg-amber-500 hover:bg-amber-600 text-white hover:shadow-amber-500/10"
-                          : "bg-primary hover:bg-primary/95 text-white"
+                          ? "bg-secondary hover:bg-secondary-hover text-white hover:shadow-secondary/10"
+                          : "bg-primary hover:bg-primary-hover text-white"
                         }`}
                       title={!canAfford ? "Masz za mało punktów na koncie" : ""}
                     >
@@ -763,10 +763,10 @@ export default function LawFirmPackagePage() {
                   )}
 
                   {!canAfford && !isCurrent && !isDowngrade && plan.typ !== "FREE" && (
-                    <p className="text-sm text-destructive text-center mt-2 flex items-center justify-center gap-1 font-semibold">
+                    <p className="text-sm text-error text-center mt-2 flex items-center justify-center gap-1 font-semibold">
                       <AlertCircle className="h-3 w-3 shrink-0" />
                       Za mało punktów.
-                      <Link href="/panel-eksperta/punkty" className="underline hover:text-destructive/80 font-bold ml-0.5">
+                      <Link href="/panel-eksperta/punkty" className="underline hover:text-error/80 font-bold ml-0.5">
                         Doładuj konto
                       </Link>
                     </p>
@@ -778,7 +778,7 @@ export default function LawFirmPackagePage() {
         </div>
 
         {/* Collapsible Feature Comparison Table Container */}
-        <Card className="border-border/60 shadow-sm overflow-hidden mt-6">
+        <Card variant="glass" className="overflow-hidden mt-6 rounded-2xl">
           <div className="p-5 border-b border-border/50 bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="font-bold text-lg text-foreground flex items-center gap-2">
@@ -822,16 +822,16 @@ export default function LawFirmPackagePage() {
                         <th
                           key={plan.id}
                           className={`border-b border-border/60 p-4 text-center font-bold text-base text-foreground w-[18.75%] ${isPopular
-                            ? "bg-teal-500/[0.02] dark:bg-teal-500/[0.05] border-x border-teal-500/10"
+                            ? "bg-primary/5 border-x border-primary/10"
                             : isBestVal
-                              ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
+                              ? "bg-secondary/5 border-x border-secondary/10"
                               : ""
                             }`}
                         >
                           <div className="flex flex-col items-center gap-1.5">
                             <span>{plan.nazwa}</span>
                             {plan.typ === lawFirm.pakietSubskrypcji && (
-                              <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-sm py-0 px-2 leading-relaxed">
+                              <Badge className="bg-success text-success-foreground text-sm py-0 px-2 leading-relaxed">
                                 Obecny
                               </Badge>
                             )}
@@ -859,7 +859,7 @@ export default function LawFirmPackagePage() {
                             {group.features.map((feature, featureIdx) => (
                               <tr
                                 key={feature.key}
-                                className={`border-b border-border/30 hover:bg-muted/20 transition-colors duration-150 ${featureIdx % 2 === 0 ? "bg-card" : "bg-muted/5"
+                                className={`border-b border-border/30 hover:bg-muted/20 transition-colors duration-150 ${featureIdx % 2 === 0 ? "bg-card/40" : "bg-muted/5"
                                   }`}
                               >
                                 <td className="p-4 font-medium text-sm text-foreground/80 w-1/4 pl-6">
@@ -872,9 +872,9 @@ export default function LawFirmPackagePage() {
                                     <td
                                       key={plan.id}
                                       className={`p-4 text-center w-[18.75%] ${isPopular
-                                        ? "bg-teal-500/[0.02] dark:bg-teal-500/[0.05] border-x border-teal-500/10"
+                                        ? "bg-primary/5 border-x border-primary/10"
                                         : isBestVal
-                                          ? "bg-amber-500/[0.02] dark:bg-amber-500/[0.05] border-x border-amber-500/10"
+                                          ? "bg-secondary/5 border-x border-secondary/10"
                                           : ""
                                         }`}
                                     >
@@ -892,7 +892,7 @@ export default function LawFirmPackagePage() {
 
                   {/* Pricing row in table */}
                   <tr className="bg-muted/30 border-t border-border/80">
-                    <td className="p-4 font-bold text-sm text-foreground pl-6">Koszt pakietu</td>
+                    <td className="p-4 font-bold text-sm text-white pl-6">Koszt pakietu</td>
                     {plans.map((plan) => {
                       const isPopular = plan.typ.toUpperCase() === "PREMIUM"
                       const isBestVal = plan.typ.toUpperCase() === "BIZNES"
@@ -903,9 +903,9 @@ export default function LawFirmPackagePage() {
                         <td
                           key={plan.id}
                           className={`p-4 text-center font-bold w-[18.75%] ${isPopular
-                            ? "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] border-x border-teal-500/10"
+                            ? "bg-primary/10 border-x border-primary/10"
                             : isBestVal
-                              ? "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border-x border-amber-500/10"
+                              ? "bg-secondary/10 border-x border-secondary/10"
                               : ""
                             }`}
                         >
@@ -913,8 +913,8 @@ export default function LawFirmPackagePage() {
                             <span className="text-sm font-bold text-muted-foreground">0 pkt (Darmowy)</span>
                           ) : (
                             <div className="flex flex-col gap-0.5">
-                              <span className="text-base text-foreground font-extrabold">{pointsCost} pkt</span>
-                              <span className="text-sm text-muted-foreground font-normal">({priceVal} PLN)</span>
+                              <span className="text-base text-white font-extrabold">{pointsCost} pkt</span>
+                              <span className="text-sm text-muted-foreground font-normal font-sans">({priceVal} PLN)</span>
                             </div>
                           )}
                         </td>
@@ -930,9 +930,9 @@ export default function LawFirmPackagePage() {
 
       {/* Confirmation Purchasing Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-md rounded-2xl border-border/40">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold flex items-center gap-2">
+            <AlertDialogTitle className="text-xl font-bold flex items-center gap-2 font-playfair text-white">
               <Sparkles className="h-5.5 w-5.5 text-primary" />
               Potwierdź aktywację pakietu
             </AlertDialogTitle>
@@ -941,7 +941,7 @@ export default function LawFirmPackagePage() {
                 {selectedPlan && (() => {
                   if (isSelectedPlanDowngrade) {
                     return (
-                      <div className="text-xs text-destructive p-3 bg-destructive/10 rounded-lg flex items-start gap-2 border border-destructive/20 leading-relaxed">
+                      <div className="text-xs text-error p-3 bg-error/10 rounded-lg flex items-start gap-2 border border-error/20 leading-relaxed">
                         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                         <div>
                           Nie możesz aktywować niższego pakietu. Posiadasz obecnie wyższą aktywną subskrypcję.
@@ -957,13 +957,13 @@ export default function LawFirmPackagePage() {
                   return (
                     <>
                       <div>
-                        <div className="text-foreground text-sm font-semibold mb-2">
+                        <div className="text-white text-sm font-semibold mb-2">
                           Wybrałeś pakiet: <strong className="text-primary text-base font-bold ml-1">{selectedPlan.nazwa}</strong>
                         </div>
                         <div className="space-y-1.5 text-xs bg-muted/40 p-3 rounded-lg border border-border/40">
                           <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">Okres rozliczeniowy:</span>
-                            <span className="font-bold text-foreground">
+                            <span className="font-bold text-white">
                               {getPeriodLabel(selectedPeriod)}
                             </span>
                           </div>
@@ -974,7 +974,7 @@ export default function LawFirmPackagePage() {
                             </span>
                           </div>
                           {selectedPlan.punktyGratis > 0 && (
-                            <div className="flex justify-between items-center text-green-600 dark:text-green-400 font-semibold border-t border-dashed border-border/40 pt-1.5 mt-1.5">
+                            <div className="flex justify-between items-center text-success font-semibold border-t border-dashed border-border/40 pt-1.5 mt-1.5">
                               <span className="flex items-center gap-1">
                                 <Gift className="h-3.5 w-3.5" /> Otrzymasz gratis:
                               </span>
@@ -987,28 +987,28 @@ export default function LawFirmPackagePage() {
                       {/* Points Simulation */}
                       <div className="bg-muted/80 p-4 rounded-xl space-y-2.5 border border-border/50">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground">Stan Twojego salda:</span>
-                          <span className="font-semibold text-foreground">{lawFirm?.punktySaldo} pkt</span>
+                           <span className="text-muted-foreground">Stan Twojego salda:</span>
+                          <span className="font-semibold text-white">{lawFirm?.punktySaldo} pkt</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-muted-foreground">Koszt pakietu:</span>
-                          <span className="font-semibold text-destructive">-{pointsCost} pkt</span>
+                          <span className="font-semibold text-error">-{pointsCost} pkt</span>
                         </div>
                         <hr className="my-1 border-border/40" />
                         <div className="flex justify-between items-center text-sm font-bold">
                           <span>Saldo po aktywacji:</span>
-                          <span className={canAfford ? "text-green-600 dark:text-green-400" : "text-destructive"}>
+                          <span className={canAfford ? "text-success" : "text-error"}>
                             {lawFirm ? lawFirm.punktySaldo - pointsCost : 0} pkt
                           </span>
                         </div>
                       </div>
 
                       {!canAfford && (
-                        <div className="text-xs text-destructive p-3 bg-destructive/10 rounded-lg flex items-start gap-2 border border-destructive/20 leading-relaxed">
+                        <div className="text-xs text-error p-3 bg-error/10 rounded-lg flex items-start gap-2 border border-error/20 leading-relaxed">
                           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                           <div>
                             Nie masz wystarczającej liczby punktów na saldzie, aby aktywować ten pakiet.
-                            <Link href="/panel-eksperta/punkty" className="underline hover:text-destructive/80 font-bold ml-1">
+                            <Link href="/panel-eksperta/punkty" className="underline hover:text-error/85 font-bold ml-1">
                               Doładuj konto tutaj.
                             </Link>
                           </div>
@@ -1021,11 +1021,11 @@ export default function LawFirmPackagePage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4 gap-2">
-            <AlertDialogCancel className="border-border">Anuluj</AlertDialogCancel>
+            <AlertDialogCancel className="border-border rounded-xl">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
               disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
-              className="bg-primary hover:bg-primary/95 text-white font-semibold"
+              className="bg-primary hover:bg-primary-hover text-white font-semibold rounded-xl"
             >
               {purchasing ? (
                 <>
@@ -1044,9 +1044,9 @@ export default function LawFirmPackagePage() {
       </AlertDialog>
 
       {/* Premium styled FAQ */}
-      <Card className="border-border/60 shadow-sm bg-gradient-to-br from-card to-muted/10 overflow-hidden">
+      <Card variant="glass" className="bg-gradient-to-br from-card to-muted/10 overflow-hidden rounded-2xl">
         <CardHeader className="border-b border-border/40 pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 font-playfair text-white">
             <HelpCircle className="h-5 w-5 text-primary" />
             Najczęściej zadawane pytania (FAQ)
           </CardTitle>
@@ -1054,41 +1054,41 @@ export default function LawFirmPackagePage() {
         </CardHeader>
         <CardContent className="pt-6 grid gap-6 md:grid-cols-2">
           <div className="space-y-1.5 p-4 bg-muted/20 rounded-xl border border-border/30">
-            <h4 className="font-bold text-sm text-foreground flex items-center gap-1.5">
+            <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               Czy mogę zmienić pakiet w każdej chwili?
             </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed font-light">
               Tak! Możesz podwyższyć swój pakiet w dowolnym momencie. Przy przejściu na wyższy poziom, różnica opłat zostanie odpowiednio i sprawiedliwie przeliczona na Twoją korzyść.
             </p>
           </div>
 
           <div className="space-y-1.5 p-4 bg-muted/20 rounded-xl border border-border/30">
-            <h4 className="font-bold text-sm text-foreground flex items-center gap-1.5">
+            <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               Co się stanie z moimi punktami po zmianie?
             </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed font-light">
               Wszystkie zebrane punkty na Twoim saldzie pozostają bezpieczne. W wyższych pakietach otrzymujesz również dodatkowe bezpłatne punkty gratis przy każdej nowej aktywacji.
             </p>
           </div>
 
           <div className="space-y-1.5 p-4 bg-muted/20 rounded-xl border border-border/30">
-            <h4 className="font-bold text-sm text-foreground flex items-center gap-1.5">
+            <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               Czy mogę zrezygnować z płatnego pakietu?
             </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed font-light">
               Oczywiście. Możesz w każdej chwili zdecydować o powrocie do pakietu Podstawowego. Subskrypcja wyższego szczebla pozostanie w pełni aktywna do końca bieżącego okresu ważności.
             </p>
           </div>
 
           <div className="space-y-1.5 p-4 bg-muted/20 rounded-xl border border-border/30">
-            <h4 className="font-bold text-sm text-foreground flex items-center gap-1.5">
+            <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               Czy otrzymam fakturę VAT?
             </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed font-light">
               Tak. Wszelkie zakupy punktów oraz aktywacje pakietów są automatycznie dokumentowane fakturami VAT, które system generuje natychmiast i przesyła do zakładki faktur.
             </p>
           </div>

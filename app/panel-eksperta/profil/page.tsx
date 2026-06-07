@@ -532,7 +532,7 @@ function LawFirmProfilePageContent() {
     return (
       <div className="relative min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground text-sm font-light">Wczytywanie profilu eksperta...</p>
         </div>
       </div>
@@ -542,8 +542,8 @@ function LawFirmProfilePageContent() {
   return (
     <form onSubmit={handleSubmit} className="relative space-y-8">
       {/* Ambient Background Glows */}
-      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-[#0da192]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-[#d7b56d]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
       <PageHeader
         title="Profil Eksperta"
@@ -557,35 +557,35 @@ function LawFirmProfilePageContent() {
         <TabsList className="p-1.5 bg-zinc-950/40 backdrop-blur-md border border-border/30 rounded-xl flex gap-1.5 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none h-auto">
           <TabsTrigger
             value="basic"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
           >
             <User className="h-4 w-4 shrink-0" />
             <span>Dane podstawowe</span>
           </TabsTrigger>
           <TabsTrigger
             value="contact"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
           >
             <MapPin className="h-4 w-4 shrink-0" />
             <span>Kontakt i obszar</span>
           </TabsTrigger>
           <TabsTrigger
             value="specialization"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
           >
             <Award className="h-4 w-4 shrink-0" />
             <span>Oferta i zakres</span>
           </TabsTrigger>
           <TabsTrigger
             value="multimedia"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
           >
             <ImageIcon className="h-4 w-4 shrink-0" />
             <span>Galeria i wideo</span>
           </TabsTrigger>
           <TabsTrigger
             value="consultations"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-[#0da192]/10 data-[state=active]:text-[#0da192] data-[state=active]:border border-transparent data-[state=active]:border-[#0da192]/30 transition-all duration-200 flex items-center gap-2"
+            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
           >
             <Clock className="h-4 w-4 shrink-0" />
             <span>Godziny i dostępność</span>
@@ -654,7 +654,7 @@ function LawFirmProfilePageContent() {
         <Button
           type="submit"
           disabled={isSaving}
-          className="h-11 px-6 bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+          className="h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
         >
           {isSaving ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -702,7 +702,7 @@ export default function LawFirmProfilePage() {
     <Suspense
       fallback={
         <div className="relative min-h-[400px] flex items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-[#0da192] mx-auto" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
         </div>
       }
     >
