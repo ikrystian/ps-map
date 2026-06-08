@@ -18,6 +18,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Coins,
   CreditCard,
   FileCode,
@@ -65,6 +66,7 @@ const navigation = [
   { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
   { name: "Powiadomienia", href: "/admin/notifications", icon: Bell },
   { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
+  { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
   { name: "Ustawienia", href: "/admin/settings", icon: Settings },
   { name: "Pakiety", href: "/admin/pakiety", icon: Shield },
   { name: "Ordery", href: "/admin/badges", icon: Star }

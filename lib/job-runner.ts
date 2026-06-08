@@ -199,3 +199,30 @@ export async function isJobDue(jobName: string, intervalMs: number): Promise<boo
     return false
   }
 }
+
+/** Domyślny okres przechowywania historii uruchomień zadań (w dniach). */
+export const JOB_RUN_RETENTION_DAYS = 30
+
+/**
+ * Usuwa stare wpisy historii uruchomień (`ScheduledJobRun`), aby tabela nie
+ * rosła w nieskończoność. Zadania uruchamiane co minutę generują ~tysiące
+ * wierszy dziennie — bez retencji baza puchnie.
+ *
+ * Nie usuwa wpisów ze statusem RUNNING (mogą reprezentować trwające zadanie).
+ *
+ * @returns liczba usuniętych wierszy
+ */
+export async function cleanupOldJobRuns(
+  retentionDays: number = JOB_RUN_RETENTION_DAYS
+): Promise<number> {
+  const threshold = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000)
+
+  const { count } = await prisma.scheduledJobRun.deleteMany({
+    where: {
+      startedAt: { lt: threshold },
+      status: { not: JobRunStatus.RUNNING },
+    },
+  })
+
+  return count
+}

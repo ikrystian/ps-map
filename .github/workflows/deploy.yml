@@ -41,7 +41,7 @@ jobs:
               "repository": os.environ.get("GITHUB_REPOSITORY", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", ""),
               "pusher": "cmq52nknm0005fyk3n94mm0z6",
-              "projectId: "cmq51g1jf000s5rmi7brxqsca"
+              "projectId": "cmq51g1jf000s5rmi7brxqsca",
               "commits": commit_urls
           }
 
@@ -83,7 +83,7 @@ jobs:
               curl -fsSL https://bun.sh/install | bash
             fi
 
-            # === BACKUP przed deployem ===
+            # === BACKUP przed deployem!! ===
             mkdir -p backups/db
             chmod +x scripts/db-backup.sh
             BACKUP_FILE=$(scripts/db-backup.sh pre-deploy)
