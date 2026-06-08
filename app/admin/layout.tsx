@@ -151,22 +151,6 @@ export default function AdminLayout({
                     title={isCollapsed ? item.name : undefined}
                   >
                     {/* Sliding/Fading Hover Background Pill */}
-                    <AnimatePresence>
-                      {hoveredIndex === index && !isActive && (
-                        <motion.span
-                          layoutId="admin-sidebar-hover-pill"
-                          className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                          initial={{ opacity: 0, scale: 0.96 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.96 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </AnimatePresence>
 
                     <div className="flex items-center justify-center flex-shrink-0">
                       <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
