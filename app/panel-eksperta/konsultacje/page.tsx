@@ -102,6 +102,20 @@ export default function ConsultationsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [bookings, setBookings] = useState<any[]>([])
   const [isChatLoading, setIsChatLoading] = useState<string | null>(null)
+  const [hasAvailability, setHasAvailability] = useState<boolean>(true)
+
+  const fetchAvailability = async () => {
+    if (!session?.user?.lawFirm?.id) return
+    try {
+      const response = await fetch(`/api/law-firms/${session.user.lawFirm.id}/consultation-availability`)
+      if (response.ok) {
+        const data = await response.json()
+        setHasAvailability(data.length > 0)
+      }
+    } catch (error) {
+      console.error("Error fetching availability:", error)
+    }
+  }
 
   const handleGoToChat = async (booking: any) => {
     setIsChatLoading(booking.id)
@@ -163,6 +177,7 @@ export default function ConsultationsPage() {
 
   useEffect(() => {
     fetchBookings()
+    fetchAvailability()
   }, [session])
 
   const handleStatusChange = async (bookingId: string, status: "ACCEPTED" | "REJECTED") => {
@@ -523,19 +538,21 @@ export default function ConsultationsPage() {
                     </p>
                   </div>
 
-                  <div className="bg-zinc-950/30 border border-border/10 rounded-2xl p-6 text-sm md:text-base space-y-4 shadow-sm text-left max-w-lg mx-auto">
-                    <p className="text-zinc-400 leading-relaxed font-light">
-                      Nie masz obecnie ustawionych <strong>godzin konsultacji</strong>. Zdefiniuj je w swoim profilu, aby klienci mogli bezpośrednio i wygodnie rezerwować dostępne terminy spotkań online:
-                    </p>
+                  {!hasAvailability && (
+                    <div className="bg-zinc-950/30 border border-border/10 rounded-2xl p-6 text-sm md:text-base space-y-4 shadow-sm text-left max-w-lg mx-auto">
+                      <p className="text-zinc-400 leading-relaxed font-light">
+                        Nie masz obecnie ustawionych <strong>godzin konsultacji</strong>. Zdefiniuj je w swoim profilu, aby klienci mogli bezpośrednio i wygodnie rezerwować dostępne terminy spotkań online:
+                      </p>
 
-                    <div className="pt-2 text-center">
-                      <Button asChild variant="primary" className="w-full sm:w-auto h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
-                        <Link href="/panel-eksperta/profil?tab=consultations">
-                          Skonfiguruj godziny konsultacji
-                        </Link>
-                      </Button>
+                      <div className="pt-2 text-center">
+                        <Button asChild variant="primary" className="w-full sm:w-auto h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
+                          <Link href="/panel-eksperta/profil?tab=consultations">
+                            Skonfiguruj godziny konsultacji
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <Tabs defaultValue="upcoming" className="w-full space-y-6">
