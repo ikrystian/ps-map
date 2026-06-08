@@ -80,7 +80,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
   ]
 
   return (
-    <section className="py-8 md:py-16 lg:py-20 xl:py-24 bg-darker">
+    <section className="py-8 md:py-16 lg:py-20 xl:py-24 bg-[#121212]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
