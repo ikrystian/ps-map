@@ -260,17 +260,17 @@ export async function POST(
         })
 
         if (lawFirmUser?.lawFirm) {
-          // Utwórz dokument dla każdego załącznika
-          for (const attachment of attachments) {
-            const filename = attachment.filename || "Nieznany plik"
-            const fileUrl = attachment.url || ""
-            const fileSize = attachment.size || 0
+          // Utwórz dokumenty dla wszystkich załączników zbiorczo
+          await prisma.document.createMany({
+            data: attachments.map((attachment: any) => {
+              const filename = attachment.filename || "Nieznany plik"
+              const fileUrl = attachment.url || ""
+              const fileSize = attachment.size || 0
 
-            // Wyciągnij rozszerzenie z URL lub nazwy pliku
-            const extension = filename.split(".").pop()?.toLowerCase() || "pdf"
+              // Wyciągnij rozszerzenie z URL lub nazwy pliku
+              const extension = filename.split(".").pop()?.toLowerCase() || "pdf"
 
-            await prisma.document.create({
-              data: {
+              return {
                 lawFirmId: lawFirmUser.lawFirm.id,
                 conversationId: conversationId,
                 nazwa: filename,
@@ -279,9 +279,9 @@ export async function POST(
                 sciezka: fileUrl,
                 rozszerzenie: extension,
                 zrodlo: "KLIENT",
-              },
-            })
-          }
+              }
+            }),
+          })
         }
       } catch (error) {
         console.error("Error creating documents from attachments:", error)

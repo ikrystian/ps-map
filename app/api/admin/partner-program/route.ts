@@ -63,13 +63,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Oblicz całkowitą liczbę przyznanych punktów
-    for (const program of partnerPrograms) {
-      const totalPoints = await prisma.partnerPointsHistory.aggregate({
-        where: { partnerProgramId: program.id },
-        _sum: { pointsAwarded: true }
-      })
-      stats.totalPointsAllocated += totalPoints._sum.pointsAwarded || 0
-    }
+    const totalPointsResult = await prisma.partnerPointsHistory.aggregate({
+      where: { partnerProgramId: { in: partnerPrograms.map((p: any) => p.id) } },
+      _sum: { pointsAwarded: true }
+    })
+    stats.totalPointsAllocated = totalPointsResult._sum.pointsAwarded || 0
 
     return Response.json({
       partnerPrograms: partnerPrograms.map((p: any) => ({
