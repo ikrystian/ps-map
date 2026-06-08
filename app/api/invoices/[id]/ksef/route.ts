@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { sendInvoiceToKsef } from "@/lib/ksef"
+import { checkInvoiceKsefStatus, sendInvoiceToKsef } from "@/lib/ksef"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(
@@ -40,8 +40,17 @@ export async function POST(
       return NextResponse.json({ error: "Brak uprawnień" }, { status: 403 })
     }
 
-    // Trigger KSeF transmission (forcing API call attempt or mock flow depending on configuration)
-    const success = await sendInvoiceToKsef(id, false)
+    // Faktura już wysłana (oczekuje UPO) — zamiast wysyłać ponownie (co dałoby
+    // duplikat w KSeF) sprawdzamy jej status i ewentualnie pobieramy UPO.
+    // W pozostałych przypadkach uruchamiamy wysyłkę (z wbudowaną ochroną przed
+    // podwójną wysyłką w sendInvoiceToKsef).
+    let success: boolean
+    if (invoice.ksefStatus === "SENT") {
+      const newStatus = await checkInvoiceKsefStatus(id)
+      success = newStatus !== "FAILED"
+    } else {
+      success = await sendInvoiceToKsef(id, false)
+    }
 
     // Fetch the updated invoice to return new status details
     const updatedInvoice = await prisma.invoice.findUnique({
