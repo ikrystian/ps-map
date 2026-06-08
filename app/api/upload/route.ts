@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { validateUploadedFile } from "@/lib/file-validation"
 import { existsSync } from "fs"
 import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
@@ -20,9 +21,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })
     }
 
-    // File type validation removed - accepting all file types
-    // You can add specific validation if needed for your use case
-
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024 // 5MB
     if (file.size > maxSize) {
@@ -34,6 +32,12 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer()
     const originalBuffer = Buffer.from(bytes)
+
+    // Walidacja typu pliku: whitelist rozszerzeń + weryfikacja sygnatury (magic bytes).
+    const validation = validateUploadedFile(originalBuffer, file.name)
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
+    }
 
     const { buffer, filename: optimizedFilename } = await optimizeImage(
       originalBuffer,

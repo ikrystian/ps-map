@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { validateUploadedFile } from "@/lib/file-validation"
 import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
 import path from "path"
@@ -59,6 +60,12 @@ export async function POST(request: NextRequest) {
     const filepath = path.join(uploadDir, filename)
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
+
+    // Weryfikacja sygnatury pliku (magic bytes) — odporna na podrobiony MIME.
+    const validation = validateUploadedFile(buffer, file.name, ["pdf"])
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
+    }
     await writeFile(filepath, buffer)
 
     // Return file URL

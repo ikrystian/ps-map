@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { validateUploadedFile } from "@/lib/file-validation"
 import { existsSync } from "fs"
 import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
@@ -40,6 +41,12 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer()
     const originalBuffer = Buffer.from(bytes)
+
+    // Weryfikacja sygnatury pliku (magic bytes) — odporna na podrobiony MIME.
+    const validation = validateUploadedFile(originalBuffer, file.name, ["jpg", "jpeg", "png", "webp", "gif"])
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
+    }
 
     const { buffer, filename: optimizedFilename } = await optimizeImage(
       originalBuffer,

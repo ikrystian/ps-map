@@ -36,18 +36,6 @@ tracesSampleRate: 1,
 `tracesSampleRate` do ~0.1 dla produkcji. DSN przenieść do zmiennej środowiskowej (historia
 gita pokazuje, że DSN był już rotowany po wycieku).
 
-#### 1.7. Upload akceptuje dowolne typy plików + publiczne serwowanie
-**Pliki:** `app/api/upload/route.ts`, `app/api/files/[filename]/route.ts`
-```ts
-// File type validation removed - accepting all file types
-```
-Brak walidacji typu/MIME i magic bytes (limit tylko 5 MB). Pliki są serwowane publicznie
-przez `/api/files/<nazwa>` bez autoryzacji i bez `Content-Disposition: attachment`. Ryzyko
-hostowania malware oraz stored XSS (np. plik HTML/SVG). Path traversal jest co prawda
-zablokowany — to dobrze.
-**Fix:** whitelist rozszerzeń + weryfikacja sygnatur pliku, wymuszanie pobierania
-(`Content-Disposition: attachment`), rozważyć autoryzację dostępu do plików powiązanych ze
-sprawami/wiadomościami.
 
 #### 1.8. Słabe szyfrowanie wiadomości
 **Plik:** `lib/encryption.ts`
@@ -63,10 +51,7 @@ Build ignoruje błędy TypeScript — realne błędy typów trafiają na produkc
 126 rzutowań `: any` w `app/api`.
 **Fix:** wyłączyć ignorowanie i naprawić błędy typów (przynajmniej w kodzie serwerowym/API).
 
-#### 1.10. Brak nagłówków bezpieczeństwa / CSP
-`next.config.ts` nie definiuje `headers()`. Brak HSTS, `X-Frame-Options`/`frame-ancestors`,
-`X-Content-Type-Options`, `Referrer-Policy`, `Content-Security-Policy`.
-**Fix:** dodać `async headers()` z zestawem nagłówków bezpieczeństwa.
+
 
 ---
 

@@ -1,3 +1,4 @@
+import { isInlineSafeMime } from '@/lib/file-validation';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { NextRequest, NextResponse } from 'next/server';
@@ -51,9 +52,19 @@ export async function GET(
       contentType = mimeTypes[ext];
     }
 
+    // Bezpieczeństwo serwowania:
+    // - nosniff: przeglądarka nie zgaduje typu (blokuje sztuczki MIME-sniffing/XSS),
+    // - inline tylko dla bezpiecznych obrazów; pozostałe wymuszają pobranie (attachment),
+    //   co zapobiega renderowaniu np. HTML/SVG w kontekście naszej domeny.
+    const disposition = isInlineSafeMime(contentType)
+      ? 'inline'
+      : `attachment; filename="${encodeURIComponent(filename)}"`;
+
     return new Response(file, {
       headers: {
         'Content-Type': contentType,
+        'Content-Disposition': disposition,
+        'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });

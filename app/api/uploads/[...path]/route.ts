@@ -1,3 +1,4 @@
+import { isInlineSafeMime } from "@/lib/file-validation"
 import { existsSync } from "fs"
 import { readFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
@@ -61,10 +62,19 @@ export async function GET(
       contentType = mimeTypes[ext]
     }
 
+    // Bezpieczeństwo serwowania: nosniff + inline tylko dla bezpiecznych obrazów,
+    // pozostałe typy wymuszają pobranie (ochrona przed stored XSS, np. HTML/SVG).
+    const fileName = path[path.length - 1] || "plik"
+    const disposition = isInlineSafeMime(contentType)
+      ? "inline"
+      : `attachment; filename="${encodeURIComponent(fileName)}"`
+
     // Return the file with appropriate headers
     return new NextResponse(fileBuffer as any, {
       headers: {
         "Content-Type": contentType,
+        "Content-Disposition": disposition,
+        "X-Content-Type-Options": "nosniff",
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     })
