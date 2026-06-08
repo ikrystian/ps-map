@@ -1,126 +1,131 @@
 import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./consultations"
+import { isJobDue, runJob, RunJobOptions } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
 
-// Zabezpieczenia (flagi locków) przed nałożeniem się wywołań w tle
-let isPromotionsJobRunning = false
-let isSubscriptionsJobRunning = false
-let isRemindersJobRunning = false
-let isEmailsJobRunning = false
-let isRankingsJobRunning = false
-let isMeetLinksJobRunning = false
+const MINUTE = 60 * 1000
+const HOUR = 60 * MINUTE
 
 /**
- * Inicjalizuje okresowe zadania w tle wykonywane po stronie serwera aplikacji
+ * Definicja pojedynczego zadania cyklicznego harmonogramu.
  */
-export function initScheduler() {
-  console.log("[SCHEDULER] Initializing background local cron job scheduler...")
+interface JobDefinition {
+  name: string
+  intervalMs: number
+  fn: () => Promise<unknown>
+  options?: RunJobOptions
+}
+
+/**
+ * Rejestruje zadanie:
+ *  - przy starcie nadrabia uruchomienie pominięte podczas wyłączenia serwera
+ *    (stan czasu ostatniego runu jest utrwalony w bazie),
+ *  - następnie uruchamia je cyklicznie z lockiem, monitoringiem i retry
+ *    (logika w `runJob`).
+ */
+async function registerJob({ name, intervalMs, fn, options }: JobDefinition) {
+  if (await isJobDue(name, intervalMs)) {
+    void runJob(name, fn, options)
+  }
+
+  setInterval(() => {
+    void runJob(name, fn, options)
+  }, intervalMs)
+}
+
+/**
+ * Inicjalizuje okresowe zadania w tle wykonywane po stronie serwera aplikacji.
+ *
+ * W odróżnieniu od poprzedniej wersji (czyste `setInterval` + flagi w pamięci):
+ *  - stan ostatniego uruchomienia jest utrwalony w bazie (przetrwa restart),
+ *  - każde uruchomienie jest logowane do bazy (monitoring niepowodzeń),
+ *  - zadania mają mechanizm ponawiania (retry),
+ *  - rozproszony lock zapobiega podwójnemu wykonaniu przy wielu instancjach.
+ */
+export async function initScheduler() {
+  console.log("[SCHEDULER] Initializing persistent background job scheduler...")
 
   const isDev = process.env.NODE_ENV === "development"
 
-  // 1. Sprawdzanie i odnawianie/deaktywowanie promocji
-  // - W dev: co 1 minutę w celu szybkiego przetestowania wygaśnięcia
-  // - W prod: co 1 godzinę
-  const promoInterval = isDev ? 60 * 1000 : 60 * 60 * 1000
-  setInterval(async () => {
-    if (isPromotionsJobRunning) return
-    isPromotionsJobRunning = true
-    try {
-      console.log("[SCHEDULER] Running promotions check...")
-      const deactivated = await deactivateExpiredPromotions()
-      const renewedResults = await renewExpiredPromotions()
-      
-      if (deactivated.length > 0 || renewedResults.renewed.length > 0 || renewedResults.failed.length > 0) {
-        console.log(`[SCHEDULER] Promotions check complete. Deactivated: ${deactivated.length}, Renewed: ${renewedResults.renewed.length}, Failed: ${renewedResults.failed.length}`)
-      }
-    } catch (error) {
-      console.error("[SCHEDULER] Error in promotions background job:", error)
-    } finally {
-      isPromotionsJobRunning = false
-    }
-  }, promoInterval)
+  const jobs: JobDefinition[] = [
+    // 1. Sprawdzanie i odnawianie/deaktywowanie promocji
+    //    - W dev: co 1 minutę (szybkie testy wygaśnięcia), w prod: co 1 godzinę
+    {
+      name: "promotions",
+      intervalMs: isDev ? MINUTE : HOUR,
+      options: { retries: 2, retryDelayMs: 30 * 1000 },
+      fn: async () => {
+        const deactivated = await deactivateExpiredPromotions()
+        const renewed = await renewExpiredPromotions()
+        return {
+          deactivated: deactivated.length,
+          renewed: renewed.renewed.length,
+          failed: renewed.failed.length,
+        }
+      },
+    },
 
-  // 2. Wysyłanie zaplanowanych e-maili z kolejki (co 1 minutę)
-  setInterval(async () => {
-    if (isEmailsJobRunning) return
-    isEmailsJobRunning = true
-    try {
-      const results = await processScheduledEmails()
-      if (results.sent > 0 || results.failed > 0) {
-        console.log(`[SCHEDULER] Processed scheduled emails. Sent: ${results.sent}, Failed: ${results.failed}`)
-      }
-    } catch (error) {
-      console.error("[SCHEDULER] Error in emails background job:", error)
-    } finally {
-      isEmailsJobRunning = false
-    }
-  }, 60 * 1000)
+    // 2. Wysyłanie zaplanowanych e-maili z kolejki (co 1 minutę)
+    {
+      name: "scheduled-emails",
+      intervalMs: MINUTE,
+      options: { retries: 1, retryDelayMs: 15 * 1000 },
+      fn: async () => {
+        const results = await processScheduledEmails()
+        return { sent: results.sent, failed: results.failed }
+      },
+    },
 
-  // 3. Wysyłanie przypomnień o nadchodzących konsultacjach (co 15 minut)
-  setInterval(async () => {
-    if (isRemindersJobRunning) return
-    isRemindersJobRunning = true
-    try {
-      const count = await sendConsultationReminders()
-      if (count > 0) {
-        console.log(`[SCHEDULER] Sent ${count} consultation reminders`)
-      }
-    } catch (error) {
-      console.error("[SCHEDULER] Error in reminders background job:", error)
-    } finally {
-      isRemindersJobRunning = false
-    }
-  }, 15 * 60 * 1000)
+    // 3. Wysyłanie przypomnień o nadchodzących konsultacjach (co 15 minut)
+    {
+      name: "consultation-reminders",
+      intervalMs: 15 * MINUTE,
+      options: { retries: 2, retryDelayMs: 30 * 1000 },
+      fn: async () => {
+        const count = await sendConsultationReminders()
+        return { remindersSent: count }
+      },
+    },
 
-  // 4. Sprawdzanie wygasłych subskrypcji pakietów eksperta (co 1 godzinę)
-  setInterval(async () => {
-    if (isSubscriptionsJobRunning) return
-    isSubscriptionsJobRunning = true
-    try {
-      console.log("[SCHEDULER] Checking expired subscriptions...")
-      const count = await checkExpiredSubscriptions()
-      if (count > 0) {
-        console.log(`[SCHEDULER] Subscription check complete. Expired subscription packages cleared: ${count}`)
-      }
-    } catch (error) {
-      console.error("[SCHEDULER] Error in subscriptions background job:", error)
-    } finally {
-      isSubscriptionsJobRunning = false
-    }
-  }, 60 * 60 * 1000)
+    // 4. Sprawdzanie wygasłych subskrypcji pakietów eksperta (co 1 godzinę)
+    {
+      name: "expired-subscriptions",
+      intervalMs: HOUR,
+      options: { retries: 2, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const count = await checkExpiredSubscriptions()
+        return { expiredCleared: count }
+      },
+    },
 
-  // 5. Przeliczanie popozycji w rankingu (co 12 godzin)
-  setInterval(async () => {
-    if (isRankingsJobRunning) return
-    isRankingsJobRunning = true
-    try {
-      console.log("[SCHEDULER] Calculating ranking scores...")
-      const count = await calculateRankings()
-      console.log(`[SCHEDULER] Rankings update complete for ${count} law firms`)
-    } catch (error) {
-      console.error("[SCHEDULER] Error in rankings background job:", error)
-    } finally {
-      isRankingsJobRunning = false
-    }
-  }, 12 * 60 * 60 * 1000)
+    // 5. Przeliczanie pozycji w rankingu (co 12 godzin)
+    {
+      name: "rankings",
+      intervalMs: 12 * HOUR,
+      options: { retries: 1, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const count = await calculateRankings()
+        return { lawFirmsUpdated: count }
+      },
+    },
 
-  // 6. Generowanie linków Google Meet na 5 minut przed konsultacją (co 1 minutę)
-  setInterval(async () => {
-    if (isMeetLinksJobRunning) return
-    isMeetLinksJobRunning = true
-    try {
-      const count = await generateUpcomingGoogleMeetLinks()
-      if (count > 0) {
-        console.log(`[SCHEDULER] Generated ${count} upcoming Google Meet links`)
-      }
-    } catch (error) {
-      console.error("[SCHEDULER] Error in Google Meet links generation job:", error)
-    } finally {
-      isMeetLinksJobRunning = false
-    }
-  }, 60 * 1000)
+    // 6. Generowanie linków Google Meet na ~5 min przed konsultacją (co 1 minutę)
+    {
+      name: "google-meet-links",
+      intervalMs: MINUTE,
+      options: { retries: 1, retryDelayMs: 10 * 1000 },
+      fn: async () => {
+        const count = await generateUpcomingGoogleMeetLinks()
+        return { meetLinksGenerated: count }
+      },
+    },
+  ]
 
-  console.log("[SCHEDULER] Background scheduler initialized and running.")
+  for (const job of jobs) {
+    await registerJob(job)
+  }
+
+  console.log(`[SCHEDULER] Background scheduler initialized with ${jobs.length} jobs.`)
 }

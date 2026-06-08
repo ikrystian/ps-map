@@ -9,9 +9,10 @@ const port = parseInt(process.env.PORT || "3000", 10)
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
-app.prepare().then(() => {
-  // Inicjalizacja lokalnego harmonogramu zadań w tle (schedulera)
-  initScheduler()
+app.prepare().then(async () => {
+  // Inicjalizacja lokalnego harmonogramu zadań w tle (schedulera).
+  // Wykonywana jest asynchronicznie — sprawdza w bazie zadania zaległe po restarcie.
+  await initScheduler()
 
   const server = createServer(async (req, res) => {
     try {
