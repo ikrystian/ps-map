@@ -154,9 +154,16 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-sec selection:bg-primary/30" id="cases-page">
+    <div
+      className="min-h-screen bg-[#0f0f0e]bg-bg-[#0f0f0e] selection:bg-primary/30 relative"
+    >
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32">
+      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32" style={{
+        backgroundImage: "linear-gradient(to bottom, rgba(20, 20, 18, 0.85), rgba(20, 20, 18, 0.95)), url('/4085ef6e-74b2-4e6e-aa70-a2135f53b9cb.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}>
         <ParticlesBackground />
 
         {/* Decorative elements */}
@@ -174,7 +181,7 @@ export default function CategoriesPage() {
             Katalog spraw i ekspertów
           </div>
 
-          <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
+          <h1 className="mb-6 text-4xl  font-playfair tracking-tight md:text-6xl lg:text-7xl">
             Znajdź <span className="text-primary">właściwą</span> pomoc
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
@@ -287,7 +294,7 @@ export default function CategoriesPage() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   )
 }
 
