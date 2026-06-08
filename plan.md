@@ -46,7 +46,7 @@ Po dogłębnej analizie projektu zidentyfikowałem kluczowe obszary wymagające 
 - ⚠️ **Brak connection pooling** dla SQLite
 
 ### 7. **Frontend Performance**
-- ⚠️ Brak lazy loading dla ciężkich komponentów (Editor.js, Tiptap)
+- ✅ Lazy loading ciężkich komponentów wdrożone (Editor.js przez `next/dynamic` + dynamiczne importy pluginów; docx-preview dynamicznie). Nieużywane pakiety Tiptap usunięte.
 - ⚠️ Brak image optimization strategy (format WebP, responsive images)
 - ⚠️ Duża liczba zależności (126 dependencies) - potencjalnie duży bundle size
 
