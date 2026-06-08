@@ -40,8 +40,8 @@ jobs:
           payload = {
               "repository": os.environ.get("GITHUB_REPOSITORY", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", ""),
-              "pusher": "cmq52nknm0005fyk3n94mm0z6",
-              "projectId": "cmq51g1jf000s5rmi7brxqsca",
+              "pusher": "ikrystian",
+              "projectId": "cmq52o0bn0007fyk35ejagn5l",
               "commits": commit_urls
           }
 
