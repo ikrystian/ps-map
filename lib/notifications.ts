@@ -1,6 +1,6 @@
-import { sendEmail } from "@/lib/email"
+import { sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
-import { NotificationType } from "@prisma/client"
+import { EmailType, NotificationType } from "@prisma/client"
 
 export interface SendNotificationOptions {
   userId: string
@@ -14,6 +14,10 @@ export interface SendNotificationOptions {
   emailHtml?: string
   emailText?: string
 
+  // Szablon z bazy danych (admin/emails) - nadrzędny nad emailHtml
+  emailTemplateType?: EmailType
+  emailVariables?: Record<string, string>
+
   // Wymuś wysłanie pomimo ustawień (np. powiadomienia kluczowe/systemowe)
   force?: boolean
 }
@@ -24,7 +28,7 @@ export interface SendNotificationOptions {
  * i decyduje, czy wysłać in-app, e-mail, czy zignorować.
  */
 export async function sendSystemNotification(options: SendNotificationOptions) {
-  const { userId, typ, tytul, tresc, linkUrl, emailSubject, emailHtml, emailText, force } = options
+  const { userId, typ, tytul, tresc, linkUrl, emailSubject, emailHtml, emailText, emailTemplateType, emailVariables, force } = options
 
   // Pobierz użytkownika i jego ustawienia powiadomień
   const user = await prisma.user.findUnique({
@@ -107,13 +111,26 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
   let emailSent = false
   if (shouldSendEmail && user.email) {
     try {
-      await sendEmail({
-        to: user.email,
-        subject: emailSubject || tytul,
-        html: emailHtml || `<p>${tresc}</p>`,
-        text: emailText || tresc,
-      })
-      emailSent = true
+      if (emailTemplateType) {
+        emailSent = await sendEmailWithTemplate({
+          to: user.email,
+          templateType: emailTemplateType,
+          variables: emailVariables || {},
+          fallbackProvider: emailHtml ? () => ({
+            subject: emailSubject || tytul,
+            html: emailHtml,
+            text: emailText || tresc,
+          }) : undefined,
+        })
+      } else {
+        await sendEmail({
+          to: user.email,
+          subject: emailSubject || tytul,
+          html: emailHtml || `<p>${tresc}</p>`,
+          text: emailText || tresc,
+        })
+        emailSent = true
+      }
     } catch (error) {
       console.error(`Failed to send email notification to ${user.email}:`, error)
     }

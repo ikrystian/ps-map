@@ -548,7 +548,6 @@ function LawFirmProfilePageContent() {
       <PageHeader
         title="Profil Eksperta"
         subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
-        titleClassName="text-white text-3xl sm:text-4xl"
       />
 
 

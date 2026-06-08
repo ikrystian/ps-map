@@ -51,19 +51,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           tytul: "Konsultacja zaakceptowana",
           tresc: `${booking.lawFirm.nazwa} zaakceptowała Twoją prośbę o konsultację na dzień ${dateStr}. Link do spotkania pojawi się na 5 minut przed planowaną godziną.`,
           linkUrl: "/panel-klienta/konsultacje",
-          emailHtml: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #0da192;">Konsultacja zaakceptowana!</h2>
-              <p>Dzień dobry,</p>
-              <p>Twoja prośba o konsultację z <strong>${booking.lawFirm.nazwa}</strong> została zaakceptowana.</p>
-              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
-              <p><strong>Link do spotkania (Google Meet):</strong><br/>
-              Wirtualny pokój Google Meet zostanie wygenerowany i udostępniony na 5 minut przed planowanym rozpoczęciem spotkania.</p>
-              <p>Szczegóły konsultacji są dostępne w Twoim panelu klienta.</p>
-              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
-            </div>
-          `,
+          emailTemplateType: "KONSULTACJA_ZAAKCEPTOWANA",
+          emailVariables: {
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{termin}': dateStr,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+          },
           force: true,
         })
 
@@ -74,19 +68,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           tytul: "Zaakceptowano konsultację",
           tresc: `Zaakceptowałeś konsultację z klientem ${booking.client.user.name} na dzień ${dateStr}. Link do spotkania pojawi się na 5 minut przed planowaną godziną.`,
           linkUrl: "/panel-eksperta/konsultacje",
-          emailHtml: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #0da192;">Potwierdzenie zaakceptowania konsultacji</h2>
-              <p>Dzień dobry,</p>
-              <p>Potwierdzamy zaakceptowanie konsultacji z klientem <strong>${booking.client.user.name}</strong>.</p>
-              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
-              <p><strong>Link do spotkania (Google Meet):</strong><br/>
-              Wirtualny pokój Google Meet zostanie wygenerowany i udostępniony na 5 minut przed planowanym rozpoczęciem spotkania.</p>
-              <p>Szczegóły i listę wszystkich konsultacji znajdziesz w panelu eksperta.</p>
-              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
-            </div>
-          `,
+          emailTemplateType: "KONSULTACJA_ZAAKCEPTOWANA_EKSPERT",
+          emailVariables: {
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{termin}': dateStr,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
+          },
           force: true,
         })
       } else if (status === "REJECTED") {
@@ -97,6 +85,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           tytul: "Konsultacja odrzucona",
           tresc: `${booking.lawFirm.nazwa} odrzuciła Twoją prośbę o konsultację`,
           linkUrl: "/panel-klienta/konsultacje",
+          emailTemplateType: "KONSULTACJA_ODRZUCONA",
+          emailVariables: {
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+          },
         })
       }
     }
@@ -112,6 +106,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           tytul: "Płatność potwierdzona",
           tresc: `${booking.lawFirm.nazwa} potwierdziła płatność za konsultację`,
           linkUrl: "/panel-klienta/konsultacje",
+          emailTemplateType: "KONSULTACJA_ZAPLACONA",
+          emailVariables: {
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+          },
         })
       }
     }
@@ -174,6 +174,12 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
         tytul: "Konsultacja anulowana",
         tresc: `${booking.client.user.name} anulował konsultację`,
         linkUrl: "/panel-eksperta/konsultacje",
+        emailTemplateType: "KONSULTACJA_ANULOWANA",
+        emailVariables: {
+          '{odbiorca}': booking.lawFirm.nazwa,
+          '{inicjator}': booking.client.user.name || booking.client.user.email,
+          '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
+        },
       })
     } else if (isLawFirm) {
       // Law firm deleted - notify client
@@ -183,6 +189,12 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
         tytul: "Konsultacja anulowana",
         tresc: `${booking.lawFirm.nazwa} anulowała konsultację`,
         linkUrl: "/panel-klienta/konsultacje",
+        emailTemplateType: "KONSULTACJA_ANULOWANA",
+        emailVariables: {
+          '{odbiorca}': booking.client.user.name || booking.client.user.email,
+          '{inicjator}': booking.lawFirm.nazwa,
+          '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+        },
       })
     }
 

@@ -1877,6 +1877,14 @@ enum EmailType {
   POTWIERDZENIE_DODANIA_SPRAWY // Potwierdzenie dodania sprawy dla klienta
   SUBSKRYPCJA_KONIEC       // Email o wygaśnięciu subskrypcji
   PROSBA_O_OCENE           // E-mail z prośbą o ocenę prawnika
+  NOWA_KONSULTACJA             // Email do eksperta o nowej prośbie o konsultację
+  KONSULTACJA_ZAAKCEPTOWANA    // Email do klienta o akceptacji konsultacji
+  KONSULTACJA_ZAAKCEPTOWANA_EKSPERT // Email do eksperta - potwierdzenie akceptacji
+  KONSULTACJA_ODRZUCONA        // Email do klienta o odrzuceniu konsultacji
+  KONSULTACJA_ZAPLACONA        // Email do klienta o potwierdzeniu płatności za konsultację
+  KONSULTACJA_ANULOWANA        // Email o anulowaniu konsultacji
+  PRZYPOMNIENIE_KONSULTACJI    // Email z przypomnieniem o nadchodzącej konsultacji
+  LINK_KONSULTACJI             // Email z linkiem Google Meet do konsultacji
 }
 
 // ============================================================================

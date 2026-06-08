@@ -1,4 +1,4 @@
-import { sendEmail } from "@/lib/email"
+import { sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { format } from "date-fns"
 import { pl } from "date-fns/locale"
@@ -58,19 +58,15 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           tytul: "Twój link do konsultacji jest gotowy",
           tresc: `Twój wirtualny pokój z ${booking.lawFirm.nazwa} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
           linkUrl: "/panel-klienta/consultacje",
-          emailHtml: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #0da192;">Twój link do konsultacji jest gotowy!</h2>
-              <p>Dzień dobry,</p>
-              <p>Za chwilę rozpoczyna się Twoja konsultacja z <strong>${booking.lawFirm.nazwa}</strong>.</p>
-              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
-              <p><strong>Link do spotkania (Google Meet):</strong><br/>
-              <a href="${meetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0da192; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold;">Dołącz do Google Meet</a></p>
-              <p style="font-size: 12px; color: #666;">Spotkanie wideo jest ważne przez 1 godzinę.</p>
-              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
-            </div>
-          `,
+          emailTemplateType: "LINK_KONSULTACJI",
+          emailVariables: {
+            '{odbiorca}': booking.client.user.name || booking.client.user.email,
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{termin}': dateStr,
+            '{linkDoSpotkania}': meetLink,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+          },
           force: true,
         })
 
@@ -81,19 +77,15 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           tytul: "Twój link do konsultacji jest gotowy",
           tresc: `Twój wirtualny pokój z klientem ${booking.client.user.name} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
           linkUrl: "/panel-eksperta/consultacje",
-          emailHtml: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #0da192;">Twój link do konsultacji jest gotowy!</h2>
-              <p>Dzień dobry,</p>
-              <p>Za chwilę rozpoczyna się Twoja konsultacja z klientem <strong>${booking.client.user.name}</strong>.</p>
-              <p><strong>Termin spotkania:</strong> ${dateStr}</p>
-              <p><strong>Link do spotkania (Google Meet):</strong><br/>
-              <a href="${meetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0da192; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold;">Dołącz do Google Meet</a></p>
-              <p style="font-size: 12px; color: #666;">Spotkanie wideo jest ważne przez 1 godzinę.</p>
-              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999;">Wiadomość wygenerowana automatycznie przez portal Prosta Sprawa.</p>
-            </div>
-          `,
+          emailTemplateType: "LINK_KONSULTACJI",
+          emailVariables: {
+            '{odbiorca}': booking.lawFirm.nazwa,
+            '{ekspert}': booking.lawFirm.nazwa,
+            '{klient}': booking.client.user.name || booking.client.user.email,
+            '{termin}': dateStr,
+            '{linkDoSpotkania}': meetLink,
+            '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
+          },
           force: true,
         })
 
@@ -137,10 +129,22 @@ export async function sendConsultationReminders(): Promise<number> {
 
     // Send reminder to client
     try {
-      await sendEmail({
+      await sendEmailWithTemplate({
         to: booking.client.user.email,
-        subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwa}`,
-        html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z ekspertem ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+        templateType: "PRZYPOMNIENIE_KONSULTACJI",
+        variables: {
+          '{odbiorca}': booking.client.user.name || booking.client.user.email,
+          '{ekspert}': booking.lawFirm.nazwa,
+          '{klient}': booking.client.user.name || booking.client.user.email,
+          '{termin}': formattedDate,
+          '{linkDoSpotkania}': booking.googleMeetUrl || '',
+          '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
+        },
+        fallbackProvider: () => ({
+          subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwa}`,
+          html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z ekspertem ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+          text: `Witaj ${booking.client.user.name}, przypominamy o konsultacji z ${booking.lawFirm.nazwa} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
+        }),
       })
     } catch (error) {
       console.error(`Failed to send consultation reminder to client ${booking.client.user.email}:`, error)
@@ -148,10 +152,22 @@ export async function sendConsultationReminders(): Promise<number> {
 
     // Send reminder to law firm
     try {
-      await sendEmail({
+      await sendEmailWithTemplate({
         to: booking.lawFirm.user.email,
-        subject: `Przypomnienie o konsultacji z ${booking.client.user.name}`,
-        html: `<p>Witaj ${booking.lawFirm.nazwa},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+        templateType: "PRZYPOMNIENIE_KONSULTACJI",
+        variables: {
+          '{odbiorca}': booking.lawFirm.nazwa,
+          '{ekspert}': booking.lawFirm.nazwa,
+          '{klient}': booking.client.user.name || booking.client.user.email,
+          '{termin}': formattedDate,
+          '{linkDoSpotkania}': booking.googleMeetUrl || '',
+          '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
+        },
+        fallbackProvider: () => ({
+          subject: `Przypomnienie o konsultacji z ${booking.client.user.name}`,
+          html: `<p>Witaj ${booking.lawFirm.nazwa},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+          text: `Witaj ${booking.lawFirm.nazwa}, przypominamy o konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
+        }),
       })
     } catch (error) {
       console.error(`Failed to send consultation reminder to law firm ${booking.lawFirm.user.email}:`, error)

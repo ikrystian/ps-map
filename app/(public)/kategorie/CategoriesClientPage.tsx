@@ -154,7 +154,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-sec selection:bg-primary/30">
+    <div className="min-h-screen bg-background-sec selection:bg-primary/30" id="cases-page">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32">
         <ParticlesBackground />

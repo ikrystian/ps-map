@@ -50,6 +50,15 @@ export async function POST(req: NextRequest) {
       tytul: "Nowa prośba o konsultację",
       tresc: `${newBooking.client.user.name} wysłał prośbę o konsultację (${duration} min)`,
       linkUrl: "/panel-eksperta/konsultacje",
+      emailTemplateType: "NOWA_KONSULTACJA",
+      emailVariables: {
+        '{ekspert}': newBooking.lawFirm.nazwa,
+        '{klient}': newBooking.client.user.name || newBooking.client.user.email,
+        '{czas}': `${duration} min`,
+        '{temat}': topic || 'Konsultacja prawna',
+        '{termin}': new Date(consultationDate).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' }),
+        '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
+      },
     })
 
     return NextResponse.json(newBooking, { status: 201 })

@@ -71,6 +71,14 @@ const emailTypes = [
   { value: "POTWIERDZENIE_DODANIA_SPRAWY", label: "Potwierdzenie dodania sprawy (klient)" },
   { value: "SUBSKRYPCJA_KONIEC", label: "Koniec subskrypcji" },
   { value: "PROSBA_O_OCENE", label: "Prośba o ocenę po 3 dniach" },
+  { value: "NOWA_KONSULTACJA", label: "Konsultacja - nowa prośba (ekspert)" },
+  { value: "KONSULTACJA_ZAAKCEPTOWANA", label: "Konsultacja - zaakceptowana (klient)" },
+  { value: "KONSULTACJA_ZAAKCEPTOWANA_EKSPERT", label: "Konsultacja - potwierdzenie akceptacji (ekspert)" },
+  { value: "KONSULTACJA_ODRZUCONA", label: "Konsultacja - odrzucona (klient)" },
+  { value: "KONSULTACJA_ZAPLACONA", label: "Konsultacja - płatność potwierdzona (klient)" },
+  { value: "KONSULTACJA_ANULOWANA", label: "Konsultacja - anulowana" },
+  { value: "PRZYPOMNIENIE_KONSULTACJI", label: "Konsultacja - przypomnienie (1h przed)" },
+  { value: "LINK_KONSULTACJI", label: "Konsultacja - link Google Meet (5 min przed)" },
   { value: "CUSTOM", label: "Własny szablon" },
 ]
 
@@ -91,6 +99,14 @@ const availableVariables: Record<string, string[]> = {
   POTWIERDZENIE_DODANIA_SPRAWY: ["{klient}", "{nazwaSprawy}", "{kategoria}", "{budzet}", "{linkDoSprawy}"],
   SUBSKRYPCJA_KONIEC: ["{ekspert}", "{nazwaSubskrypcji}", "{dataWygasniecia}", "{linkDoPakietow}"],
   PROSBA_O_OCENE: ["{klient}", "{ekspert}", "{linkDoOceny}"],
+  NOWA_KONSULTACJA: ["{ekspert}", "{klient}", "{temat}", "{czas}", "{termin}", "{linkDoPanelu}"],
+  KONSULTACJA_ZAAKCEPTOWANA: ["{klient}", "{ekspert}", "{termin}", "{linkDoPanelu}"],
+  KONSULTACJA_ZAAKCEPTOWANA_EKSPERT: ["{ekspert}", "{klient}", "{termin}", "{linkDoPanelu}"],
+  KONSULTACJA_ODRZUCONA: ["{klient}", "{ekspert}", "{linkDoPanelu}"],
+  KONSULTACJA_ZAPLACONA: ["{klient}", "{ekspert}", "{linkDoPanelu}"],
+  KONSULTACJA_ANULOWANA: ["{odbiorca}", "{inicjator}", "{linkDoPanelu}"],
+  PRZYPOMNIENIE_KONSULTACJI: ["{odbiorca}", "{ekspert}", "{klient}", "{termin}", "{linkDoSpotkania}", "{linkDoPanelu}"],
+  LINK_KONSULTACJI: ["{odbiorca}", "{ekspert}", "{klient}", "{termin}", "{linkDoSpotkania}", "{linkDoPanelu}"],
   CUSTOM: [],
 }
 
