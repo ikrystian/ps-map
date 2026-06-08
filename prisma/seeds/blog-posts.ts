@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import { createRandomBlogPost } from './generators';
+import { generateSlug } from '../../lib/utils';
 
 const POSTS_TO_CREATE = 30
 
@@ -38,12 +39,13 @@ export async function seedBlogPosts(prisma: PrismaClient) {
   })
   if (categories.length === 0) {
     // Create some default categories if none exist
+
     const categoryNames = ['Prawo cywilne', 'Prawo karne', 'Prawo rodzinne', 'Prawo pracy', 'Prawo handlowe']
     for (const name of categoryNames) {
       const newCategory = await prisma.blogCategory.create({
         data: {
           nazwa: name,
-          slug: faker.helpers.slugify(name).toLowerCase(),
+          slug: generateSlug(name),
         },
         select: {
           id: true,

@@ -61,6 +61,16 @@ export default function BlogPostPage() {
     });
   };
 
+  const formatViews = (views: number): string => {
+    if (views === 1) return "1 wyświetlenie";
+    const lastDigit = views % 10;
+    const lastTwoDigits = views % 100;
+    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
+      return `${views} wyświetlenia`;
+    }
+    return `${views} wyświetleń`;
+  };
+
   // Set up Scroll-driven animations
   const { scrollY, scrollYProgress } = useScroll();
 
@@ -215,7 +225,7 @@ export default function BlogPostPage() {
                 {/* Views */}
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4 text-primary/80" />
-                  <span>{post.wyswietlenia} wyświetleń</span>
+                  <span>{formatViews(post.wyswietlenia)}</span>
                 </div>
 
                 {estimatedReadingTime > 0 && (
@@ -314,7 +324,7 @@ export default function BlogPostPage() {
                 {/* Views */}
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4 text-primary/80" />
-                  <span>{post.wyswietlenia} wyświetleń</span>
+                  <span>{formatViews(post.wyswietlenia)}</span>
                 </div>
 
                 {estimatedReadingTime > 0 && (

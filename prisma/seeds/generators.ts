@@ -187,6 +187,8 @@ export function createRandomOffer(prisma: PrismaClient) {
     }
 }
 
+import { generateSlug } from '../../lib/utils';
+
 export function createRandomBlogPost() {
     const titles = [
         "Jak przygotować się do rozwodu?",
@@ -200,10 +202,10 @@ export function createRandomBlogPost() {
         "Ochrona znaków towarowych dla przedsiębiorców",
         "Czym jest upadłość konsumencka?"
     ];
-    const title = faker.helpers.arrayElement(titles) + " " + faker.lorem.words(2);
+    const title = faker.helpers.arrayElement(titles);
     return {
         tytul: title,
-        slug: faker.helpers.slugify(title).toLowerCase(),
+        slug: generateSlug(title),
         tresc: faker.lorem.paragraphs(5),
         tagi: faker.lorem.words(5).split(' '),
         obrazekWyrozniajacy: faker.image.url(),

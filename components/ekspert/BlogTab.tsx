@@ -14,6 +14,16 @@ interface BlogTabProps {
   formatDate: (dateString: string) => string
 }
 
+const formatViews = (views: number): string => {
+  if (views === 1) return "1 wyświetlenie";
+  const lastDigit = views % 10;
+  const lastTwoDigits = views % 100;
+  if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
+    return `${views} wyświetlenia`;
+  }
+  return `${views} wyświetleń`;
+};
+
 export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
@@ -45,11 +55,11 @@ export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
                   <CardDescription className="flex items-center gap-2">
                     <Calendar className="h-3 w-3" />
                     {post.dataPublikacji && formatDate(post.dataPublikacji)}
-                    {post.wyswietlenia > 0 && (
+                    {post.wyswietlenia !== undefined && post.wyswietlenia !== null && (
                       <>
                         <span className="mx-1">•</span>
                         <Eye className="h-3 w-3" />
-                        {post.wyswietlenia} wyświetleń
+                        {formatViews(post.wyswietlenia)}
                       </>
                     )}
                   </CardDescription>

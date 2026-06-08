@@ -142,6 +142,7 @@ export default function BlogPage() {
 
   const handleResetFilters = () => {
     setSearchQuery("");
+    setDebouncedSearch("");
     setSelectedCategory(null);
     setPagination((prev) => ({ ...prev, page: 1 }));
     router.push("/blog", { scroll: false });
@@ -153,6 +154,16 @@ export default function BlogPage() {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const formatViews = (views: number): string => {
+    if (views === 1) return "1 wyświetlenie";
+    const lastDigit = views % 10;
+    const lastTwoDigits = views % 100;
+    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
+      return `${views} wyświetlenia`;
+    }
+    return `${views} wyświetleń`;
   };
 
   const getExcerpt = (content: string, maxLength: number = 140) => {
@@ -252,7 +263,11 @@ export default function BlogPage() {
               />
               {searchQuery && (
                 <button
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => {
+                    setSearchQuery("");
+                    setDebouncedSearch("");
+                    setPagination((prev) => ({ ...prev, page: 1 }));
+                  }}
                   className="p-1 hover:bg-muted rounded-full transition-colors flex items-center justify-center cursor-pointer"
                 >
                   <X className="w-4 h-4 text-muted-foreground" />
@@ -443,6 +458,10 @@ export default function BlogPage() {
                           <Clock className="w-3.5 h-3.5" />
                           {getReadingTime(featuredPost.tresc)} min czytania
                         </span>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Eye className="w-3.5 h-3.5" />
+                          {formatViews(featuredPost.wyswietlenia)}
+                        </span>
                       </div>
 
                       {/* Title */}
@@ -569,27 +588,27 @@ export default function BlogPage() {
                           </div>
 
                           {/* Card Footer author detail */}
-                          <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2.5">
+                          <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-2 min-w-0">
+                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
                               {post.lawFirm && post.lawFirm.logo ? (
                                 <img
                                   src={post.lawFirm.logo}
                                   alt={post.lawFirm.nazwa}
-                                  className="w-7 h-7 rounded-full object-cover border border-border/60 bg-neutral-900"
+                                  className="w-7 h-7 rounded-full object-cover border border-border/60 bg-neutral-900 flex-shrink-0"
                                 />
                               ) : (
-                                <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center border border-border/60">
+                                <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center border border-border/60 flex-shrink-0">
                                   <User className="w-3.5 h-3.5 text-muted-foreground" />
                                 </div>
                               )}
-                              <span className="text-xs font-semibold text-foreground leading-tight truncate max-w-[120px]">
+                              <span className="text-xs font-semibold text-foreground leading-tight truncate hover:text-primary transition-colors">
                                 {post.lawFirm ? post.lawFirm.nazwa : "Administracja"}
                               </span>
                             </div>
-
+ 
                             {/* Views / Date */}
-                            <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                              <span className="flex items-center gap-0.5">
+                            <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-shrink-0">
+                              <span className="flex items-center gap-0.5" title={formatViews(post.wyswietlenia)}>
                                 <Eye className="w-3 h-3" />
                                 {post.wyswietlenia}
                               </span>

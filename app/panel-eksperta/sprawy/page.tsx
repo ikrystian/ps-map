@@ -709,7 +709,7 @@ const SprawyPage = () => {
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                           </span>
                           <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span title="osób przegląda tę sprawę">{(Math.random() * 10 + 1).toFixed(0)}</span>
+                          <span title="Liczba ekspertów przeglądających sprawę">{(Math.random() * 15 + 1).toFixed(0)}</span>
                         </div>
 
                         {/* Favorite button */}

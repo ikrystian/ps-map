@@ -178,7 +178,7 @@ export default function LawFirmProfilePage() {
   // Initialize active tab from URL and handle auto-opening of reviews tab
   useEffect(() => {
     const tabParam = searchParams.get("tab")
-    if (tabParam && ["about", "services", "reviews", "blog"].includes(tabParam)) {
+    if (tabParam && ["about", "services", "reviews", "blog", "consultations"].includes(tabParam)) {
       setActiveTab(tabParam)
     }
 
