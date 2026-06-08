@@ -568,7 +568,7 @@ export default function LawFirmOffersPage() {
 
                           {/* Preview Description snippet */}
                           {offer.opisOferty && (
-                            <p className="text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
+                            <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
                               {offer.opisOferty}
                             </p>
                           )}
@@ -579,8 +579,8 @@ export default function LawFirmOffersPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-emerald-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Kwota brutto</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Kwota brutto</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {formatCurrency(offer.kwotaBrutto)}
                                 </span>
                               </div>
@@ -590,8 +590,8 @@ export default function LawFirmOffersPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Clock className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {offer.terminRealizacjiDni} dni
                                 </span>
                               </div>
@@ -601,8 +601,8 @@ export default function LawFirmOffersPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <DollarSign className="h-4 w-4 mr-2.5 text-amber-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Warunki płatności</span>
-                                <span className="font-medium text-white text-xs leading-none truncate">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Warunki płatności</span>
+                                <span className="font-medium text-white text-sm leading-none truncate">
                                   {paymentTermsLabels[offer.warunkiPlatnosci] || offer.warunkiPlatnosci}
                                 </span>
                               </div>
@@ -614,8 +614,8 @@ export default function LawFirmOffersPage() {
                                 {offer.case.client.imie[0]}{offer.case.client.nazwisko[0]}
                               </div>
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Klient</span>
-                                <span className="font-medium text-white text-xs leading-none truncate">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Klient</span>
+                                <span className="font-medium text-white text-sm leading-none truncate">
                                   {offer.case.client.imie} {offer.case.client.nazwisko}
                                 </span>
                               </div>

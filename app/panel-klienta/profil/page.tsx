@@ -400,20 +400,12 @@ export default function ClientProfilePage() {
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Ustawienia Profilu"
-          subtitle="Zaktualizuj swoje dane osobowe, adres korespondencyjny oraz ustawienia powiadomień i zgód."
-          titleClassName="text-white text-3xl sm:text-4xl"
-        />
 
-      </motion.div>
+      <PageHeader
+        title="Ustawienia Profilu"
+        subtitle="Zaktualizuj swoje dane osobowe, adres korespondencyjny oraz ustawienia powiadomień i zgód."
+      />
+
 
       {/* Profile Edit Content Grid */}
       <Form {...form}>
@@ -434,10 +426,10 @@ export default function ClientProfilePage() {
                     <div className="w-full flex flex-col items-center gap-4">
                       <div className="relative h-28 w-28 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
                         <Image
-                           src={clientData.user.image}
-                           alt="Avatar"
-                           fill
-                           className="object-cover"
+                          src={clientData.user.image}
+                          alt="Avatar"
+                          fill
+                          className="object-cover"
                         />
                       </div>
                       <div className="flex flex-col gap-2 w-full">

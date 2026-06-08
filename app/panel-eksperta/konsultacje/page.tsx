@@ -251,7 +251,7 @@ export default function ConsultationsPage() {
             <Calendar className="h-5 w-5 text-zinc-500" />
           </div>
           <div>
-            <p className="text-zinc-400 text-sm font-light leading-relaxed">
+            <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
               {emptyMessage}
             </p>
           </div>
@@ -518,12 +518,12 @@ export default function ConsultationsPage() {
                   </svg>
 
                   <div className="space-y-2">
-                    <p className="text-zinc-400 text-sm font-light">
+                    <p className="text-zinc-400 text-sm md:text-base font-light">
                       Obecnie nie masz żadnych próśb o konsultacje od klientów.
                     </p>
                   </div>
 
-                  <div className="bg-zinc-950/30 border border-border/10 rounded-2xl p-6 text-sm space-y-4 shadow-sm text-left max-w-lg mx-auto">
+                  <div className="bg-zinc-950/30 border border-border/10 rounded-2xl p-6 text-sm md:text-base space-y-4 shadow-sm text-left max-w-lg mx-auto">
                     <p className="text-zinc-400 leading-relaxed font-light">
                       Nie masz obecnie ustawionych <strong>godzin konsultacji</strong>. Zdefiniuj je w swoim profilu, aby klienci mogli bezpośrednio i wygodnie rezerwować dostępne terminy spotkań online:
                     </p>

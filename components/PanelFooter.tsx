@@ -15,7 +15,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
   return (
     <div className={className} id={id}>
       {/* Partners banner */}
-      <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
+      <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
         <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
 
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
@@ -58,7 +58,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
       </div>
 
       {/* Separator line */}
-      <div className="border-t border-zinc-800/40 my-6 max-w-3xl mx-auto" />
+      <div className="border-t border-zinc-800/40 my-3 max-w-3xl mx-auto" />
 
       {/* Bottom Copyright and Social Links */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">

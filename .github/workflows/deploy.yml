@@ -75,10 +75,10 @@ jobs:
                   "message": c.get("message"),
                   "author": c.get("author", {}).get("name") if isinstance(c.get("author"), dict) else c.get("author"),
                   "timestamp": c.get("timestamp"),
-                  "added": c.get("added", []),
-                  "modified": c.get("modified", []),
-                  "removed": c.get("removed", []),
-                  "diff": commit_diff
+                  # "added": c.get("added", []),
+                  # "modified": c.get("modified", []),
+                  # "removed": c.get("removed", []),
+                  # "diff": commit_diff
               })
 
           payload = {

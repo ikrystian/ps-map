@@ -549,7 +549,7 @@ export default function ClientCasesPage() {
                           </Heading>
 
                           {/* Description preview */}
-                          <p className="text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
+                          <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
                             {caseItem.opisSprawy}
                           </p>
 
@@ -559,8 +559,8 @@ export default function ClientCasesPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
                               <MapPin className="h-4 w-4 mr-2.5 text-primary flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
-                                <span className="font-medium text-white text-xs leading-none truncate">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
+                                <span className="font-medium text-white text-sm leading-none truncate">
                                   {caseItem.city
                                     ? `${caseItem.city.nazwa}, ${caseItem.voivodeship.nazwa}`
                                     : caseItem.voivodeship.nazwa}
@@ -572,8 +572,8 @@ export default function ClientCasesPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
                               <Calendar className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {caseItem.oczekiwanyTerminRealizacji
                                     ? formatDate(caseItem.oczekiwanyTerminRealizacji)
                                     : "Elastyczny"}
@@ -585,8 +585,8 @@ export default function ClientCasesPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-emerald-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {formatBudget(caseItem.budzetOd, caseItem.budzetDo, caseItem.doNegocjacji)}
                                 </span>
                               </div>
@@ -596,8 +596,8 @@ export default function ClientCasesPage() {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
                               <Clock className="h-4 w-4 mr-2.5 text-zinc-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Dodano dnia</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Dodano dnia</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {formatDate(caseItem.createdAt)}
                                 </span>
                               </div>

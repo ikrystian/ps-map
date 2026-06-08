@@ -152,7 +152,7 @@ export default function ClientFavoritesPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-zinc-400 text-sm font-light">Ładowanie ulubionych ekspertów...</p>
+        <p className="text-zinc-400 text-sm md:text-base font-light">Ładowanie ulubionych ekspertów...</p>
       </div>
     )
   }
@@ -214,7 +214,7 @@ export default function ClientFavoritesPage() {
                 </div>
                 <div className="space-y-2">
                   <Heading level="h3" size="h3" className="text-lg">Brak ulubionych ekspertów</Heading>
-                  <p className="text-zinc-400 text-sm font-light leading-relaxed">
+                  <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
                     Przeglądaj profile ekspertów w naszym katalogu i dodaj ich do ulubionych, aby mieć do nich szybki dostęp w przyszłości.
                   </p>
                 </div>

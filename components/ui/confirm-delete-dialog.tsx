@@ -46,11 +46,10 @@ export function ConfirmDeleteDialog({
       <AlertDialogContent className="max-w-[400px] border border-zinc-800/80 bg-zinc-950/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/50 text-white">
         <AlertDialogHeader className="space-y-4">
           <div className="flex justify-center">
-            <div className={`p-3.5 rounded-full ${
-              variant === "danger" 
-                ? "bg-rose-500/10 text-rose-500 ring-8 ring-rose-500/5" 
+            <div className={`p-3.5 rounded-full ${variant === "danger"
+                ? "bg-rose-500/10 text-rose-500 ring-8 ring-rose-500/5"
                 : "bg-amber-500/10 text-amber-500 ring-8 ring-amber-500/5"
-            }`}>
+              }`}>
               {variant === "danger" ? (
                 <Trash2 className="h-6 w-6 animate-pulse" />
               ) : (
@@ -58,12 +57,12 @@ export function ConfirmDeleteDialog({
               )}
             </div>
           </div>
-          
+
           <div className="space-y-2 text-center">
             <AlertDialogTitle className="font-playfair text-xl font-semibold text-white tracking-tight leading-6">
               {title}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 text-sm font-light leading-relaxed">
+            <AlertDialogDescription className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
               {description}
             </AlertDialogDescription>
           </div>
@@ -83,11 +82,10 @@ export function ConfirmDeleteDialog({
             type="button"
             onClick={handleConfirm}
             disabled={isPending}
-            className={`w-full sm:w-1/2 rounded-xl h-11 text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
-              variant === "danger"
+            className={`w-full sm:w-1/2 rounded-xl h-11 text-sm font-semibold transition-all flex items-center justify-center gap-2 ${variant === "danger"
                 ? "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20 active:bg-rose-700"
                 : "bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/20 active:bg-amber-700"
-            }`}
+              }`}
           >
             {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

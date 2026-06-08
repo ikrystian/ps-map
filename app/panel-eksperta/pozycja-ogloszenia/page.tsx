@@ -291,7 +291,7 @@ export default function RankingBoostPage() {
                 <h2 className="text-2xl md:text-3xl font-black font-playfair text-white tracking-tight leading-tight">
                   Wyprzedź konkurencję i bądź pierwszy!
                 </h2>
-                <p className="text-zinc-400 text-sm font-light leading-relaxed">
+                <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
                   Profil na szczycie rankingu w kategorii <strong className="text-white font-medium">{lawFirm.mainCategoryName}</strong> zyskuje średnio o <strong>300% więcej zapytań</strong> od klientów. Przeznacz wolne punkty na boost pozycji i ciesz się większym zainteresowaniem.
                 </p>
               </div>

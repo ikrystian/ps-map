@@ -748,7 +748,7 @@ const SprawyPage = () => {
                           </h3>
 
                           {/* Preview Description snippet */}
-                          <p className="text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
+                          <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
                             {sprawa.opisSprawy}
                           </p>
 
@@ -758,8 +758,8 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <MapPin className="h-4 w-4 mr-2.5 text-primary flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
-                                <span className="font-medium text-white text-xs leading-none truncate">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
+                                <span className="font-medium text-white text-sm leading-none truncate">
                                   {sprawa.city ? `${sprawa.city.nazwa}` : sprawa.voivodeship.nazwa}
                                 </span>
                               </div>
@@ -769,8 +769,8 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Calendar className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Termin</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {sprawa.oczekiwanyTerminRealizacji
                                     ? formatDate(sprawa.oczekiwanyTerminRealizacji)
                                     : "Elastyczny"}
@@ -782,8 +782,8 @@ const SprawyPage = () => {
                             <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-success flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
-                                <span className="font-medium text-white text-xs leading-none">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
+                                <span className="font-medium text-white text-sm leading-none">
                                   {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
                                 </span>
                               </div>
@@ -795,8 +795,8 @@ const SprawyPage = () => {
                                 {sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}
                               </div>
                               <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-muted-foreground/75 leading-none mb-0.5">Klient</span>
-                                <span className="font-medium text-white text-xs leading-none truncate">
+                                <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Klient</span>
+                                <span className="font-medium text-white text-sm leading-none truncate">
                                   {sprawa.client.imie} {sprawa.client.nazwisko}
                                 </span>
                               </div>

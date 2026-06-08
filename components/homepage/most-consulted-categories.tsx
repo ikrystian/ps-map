@@ -205,7 +205,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
   }
 
   return (
-    <section className="py-20 bg-[#121212] text-white overflow-hidden">
+    <section className="py-20 xl:py-24 bg-darker text-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-8xl">
         {/* Title Header with elegant horizontal line separator */}
         <div className="flex items-center gap-6 mb-12">

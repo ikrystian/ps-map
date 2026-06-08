@@ -47,7 +47,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
   const experts = newLawFirms && newLawFirms.length > 0 ? newLawFirms : []
 
   return (
-    <section className="py-8 lg:py-20 bg-[#121212] text-white overflow-hidden border-t border-zinc-900/60">
+    <section className="py-12 lg:py-20 xl:py-24 bg-darker text-white overflow-hidden border-t border-zinc-900/60">
       <div className="container mx-auto px-4 max-w-7xl relative">
 
         {/* Title row with modern line design */}

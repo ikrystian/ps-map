@@ -142,7 +142,7 @@ export default function RankingClientPage() {
         ) : lawFirms.length === 0 ? (
           <Card className="border border-border/20 bg-card/25 backdrop-blur-md rounded-2xl max-w-4xl mx-auto">
             <CardContent className="py-12 text-center">
-              <p className="text-zinc-400 text-sm font-light">Brak danych w rankingu</p>
+              <p className="text-zinc-400 text-sm md:text-base font-light">Brak danych w rankingu</p>
             </CardContent>
           </Card>
         ) : (

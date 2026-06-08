@@ -27,7 +27,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
   }
 
   return (
-    <section className="py-8 lg:py-20 bg-transparent overflow-hidden">
+    <section className="py-8 lg:py-20 xl:py-24 bg-transparent overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

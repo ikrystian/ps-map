@@ -42,7 +42,7 @@ export default function CheckoutFailurePage() {
             </div>
             <div>
               <h2 className="text-2xl font-extrabold font-playfair tracking-tight mb-2 text-white">Płatność nieudana</h2>
-              <p className="text-zinc-400 text-sm font-light max-w-md mx-auto">
+              <p className="text-zinc-400 text-sm md:text-base font-light max-w-md mx-auto">
                 {errorMsg || "Transakcja została anulowana lub wystąpił błąd podczas przetwarzania płatności."}
               </p>
             </div>

@@ -352,11 +352,11 @@ export default function ClientPanelLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container p-4 mx-auto h-full">
+          <div className="container p-4 mx-auto ">
             {children}
             {/* Footer */}
             {pathname !== "/panel-klienta/wiadomosci" && (
-              <PanelFooter className="mt-12 pb-4 none hidden" id="client-footer" />
+              <PanelFooter className="mt-12 pb-4" id="client-footer" />
             )}
           </div>
         </main>

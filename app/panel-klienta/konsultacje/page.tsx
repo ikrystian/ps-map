@@ -16,6 +16,7 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -189,7 +190,7 @@ export default function ClientConsultationsPage() {
             <Calendar className="h-5 w-5 text-zinc-500" />
           </div>
           <div>
-            <p className="text-zinc-400 text-sm font-light leading-relaxed">
+            <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
               {emptyMessage}
             </p>
           </div>
@@ -346,19 +347,11 @@ export default function ClientConsultationsPage() {
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <Heading level="h1">Moje Konsultacje</Heading>
-        <p className="text-sm text-zinc-400 mt-1.5 font-light">
-          Przeglądaj status swoich umówionych konsultacji, dołączaj do spotkań wideo oraz zarządzaj rezerwacjami.
-        </p>
+      <PageHeader
+        title="Moje Konsultacje"
+        subtitle="Przeglądaj status swoich umówionych konsultacji, dołączaj do spotkań wideo oraz zarządzaj rezerwacjami."
+      />
 
-      </motion.div>
 
       {/* Main Container */}
       <motion.div

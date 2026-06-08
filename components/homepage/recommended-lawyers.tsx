@@ -124,7 +124,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
   }
 
   return (
-    <section className="py-20 text-white overflow-hidden">
+    <section className="py-8 xl:py-24 text-white overflow-hidden">
       {/* Top Header Row is wrapped in its own container to align perfectly */}
       <div className="container mx-auto px-4 max-w-8xl mb-12">
         <div className="mb-12">

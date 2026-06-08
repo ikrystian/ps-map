@@ -211,7 +211,7 @@ export default function LawFirmPanelLayout({
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
-      className="flex-1 space-y-1 overflow-y-auto p-4 relative"
+      className="flex-1 space-y-1 overflow-y-auto p-4 bg-background-sec relative"
       id="left-nav"
       onClick={() => {
         if (inSheet) {

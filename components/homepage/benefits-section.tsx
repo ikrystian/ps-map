@@ -85,7 +85,7 @@ const BenefitIcon = ({ src, alt }: { src: string; alt: string }) => {
 
 export function BenefitsSection() {
   return (
-    <section className="py-8 lg:py-20 bg-[#121212] border-b border-neutral-900/40 select-none overflow-hidden relative z-10">
+    <section className="py-8 lg:py-20 bg-darker border-b border-neutral-900/40 select-none overflow-hidden relative z-10">
       <div className="container mx-auto px-6">
         <motion.div
           variants={containerVariants}

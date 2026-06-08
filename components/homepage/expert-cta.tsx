@@ -7,7 +7,7 @@ import Link from "next/link";
 export function ExpertCTA() {
   return (
     <section
-      className="relative overflow-hidden w-full bg-black py-6 md:py-20"
+      className="relative overflow-hidden w-full bg-black py-6 md:py-20 xl:py-24"
       id="expert-cta"
       style={{
         backgroundImage: "url('/images/meet-expert.png')",
@@ -35,7 +35,7 @@ export function ExpertCTA() {
 
             {/* Description */}
             <div className="space-y-4 mt-4 md:mt-6 max-w-2xl">
-              <p className="text-neutral-400 font-sans text-base md:text-lg lg:text-xl leading-relaxed">
+              <p className="text-white font-sans text-base md:text-lg lg:text-xl leading-relaxed">
                 Zyskaj dostęp do narzędzi, które pomogą Ci skuteczniej docierać
                 do osób poszukujących pomocy prawnej.
               </p>
