@@ -77,17 +77,33 @@ jobs:
           ssh "$SSH_USER@$SSH_HOST" << 'EOF'
             set -e
             cd /root/projects/ps-map
-            git pull origin main
 
-            # Ensure Bun is installed and in PATH for the SSH session
             export PATH="$HOME/.bun/bin:$PATH"
             if ! command -v bun &> /dev/null; then
               echo "Bun is not installed. Installing Bun..."
               curl -fsSL https://bun.sh/install | bash
             fi
 
+            # === BACKUP przed deployem ===
+            mkdir -p backups/db
+            chmod +x scripts/db-backup.sh
+            BACKUP_FILE=$(scripts/db-backup.sh pre-deploy)
+            echo "Backup przed deployem: $BACKUP_FILE"
+
+            # === Deploy ===
+            git pull origin main
             bun install
             bun run build
+
+            # === Migracje z automatycznym rollbackiem przy błędzie ===
+            if ! bunx prisma migrate deploy; then
+              echo "ERROR: Migracja nie powiodła się - przywracam backup..."
+              scripts/db-restore.sh "$BACKUP_FILE"
+              echo "Rollback zakończony. Deploy przerwany."
+              exit 1
+            fi
+
             pm2 reload 0
+            echo "Deploy zakończony pomyślnie."
           EOF
 
