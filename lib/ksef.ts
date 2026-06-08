@@ -8,6 +8,76 @@ export interface KsefConfig {
   env: "test" | "prod"
 }
 
+/** Per-request timeout for KSeF HTTP calls (ms) */
+const KSEF_TIMEOUT_MS = 30000
+/** Maximum number of attempts (1 initial + retries) for transient failures */
+const KSEF_MAX_ATTEMPTS = 3
+/** Base delay for exponential backoff between retries (ms) */
+const KSEF_RETRY_BASE_DELAY_MS = 1000
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+/**
+ * Determines whether an HTTP status code represents a transient error
+ * that is safe to retry (timeouts, rate limiting, server-side failures).
+ */
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 425 || status === 429 || status >= 500
+}
+
+/**
+ * Performs a fetch with an abort-based timeout and automatic retries on
+ * transient failures (network errors, timeouts, 408/429/5xx responses).
+ * Uses exponential backoff between attempts.
+ *
+ * @param label Human-readable name of the operation, used in error messages/logs.
+ */
+async function ksefFetch(
+  url: string,
+  init: RequestInit = {},
+  label = "KSeF request"
+): Promise<Response> {
+  let lastError: unknown
+
+  for (let attempt = 1; attempt <= KSEF_MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), KSEF_TIMEOUT_MS)
+
+    try {
+      const response = await fetch(url, { ...init, signal: controller.signal })
+
+      // Retry transient server-side / throttling responses
+      if (isRetryableStatus(response.status) && attempt < KSEF_MAX_ATTEMPTS) {
+        lastError = new Error(`${label} returned HTTP ${response.status}`)
+        console.warn(`KSeF: ${label} HTTP ${response.status} (attempt ${attempt}/${KSEF_MAX_ATTEMPTS}), retrying...`)
+        await sleep(KSEF_RETRY_BASE_DELAY_MS * 2 ** (attempt - 1))
+        continue
+      }
+
+      return response
+    } catch (error: any) {
+      const isTimeout = error?.name === "AbortError"
+      lastError = isTimeout
+        ? new Error(`${label} timed out after ${KSEF_TIMEOUT_MS}ms`)
+        : error
+
+      if (attempt < KSEF_MAX_ATTEMPTS) {
+        console.warn(
+          `KSeF: ${label} ${isTimeout ? "timed out" : "failed"} (attempt ${attempt}/${KSEF_MAX_ATTEMPTS}), retrying...`
+        )
+        await sleep(KSEF_RETRY_BASE_DELAY_MS * 2 ** (attempt - 1))
+        continue
+      }
+    } finally {
+      clearTimeout(timeout)
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`${label} failed after ${KSEF_MAX_ATTEMPTS} attempts`)
+}
+
 /**
  * Fetches KSeF settings from the database
  */
@@ -299,7 +369,11 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     console.log(`KSeF: Connecting to KSeF 2.0 (${config.env}) for invoice ${invoice.invoiceNumber}`)
 
     // 1. Fetch certificates
-    const certsResponse = await fetch(`${ksefBaseUrl}/security/public-key-certificates`)
+    const certsResponse = await ksefFetch(
+      `${ksefBaseUrl}/security/public-key-certificates`,
+      {},
+      "Fetch certificates"
+    )
     if (!certsResponse.ok) {
       throw new Error(`Failed to fetch KSeF security certificates. HTTP Status ${certsResponse.status}`)
     }
@@ -316,7 +390,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
 
     // 2. Fetch challenge
     const cleanedNip = config.nip.replace(/\D/g, "")
-    const challengeResponse = await fetch(`${ksefBaseUrl}/auth/challenge`, {
+    const challengeResponse = await ksefFetch(`${ksefBaseUrl}/auth/challenge`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -325,7 +399,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
           identifier: cleanedNip
         }
       })
-    })
+    }, "Auth challenge")
 
     if (!challengeResponse.ok) {
       throw new Error(`KSeF Auth Challenge failed: ${challengeResponse.statusText}`)
@@ -345,14 +419,14 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     }, Buffer.from(textToEncrypt, "utf8"))
 
     // 4. Authenticate and get temporary token
-    const tokenResponse = await fetch(`${ksefBaseUrl}/auth/ksef-token`, {
+    const tokenResponse = await ksefFetch(`${ksefBaseUrl}/auth/ksef-token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         challenge,
         ksefToken: encryptedToken.toString("base64")
       })
-    })
+    }, "Token authentication")
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text()
@@ -364,13 +438,13 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     const authReferenceNumber = tokenData.referenceNumber
 
     // 5. Redeem Token (Get JWT Access Token)
-    const redeemResponse = await fetch(`${ksefBaseUrl}/auth/token/redeem`, {
+    const redeemResponse = await ksefFetch(`${ksefBaseUrl}/auth/token/redeem`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         authenticationToken: tempToken
       })
-    })
+    }, "Token redeem")
 
     if (!redeemResponse.ok) {
       throw new Error(`KSeF Token Redeem failed: ${redeemResponse.statusText}`)
@@ -390,7 +464,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     }, aesKey)
 
     // 7. Start interactive session
-    const sessionResponse = await fetch(`${ksefBaseUrl}/sessions/online`, {
+    const sessionResponse = await ksefFetch(`${ksefBaseUrl}/sessions/online`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -407,7 +481,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
           encryptionKey: encryptedSymKey.toString("base64")
         }
       })
-    })
+    }, "Online session init")
 
     if (!sessionResponse.ok) {
       const errTxt = await sessionResponse.text()
@@ -423,7 +497,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     encryptedXml += cipher.final("base64")
 
     // 9. Send Encrypted Invoice
-    const uploadResponse = await fetch(`${ksefBaseUrl}/sessions/online/${sessionRefNumber}/invoices`, {
+    const uploadResponse = await ksefFetch(`${ksefBaseUrl}/sessions/online/${sessionRefNumber}/invoices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -433,7 +507,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
       body: JSON.stringify({
         invoiceContent: encryptedXml
       })
-    })
+    }, "Upload invoice")
 
     if (!uploadResponse.ok) {
       const errTxt = await uploadResponse.text()
