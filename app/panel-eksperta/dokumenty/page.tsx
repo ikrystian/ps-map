@@ -782,8 +782,8 @@ export default function DocumentsPage() {
                               <FileText className="h-6 w-6 text-zinc-500" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-semibold text-white">Brak dokumentów</h4>
-                              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed font-light">
+                              <h4 className="text-base font-semibold text-white">Brak dokumentów</h4>
+                              <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed font-light">
                                 Nie znaleziono żadnych plików odpowiadających Twoim kryteriom wyszukiwania. Spróbuj zmienić filtry lub wyszukiwaną frazę.
                               </p>
                             </div>
@@ -912,8 +912,8 @@ export default function DocumentsPage() {
                     <div className="h-12 w-12 rounded-full bg-zinc-800/40 flex items-center justify-center border border-border/40 mx-auto mb-3">
                       <FileText className="h-5 w-5 text-zinc-500" />
                     </div>
-                    <h4 className="text-sm font-semibold text-white">Brak dokumentów</h4>
-                    <p className="text-xs text-muted-foreground mt-1 max-w-[240px] mx-auto font-light leading-relaxed">
+                    <h4 className="text-base font-semibold text-white">Brak dokumentów</h4>
+                    <p className="text-sm text-muted-foreground mt-1 max-w-[240px] mx-auto font-light leading-relaxed">
                       Brak plików pasujących do wybranych filtrów wyszukiwania.
                     </p>
                   </div>

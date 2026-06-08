@@ -352,7 +352,7 @@ export default function EmailManagementPage() {
             </Button>
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {templates.map((template) => (
               <Card key={template.id}>
                 <CardHeader>
