@@ -1,3 +1,4 @@
+import { verifyCronAuth } from "@/lib/cron-auth"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "@/lib/promotions"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -17,16 +18,8 @@ import { NextRequest, NextResponse } from "next/server"
  */
 export async function GET(request: NextRequest) {
   try {
-    // Weryfikacja autoryzacji (opcjonalne, ale zalecane)
-    const authHeader = request.headers.get("authorization")
-    const cronSecret = process.env.CRON_SECRET
-
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+    const unauthorized = verifyCronAuth(request)
+    if (unauthorized) return unauthorized
 
     console.log("[CRON] Starting promotion renewal and deactivation process...")
 

@@ -1,3 +1,4 @@
+import { verifyCronAuth } from "@/lib/cron-auth"
 import { allocateMonthlyPoints } from "@/lib/partner-program"
 import { NextRequest } from "next/server"
 
@@ -5,22 +6,14 @@ import { NextRequest } from "next/server"
  * POST /api/partner-program/allocate-points
  * Przyznaj miesięczne punkty wszystkim aktywnym partnerom
  *
- * Ten endpoint powinien być wywoływany przez zadanie CRON raz w miesiącu
- *
- * Opcjonalnie można przekazać klucz API w nagłówku X-Cron-Secret dla bezpieczeństwa
+ * Ten endpoint powinien być wywoływany przez zadanie CRON raz w miesiącu.
+ * Wymaga sekretu CRON (nagłówek `Authorization: Bearer <CRON_SECRET>`
+ * lub `x-cron-secret: <CRON_SECRET>`).
  */
 export async function POST(request: NextRequest) {
   try {
-    // Sprawdź autoryzację (opcjonalne - dla bezpieczeństwa CRON)
-    const cronSecret = request.headers.get('x-cron-secret')
-    const expectedSecret = process.env.CRON_SECRET
-
-    if (expectedSecret && cronSecret !== expectedSecret) {
-      return Response.json(
-        { error: "Nieautoryzowany dostęp" },
-        { status: 401 }
-      )
-    }
+    const unauthorized = verifyCronAuth(request)
+    if (unauthorized) return unauthorized
 
     // Pobierz parametry z body (opcjonalne - domyślnie bieżący miesiąc)
     const body = await request.json().catch(() => ({}))
@@ -84,7 +77,7 @@ export async function GET(request: NextRequest) {
     usage: {
       method: "POST",
       headers: {
-        "x-cron-secret": "Klucz API (opcjonalny, jeśli CRON_SECRET jest ustawiony w .env)"
+        "x-cron-secret": "Wymagany sekret CRON_SECRET (lub nagłówek Authorization: Bearer <CRON_SECRET>)"
       },
       body: {
         year: "Rok (opcjonalny, domyślnie bieżący)",

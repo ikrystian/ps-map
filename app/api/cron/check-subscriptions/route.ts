@@ -1,12 +1,10 @@
+import { verifyCronAuth } from "@/lib/cron-auth"
 import { checkExpiredSubscriptions } from "@/lib/subscriptions"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
-  // Protect this route with a secret
-  const authHeader = req.headers.get("authorization")
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  const unauthorized = verifyCronAuth(req)
+  if (unauthorized) return unauthorized
 
   try {
     const processedCount = await checkExpiredSubscriptions()
