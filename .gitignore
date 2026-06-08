@@ -55,3 +55,6 @@ files/
 .understand-anything
 # database backups
 backups/
+
+# Sentry Config File
+.env.sentry-build-plugin
