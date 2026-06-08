@@ -1,6 +1,7 @@
 import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./consultations"
 import { cleanupOldJobRuns, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
+import { pollPendingKsefInvoices } from "./ksef"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
@@ -111,7 +112,20 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 7. Czyszczenie starej historii uruchomień zadań (co 24 godziny)
+    // 7. Sprawdzanie statusu i pobieranie UPO dla faktur wysłanych do KSeF
+    //    (status "SENT" → ACCEPTED/REJECTED). W prod co 5 minut, w dev co minutę.
+    {
+      name: "ksef-upo-poll",
+      description: "Sprawdzanie statusu i pobieranie UPO faktur wysłanych do KSeF",
+      intervalMs: isDev ? MINUTE : 5 * MINUTE,
+      options: { retries: 1, retryDelayMs: 30 * 1000 },
+      fn: async () => {
+        const result = await pollPendingKsefInvoices()
+        return result
+      },
+    },
+
+    // 8. Czyszczenie starej historii uruchomień zadań (co 24 godziny)
     //    Zapobiega nieograniczonemu wzrostowi tabeli ScheduledJobRun.
     {
       name: "cleanup-job-runs",
