@@ -8,7 +8,12 @@ import { NextRequest, NextResponse } from "next/server"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, isSocialRegistration, role, userData = {} } = body
+    const { email, password, isSocialRegistration, role: requestedRole, userData = {} } = body
+
+    // Bezpieczeństwo: rola NIE może być ustawiana dowolnie z publicznego endpointu.
+    // Dozwolona jest wyłącznie rejestracja jako CLIENT lub LAW_FIRM — nigdy ADMIN.
+    const role: UserRole =
+      requestedRole === "LAW_FIRM" ? UserRole.LAW_FIRM : UserRole.CLIENT
 
     // Walidacja
     if (!email || typeof email !== "string") {
@@ -75,7 +80,7 @@ export async function POST(request: NextRequest) {
         data: {
           email: normalizedEmail,
           password: hashedPassword,
-          role: (role as UserRole) || "CLIENT",
+          role,
           name: userData.name || null,
           emailVerified: null, // Email nie zweryfikowany
         },
