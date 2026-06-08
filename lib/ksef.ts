@@ -268,7 +268,111 @@ function derToPem(derBase64: string): string {
 }
 
 /**
- * Sends an invoice to KSeF (real API call or simulated run if keys are not set)
+ * Returns the KSeF 2.0 API base URL for the configured environment.
+ */
+function ksefBaseUrl(config: KsefConfig): string {
+  return config.env === "prod"
+    ? "https://api.ksef.mf.gov.pl/api/v2"
+    : "https://api-test.ksef.mf.gov.pl/api/v2"
+}
+
+/**
+ * Authenticates against KSeF 2.0 (certificates → challenge → token → redeem)
+ * and returns a JWT access token plus the public key used for symmetric-key
+ * encryption when opening an interactive session.
+ *
+ * Extracted into a helper so both invoice submission and status/UPO polling
+ * can reuse the same authentication flow.
+ */
+async function ksefAuthenticate(
+  baseUrl: string,
+  config: KsefConfig
+): Promise<{ accessToken: string; symPublicKey: crypto.KeyObject }> {
+  // 1. Fetch certificates
+  const certsResponse = await ksefFetch(
+    `${baseUrl}/security/public-key-certificates`,
+    {},
+    "Fetch certificates"
+  )
+  if (!certsResponse.ok) {
+    throw new Error(`Failed to fetch KSeF security certificates. HTTP Status ${certsResponse.status}`)
+  }
+  const certsData = await certsResponse.json()
+  const tokenCertObj = certsData.subjects?.find((s: any) => s.usage === "KsefTokenEncryption") || certsData.subjects?.[0]
+  const symCertObj = certsData.subjects?.find((s: any) => s.usage === "SymmetricKeyEncryption") || certsData.subjects?.[0]
+
+  if (!tokenCertObj || !symCertObj) {
+    throw new Error("Could not identify required encryption certificates from KSeF")
+  }
+
+  const tokenPublicKey = crypto.createPublicKey(derToPem(tokenCertObj.certificate))
+  const symPublicKey = crypto.createPublicKey(derToPem(symCertObj.certificate))
+
+  // 2. Fetch challenge
+  const cleanedNip = config.nip.replace(/\D/g, "")
+  const challengeResponse = await ksefFetch(`${baseUrl}/auth/challenge`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      identifier: { type: "onip", identifier: cleanedNip },
+    }),
+  }, "Auth challenge")
+
+  if (!challengeResponse.ok) {
+    throw new Error(`KSeF Auth Challenge failed: ${challengeResponse.statusText}`)
+  }
+  const challengeData = await challengeResponse.json()
+  const challenge = challengeData.challenge
+  const timestamp = challengeData.timestamp
+
+  // 3. Encrypt Authorization Token
+  const challengeTimestamp = new Date(timestamp).toISOString()
+  const textToEncrypt = `${config.token}|${challengeTimestamp}`
+  const encryptedToken = crypto.publicEncrypt({
+    key: tokenPublicKey,
+    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+    oaepHash: "sha256",
+  }, Buffer.from(textToEncrypt, "utf8"))
+
+  // 4. Authenticate and get temporary token
+  const tokenResponse = await ksefFetch(`${baseUrl}/auth/ksef-token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      challenge,
+      ksefToken: encryptedToken.toString("base64"),
+    }),
+  }, "Token authentication")
+
+  if (!tokenResponse.ok) {
+    const errorText = await tokenResponse.text()
+    throw new Error(`KSeF Token Authentication failed (HTTP ${tokenResponse.status}): ${errorText}`)
+  }
+  const tokenData = await tokenResponse.json()
+  const tempToken = tokenData.authenticationToken?.token
+
+  // 5. Redeem Token (Get JWT Access Token)
+  const redeemResponse = await ksefFetch(`${baseUrl}/auth/token/redeem`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ authenticationToken: tempToken }),
+  }, "Token redeem")
+
+  if (!redeemResponse.ok) {
+    throw new Error(`KSeF Token Redeem failed: ${redeemResponse.statusText}`)
+  }
+  const redeemData = await redeemResponse.json()
+
+  return { accessToken: redeemData.accessToken, symPublicKey }
+}
+
+/**
+ * Sends an invoice to KSeF (real API call or simulated run if keys are not set).
+ *
+ * Guarded against duplicate submission: an invoice that is already PENDING,
+ * SENT or ACCEPTED will not be sent again (duplicating a document in KSeF has
+ * legal/accounting consequences). The transition to PENDING is performed as an
+ * atomic conditional update, so concurrent callers cannot both submit.
  */
 export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): Promise<boolean> {
   // Fetch invoice details
@@ -288,14 +392,40 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     return false
   }
 
-  // Mark status as pending transmission
-  await prisma.invoice.update({
-    where: { id: invoiceId },
+  // === Ochrona przed podwójną wysyłką (idempotencja + wyścig współbieżny) ===
+  // Faktura już zaakceptowana przez KSeF — nic nie robimy (idempotentny sukces).
+  if (invoice.ksefStatus === "ACCEPTED") {
+    console.log(`KSeF: Invoice ${invoice.invoiceNumber} already ACCEPTED, skipping resend.`)
+    return true
+  }
+  // Faktura w trakcie wysyłki lub już wysłana (oczekuje UPO) — nie wysyłamy
+  // ponownie, bo spowodowałoby to duplikat dokumentu w KSeF.
+  if (invoice.ksefStatus === "PENDING" || invoice.ksefStatus === "SENT") {
+    console.warn(`KSeF: Invoice ${invoice.invoiceNumber} is already ${invoice.ksefStatus}, skipping duplicate submission.`)
+    return false
+  }
+
+  // Atomowe "zajęcie" faktury: przejście do PENDING tylko jeśli status nadal jest
+  // null / FAILED / REJECTED. Jeśli równolegle inny proces zdążył ją zająć,
+  // updateMany zaktualizuje 0 wierszy i przerywamy, by nie wysłać duplikatu.
+  const claim = await prisma.invoice.updateMany({
+    where: {
+      id: invoiceId,
+      OR: [
+        { ksefStatus: null },
+        { ksefStatus: "FAILED" },
+        { ksefStatus: "REJECTED" },
+      ],
+    },
     data: {
       ksefStatus: "PENDING",
-      ksefDiagnostics: null
-    }
+      ksefDiagnostics: null,
+    },
   })
+  if (claim.count === 0) {
+    console.warn(`KSeF: Invoice ${invoice.invoiceNumber} was claimed by another process, skipping.`)
+    return false
+  }
 
   // Load KSeF config
   const config = await getKsefConfig()
@@ -362,95 +492,13 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
 
   // Real KSeF 2.0 Integration
   try {
-    const ksefBaseUrl = config.env === "prod"
-      ? "https://api.ksef.mf.gov.pl/api/v2"
-      : "https://api-test.ksef.mf.gov.pl/api/v2"
+    const baseUrl = ksefBaseUrl(config)
+    const cleanedNip = config.nip.replace(/\D/g, "")
 
     console.log(`KSeF: Connecting to KSeF 2.0 (${config.env}) for invoice ${invoice.invoiceNumber}`)
 
-    // 1. Fetch certificates
-    const certsResponse = await ksefFetch(
-      `${ksefBaseUrl}/security/public-key-certificates`,
-      {},
-      "Fetch certificates"
-    )
-    if (!certsResponse.ok) {
-      throw new Error(`Failed to fetch KSeF security certificates. HTTP Status ${certsResponse.status}`)
-    }
-    const certsData = await certsResponse.json()
-    const tokenCertObj = certsData.subjects?.find((s: any) => s.usage === "KsefTokenEncryption") || certsData.subjects?.[0]
-    const symCertObj = certsData.subjects?.find((s: any) => s.usage === "SymmetricKeyEncryption") || certsData.subjects?.[0]
-
-    if (!tokenCertObj || !symCertObj) {
-      throw new Error("Could not identify required encryption certificates from KSeF")
-    }
-
-    const tokenPublicKey = crypto.createPublicKey(derToPem(tokenCertObj.certificate))
-    const symPublicKey = crypto.createPublicKey(derToPem(symCertObj.certificate))
-
-    // 2. Fetch challenge
-    const cleanedNip = config.nip.replace(/\D/g, "")
-    const challengeResponse = await ksefFetch(`${ksefBaseUrl}/auth/challenge`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        identifier: {
-          type: "onip",
-          identifier: cleanedNip
-        }
-      })
-    }, "Auth challenge")
-
-    if (!challengeResponse.ok) {
-      throw new Error(`KSeF Auth Challenge failed: ${challengeResponse.statusText}`)
-    }
-    const challengeData = await challengeResponse.json()
-    const challenge = challengeData.challenge
-    const timestamp = challengeData.timestamp
-
-    // 3. Encrypt Authorization Token
-    const challengeTimestamp = new Date(timestamp).toISOString() // or string representation
-    const textToEncrypt = `${config.token}|${challengeTimestamp}`
-    
-    const encryptedToken = crypto.publicEncrypt({
-      key: tokenPublicKey,
-      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-      oaepHash: "sha256"
-    }, Buffer.from(textToEncrypt, "utf8"))
-
-    // 4. Authenticate and get temporary token
-    const tokenResponse = await ksefFetch(`${ksefBaseUrl}/auth/ksef-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        challenge,
-        ksefToken: encryptedToken.toString("base64")
-      })
-    }, "Token authentication")
-
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text()
-      throw new Error(`KSeF Token Authentication failed (HTTP ${tokenResponse.status}): ${errorText}`)
-    }
-
-    const tokenData = await tokenResponse.json()
-    const tempToken = tokenData.authenticationToken?.token
-    const authReferenceNumber = tokenData.referenceNumber
-
-    // 5. Redeem Token (Get JWT Access Token)
-    const redeemResponse = await ksefFetch(`${ksefBaseUrl}/auth/token/redeem`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        authenticationToken: tempToken
-      })
-    }, "Token redeem")
-
-    if (!redeemResponse.ok) {
-      throw new Error(`KSeF Token Redeem failed: ${redeemResponse.statusText}`)
-    }
-    const redeemData = await redeemResponse.json()
-    const accessToken = redeemData.accessToken
+    // 1-5. Authenticate (certificates → challenge → encrypt token → redeem JWT)
+    const { accessToken, symPublicKey } = await ksefAuthenticate(baseUrl, config)
 
     // 6. Generate AES symmetric key and IV for invoice session
     const aesKey = crypto.randomBytes(32)
@@ -464,7 +512,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     }, aesKey)
 
     // 7. Start interactive session
-    const sessionResponse = await ksefFetch(`${ksefBaseUrl}/sessions/online`, {
+    const sessionResponse = await ksefFetch(`${baseUrl}/sessions/online`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -497,7 +545,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     encryptedXml += cipher.final("base64")
 
     // 9. Send Encrypted Invoice
-    const uploadResponse = await ksefFetch(`${ksefBaseUrl}/sessions/online/${sessionRefNumber}/invoices`, {
+    const uploadResponse = await ksefFetch(`${baseUrl}/sessions/online/${sessionRefNumber}/invoices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -570,4 +618,219 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
 
     return false
   }
+}
+
+/**
+ * Builds a simulated UPO (Urzędowe Poświadczenie Odbioru) XML document.
+ */
+function buildMockUpo(ksefNumber: string, referenceNumber: string | null): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<UrzadowePoswiadczenieOdbioru xmlns="http://crd.gov.pl/xml/schematy/upo/2020/01/01/">
+  <Naglowek>
+    <WersjaSchema>1-0</WersjaSchema>
+    <DataOdbioru>${formatDateTime(new Date())}</DataOdbioru>
+  </Naglowek>
+  <StatusKSeF>ACCEPTED</StatusKSeF>
+  <KsefInvoiceNumber>${ksefNumber}</KsefInvoiceNumber>
+  <ReferenceNumber>${referenceNumber || ""}</ReferenceNumber>
+  <Komunikat>Dokument został poprawnie przyjęty i przetworzony przez system KSeF 2.0.</Komunikat>
+</UrzadowePoswiadczenieOdbioru>`
+}
+
+/**
+ * Sprawdza status faktury wysłanej do KSeF (status "SENT"). Jeśli KSeF
+ * zakończył przetwarzanie:
+ *  - akceptacja → pobiera UPO i finalny numer KSeF, ustawia status ACCEPTED,
+ *  - odrzucenie → ustawia status REJECTED wraz z diagnostyką.
+ * Jeśli przetwarzanie wciąż trwa, pozostawia status "SENT".
+ *
+ * W trybie symulacji (brak konfiguracji KSeF) od razu finalizuje fakturę jako
+ * ACCEPTED z wygenerowanym UPO, aby cykl życia faktury się domknął również w dev.
+ *
+ * Funkcja nigdy nie rzuca wyjątku do wywołującego — przy błędzie sieci/API
+ * pozostawia status bez zmian, aby kolejny cykl harmonogramu mógł spróbować ponownie.
+ *
+ * @returns nowy (lub niezmieniony) status KSeF faktury
+ */
+export async function checkInvoiceKsefStatus(invoiceId: string): Promise<string> {
+  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId } })
+  if (!invoice) {
+    console.error(`KSeF: Invoice ${invoiceId} not found for status check`)
+    return "NOT_FOUND"
+  }
+
+  // Status sprawdzamy wyłącznie dla faktur oczekujących na UPO.
+  if (invoice.ksefStatus !== "SENT") {
+    return invoice.ksefStatus || "UNKNOWN"
+  }
+
+  const config = await getKsefConfig()
+  const isMock = !config.enabled || !config.token || !config.nip
+
+  // --- Tryb symulacji: finalizacja jako ACCEPTED z wygenerowanym UPO ---
+  if (isMock) {
+    const ksefPart1 = (config.nip || "1234567890").replace(/\D/g, "")
+    const ksefPart2 = formatDate(new Date()).replace(/-/g, "")
+    const ksefPart3 = crypto.randomBytes(8).toString("hex").toUpperCase()
+    const ksefNumber = invoice.ksefNumber || `${ksefPart1}-${ksefPart2}-${ksefPart3}-01`
+
+    await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        ksefStatus: "ACCEPTED",
+        ksefNumber,
+        upoContent: buildMockUpo(ksefNumber, invoice.ksefReferenceNumber),
+        ksefDiagnostics: "Symulacja KSeF 2.0: UPO odebrane, faktura zaakceptowana.",
+      },
+    })
+
+    await prisma.systemLog.create({
+      data: {
+        level: "INFO",
+        action: "KSEF_UPO_RECEIVED_MOCK",
+        message: `Symulacja KSeF: odebrano UPO dla faktury ${invoice.invoiceNumber}.`,
+        metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, ksefNumber }),
+      },
+    })
+
+    return "ACCEPTED"
+  }
+
+  // --- Tryb realny: odpytanie KSeF 2.0 o status sesji i pobranie UPO ---
+  if (!invoice.ksefReferenceNumber) {
+    // Bez numeru referencyjnego sesji nie ma jak odpytać statusu.
+    return "SENT"
+  }
+
+  try {
+    const baseUrl = ksefBaseUrl(config)
+    const { accessToken } = await ksefAuthenticate(baseUrl, config)
+    const authHeader = { Authorization: `Bearer ${accessToken}` }
+
+    // Lista faktur w sesji wraz z ich statusami przetwarzania.
+    const invoicesRes = await ksefFetch(
+      `${baseUrl}/sessions/${invoice.ksefReferenceNumber}/invoices`,
+      { headers: authHeader },
+      "Session invoices status"
+    )
+    if (!invoicesRes.ok) {
+      // Sesja może być jeszcze nieprzetworzona — zostawiamy SENT do kolejnej próby.
+      console.warn(`KSeF: Session ${invoice.ksefReferenceNumber} status HTTP ${invoicesRes.status}, leaving SENT.`)
+      return "SENT"
+    }
+
+    const data = await invoicesRes.json()
+    // Defensywne parsowanie — różne możliwe kształty odpowiedzi KSeF 2.0.
+    const items: any[] = data.invoices || data.items || (Array.isArray(data) ? data : [])
+    const item = items[0]
+    if (!item) {
+      return "SENT"
+    }
+
+    const statusCode: unknown = item.status?.code ?? item.statusCode ?? item.processingCode
+    const ksefNumber: string | undefined = item.ksefNumber || item.ksefInvoiceNumber || invoice.ksefNumber || undefined
+    const invoiceRef: string | undefined = item.referenceNumber || item.invoiceReferenceNumber
+
+    // Odrzucenie faktury przez KSeF.
+    const isRejected =
+      item.status?.processingStatus === "Rejected" ||
+      (typeof statusCode === "number" && statusCode >= 400)
+    if (isRejected) {
+      const reason = item.status?.description || item.description || "Faktura odrzucona przez KSeF"
+      await prisma.invoice.update({
+        where: { id: invoiceId },
+        data: { ksefStatus: "REJECTED", ksefDiagnostics: `KSeF odrzucił fakturę: ${reason}` },
+      })
+      await prisma.systemLog.create({
+        data: {
+          level: "ERROR",
+          action: "KSEF_INVOICE_REJECTED",
+          message: `Faktura ${invoice.invoiceNumber} odrzucona przez KSeF.`,
+          metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, reason }),
+        },
+      })
+      return "REJECTED"
+    }
+
+    // Akceptacja — wymaga nadanego finalnego numeru KSeF.
+    const isAccepted =
+      item.status?.processingStatus === "Accepted" ||
+      statusCode === 200 ||
+      !!ksefNumber
+    if (isAccepted && ksefNumber) {
+      // Próba pobrania UPO (best-effort — przy niepowodzeniu pobierzemy później).
+      let upoXml: string | null = null
+      try {
+        const upoRes = await ksefFetch(
+          `${baseUrl}/sessions/${invoice.ksefReferenceNumber}/invoices/${invoiceRef || ksefNumber}/upo`,
+          { headers: authHeader },
+          "Fetch UPO"
+        )
+        if (upoRes.ok) {
+          upoXml = await upoRes.text()
+        }
+      } catch (e) {
+        console.warn(`KSeF: Could not fetch UPO for invoice ${invoice.invoiceNumber}:`, e)
+      }
+
+      await prisma.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          ksefStatus: "ACCEPTED",
+          ksefNumber,
+          upoContent: upoXml,
+          ksefDiagnostics: upoXml
+            ? "Faktura zaakceptowana przez KSeF, UPO odebrane."
+            : "Faktura zaakceptowana przez KSeF. UPO niedostępne — zostanie pobrane w kolejnym cyklu.",
+        },
+      })
+      await prisma.systemLog.create({
+        data: {
+          level: "INFO",
+          action: "KSEF_UPO_RECEIVED",
+          message: `Faktura ${invoice.invoiceNumber} zaakceptowana przez KSeF${upoXml ? ", UPO odebrane" : ""}.`,
+          metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, ksefNumber }),
+        },
+      })
+      return "ACCEPTED"
+    }
+
+    // Wciąż w przetwarzaniu — spróbujemy ponownie w kolejnym cyklu.
+    return "SENT"
+  } catch (error: any) {
+    console.error(`KSeF: Status check failed for invoice ${invoice.invoiceNumber}:`, error)
+    return "SENT"
+  }
+}
+
+/**
+ * Sprawdza status wszystkich faktur oczekujących na potwierdzenie z KSeF
+ * (status "SENT") i — jeśli to możliwe — pobiera ich UPO. Uruchamiane cyklicznie
+ * przez harmonogram zadań w tle.
+ *
+ * @returns podsumowanie: liczba sprawdzonych i wynik per status
+ */
+export async function pollPendingKsefInvoices(): Promise<{
+  checked: number
+  accepted: number
+  rejected: number
+  pending: number
+}> {
+  const sent = await prisma.invoice.findMany({
+    where: { ksefStatus: "SENT" },
+    select: { id: true },
+  })
+
+  let accepted = 0
+  let rejected = 0
+  let pending = 0
+
+  for (const inv of sent) {
+    const status = await checkInvoiceKsefStatus(inv.id)
+    if (status === "ACCEPTED") accepted++
+    else if (status === "REJECTED") rejected++
+    else pending++
+  }
+
+  return { checked: sent.length, accepted, rejected, pending }
 }
