@@ -49,6 +49,22 @@ export async function POST(request: NextRequest) {
       errors: [] as { email: string; error: string }[],
     }
 
+    // 2.5 Pre-fetch all necessary data to avoid N+1 queries
+    const [allVoivodeships, allCategories, existingUsers, existingFirms] = await Promise.all([
+      prisma.voivodeship.findMany(),
+      prisma.category.findMany(),
+      prisma.user.findMany({ select: { email: true } }),
+      prisma.lawFirm.findMany({ select: { nip: true, slug: true } })
+    ])
+
+    const vMap = new Map(allVoivodeships.map(v => [v.nazwa.toLowerCase(), v.id]))
+    const cMap = new Map(allCategories.map(c => [c.nazwa.toLowerCase(), c.id]))
+    const emailSet = new Set(existingUsers.map(u => u.email.toLowerCase()))
+    const nipSet = new Set(existingFirms.map(f => f.nip))
+    const slugSet = new Set(existingFirms.map(f => f.slug))
+
+    const defaultVoivodeshipId = allVoivodeships[0]?.id
+
     // 3. Process each law firm
     for (const firmData of lawFirms) {
       try {
@@ -64,11 +80,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
-          where: { email: userData.email },
-        })
-
-        if (existingUser) {
+        if (emailSet.has(userData.email.toLowerCase())) {
           results.errors.push({
             email: userData.email,
             error: "User with this email already exists",
@@ -77,26 +89,20 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if NIP already exists
-        if (lawFirmData.nip) {
-          const existingNip = await prisma.lawFirm.findUnique({
-            where: { nip: lawFirmData.nip },
+        if (lawFirmData.nip && nipSet.has(lawFirmData.nip)) {
+          results.errors.push({
+            email: userData.email,
+            error: `Law firm with NIP ${lawFirmData.nip} already exists`,
           })
-
-          if (existingNip) {
-            results.errors.push({
-              email: userData.email,
-              error: `Law firm with NIP ${lawFirmData.nip} already exists`,
-            })
-            continue
-          }
+          continue
         }
 
-        // Generate slug
+        // Generate slug locally
         const baseSlug = generateSlug(lawFirmData.nazwa)
         let slug = baseSlug
         let counter = 1
 
-        while (await prisma.lawFirm.findUnique({ where: { slug } })) {
+        while (slugSet.has(slug)) {
           slug = `${baseSlug}-${counter}`
           counter++
         }
@@ -119,23 +125,13 @@ export async function POST(request: NextRequest) {
             },
           })
 
-          // 2. Get voivodeship for main address
-          let voivodeshipId: string | undefined
-          if (lawFirmData.voivodeship) {
-            const voivodeship = await tx.voivodeship.findFirst({
-              where: { nazwa: lawFirmData.voivodeship },
-            })
-            if (!voivodeship) {
-              throw new Error(`Voivodeship "${lawFirmData.voivodeship}" not found`)
-            }
-            voivodeshipId = voivodeship.id
-          } else {
-            // Default to first voivodeship if not specified
-            const firstVoivodeship = await tx.voivodeship.findFirst()
-            if (!firstVoivodeship) {
-              throw new Error("No voivodeships found in database. Please seed voivodeships first.")
-            }
-            voivodeshipId = firstVoivodeship.id
+          // 2. Get voivodeship for main address from pre-fetched map
+          let voivodeshipId = lawFirmData.voivodeship 
+            ? vMap.get(lawFirmData.voivodeship.toLowerCase())
+            : defaultVoivodeshipId
+
+          if (!voivodeshipId) {
+            throw new Error(`Voivodeship "${lawFirmData.voivodeship || "default"}" not found. Please seed voivodeships first.`)
           }
 
           // 3. Create law firm
@@ -147,7 +143,7 @@ export async function POST(request: NextRequest) {
               nazwa: lawFirmData.nazwa,
               nazwaFirmy: lawFirmData.nazwaFirmy || lawFirmData.nazwa,
               slug,
-              nip: lawFirmData.nip || `TEMP-${Date.now()}`,
+              nip: lawFirmData.nip || `TEMP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               regon: lawFirmData.regon,
               krs: lawFirmData.krs,
               imieKontakt: lawFirmData.imieKontakt || "Kontakt",
@@ -197,36 +193,30 @@ export async function POST(request: NextRequest) {
             },
           })
 
-          // 4. Link voivodeships (areas of operation)
+          // 4. Link voivodeships (areas of operation) using pre-fetched map
           if (voivodeships && Array.isArray(voivodeships) && voivodeships.length > 0) {
             for (const voivodeshipName of voivodeships) {
-              const voivodeship = await tx.voivodeship.findFirst({
-                where: { nazwa: voivodeshipName },
-              })
-
-              if (voivodeship) {
+              const vId = vMap.get(voivodeshipName.toLowerCase())
+              if (vId) {
                 await tx.lawFirmVoivodeship.create({
                   data: {
                     lawFirmId: lawFirm.id,
-                    voivodeshipId: voivodeship.id,
+                    voivodeshipId: vId,
                   },
                 })
               }
             }
           }
 
-          // 5. Link categories
+          // 5. Link categories using pre-fetched map
           if (categories && Array.isArray(categories) && categories.length > 0) {
             for (const categoryName of categories) {
-              const category = await tx.category.findFirst({
-                where: { nazwa: categoryName },
-              })
-
-              if (category) {
+              const cId = cMap.get(categoryName.toLowerCase())
+              if (cId) {
                 await tx.lawFirmCategory.create({
                   data: {
                     lawFirmId: lawFirm.id,
-                    categoryId: category.id,
+                    categoryId: cId,
                   },
                 })
               }
@@ -275,6 +265,11 @@ export async function POST(request: NextRequest) {
             },
           })
         })
+
+        // Update local sets to prevent duplicates within the same batch
+        emailSet.add(userData.email.toLowerCase())
+        if (lawFirmData.nip) nipSet.add(lawFirmData.nip)
+        slugSet.add(slug)
 
         results.success.push(userData.email)
       } catch (error: any) {

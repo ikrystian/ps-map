@@ -22,7 +22,22 @@ export async function POST(request: NextRequest) {
     const allVoivodeships = await prisma.voivodeship.findMany()
     const voivodeshipMap = new Map(allVoivodeships.map(v => [v.nazwa.toLowerCase(), v.id]))
 
-    const createdCities = []
+    // Fetch all existing cities in these voivodeships to avoid duplicate checks in loop
+    const existingCities = await prisma.city.findMany({
+      where: {
+        voivodeshipId: { in: Array.from(voivodeshipMap.values()) }
+      },
+      select: {
+        nazwa: true,
+        voivodeshipId: true
+      }
+    })
+    
+    const existingCitySet = new Set(
+      existingCities.map(c => `${c.nazwa.toLowerCase()}-${c.voivodeshipId}`)
+    )
+
+    const citiesToCreate = []
 
     for (const cityData of cities) {
       const { nazwa, wojewodztwo } = cityData
@@ -34,31 +49,29 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      // Check if city already exists in this voivodeship
-      const existing = await prisma.city.findFirst({
-        where: { 
+      const key = `${nazwa.toLowerCase()}-${vId}`
+      if (!existingCitySet.has(key)) {
+        citiesToCreate.push({
           nazwa: nazwa,
           voivodeshipId: vId
-        }
-      })
-
-      if (!existing) {
-        const newCity = await prisma.city.create({
-          data: {
-            nazwa: nazwa,
-            voivodeshipId: vId
-          }
         })
-        createdCities.push(newCity)
+        existingCitySet.add(key) // Prevent duplicates in the same input batch
       }
     }
 
+    if (citiesToCreate.length > 0) {
+      await prisma.city.createMany({
+        data: citiesToCreate,
+        skipDuplicates: true
+      })
+    }
+
     // Invalidate cached cities
-    if (createdCities.length > 0) {
+    if (citiesToCreate.length > 0) {
       serverCache.invalidatePattern("cities")
     }
 
-    return NextResponse.json({ count: createdCities.length })
+    return NextResponse.json({ count: citiesToCreate.length })
   } catch (error) {
     console.error("Error seeding cities:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
