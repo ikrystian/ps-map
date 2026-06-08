@@ -1,5 +1,6 @@
 import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit } from "@/lib/rate-limit"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import type { NextAuthConfig, Session, User } from "next-auth"
@@ -43,12 +44,22 @@ export const authOptions: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Brak wymaganych danych")
         }
 
         const normalizedEmail = (credentials.email as string).toLowerCase().trim()
+
+        // Ograniczenie prób logowania (ochrona przed brute-force): per IP + email.
+        const ip = request instanceof Request ? getClientIp(request) : "unknown"
+        const rl = rateLimit(`login:${ip}:${normalizedEmail}`, {
+          limit: 10,
+          windowMs: 15 * 60 * 1000, // 10 prób na 15 minut
+        })
+        if (!rl.success) {
+          throw new Error("Zbyt wiele prób logowania. Spróbuj ponownie za kilka minut.")
+        }
 
         const user = await prisma.user.findUnique({
           where: {

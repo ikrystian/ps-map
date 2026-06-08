@@ -1,5 +1,6 @@
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { EmailType } from "@prisma/client"
 import crypto from "crypto"
 import { NextRequest, NextResponse } from "next/server"
@@ -10,6 +11,9 @@ import { NextRequest, NextResponse } from "next/server"
  */
 export async function POST(request: NextRequest) {
   try {
+    const rl = rateLimit(`resend-verification:${getClientIp(request)}`, { limit: 5, windowMs: 60 * 60 * 1000 })
+    if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
+
     const body = await request.json()
     const { email } = body
 

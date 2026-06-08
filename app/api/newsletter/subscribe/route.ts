@@ -1,10 +1,14 @@
 import { sendEmail } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import crypto from "crypto"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
   try {
+    const rl = rateLimit(`newsletter:${getClientIp(req)}`, { limit: 5, windowMs: 60 * 60 * 1000 })
+    if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
+
     const { email } = await req.json()
 
     if (!email) {

@@ -1,11 +1,15 @@
 import { generateContactFormEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { ContactSubject } from "@prisma/client"
 import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = rateLimit(`contact:${getClientIp(request)}`, { limit: 10, windowMs: 60 * 60 * 1000 })
+    if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
+
     const body = await request.json()
     const {
       lawFirmId,

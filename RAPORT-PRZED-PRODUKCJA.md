@@ -12,27 +12,6 @@
 
 ### 🔴 KRYTYCZNE — wymagane przed wystawieniem
 
-
-
-#### 1.2. Endpoint `/api/users/dev-list` ujawnia wszystkich użytkowników i hasła
-**Plik:** `app/api/users/dev-list/route.ts`
-Zwraca **bez żadnej autoryzacji** listę wszystkich użytkowników (e-mail, rola, nazwa) wraz
-z hasłami testowymi (`Password123`, `ADmin123`). Pełny dump kont platformy.
-**Fix:** usunąć endpoint całkowicie przed produkcją.
-
-#### 1.3. Endpointy CRON faktycznie publiczne
-**Pliki:** `app/api/cron/*`, `app/api/partner-program/allocate-points/route.ts`
-Sprawdzenie sekretu jest warunkowe:
-```ts
-if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) { ... }
-```
-`CRON_SECRET` **nie występuje w `.env.example`** i prawdopodobnie nie jest ustawiony →
-warunek się nie wykonuje, a każdy może wywołać: przeliczanie rankingów, wysyłkę
-zaplanowanych maili, odnowienia promocji, naliczanie punktów partnerskich, sprawdzanie
-subskrypcji. Komentarz w kodzie wprost mówi „opcjonalne dla bezpieczeństwa”.
-**Fix:** uczynić sekret obowiązkowym (odrzucać żądanie, gdy brak/niezgodny), dodać go do env
-i konfiguracji crona.
-
 #### 1.4. Demo Sentry w produkcji
 **Pliki:** `app/api/sentry-example-api/route.ts`, `app/sentry-example-page/`
 Trasy przykładowe rzucające wyjątki — usunąć przed wdrożeniem.
@@ -41,12 +20,7 @@ Trasy przykładowe rzucające wyjątki — usunąć przed wdrożeniem.
 
 ### 🟠 WYSOKIE
 
-#### 1.5. Brak rate limitingu (cała aplikacja)
-Nie znaleziono żadnego mechanizmu ograniczania liczby żądań. Otwarte na brute-force
-i nadużycia: `auth/login`, `auth/register`, `auth/forgot-password`, `auth/reset-password`,
-`auth/resend-verification`, `contact`, `newsletter/subscribe`.
-**Fix:** dodać rate limiting (np. `@upstash/ratelimit`, limiter w proxy/middleware lub na poziomie
-reverse-proxy) na wrażliwe endpointy.
+
 
 #### 1.6. Sentry — PII i Session Replay na platformie z danymi prawnymi
 **Pliki:** `sentry.server.config.ts`, `instrumentation-client.ts`
