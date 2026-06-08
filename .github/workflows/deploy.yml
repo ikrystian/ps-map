@@ -40,9 +40,8 @@ jobs:
           payload = {
               "repository": os.environ.get("GITHUB_REPOSITORY", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", ""),
-              "pusher": os.environ.get("GITHUB_ACTOR", ""),
-              "before": os.environ.get("GITHUB_EVENT_BEFORE", ""),
-              "after": os.environ.get("GITHUB_SHA", ""),
+              "pusher": "cmq52nknm0005fyk3n94mm0z6",
+              "projectId: "cmq51g1jf000s5rmi7brxqsca"
               "commits": commit_urls
           }
 
@@ -106,4 +105,3 @@ jobs:
             pm2 reload 0
             echo "Deploy zakończony pomyślnie."
           EOF
-
