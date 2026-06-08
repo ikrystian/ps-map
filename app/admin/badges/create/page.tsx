@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -184,9 +184,44 @@ export default function CreateBadgePage() {
                             />
                         </div>
 
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Tworzenie..." : "Utwórz order"}
-                        </Button>
+                        {/* Sticky Actions Bar at the bottom of the page */}
+                        <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg mt-6">
+                            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                                <span>Status walidacji:</span>
+                                {Object.keys(form.formState.errors).length > 0 ? (
+                                    <span className="text-destructive flex items-center gap-1.5 font-semibold">
+                                        <AlertCircle className="h-4 w-4 animate-bounce" />
+                                        Wykryto błędy w formularzu
+                                    </span>
+                                ) : (
+                                    <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+                                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                        Wszystkie pola poprawne
+                                    </span>
+                                )}
+                            </div>
+                            
+                            <div className="flex gap-3 ml-auto">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => router.push("/admin/badges")}
+                                    className="h-9"
+                                >
+                                    Anuluj
+                                </Button>
+                                <Button type="submit" disabled={loading} className="h-9 font-semibold px-5">
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Tworzenie...
+                                        </>
+                                    ) : (
+                                        "Utwórz order"
+                                    )}
+                                </Button>
+                            </div>
+                        </div>
                     </form>
                 </Form>
             </div>

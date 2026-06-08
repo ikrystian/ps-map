@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CheckCircle2 } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -712,33 +712,54 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                 </Card>
               </motion.div>
 
-              {/* Akcje formularza pod Status publikacji */}
-              <motion.div variants={itemVariants} className="flex items-center gap-4 pt-2">
-                <Button type="submit" disabled={loading} className="h-11 flex-1 group gap-2 font-semibold">
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  {loading
-                    ? "Zapisywanie..."
-                    : postId
+            </div>
+          </motion.div>
+
+          {/* Sticky Actions Bar at the bottom of the page */}
+          <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg mt-6">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+              <span>Status walidacji:</span>
+              {Object.keys(form.formState.errors).length > 0 ? (
+                <span className="text-destructive flex items-center gap-1.5 font-semibold">
+                  <AlertCircle className="h-4 w-4 animate-bounce" />
+                  Wykryto błędy w formularzu
+                </span>
+              ) : (
+                <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  Wszystkie pola poprawne
+                </span>
+              )}
+            </div>
+            
+            <div className="flex gap-3 ml-auto">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/blog")}
+                className="h-9"
+              >
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={loading} className="h-9 font-semibold px-5">
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Zapisywanie...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    {postId
                       ? "Zapisz zmiany"
                       : form.watch("opublikowany")
                         ? "Opublikuj artykuł"
                         : "Zapisz jako szkic"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push("/admin/blog")}
-                  className="h-11 px-6"
-                >
-                  Anuluj
-                </Button>
-              </motion.div>
+                  </>
+                )}
+              </Button>
             </div>
-          </motion.div>
+          </div>
         </form>
       </Form>
     </div>

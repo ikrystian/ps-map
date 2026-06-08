@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
-import { ArrowLeft, Loader2, Save } from "lucide-react"
+import { ArrowLeft, Loader2, Save, AlertCircle, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -424,28 +424,46 @@ export default function AddSubscriptionPlanPage() {
             </CardContent>
           </Card>
 
-          {/* Actions */}
-          <div className="flex gap-4">
-            <Button type="submit" disabled={saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Tworzenie...
-                </>
+          {/* Sticky Actions Bar at the bottom of the page */}
+          <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg mt-6">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+              <span>Status walidacji:</span>
+              {(!formData.nazwa || formData.nazwa.trim() === "") ? (
+                <span className="text-destructive flex items-center gap-1.5 font-semibold">
+                  <AlertCircle className="h-4 w-4 animate-bounce" />
+                  Nazwa pakietu jest wymagana
+                </span>
               ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Utwórz pakiet
-                </>
+                <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  Wszystkie pola poprawne
+                </span>
               )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/admin/pakiety")}
-            >
-              Anuluj
-            </Button>
+            </div>
+            
+            <div className="flex gap-3 ml-auto">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/pakiety")}
+                className="h-9"
+              >
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={saving} className="h-9 font-semibold px-5">
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Tworzenie...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Utwórz pakiet
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </form>

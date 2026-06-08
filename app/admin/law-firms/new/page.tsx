@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -1309,14 +1309,43 @@ export default function NewLawFirmPage() {
             </CardContent>
           </Card>
 
-          {/* Form Actions */}
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => router.push("/admin/law-firms")}>
-              Anuluj
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Tworzenie..." : "Dodaj Eksperta"}
-            </Button>
+          {/* Sticky Actions Bar at the bottom of the page */}
+          <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+              <span>Status walidacji:</span>
+              {Object.keys(form.formState.errors).length > 0 ? (
+                <span className="text-destructive flex items-center gap-1.5 font-semibold">
+                  <AlertCircle className="h-4 w-4 animate-bounce" />
+                  Wykryto błędy w formularzu
+                </span>
+              ) : (
+                <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  Wszystkie pola poprawne
+                </span>
+              )}
+            </div>
+            
+            <div className="flex gap-3 ml-auto">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/law-firms")}
+                className="h-9"
+              >
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="h-9 font-semibold px-5">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Tworzenie...
+                  </>
+                ) : (
+                  "Dodaj Eksperta"
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

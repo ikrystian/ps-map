@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -470,25 +470,48 @@ export function CategoryForm({
                 </CardContent>
               </Card>
 
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Zapisywanie..." : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Zapisz kategorię
-                    </>
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => router.push("/admin/categories")}
-                  disabled={isLoading}
-                >
-                  Anuluj
-                </Button>
-              </div>
+            </div>
+          </div>
+
+          {/* Sticky Actions Bar at the bottom of the page */}
+          <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+              <span>Status walidacji:</span>
+              {Object.keys(form.formState.errors).length > 0 ? (
+                <span className="text-destructive flex items-center gap-1.5 font-semibold">
+                  <AlertCircle className="h-4 w-4 animate-bounce" />
+                  Wykryto błędy w formularzu
+                </span>
+              ) : (
+                <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  Wszystkie pola poprawne
+                </span>
+              )}
+            </div>
+            
+            <div className="flex gap-3 ml-auto">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/categories")}
+                className="h-9"
+              >
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={isLoading} className="h-9 font-semibold px-5">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Zapisywanie...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Zapisz kategorię
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </form>

@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail } from "lucide-react"
+import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
@@ -1324,13 +1324,38 @@ export default function AdminSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Przycisk zapisu */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={saving} size="lg">
-          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          <Save className="mr-2 h-4 w-4" />
-          Zapisz wszystkie ustawienia
-        </Button>
+      {/* Sticky Actions Bar at the bottom of the page */}
+      <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg mt-6">
+        <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+          <span>Status walidacji:</span>
+          {(!siteName.trim() || !contactEmail.trim() || !supportEmail.trim()) ? (
+            <span className="text-destructive flex items-center gap-1.5 font-semibold">
+              <AlertCircle className="h-4 w-4 animate-bounce" />
+              Wymagane pola są puste (Nazwa serwisu, E-mail kontaktowy lub E-mail wsparcia)
+            </span>
+          ) : (
+            <span className="text-green-500 flex items-center gap-1.5 font-semibold">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              Wszystkie pola poprawne
+            </span>
+          )}
+        </div>
+        
+        <div className="flex gap-3 ml-auto">
+          <Button onClick={handleSave} disabled={saving} className="h-9 font-semibold px-5">
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Zapisywanie...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Zapisz wszystkie ustawienia
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   )
