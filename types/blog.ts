@@ -37,11 +37,13 @@ export interface BlogPost {
   lawFirmId?: string | null;
   lawFirm?: {
     id?: string;
+    slug?: string;
     nazwa?: string;
     nazwaFirmy?: string;
     logo?: string | null;
     miasto?: string;
     voivodeship?: any;
+    opis?: string | null;
   } | null;
   views?: number;
   metaTitle?: string | null;

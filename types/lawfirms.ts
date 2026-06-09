@@ -158,13 +158,24 @@ export interface LawFirm extends LawFirmWithLocation {
       name: string
       description: string
       imageUrl: string
-      conditionType: string
-      threshold: number
-      createdAt: string
-      updatedAt: string
+      conditionType?: string
+      threshold?: number
+      createdAt?: string
+      updatedAt?: string
     }
-    awardedAt: string
+    awardedAt: string | Date
   }>
+  edukacja?: Array<{
+    uczelnia: string
+    wydzial: string
+    rokOd: string
+    rokDo: string
+  }>
+  galeriaZdjec?: string[]
+  oraStatus?: string | null
+  oraMiasto?: string | null
+  oirpStatus?: string | null
+  oirpMiasto?: string | null
   user?: {
     id: string
     email: string

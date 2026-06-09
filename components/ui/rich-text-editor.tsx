@@ -271,13 +271,16 @@ export function RichTextEditor({
       const Header = (await import("@editorjs/header")).default
       const List = (await import("@editorjs/list")).default
       const ImageTool = (await import("@editorjs/image")).default
+      // @ts-expect-error No type declarations available
       const Embed = (await import("@editorjs/embed")).default
       const Quote = (await import("@editorjs/quote")).default
+      // @ts-expect-error No type declarations available
       const Checklist = (await import("@editorjs/checklist")).default
-      const Table = (await import("@editorjs/table")).default
+      const Table = (await import("@editorjs/table")).default as any
       const Warning = (await import("@editorjs/warning")).default
       const Delimiter = (await import("@editorjs/delimiter")).default
       const Underline = (await import("@editorjs/underline")).default
+      // @ts-expect-error No type declarations available
       const Marker = (await import("@editorjs/marker")).default
 
       if (isCancelled || !containerRef.current) return
