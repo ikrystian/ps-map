@@ -169,7 +169,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
     const filtered = lawFirms.filter((firm) => {
       if (!firm.categories) return false
       return firm.categories.some((cat) =>
-        tab.keywords.some((kw) => cat.nazwa.toLowerCase().includes(kw))
+        tab.keywords.some((kw) => cat.nazwa?.toLowerCase().includes(kw))
       )
     })
 

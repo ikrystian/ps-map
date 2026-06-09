@@ -560,7 +560,7 @@ export default function LawFirmStatsPage() {
                         axisLine={false}
                       />
                       <ChartTooltip content={<ChartTooltipContent />} />
-                      <ChartLegend content={<ChartLegendContent />} />
+                      <ChartLegend content={<ChartLegendContent /> as any} />
                       <Bar dataKey="total" fill="var(--color-total)" radius={[4, 4, 0, 0]} />
                       <Bar dataKey="accepted" fill="var(--color-accepted)" radius={[4, 4, 0, 0]} />
                     </BarChart>
@@ -637,7 +637,7 @@ export default function LawFirmStatsPage() {
                         width={90}
                       />
                       <ChartTooltip content={<ChartTooltipContent />} />
-                      <ChartLegend content={<ChartLegendContent />} />
+                      <ChartLegend content={<ChartLegendContent /> as any} />
                       <Bar dataKey="offers" fill="var(--color-offers)" radius={[0, 4, 4, 0]} />
                       <Bar dataKey="won" fill="var(--color-won)" radius={[0, 4, 4, 0]} />
                     </BarChart>

@@ -166,7 +166,7 @@ export function ReviewsSection({
     })
 
   // Date Formatter
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "long",

@@ -417,7 +417,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                     <span className="text-sm text-neutral-400 font-light truncate">
                       {lawFirm.adres
                         ? `${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}`
-                        : `${lawFirm.miasto}, ${lawFirm.voivodeship.nazwa}`}
+                        : `${lawFirm.miasto}, ${lawFirm.voivodeship?.nazwa}`}
                     </span>
                   </div>
                 </div>

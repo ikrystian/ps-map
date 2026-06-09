@@ -45,7 +45,7 @@ export function AboutTab({
       )}
 
       {/* Badges */}
-      <BadgesSection badges={lawFirm.badges} />
+      {lawFirm.badges && <BadgesSection badges={lawFirm.badges} />}
 
       {/* Scope of Services & Specializations */}
       {(lawFirm.unikatowyOpisUslugi ||
@@ -70,7 +70,7 @@ export function AboutTab({
                 <div className="space-y-3">
                   <p className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Kategorie spraw</p>
                   <div className="flex flex-wrap gap-2">
-                    {lawFirm.categories.map((cat) => (
+                    {lawFirm.categories.map((cat) => cat.category && (
                       <Badge key={cat.category.slug} className="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 font-semibold rounded-lg text-xs py-1 px-3 transition-all">
                         {cat.category.nazwa}
                       </Badge>
@@ -83,7 +83,7 @@ export function AboutTab({
                 <div className="space-y-3 pt-4 border-t border-border/10">
                   <p className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Obszary praktyki</p>
                   <div className="flex flex-wrap gap-2">
-                    {lawFirm.slowaKluczowe.map((keyword, index) => (
+                    {(lawFirm.slowaKluczowe as string[]).map((keyword: string, index: number) => (
                       <Badge key={index} variant="outline" className="bg-white/5 border-border/20 hover:bg-white/10 text-zinc-300 text-xs py-1 px-3 rounded-lg font-medium transition-all">
                         {keyword}
                       </Badge>
@@ -109,7 +109,7 @@ export function AboutTab({
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-6 relative pl-2">
-              {lawFirm.edukacja.map((edu, index) => (
+              {lawFirm.edukacja.map((edu, index: number) => (
                 <div key={index} className="relative pl-6 pb-6 last:pb-0">
                   {/* Timeline vertical bar */}
                   <div className="absolute left-[3px] top-2 bottom-0 w-0.5 bg-border/20 last:hidden" />
@@ -131,7 +131,7 @@ export function AboutTab({
       )}
 
       {/* Certificates */}
-      {lawFirm.certificates.length > 0 && (
+      {lawFirm.certificates && lawFirm.certificates.length > 0 && (
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 hover:shadow-xl">
           <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
@@ -144,7 +144,7 @@ export function AboutTab({
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              {lawFirm.certificates.map((cert) => (
+              {lawFirm.certificates && lawFirm.certificates.map((cert) => (
                 <div key={cert.id} className="flex items-start gap-4 p-4 border border-border/30 hover:border-primary/25 rounded-xl hover:shadow-md transition-all duration-300 bg-card/10">
                   <Award className="h-8 w-8 text-primary flex-shrink-0 mt-0.5 p-1 rounded-lg bg-primary/10" />
                   <div className="flex-1 space-y-1">
@@ -187,12 +187,12 @@ export function AboutTab({
           </CardHeader>
           <CardContent className="p-6">
             <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:gap-6" id="expert-gallery">
-              {[0, 1, 2, 3].map((colIdx) => (
+              {[0, 1, 2, 3].map((colIdx: number) => (
                 <div key={colIdx} className="grid gap-4 h-fit">
                   {lawFirm.galeriaZdjec!
-                    .map((img, i) => ({ img, i }))
-                    .filter(({ i }) => i % 4 === colIdx)
-                    .map(({ img, i }) => (
+                    .map((img: string, i: number) => ({ img, i }))
+                    .filter(({ i }: { i: number }) => i % 4 === colIdx)
+                    .map(({ img, i }: { img: string; i: number }) => (
                       <div
                         key={i}
                         className={`relative rounded-2xl overflow-hidden cursor-pointer group bg-muted/30 border border-border/40 shadow-sm transition-transform duration-300 hover:scale-[1.02] hover:shadow-md ${i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-square" : "aspect-[4/3]"

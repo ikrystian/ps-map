@@ -53,7 +53,7 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
       {hasCategories && (
         <div className="space-y-8">
           {/* Sprawy firmowe */}
-          {firmCategories.filter((c) => c.category.typ === "SPRAWY_FIRMOWE").length > 0 && (
+          {firmCategories.filter((c) => c.category && c.category.typ === "SPRAWY_FIRMOWE").length > 0 && (
             <div className="space-y-4">
               <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 font-playfair">
                 <div className="bg-[#0da192]/10 p-1.5 rounded-lg text-[#0da192]">
@@ -63,8 +63,8 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 {firmCategories
-                  .filter((c) => c.category.typ === "SPRAWY_FIRMOWE")
-                  .map((lawFirmCategory) => (
+                  .filter((c) => c.category && c.category.typ === "SPRAWY_FIRMOWE")
+                  .map((lawFirmCategory) => lawFirmCategory.category && (
                     <Card key={lawFirmCategory.id} className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-primary/40 hover:bg-card/35 hover:shadow-[0_0_20px_rgba(13,161,146,0.1)] transition-all duration-300 shadow-lg rounded-2xl flex flex-col justify-between overflow-hidden">
                       <CardHeader className="p-5">
                         <div className="flex justify-between items-start gap-3">
@@ -83,7 +83,7 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
           )}
 
           {/* Sprawy prywatne */}
-          {firmCategories.filter((c) => c.category.typ === "SPRAWY_PRYWATNE").length > 0 && (
+          {firmCategories.filter((c) => c.category && c.category.typ === "SPRAWY_PRYWATNE").length > 0 && (
             <div className="space-y-4">
               <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 font-playfair">
                 <div className="bg-[#0da192]/10 p-1.5 rounded-lg text-[#0da192]">
@@ -93,8 +93,8 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 {firmCategories
-                  .filter((c) => c.category.typ === "SPRAWY_PRYWATNE")
-                  .map((lawFirmCategory) => (
+                  .filter((c) => c.category && c.category.typ === "SPRAWY_PRYWATNE")
+                  .map((lawFirmCategory) => lawFirmCategory.category && (
                     <Card key={lawFirmCategory.id} className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-primary/40 hover:bg-card/35 hover:shadow-[0_0_20px_rgba(13,161,146,0.1)] transition-all duration-300 shadow-lg rounded-2xl flex flex-col justify-between overflow-hidden">
                       <CardHeader className="p-5">
                         <div className="flex justify-between items-start gap-3">
