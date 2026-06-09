@@ -217,6 +217,11 @@ export async function POST(request: NextRequest) {
             nazwa: true,
           },
         },
+        notificationSettings: {
+          select: {
+            ustawieniaOgloszenia: true,
+          },
+        },
       },
     })
 
@@ -282,6 +287,22 @@ export async function POST(request: NextRequest) {
 
     // Jeśli nie istnieje, utwórz nową
     if (!conversation) {
+      // Ustawienie eksperta "Ustawienia widoczności" – jeśli wyłączone, klient nie może
+      // rozpocząć nowej, bezpośredniej rozmowy/oferty z poziomu profilu.
+      // Istniejące konwersacje działają dalej (sprawdzamy tylko przy tworzeniu nowej).
+      if (
+        userRole === "CLIENT" &&
+        lawFirmUser.notificationSettings?.ustawieniaOgloszenia === false
+      ) {
+        return Response.json(
+          {
+            error:
+              "Ten ekspert nie przyjmuje obecnie bezpośrednich zapytań przez profil.",
+          },
+          { status: 403 }
+        )
+      }
+
       conversation = await prisma.conversation.create({
         data: {
           clientUserId: clientUserQueryId,
