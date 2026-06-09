@@ -113,6 +113,10 @@ export async function GET(request: NextRequest) {
 
     const where: any = {
       aktywna: true,
+      // Tryb urlopowy ukrywa eksperta w katalogu (uwzględnia też firmy bez ustawień)
+      NOT: {
+        user: { notificationSettings: { urlop: true } },
+      },
     }
 
     if (andConditions.length > 0) {
@@ -124,6 +128,13 @@ export async function GET(request: NextRequest) {
       prisma.lawFirm.findMany({
         where,
         include: {
+          user: {
+            select: {
+              notificationSettings: {
+                select: { wyswietlanieAwatara: true },
+              },
+            },
+          },
           voivodeship: true,
           categories: {
             include: {
@@ -232,12 +243,15 @@ export async function GET(request: NextRequest) {
         // Apply promotion boost
         const finalScore = (baseScore + viewScore + ratingScore) * boost.boostMultiplier
 
+        // Ustawienie "Wyświetlanie awatara w katalogu" – ukrywa logo eksperta na listingach
+        const pokazAwatar = firm.user?.notificationSettings?.wyswietlanieAwatara !== false
+
         return {
           id: firm.id,
           slug: firm.slug,
           nazwa: firm.nazwa,
           nazwaFirmy: firm.nazwaFirmy,
-          logo: firm.logo,
+          logo: pokazAwatar ? firm.logo : null,
           zdjecieGlowne: firm.zdjecieGlowne,
           opis: firm.opis,
           miasto: firm.miasto,
