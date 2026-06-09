@@ -58,7 +58,12 @@ export async function POST(
             slug: true,
             user: {
               select: {
-                email: true
+                email: true,
+                notificationSettings: {
+                  select: {
+                    autoProsbOpinie: true
+                  }
+                }
               }
             }
           }
@@ -287,34 +292,37 @@ export async function POST(
     }
 
     // 2. Zaplanuj e-mail z prośbą o ocenę do klienta (za 3 dni)
-    try {
-      const scheduledAt = new Date()
-      scheduledAt.setDate(scheduledAt.getDate() + 3) // Za 3 dni
+    // Tylko jeśli ekspert ma włączone "Automatyczne prośby o opinie" w ustawieniach.
+    if (offer.lawFirm?.user?.notificationSettings?.autoProsbOpinie) {
+      try {
+        const scheduledAt = new Date()
+        scheduledAt.setDate(scheduledAt.getDate() + 3) // Za 3 dni
 
-      const clientEmail = session.user.email || "Brak"
-      const linkDoOceny = `${baseUrl}/ekspert/${offer.lawFirm.slug}#reviews`
+        const clientEmail = session.user.email || "Brak"
+        const linkDoOceny = `${baseUrl}/ekspert/${offer.lawFirm.slug}#reviews`
 
-      // Przygotuj zmienne jako JSON string do zapisania w bazie danych
-      const variablesObj = {
-        "{klient}": client.imie,
-        "{ekspert}": offer.lawFirm.nazwa,
-        "{linkDoOceny}": linkDoOceny,
-      }
-
-      await prisma.scheduledEmail.create({
-        data: {
-          to: clientEmail,
-          subject: `Jak oceniasz współpracę z ekspertem ${offer.lawFirm.nazwa}?`,
-          templateType: EmailType.PROSBA_O_OCENE,
-          variables: JSON.stringify(variablesObj),
-          scheduledAt,
-          status: ScheduledEmailStatus.PENDING,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+        // Przygotuj zmienne jako JSON string do zapisania w bazie danych
+        const variablesObj = {
+          "{klient}": client.imie,
+          "{ekspert}": offer.lawFirm.nazwa,
+          "{linkDoOceny}": linkDoOceny,
         }
-      })
-    } catch (schedError) {
-      console.error("Failed to schedule review request email:", schedError)
+
+        await prisma.scheduledEmail.create({
+          data: {
+            to: clientEmail,
+            subject: `Jak oceniasz współpracę z ekspertem ${offer.lawFirm.nazwa}?`,
+            templateType: EmailType.PROSBA_O_OCENE,
+            variables: JSON.stringify(variablesObj),
+            scheduledAt,
+            status: ScheduledEmailStatus.PENDING,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }
+        })
+      } catch (schedError) {
+        console.error("Failed to schedule review request email:", schedError)
+      }
     }
 
     return Response.json(updatedOffer.updated)
