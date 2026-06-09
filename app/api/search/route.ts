@@ -8,6 +8,10 @@ export async function GET(request: NextRequest) {
 
     const where: any = {
       aktywna: true,
+      // Tryb urlopowy ukrywa eksperta w wyszukiwarce
+      NOT: {
+        user: { notificationSettings: { urlop: true } },
+      },
     }
 
     if (query) {
@@ -32,6 +36,13 @@ export async function GET(request: NextRequest) {
         miasto: true,
         adres: true,
         zweryfikowana: true,
+        user: {
+          select: {
+            notificationSettings: {
+              select: { wyswietlanieAwatara: true },
+            },
+          },
+        },
         reviews: {
           where: {
             aktywna: true,
@@ -54,12 +65,15 @@ export async function GET(request: NextRequest) {
         ? firm.reviews.reduce((sum, review) => sum + review.ocenaOgolna, 0) / firm.reviews.length
         : 0
 
+      // Ustawienie "Wyświetlanie awatara w katalogu"
+      const pokazAwatar = firm.user?.notificationSettings?.wyswietlanieAwatara !== false
+
       return {
         id: firm.id,
         slug: firm.slug,
         nazwa: firm.nazwa,
         nazwaFirmy: firm.nazwaFirmy,
-        logo: firm.logo,
+        logo: pokazAwatar ? firm.logo : null,
         zdjecieGlowne: firm.zdjecieGlowne,
         opis: firm.opis ? (firm.opis.length > 150 ? firm.opis.substring(0, 150) + "..." : firm.opis) : "",
         miasto: firm.miasto,
