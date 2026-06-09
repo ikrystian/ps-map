@@ -616,7 +616,7 @@ export default function CheckoutPage() {
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-zinc-400 font-light">Stan po zakupie:</span>
                         <span className="font-semibold text-emerald-400">
-                          {lawFirm.punktySaldo + orderData.liczbaPunktow} pkt
+                          {(lawFirm.punktySaldo || 0) + orderData.liczbaPunktow} pkt
                         </span>
                       </div>
                     )}

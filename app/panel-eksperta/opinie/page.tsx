@@ -176,7 +176,7 @@ export default function LawFirmReviewsPage() {
         nazwa: lawFirmData.nazwa,
         logo: lawFirmData.logo,
         punktySaldo: lawFirmData.punktySaldo || 0
-      })
+      } as any)
 
       // Pobierz koszty usunięcia opinii z ustawień systemowych
       try {
@@ -297,7 +297,7 @@ export default function LawFirmReviewsPage() {
         if (!prev) return null
         return {
           ...prev,
-          punktySaldo: responseData.newSaldo ?? (prev.punktySaldo - cost),
+          punktySaldo: responseData.newSaldo ?? ((prev.punktySaldo || 0) - cost),
         }
       })
 

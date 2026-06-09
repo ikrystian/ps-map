@@ -73,7 +73,7 @@ interface SubscriptionPlan {
   skillLawFocus: boolean
 }
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string | Date) => {
   return new Date(dateString).toLocaleDateString("pl-PL", {
     year: "numeric",
     month: "long",
@@ -599,7 +599,7 @@ export default function LawFirmPackagePage() {
 
             const priceVal = getPriceValue(plan, selectedPeriod)
             const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
-            const canAfford = lawFirm.punktySaldo >= pointsCost
+            const canAfford = (lawFirm.punktySaldo || 0) >= pointsCost
 
             const periodMonths = parseInt(selectedPeriod)
             const monthlyEquivPoints = Math.round(pointsCost / periodMonths)
@@ -952,7 +952,7 @@ export default function LawFirmPackagePage() {
 
                   const price = getPriceValue(selectedPlan, selectedPeriod)
                   const pointsCost = Math.round(price * POINTS_PER_PLN)
-                  const canAfford = lawFirm ? lawFirm.punktySaldo >= pointsCost : false
+                  const canAfford = lawFirm ? (lawFirm.punktySaldo || 0) >= pointsCost : false
 
                   return (
                     <>
@@ -998,7 +998,7 @@ export default function LawFirmPackagePage() {
                         <div className="flex justify-between items-center text-sm font-bold">
                           <span>Saldo po aktywacji:</span>
                           <span className={canAfford ? "text-success" : "text-error"}>
-                            {lawFirm ? lawFirm.punktySaldo - pointsCost : 0} pkt
+                            {lawFirm ? (lawFirm.punktySaldo || 0) - pointsCost : 0} pkt
                           </span>
                         </div>
                       </div>
@@ -1024,7 +1024,7 @@ export default function LawFirmPackagePage() {
             <AlertDialogCancel className="border-border rounded-xl">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
-              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && lawFirm.punktySaldo < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
+              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && (lawFirm.punktySaldo || 0) < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
               className="bg-primary hover:bg-primary-hover text-white font-semibold rounded-xl"
             >
               {purchasing ? (

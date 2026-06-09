@@ -315,7 +315,7 @@ export default function AdminTransakcjePunktyPage() {
           </Table>
 
           {/* Pagination */}
-          {pagination.totalPages > 1 && (
+          {pagination.totalPages && pagination.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
                 Strona {pagination.page} z {pagination.totalPages} (łącznie {pagination.total} operacji)

@@ -271,7 +271,7 @@ export async function POST(
               const extension = filename.split(".").pop()?.toLowerCase() || "pdf"
 
               return {
-                lawFirmId: lawFirmUser.lawFirm.id,
+                lawFirmId: lawFirmUser.lawFirm?.id,
                 conversationId: conversationId,
                 nazwa: filename,
                 typDokumentu: "klient-wiadomosc",

@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       await prisma.city.createMany({
         data: citiesToCreate,
         skipDuplicates: true
-      })
+      } as any)
     }
 
     // Invalidate cached cities

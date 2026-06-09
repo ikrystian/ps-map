@@ -103,7 +103,7 @@ export default function AdminUsersPage() {
       if (response.ok) {
         const data: PaginatedResponse<'users', User> = await response.json()
         setUsers(data.users)
-        setPagination(data.pagination)
+        setPagination(data.pagination as any)
       } else {
         throw new Error("Error fetching users")
       }
