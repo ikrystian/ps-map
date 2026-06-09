@@ -53,7 +53,8 @@ export default function BlogPostPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string | Date | null) => {
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "long",
@@ -61,8 +62,8 @@ export default function BlogPostPage() {
     });
   };
 
-  const formatViews = (views: number): string => {
-    if (views === 1) return "1 wyświetlenie";
+  const formatViews = (views?: number): string => {
+    if (!views || views === 1) return views === 1 ? "1 wyświetlenie" : "0 wyświetleń";
     const lastDigit = views % 10;
     const lastTwoDigits = views % 100;
     if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
@@ -122,7 +123,7 @@ export default function BlogPostPage() {
   }
 
   // Calculate estimated reading time (assuming 200 words per minute)
-  const estimatedReadingTime = post
+  const estimatedReadingTime = post && post.tresc
     ? Math.ceil(post.tresc.replace(/<[^>]*>/g, "").split(/\s+/).length / 200)
     : 0;
 
@@ -351,7 +352,7 @@ export default function BlogPostPage() {
             <article className="bg-[#151513]/40 border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
               <div
                 className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-neutral-300 dark:prose-p:text-neutral-350 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-neutral-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-neutral-300"
-                dangerouslySetInnerHTML={{ __html: post.tresc }}
+                dangerouslySetInnerHTML={{ __html: post.tresc || "" }}
               />
 
               <Separator className="my-10 bg-neutral-800/60" />

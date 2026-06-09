@@ -148,7 +148,8 @@ export default function BlogPage() {
     router.push("/blog", { scroll: false });
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string | Date | null) => {
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "long",
@@ -156,8 +157,8 @@ export default function BlogPage() {
     });
   };
 
-  const formatViews = (views: number): string => {
-    if (views === 1) return "1 wyświetlenie";
+  const formatViews = (views?: number): string => {
+    if (!views || views === 1) return views === 1 ? "1 wyświetlenie" : "0 wyświetleń";
     const lastDigit = views % 10;
     const lastTwoDigits = views % 100;
     if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
@@ -166,13 +167,15 @@ export default function BlogPage() {
     return `${views} wyświetleń`;
   };
 
-  const getExcerpt = (content: string, maxLength: number = 140) => {
+  const getExcerpt = (content?: string | null, maxLength: number = 140) => {
+    if (!content) return "";
     const stripped = content.replace(/<[^>]*>/g, "");
     if (stripped.length <= maxLength) return stripped;
     return stripped.slice(0, maxLength).trim() + "...";
   };
 
-  const getReadingTime = (content: string) => {
+  const getReadingTime = (content?: string | null) => {
+    if (!content) return 0;
     const stripped = content.replace(/<[^>]*>/g, "");
     const words = stripped.split(/\s+/).length;
     const minutes = Math.ceil(words / 200); // Average reading speed
@@ -613,7 +616,7 @@ export default function BlogPage() {
                                 {post.wyswietlenia}
                               </span>
                               <span>
-                                {new Date(
+                                {post.dataPublikacji && new Date(
                                   post.dataPublikacji,
                                 ).toLocaleDateString("pl-PL", {
                                   day: "numeric",
@@ -631,7 +634,7 @@ export default function BlogPage() {
             )}
 
             {/* Premium Pagination controls */}
-            {pagination.pages > 1 && (
+            {pagination.pages && pagination.pages > 1 && (
               <div className="flex items-center justify-center gap-4 pt-10">
                 <Button
                   variant="outline"
@@ -657,7 +660,7 @@ export default function BlogPage() {
                   onClick={() =>
                     setPagination((prev) => ({
                       ...prev,
-                      page: Math.min(prev.pages, prev.page + 1),
+                      page: Math.min(prev.pages || 1, prev.page + 1),
                     }))
                   }
                   disabled={pagination.page === pagination.pages}

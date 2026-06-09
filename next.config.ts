@@ -56,8 +56,8 @@ const nextConfig: NextConfig = {
     ],
   },
   typescript: {
-    // Optionally ignore typecheck errors during build to save memory in resource-constrained systems
-    ignoreBuildErrors: true,
+    // Enable type checking during build to catch errors before production
+    ignoreBuildErrors: false,
   },
   experimental: {
     webpackMemoryOptimizations: true,

@@ -642,7 +642,7 @@ export default function LawFirmProfilePage() {
                       )
                     }
 
-                    const [from, to] = todayHours.split("-").map(t => t.trim())
+                    const [from, to] = todayHours.split("-").map((t: string) => t.trim())
                     if (!from || !to) return null
 
                     const [fromHour, fromMin] = from.split(":").map(Number)
@@ -676,7 +676,7 @@ export default function LawFirmProfilePage() {
                 {/* Słowa kluczowe (tags) */}
                 {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 pt-1 justify-center md:justify-start">
-                    {lawFirm.slowaKluczowe.map((keyword, index) => (
+                    {(lawFirm.slowaKluczowe as string[]).map((keyword: string, index: number) => (
                       <Badge
                         key={index}
                         variant="outline"
@@ -837,7 +837,7 @@ export default function LawFirmProfilePage() {
               {/* Reviews Tab */}
               <TabsContent value="reviews" className="space-y-4 animate-in fade-in-50 duration-300">
                 <ReviewsSection
-                  reviews={lawFirm.reviews}
+                  reviews={lawFirm.reviews || []}
                   lawFirmId={lawFirm.id}
                   lawFirmName={lawFirm.nazwa}
                   lawFirmLogo={lawFirm.logo}
@@ -975,7 +975,7 @@ export default function LawFirmProfilePage() {
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-2.5">
-                    {Object.entries(lawFirm.godzinyOtwarcia).map(([day, hours]) => {
+                    {Object.entries(lawFirm.godzinyOtwarcia).map(([day, hours]: [string, any]) => {
                       const dayMap: Record<string, string> = {
                         poniedzialek: "Poniedziałek",
                         wtorek: "Wtorek",
@@ -996,7 +996,7 @@ export default function LawFirmProfilePage() {
                       }
                       const today = new Date().getDay()
                       const isToday = dayIndex[day] === today
-                      const isClosed = !hours || hours.trim() === "" || hours.toLowerCase() === "zamknięte"
+                      const isClosed = !hours || (typeof hours === "string" && (hours.trim() === "" || hours.toLowerCase() === "zamknięte"))
 
                       return (
                         <div
@@ -1071,7 +1071,7 @@ export default function LawFirmProfilePage() {
             })()}
 
             {/* Service Area Card */}
-            {(lawFirm.voivodeships.length > 0 || lawFirm.cities.length > 0 || lawFirm.callaPolska) && (
+            {((lawFirm.voivodeships && lawFirm.voivodeships.length > 0) || (lawFirm.cities && lawFirm.cities.length > 0) || lawFirm.callaPolska) && (
               <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
                 <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
                   <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -1090,11 +1090,11 @@ export default function LawFirmProfilePage() {
                   ) : (
                     <div className="space-y-4">
                       {/* Voivodeships */}
-                      {lawFirm.voivodeships.length > 0 && (
+                      {lawFirm.voivodeships && lawFirm.voivodeships.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Województwa</p>
                           <div className="flex flex-wrap gap-1.5">
-                            {lawFirm.voivodeships.map((v, index) => (
+                            {lawFirm.voivodeships.map((v: any, index: number) => (
                               <Badge key={index} variant="outline" className="bg-background/50 border-border/60 font-medium px-2 py-1 rounded-lg text-sm">
                                 {v.voivodeship.nazwa}
                               </Badge>
@@ -1104,11 +1104,11 @@ export default function LawFirmProfilePage() {
                       )}
 
                       {/* Cities */}
-                      {lawFirm.cities.length > 0 && (
+                      {lawFirm.cities && lawFirm.cities.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-md font-bold uppercase text-muted-foreground tracking-wider">Główne miasta</p>
                           <div className="flex flex-wrap gap-1.5">
-                            {lawFirm.cities.map((c, index) => (
+                            {lawFirm.cities.map((c: any, index: number) => (
                               <Badge key={index} variant="secondary" className="bg-primary/5 text-primary border-primary/10 font-semibold text-md px-2 py-0.5 rounded-lg">
                                 {c.city.nazwa}
                               </Badge>

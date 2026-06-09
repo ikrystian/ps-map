@@ -457,7 +457,7 @@ export default function CategoryClientPage() {
                     <SelectContent>
                       <SelectItem value="all">Wszystkie</SelectItem>
                       {voivodeships.map((voivodeship) => (
-                        <SelectItem key={voivodeship.id} value={voivodeship.slug}>
+                        <SelectItem key={voivodeship.id} value={voivodeship.slug || ""}>
                           {voivodeship.nazwa}
                         </SelectItem>
                       ))}
@@ -724,7 +724,7 @@ export default function CategoryClientPage() {
                                 <div className="flex items-center text-sm text-muted-foreground">
                                   <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
                                   <span className="truncate">
-                                    {firm.miasto}, {firm.voivodeship.nazwa}
+                                    {firm.miasto}, {firm.voivodeship?.nazwa}
                                   </span>
                                 </div>
 
