@@ -26,6 +26,12 @@ export async function GET(
           select: {
             email: true,
             name: true,
+            notificationSettings: {
+              select: {
+                ustawieniaOgloszenia: true,
+                urlop: true,
+              },
+            },
           },
         },
         voivodeship: true,
@@ -154,6 +160,10 @@ export async function GET(
       avgRating,
       reviewCount: lawFirm.reviews.length,
       limitSlowKluczowych: maxKeywords,
+      // Flagi z ustawień eksperta dla profilu publicznego
+      przyjmujeBezposrednieZapytania:
+        lawFirm.user?.notificationSettings?.ustawieniaOgloszenia !== false,
+      naUrlopie: lawFirm.user?.notificationSettings?.urlop === true,
     }
 
     return NextResponse.json(parsedLawFirm)
