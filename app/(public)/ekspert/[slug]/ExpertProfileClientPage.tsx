@@ -773,8 +773,15 @@ export default function LawFirmProfilePage() {
               {session?.user?.role === "CLIENT" ? (
                 <Button
                   onClick={handleStartChat}
-                  disabled={isStartingChat}
-                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20"
+                  disabled={isStartingChat || lawFirm.naUrlopie || lawFirm.przyjmujeBezposrednieZapytania === false}
+                  title={
+                    lawFirm.naUrlopie
+                      ? "Ekspert jest w trybie urlopowym"
+                      : lawFirm.przyjmujeBezposrednieZapytania === false
+                        ? "Ekspert nie przyjmuje obecnie bezpośrednich zapytań"
+                        : undefined
+                  }
+                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   <MessageSquare className="h-4 w-4" />
                   {isStartingChat ? "Łączenie..." : "Rozpocznij czat"}
@@ -1171,7 +1178,15 @@ export default function LawFirmProfilePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                {!showContactForm ? (
+                {lawFirm.naUrlopie ? (
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-700 dark:text-amber-300">
+                    Ekspert jest obecnie niedostępny (tryb urlopowy) i nie przyjmuje nowych zapytań.
+                  </div>
+                ) : lawFirm.przyjmujeBezposrednieZapytania === false ? (
+                  <div className="rounded-xl border border-border/50 bg-muted/20 p-4 text-sm text-muted-foreground">
+                    Ten ekspert nie przyjmuje obecnie bezpośrednich zapytań przez profil.
+                  </div>
+                ) : !showContactForm ? (
                   <Button onClick={() => setShowContactForm(true)} className="w-full rounded-xl bg-primary hover:bg-primary/95 transition-all text-white font-semibold">
                     Pokaż formularz kontaktowy
                   </Button>
