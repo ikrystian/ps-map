@@ -45,19 +45,23 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
 
   // Mapowanie typu powiadomienia na flagę e-mail
   let shouldSendEmail = force || false
+  let shouldSendSMS = false
   const shouldSendInApp = true // In-app wysyłamy prawie zawsze, chyba że dojdzie flaga to blokująca w ustawieniach
 
   if (settings && !force) {
-    // Tryb urlopowy ogranicza powiadomienia e-mail (przepuszcza tylko SYSTEM i NOWA_WIADOMOSC)
-    if (settings.urlop && typ !== "SYSTEM" && typ !== "NOWA_WIADOMOSC") {
+    // Tryb urlopowy blokuje powiadomienia e-mail/SMS – przepuszczamy wyłącznie
+    // krytyczne komunikaty systemowe (SYSTEM). Pozostałe trafiają tylko do in-app.
+    if (settings.urlop && typ !== "SYSTEM") {
       shouldSendEmail = false
     } else {
       switch (typ) {
         case "NOWA_OFERTA":
-          shouldSendEmail = settings.emailNoweOferty
+          // Nowe zlecenia/oferty to obsługa klientów – kontrolowane przez obowiązkową zgodę "Kontakt z klientami"
+          shouldSendEmail = settings.kontaktKlienci
           break
         case "NOWA_WIADOMOSC":
-          shouldSendEmail = settings.emailWiadomosci
+          // E-mail z przypomnieniem o nowej wiadomości – ustawienie "Przypomnienie o nowych wiadomościach"
+          shouldSendEmail = settings.przypomnienieWiadomosci
           break
         case "ZMIANA_STATUSU":
         case "NOWA_KONSULTACJA":
@@ -65,13 +69,15 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
         case "KONSULTACJA_ODRZUCONA":
         case "KONSULTACJA_ZAPLACONA":
         case "KONSULTACJA_ANULOWANA":
-          shouldSendEmail = settings.emailStatusy
+          // Statusy spraw/konsultacji – obsługa klientów (obowiązkowe)
+          shouldSendEmail = settings.kontaktKlienci
           break
         case "NOWA_OPINIA":
-          shouldSendEmail = settings.kluczowe // Załóżmy, że opinie wchodzą w kluczowe
+          shouldSendEmail = settings.kluczowe // Opinie wchodzą w kluczowe
           break
         case "MALY_STAN_PUNKTOW":
         case "KONIEC_SUBSKRYPCJI":
+          // Punkty/subskrypcja – komunikacja sprzedażowa ("Ciekawe oferty i promocje")
           shouldSendEmail = settings.ofertPromocje
           break
         case "SYSTEM":
@@ -83,8 +89,9 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
       }
     }
 
-    // Opcjonalne powiadomienia SMS (do rozbudowy w przyszłości):
-    // const shouldSendSMS = (typ === "NOWA_WIADOMOSC" && settings.powiadomieniaSmNowa) || (settings.smsPilne)
+    // Powiadomienia SMS o nowej wiadomości – ustawienie "Powiadomienia o nowych wiadomościach (SMS)".
+    // Tryb urlopowy blokuje również SMS. Faktyczna wysyłka wymaga integracji z bramką SMS.
+    shouldSendSMS = !settings.urlop && typ === "NOWA_WIADOMOSC" && settings.powiadomieniaSmNowa
   }
 
   // Jeśli brak settings (co nie powinno się zdarzyć z nowymi userami, ale dla pewności),
@@ -141,5 +148,6 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
     notification: notificationRecord,
     emailSent,
     shouldSendEmail,
+    shouldSendSMS,
   }
 }

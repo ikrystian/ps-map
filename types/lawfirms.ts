@@ -87,6 +87,9 @@ export interface LawFirm extends LawFirmWithLocation {
   zgodaPrzetwarzanie?: boolean
   zweryfikowana: boolean
   aktywna?: boolean
+  // Flagi pochodzące z ustawień powiadomień eksperta (profil publiczny)
+  przyjmujeBezposrednieZapytania?: boolean
+  naUrlopie?: boolean
   createdAt?: string | Date
   updatedAt?: string | Date
   rank?: number | null
