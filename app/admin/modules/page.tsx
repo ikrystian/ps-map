@@ -160,7 +160,7 @@ export default function AdminModulesPage() {
 
       const data: PaginatedResponse<'modules', Module> = await response.json()
       setModules(data.modules)
-      setPagination(data.pagination)
+      setPagination(data.pagination as any)
     } catch (error) {
       console.error("Error fetching modules:", error)
       toast.error("Błąd podczas pobierania modułów")

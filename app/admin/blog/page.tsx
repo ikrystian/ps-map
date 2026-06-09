@@ -259,7 +259,8 @@ export default function AdminBlogPage() {
     setIsPreviewOpen(true)
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string | Date | null) => {
+    if (!dateString) return ""
     return new Date(dateString).toLocaleDateString("pl-PL", {
       year: "numeric",
       month: "2-digit",
@@ -606,7 +607,7 @@ export default function AdminBlogPage() {
           </Table>
 
           {/* Paginacja */}
-          {!loading && pagination.pages > 1 && (
+          {!loading && pagination.pages && pagination.pages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-6">
               <Button
                 variant="outline"
@@ -783,7 +784,7 @@ export default function AdminBlogPage() {
                 <Label className="text-sm font-semibold">Treść artykułu</Label>
                 <div
                   className="prose dark:prose-invert max-w-none border rounded-lg p-4 bg-background max-h-[300px] overflow-y-auto"
-                  dangerouslySetInnerHTML={{ __html: selectedPost.tresc }}
+                  dangerouslySetInnerHTML={{ __html: selectedPost.tresc || "" }}
                 />
               </div>
 

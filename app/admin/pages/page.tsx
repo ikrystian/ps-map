@@ -84,7 +84,7 @@ export default function AdminPagesPage() {
 
       const data: PaginatedResponse<'pages', Page> = await response.json()
       setPages(data.pages)
-      setPagination(data.pagination)
+      setPagination(data.pagination as any)
     } catch (error) {
       console.error("Error fetching pages:", error)
       toast.error("Błąd podczas pobierania stron")

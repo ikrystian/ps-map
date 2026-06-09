@@ -75,7 +75,7 @@ export default function AdminLawFirmsPage() {
       if (response.ok) {
         const data: PaginatedResponse<'lawFirms', LawFirm> = await response.json()
         setLawFirms(data.lawFirms)
-        setPagination(data.pagination)
+        setPagination(data.pagination as any)
       } else {
         throw new Error("Error fetching law firms")
       }

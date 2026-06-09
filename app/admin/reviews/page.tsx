@@ -431,7 +431,7 @@ export default function AdminReviewsPage() {
           </Table>
 
           {/* Pagination */}
-          {pagination.pages > 1 && (
+          {pagination.pages && pagination.pages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-4">
               <Button
                 variant="outline"
