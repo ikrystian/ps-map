@@ -205,7 +205,8 @@ export function createRandomBlogPost() {
     const title = faker.helpers.arrayElement(titles);
     return {
         tytul: title,
-        slug: generateSlug(title),
+        // Sufiks gwarantuje unikalność sluga (pula tytułów jest mała, slug jest @unique)
+        slug: `${generateSlug(title)}-${faker.string.alphanumeric(8).toLowerCase()}`,
         tresc: faker.lorem.paragraphs(5),
         tagi: faker.lorem.words(5).split(' '),
         obrazekWyrozniajacy: faker.image.url(),

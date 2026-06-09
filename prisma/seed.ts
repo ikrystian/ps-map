@@ -41,6 +41,8 @@ async function main() {
   await prisma.promotion.deleteMany()
   await prisma.partnerPointsHistory.deleteMany()
   await prisma.partnerProgram.deleteMany()
+  await prisma.scheduledJobRun.deleteMany()
+  await prisma.scheduledJob.deleteMany()
   await prisma.lawFirmBadge.deleteMany()
   await prisma.orderOverride.deleteMany()
   await prisma.lawFirmCategoryStats.deleteMany()

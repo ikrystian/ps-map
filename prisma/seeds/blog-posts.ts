@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { createRandomBlogPost } from './generators';
 import { generateSlug } from '../../lib/utils';
 
-const POSTS_TO_CREATE = 30
+const POSTS_TO_CREATE = 200
 
 interface LawFirmType {
   id: string;
