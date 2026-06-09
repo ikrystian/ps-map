@@ -22,20 +22,6 @@ Trasy przykładowe rzucające wyjątki — usunąć przed wdrożeniem.
 
 
 
-#### 1.6. Sentry — PII i Session Replay na platformie z danymi prawnymi
-**Pliki:** `sentry.server.config.ts`, `instrumentation-client.ts`
-```ts
-sendDefaultPii: true,
-integrations: [Sentry.replayIntegration()],
-tracesSampleRate: 1,
-```
-- `sendDefaultPii: true` wysyła dane osobowe — przy danych klientów kancelarii to ryzyko RODO.
-- Session Replay nagrywa sesje użytkowników (potencjalnie treści spraw/wiadomości).
-- `tracesSampleRate: 1` (100%) → koszt i narzut wydajności.
-**Fix:** `sendDefaultPii: false`, ograniczyć/wyłączyć replay lub agresywnie maskować, obniżyć
-`tracesSampleRate` do ~0.1 dla produkcji. DSN przenieść do zmiennej środowiskowej (historia
-gita pokazuje, że DSN był już rotowany po wycieku).
-
 
 #### 1.8. Słabe szyfrowanie wiadomości
 **Plik:** `lib/encryption.ts`
