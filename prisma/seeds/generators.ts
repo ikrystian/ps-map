@@ -47,11 +47,11 @@ export function createRandomLawFirm(prisma: PrismaClient) {
     const hasOirp = faker.datatype.boolean();
     const hasOra = faker.datatype.boolean();
 
-    const descriptionHtml = `<p><strong>${realisticFirm.tagline}</strong></p><p>${realisticFirm.opis}</p>` + 
+    const descriptionHtml = `<p><strong>${realisticFirm.tagline}</strong></p><p>${realisticFirm.opis}</p>` +
         faker.lorem.paragraphs(2, '\n\n')
-        .split('\n\n')
-        .map(p => `<p>${p}</p>`)
-        .join('');
+            .split('\n\n')
+            .map(p => `<p>${p}</p>`)
+            .join('');
 
     return {
         typ: faker.helpers.arrayElement(Object.values(LawFirmType)),
@@ -205,7 +205,8 @@ export function createRandomBlogPost() {
     const title = faker.helpers.arrayElement(titles);
     return {
         tytul: title,
-        // Sufiks gwarantuje unikalność sluga (pula tytułów jest mała, slug jest @unique)
+        // Titles are drawn from a small fixed list, so the base slug repeats.
+        // Append a random suffix to keep the unique `slug` constraint satisfied.
         slug: `${generateSlug(title)}-${faker.string.alphanumeric(8).toLowerCase()}`,
         tresc: faker.lorem.paragraphs(5),
         tagi: faker.lorem.words(5).split(' '),
