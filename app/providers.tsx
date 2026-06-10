@@ -1,6 +1,5 @@
 "use client"
 
-import "@/instrumentation-client"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { Session } from "next-auth"

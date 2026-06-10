@@ -128,18 +128,24 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const from = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
 
     const smtpConfigured = !!(host && user && pass && from)
+    const isDev = process.env.NODE_ENV !== 'production'
 
-    // W środowisku development bez konfiguracji SMTP - tylko loguj do konsoli
-    if (process.env.NODE_ENV === 'development' && !smtpConfigured) {
+    // Na środowisku deweloperskim NIE wysyłamy prawdziwych maili.
+    // Zamiast tego logujemy je do konsoli oraz do bazy (EmailLog),
+    // skąd można je podejrzeć na publicznej stronie /mails.
+    if (isDev) {
       console.log('='.repeat(80))
-      console.log('📧 EMAIL (Development Mode - No SMTP configured)')
+      console.log('📧 EMAIL (tryb deweloperski - nie wysyłam, tylko loguję)')
       console.log('='.repeat(80))
       console.log(`To: ${to}`)
       console.log(`Subject: ${subject}`)
       console.log(`Text: ${text || html.replace(/<[^>]*>/g, '')}`)
+      console.log('Podgląd wszystkich maili: /mails')
       console.log('='.repeat(80))
 
-      smtpLog = 'Development mode: SMTP not configured. Email logged to console.'
+      smtpLog = smtpConfigured
+        ? 'Tryb deweloperski: pominięto wysyłkę SMTP. Email zapisany do logów (podgląd na /mails).'
+        : 'Tryb deweloperski: SMTP nie skonfigurowany. Email zapisany do logów (podgląd na /mails).'
       status = EmailLogStatus.SUCCESS
       return true
     }
