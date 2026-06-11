@@ -172,14 +172,52 @@
 
         a.back-link { color: #888; font-size: 0.85rem; text-decoration: none; }
         a.back-link:hover { color: #e0ddd5; }
+
+        /* Tabs */
+        .tab-nav { display: flex; gap: 4px; margin-bottom: 24px; }
+        .tab-btn {
+            background: transparent;
+            border: 1px solid #3a382f;
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 18px;
+            transition: all 0.15s;
+        }
+        .tab-btn:hover { color: #e0ddd5; border-color: #b8a366; }
+        .tab-btn.active { background: #b8a366; border-color: #b8a366; color: #14130f; font-weight: 600; }
+
+        /* Data viewer */
+        .data-controls { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+        .data-controls select { flex: 0 0 auto; background: #14130f; border: 1px solid #3a382f; border-radius: 8px; color: #e0ddd5; font-family: inherit; font-size: 0.85rem; padding: 8px 12px; outline: none; }
+        .data-controls select:focus { border-color: #b8a366; }
+        .data-search { flex: 1; min-width: 160px; }
+        .data-meta { color: #666; font-size: 0.8rem; margin-left: auto; white-space: nowrap; }
+
+        .data-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid #2e2c25; }
+        .data-table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+        .data-table th { background: #1d1c17; color: #b8a366; font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #2e2c25; white-space: nowrap; }
+        .data-table td { padding: 9px 12px; border-bottom: 1px solid #1a1914; vertical-align: top; max-width: 260px; word-break: break-word; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: #1a1914; }
+        .data-empty { color: #666; font-size: 0.85rem; padding: 20px; text-align: center; }
+
+        .data-pagination { display: flex; gap: 6px; margin-top: 14px; align-items: center; justify-content: flex-end; }
+        .page-btn { background: #1d1c17; border: 1px solid #3a382f; border-radius: 6px; color: #aaa; cursor: pointer; font-family: inherit; font-size: 0.8rem; padding: 5px 11px; transition: all 0.15s; }
+        .page-btn:hover:not(:disabled) { border-color: #b8a366; color: #e0ddd5; }
+        .page-btn.active { background: #b8a366; border-color: #b8a366; color: #14130f; font-weight: 600; }
+        .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .page-info { font-size: 0.8rem; color: #666; }
     </style>
 </head>
 
 <body>
     <div class="panel-container">
-        <h1>Panel specjalizacji</h1>
-        <p class="panel-subtitle">Zarządzaj hierarchią specjalizacji w formularzu rejestracji.
-            &nbsp;<a class="back-link" href="formularz.html">→ podgląd formularza</a></p>
+        <h1>Panel administracyjny</h1>
+        <p class="panel-subtitle">ProstaSpawa &nbsp;<a class="back-link" href="formularz.html">→ podgląd formularza</a></p>
 
         <!-- Auth -->
         <div class="auth-box" id="authBox">
@@ -190,13 +228,39 @@
             </div>
         </div>
 
-        <!-- Editor -->
-        <div id="editor" style="display: none;">
-            <div id="categoriesList"></div>
+        <!-- Tabs + content -->
+        <div id="mainPanel" style="display:none;">
+            <div class="tab-nav">
+                <button class="tab-btn active" id="tabSpec" onclick="switchTab('spec')">Specjalizacje</button>
+                <button class="tab-btn" id="tabData" onclick="switchTab('data')">Dane</button>
+            </div>
 
-            <div class="save-bar">
-                <button class="panel-btn" id="saveBtn">Zapisz zmiany</button>
-                <span class="status-msg" id="statusMsg"></span>
+            <!-- Spec editor -->
+            <div id="editor">
+                <div id="categoriesList"></div>
+                <div class="save-bar">
+                    <button class="panel-btn" id="saveBtn">Zapisz zmiany</button>
+                    <span class="status-msg" id="statusMsg"></span>
+                </div>
+            </div>
+
+            <!-- Data viewer -->
+            <div id="dataViewer" style="display:none;">
+                <div class="data-controls">
+                    <select id="dataSource" onchange="loadData()">
+                        <option value="registrations">Rejestracje</option>
+                        <option value="contacts">Wiadomości kontaktowe</option>
+                    </select>
+                    <input class="panel-input data-search" type="text" id="dataSearch" placeholder="Szukaj..." oninput="filterData()">
+                    <span class="data-meta" id="dataMeta"></span>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="dataTable">
+                        <thead id="dataHead"></thead>
+                        <tbody id="dataBody"></tbody>
+                    </table>
+                </div>
+                <div class="data-pagination" id="dataPagination"></div>
             </div>
         </div>
     </div>
@@ -205,10 +269,99 @@
         let specData = {};
         let adminKey = sessionStorage.getItem('ps_admin_key') || '';
 
+        // Data viewer state
+        let allRows = [], filteredRows = [], dataHeaders = [];
+        const PAGE_SIZE = 20;
+        let currentPage = 1;
+
         const authBox = document.getElementById('authBox');
+        const mainPanel = document.getElementById('mainPanel');
         const editor = document.getElementById('editor');
         const categoriesList = document.getElementById('categoriesList');
         const statusMsg = document.getElementById('statusMsg');
+
+        function switchTab(tab) {
+            document.getElementById('tabSpec').classList.toggle('active', tab === 'spec');
+            document.getElementById('tabData').classList.toggle('active', tab === 'data');
+            editor.style.display = tab === 'spec' ? '' : 'none';
+            document.getElementById('dataViewer').style.display = tab === 'data' ? '' : 'none';
+            if (tab === 'data' && allRows.length === 0) loadData();
+        }
+
+        async function loadData() {
+            const which = document.getElementById('dataSource').value;
+            document.getElementById('dataMeta').textContent = 'Ładowanie...';
+            document.getElementById('dataBody').innerHTML = '<tr><td colspan="99" class="data-empty">Ładowanie danych…</td></tr>';
+            try {
+                const res = await fetch('/api/data?which=' + which, { headers: { 'X-Admin-Key': adminKey } });
+                if (res.status === 401) { alert('Sesja wygasła — zaloguj się ponownie.'); return; }
+                const json = await res.json();
+                dataHeaders = json.headers || [];
+                allRows = json.rows || [];
+                document.getElementById('dataSearch').value = '';
+                filterData();
+            } catch (e) {
+                document.getElementById('dataMeta').textContent = 'Błąd: ' + e.message;
+            }
+        }
+
+        function filterData() {
+            const q = document.getElementById('dataSearch').value.trim().toLowerCase();
+            filteredRows = q ? allRows.filter(r => r.some(c => String(c).toLowerCase().includes(q))) : allRows;
+            currentPage = 1;
+            renderDataTable();
+        }
+
+        function renderDataTable() {
+            const head = document.getElementById('dataHead');
+            const body = document.getElementById('dataBody');
+            const total = filteredRows.length;
+            const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+            currentPage = Math.min(currentPage, pages);
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const slice = filteredRows.slice(start, start + PAGE_SIZE);
+
+            // Headers
+            head.innerHTML = '<tr>' + dataHeaders.map(h => `<th>${esc(h)}</th>`).join('') + '</tr>';
+
+            // Rows
+            if (slice.length === 0) {
+                body.innerHTML = `<tr><td colspan="${dataHeaders.length || 1}" class="data-empty">Brak danych.</td></tr>`;
+            } else {
+                body.innerHTML = slice.map(r =>
+                    '<tr>' + dataHeaders.map((_, i) => `<td>${esc(r[i] ?? '')}</td>`).join('') + '</tr>'
+                ).join('');
+            }
+
+            document.getElementById('dataMeta').textContent = `${total} wpisów`;
+            renderPagination(pages);
+        }
+
+        function renderPagination(pages) {
+            const pg = document.getElementById('dataPagination');
+            if (pages <= 1) { pg.innerHTML = ''; return; }
+            let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+            const range = pagRange(currentPage, pages);
+            let prev = null;
+            range.forEach(p => {
+                if (prev !== null && p - prev > 1) html += '<span class="page-info">…</span>';
+                html += `<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+                prev = p;
+            });
+            html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+            pg.innerHTML = html;
+        }
+
+        function pagRange(cur, total) {
+            const s = new Set([1, total, cur-1, cur, cur+1].filter(p => p >= 1 && p <= total));
+            return [...s].sort((a,b)=>a-b);
+        }
+
+        function goPage(p) { currentPage = p; renderDataTable(); }
+
+        function esc(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
 
         function setStatus(text, ok) {
             statusMsg.textContent = text;
@@ -398,7 +551,7 @@
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 specData = await res.json();
                 authBox.style.display = 'none';
-                editor.style.display = '';
+                mainPanel.style.display = '';
                 render();
             } catch (err) {
                 setStatus('Nie udało się pobrać danych: ' + err.message, false);
@@ -418,7 +571,7 @@
                     sessionStorage.removeItem('ps_admin_key');
                     setStatus('Błędne hasło — zaloguj się ponownie.', false);
                     authBox.style.display = '';
-                    editor.style.display = 'none';
+                    mainPanel.style.display = 'none';
                     return;
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);

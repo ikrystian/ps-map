@@ -386,6 +386,41 @@ function handleContact(string $dataDir): void
     sendJSON(['success' => true]);
 }
 
+function parseCsvToArray(string $filePath): array
+{
+    if (!file_exists($filePath)) {
+        return ['headers' => [], 'rows' => []];
+    }
+    $fh = fopen($filePath, 'r');
+    if ($fh === false) {
+        return ['headers' => [], 'rows' => []];
+    }
+    $headers = fgetcsv($fh) ?: [];
+    $rows = [];
+    while (($row = fgetcsv($fh)) !== false) {
+        // Skip completely empty rows
+        if (count(array_filter($row, fn($v) => $v !== '')) === 0) continue;
+        $rows[] = $row;
+    }
+    fclose($fh);
+    return ['headers' => $headers, 'rows' => $rows];
+}
+
+function handleGetData(string $csvFile, string $contactCsv, string $adminKey): void
+{
+    $provided = (string) ($_SERVER['HTTP_X_ADMIN_KEY'] ?? '');
+    if (!hash_equals($adminKey, $provided)) {
+        sendJSON(['error' => 'Unauthorized'], 401);
+        return;
+    }
+    $which = $_GET['which'] ?? 'registrations';
+    if ($which === 'contacts') {
+        sendJSON(parseCsvToArray($contactCsv));
+    } else {
+        sendJSON(parseCsvToArray($csvFile));
+    }
+}
+
 function serveMain(string $indexHtml): void
 {
     if (!is_file($indexHtml)) {
@@ -465,6 +500,16 @@ if ($uri === '/api/contact') {
             log_msg('Error in contact endpoint: ' . $e->getMessage());
             sendJSON(['error' => 'Invalid data'], 400);
         }
+    } else {
+        sendJSON(['error' => 'Method not allowed'], 405);
+    }
+    return;
+}
+
+if ($uri === '/api/data') {
+    if ($method === 'GET') {
+        $CONTACT_CSV = $DATA_DIR . DIRECTORY_SEPARATOR . CONTACT_CSV_NAME;
+        handleGetData($CSV_FILE, $CONTACT_CSV, $ADMIN_KEY);
     } else {
         sendJSON(['error' => 'Method not allowed'], 405);
     }
