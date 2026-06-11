@@ -610,9 +610,9 @@ export default function AdminModulesPage() {
                   </Button>
                   <div className="h-4 w-[1px] bg-slate-800" />
                   <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-lg text-white">
+                    <DialogTitle className="font-semibold text-lg text-white">
                       {selectedModule.name}
-                    </h3>
+                    </DialogTitle>
                     <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20">
                       Podgląd modułu
                     </span>

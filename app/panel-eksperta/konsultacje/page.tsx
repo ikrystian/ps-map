@@ -294,7 +294,7 @@ export default function ConsultationsPage() {
                 <div className="flex flex-col gap-2.5 min-w-0">
                   <div className="flex items-center gap-2 text-white">
                     <User className="h-4 w-4 text-zinc-400" />
-                    <span className="font-semibold text-xl font-fairplay">{booking.client.user.name}</span>
+                    <span className="font-semibold text-xl font-playfair">{booking.client.user.name}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2">

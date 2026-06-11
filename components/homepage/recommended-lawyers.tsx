@@ -242,7 +242,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                     className="w-[290px] sm:w-[330px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
-                    <div className="relative h-55 w-full overflow-hidden aspect-[5/3] bg-zinc-900">
+                    <div className="relative h-75 w-full overflow-hidden aspect-[3/5] bg-zinc-900">
                       <img
                         src={getFirmImage(firm, index)}
                         alt={firm.nazwa}

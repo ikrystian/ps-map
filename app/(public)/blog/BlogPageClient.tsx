@@ -283,12 +283,12 @@ export default function BlogPage() {
 
       {/* Category Pills Filter */}
       <section className="px-4 py-8">
-        <div className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto">
+        <div className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto categories-pills" >
           <button
             onClick={() => handleCategoryChange(null)}
             className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${selectedCategory === null
-                ? "text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+              ? "text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
               }`}
           >
             {selectedCategory === null && (
@@ -305,8 +305,8 @@ export default function BlogPage() {
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
               className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${selectedCategory === category.id
-                  ? "text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               {selectedCategory === category.id && (
@@ -608,7 +608,7 @@ export default function BlogPage() {
                                 {post.lawFirm ? post.lawFirm.nazwa : "Administracja"}
                               </span>
                             </div>
- 
+
                             {/* Views / Date */}
                             <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-shrink-0">
                               <span className="flex items-center gap-0.5" title={formatViews(post.wyswietlenia)}>

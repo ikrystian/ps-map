@@ -166,7 +166,7 @@ export function BasicTab({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex flex-col gap-2 w-full">
+                    <div className="flex flex-row items-center gap-2 w-full">
                       <label
                         htmlFor="logo-upload"
                         className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
