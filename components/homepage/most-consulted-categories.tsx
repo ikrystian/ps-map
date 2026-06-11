@@ -251,7 +251,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="grid grid-cols-1 md:grid-cols-3 lf:grid-cols-4 gap-6 max-w-8xl mx-auto"
+              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-8xl mx-auto"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {

@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
     const monthlyRevenueRaw = await prisma.$queryRaw<Array<{ month: string; revenue: bigint }>>`
       SELECT
-        to_char("createdAt", 'YYYY-MM') as month,
+        strftime('%Y-%m', "createdAt") as month,
         SUM(kwota) as revenue
       FROM "Order"
       WHERE "statusPlatnosci" = 'ZAPLACONE'
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
 
     const dailyRegistrationsRaw = await prisma.$queryRaw<Array<{ date: string; count: bigint }>>`
       SELECT
-        to_char("createdAt", 'YYYY-MM-DD') as date,
+        strftime('%Y-%m-%d', "createdAt") as date,
         COUNT(*) as count
       FROM "User"
       WHERE "createdAt" >= ${sevenDaysAgo}
