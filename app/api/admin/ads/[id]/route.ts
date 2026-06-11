@@ -38,6 +38,9 @@ export async function PUT(
       active,
       startDate,
       endDate,
+      clientId,
+      weight,
+      priority,
     } = body
 
     // Aktualizacja
@@ -50,8 +53,14 @@ export async function PUT(
         ...(htmlContent !== undefined && { htmlContent: htmlContent || null }),
         ...(location !== undefined && { location }),
         ...(active !== undefined && { active }),
+        ...(weight !== undefined && { weight: parseInt(weight) || 1 }),
+        ...(priority !== undefined && { priority: parseInt(priority) || 0 }),
+        ...(clientId !== undefined && { clientId: clientId || null }),
         startDate: startDate === undefined ? existingAd.startDate : (startDate ? new Date(startDate) : null),
         endDate: endDate === undefined ? existingAd.endDate : (endDate ? new Date(endDate) : null),
+      },
+      include: {
+        client: { select: { id: true, name: true } },
       },
     })
 

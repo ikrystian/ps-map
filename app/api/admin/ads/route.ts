@@ -12,8 +12,11 @@ export async function GET(request: NextRequest) {
     }
 
     const ads = await prisma.advertisement.findMany({
-      orderBy: {
-        createdAt: "desc",
+      orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
+      include: {
+        client: {
+          select: { id: true, name: true },
+        },
       },
     })
 
@@ -46,6 +49,9 @@ export async function POST(request: NextRequest) {
       active,
       startDate,
       endDate,
+      clientId,
+      weight,
+      priority,
     } = body
 
     // Walidacja
@@ -74,6 +80,12 @@ export async function POST(request: NextRequest) {
         active: active !== undefined ? active : true,
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,
+        clientId: clientId || null,
+        weight: weight ? parseInt(weight) : 1,
+        priority: priority ? parseInt(priority) : 0,
+      },
+      include: {
+        client: { select: { id: true, name: true } },
       },
     })
 

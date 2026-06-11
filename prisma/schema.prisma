@@ -2054,23 +2054,46 @@ enum ScheduledEmailStatus {
 // REKLAMY
 // ============================================================================
 
+model AdClient {
+  id           String          @id @default(uuid())
+  name         String          // Nazwa klienta reklamowego
+  contactName  String?         // Imię i nazwisko osoby kontaktowej
+  contactEmail String?         // Email osoby kontaktowej
+  contactPhone String?         // Telefon osoby kontaktowej
+  notes        String?         // Notatki wewnętrzne
+  active       Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  ads          Advertisement[]
+
+  @@index([active])
+}
+
 model Advertisement {
-  id           String    @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
-  imageUrl     String?   // URL do pliku graficznego banneru
-  linkUrl      String    // URL docelowy po kliknięciu
-  htmlContent  String?   // Alternatywnie: niestandardowy kod HTML/skrypt (np. AdSense)
-  location     String    // Miejsce wyświetlania: "search_top", "search_list_middle", "category_top", "category_sidebar"
-  active       Boolean   @default(true)
-  impressions  Int       @default(0)
-  clicks       Int       @default(0)
-  startDate    DateTime? // Opcjonalna data początkowa
-  endDate      DateTime? // Opcjonalna data końcowa
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  imageUrl     String?    // URL do pliku graficznego banneru
+  linkUrl      String     // URL docelowy po kliknięciu
+  htmlContent  String?    // Alternatywnie: niestandardowy kod HTML/skrypt (np. AdSense)
+  location     String     // Miejsce wyświetlania: "search_top", "search_list_middle", "category_top", "category_sidebar"
+  active       Boolean    @default(true)
+  impressions  Int        @default(0)
+  clicks       Int        @default(0)
+  weight       Int        @default(1)   // Waga rotacji (wyższy = częściej wyświetlana)
+  priority     Int        @default(0)   // Kolejność na liście
+  startDate    DateTime?  // Opcjonalna data początkowa
+  endDate      DateTime?  // Opcjonalna data końcowa
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relacja do klienta reklamowego
+  clientId     String?
+  client       AdClient?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
   @@index([location])
   @@index([active])
+  @@index([clientId])
 }
 
 // ============================================================================
