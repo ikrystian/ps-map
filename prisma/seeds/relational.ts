@@ -31,20 +31,30 @@ import { REALISTIC_LAW_FIRMS } from './data/realistic-law-firms'
 import { REALISTIC_REVIEWS } from './data/realistic-reviews'
 
 // ============================================================================
-// KONFIGURACJA WOLUMENU
+// KONFIGURACJA WOLUMENU — celowo zachowawcze wartości, aby seed mieścił się
+// w pamięci nawet na maszynach z 4GB RAM. libsql trzyma natywnie cache stron
+// proporcjonalnie do liczby operacji; przy większych wartościach proces był
+// zabijany przez OOM killer (exit 137). Każdą wartość można podbić przez env.
 // ============================================================================
-const NUM_LAW_FIRMS = 2000     // eksperci
-const NUM_CLIENTS = 5000       // klienci  => 7000 użytkowników
-const NUM_CASES = 6000
-const TARGET_OFFERS = 10000
-const TARGET_ORDERS = 10000
-const TARGET_INVOICES = 8000   // = liczba opłaconych zamówień (każde opłacone => faktura)
-const TARGET_POINT_TX = 30000
-const TARGET_REVIEWS = 30000
-const TARGET_CONSULTATIONS = 40000
-const TARGET_CONVERSATIONS = 8000
-const TARGET_JOB_RUNS = 20000
-const TARGET_NEWSLETTER = 5000
+const envInt = (key: string, def: number) => {
+  const v = process.env[key]
+  if (!v) return def
+  const n = parseInt(v, 10)
+  return Number.isFinite(n) && n > 0 ? n : def
+}
+
+const NUM_LAW_FIRMS = envInt('NUM_LAW_FIRMS', 400)
+const NUM_CLIENTS = envInt('NUM_CLIENTS', 1000)
+const NUM_CASES = envInt('NUM_CASES', 1200)
+const TARGET_OFFERS = envInt('TARGET_OFFERS', 2000)
+const TARGET_ORDERS = envInt('TARGET_ORDERS', 2000)
+const TARGET_INVOICES = envInt('TARGET_INVOICES', 1600)
+const TARGET_POINT_TX = envInt('TARGET_POINT_TX', 6000)
+const TARGET_REVIEWS = envInt('TARGET_REVIEWS', 6000)
+const TARGET_CONSULTATIONS = envInt('TARGET_CONSULTATIONS', 8000)
+const TARGET_CONVERSATIONS = envInt('TARGET_CONVERSATIONS', 1600)
+const TARGET_JOB_RUNS = envInt('TARGET_JOB_RUNS', 4000)
+const TARGET_NEWSLETTER = envInt('TARGET_NEWSLETTER', 1000)
 const MAX_OFFERS_PER_CASE = 8
 
 // Powtarzalność danych pomiędzy uruchomieniami
@@ -218,7 +228,23 @@ async function createChunkResilient(
 }
 
 export async function seedRelationalData(prisma: PrismaClient) {
-  console.log('🌱 Seedowanie spójnych, powiązanych danych (duży wolumen)...')
+  console.log('🌱 Seedowanie spójnych, powiązanych danych...')
+  console.log(`   wolumeny: ${NUM_LAW_FIRMS} kancelarii, ${NUM_CLIENTS} klientów, ${NUM_CASES} spraw, ${TARGET_OFFERS} ofert, ${TARGET_CONSULTATIONS} konsultacji`)
+  console.log(`   ⓘ  zwiększ przez env: NUM_LAW_FIRMS=2000 TARGET_OFFERS=10000 ... npm run db:seed`)
+
+  // Ograniczenia pamięci SQLite/libsql — bez nich proces rośnie w pamięci natywnej
+  // proporcjonalnie do liczby operacji. Mały cache stron + WAL z autocheckpointem
+  // utrzymuje RSS w rozsądnych granicach na maszynach z ograniczonym RAM-em.
+  try {
+    await prisma.$executeRawUnsafe('PRAGMA journal_mode = WAL')
+    await prisma.$executeRawUnsafe('PRAGMA cache_size = -2000')        // ~2MB cache stron
+    await prisma.$executeRawUnsafe('PRAGMA mmap_size = 0')              // wyłącz mmap (zmniejsza RSS)
+    await prisma.$executeRawUnsafe('PRAGMA wal_autocheckpoint = 1000')  // ~4MB między checkpointami
+    await prisma.$executeRawUnsafe('PRAGMA temp_store = MEMORY')
+    await prisma.$executeRawUnsafe('PRAGMA synchronous = NORMAL')
+  } catch (e: any) {
+    console.warn(`  ⚠️  pragma init failed: ${e?.message ?? e}`)
+  }
 
   // --------------------------------------------------------------------------
   // 0. DANE SŁOWNIKOWE
