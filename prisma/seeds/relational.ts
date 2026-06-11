@@ -147,6 +147,49 @@ async function insertMany(
 }
 
 /**
+ * Strumieniowy inserter — trzyma w pamięci najwyżej `flushAt` rekordów.
+ * Pozwala generować dane w pętli i zapisywać partiami, zamiast budować
+ * w pamięci całą olbrzymią tablicę przed jedną wielką operacją INSERT.
+ */
+function makeInserter<T>(
+  label: string,
+  model: { createMany: (args: { data: T[] }) => Promise<unknown> },
+  approxCols: number,
+  flushAt: number = 2000,
+) {
+  let buffer: T[] = []
+  let total = 0
+  const chunkSize = Math.max(1, Math.min(1000, Math.floor(900 / Math.max(1, approxCols))))
+  const flush = async () => {
+    if (buffer.length === 0) return
+    for (let i = 0; i < buffer.length; i += chunkSize) {
+      await createChunkResilient(model, buffer.slice(i, i + chunkSize) as any[])
+    }
+    total += buffer.length
+    buffer = []
+  }
+  return {
+    async push(item: T) {
+      buffer.push(item)
+      if (buffer.length >= flushAt) await flush()
+    },
+    async pushMany(items: T[]) {
+      for (const it of items) {
+        buffer.push(it)
+        if (buffer.length >= flushAt) await flush()
+      }
+    },
+    flush,
+    async done() {
+      await flush()
+      if (total === 0) console.log(`  • ${label}: 0`)
+      else console.log(`  ✓ ${label}: ${total}`)
+    },
+    get count() { return total + buffer.length },
+  }
+}
+
+/**
  * Adapter @prisma/adapter-libsql potrafi sporadycznie zgłosić P2028 ("Transaction already closed")
  * przy createMany. Ponawiamy z backoffem. Każdy wiersz ma unikalne `id`, więc jeśli poprzednia próba
  * jednak się zacommitowała, ponowienie zwróci P2002 — traktujemy to jako "już zapisane" i pomijamy.
@@ -212,28 +255,29 @@ export async function seedRelationalData(prisma: PrismaClient) {
   const monthKey = (d: Date) => `${d.getFullYear()}-${d.getMonth() + 1}`
 
   // ==========================================================================
-  // 1. UŻYTKOWNICY + ustawienia powiadomień + status online
+  // 1. UŻYTKOWNICY + ustawienia powiadomień + status online (chunked streaming)
   // ==========================================================================
   type UserRow = { id: string; email: string; name: string; createdAt: Date }
-  let users: any[] = []
-  let notifSettings: any[] = []
-  let onlineStatuses: any[] = []
   const firmUsers: UserRow[] = []
   const clientUsers: UserRow[] = []
 
-  const makeUser = (role: UserRole, idx: number, bucket: UserRow[]) => {
+  const usersInserter = makeInserter('Użytkownicy', prisma.user, 11, 1000)
+  const notifInserter = makeInserter('Ustawienia powiadomień', prisma.notificationSettings, 26, 1000)
+  const onlineInserter = makeInserter('Status online', prisma.userOnlineStatus, 5, 1000)
+
+  const makeUser = async (role: UserRole, idx: number, bucket: UserRow[]) => {
     const firstName = faker.person.firstName()
     const lastName = faker.person.lastName()
     const local = generateSlug(`${firstName} ${lastName}`).replace(/-/g, '.')
     const email = `${local}.${idx}@${pick(EMAIL_DOMAINS)}`
     const createdAt = dateBetween(earliest, now)
     const id = uuid()
-    users.push({
+    await usersInserter.push({
       id, email, name: `${firstName} ${lastName}`, image: faker.image.avatar(),
       password: sharedPassword, role, status: UserStatus.ACTIVE, emailVerified: createdAt,
       lastLogin: chance(0.8) ? dateBetween(createdAt, now) : null, createdAt, updatedAt: createdAt,
     })
-    notifSettings.push({
+    await notifInserter.push({
       id: uuid(), userId: id, isConfigured: true,
       emailNoweOferty: true, emailWiadomosci: true, emailStatusy: true, smsPilne: chance(0.3),
       kontaktKlienci: true, kluczowe: true, wskazowkiPorady: chance(0.7), ofertPromocje: chance(0.6),
@@ -243,25 +287,24 @@ export async function seedRelationalData(prisma: PrismaClient) {
       wiadomosciZbiorcze: true, urlop: chance(0.05), welcomePackageSeen: true, updatedAt: createdAt,
     })
     const isOnline = chance(0.12)
-    onlineStatuses.push({ id: uuid(), userId: id, isOnline, lastSeen: isOnline ? now : dateBetween(createdAt, now), updatedAt: now })
+    await onlineInserter.push({ id: uuid(), userId: id, isOnline, lastSeen: isOnline ? now : dateBetween(createdAt, now), updatedAt: now })
     bucket.push({ id, email, name: `${firstName} ${lastName}`, createdAt })
   }
 
   let idxCounter = 0
-  for (let i = 0; i < NUM_LAW_FIRMS; i++) makeUser(UserRole.LAW_FIRM, idxCounter++, firmUsers)
-  for (let i = 0; i < NUM_CLIENTS; i++) makeUser(UserRole.CLIENT, idxCounter++, clientUsers)
+  for (let i = 0; i < NUM_LAW_FIRMS; i++) await makeUser(UserRole.LAW_FIRM, idxCounter++, firmUsers)
+  for (let i = 0; i < NUM_CLIENTS; i++) await makeUser(UserRole.CLIENT, idxCounter++, clientUsers)
 
-  await insertMany('Użytkownicy', prisma.user, users, 11)
-  await insertMany('Ustawienia powiadomień', prisma.notificationSettings, notifSettings, 26)
-  await insertMany('Status online', prisma.userOnlineStatus, onlineStatuses, 5)
-  users = []; notifSettings = []; onlineStatuses = []
+  await usersInserter.done()
+  await notifInserter.done()
+  await onlineInserter.done()
 
   // ==========================================================================
-  // 2. KLIENCI
+  // 2. KLIENCI (chunked streaming)
   // ==========================================================================
   type ClientRow = { id: string; userId: string; email: string; imie: string; nazwisko: string; telefon: string; clientType: ClientType; createdAt: Date }
-  let clients: any[] = []
   const clientRows: ClientRow[] = []
+  const clientsInserter = makeInserter('Klienci', prisma.client, 20, 1000)
   for (const u of clientUsers) {
     const [imie, ...rest] = u.name.split(' ')
     const nazwisko = rest.join(' ')
@@ -270,7 +313,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const city = cityInVoiv(voiv.id)
     const telefon = faker.phone.number()
     const id = uuid()
-    clients.push({
+    await clientsInserter.push({
       id, userId: u.id, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, imie, nazwisko, telefon,
       nazwaFirmy: isB2B ? `${faker.company.name()} ${pick(['Sp. z o.o.', 'S.A.', 'Sp. k.', 'Sp. j.'])}` : null,
       nip: isB2B ? faker.string.numeric(10) : null, regon: isB2B ? faker.string.numeric(9) : null,
@@ -282,8 +325,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     })
     clientRows.push({ id, userId: u.id, email: u.email, imie, nazwisko, telefon, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, createdAt: u.createdAt })
   }
-  await insertMany('Klienci', prisma.client, clients, 20)
-  clients = []
+  await clientsInserter.done()
 
   // ==========================================================================
   // 3. KANCELARIE (obiekty trzymamy do uzupełnienia statystyk i salda)
@@ -620,28 +662,49 @@ export async function seedRelationalData(prisma: PrismaClient) {
 
   // --- ZAPIS RDZENIA (kolejność FK) ---
   console.log('💾 Zapis rdzenia (kancelarie, sprawy, oferty, zamówienia, transakcje)...')
-  await insertMany('Kancelarie/Eksperci', prisma.lawFirm, lawFirms, 60)
-  await insertMany('Województwa kancelarii', prisma.lawFirmVoivodeship, lawFirmVoiv, 4); lawFirmVoiv = []
-  await insertMany('Miasta kancelarii', prisma.lawFirmCity, lawFirmCity, 4); lawFirmCity = []
-  await insertMany('Kategorie kancelarii', prisma.lawFirmCategory, lawFirmCategory, 5); lawFirmCategory = []
-  await insertMany('Usługi', prisma.service, services, 9); services = []
-  await insertMany('Certyfikaty', prisma.certificate, certificates, 10); certificates = []
-  await insertMany('Dostępność konsultacji', prisma.consultationAvailability, consultAvail, 8); consultAvail = []
-  await insertMany('Sprawy', prisma.case, cases, 28)
-  await insertMany('Oferty', prisma.offer, offers, 18); offers.length = 0
-  await insertMany('Negocjacje', prisma.negotiation, negotiations, 6); negotiations = []
-  await insertMany('Zamówienia', prisma.order, orders, 20); orders = []
-  await insertMany('Faktury', prisma.invoice, invoices, 22); invoices = []
-  await insertMany('Transakcje punktowe', prisma.pointTransaction, pointTransactions, 7); pointTransactions = []
-  await insertMany('Statystyki miesięczne', prisma.lawFirmStats, lawFirmStats, 11); lawFirmStats = []
-  await insertMany('Statystyki wg kategorii', prisma.lawFirmCategoryStats, lawFirmCategoryStats, 7); lawFirmCategoryStats = []
+
+  // Strumieniowe wstawianie + natychmiastowe zwalnianie pamięci po każdej partii.
+  const streamArray = async <T>(
+    label: string,
+    model: { createMany: (args: { data: T[] }) => Promise<unknown> },
+    arr: T[],
+    approxCols: number,
+    flushAt: number = 2000,
+  ) => {
+    const ins = makeInserter<T>(label, model, approxCols, flushAt)
+    // Konsumujemy tablicę partiami i obcinamy ją w miejscu, aby GC mógł odzyskać pamięć.
+    const total = arr.length
+    while (arr.length > 0) {
+      const take = Math.min(flushAt, arr.length)
+      const part = arr.splice(0, take)
+      for (const item of part) await ins.push(item)
+    }
+    await ins.done()
+    return total
+  }
+
+  await streamArray('Kancelarie/Eksperci', prisma.lawFirm, lawFirms, 60, 500)
+  await streamArray('Województwa kancelarii', prisma.lawFirmVoivodeship, lawFirmVoiv, 4, 4000); lawFirmVoiv = []
+  await streamArray('Miasta kancelarii', prisma.lawFirmCity, lawFirmCity, 4, 4000); lawFirmCity = []
+  await streamArray('Kategorie kancelarii', prisma.lawFirmCategory, lawFirmCategory, 5, 4000); lawFirmCategory = []
+  await streamArray('Usługi', prisma.service, services, 9, 3000); services = []
+  await streamArray('Certyfikaty', prisma.certificate, certificates, 10, 3000); certificates = []
+  await streamArray('Dostępność konsultacji', prisma.consultationAvailability, consultAvail, 8, 3000); consultAvail = []
+  await streamArray('Sprawy', prisma.case, cases, 28, 1000)
+  await streamArray('Oferty', prisma.offer, offers, 18, 1500)
+  await streamArray('Negocjacje', prisma.negotiation, negotiations, 6, 3000); negotiations = []
+  await streamArray('Zamówienia', prisma.order, orders, 20, 1500); orders = []
+  await streamArray('Faktury', prisma.invoice, invoices, 22, 1500); invoices = []
+  await streamArray('Transakcje punktowe', prisma.pointTransaction, pointTransactions, 7, 3000); pointTransactions = []
+  await streamArray('Statystyki miesięczne', prisma.lawFirmStats, lawFirmStats, 11, 3000); lawFirmStats = []
+  await streamArray('Statystyki wg kategorii', prisma.lawFirmCategoryStats, lawFirmCategoryStats, 7, 3000); lawFirmCategoryStats = []
 
   // ==========================================================================
-  // 7. KONSULTACJE (umówienia klient–ekspert) — duży wolumen
+  // 7. KONSULTACJE (umówienia klient–ekspert) — duży wolumen, chunked streaming
   // ==========================================================================
   type Engagement = { clientId: string; firmId: string; firmUserId: string; clientUserId: string; when: Date }
   const engagements: Engagement[] = wonPairs.map((w) => ({ clientId: w.clientId, firmId: w.firmId, firmUserId: w.firmUserId, clientUserId: w.clientUserId, when: w.acceptedAt }))
-  let bookings: any[] = []
+  const bookingsInserter = makeInserter('Rezerwacje konsultacji', prisma.consultationBooking, 13, 2000)
   for (let i = 0; i < TARGET_CONSULTATIONS; i++) {
     const client = pick(clientRows)
     const firm = pick(firmRows)
@@ -651,64 +714,90 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const from = firm.createdAt > client.createdAt ? firm.createdAt : client.createdAt
     const consultationDate = isPast ? dateBetween(from, now) : faker.date.soon({ days: 30, refDate: now })
     const created = dateBetween(from, consultationDate < now ? consultationDate : now)
-    bookings.push({ id: uuid(), lawFirmId: firm.id, clientId: client.id, consultationDate, duration, price: duration === 15 ? pick([50, 80, 100, 120]) : pick([90, 150, 180, 220]), topic: pick(CONSULT_TOPICS), clientContact: client.telefon, status, paymentStatus: status === ConsultationStatus.COMPLETED || status === ConsultationStatus.ACCEPTED ? PaymentStatus.ZAPLACONE : PaymentStatus.OCZEKUJE, googleMeetUrl: status === ConsultationStatus.ACCEPTED || status === ConsultationStatus.COMPLETED ? `https://meet.google.com/${faker.string.alphanumeric(3)}-${faker.string.alphanumeric(4)}-${faker.string.alphanumeric(3)}` : null, isArchived: status === ConsultationStatus.COMPLETED && chance(0.3), createdAt: created, updatedAt: created })
+    await bookingsInserter.push({ id: uuid(), lawFirmId: firm.id, clientId: client.id, consultationDate, duration, price: duration === 15 ? pick([50, 80, 100, 120]) : pick([90, 150, 180, 220]), topic: pick(CONSULT_TOPICS), clientContact: client.telefon, status, paymentStatus: status === ConsultationStatus.COMPLETED || status === ConsultationStatus.ACCEPTED ? PaymentStatus.ZAPLACONE : PaymentStatus.OCZEKUJE, googleMeetUrl: status === ConsultationStatus.ACCEPTED || status === ConsultationStatus.COMPLETED ? `https://meet.google.com/${faker.string.alphanumeric(3)}-${faker.string.alphanumeric(4)}-${faker.string.alphanumeric(3)}` : null, isArchived: status === ConsultationStatus.COMPLETED && chance(0.3), createdAt: created, updatedAt: created })
     if (status === ConsultationStatus.COMPLETED) engagements.push({ clientId: client.id, firmId: firm.id, firmUserId: firm.userId, clientUserId: client.userId, when: consultationDate })
   }
-  await insertMany('Rezerwacje konsultacji', prisma.consultationBooking, bookings, 13); bookings = []
+  await bookingsInserter.done()
 
   // ==========================================================================
   // 8. OPINIE — tylko od klientów z realnym zakończonym kontaktem (sprawa wygrana lub odbyta konsultacja)
   // ==========================================================================
   // tasujemy pulę zaangażowań i bierzemy dokładnie TARGET_REVIEWS
   for (let i = engagements.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[engagements[i], engagements[j]] = [engagements[j], engagements[i]] }
-  const reviewEngagements = engagements.slice(0, Math.min(TARGET_REVIEWS, engagements.length))
-  let reviews: any[] = []
-  let reviewNotifications: any[] = []
-  for (const e of reviewEngagements) {
+  const reviewEngagementsLimit = Math.min(TARGET_REVIEWS, engagements.length)
+
+  // ==========================================================================
+  // 9. POWIADOMIENIA — strumieniowo łączymy oferty + opinie (jednolity inserter)
+  // ==========================================================================
+  const notifInsert = makeInserter('Powiadomienia (oferty/opinie)', prisma.notification, 7, 3000)
+  // Najpierw wyrzucamy nagromadzone powiadomienia z fazy ofert (zwalniając pamięć).
+  await notifInsert.pushMany(offerNotifications)
+  offerNotifications = []
+
+  const reviewsInserter = makeInserter('Opinie', prisma.review, 18, 2000)
+  for (let i = 0; i < reviewEngagementsLimit; i++) {
+    const e = engagements[i]
     const firm = firmById.get(e.firmId)!
     const tmpl = pick(REALISTIC_REVIEWS)
     const createdAt = dateBetween(e.when, now)
     const hasReply = chance(0.4)
-    reviews.push({ id: uuid(), lawFirmId: e.firmId, clientId: e.clientId, ocenaOgolna: tmpl.ocena, profesjonalizm: tmpl.ocena, komunikacja: randInt(Math.max(1, tmpl.ocena - 1), 5), terminowosc: randInt(Math.max(1, tmpl.ocena - 1), 5), stosunekJakosci: randInt(Math.max(1, tmpl.ocena - 1), 5), tytulOpinii: tmpl.tytul, trescOpinii: tmpl.tresc, polecam: tmpl.ocena >= 4, anonimowa: chance(0.25), odpowiedz: hasReply ? 'Dziękujemy za opinię i zaufanie. Cieszymy się ze współpracy i pozostajemy do dyspozycji w razie kolejnych spraw.' : null, dataOdpowiedzi: hasReply ? dateBetween(createdAt, now) : null, zweryfikowana: true, aktywna: chance(0.97), createdAt, updatedAt: createdAt })
-    reviewNotifications.push({ id: uuid(), userId: firm.userId, typ: NotificationType.NOWA_OPINIA, tytul: 'Nowa opinia o Twojej kancelarii', tresc: `Otrzymałeś nową opinię: "${tmpl.tytul}".`, linkUrl: `/panel-eksperta/opinie`, przeczytane: chance(0.5), createdAt })
+    await reviewsInserter.push({ id: uuid(), lawFirmId: e.firmId, clientId: e.clientId, ocenaOgolna: tmpl.ocena, profesjonalizm: tmpl.ocena, komunikacja: randInt(Math.max(1, tmpl.ocena - 1), 5), terminowosc: randInt(Math.max(1, tmpl.ocena - 1), 5), stosunekJakosci: randInt(Math.max(1, tmpl.ocena - 1), 5), tytulOpinii: tmpl.tytul, trescOpinii: tmpl.tresc, polecam: tmpl.ocena >= 4, anonimowa: chance(0.25), odpowiedz: hasReply ? 'Dziękujemy za opinię i zaufanie. Cieszymy się ze współpracy i pozostajemy do dyspozycji w razie kolejnych spraw.' : null, dataOdpowiedzi: hasReply ? dateBetween(createdAt, now) : null, zweryfikowana: true, aktywna: chance(0.97), createdAt, updatedAt: createdAt })
+    await notifInsert.push({ id: uuid(), userId: firm.userId, typ: NotificationType.NOWA_OPINIA, tytul: 'Nowa opinia o Twojej kancelarii', tresc: `Otrzymałeś nową opinię: "${tmpl.tytul}".`, linkUrl: `/panel-eksperta/opinie`, przeczytane: chance(0.5), createdAt })
   }
-  await insertMany('Opinie', prisma.review, reviews, 18); reviews = []
+  await reviewsInserter.done()
+  await notifInsert.done()
 
   // ==========================================================================
-  // 9. POWIADOMIENIA (oferty + akceptacje + opinie)
+  // 10. ULUBIONE KANCELARIE (chunked)
   // ==========================================================================
-  await insertMany('Powiadomienia (oferty/opinie)', prisma.notification, offerNotifications.concat(reviewNotifications), 7)
-  offerNotifications = []; reviewNotifications = []
-
-  // ==========================================================================
-  // 10. ULUBIONE KANCELARIE
-  // ==========================================================================
-  let favorites: any[] = []
+  const favoritesInserter = makeInserter('Ulubione kancelarie', prisma.favoriteLawFirm, 4, 3000)
   const favSet = new Set<string>()
   for (const client of clientRows) {
     for (const firm of faker.helpers.arrayElements(firmRows, randInt(0, 4))) {
       const key = `${client.id}:${firm.id}`
       if (favSet.has(key)) continue
       favSet.add(key)
-      favorites.push({ id: uuid(), clientId: client.id, lawFirmId: firm.id, createdAt: dateBetween(client.createdAt, now) })
+      await favoritesInserter.push({ id: uuid(), clientId: client.id, lawFirmId: firm.id, createdAt: dateBetween(client.createdAt, now) })
     }
   }
-  await insertMany('Ulubione kancelarie', prisma.favoriteLawFirm, favorites, 4); favorites = []; favSet.clear()
+  await favoritesInserter.done()
+  favSet.clear()
 
   // ==========================================================================
-  // 11. KONWERSACJE + WIADOMOŚCI CZATU (szyfrowane)
+  // 11. KONWERSACJE + WIADOMOŚCI CZATU (szyfrowane, chunked)
   // ==========================================================================
-  let conversations: any[] = []
-  let chatMessages: any[] = []
+  // Konwersacje muszą trafić do DB PRZED wiadomościami (FK). Stosujemy bufory
+  // par konwersacja+wiadomości i flushujemy zawsze konwersacje przed czatem.
+  const CONV_BATCH = 500
+  let convBuf: any[] = []
+  let chatBuf: any[] = []
+  let convTotal = 0
+  let chatTotal = 0
+  const convChunk = Math.max(1, Math.min(1000, Math.floor(900 / 14)))
+  const chatChunk = Math.max(1, Math.min(1000, Math.floor(900 / 12)))
+  const flushConvChat = async () => {
+    for (let i = 0; i < convBuf.length; i += convChunk) {
+      await createChunkResilient(prisma.conversation, convBuf.slice(i, i + convChunk))
+    }
+    convTotal += convBuf.length
+    convBuf = []
+    for (let i = 0; i < chatBuf.length; i += chatChunk) {
+      await createChunkResilient(prisma.chatMessage, chatBuf.slice(i, i + chatChunk))
+    }
+    chatTotal += chatBuf.length
+    chatBuf = []
+  }
   const convSet = new Set<string>()
-  const addConversation = (clientUserId: string, lawFirmUserId: string, startFrom: Date) => {
+  let convCount = 0
+  const addConversation = async (clientUserId: string, lawFirmUserId: string, startFrom: Date) => {
     const key = `${clientUserId}:${lawFirmUserId}`
-    if (convSet.has(key)) return
+    if (convSet.has(key)) return false
     convSet.add(key)
     const convId = uuid()
     const startedAt = dateBetween(startFrom, now)
     const msgCount = randInt(3, 10)
     let lastAt = startedAt, lastText = '', lastSender = ''
+    const msgs: any[] = []
     for (let m = 0; m < msgCount; m++) {
       const fromClient = m % 2 === 0
       const senderId = fromClient ? clientUserId : lawFirmUserId
@@ -717,37 +806,43 @@ export async function seedRelationalData(prisma: PrismaClient) {
       const createdAt = m === 0 ? startedAt : dateBetween(lastAt, now)
       lastAt = createdAt; lastText = plain; lastSender = senderId
       const isLast = m === msgCount - 1
-      chatMessages.push({ id: uuid(), conversationId: convId, senderId, content: encrypted, contentIv: iv, attachments: null, status: 'READ', deliveredAt: createdAt, isRead: !isLast || chance(0.5), readAt: !isLast ? dateBetween(createdAt, now) : (chance(0.5) ? dateBetween(createdAt, now) : null), createdAt, updatedAt: createdAt })
+      msgs.push({ id: uuid(), conversationId: convId, senderId, content: encrypted, contentIv: iv, attachments: null, status: 'READ', deliveredAt: createdAt, isRead: !isLast || chance(0.5), readAt: !isLast ? dateBetween(createdAt, now) : (chance(0.5) ? dateBetween(createdAt, now) : null), createdAt, updatedAt: createdAt })
     }
-    conversations.push({ id: convId, clientUserId, lawFirmUserId, lastMessageText: lastText, lastMessageAt: lastAt, lastMessageSenderId: lastSender, isArchivedByClient: false, isArchivedByLawFirm: false, isDeletedByClient: false, isDeletedByLawFirm: false, createdAt: startedAt, updatedAt: lastAt })
+    convBuf.push({ id: convId, clientUserId, lawFirmUserId, lastMessageText: lastText, lastMessageAt: lastAt, lastMessageSenderId: lastSender, isArchivedByClient: false, isArchivedByLawFirm: false, isDeletedByClient: false, isDeletedByLawFirm: false, createdAt: startedAt, updatedAt: lastAt })
+    chatBuf.push(...msgs)
+    convCount++
+    if (convBuf.length >= CONV_BATCH) await flushConvChat()
+    return true
   }
   // najpierw pary z akceptacją (realna współpraca), potem losowe pary do TARGET_CONVERSATIONS
-  for (const w of wonPairs) { if (conversations.length >= TARGET_CONVERSATIONS) break; addConversation(w.clientUserId, w.firmUserId, w.acceptedAt) }
+  for (const w of wonPairs) { if (convCount >= TARGET_CONVERSATIONS) break; await addConversation(w.clientUserId, w.firmUserId, w.acceptedAt) }
   let cguard = 0
-  while (conversations.length < TARGET_CONVERSATIONS && cguard < TARGET_CONVERSATIONS * 20) {
+  while (convCount < TARGET_CONVERSATIONS && cguard < TARGET_CONVERSATIONS * 20) {
     const cu = pick(clientUsers); const fu = pick(firmUsers)
-    addConversation(cu.id, fu.id, dateBetween(cu.createdAt > fu.createdAt ? cu.createdAt : fu.createdAt, now))
+    await addConversation(cu.id, fu.id, dateBetween(cu.createdAt > fu.createdAt ? cu.createdAt : fu.createdAt, now))
     cguard++
   }
-  await insertMany('Konwersacje', prisma.conversation, conversations, 14); conversations = []; convSet.clear()
-  await insertMany('Wiadomości czatu', prisma.chatMessage, chatMessages, 12); chatMessages = []
+  await flushConvChat()
+  convSet.clear()
+  console.log(`  ✓ Konwersacje: ${convTotal}`)
+  console.log(`  ✓ Wiadomości czatu: ${chatTotal}`)
 
   // ==========================================================================
-  // 12. WIADOMOŚCI (model Message) powiązane ze sprawami
+  // 12. WIADOMOŚCI (model Message) powiązane ze sprawami (chunked)
   // ==========================================================================
-  let messages: any[] = []
+  const messagesInserter = makeInserter('Wiadomości', prisma.message, 8, 3000)
   for (const w of wonPairs) {
     if (!chance(0.4)) continue
     const count = randInt(1, 4)
     for (let m = 0; m < count; m++) {
       const fromClient = m % 2 === 0
-      messages.push({ id: uuid(), senderId: fromClient ? w.clientUserId : w.firmUserId, receiverId: fromClient ? w.firmUserId : w.clientUserId, caseId: null, temat: pick(CONSULT_TOPICS), tresc: faker.lorem.paragraph(), zalaczniki: null, przeczytana: chance(0.6), createdAt: dateBetween(w.acceptedAt, now) })
+      await messagesInserter.push({ id: uuid(), senderId: fromClient ? w.clientUserId : w.firmUserId, receiverId: fromClient ? w.firmUserId : w.clientUserId, caseId: null, temat: pick(CONSULT_TOPICS), tresc: faker.lorem.paragraph(), zalaczniki: null, przeczytana: chance(0.6), createdAt: dateBetween(w.acceptedAt, now) })
     }
   }
-  await insertMany('Wiadomości', prisma.message, messages, 8); messages = []
+  await messagesInserter.done()
 
   // ==========================================================================
-  // 13. HARMONOGRAM ZADAŃ — definicje + historia uruchomień (20000)
+  // 13. HARMONOGRAM ZADAŃ — definicje + historia uruchomień (20000, chunked)
   // ==========================================================================
   const jobs: any[] = []
   for (const name of JOB_NAMES) {
@@ -756,44 +851,48 @@ export async function seedRelationalData(prisma: PrismaClient) {
   }
   await insertMany('Harmonogram zadań (definicje)', prisma.scheduledJob, jobs, 7)
 
-  let jobRuns: any[] = []
+  const jobRunsInserter = makeInserter('Historia harmonogramu (uruchomienia)', prisma.scheduledJobRun, 11, 3000)
   for (let i = 0; i < TARGET_JOB_RUNS; i++) {
     const jobName = pick(JOB_NAMES)
     const startedAt = dateBetween(earliest, now)
     const durationMs = randInt(20, 15000)
     const finishedAt = new Date(startedAt.getTime() + durationMs)
     const failed = chance(0.08)
-    jobRuns.push({ id: uuid(), jobName, status: failed ? JobRunStatus.FAILED : JobRunStatus.SUCCESS, attempt: failed ? randInt(1, 3) : 1, startedAt, finishedAt, durationMs, error: failed ? pick(['Timeout połączenia', 'Błąd zewnętrznego API', 'Brak odpowiedzi SMTP', 'Naruszenie ograniczenia bazy']) : null, result: failed ? null : JSON.stringify({ processed: randInt(0, 500) }), instanceId: `instance-${randInt(1, 4)}`, createdAt: startedAt })
+    await jobRunsInserter.push({ id: uuid(), jobName, status: failed ? JobRunStatus.FAILED : JobRunStatus.SUCCESS, attempt: failed ? randInt(1, 3) : 1, startedAt, finishedAt, durationMs, error: failed ? pick(['Timeout połączenia', 'Błąd zewnętrznego API', 'Brak odpowiedzi SMTP', 'Naruszenie ograniczenia bazy']) : null, result: failed ? null : JSON.stringify({ processed: randInt(0, 500) }), instanceId: `instance-${randInt(1, 4)}`, createdAt: startedAt })
   }
-  await insertMany('Historia harmonogramu (uruchomienia)', prisma.scheduledJobRun, jobRuns, 11); jobRuns = []
+  await jobRunsInserter.done()
 
   // ==========================================================================
-  // 14. NEWSLETTER — zapisy
+  // 14. NEWSLETTER — zapisy (chunked)
   // ==========================================================================
-  let newsletter: any[] = []
+  const newsletterInserter = makeInserter('Newsletter (zapisy)', prisma.newsletter, 11, 2000)
   const nlEmails = new Set<string>()
+  let nlCount = 0
   // część z istniejących klientów (zgoda), reszta zewnętrzni
-  const consentClients = clientRows.filter(() => chance(0.5))
-  for (const c of consentClients) {
-    if (newsletter.length >= TARGET_NEWSLETTER) break
+  for (const c of clientRows) {
+    if (nlCount >= TARGET_NEWSLETTER) break
+    if (!chance(0.5)) continue
     if (nlEmails.has(c.email)) continue
     nlEmails.add(c.email)
     const confirmed = chance(0.85)
     const zapis = dateBetween(c.createdAt, now)
     const unsub = chance(0.1)
-    newsletter.push({ id: uuid(), email: c.email, imie: c.imie, zgoda: true, aktywny: !unsub, potwierdzony: confirmed, tokenPotwierdzajacy: confirmed ? null : uuid(), unsubscribeToken: uuid(), dataPotwierdzenia: confirmed ? dateBetween(zapis, now) : null, dataZapisu: zapis, dataRezygnacji: unsub ? dateBetween(zapis, now) : null })
+    await newsletterInserter.push({ id: uuid(), email: c.email, imie: c.imie, zgoda: true, aktywny: !unsub, potwierdzony: confirmed, tokenPotwierdzajacy: confirmed ? null : uuid(), unsubscribeToken: uuid(), dataPotwierdzenia: confirmed ? dateBetween(zapis, now) : null, dataZapisu: zapis, dataRezygnacji: unsub ? dateBetween(zapis, now) : null })
+    nlCount++
   }
   let nlIdx = 0
-  while (newsletter.length < TARGET_NEWSLETTER) {
+  while (nlCount < TARGET_NEWSLETTER) {
     const email = `newsletter.${nlIdx++}@${pick(EMAIL_DOMAINS)}`
     if (nlEmails.has(email)) continue
     nlEmails.add(email)
     const confirmed = chance(0.8)
     const zapis = dateBetween(earliest, now)
     const unsub = chance(0.12)
-    newsletter.push({ id: uuid(), email, imie: chance(0.6) ? faker.person.firstName() : null, zgoda: true, aktywny: !unsub, potwierdzony: confirmed, tokenPotwierdzajacy: confirmed ? null : uuid(), unsubscribeToken: uuid(), dataPotwierdzenia: confirmed ? dateBetween(zapis, now) : null, dataZapisu: zapis, dataRezygnacji: unsub ? dateBetween(zapis, now) : null })
+    await newsletterInserter.push({ id: uuid(), email, imie: chance(0.6) ? faker.person.firstName() : null, zgoda: true, aktywny: !unsub, potwierdzony: confirmed, tokenPotwierdzajacy: confirmed ? null : uuid(), unsubscribeToken: uuid(), dataPotwierdzenia: confirmed ? dateBetween(zapis, now) : null, dataZapisu: zapis, dataRezygnacji: unsub ? dateBetween(zapis, now) : null })
+    nlCount++
   }
-  await insertMany('Newsletter (zapisy)', prisma.newsletter, newsletter, 11); newsletter = []; nlEmails.clear()
+  await newsletterInserter.done()
+  nlEmails.clear()
 
   console.log('✅ Dane powiązane zaseedowane spójnie!')
 }
