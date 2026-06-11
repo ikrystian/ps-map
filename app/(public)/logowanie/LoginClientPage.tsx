@@ -5,9 +5,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { toast } from "@/components/ui/sonner"
-import { Eye, EyeOff } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Check, ChevronsUpDown, Eye, EyeOff, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -34,23 +43,14 @@ export default function LoginPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [devUsers, setDevUsers] = useState<DevUser[]>([])
-  const [selectedUserId, setSelectedUserId] = useState("")
+  const [selectedUser, setSelectedUser] = useState<DevUser | null>(null)
   const [enableUserSelection, setEnableUserSelection] = useState(true)
+  const [comboOpen, setComboOpen] = useState(false)
+  const [userSearch, setUserSearch] = useState("")
+  const [loadingUsers, setLoadingUsers] = useState(false)
 
-  // Fetch dev users list
+  // Pobierz ustawienia (czy włączony jest wybór użytkownika na ekranie logowania)
   useEffect(() => {
-    const fetchDevUsers = async () => {
-      try {
-        const response = await fetch("/api/users/dev-list")
-        if (response.ok) {
-          const data = await response.json()
-          setDevUsers(data.users)
-        }
-      } catch (error) {
-        console.error("Error fetching dev users:", error)
-      }
-    }
-
     const fetchSettings = async () => {
       try {
         const response = await fetch("/api/settings")
@@ -63,9 +63,40 @@ export default function LoginPage() {
       }
     }
 
-    fetchDevUsers()
     fetchSettings()
   }, [])
+
+  // Pobierz listę użytkowników deweloperskich.
+  // Domyślnie (pusty filtr) backend zwraca 10x CLIENT + 10x LAW_FIRM + wszystkich ADMIN.
+  // Po wpisaniu emaila wyszukujemy z debounce (300 ms) wśród wszystkich użytkowników.
+  useEffect(() => {
+    const controller = new AbortController()
+    const handler = setTimeout(async () => {
+      try {
+        setLoadingUsers(true)
+        const query = userSearch.trim()
+        const url = query
+          ? `/api/users/dev-list?search=${encodeURIComponent(query)}`
+          : "/api/users/dev-list"
+        const response = await fetch(url, { signal: controller.signal })
+        if (response.ok) {
+          const data = await response.json()
+          setDevUsers(data.users)
+        }
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          console.error("Error fetching dev users:", error)
+        }
+      } finally {
+        setLoadingUsers(false)
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(handler)
+      controller.abort()
+    }
+  }, [userSearch])
 
   useEffect(() => {
     if (registered === "true") {
@@ -101,71 +132,68 @@ export default function LoginPage() {
     }
   }, [searchParams])
 
-  // Handle user selection from dropdown
-  // Handle user selection from dropdown
-  const handleUserSelect = async (userId: string) => {
-    setSelectedUserId(userId)
-    const user = devUsers.find((u) => u.id === userId)
-    if (user) {
-      setEmail(user.email)
-      setPassword(user.password)
+  // Wybór użytkownika z combo boxa i automatyczne logowanie.
+  const handleUserSelect = async (user: DevUser) => {
+    setSelectedUser(user)
+    setComboOpen(false)
+    setEmail(user.email)
+    setPassword(user.password)
 
-      // Auto-login after selecting user
-      setIsLoading(true)
-      setError("")
+    // Auto-login after selecting user
+    setIsLoading(true)
+    setError("")
 
-      try {
-        // 1. Sprawdzenie pre-login
-        const checkResponse = await fetch("/api/auth/pre-login-check", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email, password: user.password }),
-        })
+    try {
+      // 1. Sprawdzenie pre-login
+      const checkResponse = await fetch("/api/auth/pre-login-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, password: user.password }),
+      })
 
-        if (!checkResponse.ok) {
-          const data = await checkResponse.json()
-          setError(data.error || "Nieprawidłowy email lub hasło")
-          setIsLoading(false)
-          return
-        }
+      if (!checkResponse.ok) {
+        const data = await checkResponse.json()
+        setError(data.error || "Nieprawidłowy email lub hasło")
+        setIsLoading(false)
+        return
+      }
 
-        // 2. NextAuth Sign In
-        const result = await signIn("credentials", {
-          email: user.email,
-          password: user.password,
-          redirect: false,
-        })
+      // 2. NextAuth Sign In
+      const result = await signIn("credentials", {
+        email: user.email,
+        password: user.password,
+        redirect: false,
+      })
 
-        if (result?.error) {
-          setError("Wystąpił błąd podczas autoryzacji sesji. Spróbuj ponownie.")
-          setIsLoading(false)
-          return
-        }
+      if (result?.error) {
+        setError("Wystąpił błąd podczas autoryzacji sesji. Spróbuj ponownie.")
+        setIsLoading(false)
+        return
+      }
 
-        // Pobierz dane użytkownika aby określić rolę
-        const response = await fetch("/api/auth/me")
-        if (response.ok) {
-          const data = await response.json()
-          const userRole = data.user.role
+      // Pobierz dane użytkownika aby określić rolę
+      const response = await fetch("/api/auth/me")
+      if (response.ok) {
+        const data = await response.json()
+        const userRole = data.user.role
 
-          // Przekieruj na odpowiedni panel
-          if (userRole === "CLIENT") {
-            router.push("/panel-klienta")
-          } else if (userRole === "LAW_FIRM") {
-            router.push("/panel-eksperta")
-          } else if (userRole === "ADMIN") {
-            router.push("/admin")
-          } else {
-            router.push(callbackUrl)
-          }
+        // Przekieruj na odpowiedni panel
+        if (userRole === "CLIENT") {
+          router.push("/panel-klienta")
+        } else if (userRole === "LAW_FIRM") {
+          router.push("/panel-eksperta")
+        } else if (userRole === "ADMIN") {
+          router.push("/admin")
         } else {
           router.push(callbackUrl)
         }
-      } catch (err) {
-        console.error("Login error:", err)
-        setError("Wystąpił błąd podczas logowania")
-        setIsLoading(false)
+      } else {
+        router.push(callbackUrl)
       }
+    } catch (err) {
+      console.error("Login error:", err)
+      setError("Wystąpił błąd podczas logowania")
+      setIsLoading(false)
     }
   }
 
@@ -264,28 +292,84 @@ export default function LoginPage() {
 
             {enableUserSelection ? (
               <div className="space-y-2">
-                <Label htmlFor="email">Wybierz użytkownika</Label>
-                <Select
-                  value={selectedUserId}
-                  onValueChange={handleUserSelect}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger className="h-11">
-                    <SelectValue placeholder="Wybierz użytkownika testowego" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {devUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        <div className="flex items-center gap-2">
-                          <span>{user.email}</span>
+                <Label>Wybierz użytkownika</Label>
+                <Popover open={comboOpen} onOpenChange={setComboOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={comboOpen}
+                      disabled={isLoading}
+                      className={cn(
+                        "h-11 w-full justify-between font-normal",
+                        !selectedUser && "text-muted-foreground"
+                      )}
+                    >
+                      {selectedUser ? (
+                        <span className="flex items-center gap-2 truncate">
+                          <span className="truncate">{selectedUser.email}</span>
                           <span className="text-xs text-muted-foreground">
-                            ({user.role})
+                            ({selectedUser.role})
                           </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        </span>
+                      ) : (
+                        <span>Wybierz lub wpisz email użytkownika</span>
+                      )}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[var(--radix-popover-trigger-width)] p-0"
+                    align="start"
+                  >
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Wpisz email, aby wyszukać..."
+                        value={userSearch}
+                        onValueChange={setUserSearch}
+                      />
+                      <CommandList>
+                        {loadingUsers && (
+                          <div className="flex items-center justify-center py-6">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">
+                              Wyszukiwanie...
+                            </span>
+                          </div>
+                        )}
+                        {!loadingUsers && devUsers.length === 0 && (
+                          <CommandEmpty>Nie znaleziono użytkownika.</CommandEmpty>
+                        )}
+                        <CommandGroup className="max-h-[250px] overflow-auto">
+                          {devUsers.map((user) => (
+                            <CommandItem
+                              key={user.id}
+                              value={user.id}
+                              onSelect={() => handleUserSelect(user)}
+                              className="cursor-pointer"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4 shrink-0",
+                                  selectedUser?.id === user.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              <div className="flex flex-1 items-center justify-between gap-2 truncate">
+                                <span className="truncate">{user.email}</span>
+                                <span className="text-xs uppercase text-muted-foreground">
+                                  {user.role}
+                                </span>
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             ) : (
               <div className="space-y-2">
