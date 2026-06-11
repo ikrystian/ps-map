@@ -3,6 +3,7 @@
     "nazwa": "Dane osobowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 10,
+    "ikona": "ShieldCheck",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "RODO",
@@ -14,6 +15,7 @@
     "nazwa": "Działalność gospodarcza",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 1,
+    "ikona": "Briefcase",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zakładanie firmy",
@@ -25,6 +27,7 @@
     "nazwa": "Ochrona środowiska",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 20,
+    "ikona": "TreePine",
     "children": [
       "Gospodarowanie odpadami",
       "Regulacje środowiskowe"
@@ -35,6 +38,7 @@
     "nazwa": "Podatki",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 5,
+    "ikona": "Receipt",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Obowiązki podatkowe dla firm",
@@ -46,6 +50,7 @@
     "nazwa": "Prawo pracy",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 4,
+    "ikona": "HardHat",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zatrudnienie i umowy",
@@ -59,6 +64,7 @@
     "nazwa": "Prawa autorskie",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 11,
+    "ikona": "FileText",
     "children": [
       "Ochrona i licencjonowanie",
       "Naruszenia praw autorskich",
@@ -70,6 +76,7 @@
     "nazwa": "Przestępstwa skarbowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 6,
+    "ikona": "AlertTriangle",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Wykroczenia skarbowe",
@@ -81,6 +88,7 @@
     "nazwa": "Przetargi",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 8,
+    "ikona": "Gavel",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Postępowania przetargowe",
@@ -93,6 +101,7 @@
     "nazwa": "Spółki",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 2,
+    "ikona": "Building2",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Zakładanie spółek",
@@ -104,6 +113,7 @@
     "nazwa": "Umowy",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 3,
+    "ikona": "FileSignature",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Umowa o pracę",
@@ -114,6 +124,7 @@
     "nazwa": "Sprawy sądowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 7,
+    "ikona": "Scale",
     "wyswietlajNaGlownejFirmowe": true,
     "children": [
       "Windykacja i egzekucja",
@@ -125,6 +136,7 @@
     "nazwa": "Inne kwestie firmowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 21,
+    "ikona": "Briefcase",
     "children": [
       "Regulacje branżowe",
       "Kwestie międzynarodowe"
@@ -135,6 +147,7 @@
     "nazwa": "Technologie i innowacje",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 16,
+    "ikona": "Cpu",
     "children": [
       "Ochrona własności intelektualnej",
       "Cyfrowa transformacja",
@@ -146,6 +159,7 @@
     "nazwa": "Dotacje i finansowanie zewnętrrzne",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 9,
+    "ikona": "Coins",
     "children": [
       "Dotacje unijne",
       "Wsparcie rządowe",
@@ -157,6 +171,7 @@
     "nazwa": "Finanse i inwestycje",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 13,
+    "ikona": "LineChart",
     "children": [
       "Zarządzanie kapitałem",
       "Pozyskiwanie finansowania",
@@ -168,6 +183,7 @@
     "nazwa": "Nieruchomości komercyjne",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 14,
+    "ikona": "Building",
     "children": [
       "Wynajem i zakup",
       "Zarządzanie nieruchomościami",
@@ -180,6 +196,7 @@
     "nazwa": "Marketing i reklama",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 15,
+    "ikona": "Megaphone",
     "children": [
       "Promocja w internecie",
       "Zarządzanie marką"
@@ -190,6 +207,7 @@
     "nazwa": "Zdrowie i bezpieczeństwo w pracy",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 12,
+    "ikona": "HeartPulse",
     "children": [
       "Ochrona pracowników",
       "Przepisy BHP"
@@ -200,6 +218,7 @@
     "nazwa": "Zarządzanie zasobami ludzkimi",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 17,
+    "ikona": "Users",
     "children": [
       "Szkolenia i rozwój",
       "Ocena pracownika i rekrutacja"
@@ -210,6 +229,7 @@
     "nazwa": "Zarządzanie kryzysowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 18,
+    "ikona": "AlertTriangle",
     "children": [
       "Planowanie awaryjne",
       "Komunikacja w czasie kryzysu"
@@ -220,6 +240,7 @@
     "nazwa": "Odnawialne Źródła Energii (OZE)",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 19,
+    "ikona": "Sun",
     "children": [
       "Umowy instalacyjne",
       "Wsparcie prawne w uzyskiwaniu dotacji",
@@ -231,6 +252,7 @@
     "nazwa": "Prawo upadłościowe",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 22,
+    "ikona": "TrendingDown",
     "children": [
       "Upadłośći",
       "Likwidacja (sprzedaż majątku)"
@@ -241,6 +263,7 @@
     "nazwa": "Zobowiązania finansowe",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 2,
+    "ikona": "CreditCard",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Długi, windykacja, egzekucje",
@@ -252,6 +275,7 @@
     "nazwa": "Rodzina",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 4,
+    "ikona": "Users",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Adopcje i opieka nad dziećmi",
@@ -264,6 +288,7 @@
     "nazwa": "Majątek osobisty",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 3,
+    "ikona": "Home",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Zarządzanie majątkiem",
@@ -275,6 +300,7 @@
     "nazwa": "Mediacje",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 5,
+    "ikona": "Handshake",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Mediacje rodzinne",
@@ -286,6 +312,7 @@
     "nazwa": "Nieruchomości",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 6,
+    "ikona": "Home",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Kupno/sprzedaż",
@@ -297,6 +324,7 @@
     "nazwa": "Podatki osobiste",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 10,
+    "ikona": "Receipt",
     "children": [
       "Rozliczenia PIT",
       "Ulgi podatkowe"
@@ -307,6 +335,7 @@
     "nazwa": "Zatrudnienie",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 9,
+    "ikona": "Briefcase",
     "children": [
       "Prawa pracownika",
       "Spory pracownicze"
@@ -317,6 +346,7 @@
     "nazwa": "Ubezpieczenia",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 7,
+    "ikona": "Shield",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Ubezpieczenia majątkowe",
@@ -328,6 +358,7 @@
     "nazwa": "Prawo karne",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 1,
+    "ikona": "Gavel",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Wykroczenia",
@@ -339,6 +370,7 @@
     "nazwa": "Zdrowie i wypadki",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 8,
+    "ikona": "HeartPulse",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Odszkodowania",
@@ -350,6 +382,7 @@
     "nazwa": "Prawo konsumenckie",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 12,
+    "ikona": "ShoppingBag",
     "wyswietlajNaGlownejPrywatne": true,
     "children": [
       "Reklamacje i zwroty",
@@ -362,6 +395,7 @@
     "nazwa": "Prawo medyczne",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 14,
+    "ikona": "Stethoscope",
     "children": [
       "Błędy medyczne",
       "Prawa pacjenta"
@@ -372,6 +406,7 @@
     "nazwa": "Prawo cyfrowe i internetowe",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 13,
+    "ikona": "Globe",
     "children": [
       "Ochrona danych osobowych w sieci",
       "Problemy z umowami cyfrowymi (np. subskrypcje)"
@@ -382,6 +417,7 @@
     "nazwa": "Prawa lokatora i najemcy",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 16,
+    "ikona": "KeyRound",
     "children": [
       "Problemy z wynajmem mieszkania",
       "Konflikty z wynajmującym",
@@ -393,6 +429,7 @@
     "nazwa": "Prawo administracyjne",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 15,
+    "ikona": "Landmark",
     "children": [
       "Sprawy związane z decyzjami administracyjnymi",
       "Odwołania od decyzji urzędów"
@@ -403,6 +440,7 @@
     "nazwa": "Prawo OZE",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 11,
+    "ikona": "Sun",
     "children": [
       "Regulacje i licencjonowanie",
       "Umowy i transakcje",
