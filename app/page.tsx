@@ -136,7 +136,7 @@ export default function HomePage() {
 
       {/* SECTION 11.5: Testimonials */}
       {testimonials.length > 0 && (
-        <section className="py-0 bg-card border-t border-zinc-900/60 overflow-hidden">
+        <section className="py-0 lg:py-15 bg-card border-t border-zinc-900/60 overflow-hidden">
           <div className="container mx-auto px-4 max-w-8xl relative">
             <AnimatedTestimonials testimonials={testimonials} autoplay={true} />
           </div>
