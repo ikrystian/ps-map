@@ -2,8 +2,8 @@ import { Metadata } from "next"
 import ForLawyersClientPage from "./ForLawyersClientPage"
 
 export const metadata: Metadata = {
-  title: "Dla Ekspertów - Pozyskuj Klientów",
-  description: "Dołącz do platformy Prosta Sprawa, promuj swój profil i pozyskuj nowych klientów szukających pomocy prawnej online.",
+  title: "Prosta Sprawa - Przyszłość Prawa Online | Platforma dla Prawników",
+  description: "Łatwy dostęp do spraw, które pasują do Ciebie. Sprawnie przeglądaj zgłoszenia, wybieraj sprawy zgodne z Twoją specjalizacją i pracuj na własnych warunkach.",
 }
 
 export default function ForLawyersPage() {

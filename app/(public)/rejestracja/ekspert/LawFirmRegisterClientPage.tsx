@@ -22,7 +22,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 import { AuthLayout } from "@/components/auth"
 import { Button } from "@/components/ui/button"
@@ -42,51 +42,108 @@ import { cn } from "@/lib/utils"
 
 import { z } from "zod"
 
+const specializationsData = {
+  "PRAWNICY": [
+    "Adwokat",
+    "Radca prawny",
+    "Doradca podatkowy",
+    "Rzecznik patentowy",
+    "Doradca restrukturyzacyjny",
+    "Mediator",
+    "Syndyk"
+  ],
+  "EKSPERCI": {
+    "Finanse": [
+      "Doradca finansowy",
+      "Księgowy",
+      "Biegły rewident"
+    ],
+    "Budownictwo i nieruchomości": [
+      "Rzeczoznawca majątkowy",
+      "Geodeta",
+      "Inspektor nadzoru budowlanego",
+      "Kierownik budowy",
+      "Kosztorysant budowlany",
+      "Audytor energetyczny"
+    ],
+    "Motoryzacja i szkody": [
+      "Rzeczoznawca samochodowy",
+      "Ekspert ds. odszkodowań"
+    ],
+    "Biznes i firmy": [
+      "Specjalista BHP",
+      "Specjalista PPOŻ",
+      "Specjalista RODO",
+      "Specjalista Compliance",
+      "Specjalista ds. zamówień publicznych",
+      "Doradca biznesowy"
+    ],
+    "Medycyna i opinie": [
+      "Psycholog",
+      "Psycholog sądowy",
+      "Lekarz biegły"
+    ]
+  },
+  "BIEGLI I RZECZOZNAWCY": [
+    "Biegły sądowy",
+    "Rzeczoznawca majątkowy",
+    "Rzeczoznawca samochodowy",
+    "Rzeczoznawca budowlany",
+    "Biegły księgowy",
+    "Biegły z zakresu informatyki",
+    "Biegły medyczny"
+  ]
+}
+
 const step1Schema = z.object({
-  typ: z.string().min(1, "Wybierz typ działalności"),
-  typInny: z.string().optional(),
-}).refine(data => data.typ !== "INNY" || (data.typInny && data.typInny.trim().length > 0), {
-  message: "Podaj typ działalności",
-  path: ["typInny"]
-})
-
-const step2Schema = z.object({
-  nazwa: z.string().min(3, "Nazwa eksperta musi mieć co najmniej 3 znaki"),
-  nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
-  nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
-  regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
-  krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
-})
-
-const step3Schema = z.object({
-  imieKontakt: z.string().min(2, "Imię jest wymagane"),
-  nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
-  stanowisko: z.string().optional(),
-  emailKontakt: z.string().email("Podaj poprawny adres email"),
-  numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
-  numerTelefonu2: z.string().optional(),
-})
-
-const step4Schema = z.object({
-  adres: z.string().min(3, "Adres jest wymagany"),
-  kodPocztowy: z.string().regex(/^\d{2}-\d{3}$/, "Wpisz poprawny kod pocztowy (np. 00-000)"),
-  miasto: z.string().min(2, "Miasto jest wymagane"),
-  voivodeshipId: z.string().min(1, "Województwo jest wymagane"),
-})
-
-const step5Schema = z.object({
-  voivodeshipsIds: z.array(z.string()).length(1, "Wybierz dokładnie jedno województwo"),
+  category: z.string().min(1, "Wybierz kategorię"),
+  subcategory: z.string().optional(),
+  specialization: z.string().min(1, "Wybierz specjalizację"),
+}).superRefine((data, ctx) => {
+  const specData = specializationsData as any
+  const categoryContent = specData[data.category]
+  if (categoryContent && !Array.isArray(categoryContent)) {
+    if (!data.subcategory) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Wybierz podkategorię",
+        path: ["subcategory"],
+      })
+    }
+  }
 })
 
 const step6Schema = z.object({
   categoriesIds: z.array(z.string()).min(1, "Wybierz główną specjalizację"),
 })
 
-const step7Schema = z.object({
-  typOferty: z.string().min(1, "Wybierz typ współpracy"),
+const step5Schema = z.object({
+  voivodeshipsIds: z.array(z.string()).length(1, "Wybierz dokładnie jedno województwo"),
 })
 
-const step8Schema = z.object({
+const step4Schema = z.object({
+  // Dane firmy
+  nazwa: z.string().min(3, "Nazwa eksperta musi mieć co najmniej 3 znaki"),
+  nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
+  nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
+  regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
+  krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
+
+  // Dane kontaktowe
+  imieKontakt: z.string().min(2, "Imię jest wymagane"),
+  nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
+  stanowisko: z.string().optional(),
+  emailKontakt: z.string().email("Podaj poprawny adres email"),
+  numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
+  numerTelefonu2: z.string().optional(),
+
+  // Adres
+  adres: z.string().min(3, "Adres jest wymagany"),
+  kodPocztowy: z.string().regex(/^\d{2}-\d{3}$/, "Wpisz poprawny kod pocztowy (np. 00-000)"),
+  miasto: z.string().min(2, "Miasto jest wymagane"),
+  voivodeshipId: z.string().min(1, "Województwo jest wymagane"),
+
+  // Konto i zgody
   email: z.string().email("Podaj poprawny adres email"),
   password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
   confirmPassword: z.string(),
@@ -101,13 +158,9 @@ import { Category, Voivodeship } from "@/types"
 
 const steps = [
   { id: 1, title: "Działalność", icon: Briefcase },
-  { id: 2, title: "Firma", icon: Building2 },
-  { id: 3, title: "Kontakt", icon: User },
-  { id: 4, title: "Adres", icon: MapPin },
-  { id: 5, title: "Obszar", icon: Globe },
   { id: 6, title: "Specjalizacje", icon: Scale },
-  { id: 7, title: "Oferta", icon: Zap },
-  { id: 8, title: "Konto", icon: Lock },
+  { id: 5, title: "Obszar", icon: Globe },
+  { id: 4, title: "Dane kontaktowe", icon: User },
 ]
 
 // Client-side cache for city searches to avoid redundant api queries
@@ -131,8 +184,11 @@ export default function LawFirmRegistrationPage() {
   const [isLoadingCities, setIsLoadingCities] = useState(false)
   const [formData, setFormData] = useState({
     // Krok 1: Typ działalności
-    typ: "",
+    typ: "INNY",
     typInny: "",
+    category: "",
+    subcategory: "",
+    specialization: "",
 
     // Krok 2: Dane firmy
     nazwa: "",
@@ -162,8 +218,8 @@ export default function LawFirmRegistrationPage() {
     // Krok 6: Specjalizacje
     categoriesIds: [] as string[],
 
-    // Krok 7: Typ oferty
-    typOferty: "",
+    // Krok 7: Typ oferty (domyślny)
+    typOferty: "WSZYSTKIE",
 
     // Krok 8: Dane logowania
     email: "",
@@ -178,29 +234,6 @@ export default function LawFirmRegistrationPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const prevVoivodeshipIdRef = useRef<string | null>(null)
-
-  useEffect(() => {
-    if (isInitialized) {
-      if (prevVoivodeshipIdRef.current === null) {
-        prevVoivodeshipIdRef.current = formData.voivodeshipId || ""
-      } else if (formData.voivodeshipId !== prevVoivodeshipIdRef.current) {
-        prevVoivodeshipIdRef.current = formData.voivodeshipId
-        setFormData(prev => ({
-          ...prev,
-          voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : []
-        }))
-        if (fieldErrors.voivodeshipsIds) {
-          setFieldErrors(prev => {
-            const newErrors = { ...prev }
-            delete newErrors.voivodeshipsIds
-            return newErrors
-          })
-        }
-      }
-    }
-  }, [formData.voivodeshipId, isInitialized, fieldErrors.voivodeshipsIds])
-
   const totalSteps = steps.length
 
   // Synchronizacja kroku z URL
@@ -208,13 +241,14 @@ export default function LawFirmRegistrationPage() {
     const stepParam = searchParams.get("step")
     if (stepParam) {
       const step = parseInt(stepParam)
-      if (step >= 1 && step <= totalSteps && step !== currentStep) {
+      const isValidStep = steps.some(s => s.id === step)
+      if (isValidStep && step !== currentStep) {
         setCurrentStep(step)
         setError("")
         setFieldErrors({})
       }
     }
-  }, [searchParams, totalSteps])
+  }, [searchParams])
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -236,7 +270,8 @@ export default function LawFirmRegistrationPage() {
     const savedStep = localStorage.getItem("law_firm_registration_step")
     if (savedStep && !searchParams.get("step")) {
       const step = parseInt(savedStep)
-      if (step >= 1 && step <= totalSteps) {
+      const isValidStep = steps.some(s => s.id === step)
+      if (isValidStep) {
         setCurrentStep(step)
         const params = new URLSearchParams(searchParams)
         params.set("step", step.toString())
@@ -300,7 +335,6 @@ export default function LawFirmRegistrationPage() {
   useEffect(() => {
     const query = locationSearch.trim().toLowerCase()
 
-    // If search query is short/empty, check if we can show cities for the postal code
     if (query.length < 2) {
       if (formData.kodPocztowy && formData.kodPocztowy.length === 6) {
         const fetchCitiesForPostal = async () => {
@@ -312,7 +346,6 @@ export default function LawFirmRegistrationPage() {
               if (Array.isArray(data)) {
                 setCities(data)
 
-                // If exactly 1 city matches and is different from current form data
                 if (data.length === 1) {
                   const matchedCity = data[0]
                   setFormData(prev => {
@@ -326,7 +359,6 @@ export default function LawFirmRegistrationPage() {
                     }
                   })
 
-                  // Clear errors
                   setFieldErrors(prev => {
                     const newErrors = { ...prev }
                     delete newErrors.miasto
@@ -389,7 +421,6 @@ export default function LawFirmRegistrationPage() {
   useEffect(() => {
     if (!locationOpen) {
       setLocationSearch("")
-      // Keep cities list if we have a valid postal code so it is shown when popover opens next time
       if (formData.kodPocztowy?.length !== 6) {
         setCities([])
       }
@@ -432,26 +463,14 @@ export default function LawFirmRegistrationPage() {
       case 1:
         schema = step1Schema
         break
-      case 2:
-        schema = step2Schema
-        break
-      case 3:
-        schema = step3Schema
-        break
-      case 4:
-        schema = step4Schema
+      case 6:
+        schema = step6Schema
         break
       case 5:
         schema = step5Schema
         break
-      case 6:
-        schema = step6Schema
-        break
-      case 7:
-        schema = step7Schema
-        break
-      case 8:
-        schema = step8Schema
+      case 4:
+        schema = step4Schema
         if (session) {
           dataToValidate = {
             ...formData,
@@ -497,16 +516,20 @@ export default function LawFirmRegistrationPage() {
     if (!validateStep()) {
       return
     }
-    if (currentStep < totalSteps) {
-      updateUrlWithStep(currentStep + 1)
+    const currentIndex = steps.findIndex(s => s.id === currentStep)
+    if (currentIndex < steps.length - 1) {
+      const nextStepId = steps[currentIndex + 1].id
+      updateUrlWithStep(nextStepId)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const prevStep = () => {
     setError("")
-    if (currentStep > 1) {
-      updateUrlWithStep(currentStep - 1)
+    const currentIndex = steps.findIndex(s => s.id === currentStep)
+    if (currentIndex > 0) {
+      const prevStepId = steps[currentIndex - 1].id
+      updateUrlWithStep(prevStepId)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -515,12 +538,11 @@ export default function LawFirmRegistrationPage() {
     e.preventDefault()
     setError("")
 
-    if (currentStep < totalSteps) {
+    if (currentStep !== 4) {
       nextStep()
       return
     }
 
-    // Walidacja finalna
     if (!validateStep()) {
       return
     }
@@ -571,12 +593,10 @@ export default function LawFirmRegistrationPage() {
         return
       }
 
-      // Wyczyść dane z localStorage po pomyślnej rejestracji
-      setIsInitialized(false) // Zapobiega ponownemu zapisaniu w useEffect przed przekierowaniem
+      setIsInitialized(false)
       localStorage.removeItem("law_firm_registration_data")
       localStorage.removeItem("law_firm_registration_step")
 
-      // Przekieruj na stronę sukcesu rejestracji z e-mailem w parametrze
       router.push(`/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=LAW_FIRM`)
     } catch (error) {
       setError("Wystąpił błąd podczas rejestracji")
@@ -586,443 +606,221 @@ export default function LawFirmRegistrationPage() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1:
+      case 1: {
+        const specData = specializationsData as any
+        const categoriesList = Object.keys(specData)
+        
+        const selectedCategoryContent = formData.category ? specData[formData.category] : null
+        const hasSubcategories = selectedCategoryContent && !Array.isArray(selectedCategoryContent)
+        
+        const subcategoriesList = hasSubcategories ? Object.keys(selectedCategoryContent) : []
+        
+        let specializationsList: string[] = []
+        if (formData.category) {
+          if (Array.isArray(selectedCategoryContent)) {
+            specializationsList = selectedCategoryContent
+          } else if (formData.subcategory && selectedCategoryContent[formData.subcategory]) {
+            specializationsList = selectedCategoryContent[formData.subcategory]
+          }
+        }
+
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="typ" className={cn(fieldErrors.typ && "text-destructive")}>Typ działalności *</Label>
+              <Label htmlFor="category" className={cn(fieldErrors.category && "text-destructive")}>Kategoria *</Label>
               <Select
-                value={formData.typ}
-                onValueChange={(value) => {
-                  setFormData({ ...formData, typ: value })
-                  if (fieldErrors.typ) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.typ
-                    setFieldErrors(newErrors)
+                value={formData.category}
+                onValueChange={(val) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    category: val,
+                    subcategory: "",
+                    specialization: "",
+                    typ: "INNY",
+                    typInny: val
+                  }))
+                  if (fieldErrors.category || fieldErrors.subcategory || fieldErrors.specialization) {
+                    setFieldErrors(prev => {
+                      const newErrors = { ...prev }
+                      delete newErrors.category
+                      delete newErrors.subcategory
+                      delete newErrors.specialization
+                      return newErrors
+                    })
                   }
                 }}
               >
-                <SelectTrigger className={cn("h-11", fieldErrors.typ && "border-destructive")}>
-                  <SelectValue placeholder="Wybierz typ działalności" />
+                <SelectTrigger className={cn("h-11", fieldErrors.category && "border-destructive")}>
+                  <SelectValue placeholder="Wybierz kategorię..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="OSOBA_FIZYCZNA">Osoba fizyczna</SelectItem>
-                  <SelectItem value="SPOLKA_CYWILNA">Spółka cywilna</SelectItem>
-                  <SelectItem value="SPOLKA_PARTNERSKA">Spółka partnerska</SelectItem>
-                  <SelectItem value="SPOLKA_KOMANDYTOWA">Spółka komandytowa</SelectItem>
-                  <SelectItem value="SPOLKA_JAWNA">Spółka jawna</SelectItem>
-                  <SelectItem value="SPOLKA_ZOO">Spółka z o.o.</SelectItem>
-                  <SelectItem value="INNY">Inny</SelectItem>
+                  {categoriesList.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              {fieldErrors.typ && <p className="text-xs text-destructive">{fieldErrors.typ}</p>}
+              {fieldErrors.category && <p className="text-xs text-destructive">{fieldErrors.category}</p>}
             </div>
-            {formData.typ === "INNY" && (
+
+            {hasSubcategories && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 className="space-y-2"
               >
-                <Label htmlFor="typInny" className={cn(fieldErrors.typInny && "text-destructive")}>Podaj typ działalności</Label>
-                <Input
-                  id="typInny"
-                  value={formData.typInny}
-                  onChange={(e) => {
-                    setFormData({ ...formData, typInny: e.target.value })
-                    if (fieldErrors.typInny) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.typInny
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  placeholder="Np. fundacja, stowarzyszenie..."
-                  className={cn("h-11", fieldErrors.typInny && "border-destructive")}
-                />
-                {fieldErrors.typInny && <p className="text-xs text-destructive">{fieldErrors.typInny}</p>}
-              </motion.div>
-            )}
-            <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Wybierz formę prawną Twojej działalności. Pomoże nam to dostosować dalsze kroki rejestracji.
-              </p>
-            </div>
-          </div>
-        )
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa eksperta *</Label>
-              <Input
-                id="nazwa"
-                type="text"
-                value={formData.nazwa}
-                onChange={(e) => {
-                  setFormData({ ...formData, nazwa: e.target.value })
-                  if (fieldErrors.nazwa) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.nazwa
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                placeholder="Np. Ekspert Adwokacka Jan Kowalski"
-                className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
-              />
-              {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>
-              <Input
-                id="nazwaFirmy"
-                type="text"
-                value={formData.nazwaFirmy}
-                onChange={(e) => {
-                  setFormData({ ...formData, nazwaFirmy: e.target.value })
-                  if (fieldErrors.nazwaFirmy) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.nazwaFirmy
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
-                className={cn("h-11", fieldErrors.nazwaFirmy && "border-destructive")}
-              />
-              {fieldErrors.nazwaFirmy && <p className="text-xs text-destructive">{fieldErrors.nazwaFirmy}</p>}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="nip" className={cn(fieldErrors.nip && "text-destructive")}>NIP *</Label>
-                <Input
-                  id="nip"
-                  type="text"
-                  placeholder="1234567890"
-                  value={formData.nip}
-                  onChange={(e) => {
-                    setFormData({ ...formData, nip: e.target.value })
-                    if (fieldErrors.nip) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.nip
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.nip && "border-destructive")}
-                />
-                {fieldErrors.nip && <p className="text-xs text-destructive">{fieldErrors.nip}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="regon" className={cn(fieldErrors.regon && "text-destructive")}>REGON</Label>
-                <Input
-                  id="regon"
-                  type="text"
-                  placeholder="Opcjonalnie"
-                  value={formData.regon}
-                  onChange={(e) => {
-                    setFormData({ ...formData, regon: e.target.value })
-                    if (fieldErrors.regon) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.regon
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.regon && "border-destructive")}
-                />
-                {fieldErrors.regon && <p className="text-xs text-destructive">{fieldErrors.regon}</p>}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="krs" className={cn(fieldErrors.krs && "text-destructive")}>KRS</Label>
-              <Input
-                id="krs"
-                type="text"
-                placeholder="Dla spółek handlowych"
-                value={formData.krs}
-                onChange={(e) => {
-                  setFormData({ ...formData, krs: e.target.value })
-                  if (fieldErrors.krs) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.krs
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                className={cn("h-11", fieldErrors.krs && "border-destructive")}
-              />
-              {fieldErrors.krs && <p className="text-xs text-destructive">{fieldErrors.krs}</p>}
-            </div>
-          </div>
-        )
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="imieKontakt" className={cn(fieldErrors.imieKontakt && "text-destructive")}>Imię *</Label>
-                <Input
-                  id="imieKontakt"
-                  type="text"
-                  value={formData.imieKontakt}
-                  onChange={(e) => {
-                    setFormData({ ...formData, imieKontakt: e.target.value })
-                    if (fieldErrors.imieKontakt) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.imieKontakt
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.imieKontakt && "border-destructive")}
-                />
-                {fieldErrors.imieKontakt && <p className="text-xs text-destructive">{fieldErrors.imieKontakt}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nazwiskoKontakt" className={cn(fieldErrors.nazwiskoKontakt && "text-destructive")}>Nazwisko *</Label>
-                <Input
-                  id="nazwiskoKontakt"
-                  type="text"
-                  value={formData.nazwiskoKontakt}
-                  onChange={(e) => {
-                    setFormData({ ...formData, nazwiskoKontakt: e.target.value })
-                    if (fieldErrors.nazwiskoKontakt) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.nazwiskoKontakt
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.nazwiskoKontakt && "border-destructive")}
-                />
-                {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stanowisko" className={cn(fieldErrors.stanowisko && "text-destructive")}>Stanowisko / Tytuł zawodowy</Label>
-              <Input
-                id="stanowisko"
-                type="text"
-                placeholder="Np. Adwokat, Radca Prawny"
-                value={formData.stanowisko}
-                onChange={(e) => {
-                  setFormData({ ...formData, stanowisko: e.target.value })
-                  if (fieldErrors.stanowisko) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.stanowisko
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                className={cn("h-11", fieldErrors.stanowisko && "border-destructive")}
-              />
-              {fieldErrors.stanowisko && <p className="text-xs text-destructive">{fieldErrors.stanowisko}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="emailKontakt" className={cn(fieldErrors.emailKontakt && "text-destructive")}>Email kontaktowy *</Label>
-              <Input
-                id="emailKontakt"
-                type="email"
-                placeholder="kontakt@ekspert.pl"
-                value={formData.emailKontakt}
-                onChange={(e) => {
-                  setFormData({ ...formData, emailKontakt: e.target.value })
-                  if (fieldErrors.emailKontakt) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.emailKontakt
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                className={cn("h-11", fieldErrors.emailKontakt && "border-destructive")}
-              />
-              {fieldErrors.emailKontakt && <p className="text-xs text-destructive">{fieldErrors.emailKontakt}</p>}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
-                <Input
-                  id="numerTelefonu"
-                  type="tel"
-                  value={formData.numerTelefonu}
-                  onChange={(e) => {
-                    setFormData({ ...formData, numerTelefonu: e.target.value })
-                    if (fieldErrors.numerTelefonu) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.numerTelefonu
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
-                />
-                {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="numerTelefonu2" className={cn(fieldErrors.numerTelefonu2 && "text-destructive")}>Telefon dodatkowy</Label>
-                <Input
-                  id="numerTelefonu2"
-                  type="tel"
-                  placeholder="Opcjonalnie"
-                  value={formData.numerTelefonu2}
-                  onChange={(e) => {
-                    setFormData({ ...formData, numerTelefonu2: e.target.value })
-                    if (fieldErrors.numerTelefonu2) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.numerTelefonu2
-                      setFieldErrors(newErrors)
-                    }
-                  }}
-                  className={cn("h-11", fieldErrors.numerTelefonu2 && "border-destructive")}
-                />
-                {fieldErrors.numerTelefonu2 && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu2}</p>}
-              </div>
-            </div>
-          </div>
-        )
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="adres" className={cn(fieldErrors.adres && "text-destructive")}>Adres (ulica i numer) *</Label>
-              <Input
-                id="adres"
-                type="text"
-                value={formData.adres}
-                onChange={(e) => {
-                  setFormData({ ...formData, adres: e.target.value })
-                  if (fieldErrors.adres) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.adres
-                    setFieldErrors(newErrors)
-                  }
-                }}
-                placeholder="Np. ul. Warszawska 1/2"
-                className={cn("h-11", fieldErrors.adres && "border-destructive")}
-              />
-              {fieldErrors.adres && <p className="text-xs text-destructive">{fieldErrors.adres}</p>}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="kodPocztowy" className={cn(fieldErrors.kodPocztowy && "text-destructive")}>Kod pocztowy *</Label>
-                <Input
-                  id="kodPocztowy"
-                  type="text"
-                  value={formData.kodPocztowy}
-                  onChange={handlePostalCodeChange}
-                  placeholder="00-000"
-                  className={cn("h-11", fieldErrors.kodPocztowy && "border-destructive")}
-                />
-                {fieldErrors.kodPocztowy && <p className="text-xs text-destructive">{fieldErrors.kodPocztowy}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
-                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={locationOpen}
-                      className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
-                      disabled={isLoading}
-                    >
-                      <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
-                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0" align="start">
-                    <Command shouldFilter={false}>
-                      <CommandInput
-                        placeholder="Szukaj miasta..."
-                        value={locationSearch}
-                        onValueChange={setLocationSearch}
-                      />
-                      <CommandList>
-                        {isLoadingCities && (
-                          <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
-                        )}
-                        {!isLoadingCities && locationSearch.trim().length < 2 && cities.length === 0 && (
-                          <div className="text-neutral-500 py-3 text-center text-xs px-3">
-                            Wpisz co najmniej 2 znaki...
-                          </div>
-                        )}
-                        {!isLoadingCities && (locationSearch.trim().length >= 2 || cities.length > 0) && cities.length === 0 && (
-                          <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
-                        )}
-                        <CommandGroup>
-                          {cities.map((city) => {
-                            const matchedPostal = city.postalCodes?.find((p: any) =>
-                              p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
-                            )
-                            const displayValue = matchedPostal
-                              ? `${city.nazwa} (${matchedPostal.code})`
-                              : city.nazwa
-
-                            return (
-                              <CommandItem
-                                key={city.id}
-                                value={city.nazwa}
-                                onSelect={() => {
-                                  const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || "00-000"
-                                  setFormData({
-                                    ...formData,
-                                    miasto: city.nazwa,
-                                    voivodeshipId: city.voivodeshipId,
-                                    kodPocztowy: selectedPostalCode,
-                                  })
-                                  if (fieldErrors.miasto) {
-                                    const newErrors = { ...fieldErrors }
-                                    delete newErrors.miasto
-                                    setFieldErrors(newErrors)
-                                  }
-                                  setLocationOpen(false)
-                                }}
-                                className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Check
-                                    className={cn(
-                                      "h-4 w-4 text-primary",
-                                      formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  <span>{displayValue}</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground ml-2 text-right">
-                                  {city.voivodeship?.nazwa}
-                                </span>
-                              </CommandItem>
-                            )
-                          })}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="voivodeshipId" className={cn(fieldErrors.voivodeshipId && "text-destructive")}>Województwo *</Label>
+                <Label htmlFor="subcategory" className={cn(fieldErrors.subcategory && "text-destructive")}>Podkategoria *</Label>
                 <Select
-                  value={formData.voivodeshipId}
+                  value={formData.subcategory}
                   onValueChange={(val) => {
-                    setFormData({ ...formData, voivodeshipId: val })
-                    if (fieldErrors.voivodeshipId) {
-                      const newErrors = { ...fieldErrors }
-                      delete newErrors.voivodeshipId
-                      setFieldErrors(newErrors)
+                    setFormData(prev => ({
+                      ...prev,
+                      subcategory: val,
+                      specialization: "",
+                      typInny: `${prev.category} > ${val}`
+                    }))
+                    if (fieldErrors.subcategory || fieldErrors.specialization) {
+                      setFieldErrors(prev => {
+                        const newErrors = { ...prev }
+                        delete newErrors.subcategory
+                        delete newErrors.specialization
+                        return newErrors
+                      })
                     }
                   }}
                 >
-                  <SelectTrigger className={cn("h-11", fieldErrors.voivodeshipId && "border-destructive")}>
-                    <SelectValue placeholder="Wybierz..." />
+                  <SelectTrigger className={cn("h-11", fieldErrors.subcategory && "border-destructive")}>
+                    <SelectValue placeholder="Wybierz podkategorię..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {voivodeships.map((v) => (
-                      <SelectItem key={v.id} value={v.id}>
-                        {v.nazwa}
+                    {subcategoriesList.map((subcat) => (
+                      <SelectItem key={subcat} value={subcat}>
+                        {subcat}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {fieldErrors.voivodeshipId && <p className="text-xs text-destructive">{fieldErrors.voivodeshipId}</p>}
+                {fieldErrors.subcategory && <p className="text-xs text-destructive">{fieldErrors.subcategory}</p>}
+              </motion.div>
+            )}
+
+            {formData.category && (!hasSubcategories || formData.subcategory) && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="space-y-2"
+              >
+                <Label htmlFor="specialization" className={cn(fieldErrors.specialization && "text-destructive")}>Specjalizacja *</Label>
+                <Select
+                  value={formData.specialization}
+                  onValueChange={(val) => {
+                    setFormData(prev => {
+                      const typInnyVal = prev.subcategory
+                        ? `${prev.category} > ${prev.subcategory} > ${val}`
+                        : `${prev.category} > ${val}`
+                      return {
+                        ...prev,
+                        specialization: val,
+                        typInny: typInnyVal
+                      }
+                    })
+                    if (fieldErrors.specialization) {
+                      setFieldErrors(prev => {
+                        const newErrors = { ...prev }
+                        delete newErrors.specialization
+                        return newErrors
+                      })
+                    }
+                  }}
+                >
+                  <SelectTrigger className={cn("h-11", fieldErrors.specialization && "border-destructive")}>
+                    <SelectValue placeholder="Wybierz specjalizację..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {specializationsList.map((spec) => (
+                      <SelectItem key={spec} value={spec}>
+                        {spec}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldErrors.specialization && <p className="text-xs text-destructive">{fieldErrors.specialization}</p>}
+              </motion.div>
+            )}
+
+            <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Wybierz kategorię, podkategorię oraz swoją główną specjalizację zawodową. Pomoże nam to dostosować Twój profil dla potencjalnych klientów.
+              </p>
+            </div>
+          </div>
+        )
+      }
+
+      case 6:
+        return (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna specjalizacja *</Label>
+                <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Zaznacz główną dziedzinę prawa, w której się specjalizujesz.
+                Pomoże nam to lepiej dopasować zapytania od klientów.
+              </p>
+              <div className={cn("grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
+                {categories
+                  .filter((cat) => !cat.parentId)
+                  .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
+                  .map((cat) => {
+                    const isSelected = formData.categoriesIds.includes(cat.id)
+                    return (
+                      <div
+                        key={cat.id}
+                        className={cn(
+                          "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                          isSelected
+                            ? "bg-primary/5 border-primary shadow-sm"
+                            : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                        )}
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            categoriesIds: [cat.id]
+                          }))
+                          if (fieldErrors.categoriesIds) {
+                            const newErrors = { ...fieldErrors }
+                            delete newErrors.categoriesIds
+                            setFieldErrors(newErrors)
+                          }
+                        }}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className={cn(
+                            "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
+                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                          )}>
+                            {isSelected && <Check className="w-4 h-4" />}
+                          </div>
+                          <span className={cn(
+                            "text-sm font-medium transition-colors",
+                            isSelected ? "text-primary" : "text-foreground"
+                          )}>
+                            {cat.nazwa}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
+                            Wybrano
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+              </div>
+              {fieldErrors.categoriesIds && <p className="text-xs text-destructive">{fieldErrors.categoriesIds}</p>}
             </div>
           </div>
         )
@@ -1077,278 +875,564 @@ export default function LawFirmRegistrationPage() {
           </div>
         )
 
-      case 6:
+      case 4:
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Dane firmy */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna specjalizacja *</Label>
-                <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Zaznacz główną dziedzinę prawa, w której Twoja ekspert się specjalizuje.
-                Pomoże nam to lepiej dopasować zapytania od klientów.
-              </p>
-              <div className={cn("grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
-                {categories
-                  .filter((cat) => !cat.parentId)
-                  .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
-                  .map((cat) => {
-                    const isSelected = formData.categoriesIds.includes(cat.id)
-                    return (
-                      <div
-                        key={cat.id}
-                        className={cn(
-                          "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                          isSelected
-                            ? "bg-primary/5 border-primary shadow-sm"
-                            : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
-                        )}
-                        onClick={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            categoriesIds: [cat.id] // Tylko jedna pozycja
-                          }))
-                          if (fieldErrors.categoriesIds) {
-                            const newErrors = { ...fieldErrors }
-                            delete newErrors.categoriesIds
-                            setFieldErrors(newErrors)
-                          }
-                        }}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className={cn(
-                            "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-                          )}>
-                            {isSelected && <Check className="w-4 h-4" />}
-                          </div>
-                          <span className={cn(
-                            "text-sm font-medium transition-colors",
-                            isSelected ? "text-primary" : "text-foreground"
-                          )}>
-                            {cat.nazwa}
-                          </span>
-                        </div>
-                        {isSelected && (
-                          <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
-                            Wybrano
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-              </div>
-              {fieldErrors.categoriesIds && <p className="text-xs text-destructive">{fieldErrors.categoriesIds}</p>}
-            </div>
-          </div>
-        )
-
-
-      case 7:
-        return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="typOferty" className={cn(fieldErrors.typOferty && "text-destructive")}>Preferowany typ współpracy *</Label>
-              <Select
-                value={formData.typOferty}
-                onValueChange={(value) => {
-                  setFormData({ ...formData, typOferty: value })
-                  if (fieldErrors.typOferty) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.typOferty
-                    setFieldErrors(newErrors)
-                  }
-                }}
-              >
-                <SelectTrigger className={cn("h-11", fieldErrors.typOferty && "border-destructive")}>
-                  <SelectValue placeholder="Wybierz typ współpracy" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="KONSULTACJA">Jednorazowa konsultacja</SelectItem>
-                  <SelectItem value="JEDNORAZOWA_USLUGA">Konkretna usługa prawna</SelectItem>
-                  <SelectItem value="STALA_WSPOLPRACA">Stała obsługa prawna</SelectItem>
-                  <SelectItem value="WSZYSTKIE">Wszystkie rodzaje współpracy</SelectItem>
-                </SelectContent>
-              </Select>
-              {fieldErrors.typOferty && <p className="text-xs text-destructive">{fieldErrors.typOferty}</p>}
-            </div>
-            <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Informacja o preferowanym typie współpracy pomoże nam lepiej dopasować zapytania klientów do Twojej praktyki.
-              </p>
-            </div>
-          </div>
-        )
-
-      case 8:
-        return (
-          <div className="space-y-6">
-            {!session ? (
-              <>
+              <h3 className="text-lg font-bold border-b pb-2">Dane firmy</h3>
+              <div className="space-y-4">
+                {/* nazwa */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className={cn(fieldErrors.email && "text-destructive")}>Email logowania (Twój login) *</Label>
+                  <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa eksperta *</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="login@portal.pl"
-                    value={formData.email}
+                    id="nazwa"
+                    type="text"
+                    value={formData.nazwa}
                     onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value })
-                      if (fieldErrors.email) {
+                      setFormData({ ...formData, nazwa: e.target.value })
+                      if (fieldErrors.nazwa) {
                         const newErrors = { ...fieldErrors }
-                        delete newErrors.email
+                        delete newErrors.nazwa
                         setFieldErrors(newErrors)
                       }
                     }}
-                    disabled={isLoading}
-                    className={cn("h-11", fieldErrors.email && "border-destructive")}
+                    placeholder="Np. Ekspert Adwokacka Jan Kowalski"
+                    className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
                   />
-                  {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
+                  {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
+                </div>
+                {/* nazwaFirmy */}
+                <div className="space-y-2">
+                  <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>
+                  <Input
+                    id="nazwaFirmy"
+                    type="text"
+                    value={formData.nazwaFirmy}
+                    onChange={(e) => {
+                      setFormData({ ...formData, nazwaFirmy: e.target.value })
+                      if (fieldErrors.nazwaFirmy) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.nazwaFirmy
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                    placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
+                    className={cn("h-11", fieldErrors.nazwaFirmy && "border-destructive")}
+                  />
+                  {fieldErrors.nazwaFirmy && <p className="text-xs text-destructive">{fieldErrors.nazwaFirmy}</p>}
+                </div>
+                {/* nip, regon, krs */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="nip" className={cn(fieldErrors.nip && "text-destructive")}>NIP *</Label>
+                    <Input
+                      id="nip"
+                      type="text"
+                      placeholder="1234567890"
+                      value={formData.nip}
+                      onChange={(e) => {
+                        setFormData({ ...formData, nip: e.target.value })
+                        if (fieldErrors.nip) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.nip
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.nip && "border-destructive")}
+                    />
+                    {fieldErrors.nip && <p className="text-xs text-destructive">{fieldErrors.nip}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="regon" className={cn(fieldErrors.regon && "text-destructive")}>REGON</Label>
+                    <Input
+                      id="regon"
+                      type="text"
+                      placeholder="Opcjonalnie"
+                      value={formData.regon}
+                      onChange={(e) => {
+                        setFormData({ ...formData, regon: e.target.value })
+                        if (fieldErrors.regon) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.regon
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.regon && "border-destructive")}
+                    />
+                    {fieldErrors.regon && <p className="text-xs text-destructive">{fieldErrors.regon}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="krs" className={cn(fieldErrors.krs && "text-destructive")}>KRS</Label>
+                    <Input
+                      id="krs"
+                      type="text"
+                      placeholder="Dla spółek handlowych"
+                      value={formData.krs}
+                      onChange={(e) => {
+                        setFormData({ ...formData, krs: e.target.value })
+                        if (fieldErrors.krs) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.krs
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.krs && "border-destructive")}
+                    />
+                    {fieldErrors.krs && <p className="text-xs text-destructive">{fieldErrors.krs}</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dane adresowe */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold border-b pb-2">Adres siedziby</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="adres" className={cn(fieldErrors.adres && "text-destructive")}>Adres (ulica i numer) *</Label>
+                  <Input
+                    id="adres"
+                    type="text"
+                    value={formData.adres}
+                    onChange={(e) => {
+                      setFormData({ ...formData, adres: e.target.value })
+                      if (fieldErrors.adres) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.adres
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                    placeholder="Np. ul. Warszawska 1/2"
+                    className={cn("h-11", fieldErrors.adres && "border-destructive")}
+                  />
+                  {fieldErrors.adres && <p className="text-xs text-destructive">{fieldErrors.adres}</p>}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="kodPocztowy" className={cn(fieldErrors.kodPocztowy && "text-destructive")}>Kod pocztowy *</Label>
+                    <Input
+                      id="kodPocztowy"
+                      type="text"
+                      value={formData.kodPocztowy}
+                      onChange={handlePostalCodeChange}
+                      placeholder="00-000"
+                      className={cn("h-11", fieldErrors.kodPocztowy && "border-destructive")}
+                    />
+                    {fieldErrors.kodPocztowy && <p className="text-xs text-destructive">{fieldErrors.kodPocztowy}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="miasto" className={cn(fieldErrors.miasto && "text-destructive")}>Miasto *</Label>
+                    <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={locationOpen}
+                          className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
+                          disabled={isLoading}
+                        >
+                          <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[300px] p-0" align="start">
+                        <Command shouldFilter={false}>
+                          <CommandInput
+                            placeholder="Szukaj miasta..."
+                            value={locationSearch}
+                            onValueChange={setLocationSearch}
+                          />
+                          <CommandList>
+                            {isLoadingCities && (
+                              <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                            )}
+                            {!isLoadingCities && locationSearch.trim().length < 2 && cities.length === 0 && (
+                              <div className="text-neutral-500 py-3 text-center text-xs px-3">
+                                Wpisz co najmniej 2 znaki...
+                              </div>
+                            )}
+                            {!isLoadingCities && (locationSearch.trim().length >= 2 || cities.length > 0) && cities.length === 0 && (
+                              <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                            )}
+                            <CommandGroup>
+                              {cities.map((city) => {
+                                const matchedPostal = city.postalCodes?.find((p: any) =>
+                                  p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                                )
+                                const displayValue = matchedPostal
+                                  ? `${city.nazwa} (${matchedPostal.code})`
+                                  : city.nazwa
+
+                                return (
+                                  <CommandItem
+                                    key={city.id}
+                                    value={city.nazwa}
+                                    onSelect={() => {
+                                      const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || "00-000"
+                                      setFormData({
+                                        ...formData,
+                                        miasto: city.nazwa,
+                                        voivodeshipId: city.voivodeshipId,
+                                        kodPocztowy: selectedPostalCode,
+                                      })
+                                      if (fieldErrors.miasto) {
+                                        const newErrors = { ...fieldErrors }
+                                        delete newErrors.miasto
+                                        setFieldErrors(newErrors)
+                                      }
+                                      setLocationOpen(false)
+                                    }}
+                                    className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Check
+                                        className={cn(
+                                          "h-4 w-4 text-primary",
+                                          formData.miasto === city.nazwa ? "opacity-100" : "opacity-0"
+                                        )}
+                                      />
+                                      <span>{displayValue}</span>
+                                    </div>
+                                    <span className="text-xs text-muted-foreground ml-2 text-right">
+                                      {city.voivodeship?.nazwa}
+                                    </span>
+                                  </CommandItem>
+                                )
+                              })}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {fieldErrors.miasto && <p className="text-xs text-destructive">{fieldErrors.miasto}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="voivodeshipId" className={cn(fieldErrors.voivodeshipId && "text-destructive")}>Województwo *</Label>
+                    <Select
+                      value={formData.voivodeshipId}
+                      onValueChange={(val) => {
+                        setFormData({ ...formData, voivodeshipId: val })
+                        if (fieldErrors.voivodeshipId) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.voivodeshipId
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                    >
+                      <SelectTrigger className={cn("h-11", fieldErrors.voivodeshipId && "border-destructive")}>
+                        <SelectValue placeholder="Wybierz..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {voivodeships.map((v) => (
+                          <SelectItem key={v.id} value={v.id}>
+                            {v.nazwa}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldErrors.voivodeshipId && <p className="text-xs text-destructive">{fieldErrors.voivodeshipId}</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dane kontaktowe */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold border-b pb-2">Osoba kontaktowa</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="imieKontakt" className={cn(fieldErrors.imieKontakt && "text-destructive")}>Imię *</Label>
+                    <Input
+                      id="imieKontakt"
+                      type="text"
+                      value={formData.imieKontakt}
+                      onChange={(e) => {
+                        setFormData({ ...formData, imieKontakt: e.target.value })
+                        if (fieldErrors.imieKontakt) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.imieKontakt
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.imieKontakt && "border-destructive")}
+                    />
+                    {fieldErrors.imieKontakt && <p className="text-xs text-destructive">{fieldErrors.imieKontakt}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="nazwiskoKontakt" className={cn(fieldErrors.nazwiskoKontakt && "text-destructive")}>Nazwisko *</Label>
+                    <Input
+                      id="nazwiskoKontakt"
+                      type="text"
+                      value={formData.nazwiskoKontakt}
+                      onChange={(e) => {
+                        setFormData({ ...formData, nazwiskoKontakt: e.target.value })
+                        if (fieldErrors.nazwiskoKontakt) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.nazwiskoKontakt
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.nazwiskoKontakt && "border-destructive")}
+                    />
+                    {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stanowisko" className={cn(fieldErrors.stanowisko && "text-destructive")}>Stanowisko / Tytuł zawodowy</Label>
+                  <Input
+                    id="stanowisko"
+                    type="text"
+                    placeholder="Np. Adwokat, Radca Prawny"
+                    value={formData.stanowisko}
+                    onChange={(e) => {
+                      setFormData({ ...formData, stanowisko: e.target.value })
+                      if (fieldErrors.stanowisko) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.stanowisko
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                    className={cn("h-11", fieldErrors.stanowisko && "border-destructive")}
+                  />
+                  {fieldErrors.stanowisko && <p className="text-xs text-destructive">{fieldErrors.stanowisko}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emailKontakt" className={cn(fieldErrors.emailKontakt && "text-destructive")}>Email kontaktowy *</Label>
+                  <Input
+                    id="emailKontakt"
+                    type="email"
+                    placeholder="kontakt@ekspert.pl"
+                    value={formData.emailKontakt}
+                    onChange={(e) => {
+                      setFormData({ ...formData, emailKontakt: e.target.value })
+                      if (fieldErrors.emailKontakt) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.emailKontakt
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                    className={cn("h-11", fieldErrors.emailKontakt && "border-destructive")}
+                  />
+                  {fieldErrors.emailKontakt && <p className="text-xs text-destructive">{fieldErrors.emailKontakt}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password" className={cn(fieldErrors.password && "text-destructive")}>Hasło *</Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={formData.password}
-                        onChange={(e) => {
-                          setFormData({ ...formData, password: e.target.value })
-                          if (fieldErrors.password) {
-                            const newErrors = { ...fieldErrors }
-                            delete newErrors.password
-                            setFieldErrors(newErrors)
-                          }
-                        }}
-                        disabled={isLoading}
-                        className={cn("h-11 pr-10", fieldErrors.password && "border-destructive")}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                    {fieldErrors.password && <p className="text-xs text-destructive">{fieldErrors.password}</p>}
+                    <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
+                    <Input
+                      id="numerTelefonu"
+                      type="tel"
+                      value={formData.numerTelefonu}
+                      onChange={(e) => {
+                        setFormData({ ...formData, numerTelefonu: e.target.value })
+                        if (fieldErrors.numerTelefonu) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.numerTelefonu
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
+                    />
+                    {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className={cn(fieldErrors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
-                    <div className="relative">
+                    <Label htmlFor="numerTelefonu2" className={cn(fieldErrors.numerTelefonu2 && "text-destructive")}>Telefon dodatkowy</Label>
+                    <Input
+                      id="numerTelefonu2"
+                      type="tel"
+                      placeholder="Opcjonalnie"
+                      value={formData.numerTelefonu2}
+                      onChange={(e) => {
+                        setFormData({ ...formData, numerTelefonu2: e.target.value })
+                        if (fieldErrors.numerTelefonu2) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.numerTelefonu2
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.numerTelefonu2 && "border-destructive")}
+                    />
+                    {fieldErrors.numerTelefonu2 && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu2}</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dane logowania i zgody */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold border-b pb-2">Konto i zgody</h3>
+              <div className="space-y-4">
+                {!session ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className={cn(fieldErrors.email && "text-destructive")}>Email logowania (Twój login) *</Label>
                       <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={formData.confirmPassword}
+                        id="email"
+                        type="email"
+                        placeholder="login@portal.pl"
+                        value={formData.email}
                         onChange={(e) => {
-                          setFormData({ ...formData, confirmPassword: e.target.value })
-                          if (fieldErrors.confirmPassword) {
+                          setFormData({ ...formData, email: e.target.value })
+                          if (fieldErrors.email) {
                             const newErrors = { ...fieldErrors }
-                            delete newErrors.confirmPassword
+                            delete newErrors.email
                             setFieldErrors(newErrors)
                           }
                         }}
                         disabled={isLoading}
-                        className={cn("h-11 pr-10", fieldErrors.confirmPassword && "border-destructive")}
+                        className={cn("h-11", fieldErrors.email && "border-destructive")}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
+                      {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
                     </div>
-                    {fieldErrors.confirmPassword && <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="password" className={cn(fieldErrors.password && "text-destructive")}>Hasło *</Label>
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            value={formData.password}
+                            onChange={(e) => {
+                              setFormData({ ...formData, password: e.target.value })
+                              if (fieldErrors.password) {
+                                const newErrors = { ...fieldErrors }
+                                delete newErrors.password
+                                setFieldErrors(newErrors)
+                              }
+                            }}
+                            disabled={isLoading}
+                            className={cn("h-11 pr-10", fieldErrors.password && "border-destructive")}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
+                          </button>
+                        </div>
+                        {fieldErrors.password && <p className="text-xs text-destructive">{fieldErrors.password}</p>}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPassword" className={cn(fieldErrors.confirmPassword && "text-destructive")}>Potwierdź hasło *</Label>
+                        <div className="relative">
+                          <Input
+                            id="confirmPassword"
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            value={formData.confirmPassword}
+                            onChange={(e) => {
+                              setFormData({ ...formData, confirmPassword: e.target.value })
+                              if (fieldErrors.confirmPassword) {
+                                const newErrors = { ...fieldErrors }
+                                delete newErrors.confirmPassword
+                                setFieldErrors(newErrors)
+                              }
+                            }}
+                            disabled={isLoading}
+                            className={cn("h-11 pr-10", fieldErrors.confirmPassword && "border-destructive")}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
+                          </button>
+                        </div>
+                        {fieldErrors.confirmPassword && <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 flex items-center gap-3">
+                    <CheckCircle2 className="text-primary w-6 h-6 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">Zalogowano przez Google/Facebook</p>
+                      <p className="text-xs text-muted-foreground">{session.user?.email}</p>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <div className="bg-primary/5 p-4 rounded-xl border border-primary/20 flex items-center gap-3">
-                <CheckCircle2 className="text-primary w-6 h-6 shrink-0" />
-                <div>
-                  <p className="font-semibold text-sm">Zalogowano przez Google/Facebook</p>
-                  <p className="text-xs text-muted-foreground">{session.user?.email}</p>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-4 pt-4 border-t border-border/50">
-              <div
-                className={cn(
-                  "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
-                  formData.zgodaRegulamin
-                    ? "bg-primary/5 border-primary shadow-sm"
-                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
-                  fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
                 )}
-                onClick={() => {
-                  setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))
-                  if (fieldErrors.zgodaRegulamin) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.zgodaRegulamin
-                    setFieldErrors(newErrors)
-                  }
-                }}
-              >
-                <div className={cn(
-                  "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                  formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
-                  fieldErrors.zgodaRegulamin && "border-destructive"
-                )}>
-                  {formData.zgodaRegulamin && <Check className="w-3.5 h-3.5" />}
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaRegulamin && "text-destructive")} onClick={(e) => e.stopPropagation()}>
-                    Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
-                  </label>
-                  {fieldErrors.zgodaRegulamin && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaRegulamin}</p>}
-                </div>
-              </div>
 
-              <div
-                className={cn(
-                  "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
-                  formData.zgodaPrzetwarzanie
-                    ? "bg-primary/5 border-primary shadow-sm"
-                    : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
-                  fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
-                )}
-                onClick={() => {
-                  setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))
-                  if (fieldErrors.zgodaPrzetwarzanie) {
-                    const newErrors = { ...fieldErrors }
-                    delete newErrors.zgodaPrzetwarzanie
-                    setFieldErrors(newErrors)
-                  }
-                }}
-              >
-                <div className={cn(
-                  "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                  formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
-                  fieldErrors.zgodaPrzetwarzanie && "border-destructive"
-                )}>
-                  {formData.zgodaPrzetwarzanie && <Check className="w-3.5 h-3.5" />}
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="zgodaPrzetwarzanie" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaPrzetwarzanie && "text-destructive")} onClick={(e) => e.stopPropagation()}>
-                    Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
-                  </label>
-                  {fieldErrors.zgodaPrzetwarzanie && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaPrzetwarzanie}</p>}
+                <div className="space-y-4 pt-4 border-t border-border/50">
+                  <div
+                    className={cn(
+                      "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                      formData.zgodaRegulamin
+                        ? "bg-primary/5 border-primary shadow-sm"
+                        : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
+                      fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
+                    )}
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))
+                      if (fieldErrors.zgodaRegulamin) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.zgodaRegulamin
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                  >
+                    <div className={cn(
+                      "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
+                      formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
+                      fieldErrors.zgodaRegulamin && "border-destructive"
+                    )}>
+                      {formData.zgodaRegulamin && <Check className="w-3.5 h-3.5" />}
+                    </div>
+                    <div className="flex-1">
+                      <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaRegulamin && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                        Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
+                      </label>
+                      {fieldErrors.zgodaRegulamin && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaRegulamin}</p>}
+                    </div>
+                  </div>
+
+                  <div
+                    className={cn(
+                      "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                      formData.zgodaPrzetwarzanie
+                        ? "bg-primary/5 border-primary shadow-sm"
+                        : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
+                      fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
+                    )}
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))
+                      if (fieldErrors.zgodaPrzetwarzanie) {
+                        const newErrors = { ...fieldErrors }
+                        delete newErrors.zgodaPrzetwarzanie
+                        setFieldErrors(newErrors)
+                      }
+                    }}
+                  >
+                    <div className={cn(
+                      "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
+                      formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
+                      fieldErrors.zgodaPrzetwarzanie && "border-destructive"
+                    )}>
+                      {formData.zgodaPrzetwarzanie && <Check className="w-3.5 h-3.5" />}
+                    </div>
+                    <div className="flex-1">
+                      <label htmlFor="zgodaPrzetwarzanie" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaPrzetwarzanie && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                        Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
+                      </label>
+                      {fieldErrors.zgodaPrzetwarzanie && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaPrzetwarzanie}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1360,12 +1444,14 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
+  const currentStepIndex = steps.findIndex(s => s.id === currentStep)
+
   return (
     <AuthLayout
       heroTitle="Rozwijaj swój profil z nami"
-      heroDescription="Dołącz do największej w Polsce platformy łączącej prawników z klientami. Zyskaj dostęp do nowych spraw i buduj swoją markę online."
+      heroDescription="Dołącz do największej w Polsce platformy łączącej ekspertów i specjalistów z klientami. Zyskaj dostęp do nowych spraw i buduj swoją markę online."
       heroStats={[
-        { value: 2500, unit: "+", label: "Eksperta" },
+        { value: 2500, unit: "+", label: "Ekspertów" },
         { value: 12000, unit: "+", label: "Zapytań/mies." },
         { value: 96, unit: "%", label: "Zadowolenia" },
       ]}
@@ -1375,11 +1461,11 @@ export default function LawFirmRegistrationPage() {
           <div className="flex justify-between items-center">
             <CardTitle className="text-3xl font-extrabold tracking-tight">Rejestracja</CardTitle>
             <span className="text-xs font-light bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
-              Krok {currentStep} / {totalSteps}
+              Krok {currentStepIndex + 1} / {totalSteps}
             </span>
           </div>
           <CardDescription className="text-base">
-            {steps[currentStep - 1].title}
+            {steps[currentStepIndex]?.title}
           </CardDescription>
         </CardHeader>
 
@@ -1390,12 +1476,12 @@ export default function LawFirmRegistrationPage() {
             <motion.div
               className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 origin-left"
               initial={false}
-              animate={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+              animate={{ width: `${(currentStepIndex / (totalSteps - 1)) * 100}%` }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             />
-            {steps.map((step) => {
+            {steps.map((step, idx) => {
               const Icon = step.icon
-              const isActive = step.id <= currentStep
+              const isActive = idx <= currentStepIndex
               const isCurrent = step.id === currentStep
 
               return (
@@ -1456,7 +1542,7 @@ export default function LawFirmRegistrationPage() {
             </div>
 
             <div className="flex justify-between gap-4 pt-8 border-t border-border/50">
-              {currentStep > 1 ? (
+              {currentStepIndex > 0 ? (
                 <Button
                   type="button"
                   variant="outline"
@@ -1480,7 +1566,7 @@ export default function LawFirmRegistrationPage() {
                 disabled={isLoading}
                 className="flex-1 h-12 rounded-xl text-base font-light shadow-xl shadow-primary/20 group"
               >
-                {currentStep === totalSteps
+                {currentStep === 4
                   ? isLoading
                     ? "Rejestrowanie..."
                     : "Zarejestruj się"

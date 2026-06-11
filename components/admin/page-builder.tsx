@@ -180,7 +180,7 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
           }
         } else if (templateFieldName) {
           updateModuleData(moduleIndex, templateFieldName, data.url)
-          
+
           const img = document.querySelector('[data-editing-img]')
           if (img) {
             img.removeAttribute('data-editing-img')
