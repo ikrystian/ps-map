@@ -135,8 +135,10 @@ export default function NewPagePage() {
         throw new Error(error.error || "Failed to save page")
       }
 
+      const savedPage = await response.json()
+
       toast.success("Strona została utworzona")
-      router.push("/admin/pages")
+      router.push(`/admin/pages/${savedPage.id}`)
     } catch (error: any) {
       console.error("Error saving page:", error)
       toast.error(error.message || "Błąd podczas zapisywania strony")

@@ -216,8 +216,14 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
         throw new Error(error.error || "Failed to save page")
       }
 
+      const savedPage = await response.json()
+
       toast.success(resolvedParams.id === "new" ? "Strona została utworzona" : "Strona została zaktualizowana")
-      router.push("/admin/pages")
+      if (resolvedParams.id === "new") {
+        router.push(`/admin/pages/${savedPage.id}`)
+      } else {
+        fetchPage()
+      }
     } catch (error: any) {
       console.error("Error saving page:", error)
       toast.error(error.message || "Błąd podczas zapisywania strony")

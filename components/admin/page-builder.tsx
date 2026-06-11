@@ -15,8 +15,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { WysiwygEditor } from "@/components/ui/wysiwyg-editor"
 import { parseModuleCode, renderModule } from "@/lib/module-parser"
 import type { ModuleForBuilder, PageModuleForBuilder } from "@/types/cms"
-import { ChevronDown, ChevronUp, GripVertical, Trash2 } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, Trash2, Loader2, Upload } from "lucide-react"
 import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { ImageCropper } from "@/components/ui/image-cropper"
+import { toast } from "@/components/ui/sonner"
 
 interface PageBuilderProps {
   modules: ModuleForBuilder[]
@@ -25,32 +34,187 @@ interface PageBuilderProps {
 }
 
 export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps) {
-  const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set())
+  const [collapsedModules, setCollapsedModules] = useState<Set<number>>(new Set())
+  const [editingImage, setEditingImage] = useState<{
+    moduleIndex: number
+    isEditableHtml: boolean
+    templateFieldName: string
+    width: number
+    height: number
+    aspectRatio: number
+  } | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [showCropDialog, setShowCropDialog] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
   const toggleExpanded = (index: number) => {
-    const newExpanded = new Set(expandedModules)
-    if (newExpanded.has(index)) {
-      newExpanded.delete(index)
+    const newCollapsed = new Set(collapsedModules)
+    if (newCollapsed.has(index)) {
+      newCollapsed.delete(index)
     } else {
-      newExpanded.add(index)
+      newCollapsed.add(index)
     }
-    setExpandedModules(newExpanded)
+    setCollapsedModules(newCollapsed)
+  }
+
+  const handleImageClick = (
+    img: HTMLImageElement,
+    moduleIndex: number,
+    isEditableHtml: boolean,
+    container: HTMLElement
+  ) => {
+    // Mark this image as being edited
+    img.setAttribute('data-editing-img', 'true')
+
+    // Read dimensions
+    const width = img.naturalWidth || img.clientWidth || Number(img.getAttribute('width')) || 800
+    const height = img.naturalHeight || img.clientHeight || Number(img.getAttribute('height')) || 600
+    const aspectRatio = height > 0 ? width / height : 1
+
+    // Find field name if it's a TEMPLATE module
+    let templateFieldName = ''
+    if (!isEditableHtml) {
+      const pageModule = pageModules[moduleIndex]
+      const cmsModule = pageModule.module || modules.find(m => m.id === pageModule.moduleId)
+      if (cmsModule) {
+        const imagesInPreview = Array.from(container.querySelectorAll('img'))
+        const imgIndex = imagesInPreview.indexOf(img)
+        const imgTagsInCode = cmsModule.code.match(/<img[^>]+>/g) || []
+        if (imgIndex >= 0 && imgIndex < imgTagsInCode.length) {
+          const matchingTag = imgTagsInCode[imgIndex]
+          const srcMatch = matchingTag.match(/src=["']?\{([^}]+)\}["']?/)
+          if (srcMatch) {
+            templateFieldName = srcMatch[1]
+          }
+        }
+      }
+
+      // Fallback: search in pageModule.data for any field containing current src
+      if (!templateFieldName) {
+        const currentSrc = img.getAttribute('src') || ''
+        for (const key of Object.keys(pageModule.data)) {
+          if (pageModule.data[key] === currentSrc) {
+            templateFieldName = key
+            break
+          }
+        }
+      }
+    }
+
+    setEditingImage({
+      moduleIndex,
+      isEditableHtml,
+      templateFieldName,
+      width,
+      height,
+      aspectRatio,
+    })
+  }
+
+  const handleCancelUpload = () => {
+    const img = document.querySelector('[data-editing-img]')
+    if (img) {
+      img.removeAttribute('data-editing-img')
+    }
+    setEditingImage(null)
+    setSelectedFile(null)
+    setShowCropDialog(false)
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP, GIF")
+      return
+    }
+
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      return
+    }
+
+    setSelectedFile(file)
+    setShowCropDialog(true)
+  }
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    setShowCropDialog(false)
+    setIsUploading(true)
+
+    try {
+      const formData = new FormData()
+      const fileName = selectedFile?.name || "image.jpg"
+      const file = new File([croppedBlob], fileName, { type: croppedBlob.type })
+      formData.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image")
+      }
+
+      const data = await response.json()
+
+      if (editingImage) {
+        const { moduleIndex, isEditableHtml, templateFieldName } = editingImage
+
+        if (isEditableHtml) {
+          const img = document.querySelector('[data-editing-img]') as HTMLImageElement
+          if (img) {
+            img.src = data.url
+            if (editingImage.width) img.setAttribute('width', String(editingImage.width))
+            if (editingImage.height) img.setAttribute('height', String(editingImage.height))
+            img.removeAttribute('data-editing-img')
+
+            const container = img.closest('[contenteditable="true"]')
+            if (container) {
+              updateModuleData(moduleIndex, 'html', container.innerHTML)
+            }
+          }
+        } else if (templateFieldName) {
+          updateModuleData(moduleIndex, templateFieldName, data.url)
+          
+          const img = document.querySelector('[data-editing-img]')
+          if (img) {
+            img.removeAttribute('data-editing-img')
+          }
+        }
+      }
+
+      toast.success("Obrazek został zaktualizowany")
+    } catch (error) {
+      console.error("Upload error:", error)
+      toast.error("Nie udało się przesłać obrazka")
+    } finally {
+      setIsUploading(false)
+      setEditingImage(null)
+      setSelectedFile(null)
+    }
   }
 
   const addModule = (moduleId: string) => {
-    const module = modules.find(m => m.id === moduleId)
-    if (!module) return
+    const cmsModule = modules.find(m => m.id === moduleId)
+    if (!cmsModule) return
 
     const newModule: PageModuleForBuilder = {
       moduleId,
-      module,
+      module: cmsModule,
       order: pageModules.length,
-      data: module.type === 'EDITABLE_HTML' ? { html: module.code } : {},
+      data: cmsModule.type === 'EDITABLE_HTML' ? { html: cmsModule.code } : {},
     }
 
     onChange([...pageModules, newModule])
-    // Automatycznie rozwiń nowo dodany moduł
-    setExpandedModules(new Set([...expandedModules, pageModules.length]))
+    // Automatycznie rozwiń nowo dodany moduł (czyli usuń z collapsed)
+    const newCollapsed = new Set(collapsedModules)
+    newCollapsed.delete(pageModules.length)
+    setCollapsedModules(newCollapsed)
   }
 
   const removeModule = (index: number) => {
@@ -239,11 +403,11 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
           </Card>
         ) : (
           pageModules.map((pageModule, index) => {
-            const module = pageModule.module || modules.find(m => m.id === pageModule.moduleId)
-            if (!module) return null
+            const cmsModule = pageModule.module || modules.find(m => m.id === pageModule.moduleId)
+            if (!cmsModule) return null
 
-            const parsed = parseModuleCode(module.code)
-            const isExpanded = expandedModules.has(index)
+            const parsed = parseModuleCode(cmsModule.code)
+            const isExpanded = !collapsedModules.has(index)
 
             return (
               <Card key={`${pageModule.moduleId}-${index}`}>
@@ -251,10 +415,10 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
-                      <CardTitle className="text-lg">{module.name}</CardTitle>
-                      {module.description && (
+                      <CardTitle className="text-lg">{cmsModule.name}</CardTitle>
+                      {cmsModule.description && (
                         <span className="text-sm text-muted-foreground">
-                          - {module.description}
+                          - {cmsModule.description}
                         </span>
                       )}
                     </div>
@@ -298,23 +462,31 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
                 </CardHeader>
                 {isExpanded && (
                   <CardContent className="space-y-4">
-                    {module.type === 'EDITABLE_HTML' ? (
+                    {cmsModule.type === 'EDITABLE_HTML' ? (
                       <>
                         <div className="space-y-2">
                           <Label>Edytuj HTML (kliknij w treść, aby edytować)</Label>
                           <div
-                            className="bg-white border rounded-lg p-4 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="bg-white border rounded-lg p-0 min-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                             contentEditable={true}
                             suppressContentEditableWarning={true}
                             dangerouslySetInnerHTML={{
-                              __html: pageModule.data.html || module.code
+                              __html: pageModule.data.html || cmsModule.code
+                            }}
+                            onClick={(e) => {
+                              const target = e.target as HTMLElement
+                              if (target.tagName === 'IMG') {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                handleImageClick(target as HTMLImageElement, index, true, e.currentTarget)
+                              }
                             }}
                             onBlur={(e) => {
                               updateModuleData(index, 'html', e.currentTarget.innerHTML)
                             }}
                           />
                           <p className="text-xs text-muted-foreground">
-                            Kliknij w treść powyżej, aby ją edytować. Zmiany zostaną zapisane automatycznie.
+                            Kliknij w treść powyżej, aby ją edytować. Zmiany zostaną zapisane automatycznie. Kliknij w obrazek, aby go podmienić (upload).
                           </p>
                         </div>
                       </>
@@ -332,11 +504,19 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
 
                         {/* Preview for TEMPLATE modules only */}
                         <div className="mt-4 pt-4 border-t">
-                          <h4 className="text-sm font-semibold mb-2">Podgląd:</h4>
+                          <h4 className="text-sm font-semibold mb-2">Podgląd (kliknij w obrazek, aby go podmienić):</h4>
                           <div
-                            className="bg-muted p-4 rounded-lg"
+                            className="bg-muted p-4 rounded-lg cursor-pointer"
+                            onClick={(e) => {
+                              const target = e.target as HTMLElement
+                              if (target.tagName === 'IMG') {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                handleImageClick(target as HTMLImageElement, index, false, e.currentTarget)
+                              }
+                            }}
                             dangerouslySetInnerHTML={{
-                              __html: renderModule(module.code, pageModule.data)
+                              __html: renderModule(cmsModule.code, pageModule.data)
                             }}
                           />
                         </div>
@@ -349,6 +529,69 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
           })
         )}
       </div>
+
+      {/* Dialog for image uploading */}
+      {editingImage && (
+        <Dialog open={!!editingImage} onOpenChange={(open) => !open && handleCancelUpload()}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Zmień obrazek</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="bg-muted/50 p-4 rounded-lg border border-dashed flex flex-col items-center justify-center text-center">
+                <Upload className="h-10 w-10 text-muted-foreground mb-2" />
+                <p className="text-sm font-medium">Kliknij, aby wybrać i przesłać nowy obrazek</p>
+                {editingImage.width && editingImage.height ? (
+                  <p className="text-xs text-primary font-semibold mt-1">
+                    Wymagane wymiary: {editingImage.width} x {editingImage.height} px (proporcje {editingImage.aspectRatio.toFixed(2)}:1)
+                  </p>
+                ) : null}
+                <p className="text-xs text-muted-foreground mt-2">
+                  JPEG, PNG, WebP lub GIF (max 5MB)
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="image-file-upload-input"
+                  disabled={isUploading}
+                />
+                <Button asChild variant="outline" className="mt-4" disabled={isUploading}>
+                  <label htmlFor="image-file-upload-input" className="cursor-pointer">
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Przesyłanie...
+                      </>
+                    ) : (
+                      "Wybierz plik"
+                    )}
+                  </label>
+                </Button>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={handleCancelUpload} disabled={isUploading}>
+                Anuluj
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {selectedFile && editingImage && (
+        <ImageCropper
+          image={selectedFile}
+          aspectRatio={editingImage.aspectRatio}
+          onCropComplete={handleCropComplete}
+          onCancel={() => {
+            setSelectedFile(null)
+            setShowCropDialog(false)
+          }}
+          open={showCropDialog}
+        />
+      )}
     </div>
   )
 }
