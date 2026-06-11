@@ -6,7 +6,7 @@ import sys
 
 def main():
     db_path = os.path.join(os.path.dirname(__file__), "dev.db")
-    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "cities.csv")
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "prisma/cities.csv")
 
     if not os.path.exists(db_path):
         print(f"Error: Database not found at {db_path}", file=sys.stderr)
