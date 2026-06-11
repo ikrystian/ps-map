@@ -320,7 +320,7 @@ export function ReviewsSection({
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ocena ogólna</p>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-5xl font-black font-sans tracking-tight text-foreground">
+                <span className="text-5xl font-black  tracking-tight text-foreground">
                   {avgRating > 0 ? avgRating.toFixed(1) : "0.0"}
                 </span>
                 <span className="text-xl font-medium text-muted-foreground">/ 5</span>

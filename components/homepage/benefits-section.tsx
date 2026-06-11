@@ -101,7 +101,7 @@ export function BenefitsSection() {
               className="flex flex-col items-center text-center group cursor-pointer"
             >
               <BenefitIcon src={benefit.icon} alt={`Krok ${index + 1}`} />
-              <h3 className="text-xs md:text-sm font-medium tracking-wide text-neutral-300 group-hover:text-white leading-relaxed max-w-[180px] transition-colors duration-300 font-sans">
+              <h3 className="text-xs md:text-sm font-medium tracking-wide text-neutral-300 group-hover:text-white leading-relaxed max-w-[180px] transition-colors duration-300 ">
                 {benefit.title}
               </h3>
             </motion.div>

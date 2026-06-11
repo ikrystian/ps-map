@@ -80,7 +80,7 @@ export function ChatAssistant() {
   }
 
   return (
-    <div className="fixed bottom-4 right-6 z-50 flex flex-col items-end font-sans">
+    <div className="fixed bottom-4 right-6 z-50 flex flex-col items-end ">
       <AnimatePresence>
         {isOpen && (
           <motion.div

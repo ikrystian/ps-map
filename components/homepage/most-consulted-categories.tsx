@@ -281,7 +281,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                       <TooltipTrigger asChild>
                         {button}
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white font-sans text-xs">
+                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white  text-xs">
                         Informacja dostępna po zalogowaniu
                       </TooltipContent>
                     </Tooltip>
@@ -291,7 +291,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                    className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
                     <div className="relative h-85 w-full overflow-hidden aspect-[5/2] bg-zinc-900">

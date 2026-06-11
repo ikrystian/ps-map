@@ -914,7 +914,7 @@ export default function LawFirmPackagePage() {
                           ) : (
                             <div className="flex flex-col gap-0.5">
                               <span className="text-base text-white font-extrabold">{pointsCost} pkt</span>
-                              <span className="text-sm text-muted-foreground font-normal font-sans">({priceVal} PLN)</span>
+                              <span className="text-sm text-muted-foreground font-normal ">({priceVal} PLN)</span>
                             </div>
                           )}
                         </td>

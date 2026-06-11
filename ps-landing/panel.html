@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Panel – Specjalizacje | ProstaSpawa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #14130f;
+            color: #e0ddd5;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .panel-container { max-width: 900px; margin: 0 auto; }
+
+        h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
+
+        .panel-subtitle { color: #888; font-size: 0.9rem; margin-bottom: 32px; }
+
+        .auth-box, .category-card {
+            background: #1d1c17;
+            border: 1px solid #2e2c25;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .panel-input {
+            background: #14130f;
+            border: 1px solid #3a382f;
+            border-radius: 8px;
+            color: #e0ddd5;
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 10px 14px;
+            outline: none;
+            width: 100%;
+        }
+
+        .panel-input:focus { border-color: #b8a366; }
+
+        .panel-btn {
+            background: #b8a366;
+            border: none;
+            border-radius: 8px;
+            color: #14130f;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 10px 18px;
+            white-space: nowrap;
+            transition: opacity 0.15s;
+        }
+
+        .panel-btn:hover { opacity: 0.85; }
+        .panel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .panel-btn-ghost {
+            background: transparent;
+            border: 1px solid #3a382f;
+            color: #aaa;
+        }
+
+        .panel-btn-sm {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        .panel-row { display: flex; gap: 10px; }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .category-name { font-size: 1.1rem; font-weight: 600; }
+
+        .category-content { margin-left: 0; }
+
+        .subcategory-block {
+            background: #14130f;
+            border-left: 2px solid #3a382f;
+            border-radius: 6px;
+            margin: 12px 0 12px 16px;
+            padding: 14px;
+        }
+
+        .subcategory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .items-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+        .items-list:empty { display: none; }
+
+        .item-chip {
+            align-items: center;
+            background: #2a281f;
+            border: 1px solid #3a382f;
+            border-radius: 999px;
+            display: inline-flex;
+            font-size: 0.85rem;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+
+        .item-chip button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .item-chip button:hover { color: #d66; }
+
+        .empty-msg { color: #666; font-size: 0.85rem; margin-bottom: 12px; }
+
+        .add-item-row { display: flex; gap: 8px; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+
+        .remove-btn:hover { color: #d66; }
+
+        .save-bar {
+            align-items: center;
+            display: flex;
+            gap: 14px;
+            margin-top: 24px;
+            position: sticky;
+            bottom: 20px;
+        }
+
+        .status-msg { font-size: 0.85rem; }
+        .status-msg.ok { color: #7fbf7f; }
+        .status-msg.err { color: #d66; }
+
+        .section-label {
+            color: #b8a366;
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        a.back-link { color: #888; font-size: 0.85rem; text-decoration: none; }
+        a.back-link:hover { color: #e0ddd5; }
+    </style>
+</head>
+
+<body>
+    <div class="panel-container">
+        <h1>Panel specjalizacji</h1>
+        <p class="panel-subtitle">Zarządzaj hierarchią specjalizacji w formularzu rejestracji.
+            &nbsp;<a class="back-link" href="formularz.html">→ podgląd formularza</a></p>
+
+        <!-- Auth -->
+        <div class="auth-box" id="authBox">
+            <span class="section-label">Autoryzacja</span>
+            <div class="panel-row">
+                <input class="panel-input" type="password" id="adminKey" placeholder="Hasło administratora">
+                <button class="panel-btn" id="loginBtn">Zaloguj</button>
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div id="editor" style="display: none;">
+            <div id="categoriesList"></div>
+
+            <div class="save-bar">
+                <button class="panel-btn" id="saveBtn">Zapisz zmiany</button>
+                <span class="status-msg" id="statusMsg"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let specData = {};
+        let adminKey = sessionStorage.getItem('ps_admin_key') || '';
+
+        const authBox = document.getElementById('authBox');
+        const editor = document.getElementById('editor');
+        const categoriesList = document.getElementById('categoriesList');
+        const statusMsg = document.getElementById('statusMsg');
+
+        function setStatus(text, ok) {
+            statusMsg.textContent = text;
+            statusMsg.className = 'status-msg ' + (ok ? 'ok' : 'err');
+            if (text) setTimeout(() => { statusMsg.textContent = ''; }, 4000);
+        }
+
+        function render() {
+            categoriesList.innerHTML = '';
+            Object.entries(specData).forEach(([category, content]) => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                const name = document.createElement('span');
+                name.className = 'category-name';
+                name.textContent = category;
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = 'Usuń kategorię';
+                removeBtn.addEventListener('click', () => {
+                    if (confirm(`Usunąć kategorię "${category}" wraz ze wszystkimi specjalizacjami?`)) {
+                        delete specData[category];
+                        render();
+                    }
+                });
+                header.append(name, removeBtn);
+                card.appendChild(header);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'category-content';
+
+                if (Array.isArray(content)) {
+                    renderSimpleList(contentDiv, category, content);
+                } else if (typeof content === 'object') {
+                    renderHierarchy(contentDiv, category, content);
+                }
+
+                card.appendChild(contentDiv);
+                categoriesList.appendChild(card);
+            });
+        }
+
+        function renderSimpleList(container, category, items) {
+            const list = document.createElement('div');
+            list.className = 'items-list';
+            items.forEach((item, idx) => {
+                const chip = document.createElement('span');
+                chip.className = 'item-chip';
+                const label = document.createElement('span');
+                label.textContent = item;
+                const x = document.createElement('button');
+                x.textContent = '×';
+                x.title = 'Usuń';
+                x.addEventListener('click', () => {
+                    items.splice(idx, 1);
+                    render();
+                });
+                chip.append(label, x);
+                list.appendChild(chip);
+            });
+            container.appendChild(list);
+
+            const row = document.createElement('div');
+            row.className = 'add-item-row';
+            const input = document.createElement('input');
+            input.className = 'panel-input';
+            input.type = 'text';
+            input.placeholder = 'Nowa specjalizacja...';
+            const addBtn = document.createElement('button');
+            addBtn.className = 'panel-btn panel-btn-ghost panel-btn-sm';
+            addBtn.textContent = 'Dodaj';
+            const add = () => {
+                const val = input.value.trim();
+                if (!val) return;
+                if (items.includes(val)) {
+                    setStatus('Taka specjalizacja już istnieje.', false);
+                    return;
+                }
+                items.push(val);
+                render();
+                input.value = '';
+            };
+            addBtn.addEventListener('click', add);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+            row.append(input, addBtn);
+            container.appendChild(row);
+        }
+
+        function renderHierarchy(container, category, subdata) {
+            Object.entries(subdata).forEach(([subcat, specs]) => {
+                const block = document.createElement('div');
+                block.className = 'subcategory-block';
+
+                const header = document.createElement('div');
+                header.className = 'subcategory-header';
+                const name = document.createElement('span');
+                name.textContent = subcat;
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = 'Usuń';
+                removeBtn.addEventListener('click', () => {
+                    if (confirm(`Usunąć podkategorię "${subcat}" wraz ze wszystkimi specjalizacjami?`)) {
+                        delete subdata[subcat];
+                        render();
+                    }
+                });
+                header.append(name, removeBtn);
+                block.appendChild(header);
+
+                const list = document.createElement('div');
+                list.className = 'items-list';
+                specs.forEach((spec, idx) => {
+                    const chip = document.createElement('span');
+                    chip.className = 'item-chip';
+                    const label = document.createElement('span');
+                    label.textContent = spec;
+                    const x = document.createElement('button');
+                    x.textContent = '×';
+                    x.addEventListener('click', () => {
+                        specs.splice(idx, 1);
+                        render();
+                    });
+                    chip.append(label, x);
+                    list.appendChild(chip);
+                });
+                block.appendChild(list);
+
+                const row = document.createElement('div');
+                row.className = 'add-item-row';
+                const input = document.createElement('input');
+                input.className = 'panel-input';
+                input.type = 'text';
+                input.placeholder = 'Nowa specjalizacja...';
+                const addBtn = document.createElement('button');
+                addBtn.className = 'panel-btn panel-btn-ghost panel-btn-sm';
+                addBtn.textContent = 'Dodaj';
+                const add = () => {
+                    const val = input.value.trim();
+                    if (!val) return;
+                    if (specs.includes(val)) {
+                        setStatus('Taka specjalizacja już istnieje.', false);
+                        return;
+                    }
+                    specs.push(val);
+                    render();
+                    input.value = '';
+                };
+                addBtn.addEventListener('click', add);
+                input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+                row.append(input, addBtn);
+                block.appendChild(row);
+
+                container.appendChild(block);
+            });
+
+            const row = document.createElement('div');
+            row.className = 'add-item-row';
+            const input = document.createElement('input');
+            input.className = 'panel-input';
+            input.type = 'text';
+            input.placeholder = 'Nowa podkategoria (np. "Energia i klimat")...';
+            const addBtn = document.createElement('button');
+            addBtn.className = 'panel-btn panel-btn-ghost panel-btn-sm';
+            addBtn.textContent = 'Dodaj podkategorię';
+            const add = () => {
+                const val = input.value.trim();
+                if (!val) return;
+                if (subdata[val]) {
+                    setStatus('Taka podkategoria już istnieje.', false);
+                    return;
+                }
+                subdata[val] = [];
+                render();
+                input.value = '';
+            };
+            addBtn.addEventListener('click', add);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+            row.append(input, addBtn);
+            container.appendChild(row);
+        }
+
+        async function load() {
+            try {
+                const res = await fetch('/api/specializations');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                specData = await res.json();
+                authBox.style.display = 'none';
+                editor.style.display = '';
+                render();
+            } catch (err) {
+                setStatus('Nie udało się pobrać danych: ' + err.message, false);
+            }
+        }
+
+        async function save() {
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/specializations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey },
+                    body: JSON.stringify(specData)
+                });
+                if (res.status === 401) {
+                    sessionStorage.removeItem('ps_admin_key');
+                    setStatus('Błędne hasło — zaloguj się ponownie.', false);
+                    authBox.style.display = '';
+                    editor.style.display = 'none';
+                    return;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                setStatus('Zapisano zmiany.', true);
+            } catch (err) {
+                setStatus('Błąd zapisu: ' + err.message, false);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            adminKey = document.getElementById('adminKey').value.trim();
+            if (!adminKey) return;
+            sessionStorage.setItem('ps_admin_key', adminKey);
+            load();
+        });
+
+        document.getElementById('adminKey').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', save);
+
+        if (adminKey) load();
+    </script>
+</body>
+
+</html>

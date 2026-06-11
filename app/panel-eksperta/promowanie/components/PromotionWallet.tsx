@@ -41,7 +41,7 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
         <CardContent className="space-y-6 pt-2">
           <div className="space-y-1">
             <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-extrabold text-white tracking-tight drop-shadow-sm font-sans bg-gradient-to-r from-white via-white to-[#ede9de] bg-clip-text">
+              <span className="text-5xl font-extrabold text-white tracking-tight drop-shadow-sm  bg-gradient-to-r from-white via-white to-[#ede9de] bg-clip-text">
                 {lawFirm?.punktySaldo || 0}
               </span>
               <span className="text-lg font-bold text-secondary">pkt</span>

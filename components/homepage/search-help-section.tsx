@@ -162,7 +162,7 @@ export function SearchHelpSection() {
           </span>{" "}
           szukasz
         </h2>
-        <p className="text-sm md:text-base text-[#A8A7A4] font-normal leading-relaxed text-center mb-6 max-w-2xl mx-auto font-sans tracking-wide">
+        <p className="text-sm md:text-base text-[#A8A7A4] font-normal leading-relaxed text-center mb-6 max-w-2xl mx-auto  tracking-wide">
           Dodaj swoją sprawę bez zbędnych formalności, czekaj na ofertę i
           wybierz tę, która najlepiej odpowiada Twoim potrzebom.
         </p>
@@ -233,12 +233,12 @@ export function SearchHelpSection() {
               </div>
 
               {/* Title */}
-              <h3 className="text-white text-[22px] font-semibold tracking-wide leading-tight mb-4 font-sans max-w-[280px]">
+              <h3 className="text-white text-[22px] font-semibold tracking-wide leading-tight mb-4  max-w-[280px]">
                 {step.title}
               </h3>
 
               {/* Description */}
-              <p className="text-[#A8A7A4] text-xs md:text-sm font-normal leading-relaxed max-w-[320px] font-sans">
+              <p className="text-[#A8A7A4] text-xs md:text-sm font-normal leading-relaxed max-w-[320px] ">
                 {step.description}
               </p>
             </motion.div>

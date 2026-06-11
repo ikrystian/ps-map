@@ -634,7 +634,7 @@ export default function EmailManagementPage() {
 
                 <TabsContent value="text">
                   <div className="p-4 border rounded-lg bg-muted/30">
-                    <pre className="whitespace-pre-wrap font-sans text-sm">
+                    <pre className="whitespace-pre-wrap  text-sm">
                       {selectedTemplate.tresc}
                     </pre>
                   </div>

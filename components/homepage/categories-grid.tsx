@@ -107,7 +107,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           <div className="mb-16 flex flex-col-reverse lg:flex-row lg:items-stretch lg:justify-between gap-8 lg:gap-12">
             {/* Left side: Paragraph */}
             <div className="flex-1 flex items-center lg:pr-8">
-              <p className="text-zinc-400 text-sm sm:text-base md:text-lg leading-relaxed font-sans max-w-xl">
+              <p className="text-zinc-400 text-sm sm:text-base md:text-lg leading-relaxed  max-w-xl">
                 Prosta Sprawa to nie tylko portal – to Twój partner w
                 rozwiązywaniu problemów prawnych. Dołącz do grona zadowolonych
                 klientów, którzy z nami wygrywają. Spróbuj, a przekonasz się,

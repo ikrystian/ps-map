@@ -52,7 +52,7 @@ export function HeroSection() {
             <h2 className="text-2xl md:text-4xl font-light mb-6 font-playfair text-neutral-200">
               Rozwiązujemy Twoje <span className="italic font-bold text-white underline decoration-primary/50 underline-offset-8">problemy prawne</span> w kilku krokach.
             </h2>
-            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed font-sans">
+            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed ">
               Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników.
               Szybko, bezpiecznie i na Twoich zasadach.
             </p>

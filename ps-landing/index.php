@@ -1,17 +1,20 @@
 <?php
 declare(strict_types=1);
 
-const CSV_HEADER = 'Data,Profil,Kod Pocztowy,Miasto,Województwo,Sprawy Firmowe,Sprawy Prywatne,Pozostale,Imie i Nazwisko,Telefon,Nazwa Eksperta,Adres,Zgoda';
+const CSV_HEADER = 'Data,Profil,Specjalizacja,Kod Pocztowy,Miasto,Województwo,Sprawy Firmowe,Sprawy Prywatne,Pozostale,Imie i Nazwisko,Telefon,Nazwa Eksperta,Adres,Zgoda';
 const CONTACT_HEADER = 'Data,Imie i Nazwisko,Email,Telefon,Wiadomosc';
 const CONTACT_CSV_NAME = 'contact_messages.csv';
 const ZIP_CACHE_NAME = '.zip_cache';
+const SPEC_FILE_NAME = 'specializations.json';
 
 $ROOT = __DIR__;
 $DATA_DIR = $ROOT . DIRECTORY_SEPARATOR . 'data';
 $CSV_FILE = $DATA_DIR . DIRECTORY_SEPARATOR . 'registrations.csv';
 $ZIP_CSV = $ROOT . DIRECTORY_SEPARATOR . 'cities.csv';
 $ZIP_CACHE = $DATA_DIR . DIRECTORY_SEPARATOR . ZIP_CACHE_NAME;
+$SPEC_FILE = $DATA_DIR . DIRECTORY_SEPARATOR . SPEC_FILE_NAME;
 $INDEX_HTML = $ROOT . DIRECTORY_SEPARATOR . 'index.html';
+$ADMIN_KEY = getenv('PS_ADMIN_KEY') ?: 'prostasprawa2026';
 
 if (!is_dir($DATA_DIR)) {
     @mkdir($DATA_DIR, 0777, true);
@@ -73,10 +76,12 @@ function ensureRegistrationsCsv(string $csvFile): void
     if (!$lines || $lines[0] === '')
         return;
 
-    if (strpos($lines[0], 'Województwo') !== false)
+    $hasWoj = strpos($lines[0], 'Województwo') !== false;
+    $hasSpec = strpos($lines[0], 'Specjalizacja') !== false;
+    if ($hasWoj && $hasSpec)
         return;
 
-    log_msg("Migrating registrations.csv to include Województwo column...");
+    log_msg("Migrating registrations.csv schema...");
 
     $migrated = [CSV_HEADER];
     $count = count($lines);
@@ -85,11 +90,16 @@ function ensureRegistrationsCsv(string $csvFile): void
         if ($line === '')
             continue;
         $cols = str_getcsv($line);
-        $woj = '';
-        if (isset($cols[3]) && strpos($cols[3], 'Warszawa') !== false) {
-            $woj = 'mazowieckie';
+        if (!$hasWoj) {
+            $woj = '';
+            if (isset($cols[3]) && strpos($cols[3], 'Warszawa') !== false) {
+                $woj = 'mazowieckie';
+            }
+            array_splice($cols, 4, 0, [$woj]);
         }
-        array_splice($cols, 4, 0, [$woj]);
+        if (!$hasSpec) {
+            array_splice($cols, 2, 0, ['']);
+        }
         $migrated[] = implode(',', array_map('escapeCSV', $cols));
     }
     file_put_contents($csvFile, implode("\n", $migrated) . "\n", LOCK_EX);
@@ -178,6 +188,149 @@ function handleSearchZip(string $query, array $zipDatabase): void
     sendJSON($matches);
 }
 
+function defaultSpecializations(): array
+{
+    return [
+        'PRAWNICY' => [
+            'Adwokat',
+            'Radca prawny',
+            'Doradca podatkowy',
+            'Rzecznik patentowy',
+            'Doradca restrukturyzacyjny',
+            'Mediator',
+            'Syndyk',
+        ],
+        'EKSPERCI' => [
+            'Finanse' => [
+                'Doradca finansowy',
+                'Księgowy',
+                'Biegły rewident',
+            ],
+            'Budownictwo i nieruchomości' => [
+                'Rzeczoznawca majątkowy',
+                'Geodeta',
+                'Inspektor nadzoru budowlanego',
+                'Kierownik budowy',
+                'Kosztorysant budowlany',
+                'Audytor energetyczny',
+            ],
+            'Motoryzacja i szkody' => [
+                'Rzeczoznawca samochodowy',
+                'Ekspert ds. odszkodowań',
+            ],
+            'Biznes i firmy' => [
+                'Specjalista BHP',
+                'Specjalista PPOŻ',
+                'Specjalista RODO',
+                'Specjalista Compliance',
+                'Specjalista ds. zamówień publicznych',
+                'Doradca biznesowy',
+            ],
+            'Medycyna i opinie' => [
+                'Psycholog',
+                'Psycholog sądowy',
+                'Lekarz biegły',
+            ],
+        ],
+        'BIEGLI I RZECZOZNAWCY' => [
+            'Biegły sądowy',
+            'Rzeczoznawca majątkowy',
+            'Rzeczoznawca samochodowy',
+            'Rzeczoznawca budowlany',
+            'Biegły księgowy',
+            'Biegły z zakresu informatyki',
+            'Biegły medyczny',
+        ],
+    ];
+}
+
+function saveSpecializations(string $specFile, array $map): void
+{
+    $tmp = $specFile . '.tmp';
+    file_put_contents($tmp, json_encode($map, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    rename($tmp, $specFile);
+}
+
+function loadSpecializations(string $specFile): array
+{
+    if (file_exists($specFile)) {
+        $data = json_decode((string) file_get_contents($specFile), true);
+        if (is_array($data))
+            return $data;
+        log_msg("Warning: $specFile unreadable, regenerating defaults");
+    }
+    $defaults = defaultSpecializations();
+    saveSpecializations($specFile, $defaults);
+    return $defaults;
+}
+
+function cleanSpecializations(array $data): array
+{
+    $clean = [];
+    foreach ($data as $key => $val) {
+        $key = trim((string) $key);
+        if ($key === '')
+            continue;
+
+        if (!is_array($val))
+            continue;
+
+        $isSimpleList = true;
+        foreach ($val as $item) {
+            if (!is_string($item)) {
+                $isSimpleList = false;
+                break;
+            }
+        }
+
+        if ($isSimpleList) {
+            $list = [];
+            foreach ($val as $item) {
+                $item = trim((string) $item);
+                if ($item !== '' && !in_array($item, $list, true)) {
+                    $list[] = $item;
+                }
+            }
+            $clean[$key] = $list;
+        } else {
+            $nested = [];
+            foreach ($val as $subkey => $subval) {
+                $subkey = trim((string) $subkey);
+                if ($subkey === '' || !is_array($subval))
+                    continue;
+                $sublist = [];
+                foreach ($subval as $item) {
+                    $item = trim((string) $item);
+                    if ($item !== '' && !in_array($item, $sublist, true)) {
+                        $sublist[] = $item;
+                    }
+                }
+                $nested[$subkey] = $sublist;
+            }
+            if (!empty($nested)) {
+                $clean[$key] = $nested;
+            }
+        }
+    }
+    return $clean;
+}
+
+function handleSaveSpecializations(string $specFile, string $adminKey): void
+{
+    $provided = (string) ($_SERVER['HTTP_X_ADMIN_KEY'] ?? '');
+    if (!hash_equals($adminKey, $provided)) {
+        sendJSON(['error' => 'Unauthorized'], 401);
+        return;
+    }
+
+    $data = readJsonBody();
+    $clean = cleanSpecializations($data);
+
+    saveSpecializations($specFile, $clean);
+    log_msg('Specializations updated (' . count($clean) . ' categories)');
+    sendJSON(['success' => true]);
+}
+
 function handleRegister(string $csvFile): void
 {
     $data = readJsonBody();
@@ -186,6 +339,7 @@ function handleRegister(string $csvFile): void
     $row = [
         $now,
         $data['profil'] ?? '',
+        $data['specjalizacja'] ?? '',
         $data['kodPocztowy'] ?? '',
         $data['miasto'] ?? '',
         $data['wojewodztwo'] ?? '',
@@ -255,7 +409,7 @@ if (basename($uri) === 'index.php') {
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-Admin-Key');
 
 if ($method === 'OPTIONS') {
     http_response_code(204);
@@ -267,6 +421,22 @@ ensureRegistrationsCsv($CSV_FILE);
 if ($uri === '/api/search-zip') {
     if ($method === 'GET') {
         handleSearchZip(trim((string) ($_GET['q'] ?? '')), getZipDatabase($ZIP_CSV, $ZIP_CACHE));
+    } else {
+        sendJSON(['error' => 'Method not allowed'], 405);
+    }
+    return;
+}
+
+if ($uri === '/api/specializations') {
+    if ($method === 'GET') {
+        sendJSON(loadSpecializations($SPEC_FILE));
+    } elseif ($method === 'POST') {
+        try {
+            handleSaveSpecializations($SPEC_FILE, $ADMIN_KEY);
+        } catch (Throwable $e) {
+            log_msg('Error in specializations endpoint: ' . $e->getMessage());
+            sendJSON(['error' => 'Invalid data'], 400);
+        }
     } else {
         sendJSON(['error' => 'Method not allowed'], 405);
     }

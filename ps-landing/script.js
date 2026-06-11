@@ -106,6 +106,136 @@ if (formSteps.length > 0) {
     showStep(0);
 }
 
+// ===== Hierarchical Specializations with 2-3 dependent selects =====
+const kategSelect = document.getElementById('kategoria');
+const drugiSelectGroup = document.getElementById('drugiSelectGroup');
+const drugiSelectLabel = document.getElementById('drugiSelectLabel');
+const drugiSelect = document.getElementById('drugiSelect');
+const trzeciSelectGroup = document.getElementById('trzeciSelectGroup');
+const trzeciSelect = document.getElementById('trzeciSelect');
+
+if (kategSelect && drugiSelect && trzeciSelect) {
+    let specData = {};
+    let specFinalInput = null;
+
+    function buildFinalValue() {
+        if (!specFinalInput) {
+            specFinalInput = document.querySelector('input[name="specjalizacja"]');
+        }
+        if (!specFinalInput) return;
+
+        const kateg = kategSelect.value;
+        const drugi = drugiSelect.value;
+        const trzeci = trzeciSelect.value;
+
+        if (!kateg || !drugi) {
+            specFinalInput.value = '';
+            return;
+        }
+
+        if (trzeci) {
+            specFinalInput.value = kateg + ' > ' + drugi + ' > ' + trzeci;
+        } else {
+            specFinalInput.value = kateg + ' > ' + drugi;
+        }
+    }
+
+    function updateDrugiSelect() {
+        const kateg = kategSelect.value;
+        drugiSelect.innerHTML = '<option value="">Wybierz opcję...</option>';
+        trzeciSelectGroup.style.display = 'none';
+        trzeciSelect.innerHTML = '<option value="">Wybierz specjalizację...</option>';
+        specFinalInput?.value ? specFinalInput.value = '' : null;
+
+        if (!kateg) {
+            drugiSelectGroup.style.display = 'none';
+            return;
+        }
+
+        const content = specData[kateg];
+        if (!content) return;
+
+        drugiSelectGroup.style.display = '';
+
+        if (Array.isArray(content)) {
+            drugiSelectLabel.textContent = 'Specjalizacja';
+            drugiSelect.required = true;
+            content.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item;
+                opt.textContent = item;
+                drugiSelect.appendChild(opt);
+            });
+        } else if (typeof content === 'object') {
+            drugiSelectLabel.textContent = 'Podkategoria';
+            drugiSelect.required = true;
+            Object.keys(content).forEach(podkateg => {
+                const opt = document.createElement('option');
+                opt.value = podkateg;
+                opt.textContent = podkateg;
+                drugiSelect.appendChild(opt);
+            });
+        }
+    }
+
+    function updateTrzeciSelect() {
+        const kateg = kategSelect.value;
+        const drugi = drugiSelect.value;
+
+        trzeciSelect.innerHTML = '<option value="">Wybierz specjalizację...</option>';
+        specFinalInput?.value ? specFinalInput.value = '' : null;
+
+        if (!kateg || !drugi) {
+            trzeciSelectGroup.style.display = 'none';
+            return;
+        }
+
+        const content = specData[kateg];
+        if (!content || Array.isArray(content)) {
+            trzeciSelectGroup.style.display = 'none';
+            return;
+        }
+
+        if (content[drugi]) {
+            trzeciSelectGroup.style.display = '';
+            trzeciSelect.required = true;
+            content[drugi].forEach(spec => {
+                const opt = document.createElement('option');
+                opt.value = spec;
+                opt.textContent = spec;
+                trzeciSelect.appendChild(opt);
+            });
+        }
+    }
+
+    fetch('/api/specializations')
+        .then(res => res.ok ? res.json() : Promise.reject(new Error('Fetch failed')))
+        .then(data => {
+            specData = data || {};
+            const categories = Object.keys(specData);
+            kategSelect.innerHTML = '<option value="">Wybierz kategorię...</option>';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                kategSelect.appendChild(opt);
+            });
+        })
+        .catch(err => console.error('Error loading specializations:', err));
+
+    kategSelect.addEventListener('change', () => {
+        updateDrugiSelect();
+        buildFinalValue();
+    });
+
+    drugiSelect.addEventListener('change', () => {
+        updateTrzeciSelect();
+        buildFinalValue();
+    });
+
+    trzeciSelect.addEventListener('change', buildFinalValue);
+}
+
 // ===== Zip Code Autocomplete & Auto-fill =====
 document.addEventListener('DOMContentLoaded', () => {
     const zipInput = document.getElementById('kodPocztowy');

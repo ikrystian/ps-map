@@ -46,7 +46,7 @@ export default function WinWithUsClientPage() {
               </h1>
 
               {/* Description */}
-              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed mb-10 max-w-xl">
+              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-10 max-w-xl">
                 Naszym głównym celem jest zwiększenie dostępności bezpłatnej pomocy
                 i informacji prawnej oraz promocja ekspertów z całej Polski. Pragniemy
                 aby za pośrednictwem serwisu prostasprawa.pl każdy mógł szybko
@@ -59,7 +59,7 @@ export default function WinWithUsClientPage() {
                 <motion.button
                   whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
                   whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-10 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-base tracking-wide"
+                  className="bg-[#1e6b4f] text-white font-medium px-10 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide"
                 >
                   Dołącz
                 </motion.button>
@@ -116,11 +116,11 @@ export default function WinWithUsClientPage() {
                     <span className="font-bold">18 mln</span> użytkowników
                   </h3>
                   {/* Highlight line */}
-                  <p className="text-neutral-200 font-sans text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
+                  <p className="text-neutral-200  text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
                     miesięcznie odwiedza nasze serwisy.
                   </p>
                   {/* Paragraph */}
-                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
+                  <p className="text-neutral-400  text-sm sm:text-base leading-relaxed">
                     Od ponad 10 lat aktywnie wpływamy na rynek usług prawnych w Polsce!
                     Każdy nasz użytkownik może zostać Twoim klientem.
                   </p>
@@ -170,12 +170,12 @@ export default function WinWithUsClientPage() {
                     <span className="font-bold">Ponad 150 osób</span> dziennie
                   </h3>
                   {/* Highlight line */}
-                  <p className="text-neutral-200 font-sans text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
+                  <p className="text-neutral-200  text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
                     szuka w naszym serwisie porady prawnej lub odpowiedniego
                     Prawnika, który kompleksowo pokieruje daną kwestią.
                   </p>
                   {/* Paragraph */}
-                  <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed">
+                  <p className="text-neutral-400  text-sm sm:text-base leading-relaxed">
                     Możliwość zadania bezpłatnego pytania oraz intuicyjna, prosta w obsłudze
                     wyszukiwarka ułatwiają podjęcie świadomej decyzji, w wyborze
                     odpowiedniej ścieżki działania.
@@ -245,7 +245,7 @@ export default function WinWithUsClientPage() {
               </h3>
 
               {/* Paragraph */}
-              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-8 max-w-md">
                 Jako użytkownik serwisu prostasprawa.pl możesz w łatwy i szybki sposób uzyskać poradę prawną, bezpośrednio w swojej sprawie. Zadając anonimowo, bezpłatne pytanie, otrzymujesz informację prawną, odnoszącą się bezpośrednio do opisanej sytuacji.
               </p>
 
@@ -254,7 +254,7 @@ export default function WinWithUsClientPage() {
                 <motion.button
                   whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
                   whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-sm sm:text-base tracking-wide"
+                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-sm sm:text-base tracking-wide"
                 >
                   Zobacz pytania
                 </motion.button>
@@ -304,7 +304,7 @@ export default function WinWithUsClientPage() {
               </h3>
 
               {/* Paragraph */}
-              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-8 max-w-md">
                 Wolisz bezpośrednie rozwiązania? Skorzystaj z naszej wyszukiwarki i znajdź Prawnika z Twojej okolicy. W serwisie prostasprawa.pl zarejestrowani są Eksperci z całej Polski.
               </p>
 
@@ -313,7 +313,7 @@ export default function WinWithUsClientPage() {
                 <motion.button
                   whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
                   whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-sm sm:text-base tracking-wide"
+                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-sm sm:text-base tracking-wide"
                 >
                   Zobacz prawnika
                 </motion.button>
@@ -411,12 +411,12 @@ export default function WinWithUsClientPage() {
               </h2>
 
               {/* Tagline/Label */}
-              <p className="text-[#0da192] font-sans text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
+              <p className="text-[#0da192]  text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
                 BUDOWANIE MARKI
               </p>
 
               {/* Paragraph */}
-              <p className="text-neutral-400 font-sans text-sm sm:text-base leading-relaxed max-w-2xl">
+              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed max-w-2xl">
                 W dzisiejszych czasach internet jest pierwszym miejscem, za pośrednictwem którego klienci wyszukują interesujące ich informacje czy usługi. Praktycznie każdą działalność człowieka, można już wykonać za pośrednictwem komputera czy smartfona. Nie można pominąć tego medium, jeśli chcemy aby informacja o prowadzonej działalności dotarła do usługobiorców. Obecność w Internecie nie jest już opcją- tylko koniecznością.
               </p>
             </motion.div>
@@ -440,7 +440,7 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6 }}
             className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light text-center leading-tight mb-20 max-w-3xl mx-auto"
           >
-            <span className="text-sm font-sans tracking-[0.25em] text-[#0da192] uppercase block mb-3">Działanie serwisu:</span>
+            <span className="text-sm  tracking-[0.25em] text-[#0da192] uppercase block mb-3">Działanie serwisu:</span>
             Serwis ProstaSprawa.pl pozwala <br />
             <span className="font-bold">uzyskać pomoc prawną</span> w dwojaki sposób:
           </motion.h2>
@@ -508,7 +508,7 @@ export default function WinWithUsClientPage() {
                     Uzupełnić <br />
                     adres e-mail
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     na podany adres przesyłana jest informacja o pojawieniu się nowej odpowiedzi, jednak sam adres e-mail nie jest podawany do publicznej wiadomości;
                   </p>
                 </div>
@@ -533,7 +533,7 @@ export default function WinWithUsClientPage() {
                     Uzupełnić pole <br />
                     "Zadaj pytanie"
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     służy ono do określenia przedmiotu opisywanej sprawy;
                   </p>
                 </div>
@@ -558,7 +558,7 @@ export default function WinWithUsClientPage() {
                     Uzupełnić pole <br />
                     "Wyjaśnij sytuację"
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     tutaj pytający może zaprezentować kontekst opisywanej sytuacji w celu lepszego jej zobrazowania;
                   </p>
                 </div>
@@ -573,7 +573,7 @@ export default function WinWithUsClientPage() {
               {/* Disclaimer / Warning */}
               <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
                 <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
-                <p className="text-neutral-500 font-sans text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                <p className="text-neutral-500  text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
                   Tekst, który Użytkownik umieści w powyższych polach zostanie w całości opublikowany w serwisie - bez uprzedniej moderacji. Mając więc na uwadze bezpieczeństwo naszych użytkowników nie zalecamy podawania żadnych danych osobowych w tychże polach.
                 </p>
               </div>
@@ -636,7 +636,7 @@ export default function WinWithUsClientPage() {
                     Wyszukać <br />
                     Eksperta
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     skorzystaj z naszej wyszukiwarki lub rankingu na stronie głównej, filtrując według specjalizacji i lokalizacji;
                   </p>
                 </div>
@@ -658,7 +658,7 @@ export default function WinWithUsClientPage() {
                     Zapoznać się <br />
                     z profilem
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     przeczytaj opinie innych klientów, sprawdź zakres oferowanej pomocy prawnej, cennik oraz dotychczasową aktywność;
                   </p>
                 </div>
@@ -683,7 +683,7 @@ export default function WinWithUsClientPage() {
                     Nawiązać <br />
                     kontakt
                   </h4>
-                  <p className="text-neutral-500 font-sans text-xs leading-relaxed text-center max-w-[240px]">
+                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
                     zadzwoń pod wskazany numer telefonu, wyślij wiadomość bezpośrednią lub zarezerwuj dogodny termin konsultacji;
                   </p>
                 </div>
@@ -698,7 +698,7 @@ export default function WinWithUsClientPage() {
               {/* Disclaimer / Warning */}
               <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
                 <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
-                <p className="text-neutral-500 font-sans text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                <p className="text-neutral-500  text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
                   Warunki ewentualnej współpracy oraz wysokość honorarium są ustalane bezpośrednio pomiędzy Klientem a Prawnikiem. Serwis ProstaSprawa.pl nie pośredniczy w tych ustaleniach.
                 </p>
               </div>
@@ -718,7 +718,7 @@ export default function WinWithUsClientPage() {
               <motion.button
                 whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
                 whileTap={{ scale: 0.97 }}
-                className="bg-[#1e6b4f] text-white font-medium px-10 py-4 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-base tracking-wide"
+                className="bg-[#1e6b4f] text-white font-medium px-10 py-4 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide"
               >
                 Przejrzyj nasze najnowsze pytania
               </motion.button>
@@ -733,10 +733,10 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="border-t border-neutral-900/60 pt-10 max-w-4xl mx-auto text-center flex flex-col gap-3"
           >
-            <p className="text-neutral-500 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-500  text-xs leading-relaxed">
               Wszystkie dostępne w serwisie ProstaSprawa.pl rodzaje promocji działalności prawniczej są zgodne z zasadami etyki zawodowej.
             </p>
-            <p className="text-neutral-500 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-500  text-xs leading-relaxed">
               Zniesienie ograniczenia terytorialnego pozwala Prawnikowi dzięki serwisowi prostasprawa.pl docierać ze swoimi usługami i wiedzą nie tylko do osób w swoim regionie, ale i z całej Polski.
             </p>
           </motion.div>
@@ -786,7 +786,7 @@ export default function WinWithUsClientPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col gap-6 text-neutral-400 font-sans text-sm sm:text-base leading-relaxed text-left mb-16"
+            className="flex flex-col gap-6 text-neutral-400  text-sm sm:text-base leading-relaxed text-left mb-16"
           >
             <p>
               <span className="font-bold text-white">ProstaSprawa.pl</span> stawia na najlepszych! Jako serwis chcemy promować naszych najbardziej aktywnych użytkowników. W tym celu prowadzimy ranking ekspertów, uwzględniający ich działania w serwisie ProstaSprawa.pl.
@@ -807,14 +807,14 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pt-8 border-t border-neutral-800/40"
           >
-            <p className="font-sans text-sm sm:text-base font-semibold text-white max-w-md text-left">
+            <p className=" text-sm sm:text-base font-semibold text-white max-w-md text-left">
               Twoja widoczność w serwisie prostasprawa.pl zależy więc tylko od Ciebie.
             </p>
             <Link href="/ranking">
               <motion.button
                 whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
                 whileTap={{ scale: 0.97 }}
-                className="bg-[#1e6b4f] text-white font-medium px-8 py-3.5 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer font-sans text-base tracking-wide whitespace-nowrap"
+                className="bg-[#1e6b4f] text-white font-medium px-8 py-3.5 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide whitespace-nowrap"
               >
                 Zobacz naszych najlepszych ekspertów
               </motion.button>

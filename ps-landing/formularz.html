@@ -47,18 +47,24 @@
                 <h1 class="form-title">Zarejestruj bezpłatnie konto<br>i twórz razem z nami<br>przyszłość prawa online
                 </h1>
                 <div class="form-group">
-                    <label class="form-label" for="profil">Profil działalności</label>
-                    <select class="form-select" id="profil" name="profil" required>
-                        <option value="">Wybierz profil...</option>
-                        <option value="Adwokat">Adwokat</option>
-                        <option value="Radca prawny">Radca prawny</option>
-                        <option value="Ekspert prawny">Ekspert prawny</option>
-                        <option value="Notariusz">Notariusz</option>
-                        <option value="Doradca podatkowy">Doradca podatkowy</option>
-                        <option value="Mediator">Mediator</option>
-                        <option value="Inne">Inne</option>
+                    <label class="form-label" for="kategoria">Kategoria</label>
+                    <select class="form-select" id="kategoria" name="kategoria" required>
+                        <option value="">Wybierz kategorię...</option>
                     </select>
                 </div>
+                <div class="form-group" id="drugiSelectGroup" style="display: none;">
+                    <label class="form-label" id="drugiSelectLabel" for="drugiSelect">Specjalizacja</label>
+                    <select class="form-select" id="drugiSelect" required>
+                        <option value="">Wybierz opcję...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="trzeciSelectGroup" style="display: none;">
+                    <label class="form-label" for="trzeciSelect">Specjalizacja</label>
+                    <select class="form-select" id="trzeciSelect" required>
+                        <option value="">Wybierz specjalizację...</option>
+                    </select>
+                </div>
+                <input type="hidden" name="specjalizacja">
                 <div class="form-group dropdown-container">
                     <label class="form-label" for="kodPocztowy">Kod pocztowy</label>
                     <input class="form-input" type="text" id="kodPocztowy" name="kodPocztowy" placeholder="np. 00-001"

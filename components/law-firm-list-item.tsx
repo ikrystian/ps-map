@@ -125,7 +125,7 @@ const ContactButton = ({
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent
         side="top"
-        className="bg-[#1a1a1a] border-neutral-800 text-white font-sans text-xs"
+        className="bg-[#1a1a1a] border-neutral-800 text-white  text-xs"
       >
         Informacja dostępna po zalogowaniu
       </TooltipContent>
@@ -328,7 +328,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               ) : (
                 <div className="text-neutral-700 flex flex-col items-center justify-center">
                   <Avatar className="w-24 h-24 opacity-30 bg-[#222]">
-                    <AvatarFallback className="text-neutral-400 bg-neutral-900 font-sans text-xl">
+                    <AvatarFallback className="text-neutral-400 bg-neutral-900  text-xl">
                       {lawFirm.nazwa.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -341,12 +341,12 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             {/* Status Badge - Top Right */}
             <div className="absolute top-4 right-4 z-10">
               {isOpen === true && (
-                <div className="bg-[#0f6c65]/80 text-white border border-teal-500/20 px-4 py-1.5 rounded-full text-xs font-sans font-medium tracking-wide shadow-md backdrop-blur-sm">
+                <div className="bg-[#0f6c65]/80 text-white border border-teal-500/20 px-4 py-1.5 rounded-full text-xs  font-medium tracking-wide shadow-md backdrop-blur-sm">
                   Otwarte
                 </div>
               )}
               {isOpen === false && (
-                <div className="bg-rose-950/80 text-rose-200 border border-rose-500/20 px-4 py-1.5 rounded-full text-xs font-sans font-medium tracking-wide shadow-md backdrop-blur-sm">
+                <div className="bg-rose-950/80 text-rose-200 border border-rose-500/20 px-4 py-1.5 rounded-full text-xs  font-medium tracking-wide shadow-md backdrop-blur-sm">
                   Zamknięte
                 </div>
               )}
@@ -355,7 +355,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             {/* Rating - Bottom Left */}
             <div className="absolute bottom-4 left-4 z-10">
               <div className="bg-[#058c80] text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
-                <span className="text-2xl font-bold font-sans tracking-tight leading-none">
+                <span className="text-2xl font-bold  tracking-tight leading-none">
                   {lawFirm.avgRating > 0
                     ? lawFirm.avgRating.toFixed(1).replace(".", ",")
                     : "5,0"}
@@ -374,7 +374,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-neutral-200 font-sans leading-none font-light">
+                  <span className="text-sm text-neutral-200  leading-none font-light">
                     {lawFirm.reviewCount || 11}{" "}
                     {getOpinieText(lawFirm.reviewCount || 11)}
                   </span>

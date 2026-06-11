@@ -35,11 +35,11 @@ export function ExpertCTA() {
 
             {/* Description */}
             <div className="space-y-4 mt-4 md:mt-6 max-w-2xl">
-              <p className="text-white font-sans text-base md:text-lg lg:text-xl leading-relaxed">
+              <p className="text-white  text-base md:text-lg lg:text-xl leading-relaxed">
                 Zyskaj dostęp do narzędzi, które pomogą Ci skuteczniej docierać
                 do osób poszukujących pomocy prawnej.
               </p>
-              <p className="text-white font-bold font-sans text-base md:text-lg lg:text-xl block">
+              <p className="text-white font-bold  text-base md:text-lg lg:text-xl block">
                 Stwórz profil i zdobądź nowych klientów!
               </p>
             </div>

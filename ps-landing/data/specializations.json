@@ -1,0 +1,52 @@
+{
+    "PRAWNICY": [
+        "Adwokat",
+        "Radca prawny",
+        "Doradca podatkowy",
+        "Rzecznik patentowy",
+        "Doradca restrukturyzacyjny",
+        "Mediator",
+        "Syndyk"
+    ],
+    "EKSPERCI": {
+        "Finanse": [
+            "Doradca finansowy",
+            "Księgowy",
+            "Biegły rewident"
+        ],
+        "Budownictwo i nieruchomości": [
+            "Rzeczoznawca majątkowy",
+            "Geodeta",
+            "Inspektor nadzoru budowlanego",
+            "Kierownik budowy",
+            "Kosztorysant budowlany",
+            "Audytor energetyczny"
+        ],
+        "Motoryzacja i szkody": [
+            "Rzeczoznawca samochodowy",
+            "Ekspert ds. odszkodowań"
+        ],
+        "Biznes i firmy": [
+            "Specjalista BHP",
+            "Specjalista PPOŻ",
+            "Specjalista RODO",
+            "Specjalista Compliance",
+            "Specjalista ds. zamówień publicznych",
+            "Doradca biznesowy"
+        ],
+        "Medycyna i opinie": [
+            "Psycholog",
+            "Psycholog sądowy",
+            "Lekarz biegły"
+        ]
+    },
+    "BIEGLI I RZECZOZNAWCY": [
+        "Biegły sądowy",
+        "Rzeczoznawca majątkowy",
+        "Rzeczoznawca samochodowy",
+        "Rzeczoznawca budowlany",
+        "Biegły księgowy",
+        "Biegły z zakresu informatyki",
+        "Biegły medyczny"
+    ]
+}

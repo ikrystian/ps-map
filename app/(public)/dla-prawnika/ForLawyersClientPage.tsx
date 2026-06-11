@@ -308,7 +308,7 @@ export default function ForLawyersPage() {
   }
 
   return (
-    <div className="bg-[#121212] min-h-screen text-white font-sans">
+    <div className="bg-[#121212] min-h-screen text-white ">
       {/* Breadcrumbs Banner */}
       <div
         className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
@@ -536,7 +536,7 @@ export default function ForLawyersPage() {
           <p className="text-base font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3.5 text-center">
             ZYSKAJ KLIENTÓW
           </p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-16 max-w-2xl font-sans">
+          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-16 max-w-2xl ">
             Wypróbuj ProstaSprawa.pl od 0 zł
           </h2>
 
@@ -598,7 +598,7 @@ export default function ForLawyersPage() {
           <p className="text-base font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3.5 text-center">
             PROSTA SPRAWA!
           </p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-20 max-w-2xl font-sans">
+          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-20 max-w-2xl ">
             Jak założyć konto?
           </h2>
 
@@ -607,7 +607,7 @@ export default function ForLawyersPage() {
 
             {/* Step 01 */}
             <div className="flex flex-col items-center text-center">
-              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider font-sans">01</span>
+              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider ">01</span>
               <div className="w-32 h-32 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
                 <PillarIcon />
               </div>
@@ -621,7 +621,7 @@ export default function ForLawyersPage() {
 
             {/* Step 02 */}
             <div className="flex flex-col items-center text-center">
-              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider font-sans">02</span>
+              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider ">02</span>
               <div className="w-32 h-32 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
                 <UserPlusIcon />
               </div>
@@ -635,7 +635,7 @@ export default function ForLawyersPage() {
 
             {/* Step 03 */}
             <div className="flex flex-col items-center text-center">
-              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider font-sans">03</span>
+              <span className="text-[34px] font-bold text-neutral-600 mb-4 tracking-wider ">03</span>
               <div className="w-32 h-32 rounded-md bg-[#1d1d1d] border border-neutral-800 flex items-center justify-center mb-6 shadow-md hover:border-[#0da192]/40 transition-colors duration-300">
                 <HomeIcon />
               </div>
@@ -691,7 +691,7 @@ export default function ForLawyersPage() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3 text-center">
             PROSTA SPRAWA
           </p>
-          <h2 className="text-3xl md:text-[38px] font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl font-sans">
+          <h2 className="text-3xl md:text-[38px] font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl ">
             Jak to działa?
           </h2>
           <p className="text-[12px] text-neutral-400 font-normal leading-relaxed text-center mb-16 max-w-xl mx-auto">
@@ -706,7 +706,7 @@ export default function ForLawyersPage() {
 
               {/* Card 01 */}
               <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
-                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">01.</span>
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 ">01.</span>
                 <h4 className="text-xl font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
                   Załóż profil eksperta
                 </h4>
@@ -717,7 +717,7 @@ export default function ForLawyersPage() {
 
               {/* Card 02 */}
               <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
-                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">02.</span>
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 ">02.</span>
                 <h4 className="text-xl font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
                   Sprawy dopasowane do Twoich usług
                 </h4>
@@ -819,7 +819,7 @@ export default function ForLawyersPage() {
 
               {/* Card 03 */}
               <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
-                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">03.</span>
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 ">03.</span>
                 <h4 className="text-xl font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
                   Składaj oferty i zdobywaj klientów
                 </h4>
@@ -830,7 +830,7 @@ export default function ForLawyersPage() {
 
               {/* Card 04 */}
               <div className="bg-[#141414]/90 border border-neutral-800/60 rounded-lg p-7 hover:border-neutral-700/80 hover:bg-[#1c1c1c] transition-all duration-300 group cursor-pointer shadow-xl max-w-[280px] w-full text-center lg:text-left">
-                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 font-sans">04.</span>
+                <span className="text-[28px] font-semibold text-[#0da192] leading-none block mb-2 ">04.</span>
                 <h4 className="text-xl font-semibold text-white tracking-wider uppercase mb-2 leading-tight">
                   Zarabiaj i zbuduj swoją markę
                 </h4>
@@ -874,7 +874,7 @@ export default function ForLawyersPage() {
           <p className="text-base font-semibold uppercase tracking-[0.25em] text-neutral-500 mb-3 text-center">
             PROSTA SPRAWA
           </p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl font-sans">
+          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight text-center leading-tight mb-4 max-w-2xl ">
             Dlaczego warto?
           </h2>
           <p className="text-base text-neutral-400 font-normal leading-relaxed text-center mb-20 max-w-xl mx-auto">
@@ -966,7 +966,7 @@ export default function ForLawyersPage() {
             <h3 className="text-white text-[15px] md:text-[17px] font-bold tracking-wide mb-5">
               Szukasz klientów? Dołącz do sprawdzonego rozwiązania.
             </h3>
-            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-light font-sans max-w-4xl mx-auto">
+            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-light  max-w-4xl mx-auto">
               Na prostasprawa.pl klienci prywatni i firmy każdego dnia zgłaszają sprawy, w których potrzebują profesjonalnej pomocy. Jako prawnik, doradca lub księgowy możesz szybko i wygodnie pozyskiwać nowe zlecenia bez inwestycji w reklamę. Zarejestruj się, uzupełnij profil i zacznij otrzymywać sprawy dopasowane do Twojej specjalizacji. Odpowiadasz tylko na te zapytania, które Cię interesują – pełna kontrola, realne zlecenia, nowi klienci.
             </p>
           </div>
@@ -989,7 +989,7 @@ export default function ForLawyersPage() {
                 {/* Phone Link */}
                 <a
                   href="tel:+48534888555"
-                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
+                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group  text-xs md:text-sm font-semibold"
                 >
                   <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
                     <Phone className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
@@ -1000,7 +1000,7 @@ export default function ForLawyersPage() {
                 {/* Email Link */}
                 <a
                   href="mailto:kontakt@prostasprawa.pl"
-                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group font-sans text-xs md:text-sm font-semibold"
+                  className="flex items-center gap-3 text-white hover:text-[#0da192] transition-all duration-300 group  text-xs md:text-sm font-semibold"
                 >
                   <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#0da192] group-hover:bg-[#0da192] group-hover:text-white group-hover:border-[#0da192] transition-all duration-300">
                     <Mail className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />

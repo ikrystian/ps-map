@@ -120,7 +120,7 @@ export default function ContactClientPage() {
   }
 
   return (
-    <div className="bg-[#121212] min-h-[calc(100vh-65px)] text-white pb-20 relative overflow-hidden font-sans">
+    <div className="bg-[#121212] min-h-[calc(100vh-65px)] text-white pb-20 relative overflow-hidden ">
       {/* Breadcrumbs Banner */}
       <div
         className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
@@ -278,7 +278,7 @@ export default function ContactClientPage() {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full sm:w-auto min-w-[200px] bg-[#0e7a57] hover:bg-[#0c6b4c] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/20 transition-all duration-300 cursor-pointer font-sans text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto min-w-[200px] bg-[#0e7a57] hover:bg-[#0c6b4c] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/20 transition-all duration-300 cursor-pointer  text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? "Wysyłanie..." : "Wyślij wiadomość"}
                   </motion.button>
@@ -381,7 +381,7 @@ export default function ContactClientPage() {
                   <h3 className="font-playfair text-xl text-white font-medium">Telefon</h3>
                 </div>
 
-                <div className="space-y-2 text-neutral-400 font-sans text-sm sm:text-base">
+                <div className="space-y-2 text-neutral-400  text-sm sm:text-base">
                   <a href="tel:+48123321321" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5 opacity-40" />
                     +48 123 321 321
@@ -424,7 +424,7 @@ export default function ContactClientPage() {
                   <h3 className="font-playfair text-xl text-white font-medium">E-mail</h3>
                 </div>
 
-                <div className="space-y-3 text-neutral-400 font-sans text-sm sm:text-base">
+                <div className="space-y-3 text-neutral-400  text-sm sm:text-base">
                   <a href="mailto:biuro@prostasprawa.pl" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 opacity-40" />
                     biuro@prostasprawa.pl
@@ -460,7 +460,7 @@ export default function ContactClientPage() {
                   <h3 className="font-playfair text-xl text-white font-medium">Dane</h3>
                 </div>
 
-                <div className="space-y-2 text-neutral-400 font-sans text-xs sm:text-sm leading-relaxed">
+                <div className="space-y-2 text-neutral-400  text-xs sm:text-sm leading-relaxed">
                   <p className="text-white font-medium">Polska Grupa Identyfikacji Firm Sp. z o.o.</p>
                   <p className="flex items-start gap-2 hover:text-emerald-500 transition-colors">
                     <MapPin className="w-3.5 h-3.5 mt-0.5 opacity-40 flex-shrink-0" />

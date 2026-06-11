@@ -358,7 +358,7 @@ export default function EmailLogsTab() {
                         className="prose max-w-none text-foreground dark:prose-invert [&_h2]:!text-foreground [&_h3]:!text-foreground [&_p]:!text-foreground [&_li]:!text-foreground [&_strong]:!text-foreground [&_span]:!text-foreground [&_div]:!bg-muted/30 [&_div]:!border-border/50 [&_ul]:!bg-transparent [&_a]:!text-indigo-500 [&_table]:!bg-transparent [&_td]:!bg-transparent [&_tr]:!bg-transparent [&_th]:!bg-transparent [&_td]:!text-foreground [&_th]:!text-foreground [&_*]:border-border"
                       />
                     ) : (
-                      <pre className="whitespace-pre-wrap font-sans text-sm">
+                      <pre className="whitespace-pre-wrap  text-sm">
                         {selectedLog.content}
                       </pre>
                     )}
@@ -375,7 +375,7 @@ export default function EmailLogsTab() {
 
                 <TabsContent value="text" className="mt-4">
                   <div className="p-4 border rounded-lg bg-muted overflow-auto max-h-[400px]">
-                    <pre className="text-sm whitespace-pre-wrap font-sans">
+                    <pre className="text-sm whitespace-pre-wrap ">
                       {selectedLog.content || "Brak treści tekstowej"}
                     </pre>
                   </div>
