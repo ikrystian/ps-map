@@ -123,7 +123,6 @@ const step5Schema = z.object({
 
 const step4Schema = z.object({
   // Dane firmy
-  nazwa: z.string().min(3, "Nazwa eksperta musi mieć co najmniej 3 znaki"),
   nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
   nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
   regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
@@ -133,7 +132,6 @@ const step4Schema = z.object({
   imieKontakt: z.string().min(2, "Imię jest wymagane"),
   nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
   stanowisko: z.string().optional(),
-  emailKontakt: z.string().email("Podaj poprawny adres email"),
   numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
   numerTelefonu2: z.string().optional(),
 
@@ -205,7 +203,6 @@ export default function LawFirmRegistrationPage() {
     numerTelefonu2: "",
     emailKontakt: "",
 
-    // Krok 4: Adres siedziby
     adres: "",
     kodPocztowy: "",
     miasto: "",
@@ -987,7 +984,6 @@ export default function LawFirmRegistrationPage() {
 
             {/* Dane adresowe */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold border-b pb-2">Adres siedziby</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="adres" className={cn(fieldErrors.adres && "text-destructive")}>Adres (ulica i numer) *</Label>
@@ -1142,7 +1138,6 @@ export default function LawFirmRegistrationPage() {
 
             {/* Dane kontaktowe */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold border-b pb-2">Osoba kontaktowa</h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -1182,44 +1177,7 @@ export default function LawFirmRegistrationPage() {
                     {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stanowisko" className={cn(fieldErrors.stanowisko && "text-destructive")}>Stanowisko / Tytuł zawodowy</Label>
-                  <Input
-                    id="stanowisko"
-                    type="text"
-                    placeholder="Np. Adwokat, Radca Prawny"
-                    value={formData.stanowisko}
-                    onChange={(e) => {
-                      setFormData({ ...formData, stanowisko: e.target.value })
-                      if (fieldErrors.stanowisko) {
-                        const newErrors = { ...fieldErrors }
-                        delete newErrors.stanowisko
-                        setFieldErrors(newErrors)
-                      }
-                    }}
-                    className={cn("h-11", fieldErrors.stanowisko && "border-destructive")}
-                  />
-                  {fieldErrors.stanowisko && <p className="text-xs text-destructive">{fieldErrors.stanowisko}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emailKontakt" className={cn(fieldErrors.emailKontakt && "text-destructive")}>Email kontaktowy *</Label>
-                  <Input
-                    id="emailKontakt"
-                    type="email"
-                    placeholder="kontakt@ekspert.pl"
-                    value={formData.emailKontakt}
-                    onChange={(e) => {
-                      setFormData({ ...formData, emailKontakt: e.target.value })
-                      if (fieldErrors.emailKontakt) {
-                        const newErrors = { ...fieldErrors }
-                        delete newErrors.emailKontakt
-                        setFieldErrors(newErrors)
-                      }
-                    }}
-                    className={cn("h-11", fieldErrors.emailKontakt && "border-destructive")}
-                  />
-                  {fieldErrors.emailKontakt && <p className="text-xs text-destructive">{fieldErrors.emailKontakt}</p>}
-                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
@@ -1264,7 +1222,6 @@ export default function LawFirmRegistrationPage() {
 
             {/* Dane logowania i zgody */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold border-b pb-2">Konto i zgody</h3>
               <div className="space-y-4">
                 {!session ? (
                   <>
