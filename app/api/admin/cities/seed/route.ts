@@ -60,10 +60,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (citiesToCreate.length > 0) {
+      // Note: skipDuplicates is not supported on SQLite. Duplicates are already
+      // filtered out above via existingCitySet (against the DB and within the batch).
       await prisma.city.createMany({
-        data: citiesToCreate,
-        skipDuplicates: true
-      } as any)
+        data: citiesToCreate
+      })
     }
 
     // Invalidate cached cities
