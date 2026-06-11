@@ -43,7 +43,7 @@ import { cn } from "@/lib/utils"
 import { z } from "zod"
 
 const specializationsData = {
-  "PRAWNICY": [
+  "Prawnicy": [
     "Adwokat",
     "Radca prawny",
     "Doradca podatkowy",
@@ -52,7 +52,7 @@ const specializationsData = {
     "Mediator",
     "Syndyk"
   ],
-  "EKSPERCI": {
+  "Eksperci": {
     "Finanse": [
       "Doradca finansowy",
       "Księgowy",
@@ -84,7 +84,7 @@ const specializationsData = {
       "Lekarz biegły"
     ]
   },
-  "BIEGLI I RZECZOZNAWCY": [
+  "Biegli i rzeczoznawcy": [
     "Biegły sądowy",
     "Rzeczoznawca majątkowy",
     "Rzeczoznawca samochodowy",
@@ -609,12 +609,12 @@ export default function LawFirmRegistrationPage() {
       case 1: {
         const specData = specializationsData as any
         const categoriesList = Object.keys(specData)
-        
+
         const selectedCategoryContent = formData.category ? specData[formData.category] : null
         const hasSubcategories = selectedCategoryContent && !Array.isArray(selectedCategoryContent)
-        
+
         const subcategoriesList = hasSubcategories ? Object.keys(selectedCategoryContent) : []
-        
+
         let specializationsList: string[] = []
         if (formData.category) {
           if (Array.isArray(selectedCategoryContent)) {
