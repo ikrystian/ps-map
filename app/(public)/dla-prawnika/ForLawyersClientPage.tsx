@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import "./dla-prawnika.css"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 
 export default function ForLawyersClientPage() {
   const router = useRouter()
@@ -69,7 +70,7 @@ export default function ForLawyersClientPage() {
           <img src="/backgrounds/1.png" alt="" className="hero-bg-img" />
           <div className="hero-overlay"></div>
         </div>
-        <div className="container hero-container-layout">
+        <div className="container hero-container-layout mx-auto">
           <div className="hero-left animate-on-scroll">
             <div className="hero-badge">
               <span className="badge-dot"></span>
@@ -84,15 +85,12 @@ export default function ForLawyersClientPage() {
               pracy – bez stresu, bezpośrednio z klientem, dokładnie <strong>na Twoich warunkach.</strong>
             </p>
             <div className="hero-actions">
-              <Link href="/rejestracja/ekspert" className="btn-primary">
-                <span>Załóż bezpłatne konto</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
               </Link>
-              <a href="#benefits" className="btn-secondary-outline">
+              {/* <a href="#benefits" className="btn-secondary-outline">
                 <span>Zobacz korzyści</span>
-              </a>
+              </a> */}
             </div>
             {/* Trust / Social Proof Widget */}
             <div className="hero-trust">
@@ -205,7 +203,7 @@ export default function ForLawyersClientPage() {
       {/* Section 2: Benefits */}
       <section className="benefits" id="benefits">
         <div className="section-dark-bg">
-          <div className="container">
+          <div className="container mx-auto">
             <div className="benefits-header animate-on-scroll">
               <span className="section-label">WYŻSZY STANDARD PRACY</span>
               <h2 className="section-title-light">
@@ -290,7 +288,7 @@ export default function ForLawyersClientPage() {
             <img src="/backgrounds/3.png" alt="" className="gain-bg-img" />
             <div className="gain-overlay"></div>
           </div>
-          <div className="container gain-clients-layout">
+          <div className="container gain-clients-layout mx-auto">
             {/* Left Pane: Interactive statistics mockup card */}
             <div className="gain-left animate-on-scroll">
               <div className="analytics-mockup">
@@ -399,11 +397,8 @@ export default function ForLawyersClientPage() {
                   </div>
                 </li>
               </ul>
-              <Link href="/rejestracja/ekspert" className="btn-primary align-self-start">
-                <span>Testuj za darmo</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Testuj za darmo!</InteractiveHoverButton>
               </Link>
             </div>
           </div>
@@ -412,13 +407,13 @@ export default function ForLawyersClientPage() {
 
       {/* Section 3 & 4: Advisor */}
       <section className="advisor" id="advisor">
-        <div className="container">
-          <div className="advisor-section-header">
-            <span className="section-label animate-on-scroll">BĄDŹ LEPIEJ WIDOCZNY</span>
-            <h2 className="section-title animate-on-scroll">
+        <div className="container mx-auto">
+          <div className="advisor-section-header mx-auto">
+            <span className="section-label animate-on-scroll mx-auto">BĄDŹ LEPIEJ WIDOCZNY</span>
+            <h2 className="section-title animate-on-scroll text-center">
               Twój doradca pomoże Ci<br />rozwinąć skrzydła
             </h2>
-            <p className="section-subtitle animate-on-scroll">
+            <p className="section-subtitle animate-on-scroll text-center">
               Kompleksowe i indywidualne wsparcie, które przełoży się na więcej wygranych spraw i silniejszą markę
               w sieci.
             </p>
@@ -602,8 +597,8 @@ export default function ForLawyersClientPage() {
       </section>
 
       {/* Section 5: Differentiators */}
-      <section className="differentiators" id="differentiators">
-        <div className="container">
+      <section className="differentiators flex w-full justify-center" id="differentiators">
+        <div className="container max-auto">
           <div className="diff-split-container">
             <div className="diff-card-left animate-on-scroll">
               <span className="section-label">TWÓJ PROFIL, TWOJA WIZYTÓWKA</span>
@@ -644,11 +639,8 @@ export default function ForLawyersClientPage() {
                   </div>
                 </li>
               </ul>
-              <Link href="/rejestracja/ekspert" className="btn-primary">
-                <span>Tak, zakładam konto</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Tak, zakładam konto</InteractiveHoverButton>
               </Link>
             </div>
           </div>
@@ -657,13 +649,13 @@ export default function ForLawyersClientPage() {
 
       {/* Section 6: Why Us */}
       <section className="why-us" id="why-us">
-        <div className="container">
-          <div className="why-us-box animate-on-scroll">
+        <div className="container mx-auto">
+          <div className="why-us-box text-center animate-on-scroll">
             <span className="section-label">DLACZEGO MY?</span>
             <h2 className="section-title">
               Jedno miejsce, przejrzyste<br />warunki współpracy
             </h2>
-            <ul className="why-list">
+            <ul className="why-list max-w-4xl mx-auto">
               <li className="why-item">
                 <div className="why-bullet"></div>
                 <div>
@@ -701,7 +693,7 @@ export default function ForLawyersClientPage() {
 
       {/* Section 7: Contact */}
       <section className="contact-section" id="contact">
-        <div className="container">
+        <div className="container mx-auto">
           <h2 className="contact-title animate-on-scroll">
             <span className="contact-line"></span>
             Masz pytania?
