@@ -238,7 +238,6 @@ export async function POST(request: NextRequest) {
           krs: userData.lawFirm.krs || null,
           imieKontakt: userData.lawFirm.imieKontakt || "Do uzupełnienia",
           nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
-          stanowisko: userData.lawFirm.stanowisko || null,
           numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
           emailKontakt: userData.lawFirm.emailKontakt,

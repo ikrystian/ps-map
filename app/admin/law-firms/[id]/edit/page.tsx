@@ -93,7 +93,7 @@ export default function EditLawFirmPage() {
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
   const [showMainImageCropper, setShowMainImageCropper] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
-  
+
   const [activeTab, setActiveTab] = useState("general")
 
   const tabs = [
@@ -121,7 +121,6 @@ export default function EditLawFirmPage() {
       krs: "",
       imieKontakt: "",
       nazwiskoKontakt: "",
-      stanowisko: "",
       numerTelefonu: "",
       numerTelefonu2: "",
       emailKontakt: "",
@@ -349,7 +348,6 @@ export default function EditLawFirmPage() {
             krs: lawFirm.krs || "",
             imieKontakt: lawFirm.imieKontakt,
             nazwiskoKontakt: lawFirm.nazwiskoKontakt,
-            stanowisko: lawFirm.stanowisko || "",
             numerTelefonu: lawFirm.numerTelefonu,
             numerTelefonu2: lawFirm.numerTelefonu2 || "",
             emailKontakt: lawFirm.emailKontakt,
@@ -455,7 +453,6 @@ export default function EditLawFirmPage() {
       contact: [
         "imieKontakt",
         "nazwiskoKontakt",
-        "stanowisko",
         "numerTelefonu",
         "numerTelefonu2",
         "emailKontakt",
@@ -585,7 +582,7 @@ export default function EditLawFirmPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit, handleInvalid)} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
-            
+
             {/* Sidebar Navigation */}
             <div className="flex lg:flex-col gap-1 overflow-x-auto pb-2 lg:pb-0 lg:sticky lg:top-24 bg-card border border-border p-2 rounded-xl shadow-sm max-w-full">
               {tabs.map((tab) => {
@@ -598,11 +595,10 @@ export default function EditLawFirmPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative flex items-center gap-3 px-3.5 py-3 rounded-lg text-left text-sm font-medium transition-all outline-none whitespace-nowrap lg:whitespace-normal w-full ${
-                      isActive
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    }`}
+                    className={`relative flex items-center gap-3 px-3.5 py-3 rounded-lg text-left text-sm font-medium transition-all outline-none whitespace-nowrap lg:whitespace-normal w-full ${isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      }`}
                   >
                     <TabIcon className={`h-4.5 w-4.5 flex-shrink-0 ${isActive ? "" : "text-primary"}`} />
                     <div className="hidden sm:block text-left">
@@ -688,19 +684,7 @@ export default function EditLawFirmPage() {
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="nazwa"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nazwa (skrócona)</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Nazwa eksperta" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+
                             <FormField
                               control={form.control}
                               name="nazwaFirmy"
@@ -1019,20 +1003,6 @@ export default function EditLawFirmPage() {
                             />
                           </div>
 
-                          <FormField
-                            control={form.control}
-                            name="stanowisko"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Stanowisko (opcjonalnie)</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="np. Radca prawny, Partner" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                               control={form.control}
@@ -1062,19 +1032,6 @@ export default function EditLawFirmPage() {
                             />
                           </div>
 
-                          <FormField
-                            control={form.control}
-                            name="emailKontakt"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Email do kontaktu</FormLabel>
-                                <FormControl>
-                                  <Input type="email" placeholder="kontakt@ekspert.pl" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
                         </CardContent>
                       </Card>
 
@@ -1542,7 +1499,7 @@ export default function EditLawFirmPage() {
                                 )}
                               />
                             </div>
-                            
+
                             {form.watch("oirpStatus") && (
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                                 <FormField
@@ -1699,7 +1656,7 @@ export default function EditLawFirmPage() {
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-8 pt-6">
-                        
+
                         {/* Logo */}
                         <div className="space-y-3 border-b pb-6">
                           <h4 className="text-sm font-semibold">Logo ekspercie</h4>
@@ -2005,7 +1962,7 @@ export default function EditLawFirmPage() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"

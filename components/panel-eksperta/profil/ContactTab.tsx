@@ -77,7 +77,6 @@ interface ContactTabProps {
   formData: {
     imieKontakt: string
     nazwiskoKontakt: string
-    stanowisko: string
     numerTelefonu: string
     numerTelefonu2: string
     emailKontakt: string
@@ -220,22 +219,6 @@ export function ContactTab({
                       value={formData.nazwiskoKontakt}
                       onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
                       required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2 sm:col-span-2">
-                  <Label htmlFor="stanowisko" className="text-zinc-300 font-medium text-xs">Stanowisko / Tytuł</Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                      <Briefcase className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="stanowisko"
-                      placeholder="np. Adwokat / Partner"
-                      value={formData.stanowisko || ""}
-                      onChange={(e) => handleInputChange("stanowisko", e.target.value)}
                       className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                     />
                   </div>
@@ -406,7 +389,7 @@ export function ContactTab({
                         >
                           <span className="truncate flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-zinc-500" />
-                           {formData.miasto || "Wybierz miasto..."}
+                            {formData.miasto || "Wybierz miasto..."}
                           </span>
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-primary" />
                         </Button>

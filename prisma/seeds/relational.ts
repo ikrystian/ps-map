@@ -389,8 +389,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     lawFirms.push({
       id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwaFirmy: tmpl.nazwa, slug, nip,
       regon: faker.string.numeric(9), krs: chance(0.5) ? faker.string.numeric(10) : null,
-      imieKontakt, nazwiskoKontakt, stanowisko: pick(['Adwokat', 'Radca prawny', 'Partner zarządzający', 'Aplikant adwokacki', 'Doradca podatkowy']),
-      numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null, emailKontakt: u.email,
+      imieKontakt, nazwiskoKontakt, numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null, emailKontakt: u.email,
       adres, kodPocztowy, miasto, voivodeshipId: voiv.id,
       latitude: round2(faker.number.float({ min: 49.0, max: 54.8 })), longitude: round2(faker.number.float({ min: 14.1, max: 24.1 })),
       opis: descHtml, logo: faker.image.avatar(), zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),

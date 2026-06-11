@@ -47,11 +47,10 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Zaloguj się do swojego panelu eksperta, aby zapoznać się z pełnym opisem i złożyć ofertę pomocy prawnej.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz szczegóły i złóż ofertę</a>
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;"> Zobacz szczegóły i złóż ofertę</a>
 </div>`,
-    zmienne: ['{ekspert}', '{nazwaSprawi}', '{kategoria}', '{klient}', '{budżet}', '{linkDoPanelu}'],
+    zmienne: ['{nazwaSprawi}', '{kategoria}', '{klient}', '{budżet}', '{linkDoPanelu}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kategoria}': 'Kategoria prawna',
       '{klient}': 'Imię i nazwisko klienta',
@@ -101,12 +100,11 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Zaloguj się do swojego panelu klienta, aby zapoznać się ze szczegółami propozycji i zdecydować o nawiązaniu współpracy.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz szczegóły oferty</a>
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;"> Zobacz szczegóły oferty</a>
 </div>`,
-    zmienne: ['{klient}', '{ekspert}', '{nazwaSprawi}', '{kwota}', '{termin}', '{linkDoPanelu}'],
+    zmienne: ['{klient}', '{nazwaSprawi}', '{kwota}', '{termin}', '{linkDoPanelu}'],
     opisZmiennych: {
       '{klient}': 'Imię klienta',
-      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kwota}': 'Kwota oferty',
       '{termin}': 'Termin realizacji',
@@ -163,9 +161,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przejdź do panelu eksperta</a>
 </div>`,
-    zmienne: ['{ekspert}', '{klient}', '{nazwaSprawi}', '{kwota}', '{emailKlienta}', '{telefonKlienta}', '{linkDoPanelu}'],
+    zmienne: ['{klient}', '{nazwaSprawi}', '{kwota}', '{emailKlienta}', '{telefonKlienta}', '{linkDoPanelu}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{klient}': 'Imię i nazwisko klienta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{kwota}': 'Kwota oferty',
@@ -202,9 +199,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSpraw}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przeglądaj nowe sprawy</a>
 </div>`,
-    zmienne: ['{ekspert}', '{klient}', '{nazwaSprawi}', '{linkDoSpraw}'],
+    zmienne: ['{klient}', '{nazwaSprawi}', '{linkDoSpraw}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{klient}': 'Imię i nazwisko klienta',
       '{nazwaSprawi}': 'Tytuł sprawy',
       '{linkDoSpraw}': 'Link do listy spraw',

@@ -76,7 +76,6 @@ function LawFirmProfilePageContent() {
     // Dane kontaktowe
     imieKontakt: "",
     nazwiskoKontakt: "",
-    stanowisko: "",
     numerTelefonu: "",
     numerTelefonu2: "",
     emailKontakt: "",

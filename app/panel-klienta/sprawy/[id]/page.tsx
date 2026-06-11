@@ -86,7 +86,6 @@ interface Case {
       stronaWww?: string
       imieKontakt: string
       nazwiskoKontakt: string
-      stanowisko?: string
     }
   }>
   messages: Array<{
@@ -368,9 +367,7 @@ export default function ClientCaseDetailsPage() {
                     <span className="font-semibold text-white truncate block">
                       {acceptedOffer.lawFirm.imieKontakt} {acceptedOffer.lawFirm.nazwiskoKontakt}
                     </span>
-                    {acceptedOffer.lawFirm.stanowisko && (
-                      <span className="text-sm text-zinc-500 block truncate">{acceptedOffer.lawFirm.stanowisko}</span>
-                    )}
+
                   </div>
                 </div>
 
@@ -379,8 +376,8 @@ export default function ClientCaseDetailsPage() {
                   <div className="min-w-0">
                     <span className="text-sm text-muted-foreground block uppercase font-medium">E-mail</span>
                     <a
-                       href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
-                       className="font-semibold text-primary hover:underline truncate block"
+                      href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
+                      className="font-semibold text-primary hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.emailKontakt}
                     </a>
@@ -392,15 +389,15 @@ export default function ClientCaseDetailsPage() {
                   <div className="min-w-0">
                     <span className="text-sm text-muted-foreground block uppercase font-medium">Telefon</span>
                     <a
-                       href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
-                       className="font-semibold text-primary hover:underline truncate block"
+                      href={`tel:${acceptedOffer.lawFirm.numerTelefonu}`}
+                      className="font-semibold text-primary hover:underline truncate block"
                     >
                       {acceptedOffer.lawFirm.numerTelefonu}
                     </a>
                     {acceptedOffer.lawFirm.numerTelefonu2 && (
                       <a
-                         href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
-                         className="font-semibold text-primary hover:underline truncate block mt-0.5"
+                        href={`tel:${acceptedOffer.lawFirm.numerTelefonu2}`}
+                        className="font-semibold text-primary hover:underline truncate block mt-0.5"
                       >
                         {acceptedOffer.lawFirm.numerTelefonu2}
                       </a>

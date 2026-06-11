@@ -57,9 +57,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoFaktury}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Pobierz fakturę VAT</a>
 </div>`,
-    zmienne: ['{ekspert}', '{numerZamowienia}', '{produkt}', '{kwota}', '{data}', '{szczegoly}', '{linkDoFaktury}'],
+    zmienne: ['{numerZamowienia}', '{produkt}', '{kwota}', '{data}', '{szczegoly}', '{linkDoFaktury}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{numerZamowienia}': 'Numer zamówienia',
       '{produkt}': 'Nazwa produktu/pakietu',
       '{kwota}': 'Kwota płatności',
@@ -113,9 +112,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPakietow}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przedłuż subskrypcję teraz</a>
 </div>`,
-    zmienne: ['{ekspert}', '{nazwaSubskrypcji}', '{dniDoWygasniecia}', '{dataWygasniecia}', '{listaFunkcji}', '{linkDoPakietow}'],
+    zmienne: ['{nazwaSubskrypcji}', '{dniDoWygasniecia}', '{dataWygasniecia}', '{listaFunkcji}', '{linkDoPakietow}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSubskrypcji}': 'Nazwa pakietu subskrypcyjnego',
       '{dniDoWygasniecia}': 'Liczba dni do wygaśnięcia',
       '{dataWygasniecia}': 'Data wygaśnięcia subskrypcji',
@@ -162,9 +160,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSklepu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zasil konto punktami</a>
 </div>`,
-    zmienne: ['{ekspert}', '{aktualnyStanPunktow}', '{linkDoSklepu}'],
+    zmienne: ['{aktualnyStanPunktow}', '{linkDoSklepu}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{aktualnyStanPunktow}': 'Aktualna liczba punktów',
       '{linkDoSklepu}': 'Link do sklepu z punktami',
     },
@@ -198,9 +195,8 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoPakietow}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Wybierz pakiet subskrypcji</a>
 </div>`,
-    zmienne: ['{ekspert}', '{nazwaSubskrypcji}', '{dataWygasniecia}', '{linkDoPakietow}'],
+    zmienne: ['{nazwaSubskrypcji}', '{dataWygasniecia}', '{linkDoPakietow}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{nazwaSubskrypcji}': 'Nazwa pakietu subskrypcyjnego',
       '{dataWygasniecia}': 'Data wygaśnięcia subskrypcji',
       '{linkDoPakietow}': 'Link do wyboru pakietów w panelu',

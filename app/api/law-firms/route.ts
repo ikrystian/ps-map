@@ -161,13 +161,13 @@ export async function GET(request: NextRequest) {
         orderBy:
           sortBy === "ranking"
             ? [
-                { pozycjaRanking: { sort: "desc", nulls: "last" } },
-                { wyswietleniaProfilu: "desc" },
-              ]
+              { pozycjaRanking: { sort: "desc", nulls: "last" } },
+              { wyswietleniaProfilu: "desc" },
+            ]
             : [
-                { zweryfikowana: "desc" },
-                { wyswietleniaProfilu: "desc" },
-              ],
+              { zweryfikowana: "desc" },
+              { wyswietleniaProfilu: "desc" },
+            ],
         take: limit * 2, // Pobierz więcej, aby móc posortować z boostami
         skip: offset,
       }),
@@ -199,22 +199,22 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     const allActivePromotions = lawFirmIds.length > 0
       ? await prisma.promotion.findMany({
-          where: {
-            lawFirmId: { in: lawFirmIds },
-            aktywna: true,
-            startPromocji: { lte: now },
-            koniecPromocji: { gte: now },
-          },
-          select: {
-            id: true,
-            lawFirmId: true,
-            typPromocji: true,
-            kategoriaPromocji: true,
-            wojewodztwoPromocji: true,
-            startPromocji: true,
-            koniecPromocji: true,
-          },
-        })
+        where: {
+          lawFirmId: { in: lawFirmIds },
+          aktywna: true,
+          startPromocji: { lte: now },
+          koniecPromocji: { gte: now },
+        },
+        select: {
+          id: true,
+          lawFirmId: true,
+          typPromocji: true,
+          kategoriaPromocji: true,
+          wojewodztwoPromocji: true,
+          startPromocji: true,
+          koniecPromocji: true,
+        },
+      })
       : []
 
     // Calculate ratings, boosts, and highlight types for each law firm
@@ -523,7 +523,6 @@ export async function POST(request: NextRequest) {
           krs: body.krs || null,
           imieKontakt: body.imieKontakt,
           nazwiskoKontakt: body.nazwiskoKontakt,
-          stanowisko: body.stanowisko || null,
           numerTelefonu: body.numerTelefonu,
           numerTelefonu2: body.numerTelefonu2 || null,
           emailKontakt: body.emailKontakt,
@@ -549,7 +548,7 @@ export async function POST(request: NextRequest) {
       if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds) && body.voivodeshipsIds.length > 0) {
         // Filtruj puste ID i duplikaty
         const uniqueVoivodeshipIds = [...new Set(body.voivodeshipsIds.filter((id: string) => !!id))] as string[]
-        
+
         if (uniqueVoivodeshipIds.length > 0) {
           await tx.lawFirmVoivodeship.createMany({
             data: uniqueVoivodeshipIds.map((vId: string) => ({

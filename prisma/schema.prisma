@@ -190,7 +190,6 @@ model LawFirm {
   // Dane kontaktowe
   imieKontakt           String
   nazwiskoKontakt       String
-  stanowisko            String?
   numerTelefonu         String
   numerTelefonu2        String?
   emailKontakt          String

@@ -62,7 +62,6 @@ export function createRandomLawFirm(prisma: PrismaClient) {
         krs: faker.string.numeric('##########'),
         imieKontakt: contactFirstName,
         nazwiskoKontakt: contactLastName,
-        stanowisko: faker.person.jobTitle(),
         numerTelefonu: faker.phone.number(),
         numerTelefonu2: faker.phone.number(),
         emailKontakt: faker.internet.email({ firstName: contactFirstName, lastName: contactLastName }),

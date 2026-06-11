@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
           })
 
           // 2. Get voivodeship for main address from pre-fetched map
-          let voivodeshipId = lawFirmData.voivodeship 
+          let voivodeshipId = lawFirmData.voivodeship
             ? vMap.get(lawFirmData.voivodeship.toLowerCase())
             : defaultVoivodeshipId
 
@@ -148,7 +148,6 @@ export async function POST(request: NextRequest) {
               krs: lawFirmData.krs,
               imieKontakt: lawFirmData.imieKontakt || "Kontakt",
               nazwiskoKontakt: lawFirmData.nazwiskoKontakt || "Osoba",
-              stanowisko: lawFirmData.stanowisko,
               numerTelefonu: lawFirmData.numerTelefonu || "+48 000 000 000",
               numerTelefonu2: lawFirmData.numerTelefonu2,
               emailKontakt: lawFirmData.emailKontakt || userData.email,

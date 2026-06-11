@@ -19,7 +19,6 @@ export const lawFirmSchema = z.object({
   // Contact
   imieKontakt: z.string().min(1, "Contact first name is required"),
   nazwiskoKontakt: z.string().min(1, "Contact last name is required"),
-  stanowisko: z.string().optional(),
   numerTelefonu: z.string().min(1, "Phone number is required"),
   numerTelefonu2: z.string().optional(),
   emailKontakt: z.string().email("Invalid contact email"),

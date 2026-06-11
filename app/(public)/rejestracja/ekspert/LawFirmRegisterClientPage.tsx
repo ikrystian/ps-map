@@ -131,7 +131,6 @@ const step4Schema = z.object({
   // Dane kontaktowe
   imieKontakt: z.string().min(2, "Imię jest wymagane"),
   nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
-  stanowisko: z.string().optional(),
   numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
   numerTelefonu2: z.string().optional(),
 
@@ -198,7 +197,6 @@ export default function LawFirmRegistrationPage() {
     // Krok 3: Dane kontaktowe
     imieKontakt: "",
     nazwiskoKontakt: "",
-    stanowisko: "",
     numerTelefonu: "",
     numerTelefonu2: "",
     emailKontakt: "",
@@ -564,7 +562,6 @@ export default function LawFirmRegistrationPage() {
           krs: formData.krs || null,
           imieKontakt: formData.imieKontakt,
           nazwiskoKontakt: formData.nazwiskoKontakt,
-          stanowisko: formData.stanowisko || null,
           numerTelefonu: formData.numerTelefonu,
           numerTelefonu2: formData.numerTelefonu2 || null,
           emailKontakt: formData.emailKontakt,
@@ -879,26 +876,7 @@ export default function LawFirmRegistrationPage() {
             <div className="space-y-4">
               <h3 className="text-lg font-bold border-b pb-2">Dane firmy</h3>
               <div className="space-y-4">
-                {/* nazwa */}
-                <div className="space-y-2">
-                  <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa eksperta *</Label>
-                  <Input
-                    id="nazwa"
-                    type="text"
-                    value={formData.nazwa}
-                    onChange={(e) => {
-                      setFormData({ ...formData, nazwa: e.target.value })
-                      if (fieldErrors.nazwa) {
-                        const newErrors = { ...fieldErrors }
-                        delete newErrors.nazwa
-                        setFieldErrors(newErrors)
-                      }
-                    }}
-                    placeholder="Np. Ekspert Adwokacka Jan Kowalski"
-                    className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
-                  />
-                  {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
-                </div>
+
                 {/* nazwaFirmy */}
                 <div className="space-y-2">
                   <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>

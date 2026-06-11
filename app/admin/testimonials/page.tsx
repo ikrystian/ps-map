@@ -391,20 +391,6 @@ export default function AdminTestimonialsPage() {
                   />
                 </div>
 
-                {/* Designation field */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
-                    Stanowisko / Rola
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="np. Klient indywidualny, Prezes TechCorp"
-                    value={designation}
-                    onChange={(e) => setDesignation(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-600 focus:outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
 
                 {/* Src image url field */}
                 <div>

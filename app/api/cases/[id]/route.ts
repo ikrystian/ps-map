@@ -70,7 +70,6 @@ export async function GET(
                 stronaWww: true,
                 imieKontakt: true,
                 nazwiskoKontakt: true,
-                stanowisko: true,
               },
             },
           },
@@ -168,11 +167,11 @@ export async function GET(
     logErrorToFile("GET /api/cases/[id]", error)
     console.error("Error fetching case:", error)
     return NextResponse.json(
-      { 
-        error: "Internal server error", 
+      {
+        error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined 
-      }, 
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }
@@ -230,11 +229,11 @@ export async function PUT(
     logErrorToFile("PUT /api/cases/[id]", error)
     console.error("Error updating case:", error)
     return NextResponse.json(
-      { 
-        error: "Internal server error", 
+      {
+        error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined 
-      }, 
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }
@@ -283,11 +282,11 @@ export async function DELETE(
     logErrorToFile("DELETE /api/cases/[id]", error)
     console.error("Error deleting case:", error)
     return NextResponse.json(
-      { 
-        error: "Internal server error", 
+      {
+        error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined 
-      }, 
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     )
   }

@@ -47,7 +47,6 @@ export interface LawFirm extends LawFirmWithLocation {
   krs?: string | null
   imieKontakt?: string | null
   nazwiskoKontakt?: string | null
-  stanowisko?: string | null
   numerTelefonu2?: string | null
   adres?: string | null
   latitude?: number | null

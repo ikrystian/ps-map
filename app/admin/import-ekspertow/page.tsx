@@ -31,8 +31,8 @@ export default function ImportEkspertow() {
     if (selectedFile) {
       // Check if file is JSON by extension or MIME type
       const isJson = selectedFile.name.toLowerCase().endsWith('.json') ||
-                     selectedFile.type === "application/json" ||
-                     selectedFile.type === "text/json"
+        selectedFile.type === "application/json" ||
+        selectedFile.type === "text/json"
 
       if (!isJson) {
         toast.error("Wybierz plik JSON")
@@ -142,12 +142,11 @@ export default function ImportEkspertow() {
           <div>
             <h3 className="font-semibold mb-2">Struktura pliku JSON:</h3>
             <pre className="bg-muted p-4 rounded-lg text-sm overflow-x-auto">
-{`{
+              {`{
   "lawFirms": [
     {
       "user": {
         "email": "kontakt@ekspert.pl",
-        "name": "Nazwa Eksperta",
         "password": "HasloEkspert123!"
       },
       "lawFirm": {
@@ -180,7 +179,6 @@ export default function ImportEkspertow() {
             <h3 className="font-semibold mb-2">Wymagane pola:</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li>user.email - unikalny adres email</li>
-              <li>lawFirm.nazwa - nazwa eksperta</li>
               <li>lawFirm.nip - NIP eksperta (unikalny)</li>
               <li>lawFirm.voivodeship - województwo siedziby</li>
             </ul>

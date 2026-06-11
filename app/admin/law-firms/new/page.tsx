@@ -46,7 +46,6 @@ const createLawFirmSchema = z.object({
   // Contact
   imieKontakt: z.string().min(1, "Contact first name is required"),
   nazwiskoKontakt: z.string().min(1, "Contact last name is required"),
-  stanowisko: z.string().optional(),
   numerTelefonu: z.string().min(1, "Phone number is required"),
   numerTelefonu2: z.string().optional(),
   emailKontakt: z.string().email("Invalid contact email"),
@@ -140,7 +139,6 @@ export default function NewLawFirmPage() {
       krs: "",
       imieKontakt: "",
       nazwiskoKontakt: "",
-      stanowisko: "",
       numerTelefonu: "",
       numerTelefonu2: "",
       emailKontakt: "",
@@ -358,19 +356,7 @@ export default function NewLawFirmPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="nazwa"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nazwa</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nazwa eksperta" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="nazwaFirmy"
@@ -515,21 +501,6 @@ export default function NewLawFirmPage() {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="stanowisko"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stanowisko (opcjonalnie)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Radca prawny" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -1325,7 +1296,7 @@ export default function NewLawFirmPage() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"

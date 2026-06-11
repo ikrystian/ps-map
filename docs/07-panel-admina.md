@@ -38,7 +38,7 @@ CRUD `Advertisement`: nazwa, banner (obrazek lub własny HTML/AdSense), URL doce
 Moderacja opinii: weryfikacja (`zweryfikowana`), aktywacja/dezaktywacja (`/api/admin/reviews/[id]/status`), obsługa **zgłoszeń** (`ReviewReport`), usuwanie.
 
 ### Opinie główne — `/admin/testimonials`
-CRUD `HomepageTestimonial` (karuzela na stronie głównej): imię, stanowisko, cytat, zdjęcie, kolejność, aktywność.
+CRUD `HomepageTestimonial` (karuzela na stronie głównej): imię, cytat, zdjęcie, kolejność, aktywność.
 
 ### Kategorie — `/admin/categories` (+ `new`, `[id]/edit`)
 CRUD kategorii prawnych (`category-form.tsx`, 21 kB): nazwa, slug, typ (prywatne/firmowe), hierarchia rodzic-dziecko, opisy, ikona (picker Lucide lub upload własnej), obrazek tła, SEO, kolejność, flagi ekspozycji na stronie głównej.

@@ -46,7 +46,6 @@ CREATE TABLE "LawFirm" (
     "krs" TEXT,
     "imieKontakt" TEXT NOT NULL,
     "nazwiskoKontakt" TEXT NOT NULL,
-    "stanowisko" TEXT,
     "numerTelefonu" TEXT NOT NULL,
     "numerTelefonu2" TEXT,
     "emailKontakt" TEXT NOT NULL,

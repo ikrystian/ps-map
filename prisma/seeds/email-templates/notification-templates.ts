@@ -72,11 +72,10 @@ Zespół Prosta Sprawa`,
 <p style="margin: 0 0 24px 0;">Wspaniała opinia to najlepsza reklama Twoich usług w naszym portalu. Kliknij przycisk poniżej, aby przejść do swojego publicznego profilu.</p>
 
 <div style="text-align: center; margin: 30px 0;">
-  <a href="{linkDoProfilu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz opinie na profilu</a>
+  <a href="{linkDoProfilu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;"> Zobacz opinie na profilu</a>
 </div>`,
-    zmienne: ['{ekspert}', '{klient}', '{ocena}', '{komentarz}', '{linkDoProfilu}'],
+    zmienne: ['{klient}', '{ocena}', '{komentarz}', '{linkDoProfilu}'],
     opisZmiennych: {
-      '{ekspert}': 'Nazwa eksperta',
       '{klient}': 'Imię i nazwisko klienta',
       '{ocena}': 'Ocena (1-5)',
       '{komentarz}': 'Treść opinii',
@@ -115,10 +114,9 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoOceny}" class="btn" style="display: inline-block; background-color: #f59e0b; color: #0f0a02 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3); text-align: center; letter-spacing: 0.5px;">⭐ Wystaw ocenę prawnikowi</a>
 </div>`,
-    zmienne: ['{klient}', '{ekspert}', '{linkDoOceny}'],
+    zmienne: ['{klient}', '{linkDoOceny}'],
     opisZmiennych: {
       '{klient}': 'Imię klienta',
-      '{ekspert}': 'Nazwa eksperta',
       '{linkDoOceny}': 'Link do wystawienia oceny na profilu eksperta',
     },
     triggery: ['request_for_review_delayed'],

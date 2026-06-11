@@ -141,7 +141,6 @@ export async function POST(request: NextRequest) {
       // Contact
       imieKontakt,
       nazwiskoKontakt,
-      stanowisko,
       numerTelefonu,
       numerTelefonu2,
       emailKontakt,
@@ -266,7 +265,6 @@ export async function POST(request: NextRequest) {
           krs: krs || null,
           imieKontakt,
           nazwiskoKontakt,
-          stanowisko: stanowisko || null,
           numerTelefonu,
           numerTelefonu2: numerTelefonu2 || null,
           emailKontakt,

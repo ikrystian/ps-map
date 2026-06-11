@@ -285,7 +285,6 @@ export async function PUT(
     // Contact info
     if (body.imieKontakt !== undefined) lawFirmUpdateData.imieKontakt = body.imieKontakt
     if (body.nazwiskoKontakt !== undefined) lawFirmUpdateData.nazwiskoKontakt = body.nazwiskoKontakt
-    if (body.stanowisko !== undefined) lawFirmUpdateData.stanowisko = body.stanowisko
     if (body.numerTelefonu !== undefined) lawFirmUpdateData.numerTelefonu = body.numerTelefonu
     if (body.numerTelefonu2 !== undefined) lawFirmUpdateData.numerTelefonu2 = body.numerTelefonu2
     if (body.emailKontakt !== undefined) lawFirmUpdateData.emailKontakt = body.emailKontakt

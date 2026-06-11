@@ -237,7 +237,6 @@ export async function PUT(
     // Dane kontaktowe
     if (body.imieKontakt) updateData.imieKontakt = body.imieKontakt
     if (body.nazwiskoKontakt) updateData.nazwiskoKontakt = body.nazwiskoKontakt
-    if (body.stanowisko !== undefined) updateData.stanowisko = body.stanowisko
     if (body.numerTelefonu) updateData.numerTelefonu = body.numerTelefonu
     if (body.numerTelefonu2 !== undefined) updateData.numerTelefonu2 = body.numerTelefonu2
     if (body.emailKontakt) updateData.emailKontakt = body.emailKontakt

@@ -79,7 +79,7 @@ Ulubione kancelarie klienta — para `clientId`+`lawFirmId` (unique). Zasila wid
 |---|---|
 | Typ działalności | `typ`: `OSOBA_FIZYCZNA` / `SPOLKA_CYWILNA` / `SPOLKA_PARTNERSKA` / `SPOLKA_KOMANDYTOWA` / `SPOLKA_JAWNA` / `SPOLKA_ZOO` / `INNY` (+ `typInny`) |
 | Identyfikacja | `nazwa`, `nazwaFirmy`, `slug` (unique, URL wizytówki), `nip` (unique), `regon?`, `krs?` |
-| Osoba kontaktowa | `imieKontakt`, `nazwiskoKontakt`, `stanowisko?`, `numerTelefonu`, `numerTelefonu2?`, `emailKontakt` |
+| Osoba kontaktowa | `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2?`, `emailKontakt` |
 | Adres + geo | `adres`, `kodPocztowy`, `miasto`, `voivodeshipId`, `latitude?`, `longitude?` (mapa) |
 | Profil publiczny | `opis`, `logo`, `zdjecieGlowne`, `galeriaZdjec` (JSON array URL-i), `filmYouTube`, `okladkaFilmu`, `kolejnoscMultimedia` ("zdjecia"/"film") |
 | Godziny otwarcia | `statusGodzinyOtwarcia` (bool), `godzinyOtwarcia` (JSON `{"poniedzialek": "9:00-17:00", …}`) |
