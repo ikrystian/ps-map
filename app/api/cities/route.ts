@@ -9,9 +9,11 @@ export async function GET(request: NextRequest) {
     const voivodeship = searchParams.get("voivodeship")
     const search = searchParams.get("search")
     const hasExperts = searchParams.get("hasExperts") === "true"
+    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined
+    const offset = searchParams.get("offset") ? parseInt(searchParams.get("offset")!) : undefined
 
     // Dynamic cache key based on query parameters
-    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:vs_${voivodeship ?? "all"}:s_${search ?? "none"}:he_${hasExperts}`
+    const cacheKey = `cities:v_${voivodeshipId ?? "all"}:vs_${voivodeship ?? "all"}:s_${search ?? "none"}:he_${hasExperts}:l_${limit ?? "all"}:o_${offset ?? "0"}`
 
     const cities = await getOrSetCached(
       cacheKey,
@@ -61,6 +63,8 @@ export async function GET(request: NextRequest) {
           orderBy: {
             nazwa: "asc",
           },
+          take: limit,
+          skip: offset,
         })
       },
       3600 // Cache for 1 hour

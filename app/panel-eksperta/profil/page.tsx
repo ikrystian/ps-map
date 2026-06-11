@@ -58,6 +58,8 @@ function LawFirmProfilePageContent() {
   const [limitSlowKluczowych, setLimitSlowKluczowych] = useState(5)
   const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
   const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
+  const [hasMoreCities, setHasMoreCities] = useState<Record<string, boolean>>({})
+  const [loadingMoreCities, setLoadingMoreCities] = useState<Record<string, boolean>>({})
   const [maxVoivodeships, setMaxVoivodeships] = useState(1)
   const [maxCities, setMaxCities] = useState(3)
 
@@ -207,10 +209,11 @@ function LawFirmProfilePageContent() {
             await Promise.all(
               initialVoivIds.map(async (vId: string) => {
                 try {
-                  const response = await fetch(`/api/cities?voivodeshipId=${vId}`)
+                  const response = await fetch(`/api/cities?voivodeshipId=${vId}&limit=50&offset=0`)
                   if (response.ok) {
                     const data = await response.json()
                     setCitiesByVoivodeship((prev) => ({ ...prev, [vId]: data }))
+                    setHasMoreCities((prev) => ({ ...prev, [vId]: data.length === 50 }))
                   }
                 } catch (e) {
                   console.error("Error fetching initial cities:", e)
@@ -235,15 +238,38 @@ function LawFirmProfilePageContent() {
 
     setLoadingCities((prev) => ({ ...prev, [voivodeshipId]: true }))
     try {
-      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}`)
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}&limit=50&offset=0`)
       if (response.ok) {
         const data = await response.json()
         setCitiesByVoivodeship((prev) => ({ ...prev, [voivodeshipId]: data }))
+        setHasMoreCities((prev) => ({ ...prev, [voivodeshipId]: data.length === 50 }))
       }
     } catch (error) {
       console.error("Error fetching cities:", error)
     } finally {
       setLoadingCities((prev) => ({ ...prev, [voivodeshipId]: false }))
+    }
+  }
+
+  const fetchMoreCities = async (voivodeshipId: string) => {
+    if (loadingMoreCities[voivodeshipId] || !hasMoreCities[voivodeshipId]) return
+
+    setLoadingMoreCities((prev) => ({ ...prev, [voivodeshipId]: true }))
+    try {
+      const currentCount = citiesByVoivodeship[voivodeshipId]?.length || 0
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}&limit=50&offset=${currentCount}`)
+      if (response.ok) {
+        const data = await response.json()
+        setCitiesByVoivodeship((prev) => ({
+          ...prev,
+          [voivodeshipId]: [...(prev[voivodeshipId] || []), ...data],
+        }))
+        setHasMoreCities((prev) => ({ ...prev, [voivodeshipId]: data.length === 50 }))
+      }
+    } catch (error) {
+      console.error("Error fetching more cities:", error)
+    } finally {
+      setLoadingMoreCities((prev) => ({ ...prev, [voivodeshipId]: false }))
     }
   }
 
@@ -615,6 +641,9 @@ function LawFirmProfilePageContent() {
             loadingCities={loadingCities}
             toggleVoivodeship={toggleVoivodeship}
             toggleCity={toggleCity}
+            hasMoreCities={hasMoreCities}
+            loadingMoreCities={loadingMoreCities}
+            fetchMoreCities={fetchMoreCities}
           />
         </TabsContent>
 

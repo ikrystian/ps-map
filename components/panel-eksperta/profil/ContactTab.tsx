@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,6 +26,52 @@ import type { Voivodeship, City } from "@/types"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
+
+function CityLazyLoadTrigger({
+  voivodeshipId,
+  fetchMoreCities,
+  isLoadingMore,
+}: {
+  voivodeshipId: string
+  fetchMoreCities?: (id: string) => void
+  isLoadingMore?: boolean
+}) {
+  const triggerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!fetchMoreCities || isLoadingMore) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchMoreCities(voivodeshipId)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (triggerRef.current) {
+      observer.observe(triggerRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [voivodeshipId, fetchMoreCities, isLoadingMore])
+
+  return (
+    <div ref={triggerRef} className="py-2 flex justify-center items-center gap-2 text-xs text-zinc-500">
+      {isLoadingMore ? (
+        <>
+          <Loader2 className="h-3 w-3 animate-spin text-primary" />
+          <span>Ładowanie kolejnych miast...</span>
+        </>
+      ) : (
+        <span className="opacity-0">Wczytaj więcej</span>
+      )}
+    </div>
+  )
+}
 
 interface ContactTabProps {
   formData: {
@@ -58,6 +104,9 @@ interface ContactTabProps {
   loadingCities: Record<string, boolean>
   toggleVoivodeship: (id: string) => void
   toggleCity: (id: string) => void
+  hasMoreCities?: Record<string, boolean>
+  loadingMoreCities?: Record<string, boolean>
+  fetchMoreCities?: (voivodeshipId: string) => void
 }
 
 export function ContactTab({
@@ -70,6 +119,9 @@ export function ContactTab({
   loadingCities,
   toggleVoivodeship,
   toggleCity,
+  hasMoreCities,
+  loadingMoreCities,
+  fetchMoreCities,
 }: ContactTabProps) {
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
@@ -340,7 +392,12 @@ export function ContactTab({
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="grid gap-2 md:col-span-2">
                     <Label htmlFor="miasto" className="text-zinc-300 font-medium text-xs">Miasto *</Label>
-                    <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                    <Popover open={locationOpen} onOpenChange={(open) => {
+                      setLocationOpen(open)
+                      if (!open) {
+                        setLocationSearch("")
+                      }
+                    }}>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -366,7 +423,12 @@ export function ContactTab({
                             {isLoadingCities && (
                               <div className="text-zinc-500 py-3 text-center text-xs">Wyszukiwanie...</div>
                             )}
-                            {!isLoadingCities && locationSearch.trim().length < 2 && (
+                            {!isLoadingCities && locationSearch.trim().length === 0 && (
+                              <div className="text-zinc-500 py-3 text-center text-xs px-3">
+                                Zacznij wpisywać, aby wyszukać miasto...
+                              </div>
+                            )}
+                            {!isLoadingCities && locationSearch.trim().length > 0 && locationSearch.trim().length < 2 && (
                               <div className="text-zinc-500 py-3 text-center text-xs px-3">
                                 Wpisz co najmniej 2 znaki...
                               </div>
@@ -724,29 +786,38 @@ export function ContactTab({
                               ) : cities.length === 0 ? (
                                 <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
                               ) : (
-                                cities.map((city) => (
-                                  <div
-                                    key={city.id}
-                                    className={cn(
-                                      "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200",
-                                      formData.citiesIds.includes(city.id)
-                                        ? "bg-primary/10 text-primary font-medium border border-primary/20"
-                                        : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
-                                    )}
-                                  >
-                                    <Checkbox
-                                      id={`city-${city.id}`}
-                                      checked={formData.citiesIds.includes(city.id)}
-                                      onCheckedChange={() => toggleCity(city.id)}
-                                    />
-                                    <Label
-                                      htmlFor={`city-${city.id}`}
-                                      className="text-xs cursor-pointer flex-1 py-1"
+                                <>
+                                  {cities.map((city) => (
+                                    <div
+                                      key={city.id}
+                                      className={cn(
+                                        "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200",
+                                        formData.citiesIds.includes(city.id)
+                                          ? "bg-primary/10 text-primary font-medium border border-primary/20"
+                                          : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
+                                      )}
                                     >
-                                      {city.nazwa}
-                                    </Label>
-                                  </div>
-                                ))
+                                      <Checkbox
+                                        id={`city-${city.id}`}
+                                        checked={formData.citiesIds.includes(city.id)}
+                                        onCheckedChange={() => toggleCity(city.id)}
+                                      />
+                                      <Label
+                                        htmlFor={`city-${city.id}`}
+                                        className="text-xs cursor-pointer flex-1 py-1"
+                                      >
+                                        {city.nazwa}
+                                      </Label>
+                                    </div>
+                                  ))}
+                                  {hasMoreCities?.[vId] && (
+                                    <CityLazyLoadTrigger
+                                      voivodeshipId={vId}
+                                      fetchMoreCities={fetchMoreCities}
+                                      isLoadingMore={loadingMoreCities?.[vId]}
+                                    />
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
