@@ -148,9 +148,8 @@ function LawFirmProfilePageContent() {
     const fetchData = async () => {
       try {
         // Pobierz dane pomocnicze
-        const [voivRes, catRes, lawFirmRes, areaRes] = await Promise.all([
+        const [voivRes, lawFirmRes, areaRes] = await Promise.all([
           fetch("/api/voivodeships"),
-          fetch("/api/categories"),
           session?.user?.id ? fetch(`/api/law-firms/${session.user.id}`) : null,
           fetch("/api/law-firm/area"),
         ])
@@ -158,11 +157,6 @@ function LawFirmProfilePageContent() {
         if (voivRes.ok) {
           const voivData = await voivRes.json()
           setVoivodeships(voivData)
-        }
-
-        if (catRes.ok) {
-          const catData = await catRes.json()
-          setCategories(catData)
         }
 
         if (areaRes && areaRes.ok) {
@@ -173,6 +167,12 @@ function LawFirmProfilePageContent() {
 
         if (lawFirmRes && lawFirmRes.ok) {
           const lawFirmData = await lawFirmRes.json()
+
+          if (lawFirmData.categories) {
+            const mappedCategories = lawFirmData.categories.map((c: any) => c.category)
+            setCategories(mappedCategories)
+          }
+
           setLimitSlowKluczowych(lawFirmData.limitSlowKluczowych || 5)
           const normalizedData = {
             ...lawFirmData,
