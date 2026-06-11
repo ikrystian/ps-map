@@ -95,7 +95,6 @@ async function main() {
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)
   await seedHelpCenter(prisma)
-  await seedHomepagePromotions(prisma)
   await seedHomepageTestimonials(prisma)
   await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
 
@@ -105,6 +104,9 @@ async function main() {
   // powiadomienia, zamówienia, faktury, transakcje punktowe, czat, statystyki.
   // ==========================================================================
   await seedRelationalData(prisma)
+
+  // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
+  await seedHomepagePromotions(prisma)
 
   // ==========================================================================
   // SEEDERY ZALEŻNE OD POWYŻSZEGO (czytają kancelarie/opinie/użytkowników z bazy)
