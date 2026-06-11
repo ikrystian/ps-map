@@ -105,6 +105,18 @@ const DoubleCheckmarkLogo = () => (
   </div>
 );
 
+const floatVariants = {
+  animate: (i: number) => ({
+    y: [0, -10, 0],
+    transition: {
+      duration: 3 + i * 0.4,
+      repeat: Infinity,
+      ease: "easeInOut",
+      delay: i * 0.5,
+    },
+  }),
+};
+
 export function SearchHelpSection() {
   const router = useRouter();
 
@@ -151,7 +163,7 @@ export function SearchHelpSection() {
   ];
 
   return (
-    <section className="relative text-white py-8 lg:py-20 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10">
+    <section className="relative text-white py-8 lg:py-20 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10 serch-help-section">
       {/* Container */}
       <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
@@ -178,34 +190,55 @@ export function SearchHelpSection() {
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="none"
             >
-              {/* Solid Starting Dot */}
-              <circle cx="20" cy="70" r="5" fill="rgba(255, 255, 255, 0.45)" />
+              {/* Pulsing Starting Dot */}
+              <motion.circle
+                cx="20"
+                cy="70"
+                r="5"
+                fill="rgba(255, 255, 255, 0.45)"
+                animate={{ scale: [1, 1.6, 1], opacity: [0.45, 0.85, 0.45] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              />
 
-              {/* Dotted Sine Wave Path */}
-              <path
+              {/* Dotted Sine Wave Path — draws in on scroll */}
+              <motion.path
                 d="M 20 70 C 100 50, 120 40, 200 42 C 280 44, 320 75, 400 75 C 480 75, 520 48, 600 48 C 680 48, 720 75, 800 75 C 880 75, 920 42, 1000 42 C 1080 42, 1120 55, 1160 50"
                 stroke="rgba(255, 255, 255, 0.22)"
                 strokeWidth="2.5"
                 strokeDasharray="6 8"
                 fill="none"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.8, ease: "easeInOut", delay: 0.2 }}
               />
 
-              {/* Location Pin Icon at the End (Tilted) */}
-              <g transform="translate(1148, 38) rotate(20 12 12)">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.45)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              </g>
+              {/* Location Pin Icon at the End — wiggles after path draws */}
+              <motion.g
+                transform="translate(1148, 38)"
+                initial={{ opacity: 0, rotate: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 2, duration: 0.3 }}
+                animate={{ rotate: [0, 20, -12, 18, -8, 14, 0] }}
+                style={{ originX: "1160px", originY: "50px" }}
+              >
+                <g transform="rotate(20 12 12)">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="22"
+                    height="22"
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.45)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </g>
+              </motion.g>
             </svg>
           </div>
 
@@ -213,44 +246,66 @@ export function SearchHelpSection() {
           {steps.map((step, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 40, rotate: index % 2 === 0 ? -2 : 2 }}
+              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
+              transition={{ duration: 0.55, delay: index * 0.18, ease: [0.22, 1, 0.36, 1] }}
               className="relative flex flex-col items-center text-center z-10 group"
             >
               {/* Outline Number */}
-              <span
+              <motion.span
                 className="font-playfair text-[56px] font-light text-transparent select-none mb-3 block leading-none"
                 style={{ WebkitTextStroke: "1px rgba(255, 255, 255, 0.28)" }}
+                initial={{ opacity: 0, scale: 0.7 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.18 + 0.2, ease: "backOut" }}
               >
                 {step.number}
-              </span>
+              </motion.span>
 
               {/* Card Shape */}
-              <div className="w-36 h-36 rounded-xl bg-darker/60  border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-transform duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/30">
-                {step.icon}
+              <div className="w-36 h-36 rounded-xl bg-darker/60 border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-all duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/40 group-hover:shadow-[0_12px_40px_-5px_rgba(13,161,146,0.15)]">
+                <motion.div
+                  custom={index}
+                  variants={floatVariants}
+                  animate="animate"
+                >
+                  {step.icon}
+                </motion.div>
               </div>
 
               {/* Title */}
-              <h3 className="text-white text-[22px] font-semibold tracking-wide leading-tight mb-4  max-w-[280px]">
+              <motion.h3
+                className="text-white text-[22px] font-semibold tracking-wide leading-tight mb-4 max-w-[280px]"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.18 + 0.35 }}
+              >
                 {step.title}
-              </h3>
+              </motion.h3>
 
               {/* Description */}
-              <p className="text-[#A8A7A4] text-xs md:text-sm font-normal leading-relaxed max-w-[320px] ">
+              <motion.p
+                className="text-[#A8A7A4] text-xs md:text-sm font-normal leading-relaxed max-w-[320px]"
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.18 + 0.48 }}
+              >
                 {step.description}
-              </p>
+              </motion.p>
             </motion.div>
           ))}
         </div>
 
         {/* Action Button */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.9, y: 16 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.45 }}
+          transition={{ duration: 0.5, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="mt-8 flex justify-center items-center w-full"
         >
           <Link href="/logowanie">
