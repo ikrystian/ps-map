@@ -28,7 +28,53 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Search, Star } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+
+function CityLazyLoadTrigger({
+  voivodeshipId,
+  fetchMoreCities,
+  isLoadingMore,
+}: {
+  voivodeshipId: string
+  fetchMoreCities?: (id: string) => void
+  isLoadingMore?: boolean
+}) {
+  const triggerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!fetchMoreCities || isLoadingMore) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchMoreCities(voivodeshipId)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (triggerRef.current) {
+      observer.observe(triggerRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [voivodeshipId, fetchMoreCities, isLoadingMore])
+
+  return (
+    <div ref={triggerRef} className="py-2 flex justify-center items-center gap-2 text-xs text-zinc-500">
+      {isLoadingMore ? (
+        <>
+          <Loader2 className="h-3 w-3 animate-spin text-primary" />
+          <span>Ładowanie kolejnych miast...</span>
+        </>
+      ) : (
+        <span className="opacity-0">Wczytaj więcej</span>
+      )}
+    </div>
+  )
+}
 
 import { Category } from "@/types/categories"
 
@@ -153,6 +199,10 @@ export default function LawFirmServicesPage() {
   // Area state
   const [allVoivodeships, setAllVoivodeships] = useState<Voivodeship[]>([])
   const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
+  const [hasMoreCities, setHasMoreCities] = useState<Record<string, boolean>>({})
+  const [loadingMoreCities, setLoadingMoreCities] = useState<Record<string, boolean>>({})
+  const [selectedCitiesObjects, setSelectedCitiesObjects] = useState<City[]>([])
+  const [citiesDbOffset, setCitiesDbOffset] = useState<Record<string, number>>({})
   const [areaData, setAreaData] = useState<AreaData>({
     callaPolska: false,
     onlineOnly: false,
@@ -225,18 +275,21 @@ export default function LawFirmServicesPage() {
       const areaResponse = await fetch("/api/law-firm/area")
       if (areaResponse.ok) {
         const areaResData = await areaResponse.json()
+        const selectedCitiesFull = areaResData.cities || []
+        setSelectedCitiesObjects(selectedCitiesFull)
+
         setAreaData({
           callaPolska: areaResData.callaPolska,
           onlineOnly: areaResData.onlineOnly,
           selectedVoivodeships: areaResData.voivodeships?.map((v: any) => v.id) || [],
-          selectedCities: areaResData.cities?.map((c: any) => c.id) || [],
+          selectedCities: selectedCitiesFull.map((c: any) => c.id),
           maxVoivodeships: areaResData.maxVoivodeships,
           maxCities: areaResData.maxCities
         })
 
         if (areaResData.voivodeships) {
           areaResData.voivodeships.forEach((v: any) => {
-            fetchCities(v.id)
+            fetchCities(v.id, selectedCitiesFull)
           })
         }
       }
@@ -248,20 +301,57 @@ export default function LawFirmServicesPage() {
     }
   }
 
-  const fetchCities = async (voivodeshipId: string) => {
+  const fetchCities = async (voivodeshipId: string, initialSelectedCities?: City[]) => {
     if (citiesByVoivodeship[voivodeshipId]) return
 
     setLoadingCities(prev => ({ ...prev, [voivodeshipId]: true }))
     try {
-      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}`)
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}&limit=20&offset=0`)
       if (response.ok) {
         const data = await response.json()
-        setCitiesByVoivodeship(prev => ({ ...prev, [voivodeshipId]: data }))
+        
+        // Ensure already selected cities are present in the list
+        const activeSelectedList = initialSelectedCities || selectedCitiesObjects
+        const selectedForVoiv = activeSelectedList.filter(c => c.voivodeshipId === voivodeshipId)
+        const missingSelected = selectedForVoiv.filter(sc => !data.some((fc: City) => fc.id === sc.id))
+        const combined = [...data, ...missingSelected]
+
+        setCitiesByVoivodeship(prev => ({ ...prev, [voivodeshipId]: combined }))
+        setHasMoreCities(prev => ({ ...prev, [voivodeshipId]: data.length === 20 }))
+        setCitiesDbOffset(prev => ({ ...prev, [voivodeshipId]: data.length }))
       }
     } catch (error) {
       console.error("Error fetching cities:", error)
     } finally {
       setLoadingCities(prev => ({ ...prev, [voivodeshipId]: false }))
+    }
+  }
+
+  const fetchMoreCities = async (voivodeshipId: string) => {
+    if (loadingMoreCities[voivodeshipId] || !hasMoreCities[voivodeshipId]) return
+
+    setLoadingMoreCities(prev => ({ ...prev, [voivodeshipId]: true }))
+    try {
+      const currentOffset = citiesDbOffset[voivodeshipId] || 0
+      const response = await fetch(`/api/cities?voivodeshipId=${voivodeshipId}&limit=20&offset=${currentOffset}`)
+      if (response.ok) {
+        const data = await response.json()
+        
+        setCitiesByVoivodeship(prev => {
+          const existing = prev[voivodeshipId] || []
+          const newCities = data.filter((c: City) => !existing.some(ec => ec.id === c.id))
+          return {
+            ...prev,
+            [voivodeshipId]: [...existing, ...newCities]
+          }
+        })
+        setHasMoreCities(prev => ({ ...prev, [voivodeshipId]: data.length === 20 }))
+        setCitiesDbOffset(prev => ({ ...prev, [voivodeshipId]: currentOffset + data.length }))
+      }
+    } catch (error) {
+      console.error("Error fetching more cities:", error)
+    } finally {
+      setLoadingMoreCities(prev => ({ ...prev, [voivodeshipId]: false }))
     }
   }
 
@@ -466,6 +556,7 @@ export default function LawFirmServicesPage() {
           const city = Object.values(citiesByVoivodeship).flat().find(c => c.id === cityId)
           return city?.voivodeshipId !== id
         })
+        setSelectedCitiesObjects(prevObjects => prevObjects.filter(c => c.voivodeshipId !== id))
         return {
           ...prev,
           selectedVoivodeships: prev.selectedVoivodeships.filter(vId => vId !== id),
@@ -489,11 +580,16 @@ export default function LawFirmServicesPage() {
     setAreaData(prev => {
       const isSelected = prev.selectedCities.includes(id)
       if (isSelected) {
+        setSelectedCitiesObjects(prevObjects => prevObjects.filter(c => c.id !== id))
         return { ...prev, selectedCities: prev.selectedCities.filter(cId => cId !== id) }
       } else {
         if (prev.selectedCities.length >= prev.maxCities) {
           toast.error(`Limit miast (${prev.maxCities}) osiągnięty.`)
           return prev
+        }
+        const cityObj = Object.values(citiesByVoivodeship).flat().find(c => c.id === id)
+        if (cityObj) {
+          setSelectedCitiesObjects(prevObjects => [...prevObjects, cityObj])
         }
         return { ...prev, selectedCities: [...prev.selectedCities, id] }
       }
@@ -883,21 +979,30 @@ export default function LawFirmServicesPage() {
                                   ) : filteredCities.length === 0 ? (
                                     <div className="py-2 text-xs italic text-zinc-500">Brak pasujących miast.</div>
                                   ) : (
-                                    filteredCities.map(city => (
-                                      <div key={city.id} className={cn(
-                                        "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
-                                        areaData.selectedCities.includes(city.id)
-                                          ? "bg-primary/10 text-primary border border-primary/20"
-                                          : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
-                                      )} onClick={() => toggleCity(city.id)}>
-                                        <Checkbox
-                                          checked={areaData.selectedCities.includes(city.id)}
-                                          onCheckedChange={() => toggleCity(city.id)}
-                                          className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                    <>
+                                      {filteredCities.map(city => (
+                                        <div key={city.id} className={cn(
+                                          "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
+                                          areaData.selectedCities.includes(city.id)
+                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                            : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
+                                        )} onClick={() => toggleCity(city.id)}>
+                                          <Checkbox
+                                            checked={areaData.selectedCities.includes(city.id)}
+                                            onCheckedChange={() => toggleCity(city.id)}
+                                            className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                          />
+                                          <span className="text-xs">{city.nazwa}</span>
+                                        </div>
+                                      ))}
+                                      {hasMoreCities[vId] && !citySearch.trim() && (
+                                        <CityLazyLoadTrigger
+                                          voivodeshipId={vId}
+                                          fetchMoreCities={fetchMoreCities}
+                                          isLoadingMore={loadingMoreCities[vId]}
                                         />
-                                        <span className="text-xs">{city.nazwa}</span>
-                                      </div>
-                                    ))
+                                      )}
+                                    </>
                                   )}
                                 </div>
                               </div>
