@@ -138,7 +138,9 @@ export async function GET(request: NextRequest) {
             select: {
               imie: true,
               nazwisko: true,
-              miasto: true,
+              user: {
+                select: { miasto: true },
+              },
             },
           },
           offers: {
@@ -182,6 +184,10 @@ export async function GET(request: NextRequest) {
       // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
       const cases = filteredCases.map((caseItem: any) => ({
         ...caseItem,
+        // Miasto klienta przeniesione do modelu User — spłaszcz dla zgodności
+        client: caseItem.client
+          ? { ...caseItem.client, miasto: caseItem.client.user?.miasto ?? null }
+          : caseItem.client,
         offers: caseItem.offers
           .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tego eksperta
           .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId

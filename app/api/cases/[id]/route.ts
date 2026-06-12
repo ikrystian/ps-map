@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import fs from "fs"
 import { NextRequest, NextResponse } from "next/server"
@@ -60,15 +61,8 @@ export async function GET(
                 nazwa: true,
                 nazwaFirmy: true,
                 logo: true,
-                miasto: true,
-                voivodeship: true,
-                numerTelefonu: true,
-                numerTelefonu2: true,
-                adres: true,
-                kodPocztowy: true,
                 stronaWww: true,
-                imieKontakt: true,
-                nazwiskoKontakt: true,
+                user: { select: USER_CONTACT_SELECT },
               },
             },
           },
@@ -159,6 +153,11 @@ export async function GET(
       zalaczniki: caseDataWithCount.zalaczniki && typeof caseDataWithCount.zalaczniki === 'string' && caseDataWithCount.zalaczniki.trim()
         ? JSON.parse(caseDataWithCount.zalaczniki)
         : [],
+      // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
+      offers: caseDataWithCount.offers.map((offer: any) => ({
+        ...offer,
+        lawFirm: flattenLawFirmUser(offer.lawFirm),
+      })),
     }
 
     return NextResponse.json(parsedCase)

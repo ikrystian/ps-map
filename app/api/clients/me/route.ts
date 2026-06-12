@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { USER_CONTACT_SELECT, flattenClientUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -31,9 +32,9 @@ export async function GET() {
             email: true,
             name: true,
             image: true,
+            ...USER_CONTACT_SELECT,
           },
         },
-        voivodeship: true,
       },
     })
 
@@ -59,9 +60,9 @@ export async function GET() {
                 email: true,
                 name: true,
                 image: true,
+                ...USER_CONTACT_SELECT,
               },
             },
-            voivodeship: true,
           },
         })
       } catch (createError) {
@@ -73,7 +74,7 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(client)
+    return NextResponse.json(flattenClientUser(client))
   } catch (error) {
     console.error("Error fetching client data:", error)
     return NextResponse.json(
@@ -152,20 +153,23 @@ export async function PUT(request: NextRequest) {
         clientType: clientType || "INDIVIDUAL",
         imie,
         nazwisko,
-        telefon,
         nazwaFirmy: clientType === "BUSINESS" ? nazwaFirmy : null,
         nip: clientType === "BUSINESS" ? nip : null,
         regon: clientType === "BUSINESS" ? regon : null,
         krs: clientType === "BUSINESS" ? krs : null,
-        adres,
-        kodPocztowy,
-        miasto,
-        voivodeshipId: voivodeshipId || null,
         zgodaNewsletter,
         zgodaMarketing,
+        // Telefon i adres należą do modelu User
         user: {
           update: {
-            name: targetName
+            name: targetName,
+            imie,
+            nazwisko,
+            numerTelefonu: telefon,
+            adres,
+            kodPocztowy,
+            miasto,
+            voivodeshipId: voivodeshipId || null,
           }
         }
       },
@@ -176,13 +180,13 @@ export async function PUT(request: NextRequest) {
             email: true,
             name: true,
             image: true,
+            ...USER_CONTACT_SELECT,
           },
         },
-        voivodeship: true,
       },
     })
 
-    return NextResponse.json(updatedClient)
+    return NextResponse.json(flattenClientUser(updatedClient))
   } catch (error) {
     console.error("Error updating client data:", error)
     return NextResponse.json(

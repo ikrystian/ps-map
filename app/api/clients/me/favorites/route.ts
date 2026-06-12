@@ -40,7 +40,13 @@ export async function GET(request: NextRequest) {
       include: {
         lawFirm: {
           include: {
-            voivodeship: true,
+            user: {
+              select: {
+                miasto: true,
+                numerTelefonu: true,
+                voivodeship: { select: { nazwa: true } },
+              },
+            },
             categories: {
               include: {
                 category: true,
@@ -74,16 +80,16 @@ export async function GET(request: NextRequest) {
         addedAt: fav.createdAt,
         lawFirm: {
           id: lawFirm.id,
-          nazwa: lawFirm.nazwaFirmy,
-          nazwaFirmy: lawFirm.nazwaFirmyFirmy,
+          nazwa: lawFirm.nazwa,
+          nazwaFirmy: lawFirm.nazwaFirmy,
           typ: lawFirm.typ,
           opis: lawFirm.opis,
           logo: lawFirm.logo,
-          miasto: lawFirm.miasto,
+          miasto: lawFirm.user?.miasto ?? "",
           voivodeship: {
-            nazwa: lawFirm.voivodeship.nazwa,
+            nazwa: lawFirm.user?.voivodeship?.nazwa ?? "",
           },
-          numerTelefonu: lawFirm.numerTelefonu,
+          numerTelefonu: lawFirm.user?.numerTelefonu ?? "",
           stronaWww: lawFirm.stronaWww,
           zweryfikowana: lawFirm.zweryfikowana,
           avgRating,
