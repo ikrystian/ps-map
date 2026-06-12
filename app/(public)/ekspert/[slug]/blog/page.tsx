@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    const displayName = lawFirm.nazwaFirmyFirmy || lawFirm.nazwaFirmy
+    const displayName = lawFirm.nazwaFirmy || lawFirm.nazwa
     return {
       title: `Blog Eksperta ${displayName} | Prosta Sprawa`,
       description: `Artykuły, porady prawne i analizy publikowane przez ekspertów z eksperta ${displayName}.`,

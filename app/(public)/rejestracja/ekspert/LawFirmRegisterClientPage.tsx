@@ -397,7 +397,7 @@ export default function LawFirmRegistrationPage() {
     setFieldErrors({})
 
     let schema
-    let dataToValidate = formData
+    let dataToValidate: Record<string, unknown> = formData
 
     switch (currentStep) {
       case 1:

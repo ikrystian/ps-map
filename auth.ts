@@ -128,7 +128,7 @@ export const authOptions: NextAuthConfig = {
           where: { id: user.id },
           include: {
             lawFirm: { select: { id: true } },
-            client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
+            client: { select: { id: true, imie: true, nazwisko: true } }
           }
         })
 
@@ -147,7 +147,7 @@ export const authOptions: NextAuthConfig = {
                 zgodaNewsletter: false,
                 zgodaMarketing: false,
               },
-              select: { id: true, imie: true, nazwisko: true, telefon: true }
+              select: { id: true, imie: true, nazwisko: true }
             })
             dbUser.client = newClient
           } catch (e) {
@@ -162,7 +162,7 @@ export const authOptions: NextAuthConfig = {
           token.clientId = dbUser.client.id
           token.clientImie = dbUser.client.imie
           token.clientNazwisko = dbUser.client.nazwisko
-          token.clientTelefon = dbUser.client.telefon
+          token.clientTelefon = dbUser.numerTelefonu
         }
       }
 
@@ -195,8 +195,9 @@ export const authOptions: NextAuthConfig = {
               name: true,
               role: true,
               image: true,
+              numerTelefonu: true,
               lawFirm: { select: { id: true } },
-              client: { select: { id: true, imie: true, nazwisko: true, telefon: true } }
+              client: { select: { id: true, imie: true, nazwisko: true } }
             },
           })
 
@@ -215,7 +216,7 @@ export const authOptions: NextAuthConfig = {
                   zgodaNewsletter: false,
                   zgodaMarketing: false,
                 },
-                select: { id: true, imie: true, nazwisko: true, telefon: true }
+                select: { id: true, imie: true, nazwisko: true }
               })
               freshUser.client = newClient
             } catch (e) {
@@ -232,7 +233,7 @@ export const authOptions: NextAuthConfig = {
             token.clientId = freshUser.client?.id
             token.clientImie = freshUser.client?.imie
             token.clientNazwisko = freshUser.client?.nazwisko
-            token.clientTelefon = freshUser.client?.telefon
+            token.clientTelefon = freshUser.numerTelefonu
             token.lastRefresh = Date.now()
           }
         } catch (error) {

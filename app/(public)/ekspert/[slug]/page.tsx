@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         nazwa: true,
         nazwaFirmy: true,
         opis: true,
-        miasto: true,
+        user: { select: { miasto: true } },
       },
     })
 
@@ -28,9 +28,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    const displayName = lawFirm.nazwaFirmyFirmy || lawFirm.nazwaFirmy
-    const title = `${displayName} - Ekspert ${lawFirm.miasto} | Prosta Sprawa`
-    const description = lawFirm.opis || `Profil ekspertów prawnych z firmy ${displayName} w mieście ${lawFirm.miasto}. Zobacz specjalizacje, opinie klientów oraz wolne terminy konsultacji.`
+    const displayName = lawFirm.nazwaFirmy || lawFirm.nazwa
+    const title = `${displayName} - Ekspert ${lawFirm.user?.miasto ?? ""} | Prosta Sprawa`
+    const description = lawFirm.opis || `Profil ekspertów prawnych z firmy ${displayName} w mieście ${lawFirm.user?.miasto ?? ""}. Zobacz specjalizacje, opinie klientów oraz wolne terminy konsultacji.`
 
     return {
       title,

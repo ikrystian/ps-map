@@ -389,7 +389,7 @@ export default function BlogPostPage() {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-amber-500/20 shadow-lg flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
                       <img
                         src={post.sponsoredLawFirm.logo}
-                        alt={post.sponsoredlawFirm.nazwaFirmy}
+                        alt={post.sponsoredLawFirm.nazwaFirmy}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -411,7 +411,7 @@ export default function BlogPostPage() {
                         </span>
                       </div>
                       <h3 className="font-playfair text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
-                        {post.sponsoredlawFirm.nazwaFirmy}
+                        {post.sponsoredLawFirm.nazwaFirmy}
                       </h3>
                       {post.sponsoredLawFirm.opis && (
                         <div
@@ -501,7 +501,7 @@ export default function BlogPostPage() {
                       <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/20 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
                         <img
                           src={post.sponsoredLawFirm.logo}
-                          alt={post.sponsoredlawFirm.nazwaFirmy}
+                          alt={post.sponsoredLawFirm.nazwaFirmy}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -516,10 +516,10 @@ export default function BlogPostPage() {
                         Sponsor artykułu
                       </Badge>
                       <h3 className="font-semibold text-white text-base leading-tight group-hover:text-amber-400 transition-colors">
-                        {post.sponsoredlawFirm.nazwaFirmy}
+                        {post.sponsoredLawFirm.nazwaFirmy}
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1">
-                        {post.sponsoredlawFirm.nazwaFirmyFirmy}
+                        {post.sponsoredLawFirm.nazwaFirmy}
                       </p>
                     </div>
                   </div>
@@ -587,7 +587,7 @@ export default function BlogPostPage() {
                         {post.lawFirm.nazwaFirmy}
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1">
-                        {post.lawFirm.nazwaFirmyFirmy}
+                        {post.lawFirm.nazwaFirmy}
                       </p>
                     </div>
                   </div>
