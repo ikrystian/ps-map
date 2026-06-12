@@ -67,6 +67,13 @@ export default function PublicHeader({
   const [locationSearch, setLocationSearch] = useState("")
   const [isLoadingCities, setIsLoadingCities] = useState(false)
 
+  // Expertise categories state for nested dropdown
+  const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
+  const [selectedExpertiseCategoryId, setSelectedExpertiseCategoryId] = useState("")
+  const [selectedExpertiseCategoryName, setSelectedExpertiseCategoryName] = useState("")
+  const [expertiseOpen, setExpertiseOpen] = useState(false)
+  const [menuPath, setMenuPath] = useState<string[]>([])
+
   // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
@@ -83,6 +90,30 @@ export default function PublicHeader({
 
     fetchCategories()
   }, [])
+
+  // Fetch expertise categories on mount
+  useEffect(() => {
+    const fetchExpertiseCategories = async () => {
+      try {
+        const response = await fetch("/api/expertise-categories")
+        if (response.ok) {
+          const data = await response.json()
+          setExpertiseCategories(data)
+        }
+      } catch (error) {
+        console.error("Error fetching expertise categories:", error)
+      }
+    }
+
+    fetchExpertiseCategories()
+  }, [])
+
+  // Reset drill-down menu path when popover closes
+  useEffect(() => {
+    if (!expertiseOpen) {
+      setMenuPath([])
+    }
+  }, [expertiseOpen])
 
   // Fetch blog categories and latest post on mount
   useEffect(() => {
@@ -198,10 +229,44 @@ export default function PublicHeader({
   const isBlogActive = pathname.startsWith("/blog")
   const isONasActive = pathname === "/o-nas"
 
+  // Helpers for nested categories navigation
+  const getVisibleCategories = () => {
+    if (menuPath.length === 0) {
+      return expertiseCategories
+    }
+    if (menuPath.length === 1) {
+      const parent = expertiseCategories.find(c => c.id === menuPath[0])
+      return parent?.children || []
+    }
+    if (menuPath.length === 2) {
+      const parent = expertiseCategories.find(c => c.id === menuPath[0])
+      const sub = parent?.children?.find((c: any) => c.id === menuPath[1])
+      return sub?.children || []
+    }
+    return []
+  }
+
+  const getParentItem = () => {
+    if (menuPath.length === 1) {
+      return expertiseCategories.find(c => c.id === menuPath[0])
+    }
+    if (menuPath.length === 2) {
+      const parent = expertiseCategories.find(c => c.id === menuPath[0])
+      return parent?.children?.find((c: any) => c.id === menuPath[1])
+    }
+    return null
+  }
+
+  const getMenuTitle = () => {
+    if (menuPath.length === 0) return "Wybierz kategorię"
+    const parent = getParentItem()
+    return parent ? parent.nazwa : "Specjalizacja"
+  }
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const params = new URLSearchParams()
-    if (searchQuery.trim()) params.set("search", searchQuery.trim())
+    if (selectedExpertiseCategoryId) params.set("expertiseCategoryId", selectedExpertiseCategoryId)
     if (selectedCity) params.set("city", selectedCity)
     if (selectedVoivodeship) params.set("voivodeship", selectedVoivodeship)
     if (selectedType && selectedType !== "all") params.set("type", selectedType)
@@ -909,17 +974,110 @@ export default function PublicHeader({
 
               <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-3">
                 {/* Field 1: Kogo szukasz? */}
-                <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
-                  <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Kogo szukasz?"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
-                    autoFocus={searchFormOpen}
-                  />
-                </div>
+                <Popover open={expertiseOpen} onOpenChange={setExpertiseOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer w-full md:w-64"
+                    >
+                      <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                      <span className="text-sm truncate flex-grow text-neutral-300">
+                        {selectedExpertiseCategoryName || "Kogo szukasz?"}
+                      </span>
+                      {selectedExpertiseCategoryName && (
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedExpertiseCategoryName("")
+                            setSelectedExpertiseCategoryId("")
+                          }}
+                          className="hover:text-red-400 text-neutral-400 p-0.5"
+                        >
+                          <X className="h-4 w-4" />
+                        </span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 sm:w-80 p-0 bg-[#20201d] border-neutral-800 text-white z-50 shadow-xl shadow-black/80" align="start">
+                    <div className="flex flex-col">
+                      {/* Header with back button */}
+                      <div className="flex items-center justify-between px-3 py-2.5 border-b border-neutral-800 bg-[#161614]">
+                        {menuPath.length > 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => setMenuPath(menuPath.slice(0, -1))}
+                            className="flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 font-semibold cursor-pointer border-0 bg-transparent p-0"
+                          >
+                            <ChevronRight className="h-3.5 w-3.5 rotate-180" />
+                            Powrót
+                          </button>
+                        ) : (
+                          <span className="text-xs text-neutral-400 font-semibold">
+                            Wybierz kategorię
+                          </span>
+                        )}
+                        <span className="text-xs font-medium text-neutral-300 truncate max-w-[150px]">
+                          {getMenuTitle()}
+                        </span>
+                      </div>
+
+                      {/* Selectable categories list */}
+                      <div className="max-h-64 overflow-y-auto p-1 space-y-0.5">
+                        {/* Option to select parent category if we are inside one */}
+                        {menuPath.length > 0 && getParentItem() && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const parent = getParentItem()
+                              if (parent) {
+                                setSelectedExpertiseCategoryId(parent.id)
+                                setSelectedExpertiseCategoryName(parent.nazwa)
+                                setExpertiseOpen(false)
+                              }
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs rounded-md text-teal-400 hover:bg-neutral-800 transition-colors flex items-center gap-2 cursor-pointer font-semibold border-0 bg-transparent"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Wybierz całe "{getParentItem()?.nazwa}"
+                          </button>
+                        )}
+
+                        {getVisibleCategories().map((cat) => {
+                          const hasChildren = cat.children && cat.children.length > 0
+                          const isSelected = selectedExpertiseCategoryId === cat.id
+
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                if (hasChildren) {
+                                  setMenuPath([...menuPath, cat.id])
+                                } else {
+                                  setSelectedExpertiseCategoryId(cat.id)
+                                  setSelectedExpertiseCategoryName(cat.nazwa)
+                                  setExpertiseOpen(false)
+                                }
+                              }}
+                              className={cn(
+                                "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0 bg-transparent text-white hover:bg-neutral-800/80",
+                                isSelected && "bg-neutral-800 text-teal-400 font-semibold"
+                              )}
+                            >
+                              <span className="truncate">{cat.nazwa}</span>
+                              {hasChildren ? (
+                                <ChevronRight className="h-4 w-4 text-neutral-500" />
+                              ) : (
+                                isSelected && <Check className="h-4 w-4 text-teal-400" />
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
 
                 {/* Field 2: Lokalizacja */}
                 <Popover open={locationOpen} onOpenChange={setLocationOpen}>
