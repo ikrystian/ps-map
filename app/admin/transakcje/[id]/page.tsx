@@ -100,7 +100,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
   const router = useRouter()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
-  
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editFormData, setEditFormData] = useState({
@@ -439,7 +439,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
                   {order.lawFirm.nazwaFirmy || order.lawFirm.nazwa || "—"}
                 </span>
               </div>
-              
+
               <div>
                 <span className="text-muted-foreground block text-xs">NIP</span>
                 <span className="font-mono font-medium block mt-0.5 select-all">
@@ -450,7 +450,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div className="border-t pt-3">
                 <span className="text-muted-foreground block text-xs">Email kontaktowy</span>
                 <span className="font-semibold block mt-0.5 select-all text-primary">
-                  {order.lawFirm.emailKontakt}
+                  {order.law.Firm.user?.email}
                 </span>
               </div>
 

@@ -350,7 +350,7 @@ export default function EditLawFirmPage() {
             nazwiskoKontakt: lawFirm.nazwiskoKontakt,
             numerTelefonu: lawFirm.numerTelefonu,
             numerTelefonu2: lawFirm.numerTelefonu2 || "",
-            emailKontakt: lawFirm.emailKontakt,
+            emailKontakt: law.Firm.user?.email,
             adres: lawFirm.adres,
             kodPocztowy: lawFirm.kodPocztowy,
             miasto: lawFirm.miasto,

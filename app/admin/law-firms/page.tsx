@@ -331,7 +331,7 @@ export default function AdminLawFirmsPage() {
                     <TableCell>
                       <div className="text-sm">
                         <div>{lawFirm.imieKontakt} {lawFirm.nazwiskoKontakt}</div>
-                        <div className="text-xs text-muted-foreground">{lawFirm.emailKontakt}</div>
+                        <div className="text-xs text-muted-foreground">{law.Firm.user?.email}</div>
                       </div>
                     </TableCell>
                     <TableCell>

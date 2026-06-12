@@ -935,7 +935,7 @@ export default function LawFirmProfilePage() {
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
                     <div className="text-sm text-foreground break-all">
                       {session?.user ? (
-                        <a href={`mailto:${lawFirm.emailKontakt}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.emailKontakt}</a>
+                        <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{law.Firm.user?.email}</a>
                       ) : (
                         <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
                       )}
