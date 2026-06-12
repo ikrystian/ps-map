@@ -150,7 +150,6 @@ export async function POST(request: NextRequest) {
               nazwiskoKontakt: lawFirmData.nazwiskoKontakt || "Osoba",
               numerTelefonu: lawFirmData.numerTelefonu || "+48 000 000 000",
               numerTelefonu2: lawFirmData.numerTelefonu2,
-              emailKontakt: lawFirmData.emailKontakt || userData.email,
               adres: lawFirmData.adres || "Brak adresu",
               kodPocztowy: lawFirmData.kodPocztowy || "00-000",
               miasto: lawFirmData.miasto || "Warszawa",

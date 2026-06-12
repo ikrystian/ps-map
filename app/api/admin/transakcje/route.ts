@@ -74,7 +74,6 @@ export async function GET(request: NextRequest) {
               id: true,
               nazwa: true,
               nazwaFirmy: true,
-              emailKontakt: true,
             },
           },
           subscriptionPlan: {

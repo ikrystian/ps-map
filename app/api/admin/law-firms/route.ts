@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
         { nazwa: { contains: search } },
         { nazwaFirmy: { contains: search } },
         { nip: { contains: search } },
-        { emailKontakt: { contains: search } },
         { imieKontakt: { contains: search } },
         { nazwiskoKontakt: { contains: search } },
       ]
@@ -143,7 +142,6 @@ export async function POST(request: NextRequest) {
       nazwiskoKontakt,
       numerTelefonu,
       numerTelefonu2,
-      emailKontakt,
       // Address
       adres,
       kodPocztowy,
@@ -167,7 +165,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!typ || !nazwa || !nazwaFirmy || !nip || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !emailKontakt || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
+    if (!typ || !nazwa || !nazwaFirmy || !nip || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
         { status: 400 }
@@ -176,7 +174,7 @@ export async function POST(request: NextRequest) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email) || !emailRegex.test(emailKontakt)) {
+    if (!emailRegex.test(email)) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
@@ -267,7 +265,6 @@ export async function POST(request: NextRequest) {
           nazwiskoKontakt,
           numerTelefonu,
           numerTelefonu2: numerTelefonu2 || null,
-          emailKontakt,
           adres,
           kodPocztowy,
           miasto,

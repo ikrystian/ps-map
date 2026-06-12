@@ -248,14 +248,6 @@ export async function PUT(
       }
     }
 
-    // Validate email formats if provided
-    if (body.emailKontakt) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(body.emailKontakt)) {
-        return NextResponse.json({ error: "Invalid contact email format" }, { status: 400 })
-      }
-    }
-
     // Validate voivodeship if provided
     if (body.voivodeshipId) {
       const voivodeshipExists = await prisma.voivodeship.findUnique({
@@ -287,7 +279,6 @@ export async function PUT(
     if (body.nazwiskoKontakt !== undefined) lawFirmUpdateData.nazwiskoKontakt = body.nazwiskoKontakt
     if (body.numerTelefonu !== undefined) lawFirmUpdateData.numerTelefonu = body.numerTelefonu
     if (body.numerTelefonu2 !== undefined) lawFirmUpdateData.numerTelefonu2 = body.numerTelefonu2
-    if (body.emailKontakt !== undefined) lawFirmUpdateData.emailKontakt = body.emailKontakt
 
     // Address
     if (body.adres !== undefined) lawFirmUpdateData.adres = body.adres

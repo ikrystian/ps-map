@@ -25,7 +25,6 @@ export async function GET(
             id: true,
             nazwa: true,
             nazwaFirmy: true,
-            emailKontakt: true,
             nip: true,
           },
         },
@@ -110,7 +109,6 @@ export async function PUT(
             id: true,
             nazwa: true,
             nazwaFirmy: true,
-            emailKontakt: true,
           },
         },
         subscriptionPlan: {

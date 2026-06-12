@@ -24,7 +24,6 @@ export async function GET(
             id: true,
             nazwa: true,
             nazwaFirmy: true,
-            emailKontakt: true,
             numerTelefonu: true,
             miasto: true,
           },

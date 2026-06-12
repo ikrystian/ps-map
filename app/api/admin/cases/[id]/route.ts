@@ -36,7 +36,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                 id: true,
                 nazwa: true,
                 nazwaFirmy: true,
-                emailKontakt: true,
                 numerTelefonu: true,
                 logo: true,
               },
@@ -135,7 +134,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Dane kontaktowe
     if (body.imieNazwisko !== undefined) updateData.imieNazwisko = body.imieNazwisko
-    if (body.emailKontakt !== undefined) updateData.emailKontakt = body.emailKontakt
     if (body.telefonKontakt !== undefined) updateData.telefonKontakt = body.telefonKontakt
     if (body.preferowanyKontakt !== undefined) updateData.preferowanyKontakt = body.preferowanyKontakt
 
