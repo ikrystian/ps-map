@@ -239,7 +239,6 @@ export async function POST(request: NextRequest) {
           nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
           numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
-          emailKontakt: userData.law.Firm.user?.email,
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
           miasto: userData.lawFirm.miasto,

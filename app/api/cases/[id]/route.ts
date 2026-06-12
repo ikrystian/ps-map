@@ -62,7 +62,6 @@ export async function GET(
                 logo: true,
                 miasto: true,
                 voivodeship: true,
-                emailKontakt: true,
                 numerTelefonu: true,
                 numerTelefonu2: true,
                 adres: true,

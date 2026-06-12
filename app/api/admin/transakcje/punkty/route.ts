@@ -31,8 +31,7 @@ export async function GET(request: NextRequest) {
             OR: [
               { nazwa: { contains: search } },
               { nazwaFirmy: { contains: search } },
-              { emailKontakt: { contains: search } }
-            ]
+            
           }
         },
       ]
@@ -60,7 +59,6 @@ export async function GET(request: NextRequest) {
               id: true,
               nazwa: true,
               nazwaFirmy: true,
-              emailKontakt: true,
               punktySaldo: true,
             },
           },

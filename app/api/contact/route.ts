@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
         where: { id: lawFirmId },
         select: {
           nazwa: true,
-          emailKontakt: true,
           userId: true,
         },
       })

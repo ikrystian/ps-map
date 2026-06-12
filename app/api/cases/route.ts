@@ -233,7 +233,6 @@ export async function POST(request: NextRequest) {
       !body.nazwaSprawy ||
       !body.opisSprawy ||
       !body.imieNazwisko ||
-      !body.emailKontakt ||
       !body.telefonKontakt ||
       !body.preferowanyKontakt ||
       !body.akceptujeKlauzule
@@ -325,7 +324,6 @@ export async function POST(request: NextRequest) {
         budzetDo: body.budzetDo || null,
         doNegocjacji: body.doNegocjacji || false,
         imieNazwisko: body.imieNazwisko,
-        emailKontakt: body.emailKontakt,
         telefonKontakt: body.telefonKontakt,
         preferowanyKontakt: body.preferowanyKontakt,
         voivodeshipId: voivodeship.id,
@@ -416,7 +414,7 @@ export async function POST(request: NextRequest) {
     // 1. Wyślij email potwierdzający do klienta
     try {
       await sendEmailWithTemplate({
-        to: newCase.emailKontakt || session.user.email!,
+        to: session.user.email!,
         templateType: EmailType.POTWIERDZENIE_DODANIA_SPRAWY,
         variables: {
           "{klient}": `${client.imie} ${client.nazwisko}`,

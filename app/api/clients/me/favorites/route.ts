@@ -84,7 +84,6 @@ export async function GET(request: NextRequest) {
             nazwa: lawFirm.voivodeship.nazwa,
           },
           numerTelefonu: lawFirm.numerTelefonu,
-          emailKontakt: law.Firm.user?.email,
           stronaWww: lawFirm.stronaWww,
           zweryfikowana: lawFirm.zweryfikowana,
           avgRating,
