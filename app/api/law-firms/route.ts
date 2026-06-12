@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
     const city = searchParams.get("city")
     const search = searchParams.get("search")
     const type = searchParams.get("type")
+    const expertiseCategoryId = searchParams.get("expertiseCategoryId")
     const sortBy = searchParams.get("sortBy")
     const limit = parseInt(searchParams.get("limit") || "20")
     const offset = parseInt(searchParams.get("offset") || "0")
@@ -67,6 +68,42 @@ export async function GET(request: NextRequest) {
               typ: categoryType,
             },
           },
+        },
+      })
+    }
+
+    if (expertiseCategoryId) {
+      const categoryWithDescendants = await prisma.expertiseCategory.findUnique({
+        where: { id: expertiseCategoryId },
+        include: {
+          children: {
+            select: {
+              id: true,
+              children: {
+                select: {
+                  id: true,
+                }
+              }
+            }
+          }
+        }
+      })
+
+      const idsToFilter = [expertiseCategoryId]
+      if (categoryWithDescendants?.children) {
+        for (const child of categoryWithDescendants.children) {
+          idsToFilter.push(child.id)
+          if (child.children) {
+            for (const grandchild of child.children) {
+              idsToFilter.push(grandchild.id)
+            }
+          }
+        }
+      }
+
+      andConditions.push({
+        expertiseCategoryId: {
+          in: idsToFilter,
         },
       })
     }
