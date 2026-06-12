@@ -9,6 +9,7 @@ import {
   generatePromotionRenewedEmail,
   sendEmail,
 } from "@/lib/email"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 
 // ============================================================================
@@ -233,7 +234,7 @@ export async function getFeaturedLawFirms(limit: number = 5) {
     include: {
       lawFirm: {
         include: {
-          voivodeship: true,
+          user: { select: USER_CONTACT_SELECT },
           categories: {
             include: {
               category: true,
@@ -248,7 +249,7 @@ export async function getFeaturedLawFirms(limit: number = 5) {
     take: limit,
   })
 
-  return promotions.map((p: any) => p.lawFirm)
+  return promotions.map((p: any) => flattenLawFirmUser(p.lawFirm))
 }
 
 /**
@@ -272,7 +273,7 @@ export async function getTopLawFirms(limit: number = 10) {
     include: {
       lawFirm: {
         include: {
-          voivodeship: true,
+          user: { select: USER_CONTACT_SELECT },
           categories: {
             include: {
               category: true,
@@ -287,7 +288,7 @@ export async function getTopLawFirms(limit: number = 10) {
     take: limit,
   })
 
-  return promotions.map((p: any) => p.lawFirm)
+  return promotions.map((p: any) => flattenLawFirmUser(p.lawFirm))
 }
 
 /**

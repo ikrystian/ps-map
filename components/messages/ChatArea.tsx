@@ -189,7 +189,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
   const isClient = session?.user?.role === "CLIENT"
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
-    ? conversation.lawFirmUser.lawFirm.nazwaFirmy
+    ? (conversation.lawFirmUser.lawFirm.nazwaFirmy || conversation.lawFirmUser.lawFirm.nazwa)
     : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
   const otherUserImage = isClient
     ? conversation.lawFirmUser.lawFirm.logo
@@ -217,7 +217,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
             <AvatarImage src={otherUserImage} alt={otherUserName} />
           )}
           <AvatarFallback className="bg-primary text-primary-foreground">
-            {otherUserName.substring(0, 2).toUpperCase()}
+            {otherUser?.name?.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>

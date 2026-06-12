@@ -77,6 +77,7 @@ interface ContactTabProps {
   formData: {
     imieKontakt: string
     nazwiskoKontakt: string
+    emailKontakt?: string
     numerTelefonu: string
     numerTelefonu2: string
     stronaWww: string
