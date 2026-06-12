@@ -22,9 +22,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               select: {
                 email: true,
                 createdAt: true,
+                numerTelefonu: true,
+                adres: true,
+                kodPocztowy: true,
+                miasto: true,
+                voivodeship: { select: { nazwa: true } },
               },
             },
-            voivodeship: true,
           },
         },
         category: true,
@@ -36,8 +40,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                 id: true,
                 nazwa: true,
                 nazwaFirmy: true,
-                numerTelefonu: true,
                 logo: true,
+                user: {
+                  select: { numerTelefonu: true },
+                },
               },
             },
             negotiations: true,
@@ -79,9 +85,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Parse załączniki jeśli są w JSON
     const parsedCase = {
       ...caseData,
+      // Telefon i adres klienta przeniesione do modelu User
+      client: {
+        ...caseData.client,
+        telefon: caseData.client.user?.numerTelefonu ?? null,
+        adres: caseData.client.user?.adres ?? null,
+        kodPocztowy: caseData.client.user?.kodPocztowy ?? null,
+        miasto: caseData.client.user?.miasto ?? null,
+        voivodeship: caseData.client.user?.voivodeship ?? null,
+      },
       zalaczniki: caseData.zalaczniki && typeof caseData.zalaczniki === 'string' && caseData.zalaczniki.trim()
         ? JSON.parse(caseData.zalaczniki)
         : [],
+      // Spłaszcz numer telefonu kancelarii (przeniesiony do modelu User)
+      offers: caseData.offers.map((offer) => ({
+        ...offer,
+        lawFirm: {
+          ...offer.lawFirm,
+          numerTelefonu: offer.lawFirm.user?.numerTelefonu ?? "",
+        },
+      })),
     }
 
     return NextResponse.json(parsedCase)

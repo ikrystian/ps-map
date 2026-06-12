@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { NextRequest, NextResponse } from "next/server"
@@ -31,8 +32,8 @@ export async function GET(request: NextRequest) {
         { nazwa: { contains: search } },
         { nazwaFirmy: { contains: search } },
         { nip: { contains: search } },
-        { imieKontakt: { contains: search } },
-        { nazwiskoKontakt: { contains: search } },
+        { user: { imie: { contains: search } } },
+        { user: { nazwisko: { contains: search } } },
       ]
     }
 
@@ -72,12 +73,7 @@ export async function GET(request: NextRequest) {
               status: true,
               createdAt: true,
               lastLogin: true,
-            },
-          },
-          voivodeship: {
-            select: {
-              id: true,
-              nazwa: true,
+              ...USER_CONTACT_SELECT,
             },
           },
           _count: {
@@ -101,7 +97,7 @@ export async function GET(request: NextRequest) {
     ])
 
     return NextResponse.json({
-      lawFirms,
+      lawFirms: lawFirms.map(flattenLawFirmUser),
       pagination: {
         total,
         page,
@@ -228,13 +224,21 @@ export async function POST(request: NextRequest) {
 
     // Create user and law firm in a transaction
     const result = await prisma.$transaction(async (tx: any) => {
-      // Create user
+      // Create user (dane kontaktowe i adres należą do użytkownika)
       const user = await tx.user.create({
         data: {
           email,
           password: hashedPassword,
           role: "LAW_FIRM",
           status: "ACTIVE",
+          imie: imieKontakt,
+          nazwisko: nazwiskoKontakt,
+          numerTelefonu,
+          numerTelefonu2: numerTelefonu2 || null,
+          adres,
+          kodPocztowy,
+          miasto,
+          voivodeshipId,
         },
       })
 
@@ -261,14 +265,6 @@ export async function POST(request: NextRequest) {
           nip: cleanNip,
           regon: regon || null,
           krs: krs || null,
-          imieKontakt,
-          nazwiskoKontakt,
-          numerTelefonu,
-          numerTelefonu2: numerTelefonu2 || null,
-          adres,
-          kodPocztowy,
-          miasto,
-          voivodeshipId,
           opis: opis || "",
           typOferty,
           pakietSubskrypcji: (pakietSubskrypcji === "" || pakietSubskrypcji === "none" || pakietSubskrypcji === null) ? null : (pakietSubskrypcji || "PODSTAWOWY"),
@@ -284,16 +280,16 @@ export async function POST(request: NextRequest) {
               email: true,
               role: true,
               status: true,
+              ...USER_CONTACT_SELECT,
             },
           },
-          voivodeship: true,
         },
       })
 
       return { user, lawFirm }
     })
 
-    return NextResponse.json(result.lawFirm, { status: 201 })
+    return NextResponse.json(flattenLawFirmUser(result.lawFirm), { status: 201 })
   } catch (error) {
     console.error("Error creating law firm:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

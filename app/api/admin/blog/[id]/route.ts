@@ -71,6 +71,7 @@ export async function DELETE(
         lawFirm: {
           select: {
             nazwa: true,
+            nazwaFirmy: true,
           },
         },
       },

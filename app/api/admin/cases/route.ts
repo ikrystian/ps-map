@@ -87,6 +87,7 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   nazwa: true,
+                  nazwaFirmy: true,
                 },
               },
             },

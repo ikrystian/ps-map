@@ -114,18 +114,7 @@ export async function POST(request: NextRequest) {
 
         // Use transaction to create everything atomically
         await prisma.$transaction(async (tx: any) => {
-          // 1. Create user
-          const user = await tx.user.create({
-            data: {
-              email: userData.email,
-              name: userData.name || lawFirmData.nazwa,
-              password: hashedPassword,
-              role: "LAW_FIRM",
-              emailVerified: new Date(),
-            },
-          })
-
-          // 2. Get voivodeship for main address from pre-fetched map
+          // 1. Get voivodeship for main address from pre-fetched map
           let voivodeshipId = lawFirmData.voivodeship
             ? vMap.get(lawFirmData.voivodeship.toLowerCase())
             : defaultVoivodeshipId
@@ -133,6 +122,27 @@ export async function POST(request: NextRequest) {
           if (!voivodeshipId) {
             throw new Error(`Voivodeship "${lawFirmData.voivodeship || "default"}" not found. Please seed voivodeships first.`)
           }
+
+          // 2. Create user (dane kontaktowe i adres należą do użytkownika)
+          const user = await tx.user.create({
+            data: {
+              email: userData.email,
+              name: userData.name || lawFirmData.nazwa,
+              password: hashedPassword,
+              role: "LAW_FIRM",
+              emailVerified: new Date(),
+              imie: lawFirmData.imieKontakt || "Kontakt",
+              nazwisko: lawFirmData.nazwiskoKontakt || "Osoba",
+              numerTelefonu: lawFirmData.numerTelefonu || "+48 000 000 000",
+              numerTelefonu2: lawFirmData.numerTelefonu2,
+              adres: lawFirmData.adres || "Brak adresu",
+              kodPocztowy: lawFirmData.kodPocztowy || "00-000",
+              miasto: lawFirmData.miasto || "Warszawa",
+              voivodeshipId,
+              latitude: lawFirmData.latitude,
+              longitude: lawFirmData.longitude,
+            },
+          })
 
           // 3. Create law firm
           const lawFirm = await tx.lawFirm.create({
@@ -146,16 +156,6 @@ export async function POST(request: NextRequest) {
               nip: lawFirmData.nip || `TEMP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               regon: lawFirmData.regon,
               krs: lawFirmData.krs,
-              imieKontakt: lawFirmData.imieKontakt || "Kontakt",
-              nazwiskoKontakt: lawFirmData.nazwiskoKontakt || "Osoba",
-              numerTelefonu: lawFirmData.numerTelefonu || "+48 000 000 000",
-              numerTelefonu2: lawFirmData.numerTelefonu2,
-              adres: lawFirmData.adres || "Brak adresu",
-              kodPocztowy: lawFirmData.kodPocztowy || "00-000",
-              miasto: lawFirmData.miasto || "Warszawa",
-              voivodeshipId,
-              latitude: lawFirmData.latitude,
-              longitude: lawFirmData.longitude,
               opis: lawFirmData.opis,
               logo: lawFirmData.logo,
               zdjecieGlowne: lawFirmData.zdjecieGlowne,

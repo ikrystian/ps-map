@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
             nazwa: true,
             nazwaFirmy: true,
             logo: true,
-            miasto: true,
+            user: {
+              select: { miasto: true }
+            },
           }
         }
       },
@@ -38,7 +40,15 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ overrides })
+    // Spłaszcz miasto (przeniesione do modelu User)
+    const flattened = overrides.map((o) => ({
+      ...o,
+      lawFirm: o.lawFirm
+        ? { ...o.lawFirm, miasto: o.lawFirm.user?.miasto ?? "" }
+        : o.lawFirm,
+    }))
+
+    return NextResponse.json({ overrides: flattened })
   } catch (error) {
     console.error("Error fetching order overrides:", error)
     return NextResponse.json(

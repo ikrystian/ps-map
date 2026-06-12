@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
@@ -29,6 +30,7 @@ export async function GET(
             createdAt: true,
             updatedAt: true,
             lastLogin: true,
+            ...USER_CONTACT_SELECT,
           },
         },
         accountManager: {
@@ -41,7 +43,6 @@ export async function GET(
             avatar: true,
           },
         },
-        voivodeship: true,
         voivodeships: {
           include: {
             voivodeship: true,
@@ -187,7 +188,7 @@ export async function GET(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    return NextResponse.json(lawFirm)
+    return NextResponse.json(flattenLawFirmUser(lawFirm))
   } catch (error) {
     console.error("Error fetching law firm:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -274,17 +275,16 @@ export async function PUT(
     if (body.regon !== undefined) lawFirmUpdateData.regon = body.regon
     if (body.krs !== undefined) lawFirmUpdateData.krs = body.krs
 
-    // Contact info
-    if (body.imieKontakt !== undefined) lawFirmUpdateData.imieKontakt = body.imieKontakt
-    if (body.nazwiskoKontakt !== undefined) lawFirmUpdateData.nazwiskoKontakt = body.nazwiskoKontakt
-    if (body.numerTelefonu !== undefined) lawFirmUpdateData.numerTelefonu = body.numerTelefonu
-    if (body.numerTelefonu2 !== undefined) lawFirmUpdateData.numerTelefonu2 = body.numerTelefonu2
-
-    // Address
-    if (body.adres !== undefined) lawFirmUpdateData.adres = body.adres
-    if (body.kodPocztowy !== undefined) lawFirmUpdateData.kodPocztowy = body.kodPocztowy
-    if (body.miasto !== undefined) lawFirmUpdateData.miasto = body.miasto
-    if (body.voivodeshipId !== undefined) lawFirmUpdateData.voivodeshipId = body.voivodeshipId
+    // Contact info / address — przeniesione do modelu User
+    const userContactUpdateData: any = {}
+    if (body.imieKontakt !== undefined) userContactUpdateData.imie = body.imieKontakt
+    if (body.nazwiskoKontakt !== undefined) userContactUpdateData.nazwisko = body.nazwiskoKontakt
+    if (body.numerTelefonu !== undefined) userContactUpdateData.numerTelefonu = body.numerTelefonu
+    if (body.numerTelefonu2 !== undefined) userContactUpdateData.numerTelefonu2 = body.numerTelefonu2
+    if (body.adres !== undefined) userContactUpdateData.adres = body.adres
+    if (body.kodPocztowy !== undefined) userContactUpdateData.kodPocztowy = body.kodPocztowy
+    if (body.miasto !== undefined) userContactUpdateData.miasto = body.miasto
+    if (body.voivodeshipId !== undefined) userContactUpdateData.voivodeshipId = body.voivodeshipId
 
     // Profile
     if (body.opis !== undefined) lawFirmUpdateData.opis = body.opis
@@ -374,14 +374,14 @@ export async function PUT(
               email: true,
               role: true,
               status: true,
+              ...USER_CONTACT_SELECT,
             },
           },
-          voivodeship: true,
         },
       })
 
       // Update user if email or password is provided
-      const userUpdateData: any = {}
+      const userUpdateData: any = { ...userContactUpdateData }
 
       if (body.userEmail) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -417,16 +417,24 @@ export async function PUT(
       }
 
       if (Object.keys(userUpdateData).length > 0) {
-        await tx.user.update({
+        const updatedUser = await tx.user.update({
           where: { id: existingLawFirm.userId },
           data: userUpdateData,
+          select: {
+            id: true,
+            email: true,
+            role: true,
+            status: true,
+            ...USER_CONTACT_SELECT,
+          },
         })
+        return { ...updatedLawFirm, user: updatedUser }
       }
 
       return updatedLawFirm
     })
 
-    return NextResponse.json(result)
+    return NextResponse.json(flattenLawFirmUser(result))
   } catch (error) {
     console.error("Error updating law firm:", error)
     if (error instanceof Error && error.message.includes("already taken")) {

@@ -17,8 +17,12 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             nazwa: true,
-            numerTelefonu: true,
-            miasto: true
+            user: {
+              select: {
+                numerTelefonu: true,
+                miasto: true
+              }
+            }
           }
         },
         _count: {
@@ -28,7 +32,18 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     })
 
-    return NextResponse.json(accountManagers)
+    // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
+    const result = accountManagers.map((am) => ({
+      ...am,
+      lawFirms: am.lawFirms.map((lf) => ({
+        id: lf.id,
+        nazwa: lf.nazwa,
+        numerTelefonu: lf.user?.numerTelefonu ?? "",
+        miasto: lf.user?.miasto ?? "",
+      })),
+    }))
+
+    return NextResponse.json(result)
   } catch (error) {
     console.error('Error fetching account managers:', error)
     return NextResponse.json(
