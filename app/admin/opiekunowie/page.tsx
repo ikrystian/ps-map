@@ -39,7 +39,6 @@ interface AccountManager {
   lawFirms: {
     id: string
     nazwa: string
-    emailKontakt: string
     numerTelefonu: string
     miasto: string
   }[]
@@ -355,7 +354,6 @@ export default function AccountManagersPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Nazwa</TableHead>
-                      <TableHead>Email</TableHead>
                       <TableHead>Telefon</TableHead>
                       <TableHead>Miasto</TableHead>
                     </TableRow>
@@ -364,7 +362,7 @@ export default function AccountManagersPage() {
                     {viewingFirmsFor.lawFirms.map((firm) => (
                       <TableRow key={firm.id}>
                         <TableCell className="font-medium">{firm.nazwa}</TableCell>
-                        <TableCell>{firm.emailKontakt}</TableCell>
+
                         <TableCell>{firm.numerTelefonu}</TableCell>
                         <TableCell>{firm.miasto}</TableCell>
                       </TableRow>

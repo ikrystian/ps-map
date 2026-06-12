@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
         { nazwaSprawy: { contains: search } },
         { opisSprawy: { contains: search } },
         { imieNazwisko: { contains: search } },
-        { emailKontakt: { contains: search } },
       ]
     }
 
@@ -143,7 +142,6 @@ export async function POST(request: NextRequest) {
       !body.nazwaSprawy ||
       !body.opisSprawy ||
       !body.imieNazwisko ||
-      !body.emailKontakt ||
       !body.telefonKontakt ||
       !body.preferowanyKontakt
     ) {
@@ -201,7 +199,6 @@ export async function POST(request: NextRequest) {
         budzetDo: body.budzetDo || null,
         doNegocjacji: body.doNegocjacji || false,
         imieNazwisko: body.imieNazwisko,
-        emailKontakt: body.emailKontakt,
         telefonKontakt: body.telefonKontakt,
         preferowanyKontakt: body.preferowanyKontakt,
         voivodeshipId: body.voivodeshipId,

@@ -48,7 +48,6 @@ const createLawFirmSchema = z.object({
   nazwiskoKontakt: z.string().min(1, "Contact last name is required"),
   numerTelefonu: z.string().min(1, "Phone number is required"),
   numerTelefonu2: z.string().optional(),
-  emailKontakt: z.string().email("Invalid contact email"),
 
   // Address
   adres: z.string().min(1, "Address is required"),
@@ -141,7 +140,6 @@ export default function NewLawFirmPage() {
       nazwiskoKontakt: "",
       numerTelefonu: "",
       numerTelefonu2: "",
-      emailKontakt: "",
       adres: "",
       kodPocztowy: "",
       miasto: "",
@@ -530,19 +528,7 @@ export default function NewLawFirmPage() {
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="emailKontakt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email kontaktowy</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="kontakt@ekspert.pl" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </CardContent>
           </Card>
 
