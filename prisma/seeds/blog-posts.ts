@@ -73,7 +73,7 @@ export async function seedBlogPosts(prisma: PrismaClient) {
         },
       })
 
-      console.log(`✓ Blog Post: "${postData.tytul}" for ${randomlawFirm.nazwaFirmy}`)
+      console.log(`✓ Blog Post: "${postData.tytul}" for ${randomLawFirm.nazwa}`)
     } catch (error) {
       console.error(`Error seeding blog post:`, error)
     }

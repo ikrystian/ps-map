@@ -42,75 +42,15 @@ import { cn } from "@/lib/utils"
 
 import { z } from "zod"
 
-const specializationsData = {
-  "Prawnicy": [
-    "Adwokat",
-    "Radca prawny",
-    "Doradca podatkowy",
-    "Rzecznik patentowy",
-    "Doradca restrukturyzacyjny",
-    "Mediator",
-    "Syndyk"
-  ],
-  "Eksperci": {
-    "Finanse": [
-      "Doradca finansowy",
-      "Księgowy",
-      "Biegły rewident"
-    ],
-    "Budownictwo i nieruchomości": [
-      "Rzeczoznawca majątkowy",
-      "Geodeta",
-      "Inspektor nadzoru budowlanego",
-      "Kierownik budowy",
-      "Kosztorysant budowlany",
-      "Audytor energetyczny"
-    ],
-    "Motoryzacja i szkody": [
-      "Rzeczoznawca samochodowy",
-      "Ekspert ds. odszkodowań"
-    ],
-    "Biznes i firmy": [
-      "Specjalista BHP",
-      "Specjalista PPOŻ",
-      "Specjalista RODO",
-      "Specjalista Compliance",
-      "Specjalista ds. zamówień publicznych",
-      "Doradca biznesowy"
-    ],
-    "Medycyna i opinie": [
-      "Psycholog",
-      "Psycholog sądowy",
-      "Lekarz biegły"
-    ]
-  },
-  "Biegli i rzeczoznawcy": [
-    "Biegły sądowy",
-    "Rzeczoznawca majątkowy",
-    "Rzeczoznawca samochodowy",
-    "Rzeczoznawca budowlany",
-    "Biegły księgowy",
-    "Biegły z zakresu informatyki",
-    "Biegły medyczny"
-  ]
+type ExpertiseCategoryItem = {
+  id: string
+  nazwa: string
+  parentId: string | null
+  children?: ExpertiseCategoryItem[]
 }
 
 const step1Schema = z.object({
-  category: z.string().min(1, "Wybierz kategorię"),
-  subcategory: z.string().optional(),
-  specialization: z.string().min(1, "Wybierz specjalizację"),
-}).superRefine((data, ctx) => {
-  const specData = specializationsData as any
-  const categoryContent = specData[data.category]
-  if (categoryContent && !Array.isArray(categoryContent)) {
-    if (!data.subcategory) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Wybierz podkategorię",
-        path: ["subcategory"],
-      })
-    }
-  }
+  expertiseCategoryId: z.string().min(1, "Wybierz specjalizację"),
 })
 
 const step6Schema = z.object({
@@ -175,17 +115,18 @@ export default function LawFirmRegistrationPage() {
 
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [expertiseCategories, setExpertiseCategories] = useState<ExpertiseCategoryItem[]>([])
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
   const [locationSearch, setLocationSearch] = useState("")
   const [isLoadingCities, setIsLoadingCities] = useState(false)
+  const [selectedCatId, setSelectedCatId] = useState("")
+  const [selectedSubcatId, setSelectedSubcatId] = useState("")
   const [formData, setFormData] = useState({
     // Krok 1: Typ działalności
     typ: "INNY",
     typInny: "",
-    category: "",
-    subcategory: "",
-    specialization: "",
+    expertiseCategoryId: "",
 
     // Krok 2: Dane firmy
     nazwa: "",
@@ -302,9 +243,10 @@ export default function LawFirmRegistrationPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [voivRes, catRes] = await Promise.all([
+        const [voivRes, catRes, expRes] = await Promise.all([
           fetch("/api/voivodeships"),
           fetch("/api/categories"),
+          fetch("/api/expertise-categories"),
         ])
 
         if (voivRes.ok) {
@@ -315,6 +257,11 @@ export default function LawFirmRegistrationPage() {
         if (catRes.ok) {
           const catData = await catRes.json()
           setCategories(catData)
+        }
+
+        if (expRes.ok) {
+          const expData = await expRes.json()
+          setExpertiseCategories(expData)
         }
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -455,6 +402,7 @@ export default function LawFirmRegistrationPage() {
     switch (currentStep) {
       case 1:
         schema = step1Schema
+        dataToValidate = { expertiseCategoryId: formData.expertiseCategoryId }
         break
       case 6:
         schema = step6Schema
@@ -553,6 +501,7 @@ export default function LawFirmRegistrationPage() {
           password: formData.password,
           typ: formData.typ,
           typInny: formData.typInny || null,
+          expertiseCategoryId: formData.expertiseCategoryId || null,
           nazwa: formData.nazwa,
           nazwaFirmy: formData.nazwaFirmy,
           nip: formData.nip,
@@ -598,146 +547,155 @@ export default function LawFirmRegistrationPage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1: {
-        const specData = specializationsData as any
-        const categoriesList = Object.keys(specData)
+        const selectedCat = expertiseCategories.find(c => c.id === selectedCatId)
+        const hasSubcategories = selectedCat?.children && selectedCat.children.length > 0 &&
+          selectedCat.children.some(ch => ch.children && ch.children.length > 0)
 
-        const selectedCategoryContent = formData.category ? specData[formData.category] : null
-        const hasSubcategories = selectedCategoryContent && !Array.isArray(selectedCategoryContent)
+        const subcategoriesList = selectedCat?.children || []
+        const selectedSubcat = subcategoriesList.find(s => s.id === selectedSubcatId)
 
-        const subcategoriesList = hasSubcategories ? Object.keys(selectedCategoryContent) : []
+        let specializationsList: ExpertiseCategoryItem[] = []
+        if (selectedCat) {
+          if (!hasSubcategories) {
+            specializationsList = subcategoriesList
+          } else if (selectedSubcat) {
+            specializationsList = selectedSubcat.children || []
+          }
+        }
 
-        let specializationsList: string[] = []
-        if (formData.category) {
-          if (Array.isArray(selectedCategoryContent)) {
-            specializationsList = selectedCategoryContent
-          } else if (formData.subcategory && selectedCategoryContent[formData.subcategory]) {
-            specializationsList = selectedCategoryContent[formData.subcategory]
+        const clearSelection = () => {
+          setFormData(prev => ({ ...prev, expertiseCategoryId: "", typInny: "" }))
+          if (fieldErrors.expertiseCategoryId) {
+            const newErrors = { ...fieldErrors }
+            delete newErrors.expertiseCategoryId
+            setFieldErrors(newErrors)
           }
         }
 
         return (
           <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="category" className={cn(fieldErrors.category && "text-destructive")}>Kategoria *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(val) => {
-                  setFormData(prev => ({
-                    ...prev,
-                    category: val,
-                    subcategory: "",
-                    specialization: "",
-                    typ: "INNY",
-                    typInny: val
-                  }))
-                  if (fieldErrors.category || fieldErrors.subcategory || fieldErrors.specialization) {
-                    setFieldErrors(prev => {
-                      const newErrors = { ...prev }
-                      delete newErrors.category
-                      delete newErrors.subcategory
-                      delete newErrors.specialization
-                      return newErrors
-                    })
-                  }
-                }}
-              >
-                <SelectTrigger className={cn("h-11", fieldErrors.category && "border-destructive")}>
-                  <SelectValue placeholder="Wybierz kategorię..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoriesList.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldErrors.category && <p className="text-xs text-destructive">{fieldErrors.category}</p>}
-            </div>
+            {expertiseCategories.length === 0 ? (
+              <div className="bg-muted p-6 rounded-xl text-center text-muted-foreground">
+                <p className="text-sm">Trwa ładowanie kategorii...</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="category" className={cn(fieldErrors.expertiseCategoryId && "text-destructive")}>Kategoria *</Label>
+                  <Select
+                    value={selectedCatId}
+                    onValueChange={(val) => {
+                      setSelectedCatId(val)
+                      setSelectedSubcatId("")
+                      clearSelection()
+                    }}
+                  >
+                    <SelectTrigger className={cn("h-11", fieldErrors.expertiseCategoryId && !selectedCatId && "border-destructive")}>
+                      <SelectValue placeholder="Wybierz kategorię..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {expertiseCategories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.nazwa}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {hasSubcategories && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="space-y-2"
-              >
-                <Label htmlFor="subcategory" className={cn(fieldErrors.subcategory && "text-destructive")}>Podkategoria *</Label>
-                <Select
-                  value={formData.subcategory}
-                  onValueChange={(val) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      subcategory: val,
-                      specialization: "",
-                      typInny: `${prev.category} > ${val}`
-                    }))
-                    if (fieldErrors.subcategory || fieldErrors.specialization) {
-                      setFieldErrors(prev => {
-                        const newErrors = { ...prev }
-                        delete newErrors.subcategory
-                        delete newErrors.specialization
-                        return newErrors
-                      })
-                    }
-                  }}
-                >
-                  <SelectTrigger className={cn("h-11", fieldErrors.subcategory && "border-destructive")}>
-                    <SelectValue placeholder="Wybierz podkategorię..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subcategoriesList.map((subcat) => (
-                      <SelectItem key={subcat} value={subcat}>
-                        {subcat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {fieldErrors.subcategory && <p className="text-xs text-destructive">{fieldErrors.subcategory}</p>}
-              </motion.div>
-            )}
+                {selectedCat && hasSubcategories && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="space-y-2"
+                  >
+                    <Label htmlFor="subcategory">Podkategoria *</Label>
+                    <Select
+                      value={selectedSubcatId}
+                      onValueChange={(val) => {
+                        setSelectedSubcatId(val)
+                        clearSelection()
+                      }}
+                    >
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Wybierz podkategorię..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subcategoriesList.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {sub.nazwa}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </motion.div>
+                )}
 
-            {formData.category && (!hasSubcategories || formData.subcategory) && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="space-y-2"
-              >
-                <Label htmlFor="specialization" className={cn(fieldErrors.specialization && "text-destructive")}>Specjalizacja *</Label>
-                <Select
-                  value={formData.specialization}
-                  onValueChange={(val) => {
-                    setFormData(prev => {
-                      const typInnyVal = prev.subcategory
-                        ? `${prev.category} > ${prev.subcategory} > ${val}`
-                        : `${prev.category} > ${val}`
-                      return {
-                        ...prev,
-                        specialization: val,
-                        typInny: typInnyVal
-                      }
-                    })
-                    if (fieldErrors.specialization) {
-                      setFieldErrors(prev => {
-                        const newErrors = { ...prev }
-                        delete newErrors.specialization
-                        return newErrors
-                      })
-                    }
-                  }}
-                >
-                  <SelectTrigger className={cn("h-11", fieldErrors.specialization && "border-destructive")}>
-                    <SelectValue placeholder="Wybierz specjalizację..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {specializationsList.map((spec) => (
-                      <SelectItem key={spec} value={spec}>
-                        {spec}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {fieldErrors.specialization && <p className="text-xs text-destructive">{fieldErrors.specialization}</p>}
-              </motion.div>
+                {selectedCat && (!hasSubcategories || selectedSubcatId) && specializationsList.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="space-y-2"
+                  >
+                    <Label className={cn(fieldErrors.expertiseCategoryId && "text-destructive")}>Specjalizacja *</Label>
+                    <div className={cn("grid grid-cols-1 gap-2", fieldErrors.expertiseCategoryId && "")}>
+                      {specializationsList.map((spec) => {
+                        const isSelected = formData.expertiseCategoryId === spec.id
+                        return (
+                          <div
+                            key={spec.id}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all",
+                              isSelected
+                                ? "bg-primary/5 border-primary shadow-sm"
+                                : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
+                              fieldErrors.expertiseCategoryId && !isSelected && "border-destructive/30"
+                            )}
+                            onClick={() => {
+                              const buildPath = () => {
+                                const parts = [selectedCat.nazwa]
+                                if (selectedSubcat) parts.push(selectedSubcat.nazwa)
+                                parts.push(spec.nazwa)
+                                return parts.join(" > ")
+                              }
+                              setFormData(prev => ({
+                                ...prev,
+                                expertiseCategoryId: spec.id,
+                                typInny: buildPath(),
+                                typ: "INNY",
+                              }))
+                              if (fieldErrors.expertiseCategoryId) {
+                                const newErrors = { ...fieldErrors }
+                                delete newErrors.expertiseCategoryId
+                                setFieldErrors(newErrors)
+                              }
+                            }}
+                          >
+                            <div className={cn(
+                              "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                              isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                            )}>
+                              {isSelected && <Check className="w-3 h-3" />}
+                            </div>
+                            <span className={cn("text-sm", isSelected ? "text-primary font-medium" : "text-foreground")}>
+                              {spec.nazwa}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    {fieldErrors.expertiseCategoryId && (
+                      <p className="text-xs text-destructive">{fieldErrors.expertiseCategoryId}</p>
+                    )}
+                  </motion.div>
+                )}
+
+                {selectedCat && !hasSubcategories && specializationsList.length === 0 && (
+                  <div className="bg-muted/50 p-4 rounded-xl text-sm text-muted-foreground">
+                    Ta kategoria nie ma jeszcze specjalizacji.
+                  </div>
+                )}
+              </>
             )}
 
             <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">

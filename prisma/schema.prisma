@@ -240,6 +240,10 @@ model LawFirm {
   mainCategoryId        String?  // Główna kategoria wybrana podczas rejestracji
   mainCategory          Category? @relation("MainCategory", fields: [mainCategoryId], references: [id])
 
+  // Typ działalności z formularza rejestracji (krok 1)
+  expertiseCategoryId   String?
+  expertiseCategory     ExpertiseCategory? @relation(fields: [expertiseCategoryId], references: [id])
+
   // Obszar działania
   callaPolska           Boolean  @default(false)
   onlineOnly            Boolean  @default(false)
@@ -307,6 +311,7 @@ model LawFirm {
   @@index([aktywna])
   @@index([accountManagerId])
   @@index([mainCategoryId])
+  @@index([expertiseCategoryId])
 }
 
 enum LawFirmType {
@@ -2192,6 +2197,27 @@ model ScheduledJobRun {
 
   @@index([jobName, startedAt])
   @@index([status])
+}
+
+// ============================================================================
+// DRZEWO KATEGORII REJESTRACJI EKSPERTÓW (KROK 1)
+// ============================================================================
+
+model ExpertiseCategory {
+  id        String   @id @default(uuid())
+  nazwa     String
+  parentId  String?
+  parent    ExpertiseCategory?  @relation("ExpertiseCategoryTree", fields: [parentId], references: [id])
+  children  ExpertiseCategory[] @relation("ExpertiseCategoryTree")
+  kolejnosc Int      @default(0)
+  aktywna   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lawFirms  LawFirm[]
+
+  @@index([parentId])
+  @@index([aktywna])
 }
 
 

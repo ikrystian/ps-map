@@ -57,6 +57,7 @@ const navigation = [
   { name: "Opinie", href: "/admin/reviews", icon: Star },
   { name: "Opinie główne", href: "/admin/testimonials", icon: MessageSquare },
   { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
+  { name: "Typy działalności", href: "/admin/expertise-categories", icon: Briefcase },
   { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },
   { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
   { name: "Moduły", href: "/admin/modules", icon: FileCode },

@@ -515,6 +515,7 @@ export async function POST(request: NextRequest) {
           slug: generateSlug(body.nazwa, body.nip),
           typ: body.typ,
           typInny: body.typInny || null,
+          expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
           nazwaFirmy: body.nazwaFirmy,
           nip: body.nip,

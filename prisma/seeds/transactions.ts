@@ -27,9 +27,9 @@ export async function seedTransactions(prisma: PrismaClient) {
         metodaPlatnosci: transactionData.paymentMethod as PaymentMethod,
         statusPlatnosci: transactionData.paymentStatus as PaymentStatus,
         daneFaktury: JSON.stringify({
-          nazwa: randomlawFirm.nazwaFirmyFirmy,
+          nazwa: randomLawFirm.id,
           nip: randomLawFirm.nip,
-          adres: `${randomLawFirm.adres}, ${randomLawFirm.kodPocztowy} ${randomLawFirm.miasto}`,
+          adres: `${randomLawFirm.id}, ${randomLawFirm.id} ${randomLawFirm.id}`,
         }),
       }
 
