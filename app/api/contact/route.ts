@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       let emailData
       if (law.Firm.user?.email) {
         emailData = generateContactFormEmail(
-          lawFirm.nazwa,
+          lawFirm.nazwaFirmy,
           law.Firm.user?.email,
           imieNazwisko,
           email,

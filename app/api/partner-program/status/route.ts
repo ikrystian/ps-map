@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       return Response.json({
         enrolled: false,
         hasWebsite: !!lawFirm.stronaWww,
-        lawFirmName: lawFirm.nazwa,
+        lawFirmName: lawFirm.nazwaFirmy,
         currentPoints: lawFirm.punktySaldo
       })
     }
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
         verificationStatus: h.verificationStatus,
         createdAt: h.createdAt
       })),
-      lawFirmName: lawFirm.nazwa,
+      lawFirmName: lawFirm.nazwaFirmy,
       websiteUrl: lawFirm.stronaWww,
       hasWebsite: !!lawFirm.stronaWww
     })

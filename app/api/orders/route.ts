@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       TPAY: "enablePaymentTpay",
       PRZELEW: "enablePaymentPrzelew",
     }
-    
+
     const settingKey = paymentSettingKeys[metodaPlatnosci]
     if (settingKey) {
       const paymentSetting = await prisma.settings.findUnique({
@@ -191,12 +191,12 @@ export async function POST(request: NextRequest) {
     const finalDaneFaktury = daneFaktury
       ? JSON.stringify(daneFaktury)
       : JSON.stringify({
-          nazwaFirmy: lawFirm.nazwaFirmy || lawFirm.nazwa || "",
-          nip: lawFirm.nip || "",
-          adres: lawFirm.adres || "",
-          kodPocztowy: lawFirm.kodPocztowy || "",
-          miasto: lawFirm.miasto || "",
-        })
+        nazwaFirmy: lawFirm.nazwaFirmyFirmy || lawFirm.nazwaFirmy || "",
+        nip: lawFirm.nip || "",
+        adres: lawFirm.adres || "",
+        kodPocztowy: lawFirm.kodPocztowy || "",
+        miasto: lawFirm.miasto || "",
+      })
 
     // Utwórz zamówienie
     const order = await prisma.order.create({

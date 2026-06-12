@@ -134,7 +134,7 @@ export async function seedCases(prisma: PrismaClient) {
             zaakceptowanaData: offerData.status === OfferStatus.ZAAKCEPTOWANA ? new Date() : null,
           },
         })
-        console.log(`  ✓ Offer: ${offerData.kwotaBrutto} PLN from ${lawFirm.nazwa}`)
+        console.log(`  ✓ Offer: ${offerData.kwotaBrutto} PLN from ${lawFirm.nazwaFirmy}`)
       }
       console.log('---')
     } catch (error) {

@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
     let emailData;
     if (user?.email) {
       emailData = generatePromotionActivatedEmail(
-        lawFirm.nazwa,
+        lawFirm.nazwaFirmy,
         typPromocji,
         promotionLabel,
         start,

@@ -581,8 +581,8 @@ export default function LawFirmReviewsPage() {
             size="sm"
             onClick={() => { setSelectedRating("all"); setCurrentPage(1); }}
             className={`rounded-lg text-xs font-semibold px-4 transition-all ${selectedRating === "all"
-                ? "bg-primary hover:bg-primary-hover text-white"
-                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+              ? "bg-primary hover:bg-primary-hover text-white"
+              : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
               }`}
           >
             Wszystkie opinie
@@ -594,8 +594,8 @@ export default function LawFirmReviewsPage() {
               size="sm"
               onClick={() => { setSelectedRating(rating.toString()); setCurrentPage(1); }}
               className={`rounded-lg text-xs font-semibold flex items-center gap-1.5 px-3.5 transition-all ${selectedRating === rating.toString()
-                  ? "bg-primary hover:bg-primary-hover text-white"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                ? "bg-primary hover:bg-primary-hover text-white"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
                 }`}
             >
               <span>{rating}</span>
@@ -868,10 +868,10 @@ export default function LawFirmReviewsPage() {
                                 {/* Logo ekspercie */}
                                 <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
                                   {lawFirm.logo ? (
-                                    <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
+                                    <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwaFirmy} />
                                   ) : null}
                                   <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
-                                    {lawFirm.nazwa.substring(0, 2).toUpperCase()}
+                                    {lawFirm.nazwaFirmy.substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
 
@@ -879,7 +879,7 @@ export default function LawFirmReviewsPage() {
                                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                                     <div className="flex items-center gap-1.5">
                                       <MessageSquare className="h-3.5 w-3.5 text-primary" />
-                                      <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwa})</p>
+                                      <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwaFirmy})</p>
                                     </div>
                                     {review.dataOdpowiedzi && (
                                       <span className="text-xs font-semibold text-zinc-400">

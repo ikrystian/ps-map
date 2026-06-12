@@ -45,7 +45,7 @@ export async function seedTestData(prisma: PrismaClient) {
             voivodeshipId: randomVoivodeship.id,
           },
         });
-        console.log(`  ✓ Law Firm: ${lawFirm.nazwa}`);
+        console.log(`  ✓ Law Firm: ${lawFirm.nazwaFirmy}`);
 
         // 5. Dodaj losowe województwa działania
         const numberOfVoivodeships = faker.number.int({ min: 1, max: 5 });

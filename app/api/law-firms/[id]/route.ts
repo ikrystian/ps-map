@@ -205,7 +205,7 @@ export async function PUT(
 
     // Dane podstawowe
     // Note: slug is NOT directly updateable - it's only regenerated when nazwa changes
-    if (body.nazwa && body.nazwa !== existingLawFirm.nazwa) {
+    if (body.nazwa && body.nazwa !== existinglawFirm.nazwaFirmy) {
       updateData.nazwa = body.nazwa
       // Regenerate slug if nazwa changes
       const polishChars: Record<string, string> = {

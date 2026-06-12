@@ -47,12 +47,12 @@ export async function GET(request: NextRequest) {
 
     // Obsługa remisów po ID
     const tieBreakCount = await prisma.lawFirm.count({
-        where: {
-            user: { deletedAt: null },
-            zweryfikowana: true,
-            punktySaldo: lawFirm.punktySaldo,
-            id: { lt: lawFirm.id }
-        }
+      where: {
+        user: { deletedAt: null },
+        zweryfikowana: true,
+        punktySaldo: lawFirm.punktySaldo,
+        id: { lt: lawFirm.id }
+      }
     })
 
     const overallPosition = higherRankedCount + tieBreakCount + 1
@@ -256,7 +256,7 @@ export async function GET(request: NextRequest) {
     const response = {
       lawFirm: {
         id: lawFirm.id,
-        nazwa: lawFirm.nazwa,
+        nazwa: lawFirm.nazwaFirmy,
         pozycjaRanking: overallPosition,
         wyswietleniaProfilu: lawFirm.wyswietleniaProfilu,
         zlozoneOferty: totalOffers,

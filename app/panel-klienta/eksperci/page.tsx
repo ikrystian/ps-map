@@ -249,7 +249,7 @@ export default function ClientFavoritesPage() {
                           {lawFirm.logo ? (
                             <Image
                               src={lawFirm.logo}
-                              alt={lawFirm.nazwa}
+                              alt={lawFirm.nazwaFirmy}
                               fill
                               className="object-contain p-2"
                             />
@@ -266,7 +266,7 @@ export default function ClientFavoritesPage() {
                                 href={`/ekspert/${lawFirm.slug}`}
                                 className="hover:text-primary transition-colors"
                               >
-                                {lawFirm.nazwa}
+                                {lawFirm.nazwaFirmy}
                               </Link>
                             </Heading>
                             {lawFirm.zweryfikowana && (
@@ -278,7 +278,7 @@ export default function ClientFavoritesPage() {
                           </div>
 
                           <p className="text-xs text-zinc-400 font-light">
-                            {lawFirm.nazwaFirmy}
+                            {lawFirm.nazwaFirmyFirmy}
                           </p>
 
                           {/* Rating */}
@@ -336,7 +336,7 @@ export default function ClientFavoritesPage() {
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-lg font-bold text-white">Usunąć z ulubionych?</AlertDialogTitle>
                               <AlertDialogDescription className="text-zinc-400 text-xs font-light leading-relaxed">
-                                Czy na pewno chcesz usunąć eksperta <strong className="text-white font-semibold">{lawFirm.nazwa}</strong> z listy ulubionych? Będziesz mógł dodać go ponownie w dowolnym momencie.
+                                Czy na pewno chcesz usunąć eksperta <strong className="text-white font-semibold">{lawFirm.nazwaFirmy}</strong> z listy ulubionych? Będziesz mógł dodać go ponownie w dowolnym momencie.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter className="mt-4 gap-2">

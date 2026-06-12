@@ -502,7 +502,7 @@ export function EnhancedChatArea({
   const themeColor = isClient ? "#d7b56d" : "#0da192"
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
-    ? conversation.lawFirmUser.lawFirm.nazwa
+    ? conversation.lawFirmUser.lawFirm.nazwaFirmy
     : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
   const otherUserImage = isClient
     ? conversation.lawFirmUser.lawFirm.logo

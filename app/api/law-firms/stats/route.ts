@@ -223,7 +223,7 @@ export async function GET(request: NextRequest) {
       })
       calculatedRankingPosition = higherRankedCount + 1
     } else {
-       const higherRankedCount = await prisma.lawFirm.count({
+      const higherRankedCount = await prisma.lawFirm.count({
         where: {
           ...baseWhere,
           OR: [
@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
     return Response.json({
       lawFirm: {
         id: lawFirm.id,
-        nazwa: lawFirm.nazwa,
+        nazwa: lawFirm.nazwaFirmy,
         wyswietleniaProfilu: lawFirm.wyswietleniaProfilu,
         zlozoneOferty: lawFirm.zlozoneOferty,
         wygraneOferty: lawFirm.wygraneOferty,

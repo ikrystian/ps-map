@@ -277,14 +277,14 @@ export default function ClientOffersPage() {
                       <div className="relative h-6 w-6 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
                         <Image
                           src={offer.lawFirm.logo}
-                          alt={offer.lawFirm.nazwa}
+                          alt={offer.lawFirm.nazwaFirmy}
                           fill
                           className="object-contain p-0.5"
                         />
                       </div>
                     )}
                     <p className="font-semibold flex items-center gap-2 text-white">
-                      {offer.lawFirm.nazwa}
+                      {offer.lawFirm.nazwaFirmy}
                     </p>
                   </div>
                   <p className="text-sm text-zinc-400 flex items-center gap-2 ml-8">
@@ -440,7 +440,7 @@ export default function ClientOffersPage() {
           <DialogHeader>
             <DialogTitle className="text-xl text-white font-playfair">Szczegóły oferty</DialogTitle>
             <DialogDescription className="text-zinc-400">
-              Pełne informacje o ofercie od {selectedOffer?.lawFirm.nazwa}
+              Pełne informacje o ofercie od {selectedOffer?.lawFirm.nazwaFirmy}
             </DialogDescription>
           </DialogHeader>
 
@@ -455,13 +455,13 @@ export default function ClientOffersPage() {
                       <div className="relative h-8 w-8 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
                         <Image
                           src={selectedOffer.lawFirm.logo}
-                          alt={selectedOffer.lawFirm.nazwa}
+                          alt={selectedOffer.lawFirm.nazwaFirmy}
                           fill
                           className="object-contain p-0.5"
                         />
                       </div>
                     )}
-                    <p className="font-semibold text-lg text-white">{selectedOffer.lawFirm.nazwa}</p>
+                    <p className="font-semibold text-lg text-white">{selectedOffer.lawFirm.nazwaFirmy}</p>
                   </div>
                   <p className="text-sm text-zinc-400 ml-10">
                     {selectedOffer.lawFirm.miasto}, {selectedOffer.lawFirm.voivodeship.nazwa}
@@ -580,7 +580,7 @@ export default function ClientOffersPage() {
 
           {selectedOffer && (
             <div className="p-4 border border-border/30 rounded-lg bg-zinc-950/20">
-              <p className="font-semibold text-white">{selectedOffer.lawFirm.nazwa}</p>
+              <p className="font-semibold text-white">{selectedOffer.lawFirm.nazwaFirmy}</p>
               <p className="text-2xl font-bold text-primary mt-2">
                 {formatCurrency(selectedOffer.kwotaBrutto)}
               </p>

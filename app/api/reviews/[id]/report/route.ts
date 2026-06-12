@@ -90,7 +90,7 @@ export async function POST(
           userId: admin.id,
           typ: "SYSTEM",
           tytul: "Zgłoszenie opinii",
-          tresc: `Użytkownik ${userEmail} zgłosił opinię o tytule "${review.tytulOpinii}" dla ekspertów "${review.lawFirm.nazwa}". Powód: ${readableReason}.${description ? ` Opis: ${description}` : ""}`,
+          tresc: `Użytkownik ${userEmail} zgłosił opinię o tytule "${review.tytulOpinii}" dla ekspertów "${review.lawFirm.nazwaFirmy}". Powód: ${readableReason}.${description ? ` Opis: ${description}` : ""}`,
           linkUrl: `/admin/reviews?search=${encodeURIComponent(review.tytulOpinii)}`,
           force: true,
         })

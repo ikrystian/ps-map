@@ -277,7 +277,7 @@ export async function POST(
           to: offer.lawFirm.user.email,
           templateType: EmailType.AKCEPTACJA_OFERTY,
           variables: {
-            "{ekspert}": offer.lawFirm.nazwa,
+            "{ekspert}": offer.lawFirm.nazwaFirmy,
             "{klient}": `${client.imie} ${client.nazwisko}`,
             "{nazwaSprawi}": offer.case.nazwaSprawy,
             "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
@@ -304,14 +304,14 @@ export async function POST(
         // Przygotuj zmienne jako JSON string do zapisania w bazie danych
         const variablesObj = {
           "{klient}": client.imie,
-          "{ekspert}": offer.lawFirm.nazwa,
+          "{ekspert}": offer.lawFirm.nazwaFirmy,
           "{linkDoOceny}": linkDoOceny,
         }
 
         await prisma.scheduledEmail.create({
           data: {
             to: clientEmail,
-            subject: `Jak oceniasz współpracę z ekspertem ${offer.lawFirm.nazwa}?`,
+            subject: `Jak oceniasz współpracę z ekspertem ${offer.lawFirm.nazwaFirmy}?`,
             templateType: EmailType.PROSBA_O_OCENE,
             variables: JSON.stringify(variablesObj),
             scheduledAt,

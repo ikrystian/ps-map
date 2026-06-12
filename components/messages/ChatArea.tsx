@@ -189,7 +189,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
   const isClient = session?.user?.role === "CLIENT"
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = isClient
-    ? conversation.lawFirmUser.lawFirm.nazwa
+    ? conversation.lawFirmUser.lawFirm.nazwaFirmy
     : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
   const otherUserImage = isClient
     ? conversation.lawFirmUser.lawFirm.logo

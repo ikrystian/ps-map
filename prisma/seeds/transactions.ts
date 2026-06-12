@@ -27,7 +27,7 @@ export async function seedTransactions(prisma: PrismaClient) {
         metodaPlatnosci: transactionData.paymentMethod as PaymentMethod,
         statusPlatnosci: transactionData.paymentStatus as PaymentStatus,
         daneFaktury: JSON.stringify({
-          nazwa: randomLawFirm.nazwaFirmy,
+          nazwa: randomlawFirm.nazwaFirmyFirmy,
           nip: randomLawFirm.nip,
           adres: `${randomLawFirm.adres}, ${randomLawFirm.kodPocztowy} ${randomLawFirm.miasto}`,
         }),
@@ -52,7 +52,7 @@ export async function seedTransactions(prisma: PrismaClient) {
         data: orderData,
       })
 
-      console.log(`✓ Transaction: ${orderData.orderType} for ${randomLawFirm.nazwa} - ${orderData.kwota} PLN`)
+      console.log(`✓ Transaction: ${orderData.orderType} for ${randomlawFirm.nazwaFirmy} - ${orderData.kwota} PLN`)
     } catch (error) {
       console.error(`Error seeding transaction:`, error)
     }

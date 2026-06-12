@@ -439,7 +439,7 @@ export async function renewExpiredPromotions() {
         // Send email notification
         if (user?.email) {
           const emailData = generatePromotionRenewalFailedEmail(
-            promotion.lawFirm.nazwa,
+            promotion.lawFirm.nazwaFirmy,
             promotionLabel,
             promotion.kosztPunktow,
             promotion.lawFirm.punktySaldo
@@ -533,7 +533,7 @@ export async function renewExpiredPromotions() {
       // Send email notification
       if (user?.email) {
         const emailData = generatePromotionRenewedEmail(
-          promotion.lawFirm.nazwa,
+          promotion.lawFirm.nazwaFirmy,
           promotionLabel,
           newEnd,
           promotion.kosztPunktow,

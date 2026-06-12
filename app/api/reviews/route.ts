@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
           userId: admin.id,
           typ: "SYSTEM",
           tytul: "Nowa opinia o ekspercie",
-          tresc: `Użytkownik ${userEmail} dodał opinię o tytule "${review.tytulOpinii}" dla ekspertów "${lawFirm.nazwa}".`,
+          tresc: `Użytkownik ${userEmail} dodał opinię o tytule "${review.tytulOpinii}" dla ekspertów "${lawFirm.nazwaFirmy}".`,
           linkUrl: `/admin/reviews?search=${encodeURIComponent(review.tytulOpinii)}`,
           force: true,
         })

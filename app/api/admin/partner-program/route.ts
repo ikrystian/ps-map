@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       partnerPrograms: partnerPrograms.map((p: any) => ({
         id: p.id,
         lawFirmId: p.lawFirmId,
-        lawFirmName: p.lawFirm.nazwa,
+        lawFirmName: p.lawFirm.nazwaFirmy,
         lawFirmEmail: p.lawFirm.user.email,
         websiteUrl: p.lawFirm.stronaWww,
         currentPoints: p.lawFirm.punktySaldo,

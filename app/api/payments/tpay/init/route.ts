@@ -70,14 +70,14 @@ export async function POST(request: NextRequest) {
     const urlStatus = `${baseUrl}/api/payments/tpay/notify`
 
     // Check if Tpay credentials are placeholders or missing (mock simulation mode)
-    const isMockMode = !process.env.TPAY_CLIENT_ID || 
-                       process.env.TPAY_CLIENT_ID === "your-tpay-client-id" ||
-                       !process.env.TPAY_CLIENT_SECRET ||
-                       process.env.TPAY_CLIENT_SECRET === "your-tpay-client-secret"
+    const isMockMode = !process.env.TPAY_CLIENT_ID ||
+      process.env.TPAY_CLIENT_ID === "your-tpay-client-id" ||
+      !process.env.TPAY_CLIENT_SECRET ||
+      process.env.TPAY_CLIENT_SECRET === "your-tpay-client-secret"
 
     if (isMockMode) {
       console.warn("Tpay placeholder credentials detected. Simulating payment success.")
-      
+
       // Update order status to paid (simulate payment webhook immediately for local testing)
       await prisma.$transaction(async (tx: any) => {
         await tx.order.update({
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       description,
       payer: {
         email: order.lawFirm.user.email || "",
-        name: order.lawFirm.nazwa || "Ekspert",
+        name: order.lawFirm.nazwaFirmy || "Ekspert",
       },
       callbacks: {
         notification: {

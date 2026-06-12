@@ -56,12 +56,12 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           userId: booking.client.userId,
           typ: "KONSULTACJA_ZAAKCEPTOWANA",
           tytul: "Twój link do konsultacji jest gotowy",
-          tresc: `Twój wirtualny pokój z ${booking.lawFirm.nazwa} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
+          tresc: `Twój wirtualny pokój z ${booking.lawFirm.nazwaFirmy} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
           linkUrl: "/panel-klienta/consultacje",
           emailTemplateType: "LINK_KONSULTACJI",
           emailVariables: {
             '{odbiorca}': booking.client.user.name || booking.client.user.email,
-            '{ekspert}': booking.lawFirm.nazwa,
+            '{ekspert}': booking.lawFirm.nazwaFirmy,
             '{klient}': booking.client.user.name || booking.client.user.email,
             '{termin}': dateStr,
             '{linkDoSpotkania}': meetLink,
@@ -79,8 +79,8 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           linkUrl: "/panel-eksperta/consultacje",
           emailTemplateType: "LINK_KONSULTACJI",
           emailVariables: {
-            '{odbiorca}': booking.lawFirm.nazwa,
-            '{ekspert}': booking.lawFirm.nazwa,
+            '{odbiorca}': booking.lawFirm.nazwaFirmy,
+            '{ekspert}': booking.lawFirm.nazwaFirmy,
             '{klient}': booking.client.user.name || booking.client.user.email,
             '{termin}': dateStr,
             '{linkDoSpotkania}': meetLink,
@@ -134,16 +134,16 @@ export async function sendConsultationReminders(): Promise<number> {
         templateType: "PRZYPOMNIENIE_KONSULTACJI",
         variables: {
           '{odbiorca}': booking.client.user.name || booking.client.user.email,
-          '{ekspert}': booking.lawFirm.nazwa,
+          '{ekspert}': booking.lawFirm.nazwaFirmy,
           '{klient}': booking.client.user.name || booking.client.user.email,
           '{termin}': formattedDate,
           '{linkDoSpotkania}': booking.googleMeetUrl || '',
           '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
         },
         fallbackProvider: () => ({
-          subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwa}`,
-          html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z ekspertem ${booking.lawFirm.nazwa} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
-          text: `Witaj ${booking.client.user.name}, przypominamy o konsultacji z ${booking.lawFirm.nazwa} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
+          subject: `Przypomnienie o konsultacji z ${booking.lawFirm.nazwaFirmy}`,
+          html: `<p>Witaj ${booking.client.user.name},</p><p>Przypominamy o nadchodzącej konsultacji z ekspertem ${booking.lawFirm.nazwaFirmy} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+          text: `Witaj ${booking.client.user.name}, przypominamy o konsultacji z ${booking.lawFirm.nazwaFirmy} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
         }),
       })
     } catch (error) {
@@ -156,8 +156,8 @@ export async function sendConsultationReminders(): Promise<number> {
         to: booking.lawFirm.user.email,
         templateType: "PRZYPOMNIENIE_KONSULTACJI",
         variables: {
-          '{odbiorca}': booking.lawFirm.nazwa,
-          '{ekspert}': booking.lawFirm.nazwa,
+          '{odbiorca}': booking.lawFirm.nazwaFirmy,
+          '{ekspert}': booking.lawFirm.nazwaFirmy,
           '{klient}': booking.client.user.name || booking.client.user.email,
           '{termin}': formattedDate,
           '{linkDoSpotkania}': booking.googleMeetUrl || '',
@@ -165,8 +165,8 @@ export async function sendConsultationReminders(): Promise<number> {
         },
         fallbackProvider: () => ({
           subject: `Przypomnienie o konsultacji z ${booking.client.user.name}`,
-          html: `<p>Witaj ${booking.lawFirm.nazwa},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
-          text: `Witaj ${booking.lawFirm.nazwa}, przypominamy o konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
+          html: `<p>Witaj ${booking.lawFirm.nazwaFirmy},</p><p>Przypominamy o nadchodzącej konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}.</p><p>Link do spotkania: <a href="${booking.googleMeetUrl}">${booking.googleMeetUrl}</a></p>`,
+          text: `Witaj ${booking.lawFirm.nazwaFirmy}, przypominamy o konsultacji z klientem ${booking.client.user.name} w dniu ${formattedDate}. Link: ${booking.googleMeetUrl}`,
         }),
       })
     } catch (error) {

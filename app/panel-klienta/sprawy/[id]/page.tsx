@@ -337,9 +337,9 @@ export default function ClientCaseDetailsPage() {
             <CardContent className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <Heading level="h3" className="text-xl font-bold text-white">{acceptedOffer.lawFirm.nazwa}</Heading>
-                  {acceptedOffer.lawFirm.nazwaFirmy && (
-                    <p className="text-sm text-muted-foreground mt-1">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                  <Heading level="h3" className="text-xl font-bold text-white">{acceptedOffer.lawFirm.nazwaFirmy}</Heading>
+                  {acceptedOffer.lawFirm.nazwaFirmyFirmy && (
+                    <p className="text-sm text-muted-foreground mt-1">{acceptedOffer.lawFirm.nazwaFirmyFirmy}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-4 bg-background-sec/30 p-4 rounded-lg border border-border/30">
@@ -462,7 +462,7 @@ export default function ClientCaseDetailsPage() {
                         <CardHeader className="py-4 px-6 border-b border-border/20">
                           <div className="flex items-center justify-between gap-4">
                             <div>
-                              <CardTitle className="text-base text-white font-playfair group-hover:text-secondary transition-colors">{offer.lawFirm.nazwa}</CardTitle>
+                              <CardTitle className="text-base text-white font-playfair group-hover:text-secondary transition-colors">{offer.lawFirm.nazwaFirmy}</CardTitle>
                               <CardDescription className="text-muted-foreground text-xs mt-0.5">
                                 Lokalizacja: {offer.lawFirm.miasto} • Złożono {formatDate(offer.createdAt)}
                               </CardDescription>

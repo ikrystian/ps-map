@@ -389,7 +389,7 @@ export default function LawFirmDashboardPage() {
 
       <PageHeader
         title="Panel Eksperta"
-        subtitle={`Witaj, ${lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.`}
+        subtitle={`Witaj, ${lawFirm.nazwaFirmy}! Oto podsumowanie Twojej aktywności.`}
       />
 
 
@@ -1391,7 +1391,7 @@ export default function LawFirmDashboardPage() {
                     className="block"
                   >
                     <div className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/30 hover:bg-zinc-950/25 transition-all cursor-pointer">
-                       <div className="flex-1 min-w-0 pr-2">
+                      <div className="flex-1 min-w-0 pr-2">
                         <p className="font-semibold text-sm text-white truncate" title={caseItem.nazwaSprawy}>
                           {caseItem.nazwaSprawy}
                         </p>

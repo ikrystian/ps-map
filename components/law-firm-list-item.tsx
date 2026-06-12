@@ -321,7 +321,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               {lawFirm.zdjecieGlowne || lawFirm.logo ? (
                 <Image
                   src={lawFirm.zdjecieGlowne || lawFirm.logo || ""}
-                  alt={lawFirm.nazwa}
+                  alt={lawFirm.nazwaFirmy}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -329,7 +329,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 <div className="text-neutral-700 flex flex-col items-center justify-center">
                   <Avatar className="w-24 h-24 opacity-30 bg-[#222]">
                     <AvatarFallback className="text-neutral-400 bg-neutral-900  text-xl">
-                      {lawFirm.nazwa.slice(0, 2).toUpperCase()}
+                      {lawFirm.nazwaFirmy.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </div>
@@ -404,7 +404,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
                   <h3 className="text-xl md:text-2xl font-playfair font-bold text-white tracking-tight mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
-                    <span className="truncate">{lawFirm.nazwa}</span>
+                    <span className="truncate">{lawFirm.nazwaFirmy}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge
                         packageType={lawFirm.pakietSubskrypcji as PackageType}

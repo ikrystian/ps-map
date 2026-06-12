@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    console.log('[API] Law firm found:', lawFirm ? { id: lawFirm.id, nazwa: lawFirm.nazwa, hasAccountManager: !!lawFirm.accountManager } : 'Not found')
+    console.log('[API] Law firm found:', lawFirm ? { id: lawFirm.id, nazwa: lawFirm.nazwaFirmy, hasAccountManager: !!lawFirm.accountManager } : 'Not found')
 
     if (!lawFirm) {
       return NextResponse.json({ error: 'Law firm not found' }, { status: 404 })

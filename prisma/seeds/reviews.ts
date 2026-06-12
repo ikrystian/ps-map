@@ -49,7 +49,7 @@ export async function seedReviews(prisma: PrismaClient) {
         },
       })
 
-      console.log(`✓ Review: "${reviewData.tytulOpinii}" for ${randomLawFirm.nazwa}`)
+      console.log(`✓ Review: "${reviewData.tytulOpinii}" for ${randomlawFirm.nazwaFirmy}`)
     } catch (error) {
       console.error(`Error seeding review:`, error)
     }

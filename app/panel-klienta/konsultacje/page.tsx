@@ -210,16 +210,16 @@ export default function ClientConsultationsPage() {
                 <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
                   <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-md border border-border/40">
                     {booking.lawFirm?.logo && (
-                      <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
+                      <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwaFirmy} />
                     )}
                     <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
-                      {booking.lawFirm?.nazwa ? booking.lawFirm.nazwa.substring(0, 2).toUpperCase() : "KA"}
+                      {booking.lawFirm?.nazwa ? booking.lawFirm.nazwaFirmy.substring(0, 2).toUpperCase() : "KA"}
                     </AvatarFallback>
                   </Avatar>
                 </Link>
                 <div className="flex flex-col gap-2.5 min-w-0">
                   <Link href={`/ekspert/${booking.lawFirm.slug}`} className="font-semibold text-xl font-playfair text-white hover:text-primary transition-colors truncate">
-                    {booking.lawFirm.nazwa}
+                    {booking.lawFirm.nazwaFirmy}
                   </Link>
 
                   <div className="flex flex-wrap gap-2">

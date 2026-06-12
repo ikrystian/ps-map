@@ -74,8 +74,8 @@ export async function GET(request: NextRequest) {
         addedAt: fav.createdAt,
         lawFirm: {
           id: lawFirm.id,
-          nazwa: lawFirm.nazwa,
-          nazwaFirmy: lawFirm.nazwaFirmy,
+          nazwa: lawFirm.nazwaFirmy,
+          nazwaFirmy: lawFirm.nazwaFirmyFirmy,
           typ: lawFirm.typ,
           opis: lawFirm.opis,
           logo: lawFirm.logo,

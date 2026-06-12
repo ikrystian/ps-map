@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
       }
 
       const nip = userData.lawFirm.nip || `TEMP${Date.now()}`
-      const slug = userData.lawFirm.nazwa
+      const slug = userData.lawFirm.nazwaFirmy
         .toLowerCase()
         .replace(/[ąćęłńóśźż]/g, (char: string) => {
           const map: Record<string, string> = { ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z' }
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           typ: userData.lawFirm.typ,
           typInny: userData.lawFirm.typInny || null,
-          nazwaFirmy: userData.lawFirm.nazwaFirmy,
+          nazwaFirmy: userData.lawFirm.nazwaFirmyFirmy,
           slug,
           nip, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,
