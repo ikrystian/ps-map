@@ -137,6 +137,22 @@ export default function CategoryClientPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
   const [total, setTotal] = useState(0)
 
+  // Expertise categories filter state
+  const [selectedExpertiseCategory, setSelectedExpertiseCategory] = useState("all")
+  const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
+
+  // Helper to flatten nested categories
+  const getFlattenedExpertiseCategories = (cats: any[], depth = 0): any[] => {
+    const list: any[] = []
+    for (const cat of cats) {
+      list.push({ id: cat.id, name: cat.nazwa, depth })
+      if (cat.children && cat.children.length > 0) {
+        list.push(...getFlattenedExpertiseCategories(cat.children, depth + 1))
+      }
+    }
+    return list
+  }
+
   // Pagination
   const [page, setPage] = useState(1)
   const limit = 12
@@ -175,6 +191,23 @@ export default function CategoryClientPage() {
     }
 
     fetchVoivodeships()
+  }, [])
+
+  // Fetch expertise categories on mount
+  useEffect(() => {
+    const fetchExpertiseCategories = async () => {
+      try {
+        const response = await fetch("/api/expertise-categories")
+        if (response.ok) {
+          const data = await response.json()
+          setExpertiseCategories(data)
+        }
+      } catch (error) {
+        console.error("Error fetching expertise categories:", error)
+      }
+    }
+
+    fetchExpertiseCategories()
   }, [])
 
   // Dynamic fetch and caching for cities
@@ -256,6 +289,9 @@ export default function CategoryClientPage() {
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
         if (sortBy) params.append("sortBy", sortBy)
+        if (selectedExpertiseCategory && selectedExpertiseCategory !== "all") {
+          params.append("expertiseCategoryId", selectedExpertiseCategory)
+        }
         params.append("limit", limit.toString())
         params.append("offset", ((page - 1) * limit).toString())
 
@@ -285,6 +321,7 @@ export default function CategoryClientPage() {
     verifiedOnly,
     sortBy,
     page,
+    selectedExpertiseCategory,
   ])
 
   const totalPages = Math.ceil(total / limit)
@@ -314,6 +351,7 @@ export default function CategoryClientPage() {
     setOnlineOnly(false)
     setVerifiedOnly(false)
     setSortBy("relevance")
+    setSelectedExpertiseCategory("all")
     setPage(1)
   }
 
@@ -554,6 +592,27 @@ export default function CategoryClientPage() {
                       </Command>
                     </PopoverContent>
                   </Popover>
+                </div>
+
+                {/* Expertise Category */}
+                <div className="space-y-2">
+                  <Label>Specjalizacja ekspercka</Label>
+                  <Select value={selectedExpertiseCategory} onValueChange={setSelectedExpertiseCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Wszystkie specjalizacje" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Wszystkie specjalizacje</SelectItem>
+                      {getFlattenedExpertiseCategories(expertiseCategories).map((item) => (
+                        <SelectItem key={item.id} value={item.id} className="cursor-pointer">
+                          <span className="font-normal">
+                            {"\u00A0".repeat(item.depth * 3)}
+                            {item.name}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Min Rating */}
