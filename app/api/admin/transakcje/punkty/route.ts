@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
             OR: [
               { nazwa: { contains: search } },
               { nazwaFirmy: { contains: search } },
-            
+            ]
           }
         },
       ]
