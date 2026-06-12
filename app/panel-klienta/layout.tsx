@@ -137,10 +137,10 @@ export default function ClientPanelLayout({
             href={item.href}
             onMouseEnter={() => setHoveredIndex(index)}
             className={cn(
-              "relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors outline-none",
+              "group relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
               isActive
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                : "text-muted-foreground hover:text-foreground",
+                : "text-muted-foreground hover:text-white",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
@@ -163,7 +163,7 @@ export default function ClientPanelLayout({
             </AnimatePresence>
 
             <div className="flex items-center justify-center flex-shrink-0">
-              <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
+              <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
             </div>
 
             {/* Text label with elegant fade-slide */}
@@ -215,7 +215,7 @@ export default function ClientPanelLayout({
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length)}
         className={cn(
-          "w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
+          "group w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"

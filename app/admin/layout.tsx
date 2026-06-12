@@ -144,10 +144,10 @@ export default function AdminLayout({
                     href={item.href}
                     onMouseEnter={() => setHoveredIndex(index)}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors outline-none",
+                      "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 outline-none",
                       isActive
                         ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                        : "text-muted-foreground hover:text-foreground",
+                        : "text-muted-foreground hover:text-white",
                       isCollapsed && "justify-center",
                       item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
                     )}
@@ -156,7 +156,7 @@ export default function AdminLayout({
                     {/* Sliding/Fading Hover Background Pill */}
 
                     <div className="flex items-center justify-center flex-shrink-0">
-                      <item.icon className={cn("h-5 w-5", isActive ? "" : "text-primary")} />
+                      <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
                     </div>
 
                     {/* Text label with elegant fade-slide */}
