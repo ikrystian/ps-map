@@ -342,8 +342,8 @@ export default function CaseDetailsPage() {
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between mb-4">
                           <div>
-                            <p className="font-semibold">{offer.lawFirm.nazwa}</p>
-                            <p className="text-sm text-muted-foreground">{offer.lawFirm.nazwaFirmy}</p>
+                            <p className="font-semibold">{offer.lawFirm.nazwaFirmy}</p>
+                            <p className="text-sm text-muted-foreground">{offer.lawFirm.nazwaFirmyFirmy}</p>
                           </div>
                           <Badge variant={offerStatusLabels[offer.status]?.variant || "secondary"}>
                             {offerStatusLabels[offer.status]?.label || offer.status}
@@ -518,8 +518,8 @@ export default function CaseDetailsPage() {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Nazwa</p>
-                  <p className="font-medium">{acceptedOffer.lawFirm.nazwa}</p>
-                  <p className="text-sm text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                  <p className="font-medium">{acceptedOffer.lawFirm.nazwaFirmy}</p>
+                  <p className="text-sm text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmyFirmy}</p>
                 </div>
                 <Separator />
                 <div>

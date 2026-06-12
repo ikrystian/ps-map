@@ -194,7 +194,7 @@ export default function BlogPostPage() {
                     {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
-                        alt={post.lawFirm.nazwa}
+                        alt={post.lawFirm.nazwaFirmy}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -206,7 +206,7 @@ export default function BlogPostPage() {
                       href={`/ekspert/${post.lawFirm.slug}`}
                       className="font-medium text-white hover:text-primary transition-colors"
                     >
-                      {post.lawFirm.nazwa}
+                      {post.lawFirm.nazwaFirmy}
                     </Link>
                   ) : (
                     <span className="font-medium text-white">Administracja</span>
@@ -293,7 +293,7 @@ export default function BlogPostPage() {
                     {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
-                        alt={post.lawFirm.nazwa}
+                        alt={post.lawFirm.nazwaFirmy}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -305,7 +305,7 @@ export default function BlogPostPage() {
                       href={`/ekspert/${post.lawFirm.slug}`}
                       className="font-medium text-white hover:text-primary transition-colors"
                     >
-                      {post.lawFirm.nazwa}
+                      {post.lawFirm.nazwaFirmy}
                     </Link>
                   ) : (
                     <span className="font-medium text-white">Administracja</span>
@@ -368,7 +368,7 @@ export default function BlogPostPage() {
                         href={`/ekspert/${post.lawFirm.slug}`}
                         className="font-semibold text-white hover:text-primary hover:underline transition-colors"
                       >
-                        {post.lawFirm.nazwa}
+                        {post.lawFirm.nazwaFirmy}
                       </Link>
                     ) : (
                       <span className="font-semibold text-white">zespół redakcyjny</span>
@@ -389,7 +389,7 @@ export default function BlogPostPage() {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-amber-500/20 shadow-lg flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
                       <img
                         src={post.sponsoredLawFirm.logo}
-                        alt={post.sponsoredLawFirm.nazwa}
+                        alt={post.sponsoredlawFirm.nazwaFirmy}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -411,7 +411,7 @@ export default function BlogPostPage() {
                         </span>
                       </div>
                       <h3 className="font-playfair text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
-                        {post.sponsoredLawFirm.nazwa}
+                        {post.sponsoredlawFirm.nazwaFirmy}
                       </h3>
                       {post.sponsoredLawFirm.opis && (
                         <div
@@ -501,7 +501,7 @@ export default function BlogPostPage() {
                       <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/20 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
                         <img
                           src={post.sponsoredLawFirm.logo}
-                          alt={post.sponsoredLawFirm.nazwa}
+                          alt={post.sponsoredlawFirm.nazwaFirmy}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -516,10 +516,10 @@ export default function BlogPostPage() {
                         Sponsor artykułu
                       </Badge>
                       <h3 className="font-semibold text-white text-base leading-tight group-hover:text-amber-400 transition-colors">
-                        {post.sponsoredLawFirm.nazwa}
+                        {post.sponsoredlawFirm.nazwaFirmy}
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1">
-                        {post.sponsoredLawFirm.nazwaFirmy}
+                        {post.sponsoredlawFirm.nazwaFirmyFirmy}
                       </p>
                     </div>
                   </div>
@@ -569,7 +569,7 @@ export default function BlogPostPage() {
                       <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-neutral-800/80 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-primary/40 transition-colors">
                         <img
                           src={post.lawFirm.logo}
-                          alt={post.lawFirm.nazwa}
+                          alt={post.lawFirm.nazwaFirmy}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -584,10 +584,10 @@ export default function BlogPostPage() {
                         Ekspert prawny
                       </Badge>
                       <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">
-                        {post.lawFirm.nazwa}
+                        {post.lawFirm.nazwaFirmy}
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1">
-                        {post.lawFirm.nazwaFirmy}
+                        {post.lawFirm.nazwaFirmyFirmy}
                       </p>
                     </div>
                   </div>

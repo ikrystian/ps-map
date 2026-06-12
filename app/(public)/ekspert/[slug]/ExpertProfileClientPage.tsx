@@ -488,7 +488,7 @@ export default function LawFirmProfilePage() {
           >
             <Image
               src={lawFirm.zdjecieGlowne}
-              alt={lawFirm.nazwa}
+              alt={lawFirm.nazwaFirmy}
               fill
               id="cover-photo"
               className="object-cover opacity-75"
@@ -543,7 +543,7 @@ export default function LawFirmProfilePage() {
                     <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
                       <Image
                         src={lawFirm.logo}
-                        alt={lawFirm.nazwa}
+                        alt={lawFirm.nazwaFirmy}
                         id="logo-photo"
                         fill
                         className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
@@ -562,7 +562,7 @@ export default function LawFirmProfilePage() {
                 <div className="space-y-2">
                   <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start flex-wrap">
                     <h1 className="text-2xl md:text-3xl lg:text-4xl font-playfair tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
-                      {lawFirm.nazwa}
+                      {lawFirm.nazwaFirmyFirmy}
                     </h1>
                     <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
                       {lawFirm.zweryfikowana && (
@@ -580,7 +580,7 @@ export default function LawFirmProfilePage() {
                       )}
                     </div>
                   </div>
-                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm.nazwaFirmy}</p>
+                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm.nazwaFirmyFirmy}</p>
                 </div>
 
                 {/* Rating, Opening Status, and Location details in clean pills */}
@@ -846,7 +846,7 @@ export default function LawFirmProfilePage() {
                 <ReviewsSection
                   reviews={lawFirm.reviews || []}
                   lawFirmId={lawFirm.id}
-                  lawFirmName={lawFirm.nazwa}
+                  lawFirmName={lawFirm.nazwaFirmy}
                   lawFirmLogo={lawFirm.logo}
                   session={session}
                   onReviewSubmitted={async () => {
@@ -954,8 +954,8 @@ export default function LawFirmProfilePage() {
                         {session?.user ? (
                           <TooltipPreview
                             href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
-                            title={lawFirm.nazwa}
-                            description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
+                            title={lawFirm.nazwaFirmy}
+                            description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwaFirmy}`}
                             favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
                             className="text-primary font-medium break-all"
                           >
@@ -1400,7 +1400,7 @@ export default function LawFirmProfilePage() {
           <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/40">
             <DialogTitle className="flex items-center gap-2 text-base font-bold">
               <MapPin className="h-5 w-5 text-primary" />
-              {lawFirm.nazwa}
+              {lawFirm.nazwaFirmy}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
               {lawFirm.adres}, {lawFirm.kodPocztowy} {lawFirm.miasto}

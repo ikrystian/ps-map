@@ -312,7 +312,7 @@ export default function AdminCasesPage() {
                       <TableCell>
                         {acceptedOffer ? (
                           <div className="text-sm">
-                            <div className="font-medium">{acceptedOffer.lawFirm.nazwa}</div>
+                            <div className="font-medium">{acceptedOffer.lawFirm.nazwaFirmy}</div>
                           </div>
                         ) : (
                           <span className="text-muted-foreground text-sm">—</span>
