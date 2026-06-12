@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
             totalAmount: totalAmount,
             extOrderId: order.id, // Use our Order ID as external ID
             buyer: {
-                email: order.law.Firm.user?.email || order.lawFirm.user.email,
+                email: order.lawFirm.user.email,
                 firstName: order.lawFirm.imieKontakt,
                 lastName: order.lawFirm.nazwiskoKontakt,
                 language: "pl"

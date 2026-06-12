@@ -562,7 +562,7 @@ export default function LawFirmProfilePage() {
                 <div className="space-y-2">
                   <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start flex-wrap">
                     <h1 className="text-2xl md:text-3xl lg:text-4xl font-playfair tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
-                      {lawFirm.nazwaFirmyFirmy}
+                      {lawFirm?.nazwaFirmy}
                     </h1>
                     <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
                       {lawFirm.zweryfikowana && (
@@ -580,7 +580,7 @@ export default function LawFirmProfilePage() {
                       )}
                     </div>
                   </div>
-                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm.nazwaFirmyFirmy}</p>
+                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm?.nazwaFirmy}</p>
                 </div>
 
                 {/* Rating, Opening Status, and Location details in clean pills */}
@@ -935,7 +935,7 @@ export default function LawFirmProfilePage() {
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
                     <div className="text-sm text-foreground break-all">
                       {session?.user ? (
-                        <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{law.Firm.user?.email}</a>
+                        <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.user?.email}</a>
                       ) : (
                         <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
                       )}

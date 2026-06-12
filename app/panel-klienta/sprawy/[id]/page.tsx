@@ -369,18 +369,7 @@ export default function ClientCaseDetailsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
-                  <Mail className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <div className="min-w-0">
-                    <span className="text-sm text-muted-foreground block uppercase font-medium">E-mail</span>
-                    <a
-                      href={`mailto:${acceptedOffer.law.Firm.user?.email}`}
-                      className="font-semibold text-primary hover:underline truncate block"
-                    >
-                      {acceptedOffer.law.Firm.user?.email}
-                    </a>
-                  </div>
-                </div>
+
 
                 <div className="flex items-start gap-3 p-3 bg-background-sec/20 rounded-lg border border-border/30">
                   <Phone className="h-4 w-4 text-primary mt-0.5 shrink-0" />

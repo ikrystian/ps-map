@@ -64,8 +64,13 @@ export async function POST(request: NextRequest) {
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { id: lawFirmId },
         select: {
-          nazwa: true,
+          nazwaFirmy: true,
           userId: true,
+          user: {
+            select: {
+              email: true,
+            }
+          }
         },
       })
 
@@ -78,10 +83,10 @@ export async function POST(request: NextRequest) {
 
       // Utwórz powiadomienie dla ekspertów (wraz z weryfikacją wysłania maila)
       let emailData
-      if (law.Firm.user?.email) {
+      if (lawFirm.user?.email) {
         emailData = generateContactFormEmail(
           lawFirm.nazwaFirmy,
-          law.Firm.user?.email,
+          lawFirm.user?.email,
           imieNazwisko,
           email,
           telefon,

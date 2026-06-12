@@ -273,7 +273,7 @@ export default function AdminTransakcjePunktyPage() {
                       <TableCell>
                         <div>
                           <div className="font-medium">{tx.lawFirm.nazwaFirmy || tx.lawFirm.nazwaFirmyFirmy || "—"}</div>
-                          <div className="text-sm text-muted-foreground">{tx.law.Firm.user?.email}</div>
+                          <div className="text-sm text-muted-foreground">{tx.law.Firm.user.email}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -401,24 +401,6 @@ export default function AdminTransakcjePunktyPage() {
                 </div>
               </div>
 
-              {/* Law Firm Details */}
-              <div>
-                <h4 className="text-xs uppercase font-bold text-primary tracking-wide mb-2.5">Dane Eksperta</h4>
-                <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
-                  <div>
-                    <span className="text-muted-foreground block text-xs">Nazwa firmy / Nazwa</span>
-                    <span className="font-semibold">{selectedTx.lawFirm.nazwaFirmyFirmy || selectedTx.lawFirm.nazwaFirmy || "—"}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block text-xs">Email kontaktowy</span>
-                    <span className="font-semibold select-all text-primary/90">{selectedTx.law.Firm.user?.email}</span>
-                  </div>
-                  <div className="col-span-2 border-t pt-2 mt-1">
-                    <span className="text-muted-foreground block text-xs">Aktualne saldo punktów eksperta</span>
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-500 font-mono">{selectedTx.lawFirm.punktySaldo} pkt</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Transaction Description */}
               <div>

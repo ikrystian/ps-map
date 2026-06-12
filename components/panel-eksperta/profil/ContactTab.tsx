@@ -198,7 +198,7 @@ export function ContactTab({
                       <User className="h-4 w-4" />
                     </div>
                     <Input
-                      id="imieKontakt"
+                      id="user.name"
                       value={formData.imieKontakt}
                       onChange={(e) => handleInputChange("imieKontakt", e.target.value)}
                       required
@@ -214,7 +214,7 @@ export function ContactTab({
                       <User className="h-4 w-4" />
                     </div>
                     <Input
-                      id="nazwiskoKontakt"
+                      id=""
                       value={formData.nazwiskoKontakt}
                       onChange={(e) => handleInputChange("nazwiskoKontakt", e.target.value)}
                       required
