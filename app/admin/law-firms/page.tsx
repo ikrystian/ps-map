@@ -311,7 +311,7 @@ export default function AdminLawFirmsPage() {
                           {lawFirm.logo ? (
                             <img
                               src={lawFirm.logo}
-                              alt={lawFirm.nazwa}
+                              alt={lawFirm.nazwaFirmy}
                               className="object-contain h-full w-full p-0.5"
                             />
                           ) : (
@@ -319,8 +319,8 @@ export default function AdminLawFirmsPage() {
                           )}
                         </div>
                         <div>
-                          <div>{lawFirm.nazwa}</div>
-                          <div className="text-xs text-muted-foreground">{lawFirm.nazwaFirmy}</div>
+                          <div>{lawFirm.nazwaFirmy}</div>
+                          <div className="text-xs text-muted-foreground">{lawFirm.nazwaFirmyFirmy}</div>
                         </div>
                       </div>
                     </TableCell>

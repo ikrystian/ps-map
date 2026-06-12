@@ -272,7 +272,7 @@ export default function AdminTransakcjePunktyPage() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{tx.lawFirm.nazwa || tx.lawFirm.nazwaFirmy || "—"}</div>
+                          <div className="font-medium">{tx.lawFirm.nazwaFirmy || tx.lawFirm.nazwaFirmyFirmy || "—"}</div>
                           <div className="text-sm text-muted-foreground">{tx.law.Firm.user?.email}</div>
                         </div>
                       </TableCell>
@@ -407,7 +407,7 @@ export default function AdminTransakcjePunktyPage() {
                 <div className="grid grid-cols-2 gap-y-3 gap-x-4 border rounded-xl p-4 bg-background shadow-sm text-sm">
                   <div>
                     <span className="text-muted-foreground block text-xs">Nazwa firmy / Nazwa</span>
-                    <span className="font-semibold">{selectedTx.lawFirm.nazwaFirmy || selectedTx.lawFirm.nazwa || "—"}</span>
+                    <span className="font-semibold">{selectedTx.lawFirm.nazwaFirmyFirmy || selectedTx.lawFirm.nazwaFirmy || "—"}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-xs">Email kontaktowy</span>

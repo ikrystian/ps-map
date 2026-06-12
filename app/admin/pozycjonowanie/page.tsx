@@ -497,13 +497,13 @@ export default function AdminPozycjonowaniePage() {
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center flex-shrink-0">
                               {ov.lawFirm.logo ? (
-                                <img src={ov.lawFirm.logo} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
+                                <img src={ov.lawFirm.logo} alt={ov.lawFirm.nazwaFirmy} className="w-full h-full object-cover" />
                               ) : (
                                 <Award className="h-4 w-4 text-zinc-500" />
                               )}
                             </div>
                             <div>
-                              <div className="font-bold text-sm leading-snug">{ov.lawFirm.nazwa}</div>
+                              <div className="font-bold text-sm leading-snug">{ov.lawFirm.nazwaFirmy}</div>
                               <div className="text-xs text-muted-foreground">{ov.lawFirm.miasto}</div>
                             </div>
                           </div>

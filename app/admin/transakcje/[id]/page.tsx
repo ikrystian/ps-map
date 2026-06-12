@@ -436,7 +436,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div>
                 <span className="text-muted-foreground block text-xs">Nazwa firmy</span>
                 <span className="font-semibold text-base block mt-0.5">
-                  {order.lawFirm.nazwaFirmy || order.lawFirm.nazwa || "—"}
+                  {order.lawFirm.nazwaFirmyFirmy || order.lawFirm.nazwaFirmy || "—"}
                 </span>
               </div>
 
