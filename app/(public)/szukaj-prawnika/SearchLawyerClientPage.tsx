@@ -100,6 +100,22 @@ export default function SearchLawyerPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
 
+  // Expertise categories filter state
+  const [selectedExpertiseCategory, setSelectedExpertiseCategory] = useState("all")
+  const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
+
+  // Helper to flatten nested categories
+  const getFlattenedExpertiseCategories = (cats: any[], depth = 0): any[] => {
+    const list: any[] = []
+    for (const cat of cats) {
+      list.push({ id: cat.id, name: cat.nazwa, depth })
+      if (cat.children && cat.children.length > 0) {
+        list.push(...getFlattenedExpertiseCategories(cat.children, depth + 1))
+      }
+    }
+    return list
+  }
+
   // Initialize filters from URL
   useEffect(() => {
     const s = searchParams.get("search")
@@ -107,28 +123,31 @@ export default function SearchLawyerPage() {
     const cat = searchParams.get("category")
     const v = searchParams.get("voivodeship")
     const t = searchParams.get("type")
+    const expCat = searchParams.get("expertiseCategoryId")
 
     if (s) setSearchQuery(s)
     if (c) setSelectedCity(c)
     if (cat) setSelectedCategory(cat)
     if (v) setSelectedVoivodeship(v)
     if (t) setSelectedType(t)
+    if (expCat) setSelectedExpertiseCategory(expCat)
 
     // If any filter is set from URL, show filters by default
-    if (s || c || cat || v || t) setShowFilters(true)
+    if (s || c || cat || v || t || expCat) setShowFilters(true)
   }, [searchParams])
 
   // Pagination
   const [page, setPage] = useState(1)
   const limit = 12
 
-  // Fetch categories and voivodeships on mount
+  // Fetch categories, voivodeships and expertise-categories on mount
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const [categoriesRes, voivodeshipsRes] = await Promise.all([
+        const [categoriesRes, voivodeshipsRes, expertiseCategoriesRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/voivodeships"),
+          fetch("/api/expertise-categories"),
         ])
 
         if (categoriesRes.ok) {
@@ -139,6 +158,11 @@ export default function SearchLawyerPage() {
         if (voivodeshipsRes.ok) {
           const voivodeshipsData = await voivodeshipsRes.json()
           setVoivodeships(voivodeshipsData)
+        }
+
+        if (expertiseCategoriesRes.ok) {
+          const expertiseData = await expertiseCategoriesRes.json()
+          setExpertiseCategories(expertiseData)
         }
       } catch (error) {
         console.error("Error fetching filters:", error)
@@ -163,6 +187,9 @@ export default function SearchLawyerPage() {
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
+        if (selectedExpertiseCategory && selectedExpertiseCategory !== "all") {
+          params.append("expertiseCategoryId", selectedExpertiseCategory)
+        }
         params.append("limit", limit.toString())
         params.append("offset", ((page - 1) * limit).toString())
 
@@ -181,7 +208,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page, selectedExpertiseCategory])
 
   // Dynamic fetch and caching for cities
   useEffect(() => {
@@ -271,6 +298,7 @@ export default function SearchLawyerPage() {
     setOnlineOnly(false)
     setVerifiedOnly(false)
     setSortBy("relevance")
+    setSelectedExpertiseCategory("all")
     setPage(1)
   }
 
@@ -364,6 +392,27 @@ export default function SearchLawyerPage() {
                                 {category.ikona && <span>{category.ikona}</span>}
                                 <span>{category.nazwa}</span>
                               </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Expertise Category */}
+                    <div className="space-y-2">
+                      <Label className="text-xs">Specjalizacja ekspercka</Label>
+                      <Select value={selectedExpertiseCategory} onValueChange={setSelectedExpertiseCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Wszystkie specjalizacje" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Wszystkie specjalizacje</SelectItem>
+                          {getFlattenedExpertiseCategories(expertiseCategories).map((item) => (
+                            <SelectItem key={item.id} value={item.id} className="cursor-pointer">
+                              <span className="font-normal">
+                                {"\u00A0".repeat(item.depth * 3)}
+                                {item.name}
+                              </span>
                             </SelectItem>
                           ))}
                         </SelectContent>
