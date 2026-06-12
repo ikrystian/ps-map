@@ -51,10 +51,14 @@ export async function GET(
             nazwa: true,
             nazwaFirmy: true,
             nip: true,
-            adres: true,
-            kodPocztowy: true,
-            miasto: true,
-            numerTelefonu: true,
+            user: {
+              select: {
+                adres: true,
+                kodPocztowy: true,
+                miasto: true,
+                numerTelefonu: true,
+              },
+            },
           },
         },
       },
@@ -64,7 +68,17 @@ export async function GET(
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 })
     }
 
-    return NextResponse.json(invoice)
+    // Spłaszcz dane adresowe kancelarii (przeniesione do modelu User)
+    return NextResponse.json({
+      ...invoice,
+      lawFirm: {
+        ...invoice.lawFirm,
+        adres: invoice.lawFirm.user?.adres ?? "",
+        kodPocztowy: invoice.lawFirm.user?.kodPocztowy ?? "",
+        miasto: invoice.lawFirm.user?.miasto ?? "",
+        numerTelefonu: invoice.lawFirm.user?.numerTelefonu ?? "",
+      },
+    })
   } catch (error) {
     console.error("Error fetching invoice:", error)
     return NextResponse.json(

@@ -74,6 +74,11 @@ export async function GET(request: NextRequest) {
               id: true,
               nazwa: true,
               nazwaFirmy: true,
+              user: {
+                select: {
+                  email: true,
+                },
+              },
             },
           },
           subscriptionPlan: {

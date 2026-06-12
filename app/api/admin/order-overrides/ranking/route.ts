@@ -21,7 +21,12 @@ export async function GET(request: NextRequest) {
         aktywna: true,
       },
       include: {
-        voivodeship: true,
+        user: {
+          select: {
+            miasto: true,
+            voivodeship: { select: { nazwa: true } },
+          },
+        },
         categories: {
           include: {
             category: true,
@@ -156,12 +161,12 @@ export async function GET(request: NextRequest) {
         nazwa: firm.nazwa,
         nazwaFirmy: firm.nazwaFirmy,
         logo: firm.logo,
-        miasto: firm.miasto,
+        miasto: firm.user?.miasto || "",
         zweryfikowana: firm.zweryfikowana,
         pakietSubskrypcji: firm.pakietSubskrypcji,
         punktySaldo: firm.punktySaldo,
         totalSpentPoints,
-        voivodeship: firm.voivodeship?.nazwa || "",
+        voivodeship: firm.user?.voivodeship?.nazwa || "",
         categories: firm.categories.map((c) => c.category?.nazwa || ""),
         // Score breakdown
         baseScore,
@@ -237,7 +242,9 @@ export async function GET(request: NextRequest) {
             nazwa: true,
             nazwaFirmy: true,
             logo: true,
-            miasto: true,
+            user: {
+              select: { miasto: true },
+            },
           },
         },
       },

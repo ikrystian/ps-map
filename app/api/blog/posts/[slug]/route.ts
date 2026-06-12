@@ -23,8 +23,12 @@ export async function GET(
             logo: true,
             opis: true,
             slug: true,
-            miasto: true,
-            voivodeship: true,
+            user: {
+              select: {
+                miasto: true,
+                voivodeship: { select: { id: true, nazwa: true, slug: true } },
+              },
+            },
           },
         },
         sponsoredLawFirm: {
@@ -35,11 +39,10 @@ export async function GET(
             logo: true,
             opis: true,
             slug: true,
-            miasto: true,
-            voivodeship: {
+            user: {
               select: {
-                id: true,
-                nazwa: true,
+                miasto: true,
+                voivodeship: { select: { id: true, nazwa: true } },
               },
             },
           },
@@ -64,7 +67,24 @@ export async function GET(
       },
     })
 
-    return NextResponse.json(post)
+    // Spłaszcz dane lokalizacyjne kancelarii (przeniesione do modelu User)
+    return NextResponse.json({
+      ...post,
+      lawFirm: post.lawFirm
+        ? {
+            ...post.lawFirm,
+            miasto: post.lawFirm.user?.miasto ?? "",
+            voivodeship: post.lawFirm.user?.voivodeship ?? null,
+          }
+        : post.lawFirm,
+      sponsoredLawFirm: post.sponsoredLawFirm
+        ? {
+            ...post.sponsoredLawFirm,
+            miasto: post.sponsoredLawFirm.user?.miasto ?? "",
+            voivodeship: post.sponsoredLawFirm.user?.voivodeship ?? null,
+          }
+        : post.sponsoredLawFirm,
+    })
   } catch (error) {
     console.error("Error fetching blog post:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

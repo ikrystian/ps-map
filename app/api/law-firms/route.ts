@@ -112,8 +112,10 @@ export async function GET(request: NextRequest) {
       andConditions.push({
         OR: [
           {
-            voivodeship: {
-              slug: voivodeship,
+            user: {
+              voivodeship: {
+                slug: voivodeship,
+              },
             },
           },
           {
@@ -134,7 +136,7 @@ export async function GET(request: NextRequest) {
 
     if (city) {
       andConditions.push({
-        miasto: { contains: city },
+        user: { miasto: { contains: city } },
       })
     }
 
@@ -143,7 +145,7 @@ export async function GET(request: NextRequest) {
         OR: [
           { nazwa: { contains: search } },
           { nazwaFirmy: { contains: search } },
-          { miasto: { contains: search } },
+          { user: { miasto: { contains: search } } },
         ],
       })
     }
@@ -167,12 +169,17 @@ export async function GET(request: NextRequest) {
         include: {
           user: {
             select: {
+              adres: true,
+              kodPocztowy: true,
+              miasto: true,
+              voivodeship: {
+                select: { id: true, nazwa: true, slug: true },
+              },
               notificationSettings: {
                 select: { wyswietlanieAwatara: true },
               },
             },
           },
-          voivodeship: true,
           categories: {
             include: {
               category: {
@@ -291,10 +298,10 @@ export async function GET(request: NextRequest) {
           logo: pokazAwatar ? firm.logo : null,
           zdjecieGlowne: firm.zdjecieGlowne,
           opis: firm.opis,
-          miasto: firm.miasto,
-          adres: firm.adres,
-          kodPocztowy: firm.kodPocztowy,
-          voivodeship: firm.voivodeship,
+          miasto: firm.user?.miasto || "",
+          adres: firm.user?.adres || "",
+          kodPocztowy: firm.user?.kodPocztowy || "",
+          voivodeship: firm.user?.voivodeship || null,
           oraStatus: firm.oraStatus,
           oraMiasto: firm.oraMiasto,
           oirpStatus: firm.oirpStatus,
@@ -511,21 +518,37 @@ export async function POST(request: NextRequest) {
       let user;
 
       if (existingUser && body.isSocialRegistration) {
-        // Aktualizuj istniejącego użytkownika
+        // Aktualizuj istniejącego użytkownika (wraz z danymi kontaktowymi)
         user = await tx.user.update({
           where: { id: existingUser.id },
           data: {
             role: "LAW_FIRM",
+            imie: body.imieKontakt,
+            nazwisko: body.nazwiskoKontakt,
+            numerTelefonu: body.numerTelefonu,
+            numerTelefonu2: body.numerTelefonu2 || null,
+            adres: body.adres,
+            kodPocztowy: body.kodPocztowy,
+            miasto: body.miasto,
+            voivodeshipId: body.voivodeshipId,
           },
         })
       } else {
-        // Utwórz użytkownika
+        // Utwórz użytkownika (dane kontaktowe i adres należą do użytkownika)
         user = await tx.user.create({
           data: {
             email: body.email,
             password: hashedPassword,
             name: body.nazwa,
             role: "LAW_FIRM",
+            imie: body.imieKontakt,
+            nazwisko: body.nazwiskoKontakt,
+            numerTelefonu: body.numerTelefonu,
+            numerTelefonu2: body.numerTelefonu2 || null,
+            adres: body.adres,
+            kodPocztowy: body.kodPocztowy,
+            miasto: body.miasto,
+            voivodeshipId: body.voivodeshipId,
           },
         })
       }
@@ -558,14 +581,6 @@ export async function POST(request: NextRequest) {
           nip: body.nip,
           regon: body.regon || null,
           krs: body.krs || null,
-          imieKontakt: body.imieKontakt,
-          nazwiskoKontakt: body.nazwiskoKontakt,
-          numerTelefonu: body.numerTelefonu,
-          numerTelefonu2: body.numerTelefonu2 || null,
-          adres: body.adres,
-          kodPocztowy: body.kodPocztowy,
-          miasto: body.miasto,
-          voivodeshipId: body.voivodeshipId,
           opis: body.opis || "",
           stronaWww: body.stronaWww || null,
           typOferty: body.typOferty,

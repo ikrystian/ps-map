@@ -53,7 +53,6 @@ export async function GET(request: NextRequest) {
               id: true,
               imie: true,
               nazwisko: true,
-              telefon: true,
             },
           },
           lawFirm: {
@@ -86,6 +85,13 @@ export async function GET(request: NextRequest) {
     // Remove password from response
     const sanitizedUsers = users.map((user: any) => {
       const { password, resetToken, resetTokenExpiry, ...userWithoutSensitiveData } = user
+      // Telefon klienta przeniesiony do modelu User
+      if (userWithoutSensitiveData.client) {
+        userWithoutSensitiveData.client = {
+          ...userWithoutSensitiveData.client,
+          telefon: user.numerTelefonu ?? null,
+        }
+      }
       return userWithoutSensitiveData
     })
 
@@ -168,15 +174,18 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         role,
         status: status || "ACTIVE",
+        // Telefon i adres należą do modelu User
+        imie: clientData?.imie || null,
+        nazwisko: clientData?.nazwisko || null,
+        numerTelefonu: clientData?.telefon || null,
+        adres: clientData?.adres || null,
+        kodPocztowy: clientData?.kodPocztowy || null,
+        miasto: clientData?.miasto || null,
+        voivodeshipId: clientData?.voivodeshipId || null,
         client: clientData ? {
           create: {
             imie: clientData.imie,
             nazwisko: clientData.nazwisko,
-            telefon: clientData.telefon,
-            adres: clientData.adres,
-            kodPocztowy: clientData.kodPocztowy,
-            miasto: clientData.miasto,
-            voivodeshipId: clientData.voivodeshipId || null,
             zgodaRegulamin: clientData.zgodaRegulamin || false,
             zgodaNewsletter: clientData.zgodaNewsletter || false,
             zgodaMarketing: clientData.zgodaMarketing || false,

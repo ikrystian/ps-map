@@ -24,8 +24,13 @@ export async function GET(
             id: true,
             nazwa: true,
             nazwaFirmy: true,
-            numerTelefonu: true,
-            miasto: true,
+            user: {
+              select: {
+                email: true,
+                numerTelefonu: true,
+                miasto: true,
+              },
+            },
           },
         },
         client: {
@@ -47,7 +52,17 @@ export async function GET(
       return NextResponse.json({ error: "Review not found" }, { status: 404 })
     }
 
-    return NextResponse.json(review)
+    // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
+    return NextResponse.json({
+      ...review,
+      lawFirm: {
+        ...review.lawFirm,
+        email: review.lawFirm.user?.email ?? "",
+        numerTelefonu: review.lawFirm.user?.numerTelefonu ?? "",
+        telefon: review.lawFirm.user?.numerTelefonu ?? "",
+        miasto: review.lawFirm.user?.miasto ?? "",
+      },
+    })
   } catch (error) {
     console.error("Error fetching review:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

@@ -21,7 +21,6 @@ export async function GET(
       include: {
         client: {
           include: {
-            voivodeship: true,
             cases: {
               select: {
                 id: true,
@@ -57,7 +56,6 @@ export async function GET(
         },
         lawFirm: {
           include: {
-            voivodeship: true,
             _count: {
               select: {
                 offers: true,
@@ -87,7 +85,28 @@ export async function GET(
     // Remove sensitive data
     const { password, resetToken, resetTokenExpiry, ...userWithoutSensitiveData } = user
 
-    return NextResponse.json(userWithoutSensitiveData)
+    // Telefon i adres przeniesione do modelu User — spłaszcz dla zgodności odpowiedzi
+    const voivodeship = user.voivodeshipId
+      ? await prisma.voivodeship.findUnique({ where: { id: user.voivodeshipId } })
+      : null
+    const contact = {
+      telefon: user.numerTelefonu ?? null,
+      adres: user.adres ?? null,
+      kodPocztowy: user.kodPocztowy ?? null,
+      miasto: user.miasto ?? null,
+      voivodeshipId: user.voivodeshipId ?? null,
+      voivodeship,
+    }
+
+    return NextResponse.json({
+      ...userWithoutSensitiveData,
+      client: userWithoutSensitiveData.client
+        ? { ...userWithoutSensitiveData.client, ...contact }
+        : userWithoutSensitiveData.client,
+      lawFirm: userWithoutSensitiveData.lawFirm
+        ? { ...userWithoutSensitiveData.lawFirm, ...contact, numerTelefonu: user.numerTelefonu ?? "" }
+        : userWithoutSensitiveData.lawFirm,
+    })
   } catch (error) {
     console.error("Error fetching user:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -187,16 +206,20 @@ export async function PUT(
         updateData.name = `${clientData.imie || ""} ${clientData.nazwisko || ""}`.trim()
       }
 
+      // Telefon i adres należą do modelu User
+      updateData.imie = clientData.imie
+      updateData.nazwisko = clientData.nazwisko
+      updateData.numerTelefonu = clientData.telefon
+      updateData.adres = clientData.adres
+      updateData.kodPocztowy = clientData.kodPocztowy
+      updateData.miasto = clientData.miasto
+      updateData.voivodeshipId = clientData.voivodeshipId || null
+
       updateData.client = {
         upsert: {
           create: {
             imie: clientData.imie,
             nazwisko: clientData.nazwisko,
-            telefon: clientData.telefon,
-            adres: clientData.adres,
-            kodPocztowy: clientData.kodPocztowy,
-            miasto: clientData.miasto,
-            voivodeshipId: clientData.voivodeshipId || null,
             zgodaRegulamin: clientData.zgodaRegulamin || false,
             zgodaNewsletter: clientData.zgodaNewsletter || false,
             zgodaMarketing: clientData.zgodaMarketing || false,
@@ -204,11 +227,6 @@ export async function PUT(
           update: {
             imie: clientData.imie,
             nazwisko: clientData.nazwisko,
-            telefon: clientData.telefon,
-            adres: clientData.adres,
-            kodPocztowy: clientData.kodPocztowy,
-            miasto: clientData.miasto,
-            voivodeshipId: clientData.voivodeshipId || null,
             zgodaRegulamin: clientData.zgodaRegulamin,
             zgodaNewsletter: clientData.zgodaNewsletter,
             zgodaMarketing: clientData.zgodaMarketing,

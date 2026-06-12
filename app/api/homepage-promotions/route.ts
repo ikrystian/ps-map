@@ -1,4 +1,5 @@
 import { getOrSetCached } from "@/lib/cache"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
           include: {
             lawFirm: {
               include: {
-                voivodeship: true,
+                user: { select: USER_CONTACT_SELECT },
                 categories: {
                   include: {
                     category: true,
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
           include: {
             lawFirm: {
               include: {
-                voivodeship: true,
+                user: { select: USER_CONTACT_SELECT },
                 categories: {
                   include: {
                     category: true,
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
             recommendedByCat[cat] = []
           }
           if (!recommendedByCat[cat].some((f) => f.id === p.lawFirm.id)) {
-            recommendedByCat[cat].push(p.lawFirm)
+            recommendedByCat[cat].push(flattenLawFirmUser(p.lawFirm))
           }
         })
 
@@ -132,7 +133,7 @@ export async function GET(request: NextRequest) {
               consultedByCat[cat] = []
             }
             if (!consultedByCat[cat].some((f) => f.id === p.lawFirm.id)) {
-              consultedByCat[cat].push(p.lawFirm)
+              consultedByCat[cat].push(flattenLawFirmUser(p.lawFirm))
             }
           }
         })

@@ -151,17 +151,26 @@ export async function POST(request: NextRequest) {
           clientType,
           imie: clientData.imie,
           nazwisko: clientData.nazwisko,
-          telefon: clientData.telefon || null,
           nazwaFirmy: clientType === "BUSINESS" ? (clientData.nazwaFirmy || null) : null,
           nip: clientType === "BUSINESS" ? (clientData.nip || null) : null,
           regon: clientType === "BUSINESS" ? (clientData.regon || null) : null,
           krs: clientType === "BUSINESS" ? (clientData.krs || null) : null,
-          voivodeshipId: clientData.voivodeshipId || null,
-          miasto: clientData.miasto || null,
-          kodPocztowy: clientData.kodPocztowy || null,
           zgodaRegulamin: clientData.zgodaRegulamin || false,
           zgodaNewsletter: clientData.zgodaNewsletter || false,
           zgodaMarketing: clientData.zgodaMarketing || false,
+        },
+      })
+
+      // Telefon i adres należą do użytkownika (model User)
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          imie: clientData.imie || null,
+          nazwisko: clientData.nazwisko || null,
+          numerTelefonu: clientData.telefon || null,
+          voivodeshipId: clientData.voivodeshipId || null,
+          miasto: clientData.miasto || null,
+          kodPocztowy: clientData.kodPocztowy || null,
         },
       })
 
@@ -225,24 +234,32 @@ export async function POST(request: NextRequest) {
       const pkgStart = isAutoGrantActive ? new Date() : null
       const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
 
-      await prisma.lawFirm.create({
+      // Dane kontaktowe i adresowe należą do użytkownika (model User)
+      await prisma.user.update({
+        where: { id: user.id },
         data: {
-          userId: user.id,
-          typ: userData.lawFirm.typ,
-          typInny: userData.lawFirm.typInny || null,
-          nazwaFirmy: userData.lawFirm.nazwaFirmyFirmy,
-          slug,
-          nip, // Tymczasowy NIP dla MVP
-          regon: userData.lawFirm.regon || null,
-          krs: userData.lawFirm.krs || null,
-          imieKontakt: userData.lawFirm.imieKontakt || "Do uzupełnienia",
-          nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
+          imie: userData.lawFirm.imieKontakt || "Do uzupełnienia",
+          nazwisko: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
           numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
           miasto: userData.lawFirm.miasto,
           voivodeshipId: userData.lawFirm.voivodeshipId || defaultVoivodeship.id,
+        },
+      })
+
+      await prisma.lawFirm.create({
+        data: {
+          userId: user.id,
+          typ: userData.lawFirm.typ,
+          typInny: userData.lawFirm.typInny || null,
+          nazwa: userData.lawFirm.nazwa || userData.lawFirm.nazwaFirmy,
+          nazwaFirmy: userData.lawFirm.nazwaFirmy,
+          slug,
+          nip, // Tymczasowy NIP dla MVP
+          regon: userData.lawFirm.regon || null,
+          krs: userData.lawFirm.krs || null,
           typOferty: userData.lawFirm.typOferty,
           pakietSubskrypcji: subPackage as any,
           dataPakietuOd: pkgStart,
