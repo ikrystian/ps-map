@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { PrismaClient } from "@prisma/client"
 
 const data = [
   {
@@ -74,7 +74,8 @@ const data = [
   },
 ]
 
-export async function seedExpertiseCategories() {
+export async function seedExpertiseCategories(prisma: PrismaClient) {
+  console.log('Seeding expertise categories...')
   const existing = await prisma.expertiseCategory.count()
   if (existing > 0) {
     console.log("Expertise categories already seeded, skipping.")
@@ -109,11 +110,5 @@ export async function seedExpertiseCategories() {
   }
 
   console.log("Expertise categories seeded successfully.")
-}
-
-if (require.main === module) {
-  seedExpertiseCategories()
-    .catch(console.error)
-    .finally(() => prisma.$disconnect())
 }
 

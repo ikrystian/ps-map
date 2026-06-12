@@ -6,6 +6,7 @@ import { seedBlogCategories } from './seeds/blog-categories'; // Importuj nowy s
 import { seedBlogPosts } from './seeds/blog-posts'; // Importuj seeder postów bloga
 import { seedCategories } from './seeds/categories'
 import { seedEmailTemplates } from './seeds/email-templates'; // Importuj seeder szablonów emaili
+import { seedExpertiseCategories } from './seeds/expertise-categories'; // Drzewo kategorii rejestracji ekspertów
 import { seedHelpCenter } from './seeds/help-center'; // Importuj nowy seeder centrum pomocy
 import { seedHomepagePromotions } from './seeds/homepage-promotions'
 import { seedHomepageTestimonials } from './seeds/homepage-testimonials'
@@ -69,6 +70,7 @@ async function main() {
   await prisma.user.deleteMany()
 
   // Dane słownikowe/konfiguracyjne, które poniżej seedujemy ponownie
+  await prisma.expertiseCategory.deleteMany()
   await prisma.category.deleteMany()
   await prisma.blogCategory.deleteMany()
   await prisma.subscriptionPlan.deleteMany()
@@ -90,6 +92,7 @@ async function main() {
   // ==========================================================================
   await seedVoivodeships(prisma)               // upsert — zachowuje istniejące ID (powiązane z miastami)
   await seedCategories(prisma)
+  await seedExpertiseCategories(prisma)        // drzewo kategorii rejestracji ekspertów (krok 1)
   await seedBlogCategories(prisma)
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)

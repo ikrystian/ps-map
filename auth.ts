@@ -235,6 +235,11 @@ export const authOptions: NextAuthConfig = {
             token.clientNazwisko = freshUser.client?.nazwisko
             token.clientTelefon = freshUser.numerTelefonu
             token.lastRefresh = Date.now()
+          } else {
+            // Użytkownik nie istnieje już w bazie (np. po reseedzie) —
+            // unieważnij sesję zamiast zostawiać token z nieaktualnymi danymi
+            console.warn(`JWT refresh: user ${token.id} not found in database, invalidating session`)
+            return null
           }
         } catch (error) {
           console.error("Error refreshing user data in JWT:", error)

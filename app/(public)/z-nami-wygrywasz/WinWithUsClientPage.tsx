@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
 export default function WinWithUsClientPage() {
@@ -55,14 +56,8 @@ export default function WinWithUsClientPage() {
               </p>
 
               {/* CTA Button */}
-              <Link href="/rejestracja">
-                <motion.button
-                  whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-10 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide"
-                >
-                  Dołącz
-                </motion.button>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
               </Link>
             </motion.div>
 
@@ -250,14 +245,8 @@ export default function WinWithUsClientPage() {
               </p>
 
               {/* Button */}
-              <Link href="/pytania">
-                <motion.button
-                  whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-sm sm:text-base tracking-wide"
-                >
-                  Zobacz pytania
-                </motion.button>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
               </Link>
             </motion.div>
 
@@ -309,14 +298,8 @@ export default function WinWithUsClientPage() {
               </p>
 
               {/* Button */}
-              <Link href="/szukaj-prawnika">
-                <motion.button
-                  whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="bg-[#1e6b4f] text-white font-medium px-8 py-3 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-sm sm:text-base tracking-wide"
-                >
-                  Zobacz prawnika
-                </motion.button>
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
               </Link>
             </motion.div>
 
@@ -714,14 +697,8 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex justify-center mb-24"
           >
-            <Link href="/pytania">
-              <motion.button
-                whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
-                whileTap={{ scale: 0.97 }}
-                className="bg-[#1e6b4f] text-white font-medium px-10 py-4 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide"
-              >
-                Przejrzyj nasze najnowsze pytania
-              </motion.button>
+            <Link href="/logowanie">
+              <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
             </Link>
           </motion.div>
 
@@ -810,14 +787,8 @@ export default function WinWithUsClientPage() {
             <p className=" text-sm sm:text-base font-semibold text-white max-w-md text-left">
               Twoja widoczność w serwisie prostasprawa.pl zależy więc tylko od Ciebie.
             </p>
-            <Link href="/ranking">
-              <motion.button
-                whileHover={{ scale: 1.03, backgroundColor: "#247e5d" }}
-                whileTap={{ scale: 0.97 }}
-                className="bg-[#1e6b4f] text-white font-medium px-8 py-3.5 rounded-lg shadow-lg hover:shadow-emerald-950/25 transition-all duration-300 cursor-pointer  text-base tracking-wide whitespace-nowrap"
-              >
-                Zobacz naszych najlepszych ekspertów
-              </motion.button>
+            <Link href="/logowanie">
+              <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
             </Link>
           </motion.div>
 

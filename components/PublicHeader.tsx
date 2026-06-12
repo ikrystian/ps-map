@@ -55,6 +55,7 @@ export default function PublicHeader({
   const [categories, setCategories] = useState<CategoryWithChildren[]>([])
   const [blogCategories, setBlogCategories] = useState<BlogCategory[]>([])
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null)
+  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([])
   const [searchFormOpen, setSearchFormOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -125,11 +126,12 @@ export default function PublicHeader({
           setBlogCategories(catData.slice(0, 4))
         }
 
-        const postResponse = await fetch("/api/blog/posts?limit=1")
+        const postResponse = await fetch("/api/blog/posts?limit=4")
         if (postResponse.ok) {
           const postData = await postResponse.json()
           if (postData.posts && postData.posts.length > 0) {
             setLatestPost(postData.posts[0])
+            setRecentPosts(postData.posts.slice(1, 4))
           }
         }
       } catch (error) {
@@ -487,10 +489,10 @@ export default function PublicHeader({
                   Aktualności
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[700px] xl:w-[850px] p-6 bg-[#212121] text-white">
+                  <div className="w-[700px] xl:w-[1000px] p-6 bg-[#212121] text-white">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                       {/* Left Column: Categories and Topics */}
-                      <div className="md:col-span-7 flex flex-col justify-between">
+                      <div className="md:col-span-7 xl:col-span-5 flex flex-col justify-between">
                         <div>
                           <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">
                             Poradniki i kategorie
@@ -579,8 +581,45 @@ export default function PublicHeader({
                         </div>
                       </div>
 
+                      {/* Middle Column: Recent Articles */}
+                      <div className="hidden xl:flex xl:col-span-3 flex-col">
+                        <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">
+                          Najnowsze artykuły
+                        </h4>
+                        {recentPosts.length > 0 ? (
+                          <div className="flex flex-col gap-4">
+                            {recentPosts.map((post) => (
+                              <NavigationMenuLink key={post.id} asChild>
+                                <Link
+                                  href={`/blog/${post.slug}`}
+                                  className="group/recent-post flex flex-col gap-1 border-b border-neutral-800/60 pb-3.5 last:border-b-0"
+                                >
+                                  <span className="text-[13px] font-medium text-neutral-100 group-hover/recent-post:text-primary transition-colors leading-snug line-clamp-2">
+                                    {post.tytul}
+                                  </span>
+                                  <span className="text-[11px] text-neutral-500 font-light flex items-center gap-1.5">
+                                    {post.category?.nazwa && (
+                                      <span className="text-primary/80 font-medium">{post.category.nazwa}</span>
+                                    )}
+                                    {post.dataPublikacji && (
+                                      <span>
+                                        {new Date(post.dataPublikacji).toLocaleDateString("pl-PL", { day: "numeric", month: "short", year: "numeric" })}
+                                      </span>
+                                    )}
+                                  </span>
+                                </Link>
+                              </NavigationMenuLink>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[12px] text-neutral-500 font-light leading-relaxed">
+                            Wkrótce pojawią się tu nowe artykuły i porady naszych ekspertów.
+                          </p>
+                        )}
+                      </div>
+
                       {/* Right Column: Featured Banner */}
-                      <div className="md:col-span-5">
+                      <div className="md:col-span-5 xl:col-span-4">
                         {latestPost ? (
                           <Link href={`/blog/${latestPost.slug}`} className="group/featured-card block h-full">
                             <div className="relative h-full min-h-[200px] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-xl transition-all duration-300 group-hover/featured-card:border-primary/30 flex flex-col justify-end p-4">
