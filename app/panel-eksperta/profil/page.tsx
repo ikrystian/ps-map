@@ -78,7 +78,6 @@ function LawFirmProfilePageContent() {
     nazwiskoKontakt: "",
     numerTelefonu: "",
     numerTelefonu2: "",
-    emailKontakt: "",
     stronaWww: "",
 
     // Adres

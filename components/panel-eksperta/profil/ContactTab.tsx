@@ -79,7 +79,6 @@ interface ContactTabProps {
     nazwiskoKontakt: string
     numerTelefonu: string
     numerTelefonu2: string
-    emailKontakt: string
     stronaWww: string
     adres: string
     kodPocztowy: string

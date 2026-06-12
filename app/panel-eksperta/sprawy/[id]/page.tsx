@@ -50,7 +50,6 @@ interface Case {
   oczekiwanyTerminRealizacji?: string
   trybPilny: boolean
   imieNazwisko: string
-  emailKontakt: string
   telefonKontakt: string
   status: string
   createdAt: string
@@ -432,20 +431,6 @@ export default function LawFirmCaseDetailsPage() {
                       </div>
                     </div>
 
-                    {/* Email */}
-                    <a
-                      href={`mailto:${caseData.emailKontakt}`}
-                      className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3.5 py-3 rounded-xl border border-border/30 hover:border-primary/30 transition-colors group"
-                    >
-                      <Mail className="h-4.5 w-4.5 mr-3 text-primary flex-shrink-0 group-hover:scale-105 transition-transform" />
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-sm text-muted-foreground/75 leading-none mb-1">Adres email</span>
-                        <span className="font-semibold text-white text-xs leading-none truncate group-hover:text-primary transition-colors">
-                          {caseData.emailKontakt}
-                        </span>
-                      </div>
-                    </a>
-
                     {/* Telefon */}
                     <a
                       href={`tel:${caseData.telefonKontakt}`}
@@ -485,16 +470,6 @@ export default function LawFirmCaseDetailsPage() {
                     </div>
                   </div>
 
-                  {/* Email */}
-                  <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/10 px-3.5 py-3 rounded-xl border border-border/20">
-                    <Mail className="h-4.5 w-4.5 mr-3 text-zinc-500 flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Adres email</span>
-                      <span className="font-semibold text-white text-xs leading-none truncate">
-                        {caseData.emailKontakt}
-                      </span>
-                    </div>
-                  </div>
 
                   {/* Telefon */}
                   <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/10 px-3.5 py-3 rounded-xl border border-border/20">

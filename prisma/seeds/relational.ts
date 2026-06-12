@@ -387,9 +387,9 @@ export async function seedRelationalData(prisma: PrismaClient) {
       faker.lorem.paragraphs(2, '\n\n').split('\n\n').map((p) => `<p>${p}</p>`).join('')
 
     lawFirms.push({
-      id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwaFirmy: tmpl.nazwa, slug, nip,
+      id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwaFirmy: tmpl.nazwa, slug, nip: faker.string.numeric(10),
       regon: faker.string.numeric(9), krs: chance(0.5) ? faker.string.numeric(10) : null,
-      imieKontakt, nazwiskoKontakt, numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null, emailKontakt: u.email,
+      imieKontakt, nazwiskoKontakt, numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null,
       adres, kodPocztowy, miasto, voivodeshipId: voiv.id,
       latitude: round2(faker.number.float({ min: 49.0, max: 54.8 })), longitude: round2(faker.number.float({ min: 14.1, max: 24.1 })),
       opis: descHtml, logo: faker.image.avatar(), zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),
@@ -488,7 +488,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
       zalaczniki: chance(0.3) ? JSON.stringify(Array.from({ length: randInt(1, 3) }, () => faker.system.commonFileName('pdf'))) : null,
       oczekiwanyTerminRealizacji: chance(0.6) ? faker.date.soon({ days: 90, refDate: createdAt }) : null,
       trybPilny: chance(0.25), budzetOd, budzetDo, doNegocjacji: chance(0.6),
-      imieNazwisko: `${client.imie} ${client.nazwisko}`, emailKontakt: client.email, telefonKontakt: client.telefon,
+      imieNazwisko: `${client.imie} ${client.nazwisko}`, telefonKontakt: client.telefon,
       preferowanyKontakt: pick(Object.values(PreferredContact)), voivodeshipId: voiv.id, cityId: city?.id ?? null,
       status: CaseStatus.NOWA, isArchived: false, archivedAt: null, akceptujeKlauzule: true, createdAt, updatedAt: createdAt, zamknieto: null as Date | null,
     }

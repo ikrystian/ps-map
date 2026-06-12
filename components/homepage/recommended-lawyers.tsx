@@ -305,7 +305,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                           {/* Circular Email Action */}
                           <ContactButton
                             icon={Mail}
-                            href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "mailto:kontakt@prostasprawa.pl"}
+                            href={firm.user?.email ? `mailto:${firm.user.email}` : "mailto:kontakt@prostasprawa.pl"}
                             title="Wyślij e-mail"
                           />
 

@@ -29,7 +29,7 @@ Przegląd: statystyki spraw (wg statusów), ostatnie oferty, nadchodzące konsul
 | 2 | Kategoria | `categoryId` (+ pobranie podkategorii z `/api/categories/[id]/subcategories`) |
 | 3 | Opis | `nazwaSprawy`, `opisSprawy` (min 100 znaków), `zalaczniki` (upload, max 5 plików) |
 | 4 | Termin i budżet | `oczekiwanyTerminRealizacji` (data), `trybPilny` (checkbox), `budzetOd`/`budzetDo`, `doNegocjacji` (checkbox) |
-| 5 | Dane kontaktowe | `imieNazwisko`, `emailKontakt`, `telefonKontakt`, `preferowanyKontakt` (EMAIL/TELEFON/OBA), lokalizacja `voivodeshipId` + `cityId`, zgoda `akceptujeKlauzule` |
+| 5 | Dane kontaktowe | `imieNazwisko`, `telefonKontakt`, `preferowanyKontakt` (EMAIL/TELEFON/OBA), lokalizacja `voivodeshipId` + `cityId`, zgoda `akceptujeKlauzule` |
 
 Wysyłka → `POST /api/cases` → status `NOWA`, e-mail potwierdzający do klienta (`POTWIERDZENIE_DODANIA_SPRAWY`) i powiadomienia do pasujących ekspertów (`NOWA_SPRAWA`).
 

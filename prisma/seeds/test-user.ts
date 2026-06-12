@@ -32,7 +32,6 @@ export async function seedTestUser(prisma: PrismaClient) {
                 imieKontakt: "John",
                 nazwiskoKontakt: "Doe",
                 numerTelefonu: "123456789",
-                emailKontakt: "test-law-firm@example.com",
                 typ: "SPOLKA_ZOO",
                 typOferty: "WSZYSTKIE",
                 nazwaFirmy: "Test Law Firm LLC"

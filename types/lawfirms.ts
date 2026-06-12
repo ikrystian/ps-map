@@ -17,7 +17,6 @@ export interface LawFirmBase {
   logo?: string | null
   zdjecieGlowne?: string | null
   numerTelefonu?: string | null
-  emailKontakt?: string | null
   stronaWww?: string | null
 }
 

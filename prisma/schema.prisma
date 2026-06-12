@@ -192,7 +192,6 @@ model LawFirm {
   nazwiskoKontakt       String
   numerTelefonu         String
   numerTelefonu2        String?
-  emailKontakt          String
 
   // Adres siedziby
   adres                 String
@@ -492,7 +491,6 @@ model Case {
 
   // Dane kontaktowe
   imieNazwisko              String
-  emailKontakt              String
   telefonKontakt            String
   preferowanyKontakt        PreferredContact
 

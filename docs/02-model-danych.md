@@ -79,7 +79,7 @@ Ulubione kancelarie klienta — para `clientId`+`lawFirmId` (unique). Zasila wid
 |---|---|
 | Typ działalności | `typ`: `OSOBA_FIZYCZNA` / `SPOLKA_CYWILNA` / `SPOLKA_PARTNERSKA` / `SPOLKA_KOMANDYTOWA` / `SPOLKA_JAWNA` / `SPOLKA_ZOO` / `INNY` (+ `typInny`) |
 | Identyfikacja | `nazwa`, `nazwaFirmy`, `slug` (unique, URL wizytówki), `nip` (unique), `regon?`, `krs?` |
-| Osoba kontaktowa | `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2?`, `emailKontakt` |
+| Osoba kontaktowa | `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2?` |
 | Adres + geo | `adres`, `kodPocztowy`, `miasto`, `voivodeshipId`, `latitude?`, `longitude?` (mapa) |
 | Profil publiczny | `opis`, `logo`, `zdjecieGlowne`, `galeriaZdjec` (JSON array URL-i), `filmYouTube`, `okladkaFilmu`, `kolejnoscMultimedia` ("zdjecia"/"film") |
 | Godziny otwarcia | `statusGodzinyOtwarcia` (bool), `godzinyOtwarcia` (JSON `{"poniedzialek": "9:00-17:00", …}`) |
@@ -137,7 +137,7 @@ M:N ekspert↔kategoria + `kolejnosc` (kolejność specjalizacji u eksperta).
 | Kategoryzacja | `categoryId` → `Category`, `wybranadziedzinaPrawa?` (podkategoria), `wybranaSpecyfikacja?`, `specjalizacja?` |
 | Opis | `nazwaSprawy`, `opisSprawy` (min 100 znaków), `zalaczniki` (JSON array URL-i, max 5 plików) |
 | Termin/budżet | `oczekiwanyTerminRealizacji?`, `trybPilny` (bool), `budzetOd?`, `budzetDo?`, `doNegocjacji` (bool) |
-| Kontakt | `imieNazwisko`, `emailKontakt`, `telefonKontakt`, `preferowanyKontakt`: `EMAIL`/`TELEFON`/`OBA` |
+| Kontakt | `imieNazwisko`, `telefonKontakt`, `preferowanyKontakt`: `EMAIL`/`TELEFON`/`OBA` |
 | Lokalizacja | `voivodeshipId` (wymagane), `cityId?` |
 | Status | `status`: `NOWA` → `OFERTY_OTRZYMANE` → `W_TRAKCIE` → `ZAKONCZONA` / `ANULOWANA`; `zamknieto?` |
 | Archiwizacja | `isArchived`, `archivedAt` (soft delete) |

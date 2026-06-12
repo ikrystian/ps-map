@@ -52,7 +52,6 @@ export async function GET(
             miasto: true,
             adres: true,
             numerTelefonu: true,
-            emailKontakt: true,
             voivodeship: {
               select: {
                 nazwa: true

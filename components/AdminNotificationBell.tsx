@@ -21,7 +21,6 @@ interface LawFirm {
   id: string
   nazwa: string
   nazwaFirmy: string
-  emailKontakt: string
 }
 
 interface Order {

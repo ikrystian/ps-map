@@ -18,7 +18,6 @@ CREATE TABLE "new_Case" (
     "budzetDo" REAL,
     "doNegocjacji" BOOLEAN NOT NULL DEFAULT false,
     "imieNazwisko" TEXT NOT NULL,
-    "emailKontakt" TEXT NOT NULL,
     "telefonKontakt" TEXT NOT NULL,
     "preferowanyKontakt" TEXT NOT NULL,
     "voivodeshipId" TEXT NOT NULL,
@@ -33,7 +32,7 @@ CREATE TABLE "new_Case" (
     CONSTRAINT "Case_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Case_voivodeshipId_fkey" FOREIGN KEY ("voivodeshipId") REFERENCES "Voivodeship" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Case" ("akceptujeKlauzule", "budzetDo", "budzetOd", "categoryId", "clientId", "createdAt", "doNegocjacji", "emailKontakt", "id", "imieNazwisko", "nazwaSprawy", "oczekiwanyTerminRealizacji", "opisSprawy", "preferowanyKontakt", "specjalizacja", "status", "telefonKontakt", "trybPilny", "typSprawy", "updatedAt", "voivodeshipId", "wybranaSpecyfikacja", "wybranadziedzinaPrawa", "zalaczniki", "zamknieto") SELECT "akceptujeKlauzule", "budzetDo", "budzetOd", "categoryId", "clientId", "createdAt", "doNegocjacji", "emailKontakt", "id", "imieNazwisko", "nazwaSprawy", "oczekiwanyTerminRealizacji", "opisSprawy", "preferowanyKontakt", "specjalizacja", "status", "telefonKontakt", "trybPilny", "typSprawy", "updatedAt", "voivodeshipId", "wybranaSpecyfikacja", "wybranadziedzinaPrawa", "zalaczniki", "zamknieto" FROM "Case";
+INSERT INTO "new_Case" ("akceptujeKlauzule", "budzetDo", "budzetOd", "categoryId", "clientId", "createdAt", "doNegocjacji", "id", "imieNazwisko", "nazwaSprawy", "oczekiwanyTerminRealizacji", "opisSprawy", "preferowanyKontakt", "specjalizacja", "status", "telefonKontakt", "trybPilny", "typSprawy", "updatedAt", "voivodeshipId", "wybranaSpecyfikacja", "wybranadziedzinaPrawa", "zalaczniki", "zamknieto") SELECT "akceptujeKlauzule", "budzetDo", "budzetOd", "categoryId", "clientId", "createdAt", "doNegocjacji", "id", "imieNazwisko", "nazwaSprawy", "oczekiwanyTerminRealizacji", "opisSprawy", "preferowanyKontakt", "specjalizacja", "status", "telefonKontakt", "trybPilny", "typSprawy", "updatedAt", "voivodeshipId", "wybranaSpecyfikacja", "wybranadziedzinaPrawa", "zalaczniki", "zamknieto" FROM "Case";
 DROP TABLE "Case";
 ALTER TABLE "new_Case" RENAME TO "Case";
 CREATE INDEX "Case_clientId_idx" ON "Case"("clientId");

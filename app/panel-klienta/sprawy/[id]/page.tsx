@@ -47,7 +47,6 @@ interface Case {
   budzetDo?: number
   doNegocjacji: boolean
   imieNazwisko: string
-  emailKontakt: string
   telefonKontakt: string
   preferowanyKontakt: string
   status: string
@@ -78,7 +77,6 @@ interface Case {
       nazwaFirmy: string
       logo?: string
       miasto: string
-      emailKontakt: string
       numerTelefonu: string
       numerTelefonu2?: string
       adres: string
@@ -694,7 +692,7 @@ export default function ClientCaseDetailsPage() {
                 <Mail className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div className="min-w-0">
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Email</span>
-                  <span className="font-medium text-white truncate block">{caseData.emailKontakt}</span>
+                  <span className="font-medium text-white truncate block">{caseData?.user?.email}</span>
                 </div>
               </div>
 

@@ -50,7 +50,6 @@ interface FavoriteLawFirm {
       nazwa: string
     }
     numerTelefonu: string
-    emailKontakt: string
     stronaWww?: string
     zweryfikowana: boolean
     avgRating: number

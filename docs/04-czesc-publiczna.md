@@ -62,7 +62,7 @@ Strona wyboru typu konta (klient / ekspert).
 ### `/rejestracja/ekspert` — pola formularza (formularz wieloetapowy, ~1510 linii)
 - Forma działalności: `typ` + `typInny`
 - Firma: `nazwa`, `nazwaFirmy`, `nip`, `regon`, `krs`
-- Kontakt: `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2`, `emailKontakt`, `email` (konto), `password`/`confirmPassword`
+- Kontakt: `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2`, `email` (konto), `password`/`confirmPassword`
 - Adres: `adres`, `kodPocztowy`, `miasto`, `voivodeshipId`
 - Działalność: `categoriesIds[]` (specjalizacje), `voivodeshipsIds[]` (obszar działania), `callaPolska`, `typOferty`
 - Zgody: `zgodaRegulamin`, `zgodaPrzetwarzanie`

@@ -78,16 +78,16 @@ export async function seedCases(prisma: PrismaClient) {
 
       // Filter categories depending on client type
       const isBusiness = randomClient.clientType === ClientType.BUSINESS
-      
+
       // Pick template
       const possibleTemplates = REALISTIC_CASES.filter(c => {
-          const cat = allCategories.find(ac => ac.nazwa === c.category);
-          return cat && (isBusiness ? cat.typ === 'SPRAWY_FIRMOWE' : cat.typ === 'SPRAWY_PRYWATNE');
+        const cat = allCategories.find(ac => ac.nazwa === c.category);
+        return cat && (isBusiness ? cat.typ === 'SPRAWY_FIRMOWE' : cat.typ === 'SPRAWY_PRYWATNE');
       });
 
       const template = faker.helpers.arrayElement(possibleTemplates.length > 0 ? possibleTemplates : REALISTIC_CASES);
       const randomCategory = allCategories.find(ac => ac.nazwa === template.category) || faker.helpers.arrayElement(allCategories);
-      
+
       const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships)
 
       const alignedCaseType = isBusiness
@@ -108,7 +108,6 @@ export async function seedCases(prisma: PrismaClient) {
           budzetDo,
           doNegocjacji: faker.datatype.boolean(),
           imieNazwisko: `${randomClient.imie} ${randomClient.nazwisko}`,
-          emailKontakt: randomClient.user.email,
           telefonKontakt: randomClient.telefon || faker.phone.number(),
           preferowanyKontakt: faker.helpers.arrayElement(['EMAIL', 'TELEFON', 'OBA'] as const),
           status: 'NOWA',

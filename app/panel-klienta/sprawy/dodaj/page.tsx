@@ -60,7 +60,6 @@ interface FormData {
 
   // Krok 5: Dane kontaktowe
   imieNazwisko: string
-  emailKontakt: string
   telefonKontakt: string
   preferowanyKontakt: PreferredContact | ""
   akceptujeKlauzule: boolean
@@ -121,7 +120,6 @@ export default function ClientAddCasePage() {
     budzetDo: "",
     doNegocjacji: false,
     imieNazwisko: "",
-    emailKontakt: "",
     telefonKontakt: "",
     preferowanyKontakt: "",
     akceptujeKlauzule: false,
@@ -342,7 +340,6 @@ export default function ClientAddCasePage() {
           setFormData(prev => ({
             ...prev,
             imieNazwisko: `${userData.imie || ""} ${userData.nazwisko || ""}`.trim(),
-            emailKontakt: userData.user?.email || "",
             telefonKontakt: userData.telefon || "",
           }))
         }
@@ -377,7 +374,6 @@ export default function ClientAddCasePage() {
       case 5:
         return (
           !!formData.imieNazwisko &&
-          !!formData.emailKontakt &&
           !!formData.telefonKontakt &&
           !!formData.preferowanyKontakt &&
           formData.akceptujeKlauzule
@@ -1026,17 +1022,7 @@ export default function ClientAddCasePage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="emailKontakt" className="text-muted-foreground text-xs font-semibold">Adres e-mail *</Label>
-          <Input
-            id="emailKontakt"
-            type="email"
-            value={formData.emailKontakt}
-            onChange={(e) => updateFormData("emailKontakt", e.target.value)}
-            placeholder="jan.kowalski@example.com"
-            className="h-11 mt-1.5"
-          />
-        </div>
+
 
         <div>
           <Label htmlFor="telefonKontakt" className="text-muted-foreground text-xs font-semibold">Numer telefonu *</Label>
