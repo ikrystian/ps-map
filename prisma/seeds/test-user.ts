@@ -19,19 +19,26 @@ export async function seedTestUser(prisma: PrismaClient) {
 
     const voivodeship = await prisma.voivodeship.findFirst();
     if (voivodeship) {
+        // Dane kontaktowe/adresowe należą do użytkownika
+        await prisma.user.update({
+            where: { id: lawFirmUser.id },
+            data: {
+                imie: "John",
+                nazwisko: "Doe",
+                numerTelefonu: "123456789",
+                adres: "Test Address",
+                kodPocztowy: "00-000",
+                miasto: "Test City",
+                voivodeshipId: voivodeship.id,
+            },
+        })
+
         await prisma.lawFirm.create({
             data: {
                 userId: lawFirmUser.id,
                 nazwa: "Test Law Firm",
                 slug: "test-law-firm",
                 nip: "1234567890",
-                adres: "Test Address",
-                kodPocztowy: "00-000",
-                miasto: "Test City",
-                voivodeshipId: voivodeship.id,
-                imieKontakt: "John",
-                nazwiskoKontakt: "Doe",
-                numerTelefonu: "123456789",
                 typ: "SPOLKA_ZOO",
                 typOferty: "WSZYSTKIE",
                 nazwaFirmy: "Test Law Firm LLC"

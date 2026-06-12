@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ClientType, PrismaClient, UserRole } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { createRandomClientB2B, createRandomLawFirm, createRandomUser } from './generators';
+import { createRandomClientB2B, createRandomClientUserContact, createRandomLawFirm, createRandomLawFirmUserContact, createRandomUser } from './generators';
 
 const USERS_TO_CREATE = 80;
 
@@ -36,13 +36,21 @@ export async function seedTestData(prisma: PrismaClient) {
         const randomLawFirmData = createRandomLawFirm(prisma);
         const slug = `${randomLawFirmData.nazwa.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${faker.string.alphanumeric(5)}`;
 
-        // 4. Stwórz eksperta
+        // 4. Uzupełnij dane kontaktowe/adresowe na koncie użytkownika
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            ...createRandomLawFirmUserContact(),
+            voivodeshipId: randomVoivodeship.id,
+          },
+        });
+
+        // 5. Stwórz eksperta
         const lawFirm = await prisma.lawFirm.create({
           data: {
             ...randomLawFirmData,
             userId: user.id,
             slug,
-            voivodeshipId: randomVoivodeship.id,
           },
         });
         console.log(`  ✓ Law Firm: ${lawFirm.nazwaFirmy}`);
@@ -79,13 +87,21 @@ export async function seedTestData(prisma: PrismaClient) {
         const isB2B = faker.number.int({ min: 1, max: 100 }) <= 40; // 40% B2B, 60% INDIVIDUAL
         const randomVoivodeship = faker.helpers.arrayElement(allVoivodeships);
 
+        // Telefon i adres klienta należą do użytkownika (model User)
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            ...createRandomClientUserContact(),
+            voivodeshipId: randomVoivodeship.id,
+          },
+        });
+
         if (isB2B) {
           const clientData = createRandomClientB2B();
           await prisma.client.create({
             data: {
               ...clientData,
               userId: user.id,
-              voivodeshipId: randomVoivodeship.id,
               zgodaRegulamin: true,
               zgodaNewsletter: faker.datatype.boolean(),
               zgodaMarketing: faker.datatype.boolean(),
@@ -99,8 +115,6 @@ export async function seedTestData(prisma: PrismaClient) {
               clientType: ClientType.INDIVIDUAL,
               imie: user.name ? user.name.split(' ')[0] : faker.person.firstName(),
               nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : faker.person.lastName(),
-              telefon: faker.phone.number(),
-              voivodeshipId: randomVoivodeship.id,
               zgodaRegulamin: true,
               zgodaNewsletter: faker.datatype.boolean(),
               zgodaMarketing: faker.datatype.boolean(),
