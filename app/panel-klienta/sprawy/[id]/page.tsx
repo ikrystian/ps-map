@@ -376,10 +376,10 @@ export default function ClientCaseDetailsPage() {
                   <div className="min-w-0">
                     <span className="text-sm text-muted-foreground block uppercase font-medium">E-mail</span>
                     <a
-                      href={`mailto:${acceptedOffer.lawFirm.emailKontakt}`}
+                      href={`mailto:${acceptedOffer.law.Firm.user?.email}`}
                       className="font-semibold text-primary hover:underline truncate block"
                     >
-                      {acceptedOffer.lawFirm.emailKontakt}
+                      {acceptedOffer.law.Firm.user?.email}
                     </a>
                   </div>
                 </div>

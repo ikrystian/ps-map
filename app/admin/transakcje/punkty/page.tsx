@@ -273,7 +273,7 @@ export default function AdminTransakcjePunktyPage() {
                       <TableCell>
                         <div>
                           <div className="font-medium">{tx.lawFirm.nazwa || tx.lawFirm.nazwaFirmy || "—"}</div>
-                          <div className="text-sm text-muted-foreground">{tx.lawFirm.emailKontakt}</div>
+                          <div className="text-sm text-muted-foreground">{tx.law.Firm.user?.email}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -411,7 +411,7 @@ export default function AdminTransakcjePunktyPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-xs">Email kontaktowy</span>
-                    <span className="font-semibold select-all text-primary/90">{selectedTx.lawFirm.emailKontakt}</span>
+                    <span className="font-semibold select-all text-primary/90">{selectedTx.law.Firm.user?.email}</span>
                   </div>
                   <div className="col-span-2 border-t pt-2 mt-1">
                     <span className="text-muted-foreground block text-xs">Aktualne saldo punktów eksperta</span>

@@ -386,7 +386,7 @@ export default function ClientFavoritesPage() {
                       </div>
                       <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
                         <Mail className="h-3.5 w-3.5 text-primary shrink-0" />
-                        <span className="font-light">{lawFirm.emailKontakt}</span>
+                        <span className="font-light">{law.Firm.user?.email}</span>
                       </div>
                       {lawFirm.stronaWww && (
                         <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">

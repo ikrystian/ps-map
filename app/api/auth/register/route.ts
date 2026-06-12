@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Normalizacja email
+    // Normalizacja emai/l
     const normalizedEmail = email.toLowerCase().trim()
     if (!email || (!password && !isSocialRegistration)) {
       return NextResponse.json(
@@ -230,8 +230,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           typ: userData.lawFirm.typ,
           typInny: userData.lawFirm.typInny || null,
-          nazwa: userData.lawFirm.nazwa,
-          nazwaFirmy: userData.lawFirm.nazwaFirmy || userData.lawFirm.nazwa,
+          nazwaFirmy: userData.lawFirm.nazwaFirmy,
           slug,
           nip, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,
@@ -240,7 +239,7 @@ export async function POST(request: NextRequest) {
           nazwiskoKontakt: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
           numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
-          emailKontakt: userData.lawFirm.emailKontakt,
+          emailKontakt: userData.law.Firm.user?.email,
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
           miasto: userData.lawFirm.miasto,
@@ -261,7 +260,6 @@ export async function POST(request: NextRequest) {
           to: user.email,
           templateType: EmailType.REJESTRACJA_KANCELARIA,
           variables: {
-            "{nazwa}": userData.lawFirm.nazwa,
             "{email}": user.email,
             "{nip}": nip,
             "{linkDoPanelu}": `${baseUrl}/panel-eksperta`,

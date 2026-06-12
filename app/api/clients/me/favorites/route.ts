@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       const avgRating =
         lawFirm.reviews.length > 0
           ? lawFirm.reviews.reduce((sum: number, r: any) => sum + r.ocenaOgolna, 0) /
-            lawFirm.reviews.length
+          lawFirm.reviews.length
           : 0
       const reviewCount = lawFirm.reviews.length
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
             nazwa: lawFirm.voivodeship.nazwa,
           },
           numerTelefonu: lawFirm.numerTelefonu,
-          emailKontakt: lawFirm.emailKontakt,
+          emailKontakt: law.Firm.user?.email,
           stronaWww: lawFirm.stronaWww,
           zweryfikowana: lawFirm.zweryfikowana,
           avgRating,

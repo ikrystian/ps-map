@@ -79,10 +79,10 @@ export async function POST(request: NextRequest) {
 
       // Utwórz powiadomienie dla ekspertów (wraz z weryfikacją wysłania maila)
       let emailData
-      if (lawFirm.emailKontakt) {
+      if (law.Firm.user?.email) {
         emailData = generateContactFormEmail(
           lawFirm.nazwa,
-          lawFirm.emailKontakt,
+          law.Firm.user?.email,
           imieNazwisko,
           email,
           telefon,

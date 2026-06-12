@@ -37,7 +37,7 @@ export async function checkExpiredSubscriptions(): Promise<number> {
       : format(now, "dd.MM.yyyy")
 
     // 1. Send the expiration email
-    const recipientEmail = lf.emailKontakt || lf.user?.email
+    const recipientEmail = lf.user?.email
     if (recipientEmail) {
       try {
         await sendEmailWithTemplate({
