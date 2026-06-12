@@ -52,7 +52,7 @@ interface User {
   lawFirm?: {
     id: string
     nazwa: string
-    nazwaFirma: string
+    nazwaFirmy: string
     nip: string
     zweryfikowana: boolean
     aktywna: boolean

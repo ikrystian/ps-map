@@ -272,8 +272,8 @@ export default function AdminTransakcjePunktyPage() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{tx.lawFirm.nazwaFirmy || tx.lawFirm.nazwaFirmyFirmy || "—"}</div>
-                          <div className="text-sm text-muted-foreground">{tx.law.Firm.user.email}</div>
+                          <div className="font-medium">{tx.lawFirm.nazwaFirmy || tx.lawFirm.nazwa || "—"}</div>
+                          <div className="text-sm text-muted-foreground">{tx.lawFirm.user?.email}</div>
                         </div>
                       </TableCell>
                       <TableCell>

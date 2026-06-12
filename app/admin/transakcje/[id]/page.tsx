@@ -436,7 +436,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div>
                 <span className="text-muted-foreground block text-xs">Nazwa firmy</span>
                 <span className="font-semibold text-base block mt-0.5">
-                  {order.lawFirm.nazwaFirmyFirmy || order.lawFirm.nazwaFirmy || "—"}
+                  {order.lawFirm.nazwaFirmy || order.lawFirm.nazwa || "—"}
                 </span>
               </div>
 
@@ -450,7 +450,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div className="border-t pt-3">
                 <span className="text-muted-foreground block text-xs">Email kontaktowy</span>
                 <span className="font-semibold block mt-0.5 select-all text-primary">
-                  {order.law.Firm.user?.email}
+                  {order.lawFirm.user?.email}
                 </span>
               </div>
 

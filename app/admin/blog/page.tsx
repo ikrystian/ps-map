@@ -512,7 +512,7 @@ export default function AdminBlogPage() {
                           <>
                             <div className="font-medium text-foreground">{post.lawFirm.nazwaFirmy}</div>
                             <div className="text-muted-foreground text-xs">
-                              {post.lawFirm.nazwaFirmyFirmy}
+                              {post.lawFirm.nazwaFirmy}
                             </div>
                           </>
                         ) : (

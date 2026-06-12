@@ -39,6 +39,7 @@ interface Client {
   user: {
     email: string
     createdAt: string
+    numerTelefonu?: string | null
   }
   voivodeship?: {
     nazwa: string
@@ -343,7 +344,7 @@ export default function CaseDetailsPage() {
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <p className="font-semibold">{offer.lawFirm.nazwaFirmy}</p>
-                            <p className="text-sm text-muted-foreground">{offer.lawFirm.nazwaFirmyFirmy}</p>
+                            <p className="text-sm text-muted-foreground">{offer.lawFirm.nazwaFirmy}</p>
                           </div>
                           <Badge variant={offerStatusLabels[offer.status]?.variant || "secondary"}>
                             {offerStatusLabels[offer.status]?.label || offer.status}
@@ -496,7 +497,7 @@ export default function CaseDetailsPage() {
               <Separator />
               <div>
                 <p className="text-sm text-muted-foreground">Telefon</p>
-                <p className="font-medium">{caseData.client.user?.phone}</p>
+                <p className="font-medium">{caseData.client.user?.numerTelefonu || caseData.telefonKontakt}</p>
               </div>
               <Separator />
               <div>
@@ -519,7 +520,7 @@ export default function CaseDetailsPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">Nazwa</p>
                   <p className="font-medium">{acceptedOffer.lawFirm.nazwaFirmy}</p>
-                  <p className="text-sm text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmyFirmy}</p>
+                  <p className="text-sm text-muted-foreground">{acceptedOffer.lawFirm.nazwaFirmy}</p>
                 </div>
                 <Separator />
                 <div>

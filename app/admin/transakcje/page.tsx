@@ -58,7 +58,6 @@ interface Invoice {
 }
 
 interface Order {
-  law: any
   id: string
   orderNumber: string | null
   orderType: "POINTS" | "SUBSCRIPTION"
@@ -418,8 +417,8 @@ export default function AdminTransakcjePage() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{order.lawFirm.nazwaFirmy || order.lawFirm.nazwaFirmy}</div>
-                        <div className="text-sm text-muted-foreground">{order.law.Firm.user?.email}</div>
+                        <div className="font-medium">{order.lawFirm.nazwaFirmy || order.lawFirm.nazwa}</div>
+                        <div className="text-sm text-muted-foreground">{order.lawFirm.user?.email}</div>
                       </div>
                     </TableCell>
                     <TableCell>

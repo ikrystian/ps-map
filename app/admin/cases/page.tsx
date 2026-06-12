@@ -53,6 +53,7 @@ interface Offer {
   lawFirm: {
     id: string
     nazwa: string
+    nazwaFirmy: string
   }
 }
 

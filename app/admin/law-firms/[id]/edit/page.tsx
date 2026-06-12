@@ -340,7 +340,7 @@ export default function EditLawFirmPage() {
             typ: lawFirm.typ,
             typInny: lawFirm.typInny || "",
             nazwa: lawFirm.nazwaFirmy,
-            nazwaFirmy: lawFirm.nazwaFirmyFirmy,
+            nazwaFirmy: lawFirm.nazwaFirmy,
             slug: lawFirm.slug || "",
             nip: lawFirm.nip,
             regon: lawFirm.regon || "",
