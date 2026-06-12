@@ -199,7 +199,6 @@ export default function LawFirmRegistrationPage() {
     nazwiskoKontakt: "",
     numerTelefonu: "",
     numerTelefonu2: "",
-    emailKontakt: "",
 
     adres: "",
     kodPocztowy: "",
@@ -289,13 +288,12 @@ export default function LawFirmRegistrationPage() {
   useEffect(() => {
     if (session?.user?.email) {
       setFormData(prev => {
-        if (prev.email === session.user.email && prev.emailKontakt === session.user.email) {
+        if (prev.email === session.user.email) {
           return prev
         }
         return {
           ...prev,
           email: session.user.email || prev.email,
-          emailKontakt: session.user.email || prev.emailKontakt,
         }
       })
     }
@@ -564,7 +562,6 @@ export default function LawFirmRegistrationPage() {
           nazwiskoKontakt: formData.nazwiskoKontakt,
           numerTelefonu: formData.numerTelefonu,
           numerTelefonu2: formData.numerTelefonu2 || null,
-          emailKontakt: formData.emailKontakt,
           adres: formData.adres,
           kodPocztowy: formData.kodPocztowy,
           miasto: formData.miasto,

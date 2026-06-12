@@ -88,7 +88,6 @@ interface CaseDetails {
   doNegocjacji: boolean
   oczekiwanyTerminRealizacji?: string
   imieNazwisko: string
-  emailKontakt: string
   telefonKontakt: string
   preferowanyKontakt: string
   zalaczniki?: string
@@ -492,12 +491,12 @@ export default function CaseDetailsPage() {
               <Separator />
               <div>
                 <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{caseData.emailKontakt}</p>
+                <p className="font-medium">{caseData.client.user?.email}</p>
               </div>
               <Separator />
               <div>
                 <p className="text-sm text-muted-foreground">Telefon</p>
-                <p className="font-medium">{caseData.telefonKontakt}</p>
+                <p className="font-medium">{caseData.client.user?.phone}</p>
               </div>
               <Separator />
               <div>

@@ -54,7 +54,6 @@ const caseSchema = z.object({
   budzetDo: z.number().optional(),
   doNegocjacji: z.boolean(),
   imieNazwisko: z.string().min(1, "Imię i nazwisko jest wymagane"),
-  emailKontakt: z.string().email("Nieprawidłowy adres email"),
   telefonKontakt: z.string().min(1, "Telefon jest wymagany"),
   preferowanyKontakt: z.enum(["EMAIL", "TELEFON", "OBA"]),
   voivodeshipId: z.string().min(1, "Województwo jest wymagane"),
@@ -101,7 +100,6 @@ export default function NewCasePage() {
       budzetDo: undefined,
       doNegocjacji: false,
       imieNazwisko: "",
-      emailKontakt: "",
       telefonKontakt: "",
       preferowanyKontakt: "EMAIL",
       voivodeshipId: "",
@@ -146,7 +144,6 @@ export default function NewCasePage() {
   useEffect(() => {
     if (selectedClient) {
       form.setValue("imieNazwisko", `${selectedClient.imie} ${selectedClient.nazwisko}`)
-      form.setValue("emailKontakt", selectedClient.user.email)
     }
   }, [selectedClient, form])
 
@@ -531,19 +528,7 @@ export default function NewCasePage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="emailKontakt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email kontaktowy</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="telefonKontakt"
@@ -656,7 +641,7 @@ export default function NewCasePage() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"

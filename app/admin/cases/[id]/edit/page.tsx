@@ -40,7 +40,6 @@ const caseSchema = z.object({
   budzetDo: z.number().optional(),
   doNegocjacji: z.boolean(),
   imieNazwisko: z.string().min(1, "Name is required"),
-  emailKontakt: z.string().email("Invalid email address"),
   telefonKontakt: z.string().min(1, "Phone is required"),
   preferowanyKontakt: z.enum(["EMAIL", "TELEFON", "OBA"]),
   voivodeshipId: z.string().min(1, "Voivodeship is required"),
@@ -77,7 +76,6 @@ export default function EditCasePage() {
       budzetDo: undefined,
       doNegocjacji: false,
       imieNazwisko: "",
-      emailKontakt: "",
       telefonKontakt: "",
       preferowanyKontakt: "EMAIL",
       voivodeshipId: "",
@@ -139,7 +137,6 @@ export default function EditCasePage() {
             budzetDo: caseData.budzetDo || undefined,
             doNegocjacji: caseData.doNegocjacji,
             imieNazwisko: caseData.imieNazwisko,
-            emailKontakt: caseData.emailKontakt,
             telefonKontakt: caseData.telefonKontakt,
             preferowanyKontakt: caseData.preferowanyKontakt,
             voivodeshipId: caseData.voivodeshipId,
@@ -470,19 +467,7 @@ export default function EditCasePage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="emailKontakt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email kontaktowy</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="telefonKontakt"
@@ -657,7 +642,7 @@ export default function EditCasePage() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"
