@@ -29,7 +29,10 @@ export async function POST(
 
     // Pobierz dane klienta
     const client = await prisma.client.findUnique({
-      where: { userId: session.user.id }
+      where: { userId: session.user.id },
+      include: {
+        user: { select: { numerTelefonu: true } },
+      },
     })
 
     if (!client) {
@@ -54,6 +57,7 @@ export async function POST(
           select: {
             id: true,
             nazwa: true,
+            nazwaFirmy: true,
             userId: true,
             slug: true,
             user: {
@@ -282,7 +286,7 @@ export async function POST(
             "{nazwaSprawi}": offer.case.nazwaSprawy,
             "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
             "{emailKlienta}": session.user.email || "Brak",
-            "{telefonKlienta}": client.telefon || "Nie podano",
+            "{telefonKlienta}": client.user?.numerTelefonu || "Nie podano",
             "{linkDoPanelu}": `${baseUrl}/panel-eksperta/oferty`,
           }
         })

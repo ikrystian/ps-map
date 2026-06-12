@@ -83,7 +83,7 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
                 <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            <CardDescription className="text-sm">{lawFirm.nazwaFirmyFirmy}</CardDescription>
+            <CardDescription className="text-sm">{lawFirm.nazwaFirmy}</CardDescription>
           </div>
         </div>
       </CardHeader>

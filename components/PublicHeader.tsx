@@ -1042,7 +1042,7 @@ export default function PublicHeader({
                           </button>
                         )}
 
-                        {getVisibleCategories().map((cat) => {
+                        {getVisibleCategories().map((cat: any) => {
                           const hasChildren = cat.children && cat.children.length > 0
                           const isSelected = selectedExpertiseCategoryId === cat.id
 

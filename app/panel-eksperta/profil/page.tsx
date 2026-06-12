@@ -76,6 +76,7 @@ function LawFirmProfilePageContent() {
     // Dane kontaktowe
     imieKontakt: "",
     nazwiskoKontakt: "",
+    emailKontakt: "",
     numerTelefonu: "",
     numerTelefonu2: "",
     stronaWww: "",
@@ -174,6 +175,8 @@ function LawFirmProfilePageContent() {
           setLimitSlowKluczowych(lawFirmData.limitSlowKluczowych || 5)
           const normalizedData = {
             ...lawFirmData,
+            // Email konta użytkownika (tylko do wyświetlenia)
+            emailKontakt: lawFirmData.user?.email || session?.user?.email || "",
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
             citiesIds: lawFirmData.cities?.map((c: any) => c.city.id) || [],
             categoriesIds: lawFirmData.categories?.map((c: any) => c.category.id) || [],

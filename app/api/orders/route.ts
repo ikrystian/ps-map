@@ -104,9 +104,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Pobierz dane eksperta
+    // Pobierz dane eksperta (dane adresowe do faktury są na koncie użytkownika)
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
+      include: {
+        user: {
+          select: { adres: true, kodPocztowy: true, miasto: true },
+        },
+      },
     })
 
     if (!lawFirm) {
@@ -191,11 +196,11 @@ export async function POST(request: NextRequest) {
     const finalDaneFaktury = daneFaktury
       ? JSON.stringify(daneFaktury)
       : JSON.stringify({
-        nazwaFirmy: lawFirm.nazwaFirmyFirmy || lawFirm.nazwaFirmy || "",
+        nazwaFirmy: lawFirm.nazwaFirmy || "",
         nip: lawFirm.nip || "",
-        adres: lawFirm.adres || "",
-        kodPocztowy: lawFirm.kodPocztowy || "",
-        miasto: lawFirm.miasto || "",
+        adres: lawFirm.user?.adres || "",
+        kodPocztowy: lawFirm.user?.kodPocztowy || "",
+        miasto: lawFirm.user?.miasto || "",
       })
 
     // Utwórz zamówienie

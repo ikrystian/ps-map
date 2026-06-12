@@ -34,6 +34,11 @@ import { useEffect, useState } from "react"
 
 interface Case {
   id: string
+  client?: {
+    user?: {
+      email?: string
+    }
+  }
   typSprawy: string
   categoryId: string
   wybranadziedzinaPrawa?: string
@@ -338,8 +343,8 @@ export default function ClientCaseDetailsPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <Heading level="h3" className="text-xl font-bold text-white">{acceptedOffer.lawFirm.nazwaFirmy}</Heading>
-                  {acceptedOffer.lawFirm.nazwaFirmyFirmy && (
-                    <p className="text-sm text-muted-foreground mt-1">{acceptedOffer.lawFirm.nazwaFirmyFirmy}</p>
+                  {acceptedOffer.lawFirm.nazwaFirmy && (
+                    <p className="text-sm text-muted-foreground mt-1">{acceptedOffer.lawFirm.nazwaFirmy}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-4 bg-background-sec/30 p-4 rounded-lg border border-border/30">
@@ -681,7 +686,7 @@ export default function ClientCaseDetailsPage() {
                 <Mail className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div className="min-w-0">
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Email</span>
-                  <span className="font-medium text-white truncate block">{caseData?.user?.email}</span>
+                  <span className="font-medium text-white truncate block">{caseData?.client?.user?.email}</span>
                 </div>
               </div>
 

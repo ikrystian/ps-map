@@ -278,7 +278,7 @@ export default function ClientFavoritesPage() {
                           </div>
 
                           <p className="text-xs text-zinc-400 font-light">
-                            {lawFirm.nazwaFirmyFirmy}
+                            {lawFirm.nazwaFirmy}
                           </p>
 
                           {/* Rating */}

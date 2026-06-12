@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { nazwa: { contains: query } },
         { nazwaFirmy: { contains: query } },
-        { miasto: { contains: query } },
+        { user: { miasto: { contains: query } } },
         { opis: { contains: query } },
       ]
     }
@@ -33,11 +33,11 @@ export async function GET(request: NextRequest) {
         logo: true,
         zdjecieGlowne: true,
         opis: true,
-        miasto: true,
-        adres: true,
         zweryfikowana: true,
         user: {
           select: {
+            miasto: true,
+            adres: true,
             notificationSettings: {
               select: { wyswietlanieAwatara: true },
             },
@@ -76,8 +76,8 @@ export async function GET(request: NextRequest) {
         logo: pokazAwatar ? firm.logo : null,
         zdjecieGlowne: firm.zdjecieGlowne,
         opis: firm.opis ? (firm.opis.length > 150 ? firm.opis.substring(0, 150) + "..." : firm.opis) : "",
-        miasto: firm.miasto,
-        adres: firm.adres,
+        miasto: firm.user?.miasto || "",
+        adres: firm.user?.adres || "",
         zweryfikowana: firm.zweryfikowana,
         avgRating: parseFloat(avgRating.toFixed(1)),
         reviewCount: firm.reviews.length,
