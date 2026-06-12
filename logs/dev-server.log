@@ -1,0 +1,4 @@
+[SCHEDULER] Initializing persistent background job scheduler...
+[SCHEDULER] Background scheduler initialized with 8 jobs.
+> Ready on http://localhost:3001
+ GET /api/law-firms?limit=1 200 in 305ms (next.js: 108ms, proxy.ts: 151ms, application-code: 46ms)

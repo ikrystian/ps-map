@@ -28,11 +28,31 @@ export function createRandomClientB2B() {
         clientType: ClientType.BUSINESS,
         imie: contactFirstName,
         nazwisko: contactLastName,
-        telefon: faker.phone.number(),
         nazwaFirmy: companyName,
         nip: faker.string.numeric('10'),
         regon: faker.string.numeric('9'),
         krs: faker.string.numeric('10'),
+    };
+}
+
+// Telefon i adres klienta — przeniesione do modelu User
+export function createRandomClientUserContact() {
+    return {
+        numerTelefonu: faker.phone.number(),
+        adres: faker.location.streetAddress(),
+        kodPocztowy: faker.location.zipCode('##-###'),
+        miasto: faker.location.city(),
+    };
+}
+
+
+// Dane kontaktowe/adresowe eksperta — przeniesione do modelu User
+export function createRandomLawFirmUserContact() {
+    return {
+        imie: faker.person.firstName(),
+        nazwisko: faker.person.lastName(),
+        numerTelefonu: faker.phone.number(),
+        numerTelefonu2: faker.phone.number(),
         adres: faker.location.streetAddress(),
         kodPocztowy: faker.location.zipCode('##-###'),
         miasto: faker.location.city(),
@@ -60,13 +80,6 @@ export function createRandomLawFirm(prisma: PrismaClient) {
         nip: faker.string.numeric('##########'),
         regon: faker.string.numeric('#########'),
         krs: faker.string.numeric('##########'),
-        imieKontakt: contactFirstName,
-        nazwiskoKontakt: contactLastName,
-        numerTelefonu: faker.phone.number(),
-        numerTelefonu2: faker.phone.number(),
-        adres: faker.location.streetAddress(),
-        kodPocztowy: faker.location.zipCode(),
-        miasto: faker.location.city(),
         opis: descriptionHtml,
         logo: faker.image.avatar(),
         zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),

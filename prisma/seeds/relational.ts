@@ -330,6 +330,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // ==========================================================================
   type ClientRow = { id: string; userId: string; email: string; imie: string; nazwisko: string; telefon: string; clientType: ClientType; createdAt: Date }
   const clientRows: ClientRow[] = []
+  const clientUserContactUpdates: { userId: string; data: any }[] = []
   const clientsInserter = makeInserter('Klienci', prisma.client, 20, 1000)
   for (const u of clientUsers) {
     const [imie, ...rest] = u.name.split(' ')
@@ -340,18 +341,32 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const telefon = faker.phone.number()
     const id = uuid()
     await clientsInserter.push({
-      id, userId: u.id, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, imie, nazwisko, telefon,
+      id, userId: u.id, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, imie, nazwisko,
       nazwaFirmy: isB2B ? `${faker.company.name()} ${pick(['Sp. z o.o.', 'S.A.', 'Sp. k.', 'Sp. j.'])}` : null,
       nip: isB2B ? faker.string.numeric(10) : null, regon: isB2B ? faker.string.numeric(9) : null,
       krs: isB2B && chance(0.5) ? faker.string.numeric(10) : null,
-      adres: faker.location.streetAddress(), kodPocztowy: faker.location.zipCode('##-###'),
-      miasto: city?.nazwa ?? faker.location.city(), voivodeshipId: voiv.id,
       zgodaRegulamin: true, zgodaNewsletter: chance(0.6), zgodaMarketing: chance(0.5), punktySaldo: 0,
       createdAt: u.createdAt, updatedAt: u.createdAt,
+    })
+    // Telefon i adres klienta należą do użytkownika (model User)
+    clientUserContactUpdates.push({
+      userId: u.id,
+      data: {
+        imie, nazwisko, numerTelefonu: telefon,
+        adres: faker.location.streetAddress(), kodPocztowy: faker.location.zipCode('##-###'),
+        miasto: city?.nazwa ?? faker.location.city(), voivodeshipId: voiv.id,
+      },
     })
     clientRows.push({ id, userId: u.id, email: u.email, imie, nazwisko, telefon, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, createdAt: u.createdAt })
   }
   await clientsInserter.done()
+
+  // Dane kontaktowe klientów — aktualizacja na kontach użytkowników
+  console.log(`💾 Aktualizacja danych kontaktowych użytkowników klientów (${clientUserContactUpdates.length})...`)
+  while (clientUserContactUpdates.length > 0) {
+    const part = clientUserContactUpdates.splice(0, 200)
+    await prisma.$transaction(part.map((upd) => prisma.user.update({ where: { id: upd.userId }, data: upd.data })))
+  }
 
   // ==========================================================================
   // 3. KANCELARIE (obiekty trzymamy do uzupełnienia statystyk i salda)
@@ -359,6 +374,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   type FirmRow = { id: string; userId: string; nazwa: string; nazwaFirmy: string; nip: string; adres: string; kodPocztowy: string; miasto: string; createdAt: Date; pakiet: SubscriptionPackage }
   const lawFirms: any[] = []
   const firmRows: FirmRow[] = []
+  const userContactUpdates: { userId: string; data: any }[] = []
   let lawFirmVoiv: any[] = []
   let lawFirmCity: any[] = []
   let lawFirmCategory: any[] = []
@@ -386,12 +402,20 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const descHtml = `<p><strong>${tmpl.tagline}</strong></p><p>${tmpl.opis}</p>` +
       faker.lorem.paragraphs(2, '\n\n').split('\n\n').map((p) => `<p>${p}</p>`).join('')
 
+    // Dane kontaktowe/adresowe należą do użytkownika (model User)
+    userContactUpdates.push({
+      userId: u.id,
+      data: {
+        imie: imieKontakt, nazwisko: nazwiskoKontakt,
+        numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null,
+        adres, kodPocztowy, miasto, voivodeshipId: voiv.id,
+        latitude: round2(faker.number.float({ min: 49.0, max: 54.8 })), longitude: round2(faker.number.float({ min: 14.1, max: 24.1 })),
+      },
+    })
+
     lawFirms.push({
       id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwaFirmy: tmpl.nazwa, slug, nip: faker.string.numeric(10),
       regon: faker.string.numeric(9), krs: chance(0.5) ? faker.string.numeric(10) : null,
-      imieKontakt, nazwiskoKontakt, numerTelefonu: faker.phone.number(), numerTelefonu2: chance(0.4) ? faker.phone.number() : null,
-      adres, kodPocztowy, miasto, voivodeshipId: voiv.id,
-      latitude: round2(faker.number.float({ min: 49.0, max: 54.8 })), longitude: round2(faker.number.float({ min: 14.1, max: 24.1 })),
       opis: descHtml, logo: faker.image.avatar(), zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),
       galeriaZdjec: JSON.stringify(Array.from({ length: randInt(2, 6) }, () => faker.image.url())),
       filmYouTube: chance(0.3) ? 'https://www.youtube.com/watch?v=quC2GkURViU' : null,
@@ -709,6 +733,13 @@ export async function seedRelationalData(prisma: PrismaClient) {
   }
 
   await streamArray('Kancelarie/Eksperci', prisma.lawFirm, lawFirms, 60, 500)
+
+  // Dane kontaktowe/adresowe ekspertów — aktualizacja na kontach użytkowników
+  console.log(`💾 Aktualizacja danych kontaktowych użytkowników ekspertów (${userContactUpdates.length})...`)
+  while (userContactUpdates.length > 0) {
+    const part = userContactUpdates.splice(0, 200)
+    await prisma.$transaction(part.map((upd) => prisma.user.update({ where: { id: upd.userId }, data: upd.data })))
+  }
   await streamArray('Województwa kancelarii', prisma.lawFirmVoivodeship, lawFirmVoiv, 4, 4000); lawFirmVoiv = []
   await streamArray('Miasta kancelarii', prisma.lawFirmCity, lawFirmCity, 4, 4000); lawFirmCity = []
   await streamArray('Kategorie kancelarii', prisma.lawFirmCategory, lawFirmCategory, 5, 4000); lawFirmCategory = []

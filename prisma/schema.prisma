@@ -30,6 +30,21 @@ model User {
   lastLogin     DateTime?
   deletedAt     DateTime?  // Soft delete timestamp
 
+  // Dane osobowe / kontaktowe (przeniesione z LawFirm)
+  imie          String?
+  nazwisko      String?
+  numerTelefonu String?
+  numerTelefonu2 String?
+
+  // Adres (przeniesiony z LawFirm)
+  adres         String?
+  kodPocztowy   String?
+  miasto        String?
+  voivodeshipId String?
+  voivodeship   Voivodeship? @relation(fields: [voivodeshipId], references: [id])
+  latitude      Float?     // Współrzędne geograficzne dla mapy
+  longitude     Float?     // Współrzędne geograficzne dla mapy
+
   // NextAuth relations
   accounts      Account[]
   sessions      Session[]
@@ -58,6 +73,7 @@ model User {
   @@index([role])
   @@index([status])
   @@index([deletedAt])
+  @@index([voivodeshipId])
 }
 
 model Account {
@@ -131,20 +147,15 @@ model Client {
   // Dane osobowe / reprezentanta
   imie            String
   nazwisko        String
-  telefon         String?
+
+  // Telefon i adres przeniesione do modelu User
+  // (numerTelefonu, adres, kodPocztowy, miasto, voivodeshipId)
 
   // Dane firmowe (tylko dla BUSINESS)
   nazwaFirmy      String?
   nip             String?
   regon           String?
   krs             String?
-
-  // Adres
-  adres           String?
-  kodPocztowy     String?
-  miasto          String?
-  voivodeshipId   String?
-  voivodeship     Voivodeship? @relation(fields: [voivodeshipId], references: [id])
 
   // Zgody marketingowe
   zgodaRegulamin  Boolean  @default(false)
@@ -163,7 +174,6 @@ model Client {
   consultationBookings ConsultationBooking[]
 
   @@index([userId])
-  @@index([voivodeshipId])
 }
 
 // ============================================================================
@@ -187,20 +197,9 @@ model LawFirm {
   regon                 String?
   krs                   String?
 
-  // Dane kontaktowe
-  imieKontakt           String
-  nazwiskoKontakt       String
-  numerTelefonu         String
-  numerTelefonu2        String?
-
-  // Adres siedziby
-  adres                 String
-  kodPocztowy           String
-  miasto                String
-  voivodeshipId         String
-  voivodeship           Voivodeship @relation(fields: [voivodeshipId], references: [id])
-  latitude              Float?     // Współrzędne geograficzne dla mapy
-  longitude             Float?     // Współrzędne geograficzne dla mapy
+  // Dane kontaktowe i adres siedziby przeniesione do modelu User
+  // (imie, nazwisko, numerTelefonu, numerTelefonu2, adres, kodPocztowy,
+  //  miasto, voivodeshipId, latitude, longitude)
 
   // Profil publiczny
   opis                  String?   @default("")
@@ -305,7 +304,6 @@ model LawFirm {
   orderOverrides             OrderOverride[]
 
   @@index([userId])
-  @@index([voivodeshipId])
   @@index([nip])
   @@index([zweryfikowana])
   @@index([aktywna])
@@ -1285,8 +1283,7 @@ model Voivodeship {
 
   // Relacje
   cities          City[]
-  clients         Client[]
-  lawFirms        LawFirm[]
+  users           User[]
   lawFirmVoivodeships LawFirmVoivodeship[]
   cases           Case[]
 

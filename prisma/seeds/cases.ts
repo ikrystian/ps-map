@@ -17,6 +17,7 @@ export async function seedCases(prisma: PrismaClient) {
           id: true,
           name: true,
           email: true,
+          numerTelefonu: true,
         },
       },
     },
@@ -56,11 +57,13 @@ export async function seedCases(prisma: PrismaClient) {
         // Create a new client if needed
         const randomUserData = createRandomUser(prisma, UserRole.CLIENT)
         const user = await prisma.user.create({
-          data: { ...randomUserData, password: 'Password123' },
+          // Telefon klienta należy do użytkownika (model User)
+          data: { ...randomUserData, password: 'Password123', numerTelefonu: faker.phone.number() },
           select: {
             id: true,
             name: true,
             email: true,
+            numerTelefonu: true,
           },
         })
         const client = await prisma.client.create({
@@ -69,7 +72,6 @@ export async function seedCases(prisma: PrismaClient) {
             clientType: ClientType.INDIVIDUAL,
             imie: user.name ? user.name.split(' ')[0] : faker.person.firstName(),
             nazwisko: user.name ? user.name.split(' ').slice(1).join(' ') : faker.person.lastName(),
-            telefon: faker.phone.number(),
           },
         })
         randomClient = { ...client, user }
@@ -108,7 +110,7 @@ export async function seedCases(prisma: PrismaClient) {
           budzetDo,
           doNegocjacji: faker.datatype.boolean(),
           imieNazwisko: `${randomClient.imie} ${randomClient.nazwisko}`,
-          telefonKontakt: randomClient.telefon || faker.phone.number(),
+          telefonKontakt: randomClient.user?.numerTelefonu || faker.phone.number(),
           preferowanyKontakt: faker.helpers.arrayElement(['EMAIL', 'TELEFON', 'OBA'] as const),
           status: 'NOWA',
           akceptujeKlauzule: true,
@@ -134,7 +136,7 @@ export async function seedCases(prisma: PrismaClient) {
             zaakceptowanaData: offerData.status === OfferStatus.ZAAKCEPTOWANA ? new Date() : null,
           },
         })
-        console.log(`  ✓ Offer: ${offerData.kwotaBrutto} PLN from ${lawFirm.nazwaFirmy}`)
+        console.log(`  ✓ Offer: ${offerData.kwotaBrutto} PLN from ${lawFirm.nazwa}`)
       }
       console.log('---')
     } catch (error) {
