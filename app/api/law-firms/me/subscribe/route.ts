@@ -49,9 +49,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Pobierz dane eksperta
+    // Pobierz dane eksperta (dane adresowe do faktury są na koncie użytkownika)
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
+      include: {
+        user: {
+          select: { adres: true, kodPocztowy: true, miasto: true },
+        },
+      },
     })
 
     if (!lawFirm) {
@@ -203,15 +208,15 @@ export async function POST(request: NextRequest) {
     const POINTS_PER_PLN = 2
     const pointsCost = Math.round(finalPrice * POINTS_PER_PLN)
 
-    let updatedLawFirm = lawFirm
+    let updatedLawFirm: any = lawFirm
     let order
 
     const finalDaneFaktury = JSON.stringify({
-      nazwaFirmy: lawFirm.nazwaFirmyFirmy || lawFirm.nazwaFirmy || "",
+      nazwaFirmy: lawFirm.nazwaFirmy || "",
       nip: lawFirm.nip || "",
-      adres: lawFirm.adres || "",
-      kodPocztowy: lawFirm.kodPocztowy || "",
-      miasto: lawFirm.miasto || "",
+      adres: lawFirm.user?.adres || "",
+      kodPocztowy: lawFirm.user?.kodPocztowy || "",
+      miasto: lawFirm.user?.miasto || "",
     })
 
     if (isPointPayment) {
@@ -362,11 +367,11 @@ export async function POST(request: NextRequest) {
         invoiceNumber,
         orderId: order.id,
         lawFirmId: lawFirm.id,
-        buyerName: lawFirm.nazwaFirmyFirmy,
+        buyerName: lawFirm.nazwaFirmy,
         buyerNIP: lawFirm.nip,
-        buyerAddress: lawFirm.adres,
-        buyerPostalCode: lawFirm.kodPocztowy,
-        buyerCity: lawFirm.miasto,
+        buyerAddress: lawFirm.user?.adres || "",
+        buyerPostalCode: lawFirm.user?.kodPocztowy || "",
+        buyerCity: lawFirm.user?.miasto || "",
         netAmount,
         vatRate,
         vatAmount,

@@ -39,7 +39,9 @@ export async function GET(
               select: {
                 imie: true,
                 nazwisko: true,
-                telefon: true
+                user: {
+                  select: { numerTelefonu: true }
+                }
               }
             }
           }
@@ -49,12 +51,16 @@ export async function GET(
             id: true,
             nazwa: true,
             logo: true,
-            miasto: true,
-            adres: true,
-            numerTelefonu: true,
-            voivodeship: {
+            user: {
               select: {
-                nazwa: true
+                miasto: true,
+                adres: true,
+                numerTelefonu: true,
+                voivodeship: {
+                  select: {
+                    nazwa: true
+                  }
+                }
               }
             }
           }
@@ -114,7 +120,17 @@ export async function GET(
       }
     }
 
-    return Response.json(offer)
+    // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
+    return Response.json({
+      ...offer,
+      lawFirm: {
+        ...offer.lawFirm,
+        miasto: offer.lawFirm.user?.miasto ?? "",
+        adres: offer.lawFirm.user?.adres ?? "",
+        numerTelefonu: offer.lawFirm.user?.numerTelefonu ?? "",
+        voivodeship: offer.lawFirm.user?.voivodeship ?? null,
+      },
+    })
   } catch (error) {
     console.error("Error fetching offer:", error)
     return Response.json(

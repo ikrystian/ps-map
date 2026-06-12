@@ -1,5 +1,6 @@
 import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 import { auth } from "@/lib/auth"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
       include: {
-        voivodeship: true,
+        user: { select: { email: true, ...USER_CONTACT_SELECT } },
         voivodeships: {
           include: {
             voivodeship: true,
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
     const updatedLawFirm = await checkAndUpdatePackageExpiry(lawFirm as any);
 
     return Response.json({
-      ...lawFirm,
+      ...flattenLawFirmUser(lawFirm),
       pakietSubskrypcji: updatedLawFirm.pakietSubskrypcji,
       dataPakietuOd: updatedLawFirm.dataPakietuOd,
       dataPakietuDo: updatedLawFirm.dataPakietuDo,

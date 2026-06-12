@@ -103,10 +103,14 @@ export async function GET(request: NextRequest) {
               id: true,
               nazwa: true,
               logo: true,
-              miasto: true,
-              voivodeship: {
+              user: {
                 select: {
-                  nazwa: true
+                  miasto: true,
+                  voivodeship: {
+                    select: {
+                      nazwa: true
+                    }
+                  }
                 }
               }
             }
@@ -122,7 +126,15 @@ export async function GET(request: NextRequest) {
     ])
 
     return Response.json({
-      offers,
+      // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
+      offers: offers.map((offer) => ({
+        ...offer,
+        lawFirm: {
+          ...offer.lawFirm,
+          miasto: offer.lawFirm.user?.miasto ?? "",
+          voivodeship: offer.lawFirm.user?.voivodeship ?? null,
+        },
+      })),
       pagination: {
         page,
         limit,

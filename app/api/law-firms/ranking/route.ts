@@ -18,12 +18,16 @@ export async function GET(request: NextRequest) {
         nazwaFirmy: true,
         logo: true,
         opis: true,
-        miasto: true,
         punktySaldo: true,
         zweryfikowana: true,
-        voivodeship: {
+        user: {
           select: {
-            nazwa: true,
+            miasto: true,
+            voivodeship: {
+              select: {
+                nazwa: true,
+              },
+            },
           },
         },
         categories: {
@@ -67,11 +71,11 @@ export async function GET(request: NextRequest) {
         nazwaFirmy: firm.nazwaFirmy,
         logo: firm.logo,
         opis: firm.opis,
-        miasto: firm.miasto,
+        miasto: firm.user?.miasto || "",
         punktySaldo: firm.punktySaldo,
         zweryfikowana: firm.zweryfikowana,
         subscriptionType: firm.pakietSubskrypcji || null,
-        voivodeship: firm.voivodeship,
+        voivodeship: firm.user?.voivodeship || null,
         categories: firm.categories.map((c: any) => ({ nazwa: c.category.nazwa })),
         avgRating,
         reviewCount,

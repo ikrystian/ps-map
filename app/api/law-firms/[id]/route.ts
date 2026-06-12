@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { hasActivePackage } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
@@ -26,6 +27,7 @@ export async function GET(
           select: {
             email: true,
             name: true,
+            ...USER_CONTACT_SELECT,
             notificationSettings: {
               select: {
                 ustawieniaOgloszenia: true,
@@ -34,7 +36,6 @@ export async function GET(
             },
           },
         },
-        voivodeship: true,
         voivodeships: {
           include: {
             voivodeship: true,
@@ -151,7 +152,7 @@ export async function GET(
 
     // Parse JSON fields
     const parsedLawFirm = {
-      ...lawFirm,
+      ...flattenLawFirmUser(lawFirm),
       userId: lawFirm.userId, // Include userId for chat functionality
       galeriaZdjec: lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.trim() ? JSON.parse(lawFirm.galeriaZdjec) : [],
       slowaKluczowe: lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.trim() ? JSON.parse(lawFirm.slowaKluczowe) : [],
@@ -202,10 +203,12 @@ export async function PUT(
 
     // Przygotuj dane do aktualizacji
     const updateData: any = {}
+    // Dane kontaktowe/adresowe należą do modelu User
+    const userUpdateData: any = {}
 
     // Dane podstawowe
     // Note: slug is NOT directly updateable - it's only regenerated when nazwa changes
-    if (body.nazwa && body.nazwa !== existinglawFirm.nazwaFirmy) {
+    if (body.nazwa && body.nazwa !== existingLawFirm.nazwaFirmy) {
       updateData.nazwa = body.nazwa
       // Regenerate slug if nazwa changes
       const polishChars: Record<string, string> = {
@@ -234,18 +237,18 @@ export async function PUT(
     if (body.logo !== undefined) updateData.logo = body.logo
     if (body.zdjecieGlowne !== undefined) updateData.zdjecieGlowne = body.zdjecieGlowne
 
-    // Dane kontaktowe
-    if (body.imieKontakt) updateData.imieKontakt = body.imieKontakt
-    if (body.nazwiskoKontakt) updateData.nazwiskoKontakt = body.nazwiskoKontakt
-    if (body.numerTelefonu) updateData.numerTelefonu = body.numerTelefonu
-    if (body.numerTelefonu2 !== undefined) updateData.numerTelefonu2 = body.numerTelefonu2
+    // Dane kontaktowe (model User)
+    if (body.imieKontakt) userUpdateData.imie = body.imieKontakt
+    if (body.nazwiskoKontakt) userUpdateData.nazwisko = body.nazwiskoKontakt
+    if (body.numerTelefonu) userUpdateData.numerTelefonu = body.numerTelefonu
+    if (body.numerTelefonu2 !== undefined) userUpdateData.numerTelefonu2 = body.numerTelefonu2
     if (body.stronaWww !== undefined) updateData.stronaWww = body.stronaWww
 
-    // Adres
-    if (body.adres) updateData.adres = body.adres
-    if (body.kodPocztowy) updateData.kodPocztowy = body.kodPocztowy
-    if (body.miasto) updateData.miasto = body.miasto
-    if (body.voivodeshipId) updateData.voivodeshipId = body.voivodeshipId
+    // Adres (model User)
+    if (body.adres) userUpdateData.adres = body.adres
+    if (body.kodPocztowy) userUpdateData.kodPocztowy = body.kodPocztowy
+    if (body.miasto) userUpdateData.miasto = body.miasto
+    if (body.voivodeshipId) userUpdateData.voivodeshipId = body.voivodeshipId
 
     // Multimedia
     if (body.galeriaZdjec) updateData.galeriaZdjec = JSON.stringify(body.galeriaZdjec)
@@ -318,13 +321,21 @@ export async function PUT(
 
     updateData.updatedAt = new Date()
 
+    // Aktualizuj dane kontaktowe/adresowe na koncie użytkownika
+    if (Object.keys(userUpdateData).length > 0) {
+      await prisma.user.update({
+        where: { id: existingLawFirm.userId },
+        data: userUpdateData,
+      })
+    }
+
     // Aktualizuj eksperta
     console.log('Updating law firm with data:', updateData)
     const updatedLawFirm = await prisma.lawFirm.update({
       where: { id },
       data: updateData,
       include: {
-        voivodeship: true,
+        user: { select: USER_CONTACT_SELECT },
         voivodeships: {
           include: {
             voivodeship: true,
@@ -402,7 +413,7 @@ export async function PUT(
 
     return NextResponse.json({
       message: "Law firm updated successfully",
-      lawFirm: updatedLawFirm,
+      lawFirm: flattenLawFirmUser(updatedLawFirm),
     })
   } catch (error) {
     console.error("Error updating law firm:", error)
