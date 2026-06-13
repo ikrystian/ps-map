@@ -168,6 +168,7 @@
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
+    --color-gold: #c8a864;
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -313,6 +314,23 @@ a .bg-card {
   100% {
     background-position: 0% 50%;
   }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.5);
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite;
 }
 
 .animate-gradient {
