@@ -122,14 +122,18 @@ async function attachPlanFeatures<T extends LawFirmPermissionData>(
 
   const plan = await prisma.subscriptionPlan.findUnique({
     where: { typ: lawFirm.pakietSubskrypcji },
-    select: { statystykiAnalizy: true },
+    select: { statystykiAnalizy: true, wyswietlanieReklam: true },
   });
 
   if (!plan) {
     return lawFirm;
   }
 
-  return { ...lawFirm, statystykiAnalizy: plan.statystykiAnalizy };
+  return {
+    ...lawFirm,
+    statystykiAnalizy: plan.statystykiAnalizy,
+    wyswietlanieReklam: plan.wyswietlanieReklam,
+  };
 }
 
 /**

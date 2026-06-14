@@ -12,9 +12,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Location parameter is required" }, { status: 400 })
     }
 
-    // Jeśli zalogowany użytkownik to ekspert z pakietem BIZNES, ukrywamy reklamy
+    // Jeśli aktywny pakiet eksperta ma włączoną flagę "wyswietlanieReklam",
+    // ukrywamy reklamy dla tego użytkownika (perk pakietu).
     const lawFirm = await getAuthenticatedLawFirm()
-    if (lawFirm?.pakietSubskrypcji === "BIZNES") {
+    if (lawFirm?.wyswietlanieReklam) {
       return NextResponse.json({ ad: null, hideBanner: true })
     }
 

@@ -24,6 +24,10 @@ export interface LawFirmPermissionData {
   // Gdy zdefiniowana, decyduje o dostępie do statystyk niezależnie od typu pakietu.
   // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
   statystykiAnalizy?: boolean;
+  // Flaga "wyswietlanieReklam" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy true, reklamy są ukrywane dla tego eksperta (perk pakietu).
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  wyswietlanieReklam?: boolean;
 }
 
 /**
@@ -326,6 +330,13 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
       ? { ...packageConfig.features, canAccessStatistics: lawFirm.statystykiAnalizy }
       : packageConfig.features;
 
+  // Ukrywanie reklam wynika z flagi "wyswietlanieReklam" aktywnego planu
+  // (jeśli wczytana z bazy): true = reklamy ukryte dla eksperta.
+  const extras =
+    lawFirm.wyswietlanieReklam !== undefined
+      ? { ...packageConfig.extras, hideAds: lawFirm.wyswietlanieReklam }
+      : packageConfig.extras;
+
   return {
     packageName: lawFirm.pakietSubskrypcji,
     packageActive: active,
@@ -334,6 +345,7 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
     autoRenewal: lawFirm.autoRenewal,
     ...packageConfig,
     features,
+    extras,
   };
 }
 
