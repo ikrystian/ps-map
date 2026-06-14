@@ -567,9 +567,12 @@ export default function LawFirmServicesPage() {
         onlineOnly: areaData.onlineOnly,
         voivodeshipsIds: areaData.selectedVoivodeships,
       }
-      // Wyślij tylko poziomy widoczne w bieżącym trybie hierarchii (pozostałe zachowujemy bez zmian)
-      if (showCounties) areaPayload.countiesIds = areaData.selectedCounties
-      if (showCities) areaPayload.citiesIds = areaData.selectedCities
+      // Wyślij tylko poziomy istotne w bieżącym trybie hierarchii (pozostałe zachowujemy bez zmian).
+      // W trybie "powiaty" miasta (auto-zaznaczone pojedyncze miasta powiatów) też zapisujemy.
+      if (showCounties) {
+        areaPayload.countiesIds = areaData.selectedCounties
+        areaPayload.citiesIds = areaData.selectedCities
+      }
 
       const areaResponse = await fetch("/api/law-firm/area", {
         method: "PUT",
@@ -622,19 +625,49 @@ export default function LawFirmServicesPage() {
     })
   }
 
-  const toggleCounty = (id: string) => {
-    setAreaData(prev => {
-      const isSelected = prev.selectedCounties.includes(id)
-      if (isSelected) {
-        return { ...prev, selectedCounties: prev.selectedCounties.filter(cId => cId !== id) }
-      } else {
-        if (prev.selectedCounties.length >= prev.maxCounties) {
-          toast.error(`Limit powiatów (${prev.maxCounties}) osiągnięty.`)
-          return prev
-        }
-        return { ...prev, selectedCounties: [...prev.selectedCounties, id] }
+  // W trybie "powiaty" (miasto nie jest pokazane jako dziecko powiatu): jeśli powiat
+  // ma dokładnie jedno miasto (np. miasto na prawach powiatu), zaznacz je automatycznie.
+  const autoSelectSingleCityForCounty = async (countyId: string) => {
+    try {
+      const res = await fetch(`/api/cities?countyId=${countyId}&limit=2`)
+      if (!res.ok) return
+      const cities: City[] = await res.json()
+      if (cities.length === 1) {
+        const city = cities[0]
+        setSelectedCitiesObjects(prev => prev.some(c => c.id === city.id) ? prev : [...prev, city])
+        setAreaData(prev => prev.selectedCities.includes(city.id)
+          ? prev
+          : { ...prev, selectedCities: [...prev.selectedCities, city.id] })
       }
-    })
+    } catch (e) {
+      console.error("autoSelectSingleCityForCounty error:", e)
+    }
+  }
+
+  const toggleCounty = (id: string) => {
+    const isSelected = areaData.selectedCounties.includes(id)
+    if (isSelected) {
+      // Odznacz powiat oraz jego auto-zaznaczone miasta (tryb "powiaty")
+      const citiesToRemove = new Set(
+        selectedCitiesObjects.filter(c => c.countyId === id).map(c => c.id)
+      )
+      setSelectedCitiesObjects(prev => prev.filter(c => c.countyId !== id))
+      setAreaData(prev => ({
+        ...prev,
+        selectedCounties: prev.selectedCounties.filter(cId => cId !== id),
+        selectedCities: prev.selectedCities.filter(cId => !citiesToRemove.has(cId)),
+      }))
+      return
+    }
+    // Limit powiatów obowiązuje tylko w trybie "powiaty" (gdy powiat jest poziomem głównym)
+    if (!showCities && areaData.selectedCounties.length >= areaData.maxCounties) {
+      toast.error(`Limit powiatów (${areaData.maxCounties}) osiągnięty.`)
+      return
+    }
+    setAreaData(prev => ({ ...prev, selectedCounties: [...prev.selectedCounties, id] }))
+    if (!showCities) {
+      autoSelectSingleCityForCounty(id)
+    }
   }
 
   const toggleCity = (id: string) => {
