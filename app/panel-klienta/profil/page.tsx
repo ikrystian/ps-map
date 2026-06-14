@@ -818,6 +818,23 @@ export default function ClientProfilePage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
+                    <FormField
+                      control={form.control}
+                      name="kodPocztowy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-semibold text-muted-foreground">Kod pocztowy</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="00-000"
+                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <FormField
                       control={form.control}
@@ -906,26 +923,6 @@ export default function ClientProfilePage() {
 
                     <FormField
                       control={form.control}
-                      name="kodPocztowy"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs font-semibold text-muted-foreground">Kod pocztowy</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="00-000"
-                              className="h-11 bg-background-sec/10 text-muted-foreground cursor-not-allowed border-none"
-                              readOnly
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-
-                    <FormField
-                      control={form.control}
                       name="voivodeshipId"
                       render={({ field }) => (
                         <FormItem>
@@ -933,10 +930,9 @@ export default function ClientProfilePage() {
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
-                            disabled={true}
                           >
                             <FormControl>
-                              <SelectTrigger className="h-11 bg-background-sec/10 text-muted-foreground cursor-not-allowed border-none">
+                              <SelectTrigger className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white">
                                 <SelectValue placeholder="Wybierz" />
                               </SelectTrigger>
                             </FormControl>
