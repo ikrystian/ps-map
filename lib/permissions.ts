@@ -222,11 +222,17 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
  * Sprawdza czy pakiet eksperta jest aktywny (nieprzeterminowany)
  */
 export function hasActivePackage(lawFirm: LawFirmPermissionData): boolean {
-  if (!lawFirm.dataPakietuOd || !lawFirm.dataPakietuDo) {
+  if (!lawFirm.dataPakietuOd) {
     return false;
   }
 
   const now = new Date();
+  // Brak daty końcowej oznacza pakiet bezterminowy (np. pakiet podstawowy
+  // przyznawany automatycznie przy rejestracji) — aktywny od daty rozpoczęcia.
+  if (!lawFirm.dataPakietuDo) {
+    return now >= lawFirm.dataPakietuOd;
+  }
+
   return now >= lawFirm.dataPakietuOd && now <= lawFirm.dataPakietuDo;
 }
 
@@ -239,9 +245,9 @@ export function isPackageExpired(lawFirm: LawFirmPermissionData): boolean {
     return false;
   }
 
-  // Jeśli ma pakiet ale brak daty końcowej, traktuj jako wygasły
+  // Brak daty końcowej oznacza pakiet bezterminowy — nigdy nie wygasa
   if (!lawFirm.dataPakietuDo) {
-    return true;
+    return false;
   }
 
   const now = new Date();

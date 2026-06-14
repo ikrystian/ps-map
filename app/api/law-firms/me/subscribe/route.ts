@@ -85,11 +85,82 @@ export async function POST(request: NextRequest) {
         )
     }
 
+    // Pakiet darmowy (cena 0) — aktywacja bez płatności i bezterminowo
     if (price === 0) {
-      return Response.json(
-        { error: "Cena dla wybranego okresu jest niedostępna" },
-        { status: 400 }
-      )
+      const PACKAGE_ORDER = ["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]
+      const getPlanRank = (planTyp: string | null | undefined): number => {
+        if (!planTyp) return -1
+        const typUpper = planTyp.toUpperCase()
+        if (typUpper === "FREE") return 0
+        const idx = PACKAGE_ORDER.indexOf(typUpper)
+        return idx !== -1 ? idx + 1 : -1
+      }
+
+      // Nie pozwól na przejście z wyższego, wciąż aktywnego pakietu na darmowy
+      const hasActivePaid =
+        lawFirm.pakietSubskrypcji &&
+        (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
+      if (hasActivePaid && getPlanRank(plan.typ) < getPlanRank(lawFirm.pakietSubskrypcji)) {
+        return Response.json(
+          { error: `Nie możesz przejść na niższy pakiet (${plan.nazwa}), ponieważ posiadasz obecnie wyższy aktywny pakiet.` },
+          { status: 400 }
+        )
+      }
+
+      const dataPakietuOd = new Date()
+      const orderNumber = `SUB-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
+      const finalDaneFaktury = JSON.stringify({
+        nazwaFirmy: lawFirm.nazwaFirmy || "",
+        nip: lawFirm.nip || "",
+        adres: lawFirm.user?.adres || "",
+        kodPocztowy: lawFirm.user?.kodPocztowy || "",
+        miasto: lawFirm.user?.miasto || "",
+      })
+
+      const [updatedFreeLawFirm, freeOrder] = await prisma.$transaction([
+        prisma.lawFirm.update({
+          where: { id: lawFirm.id },
+          data: {
+            pakietSubskrypcji: plan.typ,
+            dataPakietuOd,
+            dataPakietuDo: null, // bezterminowo
+            autoRenewal: false,
+            punktySaldo: { increment: plan.punktyGratis },
+          },
+        }),
+        prisma.order.create({
+          data: {
+            orderNumber,
+            lawFirmId: lawFirm.id,
+            orderType: "SUBSCRIPTION",
+            subscriptionPlanId: plan.id,
+            subscriptionPeriod: period,
+            packageStartDate: dataPakietuOd,
+            packageEndDate: null,
+            kwota: 0,
+            metodaPlatnosci: "PRZELEW",
+            statusPlatnosci: "ZAPLACONE",
+            zaplaconoData: new Date(),
+            daneFaktury: finalDaneFaktury,
+          },
+        }),
+      ])
+
+      return Response.json({
+        success: true,
+        message: "Pakiet został aktywowany",
+        lawFirm: updatedFreeLawFirm,
+        plan: {
+          nazwa: plan.nazwa,
+          typ: plan.typ,
+          punktyGratis: plan.punktyGratis,
+          dataPakietuOd,
+          dataPakietuDo: null,
+          autoRenewal: false,
+        },
+        pricing: { originalPrice: 0, proRataCredit: 0, finalPrice: 0 },
+        order: { id: freeOrder.id, orderNumber: freeOrder.orderNumber },
+      })
     }
 
     // Proporcjonalne rozliczenie - jeśli ekspert ma aktywny pakiet

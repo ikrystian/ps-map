@@ -173,9 +173,8 @@ export default function LawFirmPackagePage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
 
-  const isSubscriptionActive = lawFirm?.dataPakietuDo
-    ? new Date(lawFirm.dataPakietuDo) > new Date()
-    : false
+  const isSubscriptionActive = !!lawFirm?.pakietSubskrypcji &&
+    (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
 
   const getPlanRank = (planTyp: string | null | undefined): number => {
     if (!planTyp) return -1
@@ -517,6 +516,10 @@ export default function LawFirmPackagePage() {
                 {lawFirm.dataPakietuDo ? (
                   <p className="text-xs text-muted-foreground mt-1">
                     Ważny do: <strong className="text-white">{formatDate(lawFirm.dataPakietuDo)}</strong>
+                  </p>
+                ) : lawFirm.pakietSubskrypcji ? (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Ważny: <strong className="text-white">bezterminowo</strong>
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground mt-1">

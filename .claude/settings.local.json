@@ -3,7 +3,12 @@
     "allow": [
       "Bash(graphify export *)",
       "Bash(graphify query *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(mv /home/krystian/Projects/ps-map/.claude/projects/-home-krystian-Projects-ps-map/memory/unlimited-subscription-null-end-date.md /home/krystian/.claude/projects/-home-krystian-Projects-ps-map/memory/unlimited-subscription-null-end-date.md)",
+      "Bash(rmdir -p /home/krystian/Projects/ps-map/.claude/projects/-home-krystian-Projects-ps-map/memory)",
+      "Bash(command -v sqlite3)",
+      "Bash(sqlite3 \"file:./prisma/dev.db?immutable=1\" \"SELECT typ, nazwa, aktywny, isPrimary, cena12Miesiecy FROM SubscriptionPlan;\")",
+      "Bash(sqlite3 *)"
     ]
   }
 }

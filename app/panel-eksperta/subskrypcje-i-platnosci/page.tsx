@@ -224,9 +224,8 @@ export default function SubscriptionsAndPaymentsPage() {
     )
   }
 
-  const subscriptionActive = lawFirm?.dataPakietuDo
-    ? new Date(lawFirm.dataPakietuDo) > new Date()
-    : false
+  const subscriptionActive = !!lawFirm?.pakietSubskrypcji &&
+    (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
 
   const currentPlan = subscriptionActive ? lawFirm?.pakietSubskrypcji || "FREE" : "FREE"
 
@@ -330,10 +329,14 @@ export default function SubscriptionsAndPaymentsPage() {
                 <span className="text-2xl font-bold tracking-tight text-white">{planDetails.name}</span>
               </div>
               <CardDescription className="text-xs mt-1">
-                {subscriptionActive && lawFirm?.dataPakietuDo ? (
-                  <span className="text-emerald-400 font-medium">
-                    Aktywny do {formatDate(lawFirm.dataPakietuDo)}
-                  </span>
+                {subscriptionActive ? (
+                  lawFirm?.dataPakietuDo ? (
+                    <span className="text-emerald-400 font-medium">
+                      Aktywny do {formatDate(lawFirm.dataPakietuDo)}
+                    </span>
+                  ) : (
+                    <span className="text-emerald-400 font-medium">Aktywny bezterminowo</span>
+                  )
                 ) : (
                   <span className="text-zinc-500 font-light">Brak aktywnego pakietu płatnego</span>
                 )}

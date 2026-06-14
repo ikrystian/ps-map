@@ -1240,11 +1240,15 @@ export default function LawFirmDashboardPage() {
               <div>
                 {getSubscriptionBadge(lawFirm.pakietSubskrypcji ?? "")}
               </div>
-              {lawFirm.dataPakietuDo && (
+              {lawFirm.dataPakietuDo ? (
                 <p className="text-sm text-zinc-500 font-light">
                   Ważność do: <span className="text-zinc-300 font-medium">{formatDate(lawFirm.dataPakietuDo)}</span>
                 </p>
-              )}
+              ) : lawFirm.pakietSubskrypcji ? (
+                <p className="text-sm text-zinc-500 font-light">
+                  Ważność: <span className="text-zinc-300 font-medium">bezterminowo</span>
+                </p>
+              ) : null}
             </div>
             <Link href="/panel-eksperta/pakiet" className="mt-4">
               <Button variant="outline" className="w-full h-10 border-border/50 text-white hover:bg-white/5 rounded-xl text-xs font-semibold transition-all">
