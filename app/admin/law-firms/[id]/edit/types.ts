@@ -9,6 +9,7 @@ export const lawFirmSchema = z.object({
   // Basic info
   typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
   typInny: z.string().optional(),
+  expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
   nazwaFirmy: z.string().min(1, "Company name is required"),
   slug: z.string().optional(),

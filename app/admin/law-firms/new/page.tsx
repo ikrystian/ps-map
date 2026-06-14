@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { ArrowLeft, AlertCircle, Check, CheckCircle2, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -36,6 +36,7 @@ const createLawFirmSchema = z.object({
   // Basic info
   typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
   typInny: z.string().optional(),
+  expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
   nazwaFirmy: z.string().min(1, "Company name is required"),
   slug: z.string().optional(),
@@ -115,11 +116,21 @@ const createLawFirmSchema = z.object({
 
 type CreateLawFirmFormValues = z.infer<typeof createLawFirmSchema>
 
+type ExpertiseCategoryItem = {
+  id: string
+  nazwa: string
+  parentId: string | null
+  children?: ExpertiseCategoryItem[]
+}
+
 import type { Voivodeship } from "@/types"
 
 export default function NewLawFirmPage() {
   const router = useRouter()
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [expertiseCategories, setExpertiseCategories] = useState<ExpertiseCategoryItem[]>([])
+  const [selectedCatId, setSelectedCatId] = useState("")
+  const [selectedSubcatId, setSelectedSubcatId] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<CreateLawFirmFormValues>({
@@ -128,8 +139,9 @@ export default function NewLawFirmPage() {
       email: "",
       password: "",
       userStatus: "ACTIVE",
-      typ: "OSOBA_FIZYCZNA",
+      typ: "INNY",
       typInny: "",
+      expertiseCategoryId: "",
       nazwa: "",
       nazwaFirmy: "",
       slug: "",
@@ -182,7 +194,7 @@ export default function NewLawFirmPage() {
     },
   })
 
-  // Fetch voivodeships
+  // Fetch voivodeships and expertise categories
   useEffect(() => {
     const fetchVoivodeships = async () => {
       try {
@@ -195,7 +207,19 @@ export default function NewLawFirmPage() {
         console.error("Error fetching voivodeships:", error)
       }
     }
+    const fetchExpertiseCategories = async () => {
+      try {
+        const response = await fetch("/api/expertise-categories")
+        if (response.ok) {
+          const data = await response.json()
+          setExpertiseCategories(data)
+        }
+      } catch (error) {
+        console.error("Error fetching expertise categories:", error)
+      }
+    }
     fetchVoivodeships()
+    fetchExpertiseCategories()
   }, [])
 
   // Create law firm
@@ -309,47 +333,93 @@ export default function NewLawFirmPage() {
               <CardDescription>Informacje o ekspercie</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="typ"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Typ działalności</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz typ" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="OSOBA_FIZYCZNA">Osoba fizyczna</SelectItem>
-                          <SelectItem value="SPOLKA_CYWILNA">Spółka cywilna</SelectItem>
-                          <SelectItem value="SPOLKA_PARTNERSKA">Spółka partnerska</SelectItem>
-                          <SelectItem value="SPOLKA_KOMANDYTOWA">Spółka komandytowa</SelectItem>
-                          <SelectItem value="SPOLKA_JAWNA">Spółka jawna</SelectItem>
-                          <SelectItem value="SPOLKA_ZOO">Spółka z o.o.</SelectItem>
-                          <SelectItem value="INNY">Inny</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {form.watch("typ") === "INNY" && (
-                  <FormField
-                    control={form.control}
-                    name="typInny"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Typ inny (opis)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Podaj typ" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              {/* Expertise Category Selector */}
+              <div className="space-y-3">
+                <FormLabel>Kategoria specjalizacji</FormLabel>
+                {expertiseCategories.length === 0 ? (
+                  <div className="bg-muted p-4 rounded-lg text-sm text-muted-foreground">Trwa ładowanie kategorii...</div>
+                ) : (
+                  <div className="space-y-3">
+                    <Select
+                      value={selectedCatId}
+                      onValueChange={(val) => {
+                        setSelectedCatId(val)
+                        setSelectedSubcatId("")
+                        form.setValue("expertiseCategoryId", "")
+                        form.setValue("typ", "INNY")
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Wybierz kategorię..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {expertiseCategories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.nazwa}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {(() => {
+                      const selectedCat = expertiseCategories.find(c => c.id === selectedCatId)
+                      if (!selectedCat) return null
+                      const hasSubcategories = selectedCat.children?.some(ch => ch.children && ch.children.length > 0) ?? false
+                      const subcategoriesList = selectedCat.children || []
+                      const selectedSubcat = subcategoriesList.find(s => s.id === selectedSubcatId)
+                      const specializationsList = !hasSubcategories
+                        ? subcategoriesList
+                        : selectedSubcat?.children || []
+
+                      return (
+                        <>
+                          {hasSubcategories && (
+                            <Select
+                              value={selectedSubcatId}
+                              onValueChange={(val) => {
+                                setSelectedSubcatId(val)
+                                form.setValue("expertiseCategoryId", "")
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz podkategorię..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {subcategoriesList.map((sub) => (
+                                  <SelectItem key={sub.id} value={sub.id}>{sub.nazwa}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+
+                          {(!hasSubcategories || selectedSubcatId) && specializationsList.length > 0 && (
+                            <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                              {specializationsList.map((spec) => {
+                                const isSelected = form.watch("expertiseCategoryId") === spec.id
+                                return (
+                                  <div
+                                    key={spec.id}
+                                    className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${isSelected ? "bg-primary/5 border-primary" : "border-transparent bg-muted/30 hover:border-primary/30 hover:bg-muted/50"}`}
+                                    onClick={() => {
+                                      const parts = [selectedCat.nazwa]
+                                      if (selectedSubcat) parts.push(selectedSubcat.nazwa)
+                                      parts.push(spec.nazwa)
+                                      form.setValue("expertiseCategoryId", spec.id)
+                                      form.setValue("typ", "INNY")
+                                      form.setValue("typInny", parts.join(" > "))
+                                    }}
+                                  >
+                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"}`}>
+                                      {isSelected && <Check className="w-3 h-3" />}
+                                    </div>
+                                    <span className={`text-sm ${isSelected ? "text-primary font-medium" : "text-foreground"}`}>{spec.nazwa}</span>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
+                  </div>
                 )}
               </div>
 
