@@ -68,6 +68,7 @@ interface Case {
   city?: {
     id: string
     nazwa: string
+    county?: { id: string; nazwa: string } | null
   } | null
   client: {
     imie: string
@@ -86,6 +87,7 @@ interface Case {
   }>
 }
 import { Category } from "@/types/categories"
+import type { Voivodeship } from "@/types"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -131,7 +133,12 @@ const SprawyPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedType, setSelectedType] = useState<string>("all")
   const [selectedCity, setSelectedCity] = useState<string>("")
+  const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
+  const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
+  const isVoivMode = geoHierarchy === "voivodeships"
+  const isCountyMode = geoHierarchy === "counties"
 
   // Favorites
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
@@ -143,6 +150,7 @@ const SprawyPage = () => {
   useEffect(() => {
     fetchCases()
     fetchCategories()
+    fetchLocationSettings()
     loadFavorites()
 
     // Read URL query parameters
@@ -160,7 +168,7 @@ const SprawyPage = () => {
 
   useEffect(() => {
     filterCases()
-  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity, statusFilter, favorites])
+  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity, selectedVoivodeship, geoHierarchy, statusFilter, favorites])
 
   const fetchCases = async () => {
     setLoading(true)
@@ -196,6 +204,22 @@ const SprawyPage = () => {
       toast.error("Nie udało się pobrać spraw")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchLocationSettings = async () => {
+    try {
+      const [voivRes, settingsRes] = await Promise.all([
+        fetch("/api/voivodeships"),
+        fetch("/api/settings"),
+      ])
+      if (voivRes.ok) setVoivodeships(await voivRes.json())
+      if (settingsRes.ok) {
+        const s = await settingsRes.json()
+        setGeoHierarchy(s.geographicHierarchy || "voivodeships")
+      }
+    } catch (error) {
+      console.error("Error fetching location settings:", error)
     }
   }
 
@@ -285,10 +309,20 @@ const SprawyPage = () => {
       filtered = filtered.filter((c) => c.typSprawy === selectedType)
     }
 
-    if (selectedCity) {
-      filtered = filtered.filter(
-        (c) =>
-          c.client?.miasto?.toLowerCase().includes(selectedCity.toLowerCase())
+    // Filtr lokalizacji zależny od ustawienia "Hierarchia geograficzna"
+    if (isVoivMode) {
+      if (selectedVoivodeship) {
+        filtered = filtered.filter((c) => c.voivodeship.id === selectedVoivodeship)
+      }
+    } else if (isCountyMode) {
+      if (selectedCity) {
+        filtered = filtered.filter((c) =>
+          c.city?.county?.nazwa?.toLowerCase().includes(selectedCity.toLowerCase())
+        )
+      }
+    } else if (selectedCity) {
+      filtered = filtered.filter((c) =>
+        c.client?.miasto?.toLowerCase().includes(selectedCity.toLowerCase())
       )
     }
 
@@ -534,13 +568,14 @@ const SprawyPage = () => {
             <Filter className="h-4 w-4" />
             <span>Panel wyszukiwania i filtrów</span>
           </div>
-          {(searchQuery || selectedCity || selectedCategory !== "all" || selectedType !== "all" || statusFilter !== "all") && (
+          {(searchQuery || selectedCity || selectedVoivodeship || selectedCategory !== "all" || selectedType !== "all" || statusFilter !== "all") && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 setSearchQuery("")
                 setSelectedCity("")
+                setSelectedVoivodeship("")
                 setSelectedCategory("all")
                 setSelectedType("all")
                 setStatusFilter("all")
@@ -566,15 +601,36 @@ const SprawyPage = () => {
             />
           </div>
 
-          {/* City filter */}
+          {/* Location filter — zależny od "Hierarchia geograficzna" */}
           <div className="lg:col-span-2 relative">
-            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Miasto..."
-              className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-            />
+            {isVoivMode ? (
+              <Select
+                value={selectedVoivodeship || "all"}
+                onValueChange={(v) => setSelectedVoivodeship(v === "all" ? "" : v)}
+              >
+                <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
+                  <SelectValue placeholder="Województwo" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                  <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie województwa</SelectItem>
+                  {voivodeships.map((v) => (
+                    <SelectItem key={v.id} value={v.id} className="hover:bg-primary/10 focus:bg-primary/10">
+                      {v.nazwa}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <>
+                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={isCountyMode ? "Powiat..." : "Miasto..."}
+                  className="pl-10 h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary"
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                />
+              </>
+            )}
           </div>
 
           {/* Category Selector */}
@@ -625,6 +681,7 @@ const SprawyPage = () => {
             onClick={() => {
               setSearchQuery("")
               setSelectedCity("")
+              setSelectedVoivodeship("")
               setSelectedCategory("all")
               setSelectedType("all")
               setStatusFilter("all")
@@ -760,7 +817,7 @@ const SprawyPage = () => {
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
                                 <span className="font-medium text-white text-sm leading-none truncate">
-                                  {sprawa.city ? `${sprawa.city.nazwa}` : sprawa.voivodeship.nazwa}
+                                  {sprawa.city ? `${sprawa.city.nazwa}, ${sprawa.voivodeship.nazwa}` : sprawa.voivodeship.nazwa}
                                 </span>
                               </div>
                             </div>
