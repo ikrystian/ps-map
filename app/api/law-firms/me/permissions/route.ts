@@ -55,6 +55,7 @@ export async function GET() {
     dataPakietuDo: lawFirm.dataPakietuDo,
     autoRenewal: lawFirm.autoRenewal,
     defaultMaxCategories,
+    statystykiAnalizy: lawFirm.statystykiAnalizy ?? false,
     permissions,
     powiadomieniaSprawy,
   });

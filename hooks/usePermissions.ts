@@ -122,6 +122,7 @@ export function usePermissions(): UsePermissionsReturn {
         dataPakietuDo: data.dataPakietuDo ? new Date(data.dataPakietuDo) : null,
         autoRenewal: data.autoRenewal || false,
         defaultMaxCategories: data.defaultMaxCategories,
+        statystykiAnalizy: data.statystykiAnalizy,
         powiadomieniaSprawy: data.powiadomieniaSprawy || 0,
       });
     } catch (err) {
