@@ -18,6 +18,8 @@ import {
   AlertTriangle,
   Award,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Coins,
   Eye,
   FileSpreadsheet,
@@ -121,6 +123,8 @@ export default function AdminPozycjonowaniePage() {
   const [filterVoivodeship, setFilterVoivodeship] = useState<string>("all")
   const [filterCategory, setFilterCategory] = useState<string>("all")
   const [showFormulaExplanation, setShowFormulaExplanation] = useState<boolean>(true)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const PAGE_SIZE = 50
 
   // Quick edit state
   const [overridePositionInput, setOverridePositionInput] = useState<Record<string, number>>({})
@@ -130,7 +134,12 @@ export default function AdminPozycjonowaniePage() {
 
   useEffect(() => {
     fetchRanking()
+    setCurrentPage(1)
   }, [context])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, filterVoivodeship, filterCategory])
 
   const fetchRanking = async () => {
     setLoading(true)
@@ -257,6 +266,9 @@ export default function AdminPozycjonowaniePage() {
 
     return matchesSearch && matchesVoivodeship && matchesCategory
   })
+
+  const totalPages = Math.ceil(filteredFirms.length / PAGE_SIZE)
+  const paginatedFirms = filteredFirms.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   // Helper colors
   const getSubBadgeColor = (pkg: string | null) => {
@@ -672,7 +684,7 @@ export default function AdminPozycjonowaniePage() {
               ) : (
                 <div className="divide-y divide-border/60">
                   <AnimatePresence initial={false}>
-                    {filteredFirms.map((firm, index) => {
+                    {paginatedFirms.map((firm, index) => {
                       const hasOverride = firm.override !== null
                       const isPosMoved = hasOverride || firm.finalPosition !== firm.originalPosition
 
@@ -923,6 +935,85 @@ export default function AdminPozycjonowaniePage() {
                       )
                     })}
                   </AnimatePresence>
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-zinc-900/20">
+                      <span className="text-sm text-muted-foreground">
+                        Strona <span className="font-semibold text-foreground">{currentPage}</span> z{" "}
+                        <span className="font-semibold text-foreground">{totalPages}</span>
+                        {" "}· pozycje{" "}
+                        <span className="font-semibold text-foreground">
+                          {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredFirms.length)}
+                        </span>{" "}
+                        z <span className="font-semibold text-foreground">{filteredFirms.length}</span>
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-2"
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage(1)}
+                        >
+                          <ChevronLeft className="h-3 w-3" />
+                          <ChevronLeft className="h-3 w-3 -ml-2" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-3"
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage((p) => p - 1)}
+                        >
+                          <ChevronLeft className="h-3 w-3 mr-1" />
+                          Poprzednia
+                        </Button>
+                        <div className="flex items-center gap-1 mx-2">
+                          {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                            .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                              if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...")
+                              acc.push(p)
+                              return acc
+                            }, [])
+                            .map((item, i) =>
+                              item === "..." ? (
+                                <span key={`ellipsis-${i}`} className="text-muted-foreground px-1 text-sm">…</span>
+                              ) : (
+                                <Button
+                                  key={item}
+                                  variant={currentPage === item ? "default" : "outline"}
+                                  size="sm"
+                                  className="h-8 w-8 p-0 font-mono text-xs"
+                                  onClick={() => setCurrentPage(item as number)}
+                                >
+                                  {item}
+                                </Button>
+                              )
+                            )}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-3"
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage((p) => p + 1)}
+                        >
+                          Następna
+                          <ChevronRight className="h-3 w-3 ml-1" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-2"
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage(totalPages)}
+                        >
+                          <ChevronRight className="h-3 w-3" />
+                          <ChevronRight className="h-3 w-3 -ml-2" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

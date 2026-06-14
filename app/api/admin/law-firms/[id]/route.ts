@@ -33,6 +33,7 @@ export async function GET(
             ...USER_CONTACT_SELECT,
           },
         },
+        expertiseCategory: true,
         accountManager: {
           select: {
             id: true,
@@ -269,6 +270,9 @@ export async function PUT(
     // Type and basic info
     if (body.typ !== undefined) lawFirmUpdateData.typ = body.typ
     if (body.typInny !== undefined) lawFirmUpdateData.typInny = body.typInny
+    if (body.expertiseCategoryId !== undefined) {
+      lawFirmUpdateData.expertiseCategoryId = body.expertiseCategoryId || null
+    }
     if (body.nazwa !== undefined) lawFirmUpdateData.nazwa = body.nazwa
     if (body.nazwaFirmy !== undefined) lawFirmUpdateData.nazwaFirmy = body.nazwaFirmy
     if (body.nip !== undefined) lawFirmUpdateData.nip = body.nip.replace(/[-\s]/g, "")

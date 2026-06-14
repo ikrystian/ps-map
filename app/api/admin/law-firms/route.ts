@@ -128,6 +128,7 @@ export async function POST(request: NextRequest) {
       // Basic info
       typ,
       typInny,
+      expertiseCategoryId,
       nazwa,
       nazwaFirmy,
       nip,
@@ -259,6 +260,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           typ,
           typInny: typ === "INNY" ? typInny : null,
+          expertiseCategoryId: expertiseCategoryId || null,
           nazwa,
           nazwaFirmy,
           slug,
