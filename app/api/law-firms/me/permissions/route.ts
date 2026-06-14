@@ -37,6 +37,17 @@ export async function GET() {
 
   const permissions = getLawFirmPermissions(permissionData);
 
+  // Pobierz dynamiczny limit powiadomieniaSprawy z planu subskrypcji w bazie danych
+  let powiadomieniaSprawy = 0;
+  if (lawFirm.pakietSubskrypcji) {
+    const plan = await prisma.subscriptionPlan.findUnique({
+      where: { typ: lawFirm.pakietSubskrypcji }
+    });
+    if (plan) {
+      powiadomieniaSprawy = plan.powiadomieniaSprawy;
+    }
+  }
+
   return NextResponse.json({
     id: lawFirm.id,
     pakietSubskrypcji: lawFirm.pakietSubskrypcji,
@@ -45,5 +56,6 @@ export async function GET() {
     autoRenewal: lawFirm.autoRenewal,
     defaultMaxCategories,
     permissions,
+    powiadomieniaSprawy,
   });
 }

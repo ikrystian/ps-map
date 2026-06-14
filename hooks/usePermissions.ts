@@ -53,6 +53,9 @@ interface UsePermissionsReturn {
 
   // Odświeżanie
   refresh: () => Promise<void>;
+
+  // Limit spraw
+  powiadomieniaSprawy: number;
 }
 
 // ============================================================================
@@ -78,7 +81,7 @@ interface UsePermissionsReturn {
  */
 export function usePermissions(): UsePermissionsReturn {
   const { data: session, status } = useSession();
-  const [lawFirmData, setLawFirmData] = useState<LawFirmPermissionData | null>(null);
+  const [lawFirmData, setLawFirmData] = useState<(LawFirmPermissionData & { powiadomieniaSprawy?: number }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -119,6 +122,7 @@ export function usePermissions(): UsePermissionsReturn {
         dataPakietuDo: data.dataPakietuDo ? new Date(data.dataPakietuDo) : null,
         autoRenewal: data.autoRenewal || false,
         defaultMaxCategories: data.defaultMaxCategories,
+        powiadomieniaSprawy: data.powiadomieniaSprawy || 0,
       });
     } catch (err) {
       console.error("Error fetching law firm permissions:", err);
@@ -193,6 +197,7 @@ export function usePermissions(): UsePermissionsReturn {
     loading,
     error,
     refresh: fetchLawFirmData,
+    powiadomieniaSprawy: lawFirmData?.powiadomieniaSprawy ?? 0,
   };
 }
 

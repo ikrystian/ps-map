@@ -319,7 +319,7 @@ export default function AddSubscriptionPlanPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="dostepDoSpraw">Dostęp do spraw (∞ jeśli puste)</Label>
                   <Input
                     id="dostepDoSpraw"
@@ -328,7 +328,7 @@ export default function AddSubscriptionPlanPage() {
                     onChange={(e) => handleNumberChange("dostepDoSpraw", e.target.value, true)}
                     placeholder="Nieograniczone"
                   />
-                </div>
+                </div> */}
                 <div className="space-y-2">
                   <Label htmlFor="kategorieSpraw">Kategorie spraw (∞ jeśli puste)</Label>
                   <Input
@@ -540,7 +540,7 @@ export default function AddSubscriptionPlanPage() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"

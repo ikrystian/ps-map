@@ -44,6 +44,7 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { usePermissions } from "@/hooks/usePermissions"
 
 interface Case {
   id: string
@@ -122,11 +123,16 @@ const cardVariants = {
 
 const SprawyPage = () => {
   const router = useRouter()
+  const { packageActive, powiadomieniaSprawy } = usePermissions()
 
   const [cases, setCases] = useState<Case[]>([])
   const [filteredCases, setFilteredCases] = useState<Case[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Sprawy limit checking
+  const [isLimited, setIsLimited] = useState(false)
+  const [totalCountBeforeLimit, setTotalCountBeforeLimit] = useState(0)
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -168,7 +174,7 @@ const SprawyPage = () => {
 
   useEffect(() => {
     filterCases()
-  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity, selectedVoivodeship, geoHierarchy, statusFilter, favorites])
+  }, [cases, searchQuery, selectedCategory, selectedType, selectedCity, selectedVoivodeship, geoHierarchy, statusFilter, favorites, packageActive, powiadomieniaSprawy])
 
   const fetchCases = async () => {
     setLoading(true)
@@ -346,7 +352,19 @@ const SprawyPage = () => {
       }
     }
 
+    let limitApplied = false
+    const totalCount = filtered.length
+
+    if (packageActive && powiadomieniaSprawy > 0) {
+      if (filtered.length > powiadomieniaSprawy) {
+        filtered = filtered.slice(0, powiadomieniaSprawy)
+        limitApplied = true
+      }
+    }
+
     setFilteredCases(filtered)
+    setIsLimited(limitApplied)
+    setTotalCountBeforeLimit(totalCount)
   }
 
   const getTypeLabel = (type: string) => {
@@ -692,6 +710,7 @@ const SprawyPage = () => {
           </Button>
         </div>
       ) : (
+        <>
         <motion.div
           id="tour-sprawy-list"
           variants={containerVariants}
@@ -879,6 +898,42 @@ const SprawyPage = () => {
             })}
           </AnimatePresence>
         </motion.div>
+
+        {isLimited && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative mt-8 p-6 rounded-2xl bg-gradient-to-br from-primary/10 via-card/45 to-secondary/5 border border-primary/25 backdrop-blur-md overflow-hidden z-10"
+          >
+            {/* Glow effects */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-2xl rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 blur-xl rounded-full pointer-events-none" />
+            
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+              <div className="flex items-center gap-4 text-left">
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                  <Sparkles className="h-6 w-6 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-white font-playfair">
+                    Dostępne są dodatkowe oferty spraw!
+                  </h4>
+                  <p className="text-sm text-zinc-300 mt-1 max-w-xl">
+                    Twój obecny pakiet pozwala na wyświetlenie maksymalnie {powiadomieniaSprawy} spraw (widzisz {powiadomieniaSprawy} z {totalCountBeforeLimit} pasujących ofert). Przejdź na wyższy pakiet subskrypcji, aby zobaczyć wszystkie dostępne zlecenia i zdobyć więcej klientów.
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => router.push("/panel-eksperta/pakiet")}
+                className="w-full md:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-white/10 flex items-center justify-center gap-2 group whitespace-nowrap"
+              >
+                <span>Ulepsz pakiet</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+        </>
       )}
 
       {/* Reject Modal */}
