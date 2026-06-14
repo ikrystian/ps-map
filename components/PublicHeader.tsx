@@ -39,6 +39,7 @@ interface PublicHeaderProps {
 
 
 
+
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
@@ -735,22 +736,6 @@ export default function PublicHeader({
                     )}
                   >
                     Dla prawnika
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {/* O nas */}
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/o-nas"
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-[#121212]",
-                      isONasActive && "text-primary font-semibold"
-                    )}
-                  >
-                    O nas
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

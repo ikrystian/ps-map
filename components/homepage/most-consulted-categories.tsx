@@ -155,35 +155,46 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
     setActiveIdx((prev) => (prev === activeTabs.length - 1 ? 0 : prev + 1))
   }
 
-  // Returns law firms dynamically based on keywords/promotions.
   const getCategoryFirms = (catIdx: number) => {
     if (activeTabs.length === 0) return []
     const tab = activeTabs[catIdx]
 
-    if (consultedData) {
-      return consultedData[tab.id] || []
+    let list: LawFirm[] = []
+
+    if (consultedData && consultedData[tab.id]) {
+      list = [...consultedData[tab.id]]
     }
 
-    if (!lawFirms || lawFirms.length === 0) return []
+    // If we need more items to reach 5, try to get from matching lawFirms
+    if (list.length < 5 && lawFirms && lawFirms.length > 0) {
+      const filtered = lawFirms.filter((firm) => {
+        if (!firm.categories) return false
+        return firm.categories.some((cat) =>
+          tab.keywords.some((kw) => cat.nazwa?.toLowerCase().includes(kw))
+        )
+      })
 
-    const filtered = lawFirms.filter((firm) => {
-      if (!firm.categories) return false
-      return firm.categories.some((cat) =>
-        tab.keywords.some((kw) => cat.nazwa?.toLowerCase().includes(kw))
-      )
-    })
-
-    if (filtered.length >= 3) {
-      return filtered.slice(0, 3)
+      filtered.forEach((firm) => {
+        if (list.length < 5 && !list.some((f) => f.id === firm.id)) {
+          list.push(firm)
+        }
+      })
     }
 
-    // Fallback rotating method to guarantee exactly 3 gorgeous profiles are always shown
-    const list: LawFirm[] = []
-    for (let i = 0; i < 3; i++) {
-      const firmIdx = (catIdx * 1 + i) % lawFirms.length
-      list.push(lawFirms[firmIdx])
+    // Fallback rotating method to guarantee exactly 5 gorgeous profiles are always shown
+    if (list.length < 5 && lawFirms && lawFirms.length > 0) {
+      let i = 0
+      while (list.length < 5 && i < lawFirms.length * 2) {
+        const firmIdx = (catIdx * 1 + i) % lawFirms.length
+        const firm = lawFirms[firmIdx]
+        if (!list.some((f) => f.id === firm.id)) {
+          list.push(firm)
+        }
+        i++
+      }
     }
-    return list
+
+    return list.slice(0, 5)
   }
 
   const getFirmImage = (firm: LawFirm, index: number) => {
@@ -251,7 +262,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-8xl mx-auto"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-8xl mx-auto"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {

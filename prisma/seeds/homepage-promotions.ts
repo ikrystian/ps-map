@@ -18,7 +18,7 @@ const CONSULTED_CATEGORIES = [
 ]
 
 const FIRMS_PER_RECOMMENDED_CATEGORY = 6
-const FIRMS_PER_CONSULTED_CATEGORY = 4
+const FIRMS_PER_CONSULTED_CATEGORY = 5
 
 const shuffle = <T>(arr: T[]): T[] => {
   const copy = [...arr]
