@@ -57,6 +57,11 @@ export type {
   Voivodeship
 } from "./voivodeships"
 
+// County (powiat) types
+export type {
+  County
+} from "./counties"
+
 // City types
 export type {
   City
