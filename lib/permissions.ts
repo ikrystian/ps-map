@@ -20,6 +20,10 @@ export interface LawFirmPermissionData {
   dataPakietuDo: Date | null;
   autoRenewal: boolean;
   defaultMaxCategories?: number;
+  // Flaga "statystykiAnalizy" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy zdefiniowana, decyduje o dostępie do statystyk niezależnie od typu pakietu.
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  statystykiAnalizy?: boolean;
 }
 
 /**
@@ -315,6 +319,13 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
 
   const packageConfig = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
 
+  // Dostęp do statystyk wynika z flagi "statystykiAnalizy" aktywnego planu
+  // (jeśli wczytana z bazy), zamiast ze sztywnej mapy uprawnień pakietu.
+  const features =
+    lawFirm.statystykiAnalizy !== undefined
+      ? { ...packageConfig.features, canAccessStatistics: lawFirm.statystykiAnalizy }
+      : packageConfig.features;
+
   return {
     packageName: lawFirm.pakietSubskrypcji,
     packageActive: active,
@@ -322,6 +333,7 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
     expiryDate: lawFirm.dataPakietuDo,
     autoRenewal: lawFirm.autoRenewal,
     ...packageConfig,
+    features,
   };
 }
 
@@ -337,6 +349,12 @@ export function canAccessFeature(
   // Jeśli pakiet wygasł, brak dostępu do jakichkolwiek funkcji
   if (isPackageExpired(lawFirm)) {
     return false;
+  }
+
+  // Dostęp do statystyk zależy od flagi "statystykiAnalizy" w aktywnym planie
+  // subskrypcji (jeśli została wczytana z bazy), a nie od konkretnego typu pakietu.
+  if (feature === "canAccessStatistics" && lawFirm.statystykiAnalizy !== undefined) {
+    return hasActivePackage(lawFirm) && lawFirm.statystykiAnalizy;
   }
 
   const permissions = getLawFirmPermissions(lawFirm);

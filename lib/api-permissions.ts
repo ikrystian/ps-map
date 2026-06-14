@@ -102,7 +102,34 @@ export async function getAuthenticatedLawFirm(): Promise<LawFirmPermissionData |
   }
 
   // Sprawdź wygaśnięcie i zaktualizuj jeśli trzeba
-  return await checkAndUpdatePackageExpiry(lawFirm);
+  const updatedLawFirm = await checkAndUpdatePackageExpiry(lawFirm);
+
+  // Wczytaj flagi funkcji z aktywnego planu subskrypcji (m.in. dostęp do statystyk)
+  return await attachPlanFeatures(updatedLawFirm);
+}
+
+/**
+ * Wzbogaca dane eksperta o flagi funkcji pobrane z planu subskrypcji w bazie danych.
+ * Dzięki temu dostęp do funkcji (np. statystyk) zależy od konfiguracji planu,
+ * a nie od sztywnego typu pakietu.
+ */
+async function attachPlanFeatures<T extends LawFirmPermissionData>(
+  lawFirm: T
+): Promise<T> {
+  if (!lawFirm.pakietSubskrypcji) {
+    return lawFirm;
+  }
+
+  const plan = await prisma.subscriptionPlan.findUnique({
+    where: { typ: lawFirm.pakietSubskrypcji },
+    select: { statystykiAnalizy: true },
+  });
+
+  if (!plan) {
+    return lawFirm;
+  }
+
+  return { ...lawFirm, statystykiAnalizy: plan.statystykiAnalizy };
 }
 
 /**
