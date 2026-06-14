@@ -1,0 +1,80 @@
+HIERARCHIA GEOGRAFICZNA — OPIS ZMIAN
+=====================================
+Data: 2026-06-14
+
+NOWE USTAWIENIE: geographicHierarchy
+--------------------------------------
+Klucz w bazie danych: geographicHierarchy
+Możliwe wartości:
+  - voivodeships  → Województwa (domyślna)
+  - counties      → Powiaty
+  - cities        → Miasta
+
+ZMODYFIKOWANE PLIKI
+--------------------
+
+1. app/admin/settings/page.tsx
+   - Dodano pole geographicHierarchy do interfejsu Settings
+   - Dodano stan: const [geographicHierarchy, setGeographicHierarchy] = useState("voivodeships")
+   - W fetchSettings: odczyt data.geographicHierarchy?.value || "voivodeships"
+   - W handleSave (body JSON): dodano klucz geographicHierarchy z wartością i opisem
+   - Dodano nową sekcję Card "Hierarchia geograficzna" z trzema przyciskami:
+       [Województwa] [Powiaty] [Miasta]
+     Umieszczona po karcie "Ustawienia ogólne", przed "Konfiguracja SMTP".
+
+2. app/api/admin/settings/route.ts
+   - W GET handler: dodano blok domyślny dla geographicHierarchy
+     (wartość: "voivodeships", opis po polsku + angielsku)
+
+3. app/api/settings/route.ts (publiczne API)
+   - Dodano domyślną wartość geographicHierarchy: "voivodeships" (fallback dla GET /api/settings)
+
+4. components/PublicHeader.tsx
+   - Dodano stany: geographicHierarchy, voivodeshipsList, voivodeshipDropdownOpen,
+     selectedVoivodeshipName, selectedCounty, countyOpen, countyInput
+   - Dodano useEffect pobierający /api/settings i /api/voivodeships równolegle
+   - Zaktualizowano handleSearchSubmit:
+       voivodeships → param "voivodeship" (slug)
+       counties     → param "county" (tekst)
+       cities       → param "city" + "voivodeship" (dotychczasowe zachowanie)
+   - Pole Field 2 "Lokalizacja" renderuje się warunkowo:
+       voivodeships → Popover z listą województw z /api/voivodeships
+       counties     → Popover z polem tekstowym "Wpisz nazwę powiatu"
+       cities       → Istniejący Popover z wyszukiwarką miast (bez zmian)
+
+MIEJSCA DO DALSZEJ MODYFIKACJI (wskaże użytkownik)
+----------------------------------------------------
+Ustawienie geographicHierarchy jest przechowywane w bazie danych jako string.
+
+Odczyt w komponencie klienckim (przez publiczne API):
+  const res = await fetch("/api/settings")
+  const data = await res.json()
+  const hierarchy = data.geographicHierarchy  // "voivodeships" | "counties" | "cities"
+
+Odczyt po stronie serwera (Prisma):
+  const setting = await prisma.settings.findUnique({ where: { key: "geographicHierarchy" } })
+  const hierarchy = setting?.value ?? "voivodeships"
+
+5. app/(public)/kategorie/[...slug]/CategoryClientPage.tsx
+   - Dodano stany: geographicHierarchy, selectedCounty, countyOpen, countyInput
+   - Scalono fetch voivodeships + settings w jeden useEffect (Promise.all)
+   - Sidebar "Lokalizacja" renderuje się warunkowo:
+       counties     → pole tekstowe "Powiat" (Popover z inputem)
+       voivodeships → tylko Select województw (bez miasta)
+       cities       → Select województw + Popover miast (bez zmian)
+   - Fetch law-firms: county/voivodeship/city param zależny od trybu
+   - handleResetFilters: dodano setSelectedCounty("")
+   - Dependency array fetch law-firms: dodano selectedCounty, geographicHierarchy
+
+6. app/(public)/szukaj-prawnika/SearchLawyerClientPage.tsx
+   - Dodano stany: geographicHierarchy, selectedCounty, countyOpen, countyInput
+   - URL init: odczyt param "county" z searchParams
+   - fetchFilters: dodano fetch("/api/settings") do Promise.all
+   - Filtry "Lokalizacja" renderują się warunkowo (ta sama logika co CategoryClientPage)
+   - Fetch law-firms: county/voivodeship/city param zależny od trybu
+   - handleResetFilters: dodano setSelectedCounty("")
+   - Dependency array fetch law-firms: dodano selectedCounty, geographicHierarchy
+
+Formularze, które jeszcze CZEKAJĄ na adaptację (użytkownik wskaze):
+  - Formularz rejestracji eksperta (pole lokalizacji)
+  - Inne miejsca wskazane przez użytkownika
