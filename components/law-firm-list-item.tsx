@@ -318,22 +318,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
           {/* Left Column - Image */}
           <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
-              {lawFirm.zdjecieGlowne || lawFirm.logo ? (
-                <Image
-                  src={lawFirm.zdjecieGlowne || lawFirm.logo || ""}
-                  alt={lawFirm.nazwaFirmy}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="text-neutral-700 flex flex-col items-center justify-center">
-                  <Avatar className="w-24 h-24 opacity-30 bg-[#222]">
-                    <AvatarFallback className="text-neutral-400 bg-neutral-900  text-xl">
-                      {lawFirm.nazwaFirmy.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              )}
+
+              <div className="text-neutral-700 flex flex-col items-center justify-center">
+                <Avatar className="w-24 h-24 opacity-30 bg-[#222]">
+                  <AvatarFallback className="text-neutral-400 bg-neutral-900  text-xl">
+                    {lawFirm.nazwaFirmy.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+
               {/* Subtle dark vignette overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
             </div>
