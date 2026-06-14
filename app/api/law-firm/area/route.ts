@@ -132,31 +132,23 @@ export async function PUT(request: Request) {
     if (!callaPolska) {
       const limits = await getLimits(session.user.id)
 
+      // Limit dotyczy poziomu głównego z ustawienia "Hierarchia geograficzna".
+      // Poziom wtórny (auto-zaznaczany: powiat z miasta lub pojedyncze miasto z powiatu) nie jest limitowany.
+      const hierarchySetting = await prisma.settings.findUnique({ where: { key: "geographicHierarchy" } })
+      const hierarchy = hierarchySetting?.value ?? "voivodeships"
+
       if (voivodeshipsIds && voivodeshipsIds.length > limits.maxVoivodeships) {
         return NextResponse.json({ error: `Przekroczono limit województw (${limits.maxVoivodeships})` }, { status: 400 })
       }
 
-      if (countiesIds && countiesIds.length) {
-        // Powiaty wynikające z wybranych miast (auto-zaznaczone) nie liczą się do limitu —
-        // limit dotyczy tylko powiatów wybranych samodzielnie.
-        let countiesToCount: string[] = countiesIds
-        if (citiesIds && citiesIds.length) {
-          const cityRows = await prisma.city.findMany({
-            where: { id: { in: citiesIds } },
-            select: { countyId: true },
-          })
-          const impliedCountyIds = new Set(
-            cityRows.map(c => c.countyId).filter((id): id is string => Boolean(id))
-          )
-          countiesToCount = countiesIds.filter((id: string) => !impliedCountyIds.has(id))
-        }
-        if (countiesToCount.length > limits.maxCounties) {
+      if (hierarchy === "counties") {
+        if (countiesIds && countiesIds.length > limits.maxCounties) {
           return NextResponse.json({ error: `Przekroczono limit powiatów (${limits.maxCounties})` }, { status: 400 })
         }
-      }
-
-      if (citiesIds && citiesIds.length > limits.maxCities) {
-        return NextResponse.json({ error: `Przekroczono limit miast (${limits.maxCities})` }, { status: 400 })
+      } else if (hierarchy === "cities") {
+        if (citiesIds && citiesIds.length > limits.maxCities) {
+          return NextResponse.json({ error: `Przekroczono limit miast (${limits.maxCities})` }, { status: 400 })
+        }
       }
     }
 
