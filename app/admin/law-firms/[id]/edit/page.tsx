@@ -169,6 +169,7 @@ export default function EditLawFirmPage() {
       punktySaldo: 0,
       dataPakietuOd: "",
       dataPakietuDo: "",
+      packageDurationDays: undefined,
       zgodaRegulamin: false,
       zgodaPrzetwarzanie: false,
       zweryfikowana: false,
@@ -436,6 +437,7 @@ export default function EditLawFirmPage() {
             punktySaldo: lawFirm.punktySaldo,
             dataPakietuOd: lawFirm.dataPakietuOd ? new Date(lawFirm.dataPakietuOd).toISOString().split("T")[0] : "",
             dataPakietuDo: lawFirm.dataPakietuDo ? new Date(lawFirm.dataPakietuDo).toISOString().split("T")[0] : "",
+            packageDurationDays: lawFirm.packageDurationDays || undefined,
             zgodaRegulamin: lawFirm.zgodaRegulamin || false,
             zgodaPrzetwarzanie: lawFirm.zgodaPrzetwarzanie || false,
             zweryfikowana: lawFirm.zweryfikowana,
@@ -525,6 +527,7 @@ export default function EditLawFirmPage() {
         "accountManagerId",
         "dataPakietuOd",
         "dataPakietuDo",
+        "packageDurationDays",
         "zgodaRegulamin",
         "zgodaPrzetwarzanie",
       ],
@@ -1426,6 +1429,31 @@ export default function EditLawFirmPage() {
                                   <FormControl>
                                     <Input type="date" {...field} />
                                   </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <FormField
+                              control={form.control}
+                              name="packageDurationDays"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Liczba dni aktywności pakietu (opcjonalnie)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      placeholder="np. 30, 60, 365"
+                                      {...field}
+                                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                                      value={field.value ?? ""}
+                                    />
+                                  </FormControl>
+                                  <p className="text-xs text-muted-foreground">
+                                    Jeśli ustawisz tę wartość, data końca subskrypcji będzie automatycznie obliczona jako data rozpoczęcia + liczba dni.
+                                  </p>
                                   <FormMessage />
                                 </FormItem>
                               )}

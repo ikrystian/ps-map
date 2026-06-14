@@ -43,6 +43,7 @@ interface SubscriptionPlan {
   punktyGratis: number
   skillLawFocus: boolean
   aktywny: boolean
+  isPrimary: boolean
 }
 
 export default function AdminSubscriptionPlansPage() {
@@ -134,10 +135,15 @@ export default function AdminSubscriptionPlansPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-2xl">{plan.nazwa}</CardTitle>
-                    <CardDescription className="mt-2">
+                    <CardDescription className="mt-2 flex gap-2">
                       <Badge variant={plan.aktywny ? "default" : "secondary"}>
                         {plan.aktywny ? "Aktywny" : "Nieaktywny"}
                       </Badge>
+                      {plan.isPrimary && (
+                        <Badge variant="default" className="bg-blue-600">
+                          Pakiet podstawowy
+                        </Badge>
+                      )}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">

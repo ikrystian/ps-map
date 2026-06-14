@@ -77,6 +77,7 @@ export const lawFirmSchema = z.object({
   punktySaldo: z.number(),
   dataPakietuOd: z.string().optional(),
   dataPakietuDo: z.string().optional(),
+  packageDurationDays: z.number().optional(),
 
   // Consents
   zgodaRegulamin: z.boolean(),
