@@ -68,6 +68,15 @@ export default function PublicHeader({
   const [locationSearch, setLocationSearch] = useState("")
   const [isLoadingCities, setIsLoadingCities] = useState(false)
 
+  // Geographic hierarchy setting
+  const [geographicHierarchy, setGeographicHierarchy] = useState<"voivodeships" | "counties" | "cities">("cities")
+  const [voivodeshipsList, setVoivodeshipsList] = useState<any[]>([])
+  const [voivodeshipDropdownOpen, setVoivodeshipDropdownOpen] = useState(false)
+  const [selectedVoivodeshipName, setSelectedVoivodeshipName] = useState("")
+  const [selectedCounty, setSelectedCounty] = useState("")
+  const [countyOpen, setCountyOpen] = useState(false)
+  const [countyInput, setCountyInput] = useState("")
+
   // Expertise categories state for nested dropdown
   const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
   const [selectedExpertiseCategoryId, setSelectedExpertiseCategoryId] = useState("")
@@ -90,6 +99,30 @@ export default function PublicHeader({
     }
 
     fetchCategories()
+  }, [])
+
+  // Fetch geographic hierarchy setting and voivodeships list
+  useEffect(() => {
+    const fetchSettingsAndVoivodeships = async () => {
+      try {
+        const [settingsRes, voivodeshipsRes] = await Promise.all([
+          fetch("/api/settings"),
+          fetch("/api/voivodeships"),
+        ])
+        if (settingsRes.ok) {
+          const data = await settingsRes.json()
+          const hierarchy = data.geographicHierarchy as "voivodeships" | "counties" | "cities"
+          if (hierarchy) setGeographicHierarchy(hierarchy)
+        }
+        if (voivodeshipsRes.ok) {
+          const data = await voivodeshipsRes.json()
+          setVoivodeshipsList(data)
+        }
+      } catch (error) {
+        console.error("Error fetching settings/voivodeships:", error)
+      }
+    }
+    fetchSettingsAndVoivodeships()
   }, [])
 
   // Fetch expertise categories on mount
@@ -269,9 +302,16 @@ export default function PublicHeader({
     e.preventDefault()
     const params = new URLSearchParams()
     if (selectedExpertiseCategoryId) params.set("expertiseCategoryId", selectedExpertiseCategoryId)
-    if (selectedCity) params.set("city", selectedCity)
-    if (selectedVoivodeship) params.set("voivodeship", selectedVoivodeship)
     if (selectedType && selectedType !== "all") params.set("type", selectedType)
+
+    if (geographicHierarchy === "voivodeships") {
+      if (selectedVoivodeship) params.set("voivodeship", selectedVoivodeship)
+    } else if (geographicHierarchy === "counties") {
+      if (selectedCounty) params.set("county", selectedCounty)
+    } else {
+      if (selectedCity) params.set("city", selectedCity)
+      if (selectedVoivodeship) params.set("voivodeship", selectedVoivodeship)
+    }
 
     window.location.href = `/szukaj-prawnika?${params.toString()}`
   }
@@ -1118,96 +1158,206 @@ export default function PublicHeader({
                   </PopoverContent>
                 </Popover>
 
-                {/* Field 2: Lokalizacja */}
-                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
-                    >
-                      <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                      <span className="text-sm truncate flex-grow text-neutral-300">
-                        {selectedCity || "Lokalizacja"}
-                      </span>
-                      {selectedCity && (
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedCity("")
-                            setSelectedVoivodeship("")
-                          }}
-                          className="hover:text-red-400 text-neutral-400 p-0.5"
-                        >
-                          <X className="h-4 w-4" />
+                {/* Field 2: Lokalizacja (tryb zależny od geographicHierarchy) */}
+                {geographicHierarchy === "voivodeships" ? (
+                  <Popover open={voivodeshipDropdownOpen} onOpenChange={setVoivodeshipDropdownOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      >
+                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-neutral-300">
+                          {selectedVoivodeshipName || "Województwo"}
                         </span>
-                      )}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
-                    <Command className="bg-[#20201d] text-white" shouldFilter={false}>
-                      <CommandInput
-                        placeholder="Wyszukaj miasto..."
-                        value={locationSearch}
-                        onValueChange={setLocationSearch}
-                        className="text-white bg-transparent border-neutral-800"
-                      />
-                      <CommandList className="max-h-60 overflow-y-auto">
-                        {isLoadingCities && (
-                          <div className="text-neutral-450 py-3 text-center text-xs">Wyszukiwanie...</div>
+                        {selectedVoivodeshipName && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedVoivodeshipName("")
+                              setSelectedVoivodeship("")
+                            }}
+                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                          >
+                            <X className="h-4 w-4" />
+                          </span>
                         )}
-                        {!isLoadingCities && locationSearch.trim().length < 2 && (
-                          <div className="text-neutral-450 py-3 text-center text-xs px-3">
-                            Wpisz co najmniej 2 znaki...
-                          </div>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-1 bg-[#20201d] border-neutral-800 text-white" align="start">
+                      <div className="max-h-64 overflow-y-auto space-y-0.5">
+                        {voivodeshipsList.map((v) => (
+                          <button
+                            key={v.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedVoivodeshipName(v.nazwa)
+                              setSelectedVoivodeship(v.slug)
+                              setVoivodeshipDropdownOpen(false)
+                            }}
+                            className={cn(
+                              "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
+                              selectedVoivodeship === v.slug
+                                ? "bg-neutral-800 text-white"
+                                : "text-neutral-300 hover:bg-neutral-800/50 hover:text-white bg-transparent"
+                            )}
+                          >
+                            <span>{v.nazwa}</span>
+                            {selectedVoivodeship === v.slug && <Check className="h-4 w-4 text-teal-400" />}
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                ) : geographicHierarchy === "counties" ? (
+                  <Popover open={countyOpen} onOpenChange={setCountyOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      >
+                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-neutral-300">
+                          {selectedCounty || "Powiat"}
+                        </span>
+                        {selectedCounty && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCounty("")
+                            }}
+                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                          >
+                            <X className="h-4 w-4" />
+                          </span>
                         )}
-                        {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                          <div className="text-neutral-450 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-3 bg-[#20201d] border-neutral-800 text-white" align="start">
+                      <div className="space-y-2">
+                        <p className="text-xs text-neutral-400">Wpisz nazwę powiatu</p>
+                        <input
+                          type="text"
+                          autoFocus
+                          value={countyInput}
+                          onChange={(e) => setCountyInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && countyInput.trim()) {
+                              setSelectedCounty(countyInput.trim())
+                              setCountyOpen(false)
+                              setCountyInput("")
+                            }
+                          }}
+                          placeholder="np. powiat warszawski"
+                          className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (countyInput.trim()) {
+                              setSelectedCounty(countyInput.trim())
+                              setCountyOpen(false)
+                              setCountyInput("")
+                            }
+                          }}
+                          className="w-full py-1.5 text-sm text-white bg-teal-600 hover:bg-teal-700 rounded-md transition-colors"
+                        >
+                          Wybierz
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      >
+                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-neutral-300">
+                          {selectedCity || "Lokalizacja"}
+                        </span>
+                        {selectedCity && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCity("")
+                              setSelectedVoivodeship("")
+                            }}
+                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                          >
+                            <X className="h-4 w-4" />
+                          </span>
                         )}
-                        <CommandGroup>
-                          {cities.map((city) => {
-                            const matchedPostal = city.postalCodes?.find((p: any) =>
-                              p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
-                            )
-                            const displayValue = matchedPostal
-                              ? `${city.nazwa} (${matchedPostal.code})`
-                              : city.nazwa
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
+                      <Command className="bg-[#20201d] text-white" shouldFilter={false}>
+                        <CommandInput
+                          placeholder="Wyszukaj miasto..."
+                          value={locationSearch}
+                          onValueChange={setLocationSearch}
+                          className="text-white bg-transparent border-neutral-800"
+                        />
+                        <CommandList className="max-h-60 overflow-y-auto">
+                          {isLoadingCities && (
+                            <div className="text-neutral-450 py-3 text-center text-xs">Wyszukiwanie...</div>
+                          )}
+                          {!isLoadingCities && locationSearch.trim().length < 2 && (
+                            <div className="text-neutral-450 py-3 text-center text-xs px-3">
+                              Wpisz co najmniej 2 znaki...
+                            </div>
+                          )}
+                          {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
+                            <div className="text-neutral-450 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                          )}
+                          <CommandGroup>
+                            {cities.map((city) => {
+                              const matchedPostal = city.postalCodes?.find((p: any) =>
+                                p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                              )
+                              const displayValue = matchedPostal
+                                ? `${city.nazwa} (${matchedPostal.code})`
+                                : city.nazwa
 
-                            return (
-                              <CommandItem
-                                key={city.id}
-                                value={city.nazwa}
-                                onSelect={() => {
-                                  if (city.nazwa === selectedCity) {
-                                    setSelectedCity("")
-                                    setSelectedVoivodeship("")
-                                  } else {
-                                    setSelectedCity(city.nazwa)
-                                    setSelectedVoivodeship(city.voivodeship?.slug || "")
-                                  }
-                                  setLocationOpen(false)
-                                }}
-                                className="text-white hover:bg-neutral-800 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Check
-                                    className={cn(
-                                      "h-4 w-4 text-teal-400",
-                                      selectedCity === city.nazwa ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  <span>{displayValue}</span>
-                                </div>
-                                <span className="text-xs text-neutral-400 ml-2 text-right">
-                                  {city.voivodeship?.nazwa}
-                                </span>
-                              </CommandItem>
-                            )
-                          })}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                              return (
+                                <CommandItem
+                                  key={city.id}
+                                  value={city.nazwa}
+                                  onSelect={() => {
+                                    if (city.nazwa === selectedCity) {
+                                      setSelectedCity("")
+                                      setSelectedVoivodeship("")
+                                    } else {
+                                      setSelectedCity(city.nazwa)
+                                      setSelectedVoivodeship(city.voivodeship?.slug || "")
+                                    }
+                                    setLocationOpen(false)
+                                  }}
+                                  className="text-white hover:bg-neutral-800 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Check
+                                      className={cn(
+                                        "h-4 w-4 text-teal-400",
+                                        selectedCity === city.nazwa ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    <span>{displayValue}</span>
+                                  </div>
+                                  <span className="text-xs text-neutral-400 ml-2 text-right">
+                                    {city.voivodeship?.nazwa}
+                                  </span>
+                                </CommandItem>
+                              )
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
 
                 {/* Field 3: Typ sprawy */}
                 <Popover open={typeOpen} onOpenChange={setTypeOpen}>

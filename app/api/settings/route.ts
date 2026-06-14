@@ -56,6 +56,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.enableUserSelectionOnLogin) {
       settingsObject.enableUserSelectionOnLogin = "true"
     }
+    if (!settingsObject.geographicHierarchy) {
+      settingsObject.geographicHierarchy = "voivodeships"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

@@ -129,6 +129,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  geographicHierarchy?: {
+    value: string
+    description: string | null
+  }
   emailServerHost?: {
     value: string
     description: string | null
@@ -164,7 +168,7 @@ export default function AdminSettingsPage() {
   const [minReviewLength, setMinReviewLength] = useState("50")
   const [featuredCategoriesLimit, setFeaturedCategoriesLimit] = useState("8")
   const [maxTags, setMaxTags] = useState("5")
-  const [showExpertTutorial, setShowExpertTutorial] = useState("true")
+  const [showExpertTutorial, setShowExpertTutorial] = useState("false")
   const [autoApproveTestPayment, setAutoApproveTestPayment] = useState("true")
   const [enablePaymentTest, setEnablePaymentTest] = useState("true")
   const [enablePaymentPrzelewy24, setEnablePaymentPrzelewy24] = useState("true")
@@ -181,6 +185,7 @@ export default function AdminSettingsPage() {
   const [ksefEnv, setKsefEnv] = useState("test")
   const [showChatAssistant, setShowChatAssistant] = useState("true")
   const [autoGrantBusinessPackage, setAutoGrantBusinessPackage] = useState("false")
+  const [geographicHierarchy, setGeographicHierarchy] = useState("voivodeships")
 
   // SMTP Settings
   const [emailServerHost, setEmailServerHost] = useState("")
@@ -220,7 +225,7 @@ export default function AdminSettingsPage() {
         setOgImage(data.ogImage?.value || "/favicon.png")
         setFeaturedCategoriesLimit(data.featuredCategoriesLimit?.value || "8")
         setMaxTags(data.maxLawFirmTags?.value || "5")
-        setShowExpertTutorial(data.showExpertTutorial?.value || "true")
+        setShowExpertTutorial(data.showExpertTutorial?.value || "false")
         setAutoApproveTestPayment(data.autoApproveTestPayment?.value || "true")
         setEnablePaymentTest(data.enablePaymentTest?.value || "true")
         setEnablePaymentPrzelewy24(data.enablePaymentPrzelewy24?.value || "true")
@@ -237,7 +242,8 @@ export default function AdminSettingsPage() {
         setKsefEnv(data.ksefEnv?.value || "test")
         setShowChatAssistant(data.showChatAssistant?.value || "true")
         setAutoGrantBusinessPackage(data.autoGrantBusinessPackage?.value || "false")
-        
+        setGeographicHierarchy(data.geographicHierarchy?.value || "voivodeships")
+
         // SMTP Settings
         setEmailServerHost(data.emailServerHost?.value || "")
         setEmailServerPort(data.emailServerPort?.value || "587")
@@ -426,6 +432,10 @@ export default function AdminSettingsPage() {
             autoGrantBusinessPackage: {
               value: autoGrantBusinessPackage,
               description: "Czy automatycznie przyznawać nowo zarejestrowanym ekspertom darmowy 3-miesięczny pakiet Biznes",
+            },
+            geographicHierarchy: {
+              value: geographicHierarchy,
+              description: "Hierarchia geograficzna używana w formularzach i filtrach: voivodeships (województwa), counties (powiaty), cities (miasta)",
             },
             favicon: {
               value: favicon,
@@ -617,6 +627,51 @@ export default function AdminSettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Hierarchia geograficzna */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Hierarchia geograficzna</CardTitle>
+          <CardDescription>
+            Wybierz poziom podziału administracyjnego używany w formularzach rejestracji ekspertów, filtrach wyszukiwania i innych miejscach wymagających lokalizacji.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant={geographicHierarchy === "voivodeships" ? "default" : "outline"}
+              className="flex-1"
+              onClick={() => setGeographicHierarchy("voivodeships")}
+            >
+              Województwa
+            </Button>
+            <Button
+              type="button"
+              variant={geographicHierarchy === "counties" ? "default" : "outline"}
+              className="flex-1"
+              onClick={() => setGeographicHierarchy("counties")}
+            >
+              Powiaty
+            </Button>
+            <Button
+              type="button"
+              variant={geographicHierarchy === "cities" ? "default" : "outline"}
+              className="flex-1"
+              onClick={() => setGeographicHierarchy("cities")}
+            >
+              Miasta
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Aktualny poziom: <span className="font-semibold text-foreground">
+              {geographicHierarchy === "voivodeships" && "Województwa"}
+              {geographicHierarchy === "counties" && "Powiaty"}
+              {geographicHierarchy === "cities" && "Miasta"}
+            </span>. Zmiana wpływa na formularze i wyniki wyszukiwania ekspertów według lokalizacji.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Ustawienia SMTP (Wysyłka e-maili) */}
       <Card className="border-cyan-500/20 bg-cyan-500/[0.01]">
         <CardHeader>
@@ -729,7 +784,7 @@ export default function AdminSettingsPage() {
               </div>
               <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany format PNG lub ICO</p>
             </div>
-            
+
             <div className="md:col-span-3 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="favicon-url">URL Faviconu</Label>
@@ -820,7 +875,7 @@ export default function AdminSettingsPage() {
               </div>
               <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany rozmiar 1200x630 (1.91:1)</p>
             </div>
-            
+
             <div className="md:col-span-3 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="ogImage-url">URL Obrazu Open Graph (og:image)</Label>
@@ -1340,7 +1395,7 @@ export default function AdminSettingsPage() {
             </span>
           )}
         </div>
-        
+
         <div className="flex gap-3 ml-auto">
           <Button onClick={handleSave} disabled={saving} className="h-9 font-semibold px-5">
             {saving ? (

@@ -165,6 +165,12 @@ export async function GET(request: NextRequest) {
         description: "Czy automatycznie przyznawać nowo zarejestrowanym ekspertom darmowy 3-miesięczny pakiet Biznes",
       }
     }
+    if (!settingsObject.geographicHierarchy) {
+      settingsObject.geographicHierarchy = {
+        value: "voivodeships",
+        description: "Hierarchia geograficzna używana w formularzach i filtrach: voivodeships (województwa), counties (powiaty), cities (miasta)",
+      }
+    }
 
     // SMTP settings
     if (!settingsObject.emailServerHost) {
