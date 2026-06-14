@@ -55,6 +55,7 @@ interface SubscriptionPlan {
   dostepDoSpraw: number | null
   kategorieSpraw: number | null
   wojewodztwa: number
+  powiaty: number
   miasta: number
   priorytetWyszukiwanie: boolean
   osobistyOpiekun: number
@@ -170,6 +171,7 @@ export default function LawFirmPackagePage() {
   const [purchasing, setPurchasing] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
 
   const isSubscriptionActive = lawFirm?.dataPakietuDo
     ? new Date(lawFirm.dataPakietuDo) > new Date()
@@ -200,9 +202,10 @@ export default function LawFirmPackagePage() {
     setError(null)
 
     try {
-      const [firmResponse, plansResponse] = await Promise.all([
+      const [firmResponse, plansResponse, settingsResponse] = await Promise.all([
         fetch("/api/law-firms/me"),
         fetch("/api/subscription-plans"),
+        fetch("/api/settings"),
       ])
 
       if (!firmResponse.ok) {
@@ -214,6 +217,11 @@ export default function LawFirmPackagePage() {
 
       const firmData = await firmResponse.json()
       const plansData = await plansResponse.json()
+
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json()
+        setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")
+      }
 
       setLawFirm(firmData)
 
@@ -339,7 +347,10 @@ export default function LawFirmPackagePage() {
         { label: "Dostęp do spraw", key: "dostepDoSpraw", type: "cases" },
         { label: "Kategorie spraw", key: "kategorieSpraw", type: "categories" },
         { label: "Zasięg województw", key: "wojewodztwa", type: "regions" },
-        { label: "Zasięg miast", key: "miasta", type: "cities" },
+        // Pokazujemy limit poziomu zgodnego z "Hierarchia geograficzna":
+        // counties -> powiaty, cities -> miasta (poziom wtórny jest auto i bez limitu).
+        ...(geoHierarchy === "counties" ? [{ label: "Zasięg powiatów", key: "powiaty", type: "counties" }] : []),
+        ...(geoHierarchy === "cities" ? [{ label: "Zasięg miast", key: "miasta", type: "cities" }] : []),
         { label: "Powiadomienia o nowych sprawach", key: "powiadomieniaSprawy", type: "notifications" },
       ]
     },
@@ -415,6 +426,10 @@ export default function LawFirmPackagePage() {
 
     if (feature.type === "regions") {
       return <span className="font-semibold text-sm">{value} woj.</span>
+    }
+
+    if (feature.type === "counties") {
+      return <span className="font-semibold text-sm">{value} pow.</span>
     }
 
     if (feature.type === "cities") {
