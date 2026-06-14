@@ -4,7 +4,6 @@ import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 import { ArrowRight, ShieldCheck, Users } from "lucide-react"
-import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -65,19 +64,21 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="flex flex-col sm:flex-row gap-6 mb-20 justify-center items-center px-4"
           >
-            <Link href="#categories-private" className="group">
-              <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
-                Sprawy prywatne
-                <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              </button>
-            </Link>
+            <button
+              onClick={() => document.getElementById("categories-private")?.scrollIntoView({ behavior: "smooth" })}
+              className="group flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
+            >
+              Sprawy prywatne
+              <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            </button>
 
-            <Link href="#categories-business" className="group">
-              <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
-                Sprawy firmowe
-                <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              </button>
-            </Link>
+            <button
+              onClick={() => document.getElementById("categories-business")?.scrollIntoView({ behavior: "smooth" })}
+              className="group flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
+            >
+              Sprawy firmowe
+              <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            </button>
           </motion.div>
 
           {/* Indicators */}

@@ -11,6 +11,7 @@ import { BenefitsSection } from "@/components/homepage/benefits-section"
 import { BusinessCategoriesGrid } from "@/components/homepage/business-categories-grid"
 import { CategoriesGrid } from "@/components/homepage/categories-grid"
 import { CitiesList } from "@/components/homepage/cities-list"
+import { VoivodeshipsList } from "@/components/homepage/voivodeships-list"
 import { ExpertCTA } from "@/components/homepage/expert-cta"
 import { HeroSection } from "@/components/homepage/hero-section"
 import { HowItWorksSection } from "@/components/homepage/how-it-works-section"
@@ -131,7 +132,10 @@ export default function HomePage() {
       {/* SECTION 10: Latest Articles */}
       <LatestArticles blogPosts={blogPosts} />
 
-      {/* SECTION 11: Cities List */}
+      {/* SECTION 11: Voivodeships List */}
+      <VoivodeshipsList />
+
+      {/* SECTION 11.5: Cities List */}
       <CitiesList />
 
       {/* SECTION 11.5: Testimonials */}
