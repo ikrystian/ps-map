@@ -28,11 +28,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Landmark, Loader2, MapPin, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import type { Voivodeship, City } from "@/types"
+import type { Voivodeship, City, County } from "@/types"
 
+const ALL = "all"
+const NO_COUNTY = "none"
 
 export default function AdminLocationsPage() {
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
@@ -42,9 +44,14 @@ export default function AdminLocationsPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
-  const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>("all")
+  const [selectedVoivodeship, setSelectedVoivodeship] = useState<string>(ALL)
 
-  // Form states
+  // Counties (powiaty) for the selected voivodeship
+  const [counties, setCounties] = useState<County[]>([])
+  const [loadingCounties, setLoadingCounties] = useState(false)
+  const [selectedCounty, setSelectedCounty] = useState<string>(ALL)
+
+  // City form states
   const [isCityDialogOpen, setIsCityDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isSeedDialogOpen, setIsSeedDialogOpen] = useState(false)
@@ -52,8 +59,17 @@ export default function AdminLocationsPage() {
   const [cityToDelete, setCityToDelete] = useState<City | null>(null)
   const [cityName, setCityName] = useState("")
   const [cityVoivodeshipId, setCityVoivodeshipId] = useState("")
+  const [cityCountyId, setCityCountyId] = useState("")
   const [cityPostalCodes, setCityPostalCodes] = useState("")
+  const [dialogCounties, setDialogCounties] = useState<County[]>([])
   const [isSaving, setIsSaving] = useState(false)
+
+  // County form states
+  const [isCountyDialogOpen, setIsCountyDialogOpen] = useState(false)
+  const [isCountyDeleteOpen, setIsCountyDeleteOpen] = useState(false)
+  const [editingCounty, setEditingCounty] = useState<County | null>(null)
+  const [countyToDelete, setCountyToDelete] = useState<County | null>(null)
+  const [countyName, setCountyName] = useState("")
 
   // Fetch voivodeships on mount
   useEffect(() => {
@@ -69,14 +85,34 @@ export default function AdminLocationsPage() {
     fetchVoivodeships()
   }, [])
 
-  const fetchCities = async (page: number, searchVal: string, voivodeshipVal: string) => {
+  const fetchCounties = async (voivodeshipId: string) => {
+    setLoadingCounties(true)
+    try {
+      const url = voivodeshipId === ALL
+        ? `/api/admin/counties`
+        : `/api/admin/counties?voivodeshipId=${voivodeshipId}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setCounties(data || [])
+    } catch (error) {
+      toast.error("Błąd podczas pobierania powiatów")
+    } finally {
+      setLoadingCounties(false)
+    }
+  }
+
+  const fetchCities = async (page: number, searchVal: string, voivodeshipVal: string, countyVal: string) => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
       params.append("page", page.toString())
       params.append("limit", "50")
-      if (voivodeshipVal !== "all") {
+      if (voivodeshipVal !== ALL) {
         params.append("voivodeshipId", voivodeshipVal)
+      }
+      if (countyVal !== ALL) {
+        params.append("countyId", countyVal)
       }
       if (searchVal) {
         params.append("search", searchVal)
@@ -85,7 +121,7 @@ export default function AdminLocationsPage() {
       const res = await fetch(`/api/admin/cities?${params.toString()}`)
       if (!res.ok) throw new Error()
       const data = await res.json()
-      
+
       setCities(data.cities || [])
       setTotalCities(data.total || 0)
     } catch (error) {
@@ -104,20 +140,46 @@ export default function AdminLocationsPage() {
     return () => clearTimeout(timer)
   }, [search])
 
-  // Reset page when voivodeship filter changes
+  // Reset page + county filter and refetch counties when voivodeship filter changes
   useEffect(() => {
     setCurrentPage(1)
+    setSelectedCounty(ALL)
+    fetchCounties(selectedVoivodeship)
   }, [selectedVoivodeship])
+
+  // Reset page when county filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCounty])
 
   // Fetch cities when dependencies change
   useEffect(() => {
-    fetchCities(currentPage, debouncedSearch, selectedVoivodeship)
-  }, [currentPage, debouncedSearch, selectedVoivodeship])
+    fetchCities(currentPage, debouncedSearch, selectedVoivodeship, selectedCounty)
+  }, [currentPage, debouncedSearch, selectedVoivodeship, selectedCounty])
 
+  // Load counties for the city dialog whenever its voivodeship changes
+  useEffect(() => {
+    const loadDialogCounties = async () => {
+      if (!cityVoivodeshipId) {
+        setDialogCounties([])
+        return
+      }
+      try {
+        const res = await fetch(`/api/admin/counties?voivodeshipId=${cityVoivodeshipId}`)
+        if (res.ok) setDialogCounties(await res.json())
+      } catch {
+        setDialogCounties([])
+      }
+    }
+    if (isCityDialogOpen) loadDialogCounties()
+  }, [cityVoivodeshipId, isCityDialogOpen])
+
+  // ----- City handlers -----
   const handleOpenAddDialog = () => {
     setEditingCity(null)
     setCityName("")
-    setCityVoivodeshipId(selectedVoivodeship !== "all" ? selectedVoivodeship : "")
+    setCityVoivodeshipId(selectedVoivodeship !== ALL ? selectedVoivodeship : "")
+    setCityCountyId(selectedCounty !== ALL && selectedCounty !== NO_COUNTY ? selectedCounty : "")
     setCityPostalCodes("")
     setIsCityDialogOpen(true)
   }
@@ -126,8 +188,9 @@ export default function AdminLocationsPage() {
     setEditingCity(city)
     setCityName(city.nazwa)
     setCityVoivodeshipId(city.voivodeshipId)
-    const codesStr = city.postalCodes 
-      ? city.postalCodes.map(pc => pc.code).join(", ") 
+    setCityCountyId(city.countyId || "")
+    const codesStr = city.postalCodes
+      ? city.postalCodes.map(pc => pc.code).join(", ")
       : ""
     setCityPostalCodes(codesStr)
     setIsCityDialogOpen(true)
@@ -140,14 +203,14 @@ export default function AdminLocationsPage() {
 
   const handleSaveCity = async () => {
     if (!cityName || !cityVoivodeshipId) {
-      toast.error("Wypełnij wszystkie pola")
+      toast.error("Wypełnij wszystkie wymagane pola")
       return
     }
 
     setIsSaving(true)
     try {
-      const url = editingCity 
-        ? `/api/admin/cities/${editingCity.id}` 
+      const url = editingCity
+        ? `/api/admin/cities/${editingCity.id}`
         : "/api/admin/cities"
       const method = editingCity ? "PATCH" : "POST"
 
@@ -157,6 +220,7 @@ export default function AdminLocationsPage() {
         body: JSON.stringify({
           nazwa: cityName,
           voivodeshipId: cityVoivodeshipId,
+          countyId: cityCountyId || null,
           postalCodes: cityPostalCodes,
         })
       })
@@ -165,7 +229,8 @@ export default function AdminLocationsPage() {
 
       toast.success(editingCity ? "Miasto zaktualizowane" : "Miasto dodane")
       setIsCityDialogOpen(false)
-      fetchCities(currentPage, debouncedSearch, selectedVoivodeship)
+      fetchCities(currentPage, debouncedSearch, selectedVoivodeship, selectedCounty)
+      fetchCounties(selectedVoivodeship)
     } catch (error) {
       toast.error("Błąd podczas zapisywania")
     } finally {
@@ -186,14 +251,91 @@ export default function AdminLocationsPage() {
 
       toast.success("Miasto usunięte")
       setIsDeleteDialogOpen(false)
-      
+
       const nextTotal = totalCities - 1
       const maxPages = Math.ceil(nextTotal / 50) || 1
       const targetPage = currentPage > maxPages ? maxPages : currentPage
       setCurrentPage(targetPage)
-      fetchCities(targetPage, debouncedSearch, selectedVoivodeship)
+      fetchCities(targetPage, debouncedSearch, selectedVoivodeship, selectedCounty)
+      fetchCounties(selectedVoivodeship)
     } catch (error) {
       toast.error("Błąd podczas usuwania")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  // ----- County (powiat) handlers -----
+  const handleOpenAddCounty = () => {
+    setEditingCounty(null)
+    setCountyName("")
+    setIsCountyDialogOpen(true)
+  }
+
+  const handleOpenEditCounty = (county: County) => {
+    setEditingCounty(county)
+    setCountyName(county.nazwa)
+    setIsCountyDialogOpen(true)
+  }
+
+  const handleSaveCounty = async () => {
+    // When editing, keep the powiat in its own voivodeship; when adding, use the selected one.
+    const voivodeshipId = editingCounty ? editingCounty.voivodeshipId : selectedVoivodeship
+    if (!countyName || !voivodeshipId || voivodeshipId === ALL) {
+      toast.error("Wpisz nazwę powiatu i wybierz województwo")
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      const url = editingCounty
+        ? `/api/admin/counties/${editingCounty.id}`
+        : "/api/admin/counties"
+      const method = editingCounty ? "PATCH" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nazwa: countyName,
+          voivodeshipId,
+        })
+      })
+
+      if (res.status === 409) {
+        toast.error("Powiat o tej nazwie już istnieje w tym województwie")
+        return
+      }
+      if (!res.ok) throw new Error()
+
+      toast.success(editingCounty ? "Powiat zaktualizowany" : "Powiat dodany")
+      setIsCountyDialogOpen(false)
+      fetchCounties(selectedVoivodeship)
+    } catch (error) {
+      toast.error("Błąd podczas zapisywania powiatu")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDeleteCounty = async () => {
+    if (!countyToDelete) return
+
+    setIsSaving(true)
+    try {
+      const res = await fetch(`/api/admin/counties/${countyToDelete.id}`, {
+        method: "DELETE"
+      })
+
+      if (!res.ok) throw new Error()
+
+      toast.success("Powiat usunięty")
+      setIsCountyDeleteOpen(false)
+      if (selectedCounty === countyToDelete.id) setSelectedCounty(ALL)
+      fetchCounties(selectedVoivodeship)
+      fetchCities(currentPage, debouncedSearch, selectedVoivodeship, selectedCounty)
+    } catch (error) {
+      toast.error("Błąd podczas usuwania powiatu")
     } finally {
       setIsSaving(false)
     }
@@ -220,7 +362,7 @@ export default function AdminLocationsPage() {
       toast.success(`Zaimportowano ${data.count} miast`)
       setIsSeedDialogOpen(false)
       setCurrentPage(1)
-      fetchCities(1, debouncedSearch, selectedVoivodeship)
+      fetchCities(1, debouncedSearch, selectedVoivodeship, selectedCounty)
     } catch (error) {
       toast.error("Błąd podczas importu")
     } finally {
@@ -233,7 +375,7 @@ export default function AdminLocationsPage() {
   const getPageNumbers = () => {
     const pages = []
     const maxVisible = 5
-    
+
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i)
@@ -241,13 +383,13 @@ export default function AdminLocationsPage() {
     } else {
       let start = Math.max(1, currentPage - 2)
       let end = Math.min(totalPages, currentPage + 2)
-      
+
       if (start === 1) {
         end = maxVisible
       } else if (end === totalPages) {
         start = totalPages - maxVisible + 1
       }
-      
+
       for (let i = start; i <= end; i++) {
         pages.push(i)
       }
@@ -255,9 +397,11 @@ export default function AdminLocationsPage() {
     return pages
   }
 
+  const selectedVoivodeshipName = voivodeships.find(v => v.id === selectedVoivodeship)?.nazwa
+
   return (
     <div className="space-y-6">
-      <AdminHeaderSetter title="Lokalizacje" subtitle="Zarządzaj miastami i ich przypisaniem do województw" />
+      <AdminHeaderSetter title="Lokalizacje" subtitle="Hierarchia: Województwo → Powiat → Miasto → Kod pocztowy" />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div />
         <div className="flex gap-2 w-full md:w-auto">
@@ -270,8 +414,9 @@ export default function AdminLocationsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="md:col-span-1 h-fit">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Województwa */}
+        <Card className="lg:col-span-1 h-fit">
           <CardHeader>
             <CardTitle>Województwa</CardTitle>
             <CardDescription>Filtruj wg regionu</CardDescription>
@@ -279,9 +424,9 @@ export default function AdminLocationsPage() {
           <CardContent className="p-0">
             <div className="flex flex-col max-h-[600px] overflow-y-auto">
               <button
-                onClick={() => setSelectedVoivodeship("all")}
+                onClick={() => setSelectedVoivodeship(ALL)}
                 className={`flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors hover:bg-accent text-left ${
-                  selectedVoivodeship === "all" ? "bg-accent text-accent-foreground" : ""
+                  selectedVoivodeship === ALL ? "bg-accent text-accent-foreground" : ""
                 }`}
               >
                 Wszystkie
@@ -303,15 +448,111 @@ export default function AdminLocationsPage() {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-3">
+        {/* Powiaty */}
+        <Card className="lg:col-span-1 h-fit">
+          <CardHeader className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle>Powiaty</CardTitle>
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-7 w-7 shrink-0"
+                onClick={handleOpenAddCounty}
+                disabled={selectedVoivodeship === ALL}
+                title={selectedVoivodeship === ALL ? "Wybierz województwo, aby dodać powiat" : "Dodaj powiat"}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            <CardDescription>
+              {selectedVoivodeship === ALL
+                ? "Wszystkie powiaty — filtruj miasta"
+                : `Powiaty: ${selectedVoivodeshipName}`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loadingCounties ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="flex flex-col max-h-[600px] overflow-y-auto">
+                <button
+                  onClick={() => setSelectedCounty(ALL)}
+                  className={`flex items-center justify-between px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent text-left ${
+                    selectedCounty === ALL ? "bg-accent text-accent-foreground" : ""
+                  }`}
+                >
+                  Wszystkie powiaty
+                </button>
+                <button
+                  onClick={() => setSelectedCounty(NO_COUNTY)}
+                  className={`flex items-center justify-between px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent text-left text-muted-foreground ${
+                    selectedCounty === NO_COUNTY ? "bg-accent text-accent-foreground" : ""
+                  }`}
+                >
+                  Bez powiatu
+                </button>
+                {counties.length === 0 ? (
+                  <div className="px-4 py-4 text-xs text-muted-foreground italic">
+                    {selectedVoivodeship === ALL
+                      ? "Brak powiatów w bazie."
+                      : "Brak powiatów. Dodaj pierwszy przyciskiem +."}
+                  </div>
+                ) : (
+                  counties.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`group flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-accent ${
+                        selectedCounty === c.id ? "bg-accent text-accent-foreground" : ""
+                      }`}
+                    >
+                      <button
+                        onClick={() => setSelectedCounty(c.id)}
+                        className="flex items-center gap-2 text-left flex-1 min-w-0"
+                      >
+                        <Landmark className="h-3.5 w-3.5 text-primary shrink-0" />
+                        <span className="flex flex-col min-w-0">
+                          <span className="truncate">
+                            {c.nazwa}
+                            <span className="text-xs text-muted-foreground"> ({c._count?.cities ?? 0})</span>
+                          </span>
+                          {selectedVoivodeship === ALL && c.voivodeship?.nazwa && (
+                            <span className="text-[11px] text-muted-foreground truncate">{c.voivodeship.nazwa}</span>
+                          )}
+                        </span>
+                      </button>
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleOpenEditCounty(c)}>
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => { setCountyToDelete(c); setIsCountyDeleteOpen(true) }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Miasta */}
+        <Card className="lg:col-span-3">
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <CardTitle>Miasta</CardTitle>
                 <CardDescription>
-                  {selectedVoivodeship === "all" 
-                    ? "Wszystkie zarejestrowane miasta" 
-                    : `Miasta w województwie ${voivodeships.find(v => v.id === selectedVoivodeship)?.nazwa}`}
+                  {selectedVoivodeship === ALL
+                    ? "Wszystkie zarejestrowane miasta"
+                    : `Miasta w województwie ${selectedVoivodeshipName}`}
                 </CardDescription>
               </div>
               <div className="relative w-full md:w-64">
@@ -341,6 +582,7 @@ export default function AdminLocationsPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Nazwa</TableHead>
+                        <TableHead>Powiat</TableHead>
                         <TableHead>Województwo</TableHead>
                         <TableHead className="text-right">Akcje</TableHead>
                       </TableRow>
@@ -359,18 +601,28 @@ export default function AdminLocationsPage() {
                               )}
                             </div>
                           </TableCell>
+                          <TableCell>
+                            {city.county ? (
+                              <span className="inline-flex items-center gap-1.5 text-sm">
+                                <Landmark className="h-3.5 w-3.5 text-primary/70" />
+                                {city.county.nazwa}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">— brak —</span>
+                            )}
+                          </TableCell>
                           <TableCell>{city.voivodeship?.nazwa}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 onClick={() => handleOpenEditDialog(city)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon"
                                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
                                 onClick={() => handleOpenDeleteDialog(city)}
@@ -412,7 +664,7 @@ export default function AdminLocationsPage() {
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
-                      
+
                       {getPageNumbers().map((pageNumber) => (
                         <Button
                           key={pageNumber}
@@ -420,8 +672,8 @@ export default function AdminLocationsPage() {
                           size="sm"
                           onClick={() => setCurrentPage(pageNumber)}
                           className={`h-8 min-w-[32px] px-2 transition-all hover:scale-105 active:scale-95 ${
-                            currentPage === pageNumber 
-                              ? "shadow-md bg-primary text-primary-foreground font-semibold" 
+                            currentPage === pageNumber
+                              ? "shadow-md bg-primary text-primary-foreground font-semibold"
                               : "hover:bg-accent text-muted-foreground hover:text-foreground"
                           }`}
                         >
@@ -456,37 +708,37 @@ export default function AdminLocationsPage() {
         </Card>
       </div>
 
-      {/* Add/Edit Dialog */}
+      {/* Add/Edit City Dialog */}
       <Dialog open={isCityDialogOpen} onOpenChange={setIsCityDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingCity ? "Edytuj miasto" : "Dodaj nowe miasto"}</DialogTitle>
             <DialogDescription>
-              Wprowadź nazwę miasta, kody pocztowe i wybierz województwo.
+              Wprowadź nazwę miasta, kody pocztowe oraz przypisz województwo i powiat.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Nazwa miasta</label>
-              <Input 
-                placeholder="np. Warszawa" 
+              <Input
+                placeholder="np. Warszawa"
                 value={cityName}
                 onChange={(e) => setCityName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Kody pocztowe (rozdzielone przecinkami)</label>
-              <Input 
-                placeholder="np. 00-001, 00-002" 
+              <Input
+                placeholder="np. 00-001, 00-002"
                 value={cityPostalCodes}
                 onChange={(e) => setCityPostalCodes(e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Województwo</label>
-              <Select 
-                value={cityVoivodeshipId} 
-                onValueChange={setCityVoivodeshipId}
+              <Select
+                value={cityVoivodeshipId}
+                onValueChange={(val) => { setCityVoivodeshipId(val); setCityCountyId("") }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Wybierz województwo" />
@@ -495,6 +747,28 @@ export default function AdminLocationsPage() {
                   {voivodeships.map((v) => (
                     <SelectItem key={v.id} value={v.id}>
                       {v.nazwa}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Powiat <span className="text-muted-foreground font-normal">(opcjonalny)</span>
+              </label>
+              <Select
+                value={cityCountyId || NO_COUNTY}
+                onValueChange={(val) => setCityCountyId(val === NO_COUNTY ? "" : val)}
+                disabled={!cityVoivodeshipId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={cityVoivodeshipId ? "Wybierz powiat" : "Najpierw wybierz województwo"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_COUNTY}>— brak —</SelectItem>
+                  {dialogCounties.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.nazwa}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -511,6 +785,36 @@ export default function AdminLocationsPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Add/Edit County Dialog */}
+      <Dialog open={isCountyDialogOpen} onOpenChange={setIsCountyDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingCounty ? "Edytuj powiat" : "Dodaj nowy powiat"}</DialogTitle>
+            <DialogDescription>
+              Powiat w województwie <strong>{editingCounty ? editingCounty.voivodeship?.nazwa : selectedVoivodeshipName}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Nazwa powiatu</label>
+              <Input
+                placeholder="np. powiat warszawski"
+                value={countyName}
+                onChange={(e) => setCountyName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSaveCounty() }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCountyDialogOpen(false)}>Anuluj</Button>
+            <Button onClick={handleSaveCounty} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editingCounty ? "Zapisz zmiany" : "Dodaj powiat"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Seed Dialog */}
       <Dialog open={isSeedDialogOpen} onOpenChange={setIsSeedDialogOpen}>
         <DialogContent>
@@ -522,7 +826,7 @@ export default function AdminLocationsPage() {
           </DialogHeader>
           <div className="py-4">
             <p className="text-sm text-muted-foreground">
-              Miasta zostaną automatycznie przypisane do odpowiednich województw. Już istniejące miasta zostaną pominięte.
+              Miasta zostaną automatycznie przypisane do odpowiednich województw (bez powiatu — powiaty przypisz ręcznie). Już istniejące miasta zostaną pominięte.
             </p>
           </div>
           <DialogFooter>
@@ -535,7 +839,7 @@ export default function AdminLocationsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete City Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -547,6 +851,25 @@ export default function AdminLocationsPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Anuluj</Button>
             <Button variant="destructive" onClick={handleDeleteCity} disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Usuń
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete County Confirmation Dialog */}
+      <Dialog open={isCountyDeleteOpen} onOpenChange={setIsCountyDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Czy na pewno chcesz usunąć ten powiat?</DialogTitle>
+            <DialogDescription>
+              Powiat <strong>{countyToDelete?.nazwa}</strong> zostanie usunięty. Przypisane miasta pozostaną w bazie, ale stracą powiązanie z tym powiatem.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCountyDeleteOpen(false)}>Anuluj</Button>
+            <Button variant="destructive" onClick={handleDeleteCounty} disabled={isSaving}>
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Usuń
             </Button>

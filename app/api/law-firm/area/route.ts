@@ -14,22 +14,24 @@ async function getLimits(userId: string) {
     },
   })
 
-  if (!lawFirm) return { maxVoivodeships: 1, maxCities: 3 }
+  if (!lawFirm) return { maxVoivodeships: 1, maxCounties: 1, maxCities: 3 }
 
   let maxVoivodeships = 1
+  let maxCounties = 1
   let maxCities = 3
 
   // 1. Get defaults from settings
   const settings = await prisma.settings.findMany({
     where: {
       key: {
-        in: ["maxLawFirmVoivodeships", "maxLawFirmCities"]
+        in: ["maxLawFirmVoivodeships", "maxLawFirmCounties", "maxLawFirmCities"]
       }
     }
   })
 
   settings.forEach(s => {
     if (s.key === "maxLawFirmVoivodeships") maxVoivodeships = parseInt(s.value) || 1
+    if (s.key === "maxLawFirmCounties") maxCounties = parseInt(s.value) || 1
     if (s.key === "maxLawFirmCities") maxCities = parseInt(s.value) || 3
   })
 
@@ -41,11 +43,12 @@ async function getLimits(userId: string) {
 
     if (plan) {
       maxVoivodeships = plan.wojewodztwa
+      maxCounties = plan.powiaty
       maxCities = plan.miasta
     }
   }
 
-  return { maxVoivodeships, maxCities }
+  return { maxVoivodeships, maxCounties, maxCities }
 }
 
 export async function GET() {
@@ -64,11 +67,21 @@ export async function GET() {
             voivodeship: true
           }
         },
+        counties: {
+          include: {
+            county: {
+              include: {
+                voivodeship: true
+              }
+            }
+          }
+        },
         cities: {
           include: {
             city: {
               include: {
-                voivodeship: true
+                voivodeship: true,
+                county: true
               }
             }
           }
@@ -86,6 +99,7 @@ export async function GET() {
       callaPolska: lawFirm.callaPolska,
       onlineOnly: lawFirm.onlineOnly,
       voivodeships: lawFirm.voivodeships.map(v => v.voivodeship),
+      counties: lawFirm.counties.map(c => c.county),
       cities: lawFirm.cities.map(c => c.city),
       ...limits
     })
@@ -112,7 +126,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { callaPolska, onlineOnly, voivodeshipsIds, citiesIds } = body
+    const { callaPolska, onlineOnly, voivodeshipsIds, countiesIds, citiesIds } = body
 
     // Validate limits
     if (!callaPolska) {
@@ -120,6 +134,25 @@ export async function PUT(request: Request) {
 
       if (voivodeshipsIds && voivodeshipsIds.length > limits.maxVoivodeships) {
         return NextResponse.json({ error: `Przekroczono limit województw (${limits.maxVoivodeships})` }, { status: 400 })
+      }
+
+      if (countiesIds && countiesIds.length) {
+        // Powiaty wynikające z wybranych miast (auto-zaznaczone) nie liczą się do limitu —
+        // limit dotyczy tylko powiatów wybranych samodzielnie.
+        let countiesToCount: string[] = countiesIds
+        if (citiesIds && citiesIds.length) {
+          const cityRows = await prisma.city.findMany({
+            where: { id: { in: citiesIds } },
+            select: { countyId: true },
+          })
+          const impliedCountyIds = new Set(
+            cityRows.map(c => c.countyId).filter((id): id is string => Boolean(id))
+          )
+          countiesToCount = countiesIds.filter((id: string) => !impliedCountyIds.has(id))
+        }
+        if (countiesToCount.length > limits.maxCounties) {
+          return NextResponse.json({ error: `Przekroczono limit powiatów (${limits.maxCounties})` }, { status: 400 })
+        }
       }
 
       if (citiesIds && citiesIds.length > limits.maxCities) {
@@ -147,6 +180,22 @@ export async function PUT(request: Request) {
           data: voivodeshipsIds.map((id: string) => ({
             lawFirmId: lawFirm.id,
             voivodeshipId: id
+          }))
+        })
+      }
+    }
+
+    // Update counties (powiaty)
+    if (countiesIds) {
+      await prisma.lawFirmCounty.deleteMany({
+        where: { lawFirmId: lawFirm.id }
+      })
+
+      if (countiesIds.length > 0) {
+        await prisma.lawFirmCounty.createMany({
+          data: countiesIds.map((id: string) => ({
+            lawFirmId: lawFirm.id,
+            countyId: id
           }))
         })
       }

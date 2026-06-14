@@ -281,6 +281,7 @@ model LawFirm {
 
   // Relacje
   voivodeships          LawFirmVoivodeship[]  // Województwa działania
+  counties              LawFirmCounty[]       // Powiaty działania
   cities                LawFirmCity[]         // Miasta działania
   categories            LawFirmCategory[]     // Specjalizacje
   services              Service[]
@@ -370,6 +371,24 @@ model LawFirmCity {
   @@unique([lawFirmId, cityId])
   @@index([lawFirmId])
   @@index([cityId])
+}
+
+// ============================================================================
+// RELACJA: KANCELARIA <-> POWIATY DZIAŁANIA
+// ============================================================================
+
+model LawFirmCounty {
+  id              String   @id @default(uuid())
+  lawFirmId       String
+  lawFirm         LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  countyId        String
+  county          County   @relation(fields: [countyId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+
+  @@unique([lawFirmId, countyId])
+  @@index([lawFirmId])
+  @@index([countyId])
 }
 
 // ============================================================================
@@ -1282,12 +1301,35 @@ model Voivodeship {
   slug            String   @unique
 
   // Relacje
+  counties        County[]
   cities          City[]
   users           User[]
   lawFirmVoivodeships LawFirmVoivodeship[]
   cases           Case[]
 
   @@index([slug])
+}
+
+// ============================================================================
+// POWIATY (SŁOWNIK)
+// ============================================================================
+
+model County {
+  id              String   @id @default(uuid())
+  nazwa           String
+  slug            String?
+  voivodeshipId   String
+  voivodeship     Voivodeship @relation(fields: [voivodeshipId], references: [id], onDelete: Cascade)
+
+  // Relacje
+  cities          City[]
+  lawFirms        LawFirmCounty[]
+
+  createdAt       DateTime @default(now())
+
+  @@unique([nazwa, voivodeshipId])
+  @@index([voivodeshipId])
+  @@index([nazwa])
 }
 
 // ============================================================================
@@ -1299,6 +1341,9 @@ model City {
   nazwa           String
   voivodeshipId   String
   voivodeship     Voivodeship @relation(fields: [voivodeshipId], references: [id])
+  // Powiat (opcjonalny - uzupełniany stopniowo)
+  countyId        String?
+  county          County?  @relation(fields: [countyId], references: [id], onDelete: SetNull)
 
   // Relacje
   lawFirms        LawFirmCity[]
@@ -1306,6 +1351,7 @@ model City {
   postalCodes     PostalCode[]
 
   @@index([voivodeshipId])
+  @@index([countyId])
   @@index([nazwa])
 }
 
@@ -1364,6 +1410,7 @@ model SubscriptionPlan {
   // Kategorie i lokalizacje
   kategorieSpraw        Int?     // null = nieograniczone
   wojewodztwa           Int
+  powiaty               Int      @default(1)
   miasta                Int
 
   // Funkcjonalności

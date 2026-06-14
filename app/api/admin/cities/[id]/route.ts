@@ -17,7 +17,7 @@ export async function PATCH(
 
     const { id } = await params
     const body = await request.json()
-    const { nazwa, voivodeshipId, postalCodes } = body
+    const { nazwa, voivodeshipId, countyId, postalCodes } = body
 
     const codes = postalCodes
       ? postalCodes
@@ -38,6 +38,7 @@ export async function PATCH(
         data: {
           nazwa,
           voivodeshipId,
+          ...(countyId !== undefined ? { countyId: countyId || null } : {}),
           ...(postalCodes !== undefined ? {
             postalCodes: {
               create: uniqueCodes.map(code => ({ code }))
@@ -46,6 +47,7 @@ export async function PATCH(
         },
         include: {
           voivodeship: true,
+          county: true,
           postalCodes: true,
         }
       })

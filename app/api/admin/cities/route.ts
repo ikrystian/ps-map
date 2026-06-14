@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const voivodeshipId = searchParams.get("voivodeshipId")
+    const countyId = searchParams.get("countyId")
     const search = searchParams.get("search")
-    
+
     const pageParam = searchParams.get("page")
     const limitParam = searchParams.get("limit")
     const page = pageParam && !isNaN(parseInt(pageParam, 10)) ? parseInt(pageParam, 10) : undefined
@@ -25,8 +26,18 @@ export async function GET(request: NextRequest) {
     if (voivodeshipId) {
       where.voivodeshipId = voivodeshipId
     }
+    if (countyId) {
+      // "none" => cities without an assigned county (powiat)
+      where.countyId = countyId === "none" ? null : countyId
+    }
     if (search) {
       where.nazwa = { contains: search }
+    }
+
+    const include = {
+      voivodeship: true,
+      county: true,
+      postalCodes: true,
     }
 
     if (page !== undefined && limit !== undefined) {
@@ -34,10 +45,7 @@ export async function GET(request: NextRequest) {
       const [cities, total] = await Promise.all([
         prisma.city.findMany({
           where,
-          include: {
-            voivodeship: true,
-            postalCodes: true,
-          },
+          include,
           orderBy: {
             nazwa: "asc",
           },
@@ -55,10 +63,7 @@ export async function GET(request: NextRequest) {
     } else {
       const cities = await prisma.city.findMany({
         where,
-        include: {
-          voivodeship: true,
-          postalCodes: true,
-        },
+        include,
         orderBy: {
           nazwa: "asc",
         },
@@ -81,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { nazwa, voivodeshipId, postalCodes } = body
+    const { nazwa, voivodeshipId, countyId, postalCodes } = body
 
     if (!nazwa || !voivodeshipId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -99,12 +104,14 @@ export async function POST(request: NextRequest) {
       data: {
         nazwa,
         voivodeshipId,
+        countyId: countyId || null,
         postalCodes: {
           create: uniqueCodes.map(code => ({ code }))
         }
       },
       include: {
         voivodeship: true,
+        county: true,
         postalCodes: true,
       }
     })

@@ -27,7 +27,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Loader2, MapPin, Save, Search, Star } from "lucide-react"
+import { ChevronDown, ChevronUp, Globe, GripVertical, Info, Landmark, Loader2, MapPin, Save, Search, Star } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 
 function CityLazyLoadTrigger({
@@ -84,15 +84,17 @@ interface LawFirmCategory {
   kolejnosc: number
   category: Category
 }
-import type { Voivodeship, City } from "@/types"
+import type { Voivodeship, City, County } from "@/types"
 
 
 interface AreaData {
   callaPolska: boolean
   onlineOnly: boolean
   selectedVoivodeships: string[]
+  selectedCounties: string[]
   selectedCities: string[]
   maxVoivodeships: number
+  maxCounties: number
   maxCities: number
 }
 
@@ -199,6 +201,7 @@ export default function LawFirmServicesPage() {
   // Area state
   const [allVoivodeships, setAllVoivodeships] = useState<Voivodeship[]>([])
   const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
+  const [countiesByVoivodeship, setCountiesByVoivodeship] = useState<Record<string, County[]>>({})
   const [hasMoreCities, setHasMoreCities] = useState<Record<string, boolean>>({})
   const [loadingMoreCities, setLoadingMoreCities] = useState<Record<string, boolean>>({})
   const [selectedCitiesObjects, setSelectedCitiesObjects] = useState<City[]>([])
@@ -207,11 +210,19 @@ export default function LawFirmServicesPage() {
     callaPolska: false,
     onlineOnly: false,
     selectedVoivodeships: [],
+    selectedCounties: [],
     selectedCities: [],
     maxVoivodeships: 1,
+    maxCounties: 1,
     maxCities: 3
   })
   const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
+  const [loadingCounties, setLoadingCounties] = useState<Record<string, boolean>>({})
+
+  // Hierarchia geograficzna z ustawień admina: "voivodeships" | "counties" | "cities"
+  const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
+  const showCounties = geoHierarchy === "counties" || geoHierarchy === "cities"
+  const showCities = geoHierarchy === "cities"
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -272,6 +283,12 @@ export default function LawFirmServicesPage() {
         setAllVoivodeships(voivData)
       }
 
+      const settingsResponse = await fetch("/api/settings")
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json()
+        setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")
+      }
+
       const areaResponse = await fetch("/api/law-firm/area")
       if (areaResponse.ok) {
         const areaResData = await areaResponse.json()
@@ -282,14 +299,17 @@ export default function LawFirmServicesPage() {
           callaPolska: areaResData.callaPolska,
           onlineOnly: areaResData.onlineOnly,
           selectedVoivodeships: areaResData.voivodeships?.map((v: any) => v.id) || [],
+          selectedCounties: areaResData.counties?.map((c: any) => c.id) || [],
           selectedCities: selectedCitiesFull.map((c: any) => c.id),
           maxVoivodeships: areaResData.maxVoivodeships,
+          maxCounties: areaResData.maxCounties,
           maxCities: areaResData.maxCities
         })
 
         if (areaResData.voivodeships) {
           areaResData.voivodeships.forEach((v: any) => {
             fetchCities(v.id, selectedCitiesFull)
+            fetchCounties(v.id)
           })
         }
       }
@@ -298,6 +318,23 @@ export default function LawFirmServicesPage() {
       toast.error("Nie udało się pobrać danych")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCounties = async (voivodeshipId: string) => {
+    if (countiesByVoivodeship[voivodeshipId]) return
+
+    setLoadingCounties(prev => ({ ...prev, [voivodeshipId]: true }))
+    try {
+      const response = await fetch(`/api/counties?voivodeshipId=${voivodeshipId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setCountiesByVoivodeship(prev => ({ ...prev, [voivodeshipId]: data }))
+      }
+    } catch (error) {
+      console.error("Error fetching counties:", error)
+    } finally {
+      setLoadingCounties(prev => ({ ...prev, [voivodeshipId]: false }))
     }
   }
 
@@ -525,15 +562,19 @@ export default function LawFirmServicesPage() {
 
       if (!catResponse.ok) throw new Error("Failed to save categories")
 
+      const areaPayload: Record<string, unknown> = {
+        callaPolska: areaData.callaPolska,
+        onlineOnly: areaData.onlineOnly,
+        voivodeshipsIds: areaData.selectedVoivodeships,
+      }
+      // Wyślij tylko poziomy widoczne w bieżącym trybie hierarchii (pozostałe zachowujemy bez zmian)
+      if (showCounties) areaPayload.countiesIds = areaData.selectedCounties
+      if (showCities) areaPayload.citiesIds = areaData.selectedCities
+
       const areaResponse = await fetch("/api/law-firm/area", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          callaPolska: areaData.callaPolska,
-          onlineOnly: areaData.onlineOnly,
-          voivodeshipsIds: areaData.selectedVoivodeships,
-          citiesIds: areaData.selectedCities,
-        }),
+        body: JSON.stringify(areaPayload),
       })
 
       if (!areaResponse.ok) throw new Error("Failed to save area of activity")
@@ -556,10 +597,14 @@ export default function LawFirmServicesPage() {
           const city = Object.values(citiesByVoivodeship).flat().find(c => c.id === cityId)
           return city?.voivodeshipId !== id
         })
+        // Drop counties that belong to this voivodeship
+        const countiesInVoiv = (countiesByVoivodeship[id] || []).map(c => c.id)
+        const newCounties = prev.selectedCounties.filter(cId => !countiesInVoiv.includes(cId))
         setSelectedCitiesObjects(prevObjects => prevObjects.filter(c => c.voivodeshipId !== id))
         return {
           ...prev,
           selectedVoivodeships: prev.selectedVoivodeships.filter(vId => vId !== id),
+          selectedCounties: newCounties,
           selectedCities: newCities
         }
       } else {
@@ -568,10 +613,26 @@ export default function LawFirmServicesPage() {
           return prev
         }
         fetchCities(id)
+        fetchCounties(id)
         return {
           ...prev,
           selectedVoivodeships: [...prev.selectedVoivodeships, id]
         }
+      }
+    })
+  }
+
+  const toggleCounty = (id: string) => {
+    setAreaData(prev => {
+      const isSelected = prev.selectedCounties.includes(id)
+      if (isSelected) {
+        return { ...prev, selectedCounties: prev.selectedCounties.filter(cId => cId !== id) }
+      } else {
+        if (prev.selectedCounties.length >= prev.maxCounties) {
+          toast.error(`Limit powiatów (${prev.maxCounties}) osiągnięty.`)
+          return prev
+        }
+        return { ...prev, selectedCounties: [...prev.selectedCounties, id] }
       }
     })
   }
@@ -591,7 +652,12 @@ export default function LawFirmServicesPage() {
         if (cityObj) {
           setSelectedCitiesObjects(prevObjects => [...prevObjects, cityObj])
         }
-        return { ...prev, selectedCities: [...prev.selectedCities, id] }
+        // Auto-zaznacz powiat, do którego należy miasto (jeśli jeszcze nie zaznaczony)
+        const countyId = cityObj?.countyId
+        const selectedCounties = countyId && !prev.selectedCounties.includes(countyId)
+          ? [...prev.selectedCounties, countyId]
+          : prev.selectedCounties
+        return { ...prev, selectedCities: [...prev.selectedCities, id], selectedCounties }
       }
     })
   }
@@ -887,7 +953,7 @@ export default function LawFirmServicesPage() {
                 <div className="pt-4 border-t border-border/10">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                     <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
-                    <div className="flex gap-3 text-xs">
+                    <div className="flex flex-wrap gap-3 text-xs">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
                         Województwa:{" "}
                         <span className={cn(
@@ -899,21 +965,36 @@ export default function LawFirmServicesPage() {
                         <span className="text-zinc-500">/</span>
                         <span className="text-zinc-400">{areaData.maxVoivodeships}</span>
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
-                        Miasta:{" "}
-                        <span className={cn(
-                          "font-semibold",
-                          areaData.selectedCities.length >= areaData.maxCities ? "text-amber-400 font-bold" : "text-primary font-bold"
-                        )}>
-                          {areaData.selectedCities.length}
+                      {showCounties && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
+                          Powiaty:{" "}
+                          <span className={cn(
+                            "font-semibold",
+                            areaData.selectedCounties.length >= areaData.maxCounties ? "text-amber-400 font-bold" : "text-primary font-bold"
+                          )}>
+                            {areaData.selectedCounties.length}
+                          </span>
+                          <span className="text-zinc-500">/</span>
+                          <span className="text-zinc-400">{areaData.maxCounties}</span>
                         </span>
-                        <span className="text-zinc-500">/</span>
-                        <span className="text-zinc-400">{areaData.maxCities}</span>
-                      </span>
+                      )}
+                      {showCities && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
+                          Miasta:{" "}
+                          <span className={cn(
+                            "font-semibold",
+                            areaData.selectedCities.length >= areaData.maxCities ? "text-amber-400 font-bold" : "text-primary font-bold"
+                          )}>
+                            {areaData.selectedCities.length}
+                          </span>
+                          <span className="text-zinc-500">/</span>
+                          <span className="text-zinc-400">{areaData.maxCities}</span>
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className={cn("grid gap-6", showCounties && "md:grid-cols-2")}>
                     <div className="space-y-3">
                       <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Województwa</h5>
                       <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
@@ -935,12 +1016,13 @@ export default function LawFirmServicesPage() {
                       </div>
                     </div>
 
+                    {showCounties && (
                     <div className="space-y-3">
                       <div className="flex flex-col gap-2">
-                        <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Miasta w wybranych województwach</h5>
+                        <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">{showCities ? "Powiaty i miasta w wybranych województwach" : "Powiaty w wybranych województwach"}</h5>
                         {areaData.selectedVoivodeships.length > 0 && (
                           <Input
-                            placeholder="Wyszukaj miasto..."
+                            placeholder={showCities ? "Wyszukaj miasto..." : "Wyszukaj powiat..."}
                             value={citySearch}
                             onChange={(e) => setCitySearch(e.target.value)}
                             className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
@@ -957,9 +1039,28 @@ export default function LawFirmServicesPage() {
                           areaData.selectedVoivodeships.map(vId => {
                             const vName = allVoivodeships.find(v => v.id === vId)?.nazwa
                             const cities = citiesByVoivodeship[vId] || []
+                            const counties = countiesByVoivodeship[vId] || []
                             const isLoading = loadingCities[vId]
+                            const q = citySearch.toLowerCase().trim()
                             const filteredCities = cities.filter(city =>
-                              city.nazwa.toLowerCase().includes(citySearch.toLowerCase().trim())
+                              city.nazwa.toLowerCase().includes(q)
+                            )
+                            const noCountyCities = filteredCities.filter(c => !c.countyId)
+
+                            const renderCity = (city: City) => (
+                              <div key={city.id} className={cn(
+                                "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
+                                areaData.selectedCities.includes(city.id)
+                                  ? "bg-primary/10 text-primary border border-primary/20"
+                                  : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
+                              )} onClick={() => toggleCity(city.id)}>
+                                <Checkbox
+                                  checked={areaData.selectedCities.includes(city.id)}
+                                  onCheckedChange={() => toggleCity(city.id)}
+                                  className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                />
+                                <span className="text-xs">{city.nazwa}</span>
+                              </div>
                             )
 
                             return (
@@ -968,49 +1069,83 @@ export default function LawFirmServicesPage() {
                                   <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
                                   {vName}
                                 </div>
-                                <div className="grid grid-cols-1 gap-1">
-                                  {isLoading ? (
-                                    <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
-                                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                                      Ładowanie miast...
-                                    </div>
-                                  ) : cities.length === 0 ? (
-                                    <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
-                                  ) : filteredCities.length === 0 ? (
-                                    <div className="py-2 text-xs italic text-zinc-500">Brak pasujących miast.</div>
-                                  ) : (
-                                    <>
-                                      {filteredCities.map(city => (
-                                        <div key={city.id} className={cn(
-                                          "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
-                                          areaData.selectedCities.includes(city.id)
-                                            ? "bg-primary/10 text-primary border border-primary/20"
-                                            : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
-                                        )} onClick={() => toggleCity(city.id)}>
-                                          <Checkbox
-                                            checked={areaData.selectedCities.includes(city.id)}
-                                            onCheckedChange={() => toggleCity(city.id)}
-                                            className="border-border/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+
+                                {/* Powiaty (zaznaczalne) z zagnieżdżonymi miastami */}
+                                {counties.length > 0 && (
+                                  <div className="space-y-2 mb-2">
+                                    {counties
+                                      .filter(county => !q || county.nazwa.toLowerCase().includes(q) || filteredCities.some(c => c.countyId === county.id))
+                                      .map(county => {
+                                        const countyCities = filteredCities.filter(c => c.countyId === county.id)
+                                        const countySelected = areaData.selectedCounties.includes(county.id)
+                                        return (
+                                          <div key={county.id} className="rounded-xl border border-border/10 bg-zinc-950/30 overflow-hidden">
+                                            <div className={cn(
+                                              "flex items-center gap-2 p-2 transition-all duration-200 cursor-pointer",
+                                              countySelected ? "bg-secondary/10 text-secondary" : "hover:bg-zinc-800/20 text-zinc-200"
+                                            )} onClick={() => toggleCounty(county.id)}>
+                                              <Checkbox
+                                                checked={countySelected}
+                                                onCheckedChange={() => toggleCounty(county.id)}
+                                                className="border-border/30 data-[state=checked]:bg-secondary data-[state=checked]:border-secondary"
+                                              />
+                                              <Landmark className="h-3.5 w-3.5 shrink-0" />
+                                              <span className="text-xs font-semibold">{county.nazwa}</span>
+                                            </div>
+                                            {showCities && countyCities.length > 0 && (
+                                              <div className="grid grid-cols-1 gap-1 px-2 pb-2 pl-7">
+                                                {countyCities.map(renderCity)}
+                                              </div>
+                                            )}
+                                          </div>
+                                        )
+                                      })}
+                                  </div>
+                                )}
+
+                                {showCities && (
+                                  <div className="grid grid-cols-1 gap-1">
+                                    {isLoading ? (
+                                      <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
+                                        <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                                        Ładowanie miast...
+                                      </div>
+                                    ) : cities.length === 0 ? (
+                                      <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
+                                    ) : filteredCities.length === 0 && counties.length === 0 ? (
+                                      <div className="py-2 text-xs italic text-zinc-500">Brak pasujących miast.</div>
+                                    ) : (
+                                      <>
+                                        {noCountyCities.length > 0 && (
+                                          <>
+                                            {counties.length > 0 && (
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-600 mt-1 px-1">Bez powiatu</div>
+                                            )}
+                                            {noCountyCities.map(renderCity)}
+                                          </>
+                                        )}
+                                        {hasMoreCities[vId] && !citySearch.trim() && (
+                                          <CityLazyLoadTrigger
+                                            voivodeshipId={vId}
+                                            fetchMoreCities={fetchMoreCities}
+                                            isLoadingMore={loadingMoreCities[vId]}
                                           />
-                                          <span className="text-xs">{city.nazwa}</span>
-                                        </div>
-                                      ))}
-                                      {hasMoreCities[vId] && !citySearch.trim() && (
-                                        <CityLazyLoadTrigger
-                                          voivodeshipId={vId}
-                                          fetchMoreCities={fetchMoreCities}
-                                          isLoadingMore={loadingMoreCities[vId]}
-                                        />
-                                      )}
-                                    </>
-                                  )}
-                                </div>
+                                        )}
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+
+                                {!showCities && counties.length === 0 && !loadingCounties[vId] && (
+                                  <div className="py-2 text-xs italic text-zinc-500">Brak powiatów w bazie.</div>
+                                )}
                               </div>
                             )
                           })
                         )}
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1075,23 +1210,45 @@ export default function LawFirmServicesPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-sm font-medium text-white">
-                        <span className="text-zinc-400 flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-secondary" /> Miasta
-                        </span>
-                        <span>{areaData.selectedCities.length} / {areaData.maxCities}</span>
+                    {showCounties && (
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-sm font-medium text-white">
+                          <span className="text-zinc-400 flex items-center gap-1.5">
+                            <Landmark className="h-3.5 w-3.5 text-secondary" /> Powiaty
+                          </span>
+                          <span>{areaData.selectedCounties.length} / {areaData.maxCounties}</span>
+                        </div>
+                        <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all duration-300",
+                              areaData.selectedCounties.length >= areaData.maxCounties ? "bg-rose-500" : "bg-secondary"
+                            )}
+                            style={{ width: `${Math.min(100, (areaData.selectedCounties.length / areaData.maxCounties) * 100)}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
-                        <div
-                          className={cn(
-                            "h-full rounded-full transition-all duration-300",
-                            areaData.selectedCities.length >= areaData.maxCities ? "bg-rose-500" : "bg-secondary"
-                          )}
-                          style={{ width: `${Math.min(100, (areaData.selectedCities.length / areaData.maxCities) * 100)}%` }}
-                        />
+                    )}
+
+                    {showCities && (
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-sm font-medium text-white">
+                          <span className="text-zinc-400 flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-secondary" /> Miasta
+                          </span>
+                          <span>{areaData.selectedCities.length} / {areaData.maxCities}</span>
+                        </div>
+                        <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all duration-300",
+                              areaData.selectedCities.length >= areaData.maxCities ? "bg-rose-500" : "bg-secondary"
+                            )}
+                            style={{ width: `${Math.min(100, (areaData.selectedCities.length / areaData.maxCities) * 100)}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </>
                 )}
               </div>
