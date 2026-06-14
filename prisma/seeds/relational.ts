@@ -217,7 +217,7 @@ async function createChunkResilient(
       const code = e?.code
       const msg = String(e?.message ?? '')
       if (code === 'P2002') return
-      const transient = code === 'P2028' || /Transaction (already closed|not found)|rollback|timeout|database is locked/i.test(msg)
+      const transient = code === 'P2028' || code === 'P2003' || /Transaction (already closed|not found)|rollback|timeout|database is locked/i.test(msg)
       if (transient && attempt < maxAttempts) {
         await new Promise((r) => setTimeout(r, 150 * attempt))
         continue
