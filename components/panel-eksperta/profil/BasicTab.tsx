@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck, Building, MapPin, FileText } from "lucide-react"
+import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck, Building, MapPin, FileText, Lock, Zap } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { usePermissions } from "@/hooks/usePermissions"
 import dynamic from "next/dynamic"
 import { useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
@@ -56,6 +58,9 @@ export function BasicTab({
 }: BasicTabProps) {
   const [showLogoConfirm, setShowLogoConfirm] = useState(false)
   const [showCoverConfirm, setShowCoverConfirm] = useState(false)
+
+  const { hasFeature, loading: permissionsLoading } = usePermissions()
+  const canUploadCover = permissionsLoading ? true : hasFeature("canUploadCoverBanner")
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -249,88 +254,107 @@ export function BasicTab({
                   </p>
                 </div>
 
-                {formData.zdjecieGlowne ? (
-                  <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                    <div className="relative w-full min-h-32 rounded-xl overflow-hidden border border-border/30">
-                      <Image
-                        src={formData.zdjecieGlowne}
-                        alt="Zdjęcie główne"
-                        fill
-                        className="object-contain relative!"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <label
-                        htmlFor="main-image-upload"
-                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
-                      >
-                        {isUploading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
-                            Przesyłanie...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="mr-2 h-4 w-4 text-primary" />
-                            Zmień zdjęcie
-                          </>
-                        )}
-                      </label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowCoverConfirm(true)}
-                        disabled={isUploading}
-                        className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
-                      >
-                        <X className="mr-2 h-4 w-4" />
-                        Usuń banner
+                <div className="relative">
+                  {!canUploadCover && (
+                    <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] rounded-xl z-20 flex flex-col items-center justify-center p-4 text-center border border-dashed border-border/30">
+                      <div className="rounded-full bg-zinc-900 border border-zinc-800 p-2.5 mb-2.5">
+                        <Lock className="h-5 w-5 text-amber-500" />
+                      </div>
+                      <p className="text-sm font-semibold text-white">Funkcja Premium</p>
+                      <p className="text-xs text-zinc-400 max-w-[280px] mt-1 mb-3">
+                        Dodawanie własnego baneru w nagłówku profilu jest dostępne w wyższych pakietach.
+                      </p>
+                      <Button asChild size="sm" className="bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg h-8 px-3">
+                        <Link href="/panel-eksperta/pakiet">
+                          Ulepsz pakiet <Zap className="ml-1.5 h-3.5 w-3.5 fill-current" />
+                        </Link>
                       </Button>
                     </div>
-                    <input
-                      id="main-image-upload"
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      className="hidden"
-                      onChange={handleMainImageFileSelect}
-                      disabled={isUploading}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <label
-                      htmlFor="main-image-upload"
-                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-                        {isUploading ? (
-                          <>
-                            <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
-                            <p className="text-sm text-zinc-400">Przesyłanie...</p>
-                          </>
-                        ) : (
-                          <>
-                            <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
-                            <p className="mb-1 text-sm text-zinc-300">
-                              <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
-                            </p>
-                            <p className="text-xs text-zinc-500">
-                              PNG, JPG, WEBP (max 5MB)
-                            </p>
-                          </>
-                        )}
+                  )}
+
+                  {formData.zdjecieGlowne ? (
+                    <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+                      <div className="relative w-full min-h-32 rounded-xl overflow-hidden border border-border/30">
+                        <Image
+                          src={formData.zdjecieGlowne}
+                          alt="Zdjęcie główne"
+                          fill
+                          className="object-contain relative!"
+                        />
                       </div>
-                    </label>
-                    <input
-                      id="main-image-upload"
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      className="hidden"
-                      onChange={handleMainImageFileSelect}
-                      disabled={isUploading}
-                    />
-                  </div>
-                )}
+                      <div className="flex gap-2">
+                        <label
+                          htmlFor="main-image-upload"
+                          className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                        >
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
+                              Przesyłanie...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4 text-primary" />
+                              Zmień zdjęcie
+                            </>
+                          )}
+                        </label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowCoverConfirm(true)}
+                          disabled={isUploading}
+                          className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Usuń banner
+                        </Button>
+                      </div>
+                      <input
+                        id="main-image-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleMainImageFileSelect}
+                        disabled={isUploading}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label
+                        htmlFor="main-image-upload"
+                        className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
+                              <p className="text-sm text-zinc-400">Przesyłanie...</p>
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
+                              <p className="mb-1 text-sm text-zinc-300">
+                                <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
+                              </p>
+                              <p className="text-xs text-zinc-500">
+                                PNG, JPG, WEBP (max 5MB)
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </label>
+                      <input
+                        id="main-image-upload"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleMainImageFileSelect}
+                        disabled={isUploading}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
             </div>

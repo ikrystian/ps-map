@@ -423,7 +423,7 @@ export default function AdminPozycjonowaniePage() {
                       Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdej eksperta przypisywany jest
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
-                    <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-2xl mx-auto flex items-center justify-center gap-2">
+                    <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex items-center justify-center gap-2">
                       <span className="text-primary font-bold">Score</span> = (
                       <span className="text-green-400">Weryfikacja [1000 pkt]</span> +
                       <span className="text-blue-400"> Wyświetlenia * 0.1</span> +
