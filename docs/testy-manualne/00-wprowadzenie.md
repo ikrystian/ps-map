@@ -127,5 +127,142 @@ na końcu pliku — patrz sekcja „Załącznik: pełna lista ekranów”.
 
 ---
 
-*(Załącznik z pełną listą ekranów zostanie uzupełniony na końcu instrukcji — patrz koniec
-tego pliku.)*
+## 9. Załącznik: pełna lista ekranów (mapa pokrycia)
+
+Poniżej **wszystkie** adresy (ekrany) aplikacji wraz z testem/plikiem, który je obejmuje.
+Lista służy do upewnienia się, że **nic nie zostało pominięte**. Zaznaczaj odhaczone ekrany.
+
+> Legenda: `[...]`, `[id]`, `[slug]` oznaczają adresy dynamiczne (w miejsce nawiasów wstawia
+> się konkretny identyfikator, np. numer sprawy). „zaślepka” = strona obecnie w budowie.
+
+### Strony publiczne → plik 01
+- [ ] `/` — PUB-01
+- [ ] (nagłówek + wyszukiwarka) — sekcja „Nagłówek”
+- [ ] (stopka) — PUB-02
+- [ ] `/szukaj-prawnika` — PUB-03
+- [ ] `/kategorie` — PUB-04
+- [ ] `/kategorie/[...slug]` — PUB-05
+- [ ] `/ranking` — PUB-06
+- [ ] `/blog` — PUB-07
+- [ ] `/blog/[slug]` — PUB-08
+- [ ] `/ekspert/[slug]` — PUB-09
+- [ ] `/ekspert/[slug]/blog` — PUB-10
+- [ ] `/ekspert/[slug]/blog/[post]` — PUB-10
+- [ ] `/kontakt` — PUB-11
+- [ ] `/jak-to-dziala` — PUB-12
+- [ ] `/dla-prawnika` — PUB-12
+- [ ] `/z-nami-wygrywasz` — PUB-12
+- [ ] `/[slug]` (strony CMS, np. `/o-nas`, `/polityka-prywatnosci`) — PUB-13
+- [ ] `/newsletter/potwierdz` — PUB-14
+- [ ] `/newsletter/wypisz-sie` — PUB-14
+- [ ] (czat-asystent / widget pomocy) — PUB-15
+- [ ] `/wylogowano` — PUB-16
+- [ ] `/dodaj-sprawe` (zaślepka) — uwaga na końcu pliku 01
+
+### Rejestracja i logowanie → plik 02
+- [ ] `/rejestracja` — REJ-01
+- [ ] `/rejestracja/klient` — REJ-02
+- [ ] `/rejestracja/ekspert` — REJ-03
+- [ ] `/rejestracja/sukces` — REJ-04
+- [ ] `/rejestracja/weryfikacja` — REJ-04
+- [ ] `/weryfikacja-email`, `/auth/verify-email` — REJ-05
+- [ ] `/wyslij-ponownie-weryfikacje`, `/auth/resend-verification` — REJ-06
+- [ ] `/logowanie` — LOG-01, LOG-02
+- [ ] `/moje-konto/lost-password` — HAS-01
+- [ ] `/reset-hasla` — HAS-02
+
+### Panel klienta → plik 03
+- [ ] `/panel-klienta` — KL-01
+- [ ] `/panel-klienta/profil` — KL-02
+- [ ] `/panel-klienta/sprawy` — KL-03
+- [ ] `/panel-klienta/sprawy/dodaj` — KL-04
+- [ ] `/panel-klienta/sprawy/[id]` — KL-05
+- [ ] `/panel-klienta/oferty` — KL-06
+- [ ] `/panel-klienta/oferty/[id]` (zaślepka) — KL-06 (uwaga końcowa)
+- [ ] `/panel-klienta/wiadomosci`, `/wiadomosci/[id]` — KL-07
+- [ ] `/panel-klienta/konsultacje` — KL-08
+- [ ] `/panel-klienta/eksperci` — KL-09
+- [ ] `/panel-klienta/pomoc` — KL-10
+- [ ] `/panel-klienta/moje-konto` (zaślepka) — uwaga końcowa pliku 03
+
+### Panel eksperta → plik 04
+- [ ] `/panel-eksperta` — EK-01
+- [ ] `/panel-eksperta/sprawy` — EK-02
+- [ ] `/panel-eksperta/sprawy/[id]` — EK-03
+- [ ] `/panel-eksperta/oferty` — EK-04
+- [ ] `/panel-eksperta/konsultacje` — EK-05
+- [ ] `/panel-eksperta/profil` — EK-06
+- [ ] `/panel-eksperta/zakres-uslug` (+ `/dodaj`, `/[id]`) — EK-07
+- [ ] `/panel-eksperta/blog` (+ `/nowy`, `/[id]`) — EK-08
+- [ ] `/panel-eksperta/opinie` — EK-09
+- [ ] `/panel-eksperta/certyfikaty` (+ `/dodaj`, `/[id]`) — EK-10
+- [ ] `/panel-eksperta/dokumenty` — EK-11
+- [ ] `/panel-eksperta/punkty` — EK-12
+- [ ] `/panel-eksperta/pakiet` — EK-13
+- [ ] `/panel-eksperta/subskrypcje-i-platnosci` — EK-14
+- [ ] `/panel-eksperta/promowanie` — EK-15
+- [ ] `/panel-eksperta/pozycja-ogloszenia` — EK-16
+- [ ] `/panel-eksperta/statystyki` — EK-17
+- [ ] `/panel-eksperta/wiadomosci` (+ `/[id]`) — EK-18
+- [ ] `/panel-eksperta/ustawienia` — EK-19
+- [ ] `/panel-eksperta/klub-partnerski` — EK-20
+- [ ] `/panel-eksperta/pomoc` — EK-21
+- [ ] `/panel-eksperta/checkout` (+ `/success`, `/failure`) — EK-22
+- [ ] `/panel-eksperta/faktury` (+ `/[id]/drukuj`) — EK-23
+- [ ] (profil publiczny + okna/onboarding) — EK-24
+
+### Sklep i płatności → plik 05
+- [ ] `/sklep`, `/sklep/punkty`, `/sklep/koszyk`, `/sklep/zamowienie`,
+  `/sklep/zamowienie/[id]`, `/sklep/zamowienie/podziekowanie` (zaślepki) — SKL-00
+- [ ] Zakup punktów / pakietu / checkout / bramki / faktury — SKL-01…SKL-07
+
+### Panel administratora cz.1 → plik 06
+- [ ] `/admin` — ADM-01
+- [ ] `/admin/users` (+ `/new`, `/[id]`, `/[id]/edit`) — ADM-02
+- [ ] `/admin/law-firms` (+ `/new`, `/[id]/edit`) — ADM-03
+- [ ] `/admin/import-ekspertow` — ADM-04
+- [ ] `/admin/opiekunowie` — ADM-05
+- [ ] `/admin/cases` (+ `/new`, `/[id]`, `/[id]/edit`) — ADM-06
+- [ ] `/admin/transakcje` (+ `/[id]`) — ADM-07
+- [ ] `/admin/transakcje/punkty` — ADM-08
+- [ ] `/admin/promocje` — ADM-09
+- [ ] `/admin/pozycjonowanie` — ADM-10
+- [ ] `/admin/reklamy` — ADM-11
+- [ ] `/admin/reviews` (+ `/[id]`) — ADM-12
+- [ ] `/admin/testimonials` — ADM-13
+
+### Panel administratora cz.2 → plik 07
+- [ ] `/admin/categories` (+ `/new`, `/[id]/edit`) — ADM-14
+- [ ] `/admin/expertise-categories` — ADM-15
+- [ ] `/admin/locations` — ADM-16
+- [ ] `/admin/pages` (+ `/new`, `/[id]`) — ADM-17
+- [ ] `/admin/modules` (+ `/[id]/preview`) — ADM-18
+- [ ] `/admin/blog` (+ `/nowy`, `/[id]`) — ADM-19
+- [ ] `/admin/blog/categories` — ADM-20
+- [ ] `/admin/newsletter` — ADM-21
+- [ ] `/admin/emails` — ADM-22
+- [ ] `/admin/notifications` — ADM-23
+- [ ] `/admin/centrum-pomocy` — ADM-24
+- [ ] `/admin/scheduler` — ADM-25
+- [ ] `/admin/settings` — ADM-26
+- [ ] `/admin/pakiety` (+ `/dodaj`, `/[id]`) — ADM-27
+- [ ] `/admin/badges` (+ `/create`, `/[id]`) — ADM-28
+- [ ] `/admin/profil` — ADM-29
+- [ ] `/admin/klub-partnerski` — ADM-30
+- [ ] `/admin/logs` — ADM-31
+- [ ] `/mails` (+ `/[id]`) — ADM-32
+
+### Funkcje przekrojowe → plik 08
+- [ ] Czat / komunikator — CROSS-01
+- [ ] Powiadomienia (dzwonek) — CROSS-02
+- [ ] Uprawnienia i pakiety — CROSS-03
+- [ ] Reklamy / banery — CROSS-04
+- [ ] Newsletter (pełny cykl) — CROSS-05
+- [ ] Centrum pomocy / widget — CROSS-06
+- [ ] Harmonogram zadań — CROSS-07
+- [ ] Powiadomienia e-mail — CROSS-08
+- [ ] Responsywność i motyw — CROSS-09
+- [ ] Bezpieczeństwo dostępu (role) — CROSS-10
+
+> ✅ Po odhaczeniu wszystkich pozycji powyżej przetestowałeś **każdy ekran i każdą
+> funkcjonalność** aplikacji.
