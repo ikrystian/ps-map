@@ -256,6 +256,7 @@ model LawFirm {
   dataPakietuOd         DateTime?
   dataPakietuDo         DateTime?
   autoRenewal           Boolean  @default(false)  // Automatyczne przedłużanie pakietu
+  packageDurationDays   Int?     // Liczba dni aktywności pakietu (nadpisanie w panelu admina)
 
   // Statystyki
   wyswietleniaProfilu   Int      @default(0)
@@ -1403,6 +1404,7 @@ model SubscriptionPlan {
   cena6Miesiecy         Float?
   cena12Miesiecy        Float
   aktywny               Boolean  @default(true)
+  isPrimary             Boolean  @default(false)  // Oznaczenie pakietu jako podstawowego
 
   // Dostęp do spraw
   dostepDoSpraw         Int?     // null = nieograniczone

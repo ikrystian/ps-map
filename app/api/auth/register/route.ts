@@ -224,15 +224,32 @@ export async function POST(request: NextRequest) {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') + '-' + nip.slice(-4)
 
-      // Sprawdź czy włączona jest opcja automatycznego przyznawania pakietu Biznes na 3 miesiące
-      const autoGrantSetting = await prisma.settings.findUnique({
-        where: { key: "autoGrantBusinessPackage" }
+      // Sprawdź czy istnieje pakiet oznaczony jako podstawowy
+      const primaryPackage = await prisma.subscriptionPlan.findFirst({
+        where: { isPrimary: true, aktywny: true }
       })
-      const isAutoGrantActive = autoGrantSetting?.value === "true"
 
-      const subPackage = isAutoGrantActive ? "BIZNES" : null
-      const pkgStart = isAutoGrantActive ? new Date() : null
-      const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
+      let subPackage: any = null
+      let pkgStart: Date | null = null
+      let pkgEnd: Date | null = null
+
+      if (primaryPackage) {
+        // Pobierz typ pakietu z nazwy (PODSTAWOWY, STANDARD, PREMIUM, BIZNES)
+        const packageTypeMap: Record<string, string> = {
+          "PODSTAWOWY": "PODSTAWOWY",
+          "STANDARD": "STANDARD",
+          "PREMIUM": "PREMIUM",
+          "BIZNES": "BIZNES"
+        }
+
+        subPackage = packageTypeMap[primaryPackage.typ] || null
+        if (subPackage) {
+          pkgStart = new Date()
+          // Domyślna długość pakietu: 365 dni (1 rok)
+          const durationDays = 365
+          pkgEnd = new Date(pkgStart.getTime() + durationDays * 24 * 60 * 60 * 1000)
+        }
+      }
 
       // Dane kontaktowe i adresowe należą do użytkownika (model User)
       await prisma.user.update({

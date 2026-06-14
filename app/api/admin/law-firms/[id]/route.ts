@@ -344,6 +344,14 @@ export async function PUT(
     if (body.dataPakietuDo !== undefined) {
       lawFirmUpdateData.dataPakietuDo = body.dataPakietuDo === "" ? null : new Date(body.dataPakietuDo)
     }
+    if (body.packageDurationDays !== undefined) {
+      lawFirmUpdateData.packageDurationDays = body.packageDurationDays || null
+      // Jeśli ustawiona liczba dni i data początkowa, automatycznie oblicz datę końca
+      if (body.packageDurationDays && body.dataPakietuOd) {
+        const startDate = new Date(body.dataPakietuOd)
+        lawFirmUpdateData.dataPakietuDo = new Date(startDate.getTime() + body.packageDurationDays * 24 * 60 * 60 * 1000)
+      }
+    }
 
     // Statistics
     if (body.wyswietleniaProfilu !== undefined) lawFirmUpdateData.wyswietleniaProfilu = body.wyswietleniaProfilu

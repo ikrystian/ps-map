@@ -45,6 +45,7 @@ interface SubscriptionPlanForm {
   punktyGratis: number
   skillLawFocus: boolean
   aktywny: boolean
+  isPrimary: boolean
   obrazek: string | null
 }
 
@@ -79,6 +80,7 @@ export default function AddSubscriptionPlanPage() {
     punktyGratis: 0,
     skillLawFocus: false,
     aktywny: true,
+    isPrimary: false,
     obrazek: null,
   })
 
@@ -189,13 +191,23 @@ export default function AddSubscriptionPlanPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="aktywny"
-                  checked={formData.aktywny}
-                  onCheckedChange={(checked) => handleChange("aktywny", checked)}
-                />
-                <Label htmlFor="aktywny">Pakiet aktywny</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="aktywny"
+                    checked={formData.aktywny}
+                    onCheckedChange={(checked) => handleChange("aktywny", checked)}
+                  />
+                  <Label htmlFor="aktywny">Pakiet aktywny</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="isPrimary"
+                    checked={formData.isPrimary}
+                    onCheckedChange={(checked) => handleChange("isPrimary", checked)}
+                  />
+                  <Label htmlFor="isPrimary">Oznacz pakiet jako podstawowy</Label>
+                </div>
               </div>
             </CardContent>
           </Card>
