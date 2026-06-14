@@ -254,6 +254,9 @@ export async function seedRelationalData(prisma: PrismaClient) {
   const cities = await prisma.city.findMany({ select: { id: true, nazwa: true, voivodeshipId: true } })
   const accountManagers = await prisma.accountManager.findMany({ select: { id: true } })
   const subscriptionPlans = await prisma.subscriptionPlan.findMany()
+  const allExpertiseCategories = await prisma.expertiseCategory.findMany({ select: { id: true, parentId: true } })
+  const expertiseParentIdSet = new Set(allExpertiseCategories.map(c => c.parentId).filter(Boolean) as string[])
+  const leafExpertiseCats = allExpertiseCategories.filter(c => !expertiseParentIdSet.has(c.id))
 
   if (voivodeships.length === 0 || categories.length === 0) {
     console.error('❌ Brak województw lub kategorii. Najpierw uruchom seedery słownikowe.')
@@ -431,7 +434,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
       oirpMiasto: hasOirp ? faker.location.city() : null, oirpWpis: hasOirp ? `WR-${faker.string.numeric(4)}` : null, oirpStatus: hasOirp,
       oraMiasto: hasOra ? faker.location.city() : null, oraWpis: hasOra ? `WAW/${faker.string.numeric(5)}` : null, oraStatus: hasOra,
       unikatowyOpisUslugi: tmpl.tagline, slowaKluczowe: JSON.stringify(faker.lorem.words(4).split(' ')),
-      mainCategoryId: null as string | null, callaPolska: chance(0.3), onlineOnly: chance(0.2),
+      mainCategoryId: null as string | null, expertiseCategoryId: leafExpertiseCats.length ? pick(leafExpertiseCats).id : null, callaPolska: chance(0.3), onlineOnly: chance(0.2),
       typOferty: pick(Object.values(OfferType)), punktySaldo: 0, pakietSubskrypcji: pakiet,
       dataPakietuOd: null as Date | null, dataPakietuDo: null as Date | null, autoRenewal: chance(0.4),
       wyswietleniaProfilu: randInt(40, 8000), zlozoneOferty: 0, wygraneOferty: 0, konwersja: 0, pozycjaRanking: null as number | null,

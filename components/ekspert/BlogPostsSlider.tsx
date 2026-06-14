@@ -77,7 +77,7 @@ export function BlogPostsSlider({ blogPosts }: BlogPostsSliderProps) {
                   href={`/blog/${post.slug}`}
                   className="w-[calc(80%-12px)] sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start group block"
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-zinc-900 shadow-xl border border-zinc-800/60">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[2/3] bg-zinc-900 shadow-xl border border-zinc-800/60">
                     {post.obrazekWyrozniajacy ? (
                       <Image
                         src={post.obrazekWyrozniajacy}
