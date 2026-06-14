@@ -262,9 +262,15 @@ export default function AddSubscriptionPlanPage() {
           <Card>
             <CardHeader>
               <CardTitle>Cennik</CardTitle>
-              <CardDescription>Ceny dla różnych okresów subskrypcji</CardDescription>
+              <CardDescription>Ceny dla różnych okresów subskrypcji. Cena 0 oznacza pakiet darmowy.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {formData.cena12Miesiecy === 0 && (
+                <div className="flex items-center gap-2 rounded-lg border border-green-600/30 bg-green-600/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Pakiet darmowy — cena wynosi 0, pakiet może być aktywny i bezpłatny dla użytkowników.
+                </div>
+              )}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="cena1Miesiac">Cena 1 miesiąc (zł)</Label>

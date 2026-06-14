@@ -245,9 +245,9 @@ export async function POST(request: NextRequest) {
         subPackage = packageTypeMap[primaryPackage.typ] || null
         if (subPackage) {
           pkgStart = new Date()
-          // Domyślna długość pakietu: 365 dni (1 rok)
-          const durationDays = 365
-          pkgEnd = new Date(pkgStart.getTime() + durationDays * 24 * 60 * 60 * 1000)
+          // Pakiet podstawowy przyznawany automatycznie przy rejestracji ma
+          // nieograniczony czas trwania (brak daty końcowej = bezterminowo).
+          pkgEnd = null
         }
       }
 

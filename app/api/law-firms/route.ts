@@ -568,9 +568,28 @@ export async function POST(request: NextRequest) {
       })
       const isAutoGrantActive = autoGrantSetting?.value === "true"
 
-      const subPackage = isAutoGrantActive ? "BIZNES" : null
-      const pkgStart = isAutoGrantActive ? new Date() : null
-      const pkgEnd = isAutoGrantActive ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : null
+      let subPackage: any = null
+      let pkgStart: Date | null = null
+      let pkgEnd: Date | null = null
+
+      if (isAutoGrantActive) {
+        // Promocyjne automatyczne przyznanie pakietu Biznes na 3 miesiące
+        subPackage = "BIZNES"
+        pkgStart = new Date()
+        pkgEnd = new Date(new Date().setMonth(new Date().getMonth() + 3))
+      } else {
+        // Domyślnie przypisz pakiet podstawowy (oznaczony jako isPrimary)
+        // nowo zarejestrowanym ekspertom z nieograniczonym czasem trwania
+        // (brak daty końcowej = bezterminowo).
+        const primaryPackage = await tx.subscriptionPlan.findFirst({
+          where: { isPrimary: true, aktywny: true },
+        })
+        if (primaryPackage) {
+          subPackage = primaryPackage.typ
+          pkgStart = new Date()
+          pkgEnd = null
+        }
+      }
 
       // Utwórz profil eksperta
       const lawFirm = await tx.lawFirm.create({

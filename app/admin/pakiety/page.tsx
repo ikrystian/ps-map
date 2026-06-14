@@ -87,6 +87,7 @@ export default function AdminSubscriptionPlansPage() {
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "-"
+    if (price === 0) return "Darmowy"
     return `${price} pkt`
   }
 
@@ -128,13 +129,13 @@ export default function AdminSubscriptionPlansPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {plans.map((plan) => (
             <Card key={plan.id}>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">{plan.nazwa}</CardTitle>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="flex-1">
+                    <CardTitle className="text-xl md:text-2xl">{plan.nazwa}</CardTitle>
                     <CardDescription className="mt-2 flex gap-2">
                       <Badge variant={plan.aktywny ? "default" : "secondary"}>
                         {plan.aktywny ? "Aktywny" : "Nieaktywny"}
@@ -144,9 +145,14 @@ export default function AdminSubscriptionPlansPage() {
                           Pakiet podstawowy
                         </Badge>
                       )}
+                      {plan.cena12Miesiecy === 0 && (
+                        <Badge variant="default" className="bg-green-600">
+                          Darmowy
+                        </Badge>
+                      )}
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 md:flex-nowrap flex-wrap">
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/pakiety/${plan.id}`}>
                         <Edit className="h-4 w-4 mr-2" />
@@ -165,11 +171,11 @@ export default function AdminSubscriptionPlansPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                   {/* Ceny */}
                   <div>
-                    <h4 className="font-semibold mb-3">Cennik</h4>
-                    <div className="space-y-2 text-sm">
+                    <h4 className="font-semibold mb-3 text-sm">Cennik</h4>
+                    <div className="space-y-2 text-xs md:text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">1 miesiąc:</span>
                         <span>{formatPrice(plan.cena1Miesiac)}</span>
@@ -187,7 +193,7 @@ export default function AdminSubscriptionPlansPage() {
 
                   {/* Dostęp */}
                   <div>
-                    <h4 className="font-semibold mb-3">Dostęp</h4>
+                    <h4 className="font-semibold mb-3 text-sm">Dostęp</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Sprawy:</span>
@@ -210,7 +216,7 @@ export default function AdminSubscriptionPlansPage() {
 
                   {/* Funkcjonalności */}
                   <div>
-                    <h4 className="font-semibold mb-3">Funkcjonalności</h4>
+                    <h4 className="font-semibold mb-3 text-sm">Funkcjonalności</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         {plan.priorytetWyszukiwanie ? <Check className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-muted-foreground" />}
@@ -233,7 +239,7 @@ export default function AdminSubscriptionPlansPage() {
 
                   {/* Pozostałe */}
                   <div>
-                    <h4 className="font-semibold mb-3">Inne</h4>
+                    <h4 className="font-semibold mb-3 text-sm">Inne</h4>
                     <div className="space-y-2 text-sm">
 
                       <div className="flex justify-between">
