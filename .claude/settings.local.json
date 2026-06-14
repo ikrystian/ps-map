@@ -8,7 +8,8 @@
       "Bash(rmdir -p /home/krystian/Projects/ps-map/.claude/projects/-home-krystian-Projects-ps-map/memory)",
       "Bash(command -v sqlite3)",
       "Bash(sqlite3 \"file:./prisma/dev.db?immutable=1\" \"SELECT typ, nazwa, aktywny, isPrimary, cena12Miesiecy FROM SubscriptionPlan;\")",
-      "Bash(sqlite3 *)"
+      "Bash(sqlite3 *)",
+      "Bash(echo \"=== total errors: $\\(npx tsc --noEmit -p tsconfig.json 2>&1)"
     ]
   }
 }

@@ -13,6 +13,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
       dostepDoSpraw: 10,
       kategorieSpraw: 2,
       wojewodztwa: 1,
+      powiaty: 3,
       miasta: 15,
       priorytetWyszukiwanie: true,
       osobistyOpiekun: 1,
@@ -39,6 +40,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
       dostepDoSpraw: 20,
       kategorieSpraw: 5,
       wojewodztwa: 2,
+      powiaty: 6,
       miasta: 15,
       priorytetWyszukiwanie: true,
       osobistyOpiekun: 2,
@@ -65,6 +67,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
       dostepDoSpraw: null, // nieograniczone
       kategorieSpraw: 10,
       wojewodztwa: 3,
+      powiaty: 12,
       miasta: 25,
       priorytetWyszukiwanie: true,
       osobistyOpiekun: 3,
@@ -91,6 +94,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
       dostepDoSpraw: null, // nieograniczone
       kategorieSpraw: null, // nieograniczone
       wojewodztwa: 6,
+      powiaty: 24,
       miasta: 35,
       priorytetWyszukiwanie: true,
       osobistyOpiekun: 6,

@@ -28,6 +28,7 @@ interface SubscriptionPlanForm {
   dostepDoSpraw: number | null
   kategorieSpraw: number | null
   wojewodztwa: number
+  powiaty: number
   miasta: number
   priorytetWyszukiwanie: boolean
   osobistyOpiekun: number
@@ -65,6 +66,7 @@ export default function EditSubscriptionPlanPage() {
     dostepDoSpraw: null,
     kategorieSpraw: null,
     wojewodztwa: 0,
+    powiaty: 0,
     miasta: 0,
     priorytetWyszukiwanie: false,
     osobistyOpiekun: 0,
@@ -371,6 +373,16 @@ export default function EditSubscriptionPlanPage() {
                     type="number"
                     value={formData.wojewodztwa}
                     onChange={(e) => handleNumberChange("wojewodztwa", e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="powiaty">Powiaty</Label>
+                  <Input
+                    id="powiaty"
+                    type="number"
+                    value={formData.powiaty}
+                    onChange={(e) => handleNumberChange("powiaty", e.target.value)}
                     required
                   />
                 </div>

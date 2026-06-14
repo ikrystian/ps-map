@@ -26,6 +26,7 @@ interface SubscriptionPlan {
   dostepDoSpraw: number | null
   kategorieSpraw: number | null
   wojewodztwa: number
+  powiaty: number
   miasta: number
   priorytetWyszukiwanie: boolean
   osobistyOpiekun: number
@@ -206,6 +207,10 @@ export default function AdminSubscriptionPlansPage() {
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Województwa:</span>
                         <span>{plan.wojewodztwa}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Powiaty:</span>
+                        <span>{plan.powiaty}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Miasta:</span>
