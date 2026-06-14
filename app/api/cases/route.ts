@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         include: {
           category: true,
           voivodeship: true,
-          city: true,
+          city: { include: { county: true } },
           client: {
             select: {
               imie: true,
