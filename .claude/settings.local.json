@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(graphify export *)",
-      "Bash(graphify query *)"
+      "Bash(graphify query *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

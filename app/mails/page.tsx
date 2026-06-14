@@ -25,7 +25,7 @@ function formatDate(date: Date): string {
 export default async function MailsPage() {
   // Podgląd logów maili udostępniamy wyłącznie poza produkcją,
   // aby nie wyciekać treści wiadomości (dane osobowe, linki) na produkcji.
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production) {
     notFound()
   }
 

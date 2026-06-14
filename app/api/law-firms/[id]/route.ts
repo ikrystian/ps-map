@@ -110,6 +110,9 @@ export async function GET(
             awardedAt: "desc",
           },
         },
+        expertiseCategory: {
+          select: { id: true, nazwa: true },
+        },
       },
     })
 

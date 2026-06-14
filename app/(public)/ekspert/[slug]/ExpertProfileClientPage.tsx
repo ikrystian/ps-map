@@ -63,6 +63,11 @@ import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@
 import { Check, ChevronDown } from "lucide-react"
 import { TooltipPreview } from "@/components/unlumen-ui/tooltip-preview"
 import type { LawFirm } from "@/types"
+import { SimilarExperts } from "@/components/ekspert/SimilarExperts"
+import { NewExperts } from "@/components/homepage/new-experts"
+import { BlogPostsSlider } from "@/components/ekspert/BlogPostsSlider"
+import { ExpertCityLinks } from "@/components/ekspert/ExpertCityLinks"
+import type { BlogPost } from "@/types/blog"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -90,6 +95,10 @@ export default function LawFirmProfilePage() {
   const searchParams = useSearchParams()
   const { data: session } = useSession()
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+  const [relatedExperts, setRelatedExperts] = useState<LawFirm[]>([])
+  const [newExperts, setNewExperts] = useState<LawFirm[]>([])
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [voivodeshipCities, setVoivodeshipCities] = useState<{ id: string; nazwa: string }[]>([])
 
   // Parallax calculations for header image
   const { scrollY } = useScroll()
@@ -236,6 +245,36 @@ export default function LawFirmProfilePage() {
       fetchLawFirm()
     }
   }, [params.slug, session])
+
+  useEffect(() => {
+    if (!lawFirm) return
+
+    const categorySlug =
+      lawFirm.categories?.[0]?.category?.slug ||
+      lawFirm.categories?.[0]?.slug ||
+      ""
+    const city = lawFirm.miasto || ""
+
+    const params = new URLSearchParams({ limit: "10" })
+    if (city) params.set("city", city)
+    if (categorySlug) params.set("category", categorySlug)
+
+    const voivodeshipId = (lawFirm as any).voivodeshipId
+    const citiesParams = new URLSearchParams({ hasExperts: "true" })
+    if (voivodeshipId) citiesParams.set("voivodeshipId", voivodeshipId)
+
+    Promise.all([
+      fetch(`/api/law-firms?${params}`).then((r) => r.ok ? r.json() : null),
+      fetch("/api/law-firms?limit=8").then((r) => r.ok ? r.json() : null),
+      fetch("/api/blog/posts?limit=8").then((r) => r.ok ? r.json() : null),
+      voivodeshipId ? fetch(`/api/cities?${citiesParams}`).then((r) => r.ok ? r.json() : []) : Promise.resolve([]),
+    ]).then(([related, newFirms, blog, cities]) => {
+      if (related?.lawFirms) setRelatedExperts(related.lawFirms)
+      if (newFirms?.lawFirms) setNewExperts(newFirms.lawFirms)
+      if (blog?.posts) setBlogPosts(blog.posts)
+      if (Array.isArray(cities)) setVoivodeshipCities(cities)
+    }).catch(() => {})
+  }, [lawFirm?.id])
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -1383,6 +1422,32 @@ export default function LawFirmProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Similar Experts - same city & category */}
+      <SimilarExperts
+        experts={relatedExperts}
+        currentExpertId={lawFirm.id}
+        cityName={lawFirm.miasto || ""}
+        categoryName={
+          lawFirm.categories?.[0]?.category?.nazwa ||
+          lawFirm.categories?.[0]?.nazwa ||
+          ""
+        }
+      />
+
+      {/* New Experts Slider */}
+      {newExperts.length > 0 && <NewExperts newLawFirms={newExperts} />}
+
+      {/* Blog Posts Slider */}
+      <BlogPostsSlider blogPosts={blogPosts} />
+
+      {/* SEO City Links */}
+      <ExpertCityLinks
+        cities={voivodeshipCities}
+        expertiseCategoryId={(lawFirm as any).expertiseCategoryId}
+        expertiseCategoryName={(lawFirm as any).expertiseCategory?.nazwa}
+        voivodeshipName={lawFirm.voivodeship?.nazwa}
+      />
 
       {/* Photo Lightbox */}
       {lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.length > 0 && (
