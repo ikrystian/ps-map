@@ -319,13 +319,17 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
           <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
 
-              <div className="text-neutral-700 flex flex-col items-center justify-center">
-                <Avatar className="w-24 h-24 opacity-30 bg-[#222]">
-                  <AvatarFallback className="text-neutral-400 bg-neutral-900  text-xl">
-                    {lawFirm.nazwaFirmy.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+              {lawFirm.logo && (
+                <div className="absolute inset-0 z-10">
+                  <Image
+                    src={lawFirm.logo}
+                    alt="Logo"
+                    width={512}
+                    height={512}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
               {/* Subtle dark vignette overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
