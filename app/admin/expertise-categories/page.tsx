@@ -173,7 +173,7 @@ export default function ExpertiseCategoriesPage() {
   }
 
   const renderRow = (item: FlatItem, level: number = 0): React.ReactNode => {
-    const hasChildren = item.children.length > 0
+    const hasChildren = (item.children?.length ?? 0) > 0
     const isExpanded = expanded.has(item.id)
     const depth = level
 
@@ -229,7 +229,7 @@ export default function ExpertiseCategoriesPage() {
             </div>
           </TableCell>
         </TableRow>
-        {hasChildren && isExpanded && item.children.map(child =>
+        {hasChildren && isExpanded && item.children?.map(child =>
           renderRow(child as FlatItem, level + 1)
         )}
       </React.Fragment>

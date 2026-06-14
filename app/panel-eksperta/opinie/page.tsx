@@ -871,7 +871,7 @@ export default function LawFirmReviewsPage() {
                                     <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwaFirmy} />
                                   ) : null}
                                   <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
-                                    {lawFirm.nazwaFirmy.substring(0, 2).toUpperCase()}
+                                    {(lawFirm.nazwaFirmy ?? lawFirm.nazwa ?? "?").substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
 

@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Globe,
   Lock,
   MapPin,
   Scale,
@@ -57,10 +56,6 @@ const step6Schema = z.object({
   categoriesIds: z.array(z.string()).min(1, "Wybierz główną specjalizację"),
 })
 
-const step5Schema = z.object({
-  voivodeshipsIds: z.array(z.string()).length(1, "Wybierz dokładnie jedno województwo"),
-})
-
 const step4Schema = z.object({
   // Dane firmy
   nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
@@ -96,7 +91,6 @@ import { Category, Voivodeship } from "@/types"
 const steps = [
   { id: 1, title: "Działalność", icon: Briefcase },
   { id: 6, title: "Specjalizacje", icon: Scale },
-  { id: 5, title: "Obszar", icon: Globe },
   { id: 4, title: "Dane kontaktowe", icon: User },
 ]
 
@@ -407,9 +401,6 @@ export default function LawFirmRegistrationPage() {
       case 6:
         schema = step6Schema
         break
-      case 5:
-        schema = step5Schema
-        break
       case 4:
         schema = step4Schema
         if (session) {
@@ -502,7 +493,7 @@ export default function LawFirmRegistrationPage() {
           typ: formData.typ,
           typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
-          nazwa: formData.nazwa,
+          nazwa: formData.nazwaFirmy,
           nazwaFirmy: formData.nazwaFirmy,
           nip: formData.nip,
           regon: formData.regon || null,
@@ -519,7 +510,7 @@ export default function LawFirmRegistrationPage() {
           zgodaRegulamin: formData.zgodaRegulamin,
           zgodaPrzetwarzanie: formData.zgodaPrzetwarzanie,
           callaPolska: formData.callaPolska,
-          voivodeshipsIds: formData.voivodeshipsIds,
+          voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : [],
           categoriesIds: formData.categoriesIds,
           isSocialRegistration: !!session?.user,
         }),
@@ -770,56 +761,6 @@ export default function LawFirmRegistrationPage() {
                   })}
               </div>
               {fieldErrors.categoriesIds && <p className="text-xs text-destructive">{fieldErrors.categoriesIds}</p>}
-            </div>
-          </div>
-        )
-
-      case 5:
-        return (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className={cn("text-base font-semibold", fieldErrors.voivodeshipsIds && "text-destructive")}>Województwo działania *</Label>
-              </div>
-              <p className="text-sm text-muted-foreground">Wybierz województwo, w którym świadczysz usługi stacjonarnie.</p>
-              <div className={cn("grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto p-3 border rounded-xl bg-card", fieldErrors.voivodeshipsIds && "border-2 border-destructive")}>
-                {voivodeships.map((v) => {
-                  const isSelected = formData.voivodeshipsIds.includes(v.id)
-                  return (
-                    <div
-                      key={v.id}
-                      className={cn(
-                        "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
-                        isSelected
-                          ? "bg-primary/5 border-primary shadow-sm"
-                          : "hover:bg-muted border-transparent"
-                      )}
-                      onClick={() => {
-                        setFormData(prev => ({ ...prev, voivodeshipsIds: [v.id], callaPolska: false }))
-                        if (fieldErrors.voivodeshipsIds) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.voivodeshipsIds
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                    >
-                      <div className={cn(
-                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
-                        isSelected ? "border-primary" : "border-muted-foreground/30"
-                      )}>
-                        {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                      </div>
-                      <span className={cn(
-                        "text-sm transition-colors",
-                        isSelected ? "text-primary font-medium" : "text-muted-foreground"
-                      )}>
-                        {v.nazwa}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-              {fieldErrors.voivodeshipsIds && <p className="text-sm text-destructive font-medium">{fieldErrors.voivodeshipsIds}</p>}
             </div>
           </div>
         )

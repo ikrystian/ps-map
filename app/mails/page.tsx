@@ -25,15 +25,10 @@ function formatDate(date: Date): string {
 export default async function MailsPage() {
   // Podgląd logów maili udostępniamy wyłącznie poza produkcją,
   // aby nie wyciekać treści wiadomości (dane osobowe, linki) na produkcji.
-<<<<<<< HEAD
-  if (process.env.NODE_ENV === "production) {
-    notFound()
-  }
-=======
+
   // if (process.env.NODE_ENV === "production") {
   //   notFound()
   // }
->>>>>>> 2efb0cb8fe5e2c15c8acf7983a011c33b126bdb2
 
   const logs = await prisma.emailLog.findMany({
     orderBy: { sentAt: "desc" },
@@ -78,8 +73,8 @@ export default async function MailsPage() {
                 >
                   <span
                     className={`mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full ${log.status === EmailLogStatus.SUCCESS
-                        ? "bg-emerald-500"
-                        : "bg-red-500"
+                      ? "bg-emerald-500"
+                      : "bg-red-500"
                       }`}
                     title={log.status}
                   />
