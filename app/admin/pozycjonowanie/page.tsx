@@ -68,6 +68,7 @@ interface LawFirmRankingData {
   totalSpentPoints: number
   voivodeship: string
   categories: string[]
+  categoryTypes: string[]
   // Score breakdown
   baseScore: number
   viewScore: number
@@ -122,6 +123,7 @@ export default function AdminPozycjonowaniePage() {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [filterVoivodeship, setFilterVoivodeship] = useState<string>("all")
   const [filterCategory, setFilterCategory] = useState<string>("all")
+  const [filterCategoryType, setFilterCategoryType] = useState<string>("all")
   const [showFormulaExplanation, setShowFormulaExplanation] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const PAGE_SIZE = 50
@@ -139,7 +141,7 @@ export default function AdminPozycjonowaniePage() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, filterVoivodeship, filterCategory])
+  }, [searchQuery, filterVoivodeship, filterCategory, filterCategoryType])
 
   const fetchRanking = async () => {
     setLoading(true)
@@ -263,8 +265,9 @@ export default function AdminPozycjonowaniePage() {
 
     const matchesVoivodeship = filterVoivodeship === "all" || f.voivodeship === filterVoivodeship
     const matchesCategory = filterCategory === "all" || f.categories.includes(filterCategory)
+    const matchesCategoryType = filterCategoryType === "all" || f.categoryTypes.includes(filterCategoryType)
 
-    return matchesSearch && matchesVoivodeship && matchesCategory
+    return matchesSearch && matchesVoivodeship && matchesCategory && matchesCategoryType
   })
 
   const totalPages = Math.ceil(filteredFirms.length / PAGE_SIZE)
@@ -580,7 +583,7 @@ export default function AdminPozycjonowaniePage() {
                   )}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pb-4 pt-0 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <CardContent className="pb-4 pt-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="search">Szukaj eksperta</Label>
                   <div className="relative">
@@ -593,6 +596,20 @@ export default function AdminPozycjonowaniePage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="filter-category-type">Typ kategorii</Label>
+                  <Select value={filterCategoryType} onValueChange={setFilterCategoryType}>
+                    <SelectTrigger id="filter-category-type">
+                      <SelectValue placeholder="Wszystkie typy" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Wszystkie typy</SelectItem>
+                      <SelectItem value="SPRAWY_PRYWATNE">Prywatna</SelectItem>
+                      <SelectItem value="SPRAWY_FIRMOWE">Firmowa</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-1">

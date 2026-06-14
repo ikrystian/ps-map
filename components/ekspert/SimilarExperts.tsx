@@ -9,8 +9,7 @@ import { PackageBadge } from "@/components/permissions"
 interface SimilarExpertsProps {
   experts: LawFirm[]
   currentExpertId: string
-  cityName: string
-  categoryName: string
+  expertiseCategoryName: string | null | undefined
 }
 
 const packageRank: Record<string, number> = {
@@ -20,7 +19,7 @@ const packageRank: Record<string, number> = {
   PODSTAWOWY: 1,
 }
 
-export function SimilarExperts({ experts, currentExpertId, cityName, categoryName }: SimilarExpertsProps) {
+export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName }: SimilarExpertsProps) {
   const filtered = experts
     .filter((e) => e.id !== currentExpertId)
     .sort((a, b) => (packageRank[b.pakietSubskrypcji || ""] || 0) - (packageRank[a.pakietSubskrypcji || ""] || 0))
@@ -33,13 +32,12 @@ export function SimilarExperts({ experts, currentExpertId, cityName, categoryNam
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center gap-6 mb-10 px-1">
           <h2 className="font-playfair text-2xl md:text-3xl font-normal text-white tracking-wide whitespace-nowrap">
-            Eksperci z{" "}
-            <span className="text-[#0da192]">{cityName}</span>
-            {categoryName && (
+            Podobni eksperci
+            {expertiseCategoryName && (
               <>
                 {" "}·{" "}
                 <span className="italic font-light text-transparent" style={{ WebkitTextStroke: "1px rgba(255,255,255,0.35)" }}>
-                  {categoryName}
+                  {expertiseCategoryName}
                 </span>
               </>
             )}

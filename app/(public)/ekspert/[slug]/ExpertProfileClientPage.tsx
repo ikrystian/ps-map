@@ -1427,12 +1427,7 @@ export default function LawFirmProfilePage() {
       <SimilarExperts
         experts={relatedExperts}
         currentExpertId={lawFirm.id}
-        cityName={lawFirm.miasto || ""}
-        categoryName={
-          lawFirm.categories?.[0]?.category?.nazwa ||
-          lawFirm.categories?.[0]?.nazwa ||
-          ""
-        }
+        expertiseCategoryName={(lawFirm as any).expertiseCategory?.nazwa}
       />
 
       {/* New Experts Slider */}

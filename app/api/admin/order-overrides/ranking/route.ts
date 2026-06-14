@@ -168,6 +168,7 @@ export async function GET(request: NextRequest) {
         totalSpentPoints,
         voivodeship: firm.user?.voivodeship?.nazwa || "",
         categories: firm.categories.map((c) => c.category?.nazwa || ""),
+        categoryTypes: firm.categories.map((c) => c.category?.typ || ""),
         // Score breakdown
         baseScore,
         viewScore: parseFloat(viewScore.toFixed(1)),
