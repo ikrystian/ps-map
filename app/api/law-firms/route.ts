@@ -208,10 +208,16 @@ export async function GET(request: NextRequest) {
               { pozycjaRanking: { sort: "desc", nulls: "last" } },
               { wyswietleniaProfilu: "desc" },
             ]
-            : [
-              { zweryfikowana: "desc" },
-              { wyswietleniaProfilu: "desc" },
-            ],
+            : sortBy === "newest"
+              ? [{ createdAt: "desc" }]
+              : sortBy === "experience"
+                // "Doświadczenie" = realny dorobek: najwięcej wygranych spraw,
+                // remisy rozstrzyga liczba złożonych ofert
+                ? [{ wygraneOferty: "desc" }, { zlozoneOferty: "desc" }]
+                : [
+                  { zweryfikowana: "desc" },
+                  { wyswietleniaProfilu: "desc" },
+                ],
         take: limit * 2, // Pobierz więcej, aby móc posortować z boostami
         skip: offset,
       }),
@@ -331,10 +337,21 @@ export async function GET(request: NextRequest) {
       })
     )
 
-    // Sort by final score (with promotion boosts applied) and apply overrides
-    let sortedLawFirms = sortBy === "ranking"
-      ? lawFirmsWithData
-      : lawFirmsWithData.sort((a: any, b: any) => b._score - a._score)
+    // Apply final ordering, then overrides.
+    // - ranking/newest/experience: already ordered by the DB query, keep as-is
+    // - rating: sort by computed average (then review count, then score)
+    // - relevance (default): boost-aware score
+    let sortedLawFirms =
+      sortBy === "ranking" || sortBy === "newest" || sortBy === "experience"
+        ? lawFirmsWithData
+        : sortBy === "rating"
+          ? lawFirmsWithData.sort(
+            (a: any, b: any) =>
+              b.avgRating - a.avgRating ||
+              b.reviewCount - a.reviewCount ||
+              b._score - a._score
+          )
+          : lawFirmsWithData.sort((a: any, b: any) => b._score - a._score)
 
     if (lawFirmIds.length > 0) {
       const overrides = await prisma.orderOverride.findMany({
