@@ -806,7 +806,11 @@ export default function PublicHeader({
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[360px] bg-[#141414] border-neutral-850 p-0 text-white flex flex-col justify-between overflow-hidden">
+                <SheetContent
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                  side="right"
+                  className="w-[300px] sm:w-[360px] bg-[#141414] border-neutral-850 p-0 text-white flex flex-col justify-between overflow-hidden"
+                >
                   <div className="flex h-16 items-center px-6 border-b border-neutral-800 justify-between">
                     <Link href="/" className="flex items-center relative" onClick={() => setMobileMenuOpen(false)}>
                       <Image src="/images/white-logo.png" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
