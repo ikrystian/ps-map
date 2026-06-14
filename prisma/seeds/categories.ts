@@ -31,7 +31,7 @@ export async function seedCategories(prisma: PrismaClient) {
         typ: category.typ as any,
         kolejnosc: category.kolejnosc,
         aktywna: true,
-        ikona: category.ikona || null,
+        ikona: null,
         wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
         wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
         backgroundImageUrl: category.backgroundImageUrl || null,
