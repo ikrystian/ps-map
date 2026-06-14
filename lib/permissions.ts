@@ -28,6 +28,22 @@ export interface LawFirmPermissionData {
   // Gdy true, reklamy są ukrywane dla tego eksperta (perk pakietu).
   // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
   wyswietlanieReklam?: boolean;
+  // Flaga "mozliwoscBloga" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy zdefiniowana, decyduje o dostępie do bloga niezależnie od typu pakietu.
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  mozliwoscBloga?: boolean;
+  // Flaga "promowanieProfilu" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy zdefiniowana, decyduje o promowaniu profilu niezależnie od typu pakietu.
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  promowanieProfilu?: boolean;
+  // Flaga "artykutySponsoro" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy zdefiniowana, decyduje o artykułach sponsorowanych niezależnie od typu pakietu.
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  artykutySponsoro?: boolean;
+  // Flaga "coverBaner" wczytana z aktywnego planu subskrypcji w bazie danych.
+  // Gdy zdefiniowana, decyduje o cover banerze niezależnie od typu pakietu.
+  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+  coverBaner?: boolean;
 }
 
 /**
@@ -323,12 +339,24 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
 
   const packageConfig = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
 
-  // Dostęp do statystyk wynika z flagi "statystykiAnalizy" aktywnego planu
-  // (jeśli wczytana z bazy), zamiast ze sztywnej mapy uprawnień pakietu.
-  const features =
-    lawFirm.statystykiAnalizy !== undefined
-      ? { ...packageConfig.features, canAccessStatistics: lawFirm.statystykiAnalizy }
-      : packageConfig.features;
+  // Część uprawnień wynika z flag aktywnego planu wczytanych z bazy danych
+  // (jeśli dostępne), zamiast ze sztywnej mapy uprawnień pakietu.
+  const features = { ...packageConfig.features };
+  if (lawFirm.statystykiAnalizy !== undefined) {
+    features.canAccessStatistics = lawFirm.statystykiAnalizy;
+  }
+  if (lawFirm.mozliwoscBloga !== undefined) {
+    features.canAccessBlog = lawFirm.mozliwoscBloga;
+  }
+  if (lawFirm.promowanieProfilu !== undefined) {
+    features.canPromoteProfile = lawFirm.promowanieProfilu;
+  }
+  if (lawFirm.artykutySponsoro !== undefined) {
+    features.canSponsorArticles = lawFirm.artykutySponsoro;
+  }
+  if (lawFirm.coverBaner !== undefined) {
+    features.canUploadCoverBanner = lawFirm.coverBaner;
+  }
 
   // Ukrywanie reklam wynika z flagi "wyswietlanieReklam" aktywnego planu
   // (jeśli wczytana z bazy): true = reklamy ukryte dla eksperta.
@@ -363,12 +391,8 @@ export function canAccessFeature(
     return false;
   }
 
-  // Dostęp do statystyk zależy od flagi "statystykiAnalizy" w aktywnym planie
-  // subskrypcji (jeśli została wczytana z bazy), a nie od konkretnego typu pakietu.
-  if (feature === "canAccessStatistics" && lawFirm.statystykiAnalizy !== undefined) {
-    return hasActivePackage(lawFirm) && lawFirm.statystykiAnalizy;
-  }
-
+  // Uprawnienia (w tym flagi z bazy: statystyki, blog) wyliczane są w
+  // getLawFirmPermissions — uwzględnia aktywność pakietu i flagi planu.
   const permissions = getLawFirmPermissions(lawFirm);
   return permissions.features[feature];
 }

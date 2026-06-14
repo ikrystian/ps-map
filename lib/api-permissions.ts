@@ -122,7 +122,14 @@ async function attachPlanFeatures<T extends LawFirmPermissionData>(
 
   const plan = await prisma.subscriptionPlan.findUnique({
     where: { typ: lawFirm.pakietSubskrypcji },
-    select: { statystykiAnalizy: true, wyswietlanieReklam: true },
+    select: {
+      statystykiAnalizy: true,
+      wyswietlanieReklam: true,
+      mozliwoscBloga: true,
+      promowanieProfilu: true,
+      artykutySponsoro: true,
+      coverBaner: true,
+    },
   });
 
   if (!plan) {
@@ -133,6 +140,10 @@ async function attachPlanFeatures<T extends LawFirmPermissionData>(
     ...lawFirm,
     statystykiAnalizy: plan.statystykiAnalizy,
     wyswietlanieReklam: plan.wyswietlanieReklam,
+    mozliwoscBloga: plan.mozliwoscBloga,
+    promowanieProfilu: plan.promowanieProfilu,
+    artykutySponsoro: plan.artykutySponsoro,
+    coverBaner: plan.coverBaner,
   };
 }
 

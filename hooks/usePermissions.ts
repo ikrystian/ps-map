@@ -123,6 +123,10 @@ export function usePermissions(): UsePermissionsReturn {
         autoRenewal: data.autoRenewal || false,
         defaultMaxCategories: data.defaultMaxCategories,
         statystykiAnalizy: data.statystykiAnalizy,
+        mozliwoscBloga: data.mozliwoscBloga,
+        promowanieProfilu: data.promowanieProfilu,
+        artykutySponsoro: data.artykutySponsoro,
+        coverBaner: data.coverBaner,
         powiadomieniaSprawy: data.powiadomieniaSprawy || 0,
       });
     } catch (err) {

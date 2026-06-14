@@ -56,6 +56,10 @@ export async function GET() {
     autoRenewal: lawFirm.autoRenewal,
     defaultMaxCategories,
     statystykiAnalizy: lawFirm.statystykiAnalizy ?? false,
+    mozliwoscBloga: lawFirm.mozliwoscBloga ?? false,
+    promowanieProfilu: lawFirm.promowanieProfilu ?? false,
+    artykutySponsoro: lawFirm.artykutySponsoro ?? false,
+    coverBaner: lawFirm.coverBaner ?? false,
     permissions,
     powiadomieniaSprawy,
   });
