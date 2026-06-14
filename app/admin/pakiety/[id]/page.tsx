@@ -13,10 +13,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
-import { ArrowLeft, Loader2, Save, AlertCircle, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, Loader2, Save, AlertCircle, CheckCircle2, Upload, X } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
 interface SubscriptionPlanForm {
@@ -45,6 +45,7 @@ interface SubscriptionPlanForm {
   punktyGratis: number
   skillLawFocus: boolean
   aktywny: boolean
+  obrazek: string | null
 }
 
 export default function EditSubscriptionPlanPage() {
@@ -52,6 +53,8 @@ export default function EditSubscriptionPlanPage() {
   const params = useParams()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState<SubscriptionPlanForm>({
     typ: "PODSTAWOWY",
     nazwa: "",
@@ -78,6 +81,7 @@ export default function EditSubscriptionPlanPage() {
     punktyGratis: 0,
     skillLawFocus: false,
     aktywny: true,
+    obrazek: null,
   })
 
   useEffect(() => {
@@ -94,6 +98,26 @@ export default function EditSubscriptionPlanPage() {
       toast.error("Nie udało się pobrać danych pakietu")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingImage(true)
+    try {
+      const data = new FormData()
+      data.append("file", file)
+      const res = await fetch("/api/upload", { method: "POST", body: data })
+      if (!res.ok) throw new Error("Upload failed")
+      const json = await res.json()
+      handleChange("obrazek", json.url)
+      toast.success("Obrazek został przesłany")
+    } catch {
+      toast.error("Nie udało się przesłać obrazka")
+    } finally {
+      setUploadingImage(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
     }
   }
 
@@ -200,6 +224,52 @@ export default function EditSubscriptionPlanPage() {
                 />
                 <Label htmlFor="aktywny">Pakiet aktywny</Label>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Obrazek pakietu */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Obrazek pakietu</CardTitle>
+              <CardDescription>Zdjęcie lub ikona reprezentująca pakiet</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {formData.obrazek && (
+                <div className="relative w-40 h-40 rounded-lg overflow-hidden border flex items-center justify-center bg-muted">
+                  <img
+                    src={formData.obrazek}
+                    alt="Obrazek pakietu"
+                    className="w-full h-full object-contain p-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleChange("obrazek", null)}
+                    className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-0.5"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/svg+xml"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingImage}
+              >
+                {uploadingImage ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="mr-2 h-4 w-4" />
+                )}
+                {formData.obrazek ? "Zmień obrazek" : "Wgraj obrazek"}
+              </Button>
             </CardContent>
           </Card>
 

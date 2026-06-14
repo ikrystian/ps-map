@@ -128,6 +128,7 @@ export default function AdminLayout({
               className="flex-1 space-y-1 overflow-y-auto p-4 relative"
               id="admin-nav-sidebar"
               onMouseLeave={() => setHoveredIndex(null)}
+              suppressHydrationWarning
             >
               {navigation.map((item, index) => {
                 const isActive = pathname === item.href ||
@@ -155,7 +156,7 @@ export default function AdminLayout({
                   >
                     {/* Sliding/Fading Hover Background Pill */}
 
-                    <div className="flex items-center justify-center flex-shrink-0">
+                    <div className="flex items-center justify-center flex-shrink-0" suppressHydrationWarning>
                       <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
                     </div>
 

@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { validateUploadedFile } from "@/lib/file-validation"
+import { validateUploadedFile, ADMIN_ALLOWED_EXTENSIONS } from "@/lib/file-validation"
 import { existsSync } from "fs"
 import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
     const originalBuffer = Buffer.from(bytes)
 
     // Walidacja typu pliku: whitelist rozszerzeń + weryfikacja sygnatury (magic bytes).
-    const validation = validateUploadedFile(originalBuffer, file.name)
+    const isAdmin = (session.user as any).role === "ADMIN"
+    const allowedExtensions = isAdmin ? ADMIN_ALLOWED_EXTENSIONS : undefined
+    const validation = validateUploadedFile(originalBuffer, file.name, allowedExtensions)
     if (!validation.ok) {
       return NextResponse.json({ error: validation.error }, { status: 400 })
     }

@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch law firms
-    const [lawFirms, total] = await Promise.all([
+    const [lawFirms, total, subscriptionPlans] = await Promise.all([
       prisma.lawFirm.findMany({
         where,
         include: {
@@ -216,7 +216,10 @@ export async function GET(request: NextRequest) {
         skip: offset,
       }),
       prisma.lawFirm.count({ where }),
+      prisma.subscriptionPlan.findMany({ select: { typ: true, obrazek: true } }),
     ])
+
+    const planImageMap = new Map(subscriptionPlans.map((p: any) => [p.typ, p.obrazek]))
 
     // Get category ID for boost calculation
     let categoryId: string | null = null
@@ -316,6 +319,7 @@ export async function GET(request: NextRequest) {
           zlozoneOferty: firm.zlozoneOferty,
           wygraneOferty: firm.wygraneOferty,
           pakietSubskrypcji: firm.pakietSubskrypcji,
+          pakietObrazek: firm.pakietSubskrypcji ? (planImageMap.get(firm.pakietSubskrypcji) ?? null) : null,
           // Promotion data
           promoted: boost.hasBoost,
           promotionBoost: boost.boostMultiplier,

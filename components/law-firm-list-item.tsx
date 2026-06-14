@@ -350,7 +350,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             </div>
 
             {/* Rating - Bottom Left */}
-            <div className="absolute bottom-4 left-4 z-10">
+            <div className="absolute bottom-2 left-2 z-10">
               <div className="bg-[#058c80] text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
                 <span className="text-2xl font-bold  tracking-tight leading-none">
                   {lawFirm.avgRating > 0
@@ -379,16 +379,14 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
               </div>
             </div>
 
-            {/* Logo Overlay - Bottom Right */}
-            {lawFirm.logo && (
-              <div className="absolute bottom-4 right-4 z-10">
-                <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border border-amber-400/30 bg-black/90 p-1 flex items-center justify-center shadow-xl overflow-hidden">
-                  <Image
-                    src={lawFirm.logo}
-                    alt="Logo"
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover rounded-full"
+            {/* Package Image - Bottom Right */}
+            {lawFirm.pakietObrazek && (
+              <div className="absolute bottom-2 right-2 z-10">
+                <div className="w-16 h-16 rounded-full border border-amber-400/30 bg-black/90 p-2 flex items-center justify-center shadow-xl overflow-hidden">
+                  <img
+                    src={lawFirm.pakietObrazek}
+                    alt="Pakiet"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>

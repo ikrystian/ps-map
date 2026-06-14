@@ -12,6 +12,7 @@
 export type AllowedExtension =
   | "jpg" | "jpeg" | "png" | "webp" | "gif"
   | "pdf" | "doc" | "docx" | "xls" | "xlsx" | "txt"
+  | "svg"
 
 interface FileTypeSpec {
   /** Kanoniczny typ MIME zwracany po walidacji. */
@@ -45,11 +46,18 @@ const FILE_TYPES: Record<AllowedExtension, FileTypeSpec> = {
   doc: { mime: "application/msword", signatures: [[0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]] },
   xls: { mime: "application/vnd.ms-excel", signatures: [[0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]] },
   txt: { mime: "text/plain", signatures: [], signatureless: true },
+  svg: { mime: "image/svg+xml", signatures: [], signatureless: true },
 }
 
 /** Domyślny zestaw rozszerzeń dozwolonych dla ogólnego uploadu (obrazy + dokumenty). */
 export const DEFAULT_ALLOWED_EXTENSIONS: AllowedExtension[] = [
   "jpg", "jpeg", "png", "webp", "gif", "pdf", "doc", "docx", "xls", "xlsx", "txt",
+]
+
+/** Rozszerzenia dozwolone wyłącznie dla administratorów (m.in. SVG dla ikon pakietów). */
+export const ADMIN_ALLOWED_EXTENSIONS: AllowedExtension[] = [
+  ...DEFAULT_ALLOWED_EXTENSIONS,
+  "svg",
 ]
 
 export interface FileValidationResult {

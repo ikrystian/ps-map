@@ -65,14 +65,14 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="flex flex-col sm:flex-row gap-6 mb-20 justify-center items-center px-4"
           >
-            <Link href="/kategorie?tab=private" className="group">
+            <Link href="#categories-private" className="group">
               <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
                 Sprawy prywatne
                 <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
               </button>
             </Link>
 
-            <Link href="/kategorie?tab=business" className="group">
+            <Link href="#categories-business" className="group">
               <button className="flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-white/5">
                 Sprawy firmowe
                 <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />

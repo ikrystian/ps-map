@@ -273,7 +273,7 @@ export default function LawFirmProfilePage() {
       if (newFirms?.lawFirms) setNewExperts(newFirms.lawFirms)
       if (blog?.posts) setBlogPosts(blog.posts)
       if (Array.isArray(cities)) setVoivodeshipCities(cities)
-    }).catch(() => {})
+    }).catch(() => { })
   }, [lawFirm?.id])
 
   const handleContactSubmit = async (e: React.FormEvent) => {

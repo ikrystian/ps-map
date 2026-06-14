@@ -90,7 +90,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
         >
           <div className="mb-12">
             <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap font-playfair">
+              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap font-playfair" id="categories-business">
                 Popularne sprawy firmowe
               </h2>
               <div className="flex-grow border-t border-zinc-800/80" />

@@ -71,6 +71,7 @@ export interface LawFirm extends LawFirmWithLocation {
   typOferty?: string | null
   punktySaldo?: number
   pakietSubskrypcji?: string | null
+  pakietObrazek?: string | null
   dataPakietuOd?: string | Date | null
   dataPakietuDo?: string | Date | null
   mainCategoryName?: string
