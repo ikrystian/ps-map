@@ -47,27 +47,56 @@ import {
   Wrench,
 } from "lucide-react"
 
-const navigation = [
-  { name: "Panel użytkownika", href: "/panel-eksperta", icon: LayoutDashboard },
-  { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: Briefcase },
-  { name: "Oferty", href: "/panel-eksperta/oferty", icon: FileText },
-  { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpen },
-
-  { name: "Profil", href: "/panel-eksperta/profil", icon: User },
-  { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: Wrench },
-  { name: "Blog", href: "/panel-eksperta/blog", icon: BookOpen },
-  { name: "Opinie", href: "/panel-eksperta/opinie", icon: Star },
-  { name: "Certyfikaty", href: "/panel-eksperta/certyfikaty", icon: Award },
-  { name: "Dokumenty", href: "/panel-eksperta/dokumenty", icon: FileStack },
-  { name: "Punkty", href: "/panel-eksperta/punkty", icon: Coins },
-  { name: "Pakiet", href: "/panel-eksperta/pakiet", icon: Package },
-  { name: "Subskrypcje i płatności", href: "/panel-eksperta/subskrypcje-i-platnosci", icon: CreditCard },
-  { name: "Promowanie", href: "/panel-eksperta/promowanie", icon: TrendingUp },
-  { name: "Pozycja ogłoszeń", href: "/panel-eksperta/pozycja-ogloszenia", icon: Trophy },
-  { name: "Statystyki", href: "/panel-eksperta/statystyki", icon: BarChart3 },
-  { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: MessageSquare },
-  { name: "Ustawienia", href: "/panel-eksperta/ustawienia", icon: Settings },
+// Pogrupowana nawigacja — sekcje porządkują panel i poprawiają UX.
+// Pierwsza grupa (bez nagłówka) to pulpit, kolejne grupują funkcje tematycznie.
+const navigationGroups = [
+  {
+    label: null,
+    items: [
+      { name: "Panel użytkownika", href: "/panel-eksperta", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "Obsługa spraw",
+    items: [
+      { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: Briefcase },
+      { name: "Oferty", href: "/panel-eksperta/oferty", icon: FileText },
+      { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpen },
+      { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Wizytówka",
+    items: [
+      { name: "Profil", href: "/panel-eksperta/profil", icon: User },
+      { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: Wrench },
+      { name: "Blog", href: "/panel-eksperta/blog", icon: BookOpen },
+      { name: "Opinie", href: "/panel-eksperta/opinie", icon: Star },
+      { name: "Certyfikaty", href: "/panel-eksperta/certyfikaty", icon: Award },
+      { name: "Dokumenty", href: "/panel-eksperta/dokumenty", icon: FileStack },
+    ],
+  },
+  {
+    label: "Promocja i wyniki",
+    items: [
+      { name: "Promowanie", href: "/panel-eksperta/promowanie", icon: TrendingUp },
+      { name: "Pozycja ogłoszeń", href: "/panel-eksperta/pozycja-ogloszenia", icon: Trophy },
+      { name: "Statystyki", href: "/panel-eksperta/statystyki", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "Konto i płatności",
+    items: [
+      { name: "Punkty", href: "/panel-eksperta/punkty", icon: Coins },
+      { name: "Pakiet", href: "/panel-eksperta/pakiet", icon: Package },
+      { name: "Subskrypcje i płatności", href: "/panel-eksperta/subskrypcje-i-platnosci", icon: CreditCard },
+      { name: "Ustawienia", href: "/panel-eksperta/ustawienia", icon: Settings },
+    ],
+  },
 ]
+
+// Spłaszczona lista — zachowuje zgodność z indeksami używanymi przez efekty hover.
+const navigation = navigationGroups.flatMap((group) => group.items)
 
 export default function LawFirmPanelLayout({
   children,
@@ -234,81 +263,96 @@ export default function LawFirmPanelLayout({
           </div>
         </div>
       )}
-      {navigation.map((item, index) => {
-        const isActive = pathname === item.href ||
-          (item.href !== "/panel-eksperta" && pathname.startsWith(item.href))
-        const isMessagesItem = item.href === "/panel-eksperta/wiadomosci"
-        const showBadge = isMessagesItem && unreadCount > 0
+      {navigationGroups.map((group, groupIndex) => (
+        <div key={group.label ?? `group-${groupIndex}`} className={cn("space-y-1", groupIndex > 0 && "pt-2")}>
+          {/* Section header — hidden when collapsed so only icons remain */}
+          {group.label && (inSheet || !isCollapsed) && (
+            <p className="px-4 pt-2 pb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
+              {group.label}
+            </p>
+          )}
+          {/* Subtle divider replaces the header when the sidebar is collapsed */}
+          {group.label && !inSheet && isCollapsed && (
+            <div className="mx-3 border-t border-border/60" />
+          )}
+          {group.items.map((item) => {
+            const index = navigation.indexOf(item)
+            const isActive = pathname === item.href ||
+              (item.href !== "/panel-eksperta" && pathname.startsWith(item.href))
+            const isMessagesItem = item.href === "/panel-eksperta/wiadomosci"
+            const showBadge = isMessagesItem && unreadCount > 0
 
-        const isSprawy = item.href === "/panel-eksperta/sprawy"
-        const isOferty = item.href === "/panel-eksperta/oferty"
-        const isKonsultacje = item.href === "/panel-eksperta/konsultacje"
-        const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : undefined
-        const showCountBadge = count !== undefined
+            const isSprawy = item.href === "/panel-eksperta/sprawy"
+            const isOferty = item.href === "/panel-eksperta/oferty"
+            const isKonsultacje = item.href === "/panel-eksperta/konsultacje"
+            const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : undefined
+            const showCountBadge = count !== undefined
 
-        return (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={cn(
-              "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
-              isActive
-                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                : "text-muted-foreground hover:text-white",
-              !inSheet && isCollapsed && "justify-center"
-            )}
-            title={!inSheet && isCollapsed ? item.name : undefined}
-          >
-
-
-            <div className="flex items-center justify-center flex-shrink-0">
-              <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
-            </div>
-
-            {/* Text label with elegant fade-slide */}
-            {
-              (inSheet || !isCollapsed) && (
-                <motion.span
-                  animate={{
-                    x: hoveredIndex === index && !isActive ? 4 : 0,
-                    fontWeight: isActive ? 600 : 500,
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                >
-                  {item.name}
-                </motion.span>
-              )
-            }
-
-            {
-              showBadge && (
-                <span className={cn(
-                  "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
-                  !inSheet && isCollapsed && "absolute -right-1 -top-1"
-                )}>
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )
-            }
-
-            {
-              showCountBadge && (
-                <span className={cn(
-                  "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
                   isActive
-                    ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "bg-primary/15 text-primary border border-primary/30 dark:bg-background-sec/60 dark:text-muted-foreground dark:border-border/30",
-                  !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
-                )}>
-                  {count}
-                </span>
-              )
-            }
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                    : "text-muted-foreground hover:text-white",
+                  !inSheet && isCollapsed && "justify-center"
+                )}
+                title={!inSheet && isCollapsed ? item.name : undefined}
+              >
 
 
-          </Link>
-        )
-      })}
+                <div className="flex items-center justify-center flex-shrink-0">
+                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
+                </div>
+
+                {/* Text label with elegant fade-slide */}
+                {
+                  (inSheet || !isCollapsed) && (
+                    <motion.span
+                      animate={{
+                        x: hoveredIndex === index && !isActive ? 4 : 0,
+                        fontWeight: isActive ? 600 : 500,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                      {item.name}
+                    </motion.span>
+                  )
+                }
+
+                {
+                  showBadge && (
+                    <span className={cn(
+                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white transition-all duration-300",
+                      !inSheet && isCollapsed && "absolute -right-1 -top-1"
+                    )}>
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )
+                }
+
+                {
+                  showCountBadge && (
+                    <span className={cn(
+                      "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold transition-all duration-300",
+                      isActive
+                        ? "bg-primary-foreground/20 text-primary-foreground"
+                        : "bg-primary/15 text-primary border border-primary/30 dark:bg-background-sec/60 dark:text-muted-foreground dark:border-border/30",
+                      !inSheet && isCollapsed && "absolute -right-1 -top-1 h-4 min-w-[16px] text-[10px] px-1"
+                    )}>
+                      {count}
+                    </span>
+                  )
+                }
+
+
+              </Link>
+            )
+          })}
+        </div>
+      ))}
 
       {/* Link do publicznej strony eksperta */}
       {

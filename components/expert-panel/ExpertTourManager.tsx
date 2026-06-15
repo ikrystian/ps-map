@@ -481,11 +481,11 @@ export function ExpertTourManager() {
           const data = await response.json()
           setIsEnabled(data.showExpertTutorial === "true")
         } else {
-          setIsEnabled(true) // fallback
+          setIsEnabled(false) // fallback
         }
       } catch (err) {
         console.error("Error fetching settings for expert tour:", err)
-        setIsEnabled(true) // fallback
+        setIsEnabled(false) // fallback
       }
     }
     fetchSettings()

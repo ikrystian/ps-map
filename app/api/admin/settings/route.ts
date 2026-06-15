@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     }
     if (!settingsObject.showExpertTutorial) {
       settingsObject.showExpertTutorial = {
-        value: "true",
+        value: "false",
         description: "Czy wyświetlać samouczek (krok po kroku) w panelu eksperta",
       }
     }

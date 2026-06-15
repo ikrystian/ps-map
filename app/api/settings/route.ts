@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       settingsObject.maxLawFirmTags = "5"
     }
     if (!settingsObject.showExpertTutorial) {
-      settingsObject.showExpertTutorial = "true"
+      settingsObject.showExpertTutorial = "false"
     }
     if (!settingsObject.deleteReviewCostRating1) {
       settingsObject.deleteReviewCostRating1 = "500"
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         maxLawFirmVoivodeships: "1",
         maxLawFirmCities: "3",
         maxLawFirmTags: "5",
-        showExpertTutorial: "true",
+        showExpertTutorial: "false",
         deleteReviewCostRating1: "500",
         deleteReviewCostRating2: "300",
         deleteReviewCostRating3: "100",
