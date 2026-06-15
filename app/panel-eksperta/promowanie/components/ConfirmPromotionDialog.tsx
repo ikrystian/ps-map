@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Coins, AlertCircle, Loader2 } from "lucide-react"
 import { LawFirm, Category, Voivodeship } from "../types"
-import { getPromotionTypeLabel, formatDate, MOST_CONSULTED_CATEGORIES } from "../utils"
+import { getPromotionTypeLabel, formatDate } from "../utils"
 
 interface ConfirmPromotionDialogProps {
   open: boolean
@@ -103,10 +103,7 @@ export function ConfirmPromotionDialog({
                 <span className="font-semibold text-white">
                   {selectedType === "POLECANI_PRAWNICY"
                     ? selectedCategory
-                    : selectedType === "NAJCZESCIEJ_KONSULTOWANE"
-                      ? MOST_CONSULTED_CATEGORIES.find((c) => c.id === selectedCategory)?.name ||
-                      selectedCategory
-                      : categories.find((c) => c.id === selectedCategory)?.nazwa ||
+                    : categories.find((c) => c.id === selectedCategory)?.nazwa ||
                       selectedCategory}
                 </span>
               </div>

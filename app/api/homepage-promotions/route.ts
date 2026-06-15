@@ -138,10 +138,22 @@ export async function GET(request: NextRequest) {
           })
         }
 
+        // Pobierz wszystkie kategorie, aby zamapować slug/nazwę promocji na UUID kategorii
+        const categories = await prisma.category.findMany({
+          where: { aktywna: true },
+        })
+
         const consultedByCat: Record<string, any[]> = {}
         consultedPromotions.forEach((p) => {
-          const cat = p.kategoriaPromocji || ""
+          let cat = p.kategoriaPromocji || ""
           if (cat) {
+            // Dopasuj kategorię po ID, slugu lub nazwie i użyj jej UUID
+            const matchingCat = categories.find(
+              (c) => c.id === cat || c.slug === cat || c.nazwa === cat
+            )
+            if (matchingCat) {
+              cat = matchingCat.id
+            }
             if (!consultedByCat[cat]) {
               consultedByCat[cat] = []
             }

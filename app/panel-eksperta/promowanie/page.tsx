@@ -40,6 +40,7 @@ export default function LawFirmPromotionPage() {
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [promotionTypes, setPromotionTypes] = useState<any[]>([])
   const [promoteConsultedImmediately, setPromoteConsultedImmediately] = useState(false)
+  const [consultedCategoryIds, setConsultedCategoryIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -157,15 +158,21 @@ export default function LawFirmPromotionPage() {
       const promotionTypesData = await promotionTypesResponse.json()
       setPromotionTypes(promotionTypesData)
 
-      // Pobierz ustawienia publiczne (m.in. tryb testowy natychmiastowych promocji)
+      // Pobierz ustawienia publiczne (m.in. tryb testowy oraz kategorie najczęściej konsultowane)
       try {
         const settingsResponse = await fetch("/api/settings")
         if (settingsResponse.ok) {
           const settingsData = await settingsResponse.json()
           setPromoteConsultedImmediately(settingsData.promoteConsultedImmediately === "true")
+          try {
+            const parsedIds = JSON.parse(settingsData.homepageConsultedCategories || "[]")
+            setConsultedCategoryIds(Array.isArray(parsedIds) ? parsedIds : [])
+          } catch {
+            setConsultedCategoryIds([])
+          }
         }
       } catch {
-        // Brak ustawień – używamy wartości domyślnej (false)
+        // Brak ustawień – używamy wartości domyślnych
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
@@ -284,6 +291,9 @@ export default function LawFirmPromotionPage() {
     setAvailability(null)
   }
 
+  // Kategorie "Najczęściej konsultowane" wybrane przez administratora w ustawieniach
+  const consultedCategories = categories.filter((c) => consultedCategoryIds.includes(c.id))
+
   const handleOpenDialog = (type: string) => {
     resetForm()
     setSelectedType(type)
@@ -291,7 +301,7 @@ export default function LawFirmPromotionPage() {
     if (type === "POLECANI_PRAWNICY") {
       setSelectedCategory("Adwokat")
     } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
-      setSelectedCategory("alimenty-i-rozwody")
+      setSelectedCategory(consultedCategories[0]?.id || "all")
     } else {
       setSelectedCategory("all")
     }
@@ -560,6 +570,7 @@ export default function LawFirmPromotionPage() {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         categories={categories}
+        consultedCategories={consultedCategories}
         selectedVoivodeship={selectedVoivodeship}
         setSelectedVoivodeship={setSelectedVoivodeship}
         voivodeships={voivodeships}

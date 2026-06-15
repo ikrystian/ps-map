@@ -62,6 +62,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.promoteConsultedImmediately) {
       settingsObject.promoteConsultedImmediately = "false"
     }
+    if (!settingsObject.homepageConsultedCategories) {
+      settingsObject.homepageConsultedCategories = "[]"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

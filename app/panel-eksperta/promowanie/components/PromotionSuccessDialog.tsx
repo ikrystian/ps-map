@@ -20,7 +20,6 @@ import {
   getIconComponent,
   getPromotionTypeLabel,
   getPromotionSuccessDetails,
-  MOST_CONSULTED_CATEGORIES,
 } from "../utils"
 
 interface PromotionSuccessDialogProps {
@@ -121,12 +120,7 @@ export function PromotionSuccessDialog({
                 // Map category ID/code to user friendly name
                 let categoryText = null
                 if (purchasedPromotion.kategoriaPromocji) {
-                  if (purchasedPromotion.typPromocji === "NAJCZESCIEJ_KONSULTOWANE") {
-                    categoryText =
-                      MOST_CONSULTED_CATEGORIES.find(
-                        (c) => c.id === purchasedPromotion.kategoriaPromocji
-                      )?.name || purchasedPromotion.kategoriaPromocji
-                  } else if (purchasedPromotion.typPromocji === "POLECANI_PRAWNICY") {
+                  if (purchasedPromotion.typPromocji === "POLECANI_PRAWNICY") {
                     categoryText = purchasedPromotion.kategoriaPromocji
                   } else {
                     categoryText =

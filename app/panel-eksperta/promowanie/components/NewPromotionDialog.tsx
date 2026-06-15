@@ -28,7 +28,6 @@ import {
   getPromotionTypeLabel,
   getFutureMonths,
   RECOMMENDED_LAWYERS_CATEGORIES,
-  MOST_CONSULTED_CATEGORIES,
 } from "../utils"
 
 interface NewPromotionDialogProps {
@@ -41,6 +40,7 @@ interface NewPromotionDialogProps {
   selectedCategory: string
   setSelectedCategory: (category: string) => void
   categories: Category[]
+  consultedCategories: Category[]
   selectedVoivodeship: string
   setSelectedVoivodeship: (voivodeship: string) => void
   voivodeships: Voivodeship[]
@@ -72,6 +72,7 @@ export function NewPromotionDialog({
   selectedCategory,
   setSelectedCategory,
   categories,
+  consultedCategories,
   selectedVoivodeship,
   setSelectedVoivodeship,
   voivodeships,
@@ -235,17 +236,24 @@ export function NewPromotionDialog({
                   <SelectValue placeholder="Wybierz kategorię spraw" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                  {MOST_CONSULTED_CATEGORIES.map((cat) => (
+                  {consultedCategories.map((cat) => (
                     <SelectItem
                       key={cat.id}
                       value={cat.id}
                       className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
                     >
-                      {cat.name}
+                      {cat.nazwa}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {consultedCategories.length === 0 && (
+                <p className="text-xs text-amber-400/90 flex items-center gap-1.5">
+                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                  Brak skonfigurowanych kategorii. Administrator może je wybrać w ustawieniach
+                  (Najczęściej konsultowane kategorie).
+                </p>
+              )}
             </div>
           )}
 

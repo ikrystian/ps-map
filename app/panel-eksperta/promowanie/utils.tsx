@@ -38,15 +38,6 @@ export const RECOMMENDED_LAWYERS_CATEGORIES = [
   "Doradca prawny",
 ]
 
-export const MOST_CONSULTED_CATEGORIES = [
-  { id: "alimenty-i-rozwody", name: "Alimenty i rozwody" },
-  { id: "dlugi-windykacja-egzekucje", name: "Długi, windykacja, egzekucje" },
-  { id: "dziedziczenie-spadki-testamenty", name: "Dziedziczenie, spadki, testamenty" },
-  { id: "pozyczki-i-kredyty", name: "Pożyczki i kredyty" },
-  { id: "zatrudnienie-i-umowy", name: "Zatrudnienie i umowy" },
-  { id: "dotacje-unijne", name: "Dotacje unijne" },
-]
-
 export const getFutureMonths = (includeCurrentMonth = false) => {
   const months = []
   const now = new Date()

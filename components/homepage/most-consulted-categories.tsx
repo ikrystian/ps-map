@@ -54,7 +54,12 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
     // Only show tabs that have either active promotions or some law firms matching
     return tabs.filter((tab) => {
       if (consultedData && consultedData[tab.id] && consultedData[tab.id].length > 0) return true
-      const hasFirms = lawFirms?.some(firm => firm.categories?.some(c => c.category?.id === tab.id))
+      const hasFirms = lawFirms?.some(firm => 
+        firm.categories?.some(c => {
+          const catId = c.category?.id || c.id
+          return catId === tab.id
+        })
+      )
       return hasFirms
     })
   }, [categories, consultedCategoryIds, consultedData, lawFirms])
@@ -86,7 +91,10 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
     if (list.length < 5 && lawFirms && lawFirms.length > 0) {
       const filtered = lawFirms.filter((firm) => {
         if (!firm.categories) return false
-        return firm.categories.some((cat) => cat.category?.id === tab.id)
+        return firm.categories.some((cat) => {
+          const catId = cat.category?.id || cat.id
+          return catId === tab.id
+        })
       })
 
       filtered.forEach((firm) => {
