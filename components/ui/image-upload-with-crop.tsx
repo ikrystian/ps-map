@@ -42,7 +42,13 @@ export function ImageUploadWithCrop({
 
       // If it's a blob from cropping, create a file with the original name
       if (fileToUpload instanceof Blob && !(fileToUpload instanceof File)) {
-        const fileName = originalFileName || "cropped-image.jpg"
+        const originalName = originalFileName || "cropped-image.jpg"
+        const lastDot = originalName.lastIndexOf(".")
+        const baseName = lastDot === -1 ? originalName : originalName.slice(0, lastDot)
+        const mimeType = fileToUpload.type.split(";")[0]
+        const extension = mimeType === "image/jpeg" ? "jpg" : mimeType.split("/")[1] || "png"
+        const fileName = `${baseName}.${extension}`
+
         const file = new File([fileToUpload], fileName, { type: fileToUpload.type })
         formData.append("file", file)
       } else {

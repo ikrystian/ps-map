@@ -147,7 +147,13 @@ export function PageBuilder({ modules, pageModules, onChange }: PageBuilderProps
 
     try {
       const formData = new FormData()
-      const fileName = selectedFile?.name || "image.jpg"
+      const originalName = selectedFile?.name || "image.jpg"
+      const lastDot = originalName.lastIndexOf(".")
+      const baseName = lastDot === -1 ? originalName : originalName.slice(0, lastDot)
+      const mimeType = croppedBlob.type.split(";")[0]
+      const extension = mimeType === "image/jpeg" ? "jpg" : mimeType.split("/")[1] || "png"
+      const fileName = `${baseName}.${extension}`
+
       const file = new File([croppedBlob], fileName, { type: croppedBlob.type })
       formData.append("file", file)
 
