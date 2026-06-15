@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, Settings as SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -605,876 +606,929 @@ export default function AdminSettingsPage() {
       <AdminHeaderSetter title="Ustawienia systemu" subtitle="Zarządzaj globalnymi ustawieniami platformy" />
       <Separator />
 
-      {/* Ustawienia ogólne */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ustawienia ogólne</CardTitle>
-          <CardDescription>
-            Podstawowe informacje o serwisie
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="siteName">
-              Nazwa serwisu
-            </Label>
-            <Input
-              id="siteName"
-              type="text"
-              value={siteName}
-              onChange={(e) => setSiteName(e.target.value)}
-              placeholder="Prosta Sprawa"
-            />
-            <p className="text-sm text-muted-foreground">
-              Nazwa wyświetlana w nagłówku strony i meta tagach
-            </p>
-          </div>
+      <Tabs defaultValue="general" className="space-y-6">
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 border-b">
+          <TabsList className="inline-flex h-auto w-full sm:w-auto flex-wrap gap-1 bg-muted/50 p-1.5">
+            <TabsTrigger value="general" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <SettingsIcon className="h-4 w-4" />
+              <span>Ogólne</span>
+            </TabsTrigger>
+            <TabsTrigger value="appearance" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <Palette className="h-4 w-4" />
+              <span>Wygląd i SEO</span>
+            </TabsTrigger>
+            <TabsTrigger value="experts" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <Users className="h-4 w-4" />
+              <span>Eksperci</span>
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <Star className="h-4 w-4" />
+              <span>Opinie</span>
+            </TabsTrigger>
+            <TabsTrigger value="email" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <Mail className="h-4 w-4" />
+              <span>E-mail (SMTP)</span>
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <CreditCard className="h-4 w-4" />
+              <span>Płatności i KSeF</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="contactEmail">
-                Email kontaktowy
-              </Label>
-              <Input
-                id="contactEmail"
-                type="email"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="kontakt@prostasprawa.pl"
-              />
-              <p className="text-sm text-muted-foreground">
-                Główny adres kontaktowy
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="supportEmail">
-                Email wsparcia
-              </Label>
-              <Input
-                id="supportEmail"
-                type="email"
-                value={supportEmail}
-                onChange={(e) => setSupportEmail(e.target.value)}
-                placeholder="pomoc@prostasprawa.pl"
-              />
-              <p className="text-sm text-muted-foreground">
-                Email wsparcia technicznego
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Hierarchia geograficzna */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Hierarchia geograficzna</CardTitle>
-          <CardDescription>
-            Wybierz poziom podziału administracyjnego używany w formularzach rejestracji ekspertów, filtrach wyszukiwania i innych miejscach wymagających lokalizacji.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-3">
-            <Button
-              type="button"
-              variant={geographicHierarchy === "voivodeships" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setGeographicHierarchy("voivodeships")}
-            >
-              Województwa
-            </Button>
-            <Button
-              type="button"
-              variant={geographicHierarchy === "counties" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setGeographicHierarchy("counties")}
-            >
-              Powiaty
-            </Button>
-            <Button
-              type="button"
-              variant={geographicHierarchy === "cities" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => setGeographicHierarchy("cities")}
-            >
-              Miasta
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Aktualny poziom: <span className="font-semibold text-foreground">
-              {geographicHierarchy === "voivodeships" && "Województwa"}
-              {geographicHierarchy === "counties" && "Powiaty"}
-              {geographicHierarchy === "cities" && "Miasta"}
-            </span>. Zmiana wpływa na formularze i wyniki wyszukiwania ekspertów według lokalizacji.
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Kategorie strony głównej */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Najczęściej konsultowane kategorie</CardTitle>
-          <CardDescription>
-            Wybierz kategorie, które mają być wyświetlane w sekcji "Najczęściej konsultowane" na stronie głównej.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {availableCategories.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Ładowanie kategorii...</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {availableCategories.map((cat) => (
-                <div key={cat.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`cat-${cat.id}`}
-                    checked={homepageConsultedCategories.includes(cat.id)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setHomepageConsultedCategories([...homepageConsultedCategories, cat.id])
-                      } else {
-                        setHomepageConsultedCategories(homepageConsultedCategories.filter((id) => id !== cat.id))
-                      }
-                    }}
-                  />
-                  <Label htmlFor={`cat-${cat.id}`} className="font-normal cursor-pointer">
-                    {cat.nazwa}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          )}
-          <p className="text-xs text-muted-foreground mt-2">
-            Zaleca się wybranie od 4 do 6 kategorii. Zaznaczone kategorie zostaną użyte jako zakładki na stronie głównej.
-          </p>
-
-          <Separator className="my-2" />
-
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-4 hover:bg-amber-500/[0.07] transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="promoteConsultedImmediately" className="text-base font-semibold flex items-center gap-2">
-                Natychmiastowe włączanie promocji (tryb testowy)
-                <span className="text-sm bg-amber-500 text-amber-950 px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Po włączeniu promocja „Najczęściej konsultowane kategorie" zakupiona w panelu eksperta na bieżący miesiąc staje się aktywna od razu (od teraz), a nie dopiero od pierwszego dnia kolejnego miesiąca. Przeznaczone wyłącznie do testów.
-              </p>
-            </div>
-            <Switch
-              id="promoteConsultedImmediately"
-              checked={promoteConsultedImmediately === "true"}
-              onCheckedChange={(checked) => setPromoteConsultedImmediately(checked ? "true" : "false")}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia SMTP (Wysyłka e-maili) */}
-      <Card className="border-cyan-500/20 bg-cyan-500/[0.01]">
-        <CardHeader>
-          <CardTitle className="text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
-            <Mail className="h-5 w-5" />
-            Konfiguracja SMTP (Wysyłka e-maili)
-          </CardTitle>
-          <CardDescription>
-            Skonfiguruj serwer SMTP do wysyłania powiadomień e-mail z platformy.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="emailServerHost">Host SMTP</Label>
-              <Input
-                id="emailServerHost"
-                type="text"
-                value={emailServerHost}
-                onChange={(e) => setEmailServerHost(e.target.value)}
-                placeholder="np. smtp.gmail.com"
-              />
-              <p className="text-xs text-muted-foreground">
-                Adres serwera poczty wychodzącej SMTP.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="emailServerPort">Port SMTP</Label>
-              <Input
-                id="emailServerPort"
-                type="text"
-                value={emailServerPort}
-                onChange={(e) => setEmailServerPort(e.target.value)}
-                placeholder="np. 587"
-              />
-              <p className="text-xs text-muted-foreground">
-                Zazwyczaj 587 (STARTTLS) lub 465 (SSL).
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="emailServerUser">Użytkownik SMTP</Label>
-              <Input
-                id="emailServerUser"
-                type="text"
-                value={emailServerUser}
-                onChange={(e) => setEmailServerUser(e.target.value)}
-                placeholder="np. website@ps-dev.com.pl"
-              />
-              <p className="text-xs text-muted-foreground">
-                Login do konta pocztowego.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="emailServerPassword">Hasło SMTP</Label>
-              <Input
-                id="emailServerPassword"
-                type="password"
-                value={emailServerPassword}
-                onChange={(e) => setEmailServerPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-              <p className="text-xs text-muted-foreground">
-                Hasło do konta lub hasło aplikacji (dla Gmail).
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="emailFrom">Adres nadawcy (Od)</Label>
-            <Input
-              id="emailFrom"
-              type="email"
-              value={emailFrom}
-              onChange={(e) => setEmailFrom(e.target.value)}
-              placeholder="np. noreply@prostasprawa.pl"
-            />
-            <p className="text-xs text-muted-foreground">
-              Adres e-mail, z którego będą wysyłane wiadomości (powinien odpowiadać autoryzowanemu nadawcy w SMTP).
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Favicon i Open Graph (SEO) */}
-      <Card className="border-teal-500/20 bg-teal-500/[0.01]">
-        <CardHeader>
-          <CardTitle className="text-teal-600 dark:text-teal-400 flex items-center gap-2">
-            Favicon i Open Graph (SEO)
-          </CardTitle>
-          <CardDescription>
-            Zarządzaj faviconem serwisu oraz domyślnymi tagami Open Graph dla strony głównej i podstron publicznych.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Favicon Section */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
-            <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
-              <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Favicon Podgląd</Label>
-              <div className="w-16 h-16 rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden p-1 shadow-sm">
-                {favicon ? (
-                  <img src={favicon} alt="Favicon preview" className="max-w-full max-h-full object-contain" />
-                ) : (
-                  <span className="text-xs text-muted-foreground">Brak</span>
-                )}
-              </div>
-              <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany format PNG lub ICO</p>
-            </div>
-
-            <div className="md:col-span-3 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="favicon-url">URL Faviconu</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="favicon-url"
-                    type="text"
-                    value={favicon}
-                    onChange={(e) => setFavicon(e.target.value)}
-                    placeholder="/favicon.png"
-                  />
-                  <div className="relative">
-                    <input
-                      id="favicon-file"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFaviconUpload}
-                      className="hidden"
-                      disabled={isUploadingFavicon}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById("favicon-file")?.click()}
-                      disabled={isUploadingFavicon}
-                      className="whitespace-nowrap flex gap-2"
-                    >
-                      {isUploadingFavicon ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <Upload className="h-4 w-4" />
-                          Wgraj plik
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Ścieżka relatywna (np. /favicon.png) lub pełny adres URL.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Open Graph Title */}
-          <div className="space-y-2">
-            <Label htmlFor="ogTitle">Domyślny Tytuł Open Graph (og:title)</Label>
-            <Input
-              id="ogTitle"
-              type="text"
-              value={ogTitle}
-              onChange={(e) => setOgTitle(e.target.value)}
-              placeholder="Prosta Sprawa - ..."
-            />
-            <p className="text-xs text-muted-foreground">
-              Używany jako domyślny tytuł przy udostępnianiu strony w mediach społecznościowych (np. Facebook, Twitter, Slack).
-            </p>
-          </div>
-
-          {/* Open Graph Description */}
-          <div className="space-y-2">
-            <Label htmlFor="ogDescription">Domyślny Opis Open Graph (og:description)</Label>
-            <Textarea
-              id="ogDescription"
-              value={ogDescription}
-              onChange={(e) => setOgDescription(e.target.value)}
-              placeholder="Znajdź prawnika..."
-              className="min-h-[80px]"
-            />
-            <p className="text-xs text-muted-foreground">
-              Opis wyświetlany pod tytułem udostępnionej karty w mediach społecznościowych. Zalecane max. 155-160 znaków.
-            </p>
-          </div>
-
-          {/* Open Graph Image */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
-            <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
-              <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Obraz OG Podgląd</Label>
-              <div className="w-full aspect-[1.91/1] rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden shadow-sm">
-                {ogImage ? (
-                  <img src={ogImage} alt="OG Image preview" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-xs text-muted-foreground">Brak</span>
-                )}
-              </div>
-              <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany rozmiar 1200x630 (1.91:1)</p>
-            </div>
-
-            <div className="md:col-span-3 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="ogImage-url">URL Obrazu Open Graph (og:image)</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="ogImage-url"
-                    type="text"
-                    value={ogImage}
-                    onChange={(e) => setOgImage(e.target.value)}
-                    placeholder="/favicon.png"
-                  />
-                  <div className="relative">
-                    <input
-                      id="ogImage-file"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleOgImageUpload}
-                      className="hidden"
-                      disabled={isUploadingOgImage}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById("ogImage-file")?.click()}
-                      disabled={isUploadingOgImage}
-                      className="whitespace-nowrap flex gap-2"
-                    >
-                      {isUploadingOgImage ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <Upload className="h-4 w-4" />
-                          Wgraj plik
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Główny obraz reprezentujący witrynę po udostępnieniu. Powinien mieć wymiary 1200x630px dla optymalnego wyglądu.
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia eksperta */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ustawienia eksperta</CardTitle>
-          <CardDescription>
-            Konfiguracja parametrów dla ekspertów prawnych
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="maxCategories">
-              Maksymalna liczba kategorii dla ekspertów
-            </Label>
-            <Input
-              id="maxCategories"
-              type="number"
-              min="1"
-              max="100"
-              value={maxCategories}
-              onChange={(e) => setMaxCategories(e.target.value)}
-              placeholder="10"
-            />
-            <p className="text-sm text-muted-foreground">
-              Określa ile maksymalnie kategorii może zaznaczyć ekspert w zakresie usług
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="maxTags">
-              Maksymalna liczba słów kluczowych dla ekspertów
-            </Label>
-            <Input
-              id="maxTags"
-              type="number"
-              min="1"
-              max="100"
-              value={maxTags}
-              onChange={(e) => setMaxTags(e.target.value)}
-              placeholder="5"
-            />
-            <p className="text-sm text-muted-foreground">
-              Określa ile maksymalnie słów kluczowych (tagów) może dodać ekspert bez aktywnego pakietu
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="autoGrantBusinessPackage" className="text-base font-semibold">
-                Darmowy pakiet Biznes dla nowych ekspertów
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Po włączeniu każdy nowo zarejestrowany ekspert otrzyma automatycznie pakiet Biznes na okres 3 miesięcy od momentu rejestracji.
-              </p>
-            </div>
-            <Switch
-              id="autoGrantBusinessPackage"
-              checked={autoGrantBusinessPackage === "true"}
-              onCheckedChange={(checked) => setAutoGrantBusinessPackage(checked ? "true" : "false")}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia opinii */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ustawienia opinii</CardTitle>
-          <CardDescription>
-            Konfiguracja systemu opinii i ocen
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="reviewsPerPage">
-                Liczba opinii na stronę
-              </Label>
-              <Input
-                id="reviewsPerPage"
-                type="number"
-                min="5"
-                max="50"
-                value={reviewsPerPage}
-                onChange={(e) => setReviewsPerPage(e.target.value)}
-                placeholder="10"
-              />
-              <p className="text-sm text-muted-foreground">
-                Ile opinii wyświetlać na jednej stronie (5-50)
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="minReviewLength">
-                Minimalna długość opinii
-              </Label>
-              <Input
-                id="minReviewLength"
-                type="number"
-                min="10"
-                max="500"
-                value={minReviewLength}
-                onChange={(e) => setMinReviewLength(e.target.value)}
-                placeholder="50"
-              />
-              <p className="text-sm text-muted-foreground">
-                Minimalna liczba znaków w opinii (10-500)
-              </p>
-            </div>
-          </div>
-
-          <Separator className="my-4" />
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Koszt usunięcia opinii (w punktach)</h3>
-            <p className="text-xs text-muted-foreground">
-              Określ, ile punktów kosztuje usunięcie negatywnej opinii przez eksperta, w zależności od oceny (1-3 gwiazdki).
-            </p>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="deleteCost1">Ocena 1★</Label>
-                <Input
-                  id="deleteCost1"
-                  type="number"
-                  min="0"
-                  value={deleteCost1}
-                  onChange={(e) => setDeleteCost1(e.target.value)}
-                  placeholder="500"
-                />
-                <p className="text-xs text-muted-foreground">Punkty za opinię 1★</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deleteCost2">Ocena 2★</Label>
-                <Input
-                  id="deleteCost2"
-                  type="number"
-                  min="0"
-                  value={deleteCost2}
-                  onChange={(e) => setDeleteCost2(e.target.value)}
-                  placeholder="300"
-                />
-                <p className="text-xs text-muted-foreground">Punkty za opinię 2★</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deleteCost3">Ocena 3★</Label>
-                <Input
-                  id="deleteCost3"
-                  type="number"
-                  min="0"
-                  value={deleteCost3}
-                  onChange={(e) => setDeleteCost3(e.target.value)}
-                  placeholder="100"
-                />
-                <p className="text-xs text-muted-foreground">Punkty za opinię 3★</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia wyświetlania */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ustawienia wyświetlania</CardTitle>
-          <CardDescription>
-            Konfiguracja elementów wyświetlanych na stronie
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="featuredCategoriesLimit">
-              Limit wyróżnionych kategorii
-            </Label>
-            <Input
-              id="featuredCategoriesLimit"
-              type="number"
-              min="4"
-              max="20"
-              value={featuredCategoriesLimit}
-              onChange={(e) => setFeaturedCategoriesLimit(e.target.value)}
-              placeholder="8"
-            />
-            <p className="text-sm text-muted-foreground">
-              Liczba wyróżnionych kategorii na stronie głównej (4-20)
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="showExpertTutorial" className="text-base font-semibold">
-                Samouczek w panelu eksperta
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza interaktywny samouczek krok po kroku dla zalogowanych ekspertów w ich panelu.
-              </p>
-            </div>
-            <Switch
-              id="showExpertTutorial"
-              checked={showExpertTutorial === "true"}
-              onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
-            />
-          </div>
-
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="showChatAssistant" className="text-base font-semibold">
-                Asystent czatu (AI Chat Assistant)
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza wyświetlanie pływającego okna asystenta czatu (ChatAssistant) w prawym dolnym rogu na stronach publicznych.
-              </p>
-            </div>
-            <Switch
-              id="showChatAssistant"
-              checked={showChatAssistant === "true"}
-              onCheckedChange={(checked) => setShowChatAssistant(checked ? "true" : "false")}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia logowania */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ustawienia logowania</CardTitle>
-          <CardDescription>
-            Konfiguracja formularza logowania w serwisie
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="enableUserSelectionOnLogin" className="text-base font-semibold">
-                Wybór użytkownika przy logowaniu
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza możliwość szybkiego wyboru użytkownika testowego z listy rozwijanej zamiast wpisywania adresu email.
-              </p>
-            </div>
-            <Switch
-              id="enableUserSelectionOnLogin"
-              checked={enableUserSelectionOnLogin === "true"}
-              onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Metody płatności */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Metody płatności</CardTitle>
-          <CardDescription>
-            Włączaj i wyłączaj poszczególne metody płatności w systemie oraz konfiguruj ich działanie
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Przelewy24 */}
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="enablePaymentPrzelewy24" className="text-base font-semibold">
-                Przelewy24
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Przelewy24 (BLIK, szybkie przelewy, karty).
-              </p>
-            </div>
-            <Switch
-              id="enablePaymentPrzelewy24"
-              checked={enablePaymentPrzelewy24 === "true"}
-              onCheckedChange={(checked) => setEnablePaymentPrzelewy24(checked ? "true" : "false")}
-            />
-          </div>
-
-          {/* PayU */}
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="enablePaymentPayU" className="text-base font-semibold">
-                PayU
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu PayU.
-              </p>
-            </div>
-            <Switch
-              id="enablePaymentPayU"
-              checked={enablePaymentPayU === "true"}
-              onCheckedChange={(checked) => setEnablePaymentPayU(checked ? "true" : "false")}
-            />
-          </div>
-
-          {/* Tpay */}
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="enablePaymentTpay" className="text-base font-semibold">
-                Tpay
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Tpay.
-              </p>
-            </div>
-            <Switch
-              id="enablePaymentTpay"
-              checked={enablePaymentTpay === "true"}
-              onCheckedChange={(checked) => setEnablePaymentTpay(checked ? "true" : "false")}
-            />
-          </div>
-
-          {/* Przelew tradycyjny */}
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-            <div className="space-y-0.5">
-              <Label htmlFor="enablePaymentPrzelew" className="text-base font-semibold">
-                Przelew tradycyjny
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza opcję zapłaty przelewem tradycyjnym (wymaga ręcznego zatwierdzenia po zaksięgowaniu wpłaty).
-              </p>
-            </div>
-            <Switch
-              id="enablePaymentPrzelew"
-              checked={enablePaymentPrzelew === "true"}
-              onCheckedChange={(checked) => setEnablePaymentPrzelew(checked ? "true" : "false")}
-            />
-          </div>
-
-          <Separator className="my-4" />
-
-          {/* Płatność testowa */}
-          <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
-            <div className="space-y-0.5">
-              <Label htmlFor="enablePaymentTest" className="text-base font-semibold flex items-center gap-2">
-                Płatność testowa
-                <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
-              </Label>
-              <p className="text-sm text-muted-foreground max-w-xl">
-                Włącza/wyłącza możliwość korzystania z płatności testowej (TEST) w systemie (symulacja płatności).
-              </p>
-            </div>
-            <Switch
-              id="enablePaymentTest"
-              checked={enablePaymentTest === "true"}
-              onCheckedChange={(checked) => setEnablePaymentTest(checked ? "true" : "false")}
-            />
-          </div>
-
-          {/* Automatyczna akceptacja płatności testowych (widoczna tylko gdy włączona płatność testowa) */}
-          {enablePaymentTest === "true" && (
-            <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors border-primary/20 bg-primary/5">
-              <div className="space-y-0.5">
-                <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
-                  Automatyczna akceptacja płatności testowych
-                  <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
-                </Label>
-                <p className="text-sm text-muted-foreground max-w-xl">
-                  Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
-                </p>
-              </div>
-              <Switch
-                id="autoApproveTestPayment"
-                checked={autoApproveTestPayment === "true"}
-                onCheckedChange={(checked) => setAutoApproveTestPayment(checked ? "true" : "false")}
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Ustawienia Krajowego Systemu e-Faktur (KSeF) */}
-      <Card className="border-indigo-500/20 bg-indigo-500/[0.01]">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
-                Integracja KSeF 2.0
-                <span className="text-sm bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">MF Polska</span>
+        {/* ============== TAB 1: OGÓLNE ============== */}
+        <TabsContent value="general" className="space-y-6 m-0">
+          {/* Ustawienia ogólne */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Identyfikacja serwisu
               </CardTitle>
               <CardDescription>
-                Konfiguracja automatycznego przesyłania faktur do Krajowego Systemu e-Faktur (KSeF) w standardzie FA(3).
+                Podstawowe informacje o platformie wyświetlane użytkownikom.
               </CardDescription>
-            </div>
-            <Switch
-              id="ksefEnabled"
-              checked={ksefEnabled === "true"}
-              onCheckedChange={(checked) => setKsefEnabled(checked ? "true" : "false")}
-            />
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {ksefEnabled === "false" && (
-            <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/[0.03] p-4 text-sm text-yellow-800 dark:text-yellow-400">
-              <span className="font-semibold">Tryb Symulacji:</span> System KSeF jest wyłączony. Faktury będą generowane w formacie FA(3) XML lokalnie i automatycznie oznaczane jako przesłane w celach demonstracyjnych i deweloperskich.
-            </div>
-          )}
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="siteName">
+                  Nazwa serwisu
+                </Label>
+                <Input
+                  id="siteName"
+                  type="text"
+                  value={siteName}
+                  onChange={(e) => setSiteName(e.target.value)}
+                  placeholder="Prosta Sprawa"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Nazwa wyświetlana w nagłówku strony i meta tagach
+                </p>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="ksefNip" className="font-semibold text-foreground">NIP Sprzedawcy (Platformy)</Label>
-              <Input
-                id="ksefNip"
-                type="text"
-                value={ksefNip}
-                onChange={(e) => setKsefNip(e.target.value)}
-                placeholder="np. 1234567890"
-                disabled={ksefEnabled === "false"}
-              />
-              <p className="text-xs text-muted-foreground">
-                10-cyfrowy NIP podmiotu wystawiającego faktury (sprzedawcy).
-              </p>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contactEmail">
+                    Email kontaktowy
+                  </Label>
+                  <Input
+                    id="contactEmail"
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="kontakt@prostasprawa.pl"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Główny adres kontaktowy
+                  </p>
+                </div>
 
-            <div className="space-y-2">
-              <Label className="font-semibold text-foreground">Środowisko KSeF 2.0</Label>
-              <div className="flex gap-2">
+                <div className="space-y-2">
+                  <Label htmlFor="supportEmail">
+                    Email wsparcia
+                  </Label>
+                  <Input
+                    id="supportEmail"
+                    type="email"
+                    value={supportEmail}
+                    onChange={(e) => setSupportEmail(e.target.value)}
+                    placeholder="pomoc@prostasprawa.pl"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Email wsparcia technicznego
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Hierarchia geograficzna */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Hierarchia geograficzna</CardTitle>
+              <CardDescription>
+                Wybierz poziom podziału administracyjnego używany w formularzach rejestracji ekspertów, filtrach wyszukiwania i innych miejscach wymagających lokalizacji.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   type="button"
-                  variant={ksefEnv === "test" ? "default" : "outline"}
+                  variant={geographicHierarchy === "voivodeships" ? "default" : "outline"}
                   className="flex-1"
-                  onClick={() => setKsefEnv("test")}
-                  disabled={ksefEnabled === "false"}
+                  onClick={() => setGeographicHierarchy("voivodeships")}
                 >
-                  TEST (Sandbox)
+                  Województwa
                 </Button>
                 <Button
                   type="button"
-                  variant={ksefEnv === "prod" ? "default" : "outline"}
-                  className="flex-1 text-red-600 hover:text-red-700 dark:text-red-400"
-                  onClick={() => setKsefEnv("prod")}
-                  disabled={ksefEnabled === "false"}
+                  variant={geographicHierarchy === "counties" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setGeographicHierarchy("counties")}
                 >
-                  PRODUKCJA
+                  Powiaty
+                </Button>
+                <Button
+                  type="button"
+                  variant={geographicHierarchy === "cities" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setGeographicHierarchy("cities")}
+                >
+                  Miasta
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Zalecane testowanie integracji na środowisku testowym (Sandbox MF).
+              <p className="text-sm text-muted-foreground">
+                Aktualny poziom: <span className="font-semibold text-foreground">
+                  {geographicHierarchy === "voivodeships" && "Województwa"}
+                  {geographicHierarchy === "counties" && "Powiaty"}
+                  {geographicHierarchy === "cities" && "Miasta"}
+                </span>. Zmiana wpływa na formularze i wyniki wyszukiwania ekspertów według lokalizacji.
               </p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="ksefToken" className="font-semibold text-foreground">Token Autoryzacyjny (Token KSeF)</Label>
-            <Input
-              id="ksefToken"
-              type="password"
-              value={ksefToken}
-              onChange={(e) => setKsefToken(e.target.value)}
-              placeholder="Wklej 40-znakowy token autoryzacyjny..."
-              disabled={ksefEnabled === "false"}
-            />
-            <p className="text-xs text-muted-foreground">
-              Token wygenerowany w Aplikacji Podatnika KSeF w sekcji &quot;Certyfikaty i Uprawnienia&quot;. Posiadający uprawnienie do wystawiania faktur.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          {/* Ustawienia logowania */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Logowanie</CardTitle>
+              <CardDescription>
+                Konfiguracja formularza logowania w serwisie
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enableUserSelectionOnLogin" className="text-base font-semibold">
+                    Wybór użytkownika przy logowaniu
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza możliwość szybkiego wyboru użytkownika testowego z listy rozwijanej zamiast wpisywania adresu email.
+                  </p>
+                </div>
+                <Switch
+                  id="enableUserSelectionOnLogin"
+                  checked={enableUserSelectionOnLogin === "true"}
+                  onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 2: WYGLĄD I SEO ============== */}
+        <TabsContent value="appearance" className="space-y-6 m-0">
+          {/* Favicon i Open Graph (SEO) */}
+          <Card className="border-teal-500/20 bg-teal-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-teal-600 dark:text-teal-400 flex items-center gap-2">
+                Favicon i Open Graph (SEO)
+              </CardTitle>
+              <CardDescription>
+                Zarządzaj faviconem serwisu oraz domyślnymi tagami Open Graph dla strony głównej i podstron publicznych.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Favicon Section */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+                <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
+                  <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Favicon Podgląd</Label>
+                  <div className="w-16 h-16 rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden p-1 shadow-sm">
+                    {favicon ? (
+                      <img src={favicon} alt="Favicon preview" className="max-w-full max-h-full object-contain" />
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Brak</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany format PNG lub ICO</p>
+                </div>
+
+                <div className="md:col-span-3 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="favicon-url">URL Faviconu</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="favicon-url"
+                        type="text"
+                        value={favicon}
+                        onChange={(e) => setFavicon(e.target.value)}
+                        placeholder="/favicon.png"
+                      />
+                      <div className="relative">
+                        <input
+                          id="favicon-file"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFaviconUpload}
+                          className="hidden"
+                          disabled={isUploadingFavicon}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById("favicon-file")?.click()}
+                          disabled={isUploadingFavicon}
+                          className="whitespace-nowrap flex gap-2"
+                        >
+                          {isUploadingFavicon ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              Wgraj plik
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Ścieżka relatywna (np. /favicon.png) lub pełny adres URL.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Open Graph Title */}
+              <div className="space-y-2">
+                <Label htmlFor="ogTitle">Domyślny Tytuł Open Graph (og:title)</Label>
+                <Input
+                  id="ogTitle"
+                  type="text"
+                  value={ogTitle}
+                  onChange={(e) => setOgTitle(e.target.value)}
+                  placeholder="Prosta Sprawa - ..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  Używany jako domyślny tytuł przy udostępnianiu strony w mediach społecznościowych (np. Facebook, Twitter, Slack).
+                </p>
+              </div>
+
+              {/* Open Graph Description */}
+              <div className="space-y-2">
+                <Label htmlFor="ogDescription">Domyślny Opis Open Graph (og:description)</Label>
+                <Textarea
+                  id="ogDescription"
+                  value={ogDescription}
+                  onChange={(e) => setOgDescription(e.target.value)}
+                  placeholder="Znajdź prawnika..."
+                  className="min-h-[80px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Opis wyświetlany pod tytułem udostępnionej karty w mediach społecznościowych. Zalecane max. 155-160 znaków.
+                </p>
+              </div>
+
+              {/* Open Graph Image */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+                <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
+                  <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Obraz OG Podgląd</Label>
+                  <div className="w-full aspect-[1.91/1] rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden shadow-sm">
+                    {ogImage ? (
+                      <img src={ogImage} alt="OG Image preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Brak</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-center text-muted-foreground mt-2">Zalecany rozmiar 1200x630 (1.91:1)</p>
+                </div>
+
+                <div className="md:col-span-3 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ogImage-url">URL Obrazu Open Graph (og:image)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="ogImage-url"
+                        type="text"
+                        value={ogImage}
+                        onChange={(e) => setOgImage(e.target.value)}
+                        placeholder="/favicon.png"
+                      />
+                      <div className="relative">
+                        <input
+                          id="ogImage-file"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleOgImageUpload}
+                          className="hidden"
+                          disabled={isUploadingOgImage}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById("ogImage-file")?.click()}
+                          disabled={isUploadingOgImage}
+                          className="whitespace-nowrap flex gap-2"
+                        >
+                          {isUploadingOgImage ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              Wgraj plik
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Główny obraz reprezentujący witrynę po udostępnieniu. Powinien mieć wymiary 1200x630px dla optymalnego wyglądu.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Strona główna - Najczęściej konsultowane kategorie */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Najczęściej konsultowane kategorie</CardTitle>
+              <CardDescription>
+                Wybierz kategorie, które mają być wyświetlane w sekcji "Najczęściej konsultowane" na stronie głównej.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {availableCategories.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Ładowanie kategorii...</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {availableCategories.map((cat) => (
+                    <div key={cat.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`cat-${cat.id}`}
+                        checked={homepageConsultedCategories.includes(cat.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setHomepageConsultedCategories([...homepageConsultedCategories, cat.id])
+                          } else {
+                            setHomepageConsultedCategories(homepageConsultedCategories.filter((id) => id !== cat.id))
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`cat-${cat.id}`} className="font-normal cursor-pointer">
+                        {cat.nazwa}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Zaleca się wybranie od 4 do 6 kategorii. Zaznaczone kategorie zostaną użyte jako zakładki na stronie głównej.
+              </p>
+
+              <Separator className="my-2" />
+
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-4 hover:bg-amber-500/[0.07] transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="promoteConsultedImmediately" className="text-base font-semibold flex items-center gap-2">
+                    Natychmiastowe włączanie promocji (tryb testowy)
+                    <span className="text-sm bg-amber-500 text-amber-950 px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu promocja „Najczęściej konsultowane kategorie" zakupiona w panelu eksperta na bieżący miesiąc staje się aktywna od razu (od teraz), a nie dopiero od pierwszego dnia kolejnego miesiąca. Przeznaczone wyłącznie do testów.
+                  </p>
+                </div>
+                <Switch
+                  id="promoteConsultedImmediately"
+                  checked={promoteConsultedImmediately === "true"}
+                  onCheckedChange={(checked) => setPromoteConsultedImmediately(checked ? "true" : "false")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Ustawienia wyświetlania */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Elementy interfejsu</CardTitle>
+              <CardDescription>
+                Konfiguracja elementów wyświetlanych na stronie
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="featuredCategoriesLimit">
+                  Limit wyróżnionych kategorii
+                </Label>
+                <Input
+                  id="featuredCategoriesLimit"
+                  type="number"
+                  min="4"
+                  max="20"
+                  value={featuredCategoriesLimit}
+                  onChange={(e) => setFeaturedCategoriesLimit(e.target.value)}
+                  placeholder="8"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Liczba wyróżnionych kategorii na stronie głównej (4-20)
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="showExpertTutorial" className="text-base font-semibold">
+                    Samouczek w panelu eksperta
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza interaktywny samouczek krok po kroku dla zalogowanych ekspertów w ich panelu.
+                  </p>
+                </div>
+                <Switch
+                  id="showExpertTutorial"
+                  checked={showExpertTutorial === "true"}
+                  onCheckedChange={(checked) => setShowExpertTutorial(checked ? "true" : "false")}
+                />
+              </div>
+
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="showChatAssistant" className="text-base font-semibold">
+                    Asystent czatu (AI Chat Assistant)
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza wyświetlanie pływającego okna asystenta czatu (ChatAssistant) w prawym dolnym rogu na stronach publicznych.
+                  </p>
+                </div>
+                <Switch
+                  id="showChatAssistant"
+                  checked={showChatAssistant === "true"}
+                  onCheckedChange={(checked) => setShowChatAssistant(checked ? "true" : "false")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 3: EKSPERCI ============== */}
+        <TabsContent value="experts" className="space-y-6 m-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Ustawienia eksperta</CardTitle>
+              <CardDescription>
+                Konfiguracja parametrów dla ekspertów prawnych
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="maxCategories">
+                    Maks. liczba kategorii
+                  </Label>
+                  <Input
+                    id="maxCategories"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={maxCategories}
+                    onChange={(e) => setMaxCategories(e.target.value)}
+                    placeholder="10"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Ile maks. kategorii może zaznaczyć ekspert w zakresie usług
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="maxTags">
+                    Maks. liczba słów kluczowych
+                  </Label>
+                  <Input
+                    id="maxTags"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={maxTags}
+                    onChange={(e) => setMaxTags(e.target.value)}
+                    placeholder="5"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Ile maks. tagów może dodać ekspert bez aktywnego pakietu
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="autoGrantBusinessPackage" className="text-base font-semibold">
+                    Darmowy pakiet Biznes dla nowych ekspertów
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu każdy nowo zarejestrowany ekspert otrzyma automatycznie pakiet Biznes na okres 3 miesięcy od momentu rejestracji.
+                  </p>
+                </div>
+                <Switch
+                  id="autoGrantBusinessPackage"
+                  checked={autoGrantBusinessPackage === "true"}
+                  onCheckedChange={(checked) => setAutoGrantBusinessPackage(checked ? "true" : "false")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 4: OPINIE ============== */}
+        <TabsContent value="reviews" className="space-y-6 m-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Ustawienia opinii</CardTitle>
+              <CardDescription>
+                Konfiguracja systemu opinii i ocen
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reviewsPerPage">
+                    Liczba opinii na stronę
+                  </Label>
+                  <Input
+                    id="reviewsPerPage"
+                    type="number"
+                    min="5"
+                    max="50"
+                    value={reviewsPerPage}
+                    onChange={(e) => setReviewsPerPage(e.target.value)}
+                    placeholder="10"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Ile opinii wyświetlać na jednej stronie (5-50)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="minReviewLength">
+                    Minimalna długość opinii
+                  </Label>
+                  <Input
+                    id="minReviewLength"
+                    type="number"
+                    min="10"
+                    max="500"
+                    value={minReviewLength}
+                    onChange={(e) => setMinReviewLength(e.target.value)}
+                    placeholder="50"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Minimalna liczba znaków w opinii (10-500)
+                  </p>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Koszt usunięcia opinii (w punktach)</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Określ, ile punktów kosztuje usunięcie negatywnej opinii przez eksperta, w zależności od oceny (1-3 gwiazdki).
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="deleteCost1">Ocena 1★</Label>
+                    <Input
+                      id="deleteCost1"
+                      type="number"
+                      min="0"
+                      value={deleteCost1}
+                      onChange={(e) => setDeleteCost1(e.target.value)}
+                      placeholder="500"
+                    />
+                    <p className="text-xs text-muted-foreground">Punkty za opinię 1★</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="deleteCost2">Ocena 2★</Label>
+                    <Input
+                      id="deleteCost2"
+                      type="number"
+                      min="0"
+                      value={deleteCost2}
+                      onChange={(e) => setDeleteCost2(e.target.value)}
+                      placeholder="300"
+                    />
+                    <p className="text-xs text-muted-foreground">Punkty za opinię 2★</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="deleteCost3">Ocena 3★</Label>
+                    <Input
+                      id="deleteCost3"
+                      type="number"
+                      min="0"
+                      value={deleteCost3}
+                      onChange={(e) => setDeleteCost3(e.target.value)}
+                      placeholder="100"
+                    />
+                    <p className="text-xs text-muted-foreground">Punkty za opinię 3★</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 5: E-MAIL (SMTP) ============== */}
+        <TabsContent value="email" className="space-y-6 m-0">
+          <Card className="border-cyan-500/20 bg-cyan-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Konfiguracja SMTP (Wysyłka e-maili)
+              </CardTitle>
+              <CardDescription>
+                Skonfiguruj serwer SMTP do wysyłania powiadomień e-mail z platformy.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="emailServerHost">Host SMTP</Label>
+                  <Input
+                    id="emailServerHost"
+                    type="text"
+                    value={emailServerHost}
+                    onChange={(e) => setEmailServerHost(e.target.value)}
+                    placeholder="np. smtp.gmail.com"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Adres serwera poczty wychodzącej SMTP.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="emailServerPort">Port SMTP</Label>
+                  <Input
+                    id="emailServerPort"
+                    type="text"
+                    value={emailServerPort}
+                    onChange={(e) => setEmailServerPort(e.target.value)}
+                    placeholder="np. 587"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Zazwyczaj 587 (STARTTLS) lub 465 (SSL).
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="emailServerUser">Użytkownik SMTP</Label>
+                  <Input
+                    id="emailServerUser"
+                    type="text"
+                    value={emailServerUser}
+                    onChange={(e) => setEmailServerUser(e.target.value)}
+                    placeholder="np. website@ps-dev.com.pl"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Login do konta pocztowego.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="emailServerPassword">Hasło SMTP</Label>
+                  <Input
+                    id="emailServerPassword"
+                    type="password"
+                    value={emailServerPassword}
+                    onChange={(e) => setEmailServerPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Hasło do konta lub hasło aplikacji (dla Gmail).
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="emailFrom">Adres nadawcy (Od)</Label>
+                <Input
+                  id="emailFrom"
+                  type="email"
+                  value={emailFrom}
+                  onChange={(e) => setEmailFrom(e.target.value)}
+                  placeholder="np. noreply@prostasprawa.pl"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Adres e-mail, z którego będą wysyłane wiadomości (powinien odpowiadać autoryzowanemu nadawcy w SMTP).
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 6: PŁATNOŚCI I KSEF ============== */}
+        <TabsContent value="payments" className="space-y-6 m-0">
+          {/* Metody płatności */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Metody płatności</CardTitle>
+              <CardDescription>
+                Włączaj i wyłączaj poszczególne metody płatności w systemie oraz konfiguruj ich działanie
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Przelewy24 */}
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enablePaymentPrzelewy24" className="text-base font-semibold">
+                    Przelewy24
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Przelewy24 (BLIK, szybkie przelewy, karty).
+                  </p>
+                </div>
+                <Switch
+                  id="enablePaymentPrzelewy24"
+                  checked={enablePaymentPrzelewy24 === "true"}
+                  onCheckedChange={(checked) => setEnablePaymentPrzelewy24(checked ? "true" : "false")}
+                />
+              </div>
+
+              {/* PayU */}
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enablePaymentPayU" className="text-base font-semibold">
+                    PayU
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza płatności internetowe za pośrednictwem serwisu PayU.
+                  </p>
+                </div>
+                <Switch
+                  id="enablePaymentPayU"
+                  checked={enablePaymentPayU === "true"}
+                  onCheckedChange={(checked) => setEnablePaymentPayU(checked ? "true" : "false")}
+                />
+              </div>
+
+              {/* Tpay */}
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enablePaymentTpay" className="text-base font-semibold">
+                    Tpay
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza płatności internetowe za pośrednictwem serwisu Tpay.
+                  </p>
+                </div>
+                <Switch
+                  id="enablePaymentTpay"
+                  checked={enablePaymentTpay === "true"}
+                  onCheckedChange={(checked) => setEnablePaymentTpay(checked ? "true" : "false")}
+                />
+              </div>
+
+              {/* Przelew tradycyjny */}
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enablePaymentPrzelew" className="text-base font-semibold">
+                    Przelew tradycyjny
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza opcję zapłaty przelewem tradycyjnym (wymaga ręcznego zatwierdzenia po zaksięgowaniu wpłaty).
+                  </p>
+                </div>
+                <Switch
+                  id="enablePaymentPrzelew"
+                  checked={enablePaymentPrzelew === "true"}
+                  onCheckedChange={(checked) => setEnablePaymentPrzelew(checked ? "true" : "false")}
+                />
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Płatność testowa */}
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-primary/20 bg-primary/5 p-4 hover:bg-primary/10 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enablePaymentTest" className="text-base font-semibold flex items-center gap-2">
+                    Płatność testowa
+                    <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Włącza/wyłącza możliwość korzystania z płatności testowej (TEST) w systemie (symulacja płatności).
+                  </p>
+                </div>
+                <Switch
+                  id="enablePaymentTest"
+                  checked={enablePaymentTest === "true"}
+                  onCheckedChange={(checked) => setEnablePaymentTest(checked ? "true" : "false")}
+                />
+              </div>
+
+              {/* Automatyczna akceptacja płatności testowych (widoczna tylko gdy włączona płatność testowa) */}
+              {enablePaymentTest === "true" && (
+                <div className="flex items-center justify-between space-y-0 rounded-lg border border-primary/20 bg-primary/5 p-4 hover:bg-primary/10 transition-colors">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="autoApproveTestPayment" className="text-base font-semibold flex items-center gap-2">
+                      Automatyczna akceptacja płatności testowych
+                      <span className="text-sm bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+                    </Label>
+                    <p className="text-sm text-muted-foreground max-w-xl">
+                      Włącza/wyłącza automatyczne zatwierdzanie płatności testowej (TEST). Gdy jest wyłączone, zamówienie uzyska status oczekującego (OCZEKUJE) i będzie wymagało zatwierdzenia w panelu admina.
+                    </p>
+                  </div>
+                  <Switch
+                    id="autoApproveTestPayment"
+                    checked={autoApproveTestPayment === "true"}
+                    onCheckedChange={(checked) => setAutoApproveTestPayment(checked ? "true" : "false")}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Ustawienia Krajowego Systemu e-Faktur (KSeF) */}
+          <Card className="border-indigo-500/20 bg-indigo-500/[0.01]">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                    Integracja KSeF 2.0
+                    <span className="text-sm bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">MF Polska</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Konfiguracja automatycznego przesyłania faktur do Krajowego Systemu e-Faktur (KSeF) w standardzie FA(3).
+                  </CardDescription>
+                </div>
+                <Switch
+                  id="ksefEnabled"
+                  checked={ksefEnabled === "true"}
+                  onCheckedChange={(checked) => setKsefEnabled(checked ? "true" : "false")}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {ksefEnabled === "false" && (
+                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/[0.03] p-4 text-sm text-yellow-800 dark:text-yellow-400">
+                  <span className="font-semibold">Tryb Symulacji:</span> System KSeF jest wyłączony. Faktury będą generowane w formacie FA(3) XML lokalnie i automatycznie oznaczane jako przesłane w celach demonstracyjnych i deweloperskich.
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="ksefNip" className="font-semibold text-foreground">NIP Sprzedawcy (Platformy)</Label>
+                  <Input
+                    id="ksefNip"
+                    type="text"
+                    value={ksefNip}
+                    onChange={(e) => setKsefNip(e.target.value)}
+                    placeholder="np. 1234567890"
+                    disabled={ksefEnabled === "false"}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    10-cyfrowy NIP podmiotu wystawiającego faktury (sprzedawcy).
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-semibold text-foreground">Środowisko KSeF 2.0</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={ksefEnv === "test" ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={() => setKsefEnv("test")}
+                      disabled={ksefEnabled === "false"}
+                    >
+                      TEST (Sandbox)
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={ksefEnv === "prod" ? "default" : "outline"}
+                      className="flex-1 text-red-600 hover:text-red-700 dark:text-red-400"
+                      onClick={() => setKsefEnv("prod")}
+                      disabled={ksefEnabled === "false"}
+                    >
+                      PRODUKCJA
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Zalecane testowanie integracji na środowisku testowym (Sandbox MF).
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ksefToken" className="font-semibold text-foreground">Token Autoryzacyjny (Token KSeF)</Label>
+                <Input
+                  id="ksefToken"
+                  type="password"
+                  value={ksefToken}
+                  onChange={(e) => setKsefToken(e.target.value)}
+                  placeholder="Wklej 40-znakowy token autoryzacyjny..."
+                  disabled={ksefEnabled === "false"}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Token wygenerowany w Aplikacji Podatnika KSeF w sekcji &quot;Certyfikaty i Uprawnienia&quot;. Posiadający uprawnienie do wystawiania faktur.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Sticky Actions Bar at the bottom of the page */}
       <div className="sticky bottom-4 left-0 right-0 z-20 bg-background/90 backdrop-blur border border-border p-4 rounded-xl flex justify-between items-center gap-4 shadow-lg mt-6">

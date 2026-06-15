@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { Loader2, MessageCircle, Scale, Send, X } from "lucide-react"
+import { Loader2, Maximize2, MessageCircle, Minimize2, Scale, Send, X } from "lucide-react"
 import React, { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 
@@ -21,6 +21,7 @@ export function ChatAssistant() {
   ])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -88,7 +89,12 @@ export function ChatAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="mb-4 flex h-[520px] w-[360px] flex-col rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 shadow-2xl backdrop-blur-md overflow-hidden sm:w-[400px]"
+            className={cn(
+              "mb-4 flex flex-col rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 shadow-2xl backdrop-blur-md overflow-hidden transition-[width,height] duration-300 ease-in-out",
+              isExpanded
+                ? "h-[calc(100dvh-7rem)] max-h-[760px] w-[calc(100vw-3rem)] sm:w-[600px] md:w-[760px]"
+                : "h-[520px] w-[360px] sm:w-[400px]"
+            )}
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 px-4 py-3">
@@ -102,13 +108,23 @@ export function ChatAssistant() {
                   <span className="text-sm text-neutral-500 dark:text-neutral-400">Model DeepSeek V4 Flash</span>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="rounded-full p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
-                aria-label="Zamknij czat"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-0.5">
+                <button
+                  onClick={() => setIsExpanded((prev) => !prev)}
+                  className="hidden sm:inline-flex rounded-full p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
+                  aria-label={isExpanded ? "Zmniejsz okno czatu" : "Powiększ okno czatu"}
+                  title={isExpanded ? "Zmniejsz okno" : "Powiększ okno"}
+                >
+                  {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-full p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
+                  aria-label="Zamknij czat"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Chat Area */}
