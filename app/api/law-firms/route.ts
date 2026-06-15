@@ -162,7 +162,10 @@ export async function GET(request: NextRequest) {
       where.AND = andConditions
     }
 
-    // Fetch law firms
+    // Fetch law firms. We need the full matching set here so that manual SEARCH-context
+    // order overrides (OrderOverride) can be inserted at their declared positions.
+    // Paginating at the DB level (take/skip) would clip those positions and the overridden
+    // firm would end up beyond the visible page.
     const [lawFirms, total, subscriptionPlans] = await Promise.all([
       prisma.lawFirm.findMany({
         where,
@@ -224,8 +227,6 @@ export async function GET(request: NextRequest) {
                   { zweryfikowana: "desc" },
                   { wyswietleniaProfilu: "desc" },
                 ],
-        take: limit * 2, // Pobierz więcej, aby móc posortować z boostami
-        skip: offset,
       }),
       prisma.lawFirm.count({ where }),
       prisma.subscriptionPlan.findMany({ select: { typ: true, obrazek: true } }),
@@ -399,7 +400,7 @@ export async function GET(request: NextRequest) {
     }
 
     const limitedLawFirms = sortedLawFirms
-      .slice(0, limit) // Apply limit after sorting and overrides
+      .slice(offset, offset + limit) // Paginate after override is applied to the full set
       .map(({ _score, ...firm }: any) => firm) // Remove internal score from response
 
     return NextResponse.json({
@@ -407,7 +408,7 @@ export async function GET(request: NextRequest) {
       total,
       limit,
       offset,
-      hasMore: offset + limit < total,
+      hasMore: offset + limit < sortedLawFirms.length,
     })
   } catch (error) {
     console.error("Error fetching law firms:", error)

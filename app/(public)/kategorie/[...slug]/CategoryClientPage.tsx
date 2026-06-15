@@ -131,7 +131,7 @@ export default function CategoryClientPage() {
   const [minRating, setMinRating] = useState<string | null>(null)
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
-  const [sortBy, setSortBy] = useState("ranking")
+  const [sortBy, setSortBy] = useState("relevance")
   const [isLoading, setIsLoading] = useState(true)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
