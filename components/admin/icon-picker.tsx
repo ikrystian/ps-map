@@ -77,6 +77,17 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
   const [activeCategory, setActiveCategory] = useState<keyof typeof CATEGORIES>("popular")
   const [tempSelected, setTempSelected] = useState<string>(value)
 
+  // Synchronize tempSelected with value when value changes or dialog opens
+  React.useEffect(() => {
+    setTempSelected(value)
+  }, [value, isOpen])
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onChange("")
+    setTempSelected("")
+  }
+
   const allIconNames = useMemo(() => Object.keys(icons), [])
 
   const filteredIcons = useMemo(() => {
@@ -148,29 +159,30 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) handleCancel()
-      else setIsOpen(true)
-    }}>
-      <DialogTrigger asChild>
-        <Button 
-          type="button" 
-          variant="outline" 
-          className="w-full flex items-center justify-between h-10 px-3 bg-background font-normal text-left border border-input rounded-md hover:bg-accent"
-        >
-          <div className="flex items-center">
-            {SelectedIcon || <HelpCircle className="h-5 w-5 mr-2 text-muted-foreground" />}
-            <span className={cn(value ? "text-foreground font-medium" : "text-muted-foreground")}>
-              {value || "Wybierz ikonę z biblioteki..."}
+    <div className="flex items-center gap-2">
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        if (!open) handleCancel()
+        else setIsOpen(true)
+      }}>
+        <DialogTrigger asChild>
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="flex-1 flex items-center justify-between h-10 px-3 bg-background font-normal text-left border border-input rounded-md hover:bg-accent min-w-0"
+          >
+            <div className="flex items-center truncate min-w-0">
+              {SelectedIcon || <HelpCircle className="h-5 w-5 mr-2 text-muted-foreground shrink-0" />}
+              <span className={cn(value ? "text-foreground font-medium" : "text-muted-foreground", "truncate")}>
+                {value || "Wybierz ikonę z biblioteki..."}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground bg-accent/80 px-2 py-0.5 rounded border shrink-0 ml-2">
+              Zmień
             </span>
-          </div>
-          <span className="text-xs text-muted-foreground bg-accent/80 px-2 py-0.5 rounded border">
-            Zmień
-          </span>
-        </Button>
-      </DialogTrigger>
-      
-      <DialogContent className="max-w-2xl w-full max-h-[85vh] flex flex-col p-6 rounded-xl border bg-background shadow-2xl">
+          </Button>
+        </DialogTrigger>
+        
+        <DialogContent className="max-w-2xl w-full max-h-[85vh] flex flex-col p-6 rounded-xl border bg-background shadow-2xl">
         <DialogHeader className="pb-2">
           <DialogTitle className="text-2xl font-bold tracking-tight">
             Wybierz ikonę Lucide
@@ -243,9 +255,20 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Wybrana ikona
               </span>
-              <span className="text-sm font-bold text-foreground truncate max-w-[200px]">
-                {tempSelected || "Brak (Pusta)"}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-foreground truncate max-w-[150px]">
+                  {tempSelected || "Brak (Pusta)"}
+                </span>
+                {tempSelected && (
+                  <button
+                    type="button"
+                    onClick={() => setTempSelected("")}
+                    className="text-xs text-muted-foreground hover:text-destructive transition-colors underline decoration-dotted"
+                  >
+                    wyczyść
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -271,5 +294,18 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+    {value && (
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        onClick={handleClear}
+        className="h-10 w-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
+        title="Wyczyść ikonę"
+      >
+        <X className="h-4 w-4" />
+      </Button>
+    )}
+  </div>
+)
 }

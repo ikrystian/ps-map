@@ -30,10 +30,13 @@ export default function NewCategoryPage() {
   const handleCreateCategory = async (values: CategoryFormValues) => {
     setLoading(true)
     try {
-      // Konwertuj "none" na null przed wysłaniem
+      // Konwertuj "none" na null oraz puste stringi na null przed wysłaniem
       const dataToSend = {
         ...values,
         parentId: values.parentId === "none" ? null : values.parentId,
+        ikona: values.ikona || null,
+        ikonaUrl: values.ikonaUrl || null,
+        backgroundImageUrl: values.backgroundImageUrl || null,
       }
 
       const response = await fetch("/api/categories", {

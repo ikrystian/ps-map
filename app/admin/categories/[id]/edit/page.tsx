@@ -50,10 +50,13 @@ export default function EditCategoryPage({ params }: EditCategoryPageProps) {
   const handleEditCategory = async (values: CategoryFormValues) => {
     setSaving(true)
     try {
-      // Konwertuj "none" na null przed wysłaniem
+      // Konwertuj "none" na null oraz puste stringi na null przed wysłaniem
       const dataToSend = {
         ...values,
         parentId: values.parentId === "none" ? null : values.parentId,
+        ikona: values.ikona || null,
+        ikonaUrl: values.ikonaUrl || null,
+        backgroundImageUrl: values.backgroundImageUrl || null,
       }
 
       const response = await fetch(`/api/categories/${id}`, {
