@@ -37,17 +37,8 @@ export async function GET() {
 
   const permissions = getLawFirmPermissions(permissionData);
 
-  // Pobierz dynamiczny limit powiadomieniaSprawy z planu subskrypcji w bazie danych
-  let powiadomieniaSprawy = 0;
-  if (lawFirm.pakietSubskrypcji) {
-    const plan = await prisma.subscriptionPlan.findUnique({
-      where: { typ: lawFirm.pakietSubskrypcji }
-    });
-    if (plan) {
-      powiadomieniaSprawy = plan.powiadomieniaSprawy;
-    }
-  }
-
+  // Zwracamy wszystkie wczytane pola planu, aby klient (usePermissions) mógł wyliczyć
+  // identyczny zestaw uprawnień — sterowany opcjami/wartościami planu, nie typem pakietu.
   return NextResponse.json({
     id: lawFirm.id,
     pakietSubskrypcji: lawFirm.pakietSubskrypcji,
@@ -55,12 +46,29 @@ export async function GET() {
     dataPakietuDo: lawFirm.dataPakietuDo,
     autoRenewal: lawFirm.autoRenewal,
     defaultMaxCategories,
+    // Limity
+    dostepDoSpraw: lawFirm.dostepDoSpraw,
+    kategorieSpraw: lawFirm.kategorieSpraw,
+    wojewodztwa: lawFirm.wojewodztwa,
+    powiaty: lawFirm.powiaty,
+    miasta: lawFirm.miasta,
+    liczbaTakow: lawFirm.liczbaTakow,
+    // Flagi funkcji
+    priorytetWyszukiwanie: lawFirm.priorytetWyszukiwanie,
     statystykiAnalizy: lawFirm.statystykiAnalizy ?? false,
     mozliwoscBloga: lawFirm.mozliwoscBloga ?? false,
     promowanieProfilu: lawFirm.promowanieProfilu ?? false,
-    artykutySponsoro: lawFirm.artykutySponsoro ?? false,
     coverBaner: lawFirm.coverBaner ?? false,
+    wsparcieMarketingowe: lawFirm.wsparcieMarketingowe,
+    artykutySponsoro: lawFirm.artykutySponsoro ?? false,
+    skillLawFocus: lawFirm.skillLawFocus,
+    // Dodatki
+    osobistyOpiekun: lawFirm.osobistyOpiekun,
+    punktyGratis: lawFirm.punktyGratis,
+    wyswietlanieReklam: lawFirm.wyswietlanieReklam,
+    zalaczniki: lawFirm.zalaczniki,
+    specjalneOznaczenie: lawFirm.specjalneOznaczenie,
     permissions,
-    powiadomieniaSprawy,
+    powiadomieniaSprawy: lawFirm.powiadomieniaSprawy ?? 0,
   });
 }

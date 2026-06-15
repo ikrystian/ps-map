@@ -11,7 +11,37 @@
 // ============================================================================
 
 /**
- * Typ reprezentujący eksperta z minimalnymi danymi do sprawdzania uprawnień
+ * Typ reprezentujący eksperta z danymi do sprawdzania uprawnień.
+ *
+ * Pola z sekcji "PLAN SUBSKRYPCJI" są wczytywane z aktywnego planu w bazie danych
+ * (model SubscriptionPlan). Gdy są zdefiniowane, stanowią ŹRÓDŁO PRAWDY dla uprawnień
+ * i limitów — niezależnie od typu pakietu. Gdy są `undefined` (niezaładowane z bazy),
+ * stosowany jest fallback do mapy PACKAGE_PERMISSIONS na podstawie typu pakietu.
+ *
+ * Mapowanie pól planu na funkcjonalności (PermissionsSet):
+ *   Limity:
+ *     dostepDoSpraw         -> limits.activeCases   (null = nieograniczone)
+ *     kategorieSpraw        -> limits.categories    (null = nieograniczone)
+ *     wojewodztwa           -> limits.voivodeships
+ *     powiaty               -> limits.counties
+ *     miasta                -> limits.cities
+ *     liczbaTakow           -> limits.keywords      (limit słów kluczowych / tagów)
+ *   Funkcje:
+ *     priorytetWyszukiwanie -> features.canAccessPrioritySearch
+ *     statystykiAnalizy     -> features.canAccessStatistics
+ *     mozliwoscBloga        -> features.canAccessBlog
+ *     promowanieProfilu     -> features.canPromoteProfile
+ *     coverBaner            -> features.canUploadCoverBanner
+ *     wsparcieMarketingowe  -> features.canAccessMarketingSupport
+ *     artykutySponsoro      -> features.canSponsorArticles
+ *     skillLawFocus         -> features.skillLawFocus
+ *   Dodatki (extras):
+ *     osobistyOpiekun       -> extras.personalSupport
+ *     powiadomieniaSprawy   -> extras.caseNotifications
+ *     punktyGratis          -> extras.bonusPoints
+ *     wyswietlanieReklam    -> extras.hideAds        (true = reklamy UKRYTE — mimo nazwy)
+ *     zalaczniki            -> extras.allowAttachments
+ *     specjalneOznaczenie   -> extras.specialBadge
  */
 export interface LawFirmPermissionData {
   id: string;
@@ -20,53 +50,59 @@ export interface LawFirmPermissionData {
   dataPakietuDo: Date | null;
   autoRenewal: boolean;
   defaultMaxCategories?: number;
-  // Flaga "statystykiAnalizy" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy zdefiniowana, decyduje o dostępie do statystyk niezależnie od typu pakietu.
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
+
+  // ── PLAN SUBSKRYPCJI: LIMITY (undefined = niezaładowane → fallback do mapy) ──
+  dostepDoSpraw?: number | null;   // null = nieograniczone
+  kategorieSpraw?: number | null;  // null = nieograniczone
+  wojewodztwa?: number;
+  powiaty?: number;
+  miasta?: number;
+  liczbaTakow?: number;
+
+  // ── PLAN SUBSKRYPCJI: FLAGI FUNKCJI (undefined = niezaładowane → fallback) ──
+  priorytetWyszukiwanie?: boolean;
   statystykiAnalizy?: boolean;
-  // Flaga "wyswietlanieReklam" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy true, reklamy są ukrywane dla tego eksperta (perk pakietu).
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
-  wyswietlanieReklam?: boolean;
-  // Flaga "mozliwoscBloga" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy zdefiniowana, decyduje o dostępie do bloga niezależnie od typu pakietu.
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
   mozliwoscBloga?: boolean;
-  // Flaga "promowanieProfilu" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy zdefiniowana, decyduje o promowaniu profilu niezależnie od typu pakietu.
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
   promowanieProfilu?: boolean;
-  // Flaga "artykutySponsoro" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy zdefiniowana, decyduje o artykułach sponsorowanych niezależnie od typu pakietu.
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
-  artykutySponsoro?: boolean;
-  // Flaga "coverBaner" wczytana z aktywnego planu subskrypcji w bazie danych.
-  // Gdy zdefiniowana, decyduje o cover banerze niezależnie od typu pakietu.
-  // undefined = flaga niezaładowana (fallback do mapy PACKAGE_PERMISSIONS).
   coverBaner?: boolean;
+  wsparcieMarketingowe?: boolean;
+  artykutySponsoro?: boolean;
+  skillLawFocus?: boolean;
+
+  // ── PLAN SUBSKRYPCJI: DODATKI (undefined = niezaładowane → fallback) ──
+  osobistyOpiekun?: number;
+  powiadomieniaSprawy?: number;
+  punktyGratis?: number;
+  wyswietlanieReklam?: boolean;    // true = reklamy ukryte dla eksperta
+  zalaczniki?: boolean;
+  specjalneOznaczenie?: string | null;
 }
 
 /**
  * Dostępne funkcje/uprawnienia w systemie
  */
+// Każda funkcja jest sterowana odpowiednią flagą aktywnego planu subskrypcji
+// (patrz mapowanie w LawFirmPermissionData), a nie typem pakietu.
 export type Feature =
-  | 'canAccessBlog'              // Dostęp do bloga (tylko BIZNES)
-  | 'canAccessStatistics'        // Dostęp do zaawansowanych statystyk
-  | 'canPromoteProfile'          // Możliwość promowania profilu
-  | 'canAccessPrioritySearch'    // Priorytet w wyszukiwaniu
-  | 'canUploadCoverBanner'       // Upload cover/banner
-  | 'canAccessMarketingSupport'  // Wsparcie marketingowe
-  | 'canSponsorArticles'         // Artykuły sponsorowane
-  | 'skillLawFocus';             // Specjalna funkcjonalność (tylko BIZNES)
+  | 'canAccessBlog'              // Dostęp do bloga (flaga planu: mozliwoscBloga)
+  | 'canAccessStatistics'        // Zaawansowane statystyki (flaga: statystykiAnalizy)
+  | 'canPromoteProfile'          // Promowanie profilu (flaga: promowanieProfilu)
+  | 'canAccessPrioritySearch'    // Priorytet w wyszukiwaniu (flaga: priorytetWyszukiwanie)
+  | 'canUploadCoverBanner'       // Upload cover/banner (flaga: coverBaner)
+  | 'canAccessMarketingSupport'  // Wsparcie marketingowe (flaga: wsparcieMarketingowe)
+  | 'canSponsorArticles'         // Artykuły sponsorowane (flaga: artykutySponsoro)
+  | 'skillLawFocus';             // Skill Law Focus (flaga: skillLawFocus)
 
 /**
  * Typy limitów
  */
 export type LimitType =
-  | 'activeCases'      // Limit aktywnych spraw
-  | 'categories'       // Limit kategorii
-  | 'voivodeships'     // Limit województw
-  | 'cities';          // Limit miast
+  | 'activeCases'      // Limit aktywnych spraw (plan: dostepDoSpraw)
+  | 'categories'       // Limit kategorii (plan: kategorieSpraw)
+  | 'voivodeships'     // Limit województw (plan: wojewodztwa)
+  | 'counties'         // Limit powiatów (plan: powiaty)
+  | 'cities'           // Limit miast (plan: miasta)
+  | 'keywords';        // Limit słów kluczowych / tagów (plan: liczbaTakow)
 
 /**
  * Wynik sprawdzenia limitu
@@ -104,9 +140,11 @@ export interface PermissionsSet {
   // Limity
   limits: {
     activeCases: number | null;      // null = nieograniczone
-    categories: number | null;
+    categories: number | null;       // null = nieograniczone
     voivodeships: number;
+    counties: number;
     cities: number;
+    keywords: number;                // limit słów kluczowych / tagów
   };
 
   // Dodatkowe parametry
@@ -144,7 +182,9 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
       activeCases: 10,
       categories: 2,
       voivodeships: 1,
+      counties: 3,
       cities: 15,
+      keywords: 3,
     },
     extras: {
       personalSupport: 1,
@@ -171,7 +211,9 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
       activeCases: 20,
       categories: 5,
       voivodeships: 2,
+      counties: 6,
       cities: 15,
+      keywords: 4,
     },
     extras: {
       personalSupport: 2,
@@ -198,7 +240,9 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
       activeCases: null,  // Nieograniczone
       categories: 10,
       voivodeships: 3,
+      counties: 12,
       cities: 25,
+      keywords: 10,
     },
     extras: {
       personalSupport: 2,
@@ -225,7 +269,9 @@ const PACKAGE_PERMISSIONS: Record<string, Omit<PermissionsSet, 'packageName' | '
       activeCases: null,  // Nieograniczone
       categories: null,   // Nieograniczone
       voivodeships: 6,
+      counties: 24,
       cities: 35,
+      keywords: 12,
     },
     extras: {
       personalSupport: 2,
@@ -294,8 +340,63 @@ export function daysUntilExpiry(lawFirm: LawFirmPermissionData): number | null {
   return diffDays;
 }
 
+// ----------------------------------------------------------------------------
+// RESOLVERY: łączą wartości z aktywnego planu (jeśli wczytane z bazy) z wartościami
+// bazowymi pakietu. Wartość planu ma pierwszeństwo; gdy jest `undefined`, stosowany
+// jest fallback do mapy PACKAGE_PERMISSIONS. To sprawia, że uprawnienia zależą od
+// zaznaczonych opcji/uzupełnionych wartości planu, a nie od typu pakietu.
+//
+// UWAGA: dla flag i pól, które mogą mieć znaczącą wartość `false`/`null`/`0`,
+// używamy `?? base` (fallback tylko dla null/undefined). Dla limitów dopuszczających
+// `null` (= nieograniczone) używamy jawnego `!== undefined`, aby nie zgubić `null`.
+// ----------------------------------------------------------------------------
+
+type FeaturesSet = PermissionsSet['features'];
+type LimitsSet = PermissionsSet['limits'];
+type ExtrasSet = PermissionsSet['extras'];
+
+function resolveFeatures(base: FeaturesSet, d: LawFirmPermissionData): FeaturesSet {
+  return {
+    canAccessBlog: d.mozliwoscBloga ?? base.canAccessBlog,
+    canAccessStatistics: d.statystykiAnalizy ?? base.canAccessStatistics,
+    canPromoteProfile: d.promowanieProfilu ?? base.canPromoteProfile,
+    canAccessPrioritySearch: d.priorytetWyszukiwanie ?? base.canAccessPrioritySearch,
+    canUploadCoverBanner: d.coverBaner ?? base.canUploadCoverBanner,
+    canAccessMarketingSupport: d.wsparcieMarketingowe ?? base.canAccessMarketingSupport,
+    canSponsorArticles: d.artykutySponsoro ?? base.canSponsorArticles,
+    skillLawFocus: d.skillLawFocus ?? base.skillLawFocus,
+  };
+}
+
+function resolveLimits(base: LimitsSet, d: LawFirmPermissionData): LimitsSet {
+  return {
+    activeCases: d.dostepDoSpraw !== undefined ? d.dostepDoSpraw : base.activeCases,
+    categories: d.kategorieSpraw !== undefined ? d.kategorieSpraw : base.categories,
+    voivodeships: d.wojewodztwa ?? base.voivodeships,
+    counties: d.powiaty ?? base.counties,
+    cities: d.miasta ?? base.cities,
+    keywords: d.liczbaTakow ?? base.keywords,
+  };
+}
+
+function resolveExtras(base: ExtrasSet, d: LawFirmPermissionData): ExtrasSet {
+  return {
+    personalSupport: d.osobistyOpiekun ?? base.personalSupport,
+    caseNotifications: d.powiadomieniaSprawy ?? base.caseNotifications,
+    bonusPoints: d.punktyGratis ?? base.bonusPoints,
+    // wyswietlanieReklam = true oznacza UKRYTE reklamy (mimo nazwy).
+    hideAds: d.wyswietlanieReklam ?? base.hideAds,
+    allowAttachments: d.zalaczniki ?? base.allowAttachments,
+    specialBadge: d.specjalneOznaczenie !== undefined ? d.specjalneOznaczenie : base.specialBadge,
+  };
+}
+
 /**
- * Pobiera pełny zestaw uprawnień dla ekspertów
+ * Pobiera pełny zestaw uprawnień dla ekspertów.
+ *
+ * Uprawnienia, limity i dodatki są wyliczane z opcji/wartości aktywnego planu
+ * subskrypcji (jeśli wczytane z bazy danych). Typ pakietu służy wyłącznie jako
+ * fallback (mapa PACKAGE_PERMISSIONS), gdy konkretna opcja planu nie jest dostępna.
  */
 export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): PermissionsSet {
   const active = hasActivePackage(lawFirm);
@@ -324,7 +425,9 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
         activeCases: 0,
         categories: defaultCategories,
         voivodeships: 0,
+        counties: 0,
         cities: 0,
+        keywords: 0,
       },
       extras: {
         personalSupport: 0,
@@ -337,33 +440,9 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
     };
   }
 
-  const packageConfig = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
-
-  // Część uprawnień wynika z flag aktywnego planu wczytanych z bazy danych
-  // (jeśli dostępne), zamiast ze sztywnej mapy uprawnień pakietu.
-  const features = { ...packageConfig.features };
-  if (lawFirm.statystykiAnalizy !== undefined) {
-    features.canAccessStatistics = lawFirm.statystykiAnalizy;
-  }
-  if (lawFirm.mozliwoscBloga !== undefined) {
-    features.canAccessBlog = lawFirm.mozliwoscBloga;
-  }
-  if (lawFirm.promowanieProfilu !== undefined) {
-    features.canPromoteProfile = lawFirm.promowanieProfilu;
-  }
-  if (lawFirm.artykutySponsoro !== undefined) {
-    features.canSponsorArticles = lawFirm.artykutySponsoro;
-  }
-  if (lawFirm.coverBaner !== undefined) {
-    features.canUploadCoverBanner = lawFirm.coverBaner;
-  }
-
-  // Ukrywanie reklam wynika z flagi "wyswietlanieReklam" aktywnego planu
-  // (jeśli wczytana z bazy): true = reklamy ukryte dla eksperta.
-  const extras =
-    lawFirm.wyswietlanieReklam !== undefined
-      ? { ...packageConfig.extras, hideAds: lawFirm.wyswietlanieReklam }
-      : packageConfig.extras;
+  // Wartości bazowe z mapy pakietu pełnią rolę fallbacku dla opcji planu, które nie
+  // zostały wczytane z bazy. Gdy opcja planu jest wczytana, decyduje ona (nie typ pakietu).
+  const base = PACKAGE_PERMISSIONS[lawFirm.pakietSubskrypcji];
 
   return {
     packageName: lawFirm.pakietSubskrypcji,
@@ -371,9 +450,9 @@ export function getLawFirmPermissions(lawFirm: LawFirmPermissionData): Permissio
     packageExpired: expired,
     expiryDate: lawFirm.dataPakietuDo,
     autoRenewal: lawFirm.autoRenewal,
-    ...packageConfig,
-    features,
-    extras,
+    features: resolveFeatures(base.features, lawFirm),
+    limits: resolveLimits(base.limits, lawFirm),
+    extras: resolveExtras(base.extras, lawFirm),
   };
 }
 
@@ -506,7 +585,9 @@ export function getLimitDisplayName(limitType: LimitType): string {
     activeCases: 'Aktywne sprawy',
     categories: 'Kategorie prawne',
     voivodeships: 'Województwa',
+    counties: 'Powiaty',
     cities: 'Miasta',
+    keywords: 'Słowa kluczowe',
   };
 
   return names[limitType];

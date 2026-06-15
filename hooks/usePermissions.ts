@@ -13,6 +13,7 @@ import {
   daysUntilExpiry,
   getLawFirmPermissions,
   getPackageDisplayName,
+  getRequiredPackageForFeature,
   isPackageExpired,
   type Feature,
   type LawFirmPermissionData,
@@ -122,12 +123,29 @@ export function usePermissions(): UsePermissionsReturn {
         dataPakietuDo: data.dataPakietuDo ? new Date(data.dataPakietuDo) : null,
         autoRenewal: data.autoRenewal || false,
         defaultMaxCategories: data.defaultMaxCategories,
+        // Limity planu
+        dostepDoSpraw: data.dostepDoSpraw,
+        kategorieSpraw: data.kategorieSpraw,
+        wojewodztwa: data.wojewodztwa,
+        powiaty: data.powiaty,
+        miasta: data.miasta,
+        liczbaTakow: data.liczbaTakow,
+        // Flagi funkcji planu
+        priorytetWyszukiwanie: data.priorytetWyszukiwanie,
         statystykiAnalizy: data.statystykiAnalizy,
         mozliwoscBloga: data.mozliwoscBloga,
         promowanieProfilu: data.promowanieProfilu,
-        artykutySponsoro: data.artykutySponsoro,
         coverBaner: data.coverBaner,
+        wsparcieMarketingowe: data.wsparcieMarketingowe,
+        artykutySponsoro: data.artykutySponsoro,
+        skillLawFocus: data.skillLawFocus,
+        // Dodatki planu
+        osobistyOpiekun: data.osobistyOpiekun,
         powiadomieniaSprawy: data.powiadomieniaSprawy || 0,
+        punktyGratis: data.punktyGratis,
+        wyswietlanieReklam: data.wyswietlanieReklam,
+        zalaczniki: data.zalaczniki,
+        specjalneOznaczenie: data.specjalneOznaczenie,
       });
     } catch (err) {
       console.error("Error fetching law firm permissions:", err);
@@ -226,20 +244,10 @@ export function useFeatureAccess(feature: Feature) {
 
   const hasAccess = hasFeature(feature);
 
-  // Znajdź wymagane pakiety dla tej funkcji
+  // Znajdź wymagane pakiety dla tej funkcji (na podstawie mapy uprawnień pakietów).
   const requiredPackages = useMemo(() => {
     if (hasAccess) return [];
-
-    // Sprawdź które pakiety mają tę funkcję
-    const packages: string[] = [];
-    if (feature === "canAccessBlog") packages.push("BIZNES");
-    if (feature === "canAccessStatistics") packages.push("PREMIUM", "BIZNES");
-    if (feature === "canPromoteProfile") packages.push("PREMIUM", "BIZNES");
-    if (feature === "canUploadCoverBanner") packages.push("PREMIUM", "BIZNES");
-    if (feature === "canAccessMarketingSupport") packages.push("PREMIUM", "BIZNES");
-    if (feature === "skillLawFocus") packages.push("BIZNES");
-
-    return packages;
+    return getRequiredPackageForFeature(feature);
   }, [hasAccess, feature]);
 
   return {

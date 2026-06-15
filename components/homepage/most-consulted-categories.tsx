@@ -227,7 +227,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
         </div>
 
         {/* 6 Category Tabs Grid / Scrollable Row */}
-        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 md:mb-12 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
+        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 md:mb-12 max-w-6xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
           {activeTabs.map((tab, idx) => {
             const isActive = activeIdx === idx
             return (
@@ -245,7 +245,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms }:
                     }`
                   )}
                 </div>
-                <span className="text-sm font-bold tracking-wider leading-tight">
+                <span className="text-sm font-light tracking-wider leading-tight">
                   {tab.title}
                 </span>
               </button>

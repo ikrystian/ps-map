@@ -302,6 +302,7 @@ export default function PublicHeader({
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const params = new URLSearchParams()
+    if (searchQuery.trim()) params.set("search", searchQuery.trim())
     if (selectedExpertiseCategoryId) params.set("expertiseCategoryId", selectedExpertiseCategoryId)
     if (selectedType && selectedType !== "all") params.set("type", selectedType)
 
@@ -323,14 +324,14 @@ export default function PublicHeader({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="block md:hidden" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
+            <Image className="hidden lg:block min-w-[150px]" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
             <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
           </Link>
 
           {/* Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList className="flex gap-6 lg:gap-6">
+            <NavigationMenuList className="flex lg:gap-2">
               {/* Szukaj / Zamknij Animated Button */}
               <NavigationMenuItem>
                 <AnimatePresence mode="wait">
@@ -344,11 +345,11 @@ export default function PublicHeader({
                       onClick={() => setSearchFormOpen(true)}
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "flex items-center justify-center gap-2 bg-transparent hover:bg-[#121212] transition-colors w-[108px]"
+                        "flex items-center justify-center gap-2 bg-transparent hover:bg-[#121212] transition-colors lg:w-[108px]"
                       )}
                     >
                       <Search className="h-4 w-4 text-neutral-400" />
-                      <span>Szukaj</span>
+                      <span className="hidden min-[1200px] lg:block">Szukaj</span>
                     </motion.button>
                   ) : (
                     <motion.button
@@ -520,14 +521,14 @@ export default function PublicHeader({
 
 
               {/* Blog - Mega Menu */}
-              <NavigationMenuItem>
+              <NavigationMenuItem >
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-[#121212]",
+                    "bg-transparent hover:bg-[#121212] hidden lg:flex",
                     isBlogActive && "text-primary font-semibold"
                   )}
                 >
-                  Aktualności
+                  Blog
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[700px] xl:w-[1000px] p-6 bg-[#212121] text-white">
@@ -770,7 +771,7 @@ export default function PublicHeader({
               />
             ) : (
               <div className="hidden md:flex items-center gap-4">
-                <Link href="/panel-klienta/dodaj-sprawe">
+                <Link href="/panel-klienta/dodaj-sprawe" className="hidden lg:flex">
                   <Button variant="outline">Dodaj sprawę</Button>
                 </Link>
                 <Link href="/logowanie">
@@ -1041,6 +1042,27 @@ export default function PublicHeader({
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-white overflow-hidden">
 
               <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-3">
+                {/* Field 0: Fraza wyszukiwania */}
+                <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors w-full md:w-64">
+                  <Search className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Wpisz frazę..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-neutral-300 focus:ring-0"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="hover:text-red-400 text-neutral-400 p-0.5"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+
                 {/* Field 1: Kogo szukasz? */}
                 <Popover open={expertiseOpen} onOpenChange={setExpertiseOpen}>
                   <PopoverTrigger asChild>

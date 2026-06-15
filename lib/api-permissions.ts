@@ -123,12 +123,29 @@ async function attachPlanFeatures<T extends LawFirmPermissionData>(
   const plan = await prisma.subscriptionPlan.findUnique({
     where: { typ: lawFirm.pakietSubskrypcji },
     select: {
+      // Limity
+      dostepDoSpraw: true,
+      kategorieSpraw: true,
+      wojewodztwa: true,
+      powiaty: true,
+      miasta: true,
+      liczbaTakow: true,
+      // Flagi funkcji
+      priorytetWyszukiwanie: true,
       statystykiAnalizy: true,
-      wyswietlanieReklam: true,
       mozliwoscBloga: true,
       promowanieProfilu: true,
-      artykutySponsoro: true,
       coverBaner: true,
+      wsparcieMarketingowe: true,
+      artykutySponsoro: true,
+      skillLawFocus: true,
+      // Dodatki
+      osobistyOpiekun: true,
+      powiadomieniaSprawy: true,
+      punktyGratis: true,
+      wyswietlanieReklam: true,
+      zalaczniki: true,
+      specjalneOznaczenie: true,
     },
   });
 
@@ -136,14 +153,11 @@ async function attachPlanFeatures<T extends LawFirmPermissionData>(
     return lawFirm;
   }
 
+  // Rozkładamy wszystkie pola planu na LawFirmPermissionData, dzięki czemu uprawnienia
+  // i limity wynikają z opcji/wartości planu, a nie ze sztywnego typu pakietu.
   return {
     ...lawFirm,
-    statystykiAnalizy: plan.statystykiAnalizy,
-    wyswietlanieReklam: plan.wyswietlanieReklam,
-    mozliwoscBloga: plan.mozliwoscBloga,
-    promowanieProfilu: plan.promowanieProfilu,
-    artykutySponsoro: plan.artykutySponsoro,
-    coverBaner: plan.coverBaner,
+    ...plan,
   };
 }
 
