@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Category } from "@/types/categories"
 
 interface Settings {
   favicon?: {
@@ -153,6 +155,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  homepageConsultedCategories?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -193,6 +199,10 @@ export default function AdminSettingsPage() {
   const [emailServerUser, setEmailServerUser] = useState("")
   const [emailServerPassword, setEmailServerPassword] = useState("")
   const [emailFrom, setEmailFrom] = useState("")
+
+  // Homepage Categories
+  const [homepageConsultedCategories, setHomepageConsultedCategories] = useState<string[]>([])
+  const [availableCategories, setAvailableCategories] = useState<Category[]>([])
 
   // Favicon i Open Graph (SEO)
   const [favicon, setFavicon] = useState("/favicon.png")
@@ -250,6 +260,20 @@ export default function AdminSettingsPage() {
         setEmailServerUser(data.emailServerUser?.value || "")
         setEmailServerPassword(data.emailServerPassword?.value || "")
         setEmailFrom(data.emailFrom?.value || "")
+
+        try {
+          const parsed = JSON.parse(data.homepageConsultedCategories?.value || "[]")
+          setHomepageConsultedCategories(Array.isArray(parsed) ? parsed : [])
+        } catch {
+          setHomepageConsultedCategories([])
+        }
+
+        // Pobierz kategorie
+        const catRes = await fetch("/api/categories")
+        if (catRes.ok) {
+          const cats = await catRes.json()
+          setAvailableCategories(cats.filter((c: Category) => c.aktywna && c.typ === "SPRAWY_PRYWATNE"))
+        }
       }
     } catch (error) {
       console.error("Error fetching settings:", error)
@@ -473,6 +497,10 @@ export default function AdminSettingsPage() {
               value: emailFrom,
               description: "Adres email nadawcy",
             },
+            homepageConsultedCategories: {
+              value: JSON.stringify(homepageConsultedCategories),
+              description: "Lista ID kategorii wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
+            },
           },
         }),
       })
@@ -668,6 +696,45 @@ export default function AdminSettingsPage() {
               {geographicHierarchy === "counties" && "Powiaty"}
               {geographicHierarchy === "cities" && "Miasta"}
             </span>. Zmiana wpływa na formularze i wyniki wyszukiwania ekspertów według lokalizacji.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Kategorie strony głównej */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Najczęściej konsultowane kategorie</CardTitle>
+          <CardDescription>
+            Wybierz kategorie, które mają być wyświetlane w sekcji "Najczęściej konsultowane" na stronie głównej.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {availableCategories.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Ładowanie kategorii...</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {availableCategories.map((cat) => (
+                <div key={cat.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`cat-${cat.id}`}
+                    checked={homepageConsultedCategories.includes(cat.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setHomepageConsultedCategories([...homepageConsultedCategories, cat.id])
+                      } else {
+                        setHomepageConsultedCategories(homepageConsultedCategories.filter((id) => id !== cat.id))
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`cat-${cat.id}`} className="font-normal cursor-pointer">
+                    {cat.nazwa}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground mt-2">
+            Zaleca się wybranie od 4 do 6 kategorii. Zaznaczone kategorie zostaną użyte jako zakładki na stronie głównej.
           </p>
         </CardContent>
       </Card>

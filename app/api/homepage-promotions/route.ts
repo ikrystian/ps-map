@@ -81,6 +81,19 @@ export async function GET(request: NextRequest) {
           },
         })
 
+        // 4. Pobierz ustawienia wyświetlanych kategorii (z tabeli Settings)
+        const categoriesSetting = await prisma.settings.findUnique({
+          where: { key: "homepageConsultedCategories" },
+        })
+        let homepageConsultedCategoryIds: string[] = []
+        try {
+          if (categoriesSetting?.value) {
+            homepageConsultedCategoryIds = JSON.parse(categoriesSetting.value)
+          }
+        } catch {
+          // fallback
+        }
+
         const recommendedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_RECOMMENDED")
         const consultedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_CONSULTED")
 
@@ -170,6 +183,7 @@ export async function GET(request: NextRequest) {
         return {
           recommended: recommendedByCat,
           consulted: consultedByCat,
+          consultedCategoryIds: homepageConsultedCategoryIds,
         }
       },
       300 // Cache homepage promotions for 5 minutes

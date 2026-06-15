@@ -51,6 +51,12 @@ export async function GET(request: NextRequest) {
         description: "Adres URL lub ścieżka do domyślnego obrazka Open Graph (zalecane 1200x630)",
       }
     }
+    if (!settingsObject.homepageConsultedCategories) {
+      settingsObject.homepageConsultedCategories = {
+        value: "[]",
+        description: "Lista ID kategorii (Category) wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
+      }
+    }
     if (!settingsObject.maxLawFirmCategories) {
       settingsObject.maxLawFirmCategories = {
         value: "10",

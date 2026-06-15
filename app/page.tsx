@@ -33,6 +33,7 @@ export default function HomePage() {
   const [homepagePromotions, setHomepagePromotions] = useState<{
     recommended: Record<string, LawFirm[]>
     consulted: Record<string, LawFirm[]>
+    consultedCategoryIds?: string[]
   } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -118,7 +119,7 @@ export default function HomePage() {
       <RecommendedLawyers recommendedData={homepagePromotions?.recommended} lawFirms={lawFirms} />
 
       {/* SECTION 6: Most Consulted Categories */}
-      <MostConsultedCategories consultedData={homepagePromotions?.consulted} categories={categories} lawFirms={lawFirms} />
+      <MostConsultedCategories consultedData={homepagePromotions?.consulted} consultedCategoryIds={homepagePromotions?.consultedCategoryIds} categories={categories} lawFirms={lawFirms} />
 
       {/* SECTION 7: Expert CTA with Background */}
       <ExpertCTA />
