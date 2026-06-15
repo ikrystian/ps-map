@@ -288,7 +288,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     ? "Adwokat"
     : lawFirm.oirpStatus
       ? "Radca prawny"
-      : lawFirm.categories[0]?.nazwa || "Adwokat";
+      : lawFirm.expertiseCategory?.nazwa || lawFirm.categories[0]?.nazwa || "Adwokat";
   const chamberText =
     lawFirm.oraStatus && lawFirm.oraMiasto
       ? `ORA ${lawFirm.oraMiasto}`

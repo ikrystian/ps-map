@@ -201,6 +201,12 @@ export async function GET(request: NextRequest) {
               ocenaOgolna: true,
             },
           },
+          expertiseCategory: {
+            select: {
+              id: true,
+              nazwa: true,
+            },
+          },
         },
         orderBy:
           sortBy === "ranking"
@@ -319,6 +325,7 @@ export async function GET(request: NextRequest) {
           callaPolska: firm.callaPolska,
           onlineOnly: firm.onlineOnly,
           categories: firm.categories.map((c: any) => c.category),
+          expertiseCategory: firm.expertiseCategory || null,
           avgRating: parseFloat(avgRating.toFixed(1)),
           reviewCount: firm.reviews.length,
           wyswietleniaProfilu: firm.wyswietleniaProfilu,

@@ -78,7 +78,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {experts.map((firm, index) => {
-                const profession = firm.categories?.[0]?.nazwa || "Prawnik"
+                const profession = firm.expertiseCategory?.nazwa || firm.categories?.[0]?.nazwa || ""
                 const voivodeship = firm.voivodeship?.nazwa;
 
                 return (

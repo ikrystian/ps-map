@@ -20,6 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
         categories: { include: { category: true } },
         reviews: { include: { client: { include: { user: true } } } },
         consultationAvailabilities: true,
+        expertiseCategory: { select: { id: true, nazwa: true } },
       },
     })
 

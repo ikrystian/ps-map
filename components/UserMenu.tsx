@@ -19,15 +19,12 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
-  Moon,
   Receipt,
   Settings,
-  Sun,
   User,
   Users,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
-import { useTheme } from "next-themes"
 import Link from "next/link"
 
 interface UserMenuProps {
@@ -51,18 +48,12 @@ export default function UserMenu({
   subscriptionType,
   showPoints = true,
 }: UserMenuProps) {
-  const { theme, setTheme } = useTheme()
-
   // Get subscription border color
   const borderColor = getSubscriptionBorderColor(subscriptionType)
 
   const handleLogout = async () => {
     await clearAppCacheAndStorage()
     await signOut({ callbackUrl: "/wylogowano" })
-  }
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
   }
 
   // Get initials for avatar fallback
@@ -283,22 +274,6 @@ export default function UserMenu({
           <DropdownMenuSeparator />
 
           <div className="py-1">
-            <DropdownMenuItem
-              onClick={toggleTheme}
-              className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-2"
-            >
-              {theme === "dark" ? (
-                <>
-                  <Sun className="h-4 w-4" />
-                  Jasny motyw
-                </>
-              ) : (
-                <>
-                  <Moon className="h-4 w-4" />
-                  Ciemny motyw
-                </>
-              )}
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleLogout}
               className="px-4 py-2.5 text-sm cursor-pointer"
