@@ -1,21 +1,8 @@
 import { PrismaClient, PromotionType } from '@prisma/client'
 
-const RECOMMENDED_CATEGORIES = [
-  "Adwokat",
-  "Aplikant",
-  "BHP i PPOŻ",
-  "Doradca finansowy",
-  "Doradca podatkowy"
-]
+const RECOMMENDED_CATEGORIES: string | any[] = []
 
-const CONSULTED_CATEGORIES = [
-  "alimenty-i-rozwody",
-  "dlugi-windykacja-egzekucje",
-  "dziedziczenie-spadki-testamenty",
-  "pozyczki-i-kredyty",
-  "zatrudnienie-i-umowy",
-  "dotacje-unijne"
-]
+const CONSULTED_CATEGORIES: string | any[] = []
 
 const FIRMS_PER_RECOMMENDED_CATEGORY = 6
 const FIRMS_PER_CONSULTED_CATEGORY = 5
@@ -24,7 +11,7 @@ const shuffle = <T>(arr: T[]): T[] => {
   const copy = [...arr]
   for (let i = copy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+      ;[copy[i], copy[j]] = [copy[j], copy[i]]
   }
   return copy
 }

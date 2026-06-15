@@ -7,16 +7,7 @@ const TARGET_CATEGORIES = 50
 
 // Dodatkowe, tematyczne kategorie bloga (uzupełniają te z pliku JSON do TARGET_CATEGORIES)
 const EXTRA_CATEGORY_NAMES = [
-  'Prawo Pracy', 'Prawo Karne', 'Prawo Cywilne', 'Prawo Administracyjne', 'Prawo Podatkowe',
-  'Prawo Nieruchomości', 'Prawo Konsumenckie', 'Prawo Spółek', 'Prawo Upadłościowe', 'Prawo Bankowe',
-  'Prawo Ubezpieczeniowe', 'Prawo Medyczne', 'Prawo Autorskie', 'Własność Intelektualna', 'Prawo Internetu',
-  'Ochrona Danych Osobowych', 'Prawo Zamówień Publicznych', 'Prawo Budowlane', 'Prawo Transportowe', 'Prawo Morskie',
-  'Prawo Energetyczne', 'Prawo Ochrony Środowiska', 'Prawo Rolne', 'Prawo Sportowe', 'Prawo Migracyjne',
-  'Odszkodowania', 'Windykacja Należności', 'Mediacje i Arbitraż', 'Postępowanie Egzekucyjne', 'Prawo Wekslowe',
-  'Prawo Spadkowe', 'Rozwody i Separacje', 'Alimenty', 'Kontakty z Dziećmi', 'Podział Majątku',
-  'Umowy Handlowe', 'Restrukturyzacja Firm', 'Prawo Telekomunikacyjne', 'Prawo Lotnicze', 'Prawo Górnicze',
-  'Compliance', 'RODO w Praktyce', 'Prawo Pracy Zdalnej', 'Sygnaliści', 'Kryptowaluty i Prawo',
-  'Sztuczna Inteligencja i Prawo', 'Prawo Reklamy', 'E-commerce', 'Prawo Fundacji i Stowarzyszeń', 'Prawo Wyborcze',
+  'Prawo Pracy', 'Prawo Karne', 'Prawo Cywilne', 'Prawo Administracyjne', 'Prawo Podatkowe'
 ]
 
 export async function seedBlogCategories(prisma: PrismaClient) {

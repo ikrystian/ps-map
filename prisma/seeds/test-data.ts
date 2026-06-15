@@ -3,7 +3,7 @@ import { ClientType, PrismaClient, UserRole } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { createRandomClientB2B, createRandomClientUserContact, createRandomLawFirm, createRandomLawFirmUserContact, createRandomUser } from './generators';
 
-const USERS_TO_CREATE = 80;
+const USERS_TO_CREATE = 12;
 
 export async function seedTestData(prisma: PrismaClient) {
   console.log(`Seeding ${USERS_TO_CREATE} test users (law firms and clients)...`);

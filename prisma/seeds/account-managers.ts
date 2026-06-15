@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { createRandomAccountManager } from './generators'
 
-const MANAGERS_TO_CREATE = 5
+const MANAGERS_TO_CREATE = 2
 
 export async function seedAccountManagers(prisma: PrismaClient) {
   console.log(`Seeding ${MANAGERS_TO_CREATE} account managers...`)

@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 import { PrismaClient, UserRole } from '@prisma/client'
 import { createRandomReview, createRandomUser } from './generators'
 
-const REVIEWS_TO_CREATE = 150
+const REVIEWS_TO_CREATE = 15
 
 export async function seedReviews(prisma: PrismaClient) {
   console.log(`Seeding ${REVIEWS_TO_CREATE} test reviews...`)

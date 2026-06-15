@@ -208,7 +208,7 @@ async function createChunkResilient(
   model: { createMany: (args: { data: any[] }) => Promise<unknown> },
   chunk: any[],
 ) {
-  const maxAttempts = 6
+  const maxAttempts = 10
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       await model.createMany({ data: chunk })
@@ -217,9 +217,14 @@ async function createChunkResilient(
       const code = e?.code
       const msg = String(e?.message ?? '')
       if (code === 'P2002') return
-      const transient = code === 'P2028' || code === 'P2003' || /Transaction (already closed|not found)|rollback|timeout|database is locked/i.test(msg)
+      const transient =
+        code === 'P1008' ||
+        code === 'P2028' ||
+        code === 'P2003' ||
+        /Transaction (already closed|not found)|rollback|timeout|database is locked/i.test(msg)
+
       if (transient && attempt < maxAttempts) {
-        await new Promise((r) => setTimeout(r, 150 * attempt))
+        await new Promise((r) => setTimeout(r, 200 * attempt))
         continue
       }
       throw e
@@ -237,6 +242,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // utrzymuje RSS w rozsądnych granicach na maszynach z ograniczonym RAM-em.
   try {
     await prisma.$executeRawUnsafe('PRAGMA journal_mode = WAL')
+    await prisma.$executeRawUnsafe('PRAGMA busy_timeout = 60000')      // poczekaj do 60s jeśli baza zablokowana
     await prisma.$executeRawUnsafe('PRAGMA cache_size = -2000')        // ~2MB cache stron
     await prisma.$executeRawUnsafe('PRAGMA mmap_size = 0')              // wyłącz mmap (zmniejsza RSS)
     await prisma.$executeRawUnsafe('PRAGMA wal_autocheckpoint = 1000')  // ~4MB między checkpointami
@@ -745,25 +751,25 @@ export async function seedRelationalData(prisma: PrismaClient) {
   }
   await streamArray('Województwa kancelarii', prisma.lawFirmVoivodeship, lawFirmVoiv, 4, 4000); lawFirmVoiv = []
   await streamArray('Miasta kancelarii', prisma.lawFirmCity, lawFirmCity, 4, 4000); lawFirmCity = []
-  await streamArray('Kategorie kancelarii', prisma.lawFirmCategory, lawFirmCategory, 5, 4000); lawFirmCategory = []
-  await streamArray('Usługi', prisma.service, services, 9, 3000); services = []
-  await streamArray('Certyfikaty', prisma.certificate, certificates, 10, 3000); certificates = []
-  await streamArray('Dostępność konsultacji', prisma.consultationAvailability, consultAvail, 8, 3000); consultAvail = []
-  await streamArray('Sprawy', prisma.case, cases, 28, 1000)
-  await streamArray('Oferty', prisma.offer, offers, 18, 1500)
-  await streamArray('Negocjacje', prisma.negotiation, negotiations, 6, 3000); negotiations = []
-  await streamArray('Zamówienia', prisma.order, orders, 20, 1500); orders = []
-  await streamArray('Faktury', prisma.invoice, invoices, 22, 1500); invoices = []
-  await streamArray('Transakcje punktowe', prisma.pointTransaction, pointTransactions, 7, 3000); pointTransactions = []
-  await streamArray('Statystyki miesięczne', prisma.lawFirmStats, lawFirmStats, 11, 3000); lawFirmStats = []
-  await streamArray('Statystyki wg kategorii', prisma.lawFirmCategoryStats, lawFirmCategoryStats, 7, 3000); lawFirmCategoryStats = []
+  await streamArray('Kategorie kancelarii', prisma.lawFirmCategory, lawFirmCategory, 6, 2000); lawFirmCategory = []
+  await streamArray('Usługi', prisma.service, services, 9, 2000); services = []
+  await streamArray('Certyfikaty', prisma.certificate, certificates, 10, 2000); certificates = []
+  await streamArray('Dostępność konsultacji', prisma.consultationAvailability, consultAvail, 8, 2000); consultAvail = []
+  await streamArray('Sprawy', prisma.case, cases, 28, 800)
+  await streamArray('Oferty', prisma.offer, offers, 18, 1000)
+  await streamArray('Negocjacje', prisma.negotiation, negotiations, 6, 2000); negotiations = []
+  await streamArray('Zamówienia', prisma.order, orders, 20, 1000); orders = []
+  await streamArray('Faktury', prisma.invoice, invoices, 22, 1000); invoices = []
+  await streamArray('Transakcje punktowe', prisma.pointTransaction, pointTransactions, 7, 2000); pointTransactions = []
+  await streamArray('Statystyki miesięczne', prisma.lawFirmStats, lawFirmStats, 11, 2000); lawFirmStats = []
+  await streamArray('Statystyki wg kategorii', prisma.lawFirmCategoryStats, lawFirmCategoryStats, 7, 2000); lawFirmCategoryStats = []
 
   // ==========================================================================
   // 7. KONSULTACJE (umówienia klient–ekspert) — duży wolumen, chunked streaming
   // ==========================================================================
   type Engagement = { clientId: string; firmId: string; firmUserId: string; clientUserId: string; when: Date }
   const engagements: Engagement[] = wonPairs.map((w) => ({ clientId: w.clientId, firmId: w.firmId, firmUserId: w.firmUserId, clientUserId: w.clientUserId, when: w.acceptedAt }))
-  const bookingsInserter = makeInserter('Rezerwacje konsultacji', prisma.consultationBooking, 13, 2000)
+  const bookingsInserter = makeInserter('Rezerwacje konsultacji', prisma.consultationBooking, 13, 1000)
   for (let i = 0; i < TARGET_CONSULTATIONS; i++) {
     const client = pick(clientRows)
     const firm = pick(firmRows)
@@ -793,7 +799,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   await notifInsert.pushMany(offerNotifications)
   offerNotifications = []
 
-  const reviewsInserter = makeInserter('Opinie', prisma.review, 18, 2000)
+  const reviewsInserter = makeInserter('Opinie', prisma.review, 18, 1000)
   for (let i = 0; i < reviewEngagementsLimit; i++) {
     const e = engagements[i]
     const firm = firmById.get(e.firmId)!
@@ -809,7 +815,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // ==========================================================================
   // 10. ULUBIONE KANCELARIE (chunked)
   // ==========================================================================
-  const favoritesInserter = makeInserter('Ulubione kancelarie', prisma.favoriteLawFirm, 4, 3000)
+  const favoritesInserter = makeInserter('Ulubione kancelarie', prisma.favoriteLawFirm, 4, 1500)
   const favSet = new Set<string>()
   for (const client of clientRows) {
     for (const firm of faker.helpers.arrayElements(firmRows, randInt(0, 4))) {
