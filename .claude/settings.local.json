@@ -12,7 +12,9 @@
       "Bash(echo \"=== total errors: $\\(npx tsc --noEmit -p tsconfig.json 2>&1)",
       "Bash(grep -nE \"label:|title:|name:|>[A-ZŻŹĆĄŚĘŁÓŃ][a-ząćęłńóśźż ]{2,40}<\" components/PublicHeader.tsx)",
       "Bash(sed -n '140,160p;295,310p' app/api/law-firms/[id]/route.ts)",
-      "Bash(echo \"=== total error lines: $\\(npx tsc --noEmit 2>&1)"
+      "Bash(echo \"=== total error lines: $\\(npx tsc --noEmit 2>&1)",
+      "Bash(curl -s --max-time 30 https://openrouter.ai/api/v1/models)",
+      "Bash(timeout 90 bun run /tmp/test-experts.ts)"
     ]
   }
 }

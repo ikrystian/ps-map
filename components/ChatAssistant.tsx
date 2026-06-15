@@ -99,7 +99,7 @@ export function ChatAssistant() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 leading-none">Asystent Prosta Sprawa</h3>
-                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Model Gemini 2.5 Flash-lite</span>
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Model DeepSeek V4 Flash</span>
                 </div>
               </div>
               <button
