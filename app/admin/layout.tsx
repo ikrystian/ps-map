@@ -118,7 +118,7 @@ export default function AdminLayout({
                 {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               </Button>
               {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
-                <Image className="hidden md:block" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+                <Image className="hidden md:block" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
                 <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
               </Link>}
             </div>

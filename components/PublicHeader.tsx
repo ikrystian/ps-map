@@ -324,7 +324,7 @@ export default function PublicHeader({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <Image className="hidden lg:block min-w-[150px]" src="/images/white-logo.png" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="hidden lg:block min-w-[150px]" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
             <Image className="block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
             <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
           </Link>
@@ -799,7 +799,7 @@ export default function PublicHeader({
                 >
                   <div className="flex h-16 items-center px-6 border-b border-neutral-800 justify-between">
                     <Link href="/" className="flex items-center relative" onClick={() => setMobileMenuOpen(false)}>
-                      <Image src="/images/white-logo.png" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
+                      <Image src="/logo.svg" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
                     </Link>
                   </div>
 

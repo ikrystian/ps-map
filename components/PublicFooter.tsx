@@ -56,11 +56,10 @@ export default function PublicFooter() {
           <div className="space-y-4 lg:col-span-4">
             <Link href="/" className="inline-block">
               <Image
-                src="/images/white-logo.png"
+                src="/logo.svg"
                 alt="Prosta Sprawa"
                 width={160}
                 height={40}
-                className="brightness-200"
               />
             </Link>
             <p className="text-sm text-neutral-400 leading-relaxed font-light max-w-sm">
