@@ -46,6 +46,7 @@ interface NewPromotionDialogProps {
   voivodeships: Voivodeship[]
   startDate: string
   setStartDate: (date: string) => void
+  allowImmediateConsulted?: boolean
   autoRenewal: boolean
   setAutoRenewal: (auto: boolean) => void
   availability: {
@@ -76,6 +77,7 @@ export function NewPromotionDialog({
   voivodeships,
   startDate,
   setStartDate,
+  allowImmediateConsulted = false,
   autoRenewal,
   setAutoRenewal,
   availability,
@@ -343,7 +345,9 @@ export function NewPromotionDialog({
                   <SelectValue placeholder="Wybierz miesiąc kalendarzowy" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                  {getFutureMonths().map((m) => (
+                  {getFutureMonths(
+                    selectedType === "NAJCZESCIEJ_KONSULTOWANE" && allowImmediateConsulted
+                  ).map((m) => (
                     <SelectItem
                       key={m.value}
                       value={m.value}
@@ -354,6 +358,12 @@ export function NewPromotionDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {selectedType === "NAJCZESCIEJ_KONSULTOWANE" && allowImmediateConsulted && (
+                <p className="text-xs text-amber-400/90 flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 flex-shrink-0" />
+                  Tryb testowy: wybór bieżącego miesiąca aktywuje promocję od razu.
+                </p>
+              )}
             </div>
           ) : (
             <div className="space-y-2">

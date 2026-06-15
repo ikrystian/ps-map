@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { serverCache } from "@/lib/cache"
 import { generatePromotionActivatedEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
@@ -11,6 +12,12 @@ const PROMOTION_COSTS = {
   WYROZNIENIE: 50,         // pkt/tydzień
   TOP_LISTA: 100,          // pkt/tydzień
   STRONA_GLOWNA: 200,      // pkt/tydzień
+}
+
+// Sprawdza, czy boolowskie ustawienie globalne jest włączone ("true")
+async function isSettingEnabled(key: string): Promise<boolean> {
+  const setting = await prisma.settings.findUnique({ where: { key } })
+  return setting?.value === "true"
 }
 
 export async function GET(request: NextRequest) {
@@ -136,24 +143,42 @@ export async function POST(request: NextRequest) {
     if (isMonthly) {
       kosztPunktow = config.pointsPerMonth || 0
 
-      // Zawsze zaczynamy od pierwszego dnia wybranego miesiąca
       const targetYear = start.getFullYear()
       const targetMonth = start.getMonth()
 
-      start = new Date(targetYear, targetMonth, 1, 0, 0, 0, 0)
-      end = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999)
-      finalCzasTrwaniaDni = new Date(targetYear, targetMonth + 1, 0).getDate()
+      // Granice wybranego miesiąca kalendarzowego (do limitów i sprawdzania wolnych miejsc)
+      const monthStart = new Date(targetYear, targetMonth, 1, 0, 0, 0, 0)
+      const monthEnd = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999)
 
-      // Walidacja obecnego miesiąca: nie wolno kupić na obecny lub przeszły miesiąc
       const now = new Date()
       const currentYear = now.getFullYear()
       const currentMonth = now.getMonth()
+      const isCurrentMonth = targetYear === currentYear && targetMonth === currentMonth
 
-      if (targetYear < currentYear || (targetYear === currentYear && targetMonth <= currentMonth)) {
-        return Response.json(
-          { error: "Nie można zakupić promocji na obecny lub przeszły miesiąc" },
-          { status: 400 }
-        )
+      // Tryb testowy: pozwól włączyć promocję "Najczęściej konsultowane" od razu (bieżący miesiąc)
+      const immediateConsulted =
+        typPromocji === "NAJCZESCIEJ_KONSULTOWANE" &&
+        isCurrentMonth &&
+        (await isSettingEnabled("promoteConsultedImmediately"))
+
+      if (immediateConsulted) {
+        // Promocja aktywna natychmiast, do końca bieżącego miesiąca
+        start = now
+        end = monthEnd
+        finalCzasTrwaniaDni = monthEnd.getDate()
+      } else {
+        // Zawsze zaczynamy od pierwszego dnia wybranego miesiąca
+        start = monthStart
+        end = monthEnd
+        finalCzasTrwaniaDni = new Date(targetYear, targetMonth + 1, 0).getDate()
+
+        // Walidacja obecnego miesiąca: nie wolno kupić na obecny lub przeszły miesiąc
+        if (targetYear < currentYear || (targetYear === currentYear && targetMonth <= currentMonth)) {
+          return Response.json(
+            { error: "Nie można zakupić promocji na obecny lub przeszły miesiąc" },
+            { status: 400 }
+          )
+        }
       }
 
       // Sprawdź limit 4 promowań w roku na eksperta (tylko z tych dwóch typów)
@@ -188,8 +213,8 @@ export async function POST(request: NextRequest) {
             in: ["POLECANI_PRAWNICY", "NAJCZESCIEJ_KONSULTOWANE"],
           },
           startPromocji: {
-            gte: start,
-            lte: end,
+            gte: monthStart,
+            lte: monthEnd,
           },
           aktywna: true,
         },
@@ -215,8 +240,8 @@ export async function POST(request: NextRequest) {
             typPromocji: "POLECANI_PRAWNICY",
             kategoriaPromocji,
             startPromocji: {
-              gte: start,
-              lte: end,
+              gte: monthStart,
+              lte: monthEnd,
             },
             aktywna: true,
           },
@@ -239,8 +264,8 @@ export async function POST(request: NextRequest) {
             typPromocji: "NAJCZESCIEJ_KONSULTOWANE",
             kategoriaPromocji,
             startPromocji: {
-              gte: start,
-              lte: end,
+              gte: monthStart,
+              lte: monthEnd,
             },
             aktywna: true,
           },
@@ -295,6 +320,9 @@ export async function POST(request: NextRequest) {
         },
       }),
     ])
+
+    // Odśwież cache promocji strony głównej, aby nowa promocja była od razu widoczna
+    serverCache.delete("homepage:promotions")
 
     // Get promotion label for notification
     const promotionLabels = {

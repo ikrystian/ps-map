@@ -200,12 +200,6 @@ export async function PUT(request: Request) {
           { status: 400 }
         )
       }
-      if (categoryToCheck.parentId !== null) {
-        return NextResponse.json(
-          { error: "Główną kategorią może być tylko kategoria nadrzędna (rodzic)" },
-          { status: 400 }
-        )
-      }
     }
 
     // Delete all existing categories for this law firm

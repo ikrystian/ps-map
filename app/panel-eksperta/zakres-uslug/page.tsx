@@ -808,20 +808,18 @@ export default function LawFirmServicesPage() {
                     Główna
                   </Badge>
                 ) : (
-                  !category.parentId && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 text-xs text-zinc-400 hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded-lg transition-all ml-1"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleSetMainCategory(category)
-                      }}
-                    >
-                      Ustaw jako główną
-                    </Button>
-                  )
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-xs text-zinc-400 hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded-lg transition-all ml-1"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleSetMainCategory(category)
+                    }}
+                  >
+                    Ustaw jako główną
+                  </Button>
                 )}
               </label>
               {category.opis && (

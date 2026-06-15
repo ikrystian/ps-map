@@ -59,6 +59,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.geographicHierarchy) {
       settingsObject.geographicHierarchy = "voivodeships"
     }
+    if (!settingsObject.promoteConsultedImmediately) {
+      settingsObject.promoteConsultedImmediately = "false"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

@@ -47,7 +47,7 @@ export const MOST_CONSULTED_CATEGORIES = [
   { id: "dotacje-unijne", name: "Dotacje unijne" },
 ]
 
-export const getFutureMonths = () => {
+export const getFutureMonths = (includeCurrentMonth = false) => {
   const months = []
   const now = new Date()
   const currentYear = now.getFullYear()
@@ -68,15 +68,21 @@ export const getFutureMonths = () => {
     "Grudzień",
   ]
 
-  for (let i = 1; i <= 12; i++) {
+  // Tryb testowy: pozwól wybrać bieżący miesiąc (promocja od teraz)
+  const startOffset = includeCurrentMonth ? 0 : 1
+  for (let i = startOffset; i <= 12; i++) {
     const targetDate = new Date(currentYear, currentMonth + i, 1)
     const monthIndex = targetDate.getMonth()
     const year = targetDate.getFullYear()
+    const isCurrent = i === 0
     months.push({
       value: targetDate.toISOString(),
-      label: `${polishMonths[monthIndex]} ${year}`,
+      label: isCurrent
+        ? `${polishMonths[monthIndex]} ${year} (od teraz)`
+        : `${polishMonths[monthIndex]} ${year}`,
       year,
       month: monthIndex,
+      isCurrent,
     })
   }
   return months

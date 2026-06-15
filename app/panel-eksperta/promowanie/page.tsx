@@ -39,6 +39,7 @@ export default function LawFirmPromotionPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [promotionTypes, setPromotionTypes] = useState<any[]>([])
+  const [promoteConsultedImmediately, setPromoteConsultedImmediately] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -155,6 +156,17 @@ export default function LawFirmPromotionPage() {
       if (!promotionTypesResponse.ok) throw new Error("Nie udało się pobrać typów promocji")
       const promotionTypesData = await promotionTypesResponse.json()
       setPromotionTypes(promotionTypesData)
+
+      // Pobierz ustawienia publiczne (m.in. tryb testowy natychmiastowych promocji)
+      try {
+        const settingsResponse = await fetch("/api/settings")
+        if (settingsResponse.ok) {
+          const settingsData = await settingsResponse.json()
+          setPromoteConsultedImmediately(settingsData.promoteConsultedImmediately === "true")
+        }
+      } catch {
+        // Brak ustawień – używamy wartości domyślnej (false)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd")
     } finally {
@@ -553,6 +565,7 @@ export default function LawFirmPromotionPage() {
         voivodeships={voivodeships}
         startDate={startDate}
         setStartDate={setStartDate}
+        allowImmediateConsulted={promoteConsultedImmediately}
         autoRenewal={autoRenewal}
         setAutoRenewal={setAutoRenewal}
         availability={availability}

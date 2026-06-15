@@ -177,6 +177,12 @@ export async function GET(request: NextRequest) {
         description: "Hierarchia geograficzna używana w formularzach i filtrach: voivodeships (województwa), counties (powiaty), cities (miasta)",
       }
     }
+    if (!settingsObject.promoteConsultedImmediately) {
+      settingsObject.promoteConsultedImmediately = {
+        value: "false",
+        description: "Tryb testowy: promocje 'Najczęściej konsultowane kategorie' są aktywowane natychmiast (od teraz) zamiast od pierwszego dnia kolejnego miesiąca",
+      }
+    }
 
     // SMTP settings
     if (!settingsObject.emailServerHost) {

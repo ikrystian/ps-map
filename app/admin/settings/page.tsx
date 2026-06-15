@@ -159,6 +159,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  promoteConsultedImmediately?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -203,6 +207,7 @@ export default function AdminSettingsPage() {
   // Homepage Categories
   const [homepageConsultedCategories, setHomepageConsultedCategories] = useState<string[]>([])
   const [availableCategories, setAvailableCategories] = useState<Category[]>([])
+  const [promoteConsultedImmediately, setPromoteConsultedImmediately] = useState("false")
 
   // Favicon i Open Graph (SEO)
   const [favicon, setFavicon] = useState("/favicon.png")
@@ -260,6 +265,8 @@ export default function AdminSettingsPage() {
         setEmailServerUser(data.emailServerUser?.value || "")
         setEmailServerPassword(data.emailServerPassword?.value || "")
         setEmailFrom(data.emailFrom?.value || "")
+
+        setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
 
         try {
           const parsed = JSON.parse(data.homepageConsultedCategories?.value || "[]")
@@ -501,6 +508,10 @@ export default function AdminSettingsPage() {
               value: JSON.stringify(homepageConsultedCategories),
               description: "Lista ID kategorii wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
             },
+            promoteConsultedImmediately: {
+              value: promoteConsultedImmediately,
+              description: "Tryb testowy: promocje 'Najczęściej konsultowane kategorie' są aktywowane natychmiast (od teraz) zamiast od pierwszego dnia kolejnego miesiąca",
+            },
           },
         }),
       })
@@ -736,6 +747,25 @@ export default function AdminSettingsPage() {
           <p className="text-xs text-muted-foreground mt-2">
             Zaleca się wybranie od 4 do 6 kategorii. Zaznaczone kategorie zostaną użyte jako zakładki na stronie głównej.
           </p>
+
+          <Separator className="my-2" />
+
+          <div className="flex items-center justify-between space-y-0 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-4 hover:bg-amber-500/[0.07] transition-colors">
+            <div className="space-y-0.5">
+              <Label htmlFor="promoteConsultedImmediately" className="text-base font-semibold flex items-center gap-2">
+                Natychmiastowe włączanie promocji (tryb testowy)
+                <span className="text-sm bg-amber-500 text-amber-950 px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
+              </Label>
+              <p className="text-sm text-muted-foreground max-w-xl">
+                Po włączeniu promocja „Najczęściej konsultowane kategorie" zakupiona w panelu eksperta na bieżący miesiąc staje się aktywna od razu (od teraz), a nie dopiero od pierwszego dnia kolejnego miesiąca. Przeznaczone wyłącznie do testów.
+              </p>
+            </div>
+            <Switch
+              id="promoteConsultedImmediately"
+              checked={promoteConsultedImmediately === "true"}
+              onCheckedChange={(checked) => setPromoteConsultedImmediately(checked ? "true" : "false")}
+            />
+          </div>
         </CardContent>
       </Card>
 
