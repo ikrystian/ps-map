@@ -280,7 +280,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                           {categoriesList[activeIdx]}
                         </span>
                         {/* Lawyer / Firm Name */}
-                        <h3 className="text-[19px] font-bold text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                        <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
                           <Link href={`/ekspert/${firm.slug}`}>
                             {firm.nazwa}
                           </Link>
