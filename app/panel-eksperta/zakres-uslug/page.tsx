@@ -83,6 +83,7 @@ interface LawFirmCategory {
   categoryId: string
   kolejnosc: number
   category: Category
+  percentage?: number
 }
 import type { Voivodeship, City, County } from "@/types"
 
@@ -103,9 +104,11 @@ interface SortableItemProps {
   index: number
   isMainCategory: boolean
   onRemove: () => void
+  skillLawFocusActive: boolean
+  onPercentageChange: (categoryId: string, value: number) => void
 }
 
-function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemProps) {
+function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActive, onPercentageChange }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -125,61 +128,97 @@ function SortableItem({ item, index, isMainCategory, onRemove }: SortableItemPro
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
+      className={`flex flex-col gap-2.5 p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
           ? "border-primary/60 shadow-lg shadow-primary/5 bg-primary/5"
           : "border-border/30 hover:border-primary/20 hover:bg-zinc-800/10"
         }`}
     >
-      <div className="flex items-center gap-3">
-        <div
-          {...listeners}
-          {...attributes}
-          className="cursor-grab active:cursor-grabbing text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
-        >
-          <GripVertical className="h-4 w-4" />
-        </div>
-        <div className="flex items-center gap-2">
-          {isMainCategory && (
-            <Star className="h-4 w-4 text-primary fill-primary" />
-          )}
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="font-semibold text-sm text-white">{item.category.nazwa}</p>
-              {isMainCategory && (
-                <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-primary hover:bg-primary-hover text-white rounded-md border-none">
-                  Główna
-                </Badge>
-              )}
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-3">
+          <div
+            {...listeners}
+            {...attributes}
+            className="cursor-grab active:cursor-grabbing text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
+          >
+            <GripVertical className="h-4 w-4" />
+          </div>
+          <div className="flex items-center gap-2">
+            {isMainCategory && (
+              <Star className="h-4 w-4 text-primary fill-primary" />
+            )}
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-sm text-white">{item.category.nazwa}</p>
+                {isMainCategory && (
+                  <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-primary hover:bg-primary-hover text-white rounded-md border-none">
+                    Główna
+                  </Badge>
+                )}
+              </div>
+              <Badge variant="outline" className="text-[10px] mt-1 text-zinc-400 border-border/40 rounded-md">
+                {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
+              </Badge>
             </div>
-            <Badge variant="outline" className="text-[10px] mt-1 text-zinc-400 border-border/40 rounded-md">
-              {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
-            </Badge>
           </div>
         </div>
-      </div>
-      {!isMainCategory && (
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg"
-            onClick={onRemove}
-          >
-            <span className="sr-only">Usuń</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
+        
+        <div className="flex items-center gap-2">
+          {skillLawFocusActive && (
+            <Badge variant="secondary" className="bg-primary/20 text-primary border-none font-bold text-xs">
+              {item.percentage || 0}%
+            </Badge>
+          )}
+          {!isMainCategory && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={onRemove}
             >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </Button>
+              <span className="sr-only">Usuń</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {skillLawFocusActive && (
+        <div className="flex items-center gap-4 pl-8 pr-2 py-1 w-full">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            value={item.percentage || 0}
+            onChange={(e) => onPercentageChange(item.categoryId, parseInt(e.target.value) || 0)}
+            className="flex-1 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
+          />
+          <div className="flex items-center gap-1 shrink-0">
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={item.percentage || 0}
+              onChange={(e) => {
+                const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0))
+                onPercentageChange(item.categoryId, val)
+              }}
+              className="w-12 h-7 bg-zinc-900 border border-border/30 rounded-md text-xs text-center text-white focus:outline-none focus:border-primary"
+            />
+            <span className="text-zinc-400 text-xs">%</span>
+          </div>
         </div>
       )}
     </div>
@@ -195,6 +234,7 @@ export default function LawFirmServicesPage() {
   const [saving, setSaving] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [maxCategories, setMaxCategories] = useState(10)
+  const [skillLawFocusActive, setSkillLawFocusActive] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [citySearch, setCitySearch] = useState("")
 
@@ -275,6 +315,7 @@ export default function LawFirmServicesPage() {
         setSelectedCategories(selectedData.categories || [])
         setMainCategoryId(selectedData.mainCategoryId || null)
         setMaxCategories(selectedData.maxCategories || 10)
+        setSkillLawFocusActive(selectedData.skillLawFocusActive || false)
       }
 
       const voivResponse = await fetch("/api/voivodeships")
@@ -456,6 +497,7 @@ export default function LawFirmServicesPage() {
         categoryId: cat.id,
         kolejnosc: maxKolejnosc + 1 + index,
         category: cat,
+        percentage: (selectedCategories.length === 0 && index === 0) ? 100 : 0,
       }))
 
       setSelectedCategories([
@@ -512,6 +554,7 @@ export default function LawFirmServicesPage() {
         categoryId: category.id,
         kolejnosc: maxKolejnosc + 1,
         category: category,
+        percentage: selectedCategories.length === 0 ? 100 : 0,
       }
       setSelectedCategories([...selectedCategories, newItem])
     }
@@ -546,6 +589,14 @@ export default function LawFirmServicesPage() {
   }
 
   const handleSave = async () => {
+    if (skillLawFocusActive && sortedSelectedCategories.length > 0) {
+      const sum = sortedSelectedCategories.reduce((acc, sc) => acc + (sc.percentage || 0), 0)
+      if (sum !== 100) {
+        toast.error("Suma udziału procentowego dla wybranych specjalizacji musi wynosić dokładnie 100%.")
+        return
+      }
+    }
+
     setSaving(true)
     try {
       const catResponse = await fetch("/api/law-firm/categories", {
@@ -555,6 +606,7 @@ export default function LawFirmServicesPage() {
           categories: sortedSelectedCategories.map((sc, index) => ({
             categoryId: sc.categoryId,
             kolejnosc: index,
+            percentage: sc.percentage || 0,
           })),
           mainCategoryId,
         }),
@@ -796,6 +848,28 @@ export default function LawFirmServicesPage() {
     if (b.categoryId === mainCategoryId) return 1
     return a.kolejnosc - b.kolejnosc
   })
+
+  const percentageSum = selectedCategories.reduce((acc, cat) => acc + (cat.percentage || 0), 0)
+
+  const handlePercentageChange = (categoryId: string, val: number) => {
+    setSelectedCategories(prev => prev.map(sc => {
+      if (sc.categoryId === categoryId) {
+        return { ...sc, percentage: val }
+      }
+      return sc
+    }))
+  }
+
+  const handleAutoDistribute = () => {
+    if (selectedCategories.length === 0) return
+    const base = Math.floor(100 / selectedCategories.length)
+    const remainder = 100 % selectedCategories.length
+    setSelectedCategories(selectedCategories.map((sc, index) => ({
+      ...sc,
+      percentage: base + (index === 0 ? remainder : 0)
+    })))
+    toast.success("Rozdzielono procenty równomiernie!")
+  }
 
   if (loading) {
     return (
@@ -1306,6 +1380,51 @@ export default function LawFirmServicesPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar pt-4">
+              {skillLawFocusActive && selectedCategories.length > 0 && (
+                <div className="mb-4 p-3.5 rounded-xl border border-border/20 bg-zinc-950/40 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-400 font-medium">Podział procentowy (Skill Law Focus):</span>
+                    <span className={cn(
+                      "font-bold",
+                      percentageSum === 100 ? "text-emerald-400 animate-pulse" : "text-amber-400"
+                    )}>
+                      {percentageSum}% / 100%
+                    </span>
+                  </div>
+                  
+                  {/* Progress bar */}
+                  <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full transition-all duration-300",
+                        percentageSum === 100 ? "bg-emerald-500" : percentageSum > 100 ? "bg-rose-500" : "bg-amber-500"
+                      )}
+                      style={{ width: `${Math.min(100, percentageSum)}%` }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <p className="text-[10px] text-zinc-500">
+                      {percentageSum === 100 
+                        ? "Suma wynosi dokładnie 100%. Super!" 
+                        : percentageSum < 100 
+                        ? `Pozostało do rozdania: ${100 - percentageSum}%` 
+                        : `Przekroczono o: ${percentageSum - 100}%`
+                      }
+                    </p>
+                    <Button
+                      onClick={handleAutoDistribute}
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-[10px] text-primary hover:text-white hover:bg-primary/10 rounded-md gap-1"
+                    >
+                      <Globe className="h-3 w-3" />
+                      Rozdziel równo
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {selectedCategories.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500 border-2 border-dashed border-border/20 rounded-2xl bg-zinc-950/10">
                   <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-primary" />
@@ -1317,7 +1436,15 @@ export default function LawFirmServicesPage() {
                   <SortableContext items={sortedSelectedCategories.map(item => item.categoryId)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-2">
                       {sortedSelectedCategories.map((item, index) => (
-                        <SortableItem key={item.categoryId} item={item} index={index} isMainCategory={item.categoryId === mainCategoryId} onRemove={() => toggleCategory(item.category)} />
+                        <SortableItem 
+                          key={item.categoryId} 
+                          item={item} 
+                          index={index} 
+                          isMainCategory={item.categoryId === mainCategoryId} 
+                          onRemove={() => toggleCategory(item.category)} 
+                          skillLawFocusActive={skillLawFocusActive}
+                          onPercentageChange={handlePercentageChange}
+                        />
                       ))}
                     </div>
                   </SortableContext>

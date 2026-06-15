@@ -144,12 +144,14 @@ export async function GET(
       maxKeywords = parseInt(tagSetting.value) || 5
     }
 
+    let skillLawFocusActive = false
     if (lawFirm.pakietSubskrypcji && hasActivePackage(lawFirm as any)) {
       const plan = await prisma.subscriptionPlan.findUnique({
         where: { typ: lawFirm.pakietSubskrypcji }
       })
       if (plan) {
         maxKeywords = plan.liczbaTakow
+        skillLawFocusActive = plan.skillLawFocus
       }
     }
 
@@ -164,6 +166,7 @@ export async function GET(
       avgRating,
       reviewCount: lawFirm.reviews.length,
       limitSlowKluczowych: maxKeywords,
+      skillLawFocusActive,
       // Flagi z ustawień eksperta dla profilu publicznego
       przyjmujeBezposrednieZapytania:
         lawFirm.user?.notificationSettings?.ustawieniaOgloszenia !== false,

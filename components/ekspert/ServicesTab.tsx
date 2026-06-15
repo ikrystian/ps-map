@@ -66,7 +66,7 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                   .filter((c) => c.category && c.category.typ === "SPRAWY_FIRMOWE")
                   .map((lawFirmCategory) => lawFirmCategory.category && (
                     <Card key={lawFirmCategory.id} className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-primary/40 hover:bg-card/35 hover:shadow-[0_0_20px_rgba(13,161,146,0.1)] transition-all duration-300 shadow-lg rounded-2xl flex flex-col justify-between overflow-hidden">
-                      <CardHeader className="p-5">
+                      <CardHeader className="p-5 pb-3">
                         <div className="flex justify-between items-start gap-3">
                           <CardTitle className="text-sm md:text-base font-bold text-white leading-snug">
                             {lawFirmCategory.category.nazwa}
@@ -76,6 +76,20 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                           </Badge>
                         </div>
                       </CardHeader>
+                      {lawFirm.skillLawFocusActive && (
+                        <div className="px-5 pb-5 pt-1 space-y-2">
+                          <div className="flex justify-between items-center text-xs font-medium">
+                            <span className="text-zinc-400">Specjalizacja:</span>
+                            <span className="text-primary font-bold">{lawFirmCategory.percentage || 0}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden border border-border/10">
+                            <div 
+                              className="h-full bg-gradient-to-r from-primary to-[#0da192] rounded-full transition-all duration-500"
+                              style={{ width: `${lawFirmCategory.percentage || 0}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </Card>
                   ))}
               </div>
@@ -96,7 +110,7 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                   .filter((c) => c.category && c.category.typ === "SPRAWY_PRYWATNE")
                   .map((lawFirmCategory) => lawFirmCategory.category && (
                     <Card key={lawFirmCategory.id} className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-primary/40 hover:bg-card/35 hover:shadow-[0_0_20px_rgba(13,161,146,0.1)] transition-all duration-300 shadow-lg rounded-2xl flex flex-col justify-between overflow-hidden">
-                      <CardHeader className="p-5">
+                      <CardHeader className="p-5 pb-3">
                         <div className="flex justify-between items-start gap-3">
                           <CardTitle className="text-sm md:text-base font-bold text-white leading-snug">
                             {lawFirmCategory.category.nazwa}
@@ -106,6 +120,20 @@ export function ServicesTab({ lawFirm }: ServicesTabProps) {
                           </Badge>
                         </div>
                       </CardHeader>
+                      {lawFirm.skillLawFocusActive && (
+                        <div className="px-5 pb-5 pt-1 space-y-2">
+                          <div className="flex justify-between items-center text-xs font-medium">
+                            <span className="text-zinc-400">Specjalizacja:</span>
+                            <span className="text-cyan-400 font-bold">{lawFirmCategory.percentage || 0}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden border border-border/10">
+                            <div 
+                              className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full transition-all duration-500"
+                              style={{ width: `${lawFirmCategory.percentage || 0}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </Card>
                   ))}
               </div>

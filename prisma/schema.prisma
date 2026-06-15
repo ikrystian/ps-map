@@ -473,6 +473,7 @@ model LawFirmCategory {
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   kolejnosc   Int      @default(0)  // Order of category for this law firm
+  percentage  Int      @default(0)  // Percentage knowledge of specialization (Skill Law Focus)
 
   createdAt   DateTime @default(now())
 

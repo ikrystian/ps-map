@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { hasActivePackage } from "@/lib/permissions"
+import { hasActivePackage, getLawFirmPermissions } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
@@ -59,6 +59,10 @@ export async function GET() {
       select: {
         id: true,
         mainCategoryId: true,
+        pakietSubskrypcji: true,
+        dataPakietuOd: true,
+        dataPakietuDo: true,
+        autoRenewal: true,
       },
     })
 
@@ -68,6 +72,22 @@ export async function GET() {
 
     // Get max categories
     const maxCategories = await getMaxCategories(session.user.id)
+
+    // Check if skillLawFocus is active
+    let skillLawFocusActive = false
+    if (lawFirm.pakietSubskrypcji) {
+      const plan = await prisma.subscriptionPlan.findUnique({
+        where: { typ: lawFirm.pakietSubskrypcji },
+      })
+      if (plan) {
+        const permissionsData = {
+          ...lawFirm,
+          ...plan,
+        }
+        const permissions = getLawFirmPermissions(permissionsData)
+        skillLawFocusActive = permissions.features.skillLawFocus
+      }
+    }
 
     // Get law firm's selected categories
     const lawFirmCategories = await prisma.lawFirmCategory.findMany({
@@ -82,6 +102,7 @@ export async function GET() {
       categories: lawFirmCategories,
       mainCategoryId: lawFirm.mainCategoryId,
       maxCategories,
+      skillLawFocusActive,
     })
   } catch (error) {
     console.error("Error fetching law firm categories:", error)
@@ -103,11 +124,31 @@ export async function PUT(request: Request) {
       select: {
         id: true,
         mainCategoryId: true,
+        pakietSubskrypcji: true,
+        dataPakietuOd: true,
+        dataPakietuDo: true,
+        autoRenewal: true,
       },
     })
 
     if (!lawFirm) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+    }
+
+    // Check if skillLawFocus is active
+    let skillLawFocusActive = false
+    if (lawFirm.pakietSubskrypcji) {
+      const plan = await prisma.subscriptionPlan.findUnique({
+        where: { typ: lawFirm.pakietSubskrypcji },
+      })
+      if (plan) {
+        const permissionsData = {
+          ...lawFirm,
+          ...plan,
+        }
+        const permissions = getLawFirmPermissions(permissionsData)
+        skillLawFocusActive = permissions.features.skillLawFocus
+      }
     }
 
     const body = await request.json()
@@ -124,6 +165,17 @@ export async function PUT(request: Request) {
         { error: `Przekroczono maksymalną liczbę kategorii (${maxCategories}).` },
         { status: 400 }
       )
+    }
+
+    // Walidacja udziału procentowego dla Skill Law Focus
+    if (skillLawFocusActive && categories.length > 0) {
+      const sum = categories.reduce((acc, cat) => acc + (cat.percentage || 0), 0)
+      if (sum !== 100) {
+        return NextResponse.json(
+          { error: "Suma udziału procentowego dla wybranych specjalizacji musi wynosić dokładnie 100%." },
+          { status: 400 }
+        )
+      }
     }
 
     const activeMainCategoryId = mainCategoryId !== undefined ? mainCategoryId : lawFirm.mainCategoryId
@@ -164,10 +216,11 @@ export async function PUT(request: Request) {
     // Create new category associations
     if (categories.length > 0) {
       await prisma.lawFirmCategory.createMany({
-        data: categories.map((cat: { categoryId: string; kolejnosc: number }) => ({
+        data: categories.map((cat: { categoryId: string; kolejnosc: number; percentage?: number }) => ({
           lawFirmId: lawFirm.id,
           categoryId: cat.categoryId,
           kolejnosc: cat.kolejnosc,
+          percentage: skillLawFocusActive ? (cat.percentage || 0) : 0,
         })),
       })
     }
@@ -193,6 +246,7 @@ export async function PUT(request: Request) {
       categories: updatedCategories,
       mainCategoryId: mainCategoryId !== undefined ? mainCategoryId : lawFirm.mainCategoryId,
       maxCategories,
+      skillLawFocusActive,
     })
   } catch (error) {
     console.error("Error updating law firm categories:", error)

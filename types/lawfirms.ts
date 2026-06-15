@@ -94,6 +94,7 @@ export interface LawFirm extends LawFirmWithLocation {
   // Flagi pochodzące z ustawień powiadomień eksperta (profil publiczny)
   przyjmujeBezposrednieZapytania?: boolean
   naUrlopie?: boolean
+  skillLawFocusActive?: boolean
   createdAt?: string | Date
   updatedAt?: string | Date
   rank?: number | null
@@ -102,6 +103,7 @@ export interface LawFirm extends LawFirmWithLocation {
   categories: Array<{
     id?: string
     kolejnosc?: number
+    percentage?: number
     category?: {
       id?: string
       nazwa: string

@@ -399,7 +399,8 @@ function parseCsvToArray(string $filePath): array
     $rows = [];
     while (($row = fgetcsv($fh)) !== false) {
         // Skip completely empty rows
-        if (count(array_filter($row, fn($v) => $v !== '')) === 0) continue;
+        if (count(array_filter($row, fn($v) => $v !== '')) === 0)
+            continue;
         $rows[] = $row;
     }
     fclose($fh);
