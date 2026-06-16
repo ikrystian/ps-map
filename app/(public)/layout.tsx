@@ -37,7 +37,6 @@ export default async function PublicLayout({
         punktySaldo={punktySaldo}
       />
       <main className="flex-1 pt-[65px]">{children}</main>
-      <LocalSeoLinks />
       <TeamExpertsSection />
       <PublicFooter />
     </div>

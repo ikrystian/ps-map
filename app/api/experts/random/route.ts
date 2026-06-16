@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -33,19 +33,23 @@ export async function GET() {
           select: { category: { select: { nazwa: true } } },
         },
       },
-    })
+    });
 
     // Shuffle in memory to ensure randomness
-    const shuffled = [...lawFirms].sort(() => 0.5 - Math.random())
-    const selected = shuffled.slice(0, 24)
+    const shuffled = [...lawFirms].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 25);
 
     return NextResponse.json(selected, {
       headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
       },
-    })
+    });
   } catch (error) {
-    console.error("Error fetching random experts:", error)
-    return NextResponse.json({ error: "Failed to fetch random experts" }, { status: 500 })
+    console.error("Error fetching random experts:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch random experts" },
+      { status: 500 },
+    );
   }
 }

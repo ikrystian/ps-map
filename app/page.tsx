@@ -162,9 +162,6 @@ export default function HomePage() {
       {/* SECTION 12: Newsletter */}
       <NewsletterSection />
 
-      {/* SECTION 11.6: Local SEO Links (kategoria + lokalizacja) */}
-      <LocalSeoLinks seed="home" />
-
       <TeamExpertsSection />
 
       <PublicFooter />
