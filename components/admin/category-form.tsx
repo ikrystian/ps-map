@@ -19,9 +19,18 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, Save, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <div className="h-40 w-full flex items-center justify-center bg-muted/20 border border-border/30 rounded-xl text-sm text-muted-foreground animate-pulse">Ładowanie edytora...</div>
+  }
+)
 
 // Schema walidacji formularza
 const categorySchema = z.object({
@@ -190,12 +199,14 @@ export function CategoryForm({
                       <FormItem>
                         <FormLabel>Opis</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Krótki opis kategorii..."
-                            className="min-h-[100px] resize-none"
-                            {...field}
-                            value={field.value || ""}
-                          />
+                          <div className="rounded-xl overflow-hidden border bg-background focus-within:border-primary transition-all [&_.ql-toolbar]:bg-muted/50 [&_.ql-toolbar]:border-b [&_.ql-container]:border-none [&_.ql-editor]:min-h-[200px]">
+                            <RichTextEditor
+                              value={field.value || ""}
+                              onChange={field.onChange}
+                              placeholder="Krótki opis kategorii..."
+                              minHeight="200px"
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -208,12 +219,14 @@ export function CategoryForm({
                       <FormItem>
                         <FormLabel>Opis dodatkowy</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Dodatkowy opis kategorii..."
-                            className="min-h-[150px] resize-none"
-                            {...field}
-                            value={field.value || ""}
-                          />
+                          <div className="rounded-xl overflow-hidden border bg-background focus-within:border-primary transition-all [&_.ql-toolbar]:bg-muted/50 [&_.ql-toolbar]:border-b [&_.ql-container]:border-none [&_.ql-editor]:min-h-[300px]">
+                            <RichTextEditor
+                              value={field.value || ""}
+                              onChange={field.onChange}
+                              placeholder="Dodatkowy opis kategorii..."
+                              minHeight="300px"
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

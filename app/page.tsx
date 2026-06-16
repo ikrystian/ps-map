@@ -2,6 +2,7 @@
 
 import PublicFooter from "@/components/PublicFooter"
 import PublicHeader from "@/components/PublicHeader"
+import TeamExpertsSection from "@/components/TeamExpertsSection"
 import type { Category } from "@/types/categories"
 import type { LawFirm } from "@/types/lawfirms"
 import { useSession } from "next-auth/react"
@@ -21,6 +22,7 @@ import { NewExperts } from "@/components/homepage/new-experts"
 import { NewsletterSection } from "@/components/homepage/newsletter-section"
 import { RecommendedLawyers } from "@/components/homepage/recommended-lawyers"
 import { SearchHelpSection } from "@/components/homepage/search-help-section"
+import { LocalSeoLinks } from "@/components/seo/local-seo-links"
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 
 export default function HomePage() {
@@ -139,6 +141,9 @@ export default function HomePage() {
       {/* SECTION 11.5: Cities List */}
       <CitiesList />
 
+      {/* SECTION 11.6: Local SEO Links (kategoria + lokalizacja) */}
+      <LocalSeoLinks seed="home" />
+
       {/* SECTION 11.5: Testimonials */}
       {testimonials.length > 0 && (
         <section className="py-0 lg:py-15 bg-card border-t border-zinc-900/60 overflow-hidden">
@@ -150,6 +155,8 @@ export default function HomePage() {
 
       {/* SECTION 12: Newsletter */}
       <NewsletterSection />
+
+      <TeamExpertsSection />
 
       <PublicFooter />
     </div>

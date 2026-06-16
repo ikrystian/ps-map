@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { LocalSeoLinks } from "@/components/seo/local-seo-links"
 import {
   Select,
   SelectContent,
@@ -1006,6 +1007,9 @@ export default function CategoryClientPage() {
           </div>
         )}
       </div>
+
+      {/* Linki SEO — bieżąca kategoria w różnych lokalizacjach */}
+      {category && <LocalSeoLinks seed={`kategoria-${slug}`} categorySlug={slug} />}
     </div>
   )
 }

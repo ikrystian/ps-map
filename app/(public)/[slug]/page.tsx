@@ -1,4 +1,5 @@
 import { DynamicPageContent } from "@/components/DynamicPageContent"
+import { LocalSeoLinks } from "@/components/seo/local-seo-links"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import { renderModule } from "@/lib/module-parser"
 import { prisma } from "@/lib/prisma"
@@ -111,6 +112,9 @@ export default async function DynamicPage({ params }: PageProps) {
 
       {/* Render page modules using dynamic interactive content component */}
       <DynamicPageContent modulesHtml={modulesHtml} />
+
+      {/* Linki SEO — różne na każdej stronie statycznej (seed = slug) */}
+      <LocalSeoLinks seed={`page-${slug}`} />
     </div>
   )
 }

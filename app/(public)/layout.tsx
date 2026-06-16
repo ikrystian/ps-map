@@ -1,5 +1,6 @@
 import PublicFooter from "@/components/PublicFooter"
 import PublicHeader from "@/components/PublicHeader"
+import TeamExpertsSection from "@/components/TeamExpertsSection"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
@@ -37,7 +38,9 @@ export default async function PublicLayout({
       <main className="flex-1 pt-[65px]">
         {children}
       </main>
+      <TeamExpertsSection />
       <PublicFooter />
     </div>
   )
 }
+

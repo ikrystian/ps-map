@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { LocalSeoLinks } from "@/components/seo/local-seo-links"
 import {
   Select,
   SelectContent,
@@ -949,6 +950,14 @@ export default function SearchLawyerPage() {
           )}
         </div>
       </div>
+
+      {/* Linki SEO — dynamicznie z aktualnych filtrów wyszukiwania */}
+      <LocalSeoLinks
+        seed="szukaj-prawnika"
+        categorySlug={selectedCategory !== "all" ? selectedCategory : undefined}
+        voivodeshipSlug={selectedVoivodeship !== "all" ? selectedVoivodeship : undefined}
+        cityName={selectedCity || undefined}
+      />
     </div>
   )
 }
