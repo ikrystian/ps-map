@@ -1,28 +1,29 @@
-import PublicFooter from "@/components/PublicFooter"
-import PublicHeader from "@/components/PublicHeader"
-import TeamExpertsSection from "@/components/TeamExpertsSection"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import PublicFooter from "@/components/PublicFooter";
+import PublicHeader from "@/components/PublicHeader";
+import { LocalSeoLinks } from "@/components/seo/local-seo-links";
+import TeamExpertsSection from "@/components/TeamExpertsSection";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export default async function PublicLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const session = await auth()
+  const session = await auth();
 
   // Fetch law firm data if user is a law firm
-  let punktySaldo: number | undefined
+  let punktySaldo: number | undefined;
 
   if (session?.user?.role === "LAW_FIRM") {
     try {
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { userId: session.user.id },
         select: { punktySaldo: true },
-      })
-      punktySaldo = lawFirm?.punktySaldo
+      });
+      punktySaldo = lawFirm?.punktySaldo;
     } catch (error) {
-      console.error("Error fetching law firm data:", error)
+      console.error("Error fetching law firm data:", error);
     }
   }
 
@@ -35,12 +36,10 @@ export default async function PublicLayout({
         userImage={session?.user?.image}
         punktySaldo={punktySaldo}
       />
-      <main className="flex-1 pt-[65px]">
-        {children}
-      </main>
+      <main className="flex-1 pt-[65px]">{children}</main>
+      <LocalSeoLinks />
       <TeamExpertsSection />
       <PublicFooter />
     </div>
-  )
+  );
 }
-

@@ -1,34 +1,36 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { MapPin } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function VoivodeshipsList() {
-  const [voivodeships, setVoivodeships] = useState<{ id: string; nazwa: string; slug: string }[]>([])
-  const [loading, setLoading] = useState(true)
+  const [voivodeships, setVoivodeships] = useState<
+    { id: string; nazwa: string; slug: string }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchVoivodeships = async () => {
       try {
-        const res = await fetch("/api/voivodeships")
-        const data = await res.json()
+        const res = await fetch("/api/voivodeships");
+        const data = await res.json();
         if (Array.isArray(data)) {
-          setVoivodeships(data)
+          setVoivodeships(data);
         }
       } catch (error) {
-        console.error("Error fetching voivodeships:", error)
+        console.error("Error fetching voivodeships:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchVoivodeships()
-  }, [])
+    fetchVoivodeships();
+  }, []);
 
   if (loading || voivodeships.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -36,7 +38,7 @@ export function VoivodeshipsList() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Znajdź prawnika w swoim województwie
+            Znajdź eksperta w swoim województwie
           </h2>
           <p className="text-xl text-muted-foreground">
             Eksperci prawni dostępni w całej Polsce
@@ -62,5 +64,5 @@ export function VoivodeshipsList() {
         </div>
       </div>
     </section>
-  )
+  );
 }
