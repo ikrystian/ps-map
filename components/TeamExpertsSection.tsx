@@ -648,7 +648,7 @@ export default function TeamExpertsSection() {
   return (
     <section className="relative w-full border-t border-zinc-900/60 bg-zinc-950/20 py-16 md:py-24 lg:py-28 overflow-hidden select-none">
       {/* Decorative background grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#d7b56d_1px,transparent_1px),linear-gradient(to_bottom,#d7b56d_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-10 -z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#c7b56d_1px,transparent_1px),linear-gradient(to_bottom,#c7b57d_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-10 -z-10 pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative">
         {/* Header */}
@@ -734,7 +734,7 @@ export default function TeamExpertsSection() {
                   whileHover={{ y: -6, scale: 1.015 }}
                   className="group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-zinc-900/60 bg-zinc-950/45 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
                 >
-                  <div>
+                  <Link href={`/ekspert/${expert.slug}`}>
                     {/* Header */}
                     <div className="flex items-center gap-4">
                       <Avatar className="h-14 w-14 border border-zinc-800/60 transition-transform duration-500 group-hover:scale-105">
@@ -760,7 +760,7 @@ export default function TeamExpertsSection() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Decorative Hover Glow background (Matching Team 11) */}
                   <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none" />
