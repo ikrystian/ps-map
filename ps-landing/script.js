@@ -53,6 +53,19 @@ function showStep(index) {
 }
 
 function nextStep() {
+    const activeStep = formSteps[currentStep];
+    const inputs = activeStep.querySelectorAll('input, select, textarea');
+    let allValid = true;
+    for (const input of inputs) {
+        if (input.disabled) continue;
+        if (!input.checkValidity()) {
+            input.reportValidity();
+            allValid = false;
+            break;
+        }
+    }
+    if (!allValid) return;
+
     if (currentStep < formSteps.length - 1) {
         showStep(currentStep + 1);
     }
@@ -144,16 +157,22 @@ if (kategSelect && drugiSelect && trzeciSelect) {
         const kateg = kategSelect.value;
         drugiSelect.innerHTML = '<option value="">Wybierz opcję...</option>';
         trzeciSelectGroup.style.display = 'none';
+        trzeciSelect.required = false;
         trzeciSelect.innerHTML = '<option value="">Wybierz specjalizację...</option>';
         specFinalInput?.value ? specFinalInput.value = '' : null;
 
         if (!kateg) {
             drugiSelectGroup.style.display = 'none';
+            drugiSelect.required = false;
             return;
         }
 
         const content = specData[kateg];
-        if (!content) return;
+        if (!content) {
+            drugiSelectGroup.style.display = 'none';
+            drugiSelect.required = false;
+            return;
+        }
 
         drugiSelectGroup.style.display = '';
 
@@ -183,6 +202,7 @@ if (kategSelect && drugiSelect && trzeciSelect) {
         const drugi = drugiSelect.value;
 
         trzeciSelect.innerHTML = '<option value="">Wybierz specjalizację...</option>';
+        trzeciSelect.required = false;
         specFinalInput?.value ? specFinalInput.value = '' : null;
 
         if (!kateg || !drugi) {
@@ -205,6 +225,8 @@ if (kategSelect && drugiSelect && trzeciSelect) {
                 opt.textContent = spec;
                 trzeciSelect.appendChild(opt);
             });
+        } else {
+            trzeciSelectGroup.style.display = 'none';
         }
     }
 

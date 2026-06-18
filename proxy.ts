@@ -1,8 +1,44 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
 
+// CORS dla statycznego landing page (katalog ps-landing), który żyje na innym
+// origin niż ta aplikacja Next.js, a pobiera dane słownikowe i pre-rejestruje
+// ekspertów bezpośrednio przeciwko poniższym publicznym endpointom.
+const CORS_PATHS = [
+  "/api/law-firms",
+  "/api/voivodeships",
+  "/api/categories",
+  "/api/expertise-categories",
+  "/api/cities",
+]
+
+function corsHeaders(origin: string): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  }
+}
+
 export default auth((req) => {
   const { nextUrl } = req
+
+  // CORS dla publicznych endpointów słownikowych wykorzystywanych przez landing page.
+  // Obsługujemy preflight i nagłówki zanim wejdzie logika autoryzacji.
+  if (CORS_PATHS.includes(nextUrl.pathname)) {
+    const origin = req.headers.get("origin") ?? "*"
+    if (req.method === "OPTIONS") {
+      return new NextResponse(null, { status: 204, headers: corsHeaders(origin) })
+    }
+    const response = NextResponse.next()
+    for (const [key, value] of Object.entries(corsHeaders(origin))) {
+      response.headers.set(key, value)
+    }
+    return response
+  }
+
   const isLoggedIn = !!req.auth
   const userRole = req.auth?.user?.role
 

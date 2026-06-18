@@ -578,6 +578,10 @@ export async function POST(request: NextRequest) {
             kodPocztowy: body.kodPocztowy,
             miasto: body.miasto,
             voivodeshipId: body.voivodeshipId,
+            // Pre-rejestracja z landing page (ps-landing): konto zakładane bez maila
+            // aktywacyjnego, więc oznaczamy email jako zweryfikowany od razu, żeby było
+            // gotowe do logowania po starcie platformy.
+            emailVerified: body.skipEmailVerification ? new Date() : undefined,
           },
         })
       }
@@ -672,10 +676,11 @@ export async function POST(request: NextRequest) {
       return { user, lawFirm }
     })
 
-    // Generate verification token (valid for 24 hours) - ONLY for new users
+    // Generate verification token (valid for 24 hours) - ONLY for new users.
+    // skipEmailVerification (np. pre-rejestracja z landing page) pomija wysyłkę maila.
     let emailSent = false;
 
-    if (!existingUser) {
+    if (!existingUser && !body.skipEmailVerification) {
       // Wygeneruj 6-cyfrowy kod weryfikacyjny oraz token do linku
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
       const token = crypto.randomBytes(32).toString('hex')

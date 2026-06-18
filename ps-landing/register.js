@@ -1,0 +1,414 @@
+// ===== Rejestracja eksperta (formularz.html) =====
+// Tworzy konto eksperta bezpośrednio w głównej aplikacji (Next.js) bez maila
+// aktywacyjnego. Dane słownikowe (województwa, kategorie, specjalizacje, miasta)
+// pobierane są z tej samej aplikacji. Zmień API_BASE jeśli adres się zmieni.
+const API_BASE = "http://localhost:3000";
+
+// ===== Multi-step =====
+const formSteps = document.querySelectorAll(".form-step");
+const progressFill = document.querySelector(".progress-fill");
+let currentStep = 0;
+
+function showStep(index) {
+    formSteps.forEach((step, i) => step.classList.toggle("active", i === index));
+    if (progressFill) {
+        progressFill.style.width = ((index + 1) / formSteps.length * 100) + "%";
+    }
+    currentStep = index;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function validateActiveStep() {
+    const activeStep = formSteps[currentStep];
+    const inputs = activeStep.querySelectorAll("input, select, textarea");
+    for (const input of inputs) {
+        if (input.disabled) continue;
+        if (!input.checkValidity()) {
+            input.reportValidity();
+            return false;
+        }
+    }
+    return true;
+}
+
+function nextStep() {
+    if (!validateActiveStep()) return;
+    if (currentStep < formSteps.length - 1) {
+        showStep(currentStep + 1);
+    }
+}
+
+function prevStep() {
+    if (currentStep > 0) {
+        showStep(currentStep - 1);
+    }
+}
+
+if (formSteps.length > 0) {
+    showStep(0);
+}
+
+// ===== Pola =====
+const kategoriaSelect = document.getElementById("kategoriaEkspert");
+const podkategoriaGroup = document.getElementById("podkategoriaGroup");
+const podkategoriaSelect = document.getElementById("podkategoriaEkspert");
+const specjalizacjaGroup = document.getElementById("specjalizacjaGroup");
+const specjalizacjaSelect = document.getElementById("specjalizacjaEkspert");
+const expertiseCategoryIdInput = document.getElementById("expertiseCategoryId");
+const typInnyInput = document.getElementById("typInny");
+const glownaSpecjalizacjaSelect = document.getElementById("glownaSpecjalizacja");
+const wojewodztwoSelect = document.getElementById("wojewodztwoSelect");
+const passwordInput = document.getElementById("password");
+const confirmPasswordInput = document.getElementById("confirmPassword");
+
+// ===== Hierarchiczne specjalizacje (expertise-categories) =====
+let expertiseTree = [];
+
+function clearExpertiseLeaf() {
+    expertiseCategoryIdInput.value = "";
+    typInnyInput.value = "";
+}
+
+function fillSelect(select, items, placeholder) {
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    items.forEach((item) => {
+        const opt = document.createElement("option");
+        opt.value = item.id;
+        opt.textContent = item.nazwa;
+        select.appendChild(opt);
+    });
+}
+
+// Czy kategoria ma realne podkategorie (dziecko, które samo ma dzieci)?
+function hasSubcategories(cat) {
+    return Array.isArray(cat.children) &&
+        cat.children.some((ch) => Array.isArray(ch.children) && ch.children.length > 0);
+}
+
+function selectedLeafPath() {
+    const cat = expertiseTree.find((c) => c.id === kategoriaSelect.value);
+    if (!cat) return "";
+    const parts = [cat.nazwa];
+    if (hasSubcategories(cat)) {
+        const sub = (cat.children || []).find((s) => s.id === podkategoriaSelect.value);
+        if (sub) parts.push(sub.nazwa);
+        const leaf = (sub?.children || []).find((l) => l.id === specjalizacjaSelect.value);
+        if (leaf) parts.push(leaf.nazwa);
+    } else {
+        const leaf = (cat.children || []).find((l) => l.id === specjalizacjaSelect.value);
+        if (leaf) parts.push(leaf.nazwa);
+    }
+    return parts.join(" > ");
+}
+
+function rebuildExpertiseLeaf() {
+    expertiseCategoryIdInput.value = specjalizacjaSelect.value || "";
+    typInnyInput.value = specjalizacjaSelect.value ? selectedLeafPath() : "";
+}
+
+function onKategoriaChange() {
+    const cat = expertiseTree.find((c) => c.id === kategoriaSelect.value);
+    podkategoriaGroup.style.display = "none";
+    podkategoriaSelect.required = false;
+    specjalizacjaGroup.style.display = "none";
+    specjalizacjaSelect.required = false;
+    clearExpertiseLeaf();
+
+    if (!cat) return;
+
+    if (hasSubcategories(cat)) {
+        fillSelect(podkategoriaSelect, cat.children || [], "Wybierz podkategorię...");
+        podkategoriaGroup.style.display = "";
+        podkategoriaSelect.required = true;
+    } else {
+        fillSelect(specjalizacjaSelect, cat.children || [], "Wybierz specjalizację...");
+        specjalizacjaGroup.style.display = "";
+        specjalizacjaSelect.required = (cat.children || []).length > 0;
+    }
+}
+
+function onPodkategoriaChange() {
+    const cat = expertiseTree.find((c) => c.id === kategoriaSelect.value);
+    const sub = (cat?.children || []).find((s) => s.id === podkategoriaSelect.value);
+    specjalizacjaGroup.style.display = "none";
+    specjalizacjaSelect.required = false;
+    clearExpertiseLeaf();
+    if (!sub) return;
+    fillSelect(specjalizacjaSelect, sub.children || [], "Wybierz specjalizację...");
+    specjalizacjaGroup.style.display = "";
+    specjalizacjaSelect.required = (sub.children || []).length > 0;
+}
+
+if (kategoriaSelect) {
+    kategoriaSelect.addEventListener("change", onKategoriaChange);
+    podkategoriaSelect.addEventListener("change", onPodkategoriaChange);
+    specjalizacjaSelect.addEventListener("change", rebuildExpertiseLeaf);
+}
+
+// ===== Ładowanie danych słownikowych =====
+async function loadReferenceData() {
+    try {
+        const [vRes, cRes, eRes] = await Promise.all([
+            fetch(`${API_BASE}/api/voivodeships`),
+            fetch(`${API_BASE}/api/categories`),
+            fetch(`${API_BASE}/api/expertise-categories`),
+        ]);
+
+        if (vRes.ok && wojewodztwoSelect) {
+            const voivodeships = await vRes.json();
+            voivodeships
+                .sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"))
+                .forEach((v) => {
+                    const opt = document.createElement("option");
+                    opt.value = v.id;
+                    opt.textContent = v.nazwa;
+                    wojewodztwoSelect.appendChild(opt);
+                });
+        }
+
+        if (cRes.ok && glownaSpecjalizacjaSelect) {
+            const categories = await cRes.json();
+            categories
+                .filter((cat) => !cat.parentId)
+                .sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"))
+                .forEach((cat) => {
+                    const opt = document.createElement("option");
+                    opt.value = cat.id;
+                    opt.textContent = cat.nazwa;
+                    glownaSpecjalizacjaSelect.appendChild(opt);
+                });
+        }
+
+        if (eRes.ok && kategoriaSelect) {
+            expertiseTree = await eRes.json();
+            fillSelect(kategoriaSelect, expertiseTree, "Wybierz kategorię...");
+        }
+    } catch (err) {
+        console.error("Błąd ładowania danych słownikowych:", err);
+    }
+}
+
+// ===== Autouzupełnianie miasta / kodu pocztowego (z /api/cities) =====
+function initCityAutocomplete() {
+    const zipInput = document.getElementById("kodPocztowy");
+    const dropdown = document.getElementById("kodPocztowyDropdown");
+    const cityInput = document.getElementById("miasto");
+
+    if (!zipInput || !dropdown || !cityInput) return;
+
+    let items = [];
+    let highlightedIndex = -1;
+    let debounceTimer;
+
+    zipInput.addEventListener("input", (e) => {
+        let value = e.target.value.replace(/[^0-9-]/g, "");
+        if (value.length === 5 && !value.includes("-")) {
+            value = value.slice(0, 2) + "-" + value.slice(2);
+        }
+        if (value.length > 6) value = value.slice(0, 6);
+        e.target.value = value;
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => fetchSuggestions(value), 220);
+    });
+
+    async function fetchSuggestions(query) {
+        const cleanQuery = query.trim();
+        if (cleanQuery.length < 2) {
+            closeDropdown();
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/api/cities?search=${encodeURIComponent(cleanQuery)}&limit=15`);
+            if (!res.ok) throw new Error("Search failed");
+            const cities = await res.json();
+            // Spłaszcz do par (kod, miasto, województwo)
+            items = [];
+            cities.forEach((city) => {
+                const codes = (city.postalCodes || []).filter((p) =>
+                    p.code && p.code.replace(/-/g, "").startsWith(cleanQuery.replace(/-/g, ""))
+                );
+                const list = codes.length > 0 ? codes : (city.postalCodes || []).slice(0, 1);
+                list.forEach((p) => {
+                    items.push({
+                        zip: p.code,
+                        city: city.nazwa,
+                        voivodeshipId: city.voivodeshipId,
+                        voivodeship: city.voivodeship?.nazwa || "",
+                    });
+                });
+            });
+            items = items.slice(0, 15);
+            renderDropdown();
+        } catch (err) {
+            console.error("Błąd pobierania kodów pocztowych:", err);
+        }
+    }
+
+    function renderDropdown() {
+        dropdown.innerHTML = "";
+        highlightedIndex = -1;
+        if (items.length === 0) {
+            const noResults = document.createElement("div");
+            noResults.className = "autocomplete-no-results";
+            noResults.textContent = "Brak pasujących wyników";
+            dropdown.appendChild(noResults);
+        } else {
+            items.forEach((item) => {
+                const div = document.createElement("div");
+                div.className = "autocomplete-item";
+                div.innerHTML = `
+                    <span class="item-zip">${item.zip}</span>
+                    <span class="item-details">${item.city}, ${item.voivodeship}</span>
+                `;
+                div.addEventListener("click", () => {
+                    fillFields(item);
+                    closeDropdown();
+                });
+                dropdown.appendChild(div);
+            });
+        }
+        dropdown.classList.add("active");
+    }
+
+    function fillFields(item) {
+        zipInput.value = item.zip;
+        cityInput.value = item.city;
+        if (item.voivodeshipId && wojewodztwoSelect) {
+            wojewodztwoSelect.value = item.voivodeshipId;
+        }
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove("active");
+        dropdown.innerHTML = "";
+        items = [];
+        highlightedIndex = -1;
+    }
+
+    zipInput.addEventListener("keydown", (e) => {
+        const els = dropdown.querySelectorAll(".autocomplete-item");
+        if (!dropdown.classList.contains("active") || els.length === 0) return;
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            highlightedIndex = (highlightedIndex + 1) % els.length;
+            updateHighlight(els);
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            highlightedIndex = (highlightedIndex - 1 + els.length) % els.length;
+            updateHighlight(els);
+        } else if (e.key === "Enter") {
+            if (highlightedIndex >= 0 && highlightedIndex < items.length) {
+                e.preventDefault();
+                fillFields(items[highlightedIndex]);
+                closeDropdown();
+            }
+        } else if (e.key === "Escape") {
+            closeDropdown();
+        }
+    });
+
+    function updateHighlight(els) {
+        els.forEach((el, idx) => {
+            el.classList.toggle("highlighted", idx === highlightedIndex);
+            if (idx === highlightedIndex) el.scrollIntoView({ block: "nearest" });
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+        if (!zipInput.contains(e.target) && !dropdown.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+}
+
+// ===== Wysyłka =====
+async function submitForm(e) {
+    e.preventDefault();
+    const form = document.getElementById("registrationForm");
+    const errorEl = document.getElementById("formError");
+    if (errorEl) errorEl.textContent = "";
+
+    if (!validateActiveStep()) return;
+
+    // Zgodność haseł
+    confirmPasswordInput.setCustomValidity("");
+    if (passwordInput.value !== confirmPasswordInput.value) {
+        confirmPasswordInput.setCustomValidity("Hasła nie są identyczne");
+        confirmPasswordInput.reportValidity();
+        return;
+    }
+
+    // Miasto jest readonly (uzupełniane z listy), więc nie łapie go natywna walidacja.
+    const miastoValue = document.getElementById("miasto").value.trim();
+    if (!miastoValue) {
+        if (errorEl) errorEl.textContent = "Wybierz miasto – zacznij wpisywać kod pocztowy i wybierz pozycję z listy.";
+        document.getElementById("kodPocztowy").focus();
+        return;
+    }
+
+    const voivodeshipId = wojewodztwoSelect.value;
+    const categoryId = glownaSpecjalizacjaSelect.value;
+
+    const payload = {
+        email: document.getElementById("email").value.trim(),
+        password: passwordInput.value,
+        typ: "INNY",
+        typInny: typInnyInput.value || null,
+        expertiseCategoryId: expertiseCategoryIdInput.value || null,
+        nazwa: document.getElementById("nazwaFirmy").value.trim(),
+        nazwaFirmy: document.getElementById("nazwaFirmy").value.trim(),
+        nip: document.getElementById("nip").value.replace(/[-\s]/g, ""),
+        regon: document.getElementById("regon").value.replace(/[-\s]/g, "") || null,
+        krs: document.getElementById("krs").value.replace(/[-\s]/g, "") || null,
+        imieKontakt: document.getElementById("imieKontakt").value.trim(),
+        nazwiskoKontakt: document.getElementById("nazwiskoKontakt").value.trim(),
+        numerTelefonu: document.getElementById("numerTelefonu").value.trim(),
+        numerTelefonu2: document.getElementById("numerTelefonu2").value.trim() || null,
+        adres: document.getElementById("adres").value.trim(),
+        kodPocztowy: document.getElementById("kodPocztowy").value.trim(),
+        miasto: document.getElementById("miasto").value.trim(),
+        voivodeshipId,
+        typOferty: "WSZYSTKIE",
+        zgodaRegulamin: document.getElementById("zgodaRegulamin").checked,
+        zgodaPrzetwarzanie: document.getElementById("zgodaPrzetwarzanie").checked,
+        callaPolska: false,
+        voivodeshipsIds: voivodeshipId ? [voivodeshipId] : [],
+        categoriesIds: categoryId ? [categoryId] : [],
+        isSocialRegistration: false,
+        // Pre-rejestracja z landing page: bez maila aktywacyjnego, konto od razu zweryfikowane.
+        skipEmailVerification: true,
+    };
+
+    const btn = e.target.querySelector('button[type="submit"]') || document.querySelector(".btn-submit");
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Wysyłanie...";
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/law-firms`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok) {
+            showStep(formSteps.length - 1); // sukces
+            return;
+        }
+        throw new Error(data.error || "Wystąpił błąd podczas rejestracji");
+    } catch (err) {
+        if (errorEl) errorEl.textContent = err.message || "Wystąpił błąd podczas rejestracji";
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "Załóż bezpłatne konto";
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadReferenceData();
+    initCityAutocomplete();
+});

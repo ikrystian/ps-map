@@ -1874,6 +1874,18 @@ h3 {
     box-shadow: 0 0 0 3px rgba(200, 168, 100, 0.08);
 }
 
+.form-input[readonly] {
+    cursor: not-allowed;
+    background: rgba(0, 0, 0, 0.3);
+    color: #888;
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.form-input[readonly]:focus {
+    border-color: rgba(255, 255, 255, 0.04);
+    box-shadow: none;
+}
+
 .form-select {
     appearance: none;
     cursor: pointer;
@@ -2042,6 +2054,62 @@ h3 {
     margin-top: 48px;
     display: flex;
     gap: 12px;
+}
+
+/* Rejestracja eksperta – układ pól */
+.form-section-heading {
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8a864;
+    margin: 36px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.form-section-heading:first-of-type {
+    margin-top: 8px;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row .form-group {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.form-optional {
+    color: #777;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.form-error {
+    text-align: left;
+    color: #e06c6c;
+    font-size: 0.9rem;
+    margin-top: 16px;
+    min-height: 1.2em;
+}
+
+.form-error:empty {
+    margin-top: 0;
+}
+
+@media (max-width: 560px) {
+
+    .form-row,
+    .form-row-3 {
+        flex-direction: column;
+        gap: 0;
+    }
 }
 
 .btn-form {

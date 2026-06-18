@@ -1,0 +1,92 @@
+==================================================
+Timestamp (Client) : 2026-06-16T19:50:00Z
+Timestamp (Server) : 2026-06-16 19:51:30
+Client IP          : 127.0.0.1
+User Agent         : CurlTest
+Page URL           : http://localhost:666/test
+Error Type         : test-error
+Location           : Line 42, Col 7
+Message            : This is a test log message from curl
+Stack Trace        :
+Error: test\n  at main (test.js:42:7)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:23:15.273Z
+Timestamp (Server) : 2026-06-17 20:23:15
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at loadReferenceData (http://localhost:666/register.js:153:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:23:58.453Z
+Timestamp (Server) : 2026-06-17 20:23:58
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at loadReferenceData (http://localhost:666/register.js:154:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:24:05.515Z
+Timestamp (Server) : 2026-06-17 20:24:05
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at loadReferenceData (http://localhost:666/register.js:153:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:26:00.483Z
+Timestamp (Server) : 2026-06-17 20:26:00
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at loadReferenceData (http://localhost:666/register.js:152:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:26:01.929Z
+Timestamp (Server) : 2026-06-17 20:26:01
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at loadReferenceData (http://localhost:666/register.js:152:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+
+==================================================
+Timestamp (Client) : 2026-06-17T20:31:56.277Z
+Timestamp (Server) : 2026-06-17 20:31:56
+Client IP          : 127.0.0.1
+User Agent         : Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+Page URL           : http://localhost:666/formularz.html
+Error Type         : console.error
+Message            : Błąd ładowania danych słownikowych: Failed to fetch
+TypeError: Failed to fetch
+    at chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/requests.js:1:3630
+    at loadReferenceData (http://localhost:666/register.js:152:13)
+    at HTMLDocument.<anonymous> (http://localhost:666/register.js:412:5)
+==================================================
+

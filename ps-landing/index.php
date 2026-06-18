@@ -386,6 +386,44 @@ function handleContact(string $dataDir): void
     sendJSON(['success' => true]);
 }
 
+function handleLogError(string $dataDir): void
+{
+    $data = readJsonBody();
+    $now = date('Y-m-d H:i:s');
+    
+    $type = $data['type'] ?? 'unknown';
+    $message = $data['message'] ?? '';
+    $url = $data['url'] ?? '';
+    $line = $data['line'] ?? '';
+    $col = $data['col'] ?? '';
+    $stack = $data['stack'] ?? '';
+    $userAgent = $data['userAgent'] ?? '';
+    $timestamp = $data['timestamp'] ?? '';
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+    $logFile = $dataDir . DIRECTORY_SEPARATOR . 'console_errors.txt';
+
+    $logEntry = "==================================================\n";
+    $logEntry .= "Timestamp (Client) : $timestamp\n";
+    $logEntry .= "Timestamp (Server) : $now\n";
+    $logEntry .= "Client IP          : $ip\n";
+    $logEntry .= "User Agent         : $userAgent\n";
+    $logEntry .= "Page URL           : $url\n";
+    $logEntry .= "Error Type         : $type\n";
+    if ($line !== null && $line !== '') {
+        $logEntry .= "Location           : Line $line, Col $col\n";
+    }
+    $logEntry .= "Message            : $message\n";
+    if ($stack !== null && $stack !== '') {
+        $logEntry .= "Stack Trace        :\n$stack\n";
+    }
+    $logEntry .= "==================================================\n\n";
+
+    file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+
+    sendJSON(['success' => true]);
+}
+
 function parseCsvToArray(string $filePath): array
 {
     if (!file_exists($filePath)) {
@@ -499,6 +537,20 @@ if ($uri === '/api/contact') {
             handleContact($DATA_DIR);
         } catch (Throwable $e) {
             log_msg('Error in contact endpoint: ' . $e->getMessage());
+            sendJSON(['error' => 'Invalid data'], 400);
+        }
+    } else {
+        sendJSON(['error' => 'Method not allowed'], 405);
+    }
+    return;
+}
+
+if ($uri === '/api/log-error') {
+    if ($method === 'POST') {
+        try {
+            handleLogError($DATA_DIR);
+        } catch (Throwable $e) {
+            log_msg('Error in log-error endpoint: ' . $e->getMessage());
             sendJSON(['error' => 'Invalid data'], 400);
         }
     } else {
