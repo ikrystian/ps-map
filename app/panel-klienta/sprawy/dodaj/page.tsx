@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -22,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { Check, ChevronDown, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X, Sparkles, Loader2, User, Building2, Landmark } from "lucide-react"
+import { Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, FolderOpen, Search, Upload, X, Sparkles, Loader2, User, Building2, Landmark } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -89,6 +90,8 @@ export default function ClientAddCasePage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [createdCaseId, setCreatedCaseId] = useState<string | null>(null)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
 
@@ -401,7 +404,8 @@ export default function ClientAddCasePage() {
 
       if (response.ok) {
         const data = await response.json()
-        router.push(`/panel-klienta/sprawy/${data.id}`)
+        setCreatedCaseId(data.id)
+        setShowSuccessDialog(true)
       } else {
         toast.error("Błąd podczas dodawania sprawy")
       }
@@ -1169,6 +1173,66 @@ export default function ClientAddCasePage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Popup potwierdzający dodanie sprawy */}
+      <Dialog
+        open={showSuccessDialog}
+        onOpenChange={(open) => {
+          // Po zamknięciu popupu przenosimy klienta do dodanej sprawy
+          if (!open && createdCaseId) {
+            router.push(`/panel-klienta/sprawy/${createdCaseId}`)
+          }
+          setShowSuccessDialog(open)
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-6 overflow-hidden text-center">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[180px] h-[180px] bg-success/10 blur-[70px] rounded-full pointer-events-none" />
+          <DialogHeader className="items-center">
+            <motion.div
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-success/10 border border-success/20"
+            >
+              <CheckCircle2 className="h-9 w-9 text-success" />
+            </motion.div>
+            <DialogTitle className="text-xl font-bold font-playfair text-white">
+              Sprawa została dodana!
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">
+              Twoja sprawa została pomyślnie opublikowana. Eksperci mogą już zapoznać się z jej szczegółami i przesłać Ci swoje oferty.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-center gap-2.5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowSuccessDialog(false)
+                router.push("/panel-klienta/sprawy")
+              }}
+              className="h-11 px-5"
+            >
+              Przejdź do listy spraw
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => {
+                setShowSuccessDialog(false)
+                if (createdCaseId) {
+                  router.push(`/panel-klienta/sprawy/${createdCaseId}`)
+                }
+              }}
+              className="h-11 px-5 shadow-md shadow-primary/20 gap-1.5"
+            >
+              Zobacz sprawę
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

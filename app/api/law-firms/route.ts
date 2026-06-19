@@ -1,4 +1,4 @@
-import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
+import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { EmailType } from "@prisma/client"
@@ -725,6 +725,26 @@ export async function POST(request: NextRequest) {
       if (!emailSent) {
         console.error('Failed to send verification email to:', body.email)
         // Don't fail registration if email fails, just log it
+      }
+    } else if (!existingUser && body.skipEmailVerification) {
+      // Pre-rejestracja z landing page (ps-landing): konto jest od razu zweryfikowane,
+      // więc zamiast maila aktywacyjnego wysyłamy mail powitalny w standardowej szacie
+      // graficznej (ten sam layout, co pozostałe maile systemowe).
+      try {
+        const welcome = generateLandingWelcomeEmail()
+        emailSent = await sendEmail({
+          to: body.email,
+          subject: welcome.subject,
+          html: welcome.html,
+          text: welcome.text,
+          templateType: EmailType.REJESTRACJA_KANCELARIA,
+        })
+        if (!emailSent) {
+          console.error('Failed to send landing welcome email to:', body.email)
+        }
+      } catch (welcomeError) {
+        // Nie blokuj rejestracji, jeśli mail powitalny się nie wyśle.
+        console.error('Failed to send landing welcome email to:', body.email, welcomeError)
       }
     }
 
