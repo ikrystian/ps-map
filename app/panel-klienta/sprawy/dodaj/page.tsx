@@ -1200,7 +1200,7 @@ export default function ClientAddCasePage() {
               Sprawa została dodana!
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">
-              Twoja sprawa została pomyślnie opublikowana. Eksperci mogą już zapoznać się z jej szczegółami i przesłać Ci swoje oferty.
+              Twoja sprawa jest już w systemie! Prawnicy specjalizujący się w tej dziedzinie wkrótce zapoznają się z jej szczegółami i złożą swoje oferty. Otrzymasz powiadomienie, gdy tylko pojawią się nowe propozycje. Dziękujemy za zaufanie!
             </DialogDescription>
           </DialogHeader>
 
