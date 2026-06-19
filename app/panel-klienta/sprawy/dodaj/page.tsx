@@ -108,6 +108,7 @@ export default function ClientAddCasePage() {
   const [locationOpen, setLocationOpen] = useState(false)
   const [locationSearch, setLocationSearch] = useState("")
   const [selectedCityName, setSelectedCityName] = useState("")
+  const [showMoreGDPR, setShowMoreGDPR] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
@@ -1065,13 +1066,45 @@ export default function ClientAddCasePage() {
           onCheckedChange={(checked) => updateFormData("akceptujeKlauzule", checked)}
           className="mt-1 h-5 w-5 border-border/50 text-primary focus:ring-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded shrink-0"
         />
-        <Label htmlFor="akceptujeKlauzule" className="cursor-pointer text-xs text-muted-foreground leading-relaxed font-light">
-          Oświadczam, że zapoznałem się i akceptuję klauzulę informacyjną oraz regulamin portalu odnośnie przetwarzania danych osobowych w celu realizacji zlecenia. *
-          <br />
-          <span className="text-muted-foreground/70 text-sm block mt-1 font-light">
+        <div className="space-y-1.5 flex-1">
+          <Label htmlFor="akceptujeKlauzule" className="cursor-pointer text-xs text-muted-foreground leading-relaxed font-light block">
+            Oświadczam, że zapoznałem się i akceptuję klauzulę informacyjną oraz regulamin portalu odnośnie przetwarzania danych osobowych w celu realizacji zlecenia. *
+          </Label>
+          <div className="text-muted-foreground/70 text-xs leading-relaxed font-light">
+            Administratorem Twoich danych osobowych jest Polska Grupa Identyfikacji Firm Sp. z o.o. z siedzibą w Kielcach: Generała Mariana Langiewicza 16/3,{" "}
+            {!showMoreGDPR ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowMoreGDPR(true);
+                }}
+                className="text-primary hover:underline font-normal inline-flex items-center"
+              >
+                Wiecej
+              </button>
+            ) : (
+              <>
+                Twoje dane osobowe będą przetwarzane głównie w celu realizacji zawartej umowy, co obejmuje świadczenie usług drogą elektroniczną oraz korzystanie z naszego serwisu. Oznacza to, że na Twoje zlecenie będziemy poszukiwać dostawców interesujących Cię produktów i usług oraz umożliwiać nawiązanie z nimi kontaktu. Dążymy również do dostarczania Ci spersonalizowanych informacji, takich jak rekomendacje, porady oraz ankiety, a także informowania o nowościach. Nasz zespół może się z Tobą kontaktować w celu obsługi Twoich zapytań. Zapewniamy realizację Twoich praw wynikających z RODO, w tym prawa dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia, wniesienia sprzeciwu oraz prawa do tego, aby nie podlegać automatycznemu podejmowaniu decyzji, w tym profilowaniu. Podanie danych osobowych jest dobrowolne, lecz konieczne do realizacji umowy. Szczegółowe informacje o sposobach przetwarzania danych, czasie ich przechowywania oraz możliwości składania skarg znajdują się w naszej Polityce Prywatności.{" "}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowMoreGDPR(false);
+                  }}
+                  className="text-primary hover:underline font-normal inline-flex items-center"
+                >
+                  Mniej
+                </button>
+              </>
+            )}
+          </div>
+          <span className="text-muted-foreground/50 text-xs block mt-1 font-light italic">
             Podane dane kontaktowe zostaną udostępnione wyłącznie wybranym ekspertom po złożeniu przez nich ofert.
           </span>
-        </Label>
+        </div>
       </div>
     </div>
   )
