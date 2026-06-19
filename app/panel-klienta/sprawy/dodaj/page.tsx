@@ -124,7 +124,7 @@ export default function ClientAddCasePage() {
     doNegocjacji: false,
     imieNazwisko: "",
     telefonKontakt: "",
-    preferowanyKontakt: "",
+    preferowanyKontakt: "EMAIL",
     akceptujeKlauzule: false,
   })
 
