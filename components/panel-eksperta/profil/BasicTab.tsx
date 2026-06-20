@@ -6,12 +6,12 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck, Building, MapPin, FileText, Lock, Zap } from "lucide-react"
+import { Loader2, Upload, X, Image as ImageIcon, User, ShieldCheck, Building, MapPin, FileText, Lock, Zap, Lightbulb, ChevronDown, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
 import dynamic from "next/dynamic"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { BorderBeam } from "@/components/ui/border-beam"
 
@@ -58,6 +58,15 @@ export function BasicTab({
 }: BasicTabProps) {
   const [showLogoConfirm, setShowLogoConfirm] = useState(false)
   const [showCoverConfirm, setShowCoverConfirm] = useState(false)
+  const [showDescTips, setShowDescTips] = useState(false)
+  const descTipsRef = useRef<HTMLDivElement>(null)
+
+  // Po odsłonięciu sekcji ze wskazówkami przewiń do niej płynnie
+  useEffect(() => {
+    if (showDescTips) {
+      descTipsRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+  }, [showDescTips])
 
   const { hasFeature, loading: permissionsLoading } = usePermissions()
   const canUploadCover = permissionsLoading ? true : hasFeature("canUploadCoverBanner")
@@ -117,7 +126,19 @@ export function BasicTab({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="opis" className="text-zinc-300 font-medium">Opis profilu</Label>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <Label htmlFor="opis" className="text-zinc-300 font-medium">Opis profilu</Label>
+                  <button
+                    type="button"
+                    onClick={() => setShowDescTips((prev) => !prev)}
+                    aria-expanded={showDescTips}
+                    className="profile-desc-button inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover transition-colors"
+                  >
+                    <Lightbulb className="h-3.5 w-3.5" />
+                    {showDescTips ? "Ukryj wskazówki" : "Jak napisać dobry opis?"}
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${showDescTips ? "rotate-180" : ""}`} />
+                  </button>
+                </div>
                 <div className="rounded-xl overflow-hidden border border-border/30 bg-zinc-950/20">
                   <RichTextEditor
                     value={formData.opis}
@@ -125,6 +146,50 @@ export function BasicTab({
                     placeholder="Opisz swoje doświadczenie i usługi..."
                   />
                 </div>
+
+                {showDescTips && (
+                  <div
+                    ref={descTipsRef}
+                    className="scroll-mt-24 rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3 animate-in slide-in-from-top-1 fade-in-50 duration-200"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="bg-primary/10 p-1.5 rounded-lg text-primary">
+                        <Lightbulb className="h-4 w-4" />
+                      </div>
+                      <h4 className="text-sm font-semibold text-white">Jak napisać dobry opis profilu</h4>
+                    </div>
+
+                    <ul className="space-y-2 text-xs text-zinc-300 font-light leading-relaxed">
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span><strong className="font-medium text-zinc-100">Zacznij od najważniejszego</strong> — w pierwszych zdaniach napisz, w czym się specjalizujesz i komu pomagasz.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span><strong className="font-medium text-zinc-100">Używaj słów kluczowych</strong>, których szukają klienci (np. „rozwód", „odszkodowanie", „prawo pracy") — poprawiają widoczność w wyszukiwarce (SEO).</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span><strong className="font-medium text-zinc-100">Pokaż doświadczenie konkretami</strong> — lata praktyki, liczba prowadzonych spraw, obszary specjalizacji.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span><strong className="font-medium text-zinc-100">Pisz prostym językiem</strong>, bez nadmiaru żargonu prawniczego — klient ma zrozumieć, jak mu pomożesz.</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span><strong className="font-medium text-zinc-100">Zadbaj o długość min. 40 znaków</strong> — zbyt krótkie opisy obniżają ocenę kompletności profilu.</span>
+                      </li>
+                    </ul>
+
+                    <div className="rounded-lg border border-border/20 bg-zinc-950/30 p-3">
+                      <p className="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Przykład</p>
+                      <p className="text-xs text-zinc-300 font-light italic leading-relaxed">
+                        „Specjalizuję się w prawie rodzinnym — rozwody, podział majątku oraz sprawy alimentacyjne. Od ponad 10 lat reprezentuję klientów w Warszawie i okolicach, prowadząc każdą sprawę z pełnym zaangażowaniem. Oferuję jasne zasady współpracy i bezpłatną wstępną konsultację telefoniczną."
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

@@ -20,7 +20,9 @@
       "Bash(awk '/^model \\(Category|Voivodeship|City|Powiat\\) \\\\{/{flag=1} flag{print} /^\\\\}/{if\\(flag\\)flag=0}' prisma/schema.prisma)",
       "Bash(awk 'NR>=233' \"app/\\(public\\)/szukaj-prawnika/SearchLawyerClientPage.tsx\")",
       "Bash(grep -nE \"return \\\\\\(|</div>|</main>|^\\\\s*\\\\\\)\\\\s*$|^}\")",
-      "Bash(echo \"=== eslint exit: $? ===\")"
+      "Bash(echo \"=== eslint exit: $? ===\")",
+      "Bash(git -C /home/krystian/Projects/ps-map show 037be74 --stat)",
+      "Bash(git -C /home/krystian/Projects/ps-map show 037be74)"
     ]
   }
 }
