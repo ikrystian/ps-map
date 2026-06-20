@@ -245,6 +245,7 @@ export function RichTextEditor({
   const editorRef = useRef<any>(null)
   const isUpdatingRef = useRef(false)
   const initialValueRef = useRef(value)
+  const lastEmittedRef = useRef(value)
   const onChangeRef = useRef(onChange)
 
   // Keep onChange ref updated to avoid effect dependency re-runs
@@ -369,6 +370,9 @@ export function RichTextEditor({
           if (isUpdatingRef.current) return
           const savedData = await api.saver.save()
           const html = convertBlocksToHTML(savedData.blocks)
+          // Remember what we emitted so the parent->editor sync below can tell
+          // our own echo apart from a genuine external value change.
+          lastEmittedRef.current = html
           onChangeRef.current(html)
         }
       })
@@ -411,22 +415,33 @@ export function RichTextEditor({
     }
   }, [placeholder])
 
-  // Sync value from parent (only if value changed externally)
+  // Sync value from parent — only when the change came from outside the editor.
+  // Echoes of the editor's own onChange are ignored, otherwise the async save
+  // below races against fresh keystrokes and reverts them (which also stalls any
+  // consumer reading the value, e.g. the profile completeness score).
   useEffect(() => {
     const editor = editorRef.current
     if (!editor || !editor.isReady) return
 
+    const cleanValue = value || ""
+    if (cleanValue === lastEmittedRef.current) return
+
     editor.isReady.then(() => {
       editor.saver.save().then((savedData: any) => {
         const currentHTML = convertBlocksToHTML(savedData.blocks)
-        const cleanValue = value || ""
 
         if (cleanValue !== currentHTML) {
           isUpdatingRef.current = true
           const newBlocks = convertHTMLToBlocks(cleanValue)
-          editor.render({ blocks: newBlocks }).then(() => {
-            isUpdatingRef.current = false
-          })
+          editor
+            .render({ blocks: newBlocks })
+            .then(() => {
+              lastEmittedRef.current = cleanValue
+              isUpdatingRef.current = false
+            })
+            .catch(() => {
+              isUpdatingRef.current = false
+            })
         }
       })
     })

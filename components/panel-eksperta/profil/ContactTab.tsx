@@ -174,7 +174,7 @@ export function ContactTab({
   return (
     <div className="space-y-6">
       {/* Rząd 1: Osoba kontaktowa oraz Dane teleadresowe */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      <div className="grid grid-cols-1  gap-6 items-stretch">
         {/* Osoba kontaktowa */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
           <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
@@ -316,7 +316,7 @@ export function ContactTab({
 
 
       {/* Rząd 2: Adres stacjonarny biura oraz Profile społecznościowe */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      <div className="grid grid-cols-1 gap-6 items-stretch">
         {/* Adres stacjonarny */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
           <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />

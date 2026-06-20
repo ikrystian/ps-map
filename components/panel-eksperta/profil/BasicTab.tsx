@@ -65,7 +65,7 @@ export function BasicTab({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       {/* Kolumna lewa: Dane podstawowe */}
-      <div className="lg:col-span-7 space-y-6">
+      <div className="lg:col-span-12 space-y-6">
         {/* Dane podstawowe */}
         <Card id="tour-profil-basic" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
           <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
@@ -132,7 +132,7 @@ export function BasicTab({
       </div>
 
       {/* Kolumna prawa: Wizerunek i zdjęcia bannerów oraz Wpisy do rejestrów */}
-      <div className="lg:col-span-5 space-y-6">
+      <div className="lg:col-span-12 space-y-6">
         {/* Logo i zdjęcia główne */}
         <Card id="tour-profil-logo" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
           <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={9} borderWidth={1} />
