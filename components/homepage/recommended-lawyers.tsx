@@ -41,10 +41,15 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
   const [activeIdx, setActiveIdx] = useState(0)
   const sliderRef = useRef<HTMLDivElement>(null)
 
-  const categoriesList = recommendedData ? Object.keys(recommendedData).sort() : CATEGORIES
+  const categoriesList = recommendedData && Object.keys(recommendedData).length > 0
+    ? Object.keys(recommendedData).sort()
+    : CATEGORIES
 
-  // Jeśli przekazano dane promocyjne, a lista jest pusta, to ukrywamy cały blok
-  if (recommendedData && categoriesList.length === 0) {
+  // Jeśli nie ma ani danych promocyjnych, ani ogólnych kancelarii, to ukrywamy cały blok
+  if (
+    (!recommendedData || Object.keys(recommendedData).length === 0) &&
+    (!lawFirms || lawFirms.length === 0)
+  ) {
     return null
   }
 
@@ -121,6 +126,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
     if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
       return firm.zdjecieGlowne
     }
+    return `https://images.unsplash.com/photo-${index % 2 === 0 ? "1560250097-0b93528c311a" : "1573496359142-b8d87734a5a2"}?auto=format&fit=crop&w=400&q=80`
   }
 
   return (
