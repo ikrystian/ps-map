@@ -7,7 +7,7 @@ import { notFound } from "next/navigation"
 export const dynamic = "force-dynamic"
 
 export const metadata = {
-  title: "Podgląd maili (DEV)",
+  title: "Podgląd maili (DEV/STAGE)",
   robots: { index: false, follow: false },
 }
 
@@ -26,9 +26,10 @@ export default async function MailsPage() {
   // Podgląd logów maili udostępniamy wyłącznie poza produkcją,
   // aby nie wyciekać treści wiadomości (dane osobowe, linki) na produkcji.
 
-  // if (process.env.NODE_ENV === "production") {
-  //   notFound()
-  // }
+  const nodeEnv = process.env.NODE_ENV as string
+  if (nodeEnv !== "development" && nodeEnv !== "stage") {
+    notFound()
+  }
 
   const logs = await prisma.emailLog.findMany({
     orderBy: { sentAt: "desc" },
@@ -49,12 +50,14 @@ export default async function MailsPage() {
         <header className="mb-8">
           <div className="flex items-center gap-3">
             <span className="text-3xl">📧</span>
-            <h1 className="text-2xl font-semibold">Podgląd maili (DEV)</h1>
+            <h1 className="text-2xl font-semibold">
+              Podgląd maili {nodeEnv === "stage" ? "(STAGE)" : "(DEV)"}
+            </h1>
           </div>
           <p className="mt-2 text-sm text-neutral-400">
-            Na środowisku deweloperskim maile nie są wysyłane – są jedynie
-            zapisywane w logach i wyświetlane na tej stronie. Pokazuję{" "}
-            {logs.length} ostatnich wiadomości.
+            {nodeEnv === "stage"
+              ? `Na środowisku testowym (stage) maile są wysyłane oraz zapisywane w logach do podglądu. Pokazuję ${logs.length} ostatnich wiadomości.`
+              : `Na środowisku deweloperskim maile nie są wysyłane – są jedynie zapisywane w logach i wyświetlane na tej stronie. Pokazuję ${logs.length} ostatnich wiadomości.`}
           </p>
         </header>
 

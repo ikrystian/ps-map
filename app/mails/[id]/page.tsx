@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 export const dynamic = "force-dynamic"
 
 export const metadata = {
-  title: "Podgląd maila (DEV)",
+  title: "Podgląd maila (DEV/STAGE)",
   robots: { index: false, follow: false },
 }
 
@@ -26,7 +26,8 @@ export default async function MailDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  if (process.env.NODE_ENV === "production") {
+  const nodeEnv = process.env.NODE_ENV as string
+  if (nodeEnv !== "development" && nodeEnv !== "stage") {
     notFound()
   }
 
@@ -63,11 +64,10 @@ export default async function MailDetailPage({
           <div className="border-b border-neutral-800 p-5">
             <div className="mb-3 flex items-center gap-2">
               <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${
-                  log.status === EmailLogStatus.SUCCESS
+                className={`inline-block h-2.5 w-2.5 rounded-full ${log.status === EmailLogStatus.SUCCESS
                     ? "bg-emerald-500"
                     : "bg-red-500"
-                }`}
+                  }`}
               />
               <span className="text-xs uppercase tracking-wide text-neutral-400">
                 {log.status}

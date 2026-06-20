@@ -287,101 +287,40 @@
     /* Dane kontaktowe – prawy dolny róg */
     .contact-card {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
+      bottom: 16px;
+      right: 16px;
       z-index: 100;
-      background: rgba(18, 18, 18, 0.82);
-      border: 1px solid rgba(13, 161, 146, 0.28);
-      border-radius: 18px;
-      padding: 20px 24px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
-      min-width: 230px;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      background: rgba(15, 15, 15, 0.78);
+      border: 1px solid rgba(13, 161, 146, 0.22);
+      border-radius: 10px;
+      padding: 10px 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.3s;
     }
 
     .contact-card:hover {
-      border-color: rgba(13, 161, 146, 0.55);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 24px rgba(13, 161, 146, 0.08);
+      border-color: rgba(13, 161, 146, 0.45);
     }
 
-    .contact-card__heading {
+    .contact-card__item {
       font-family: "Inter", sans-serif;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: #0da192;
-      margin-bottom: 14px;
+      font-size: 0.72rem;
+      color: #aaa;
+      line-height: 1.7;
+      white-space: nowrap;
+      display: block;
     }
 
-    .contact-card__row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .contact-card__row:last-child {
-      margin-bottom: 0;
-    }
-
-    .contact-card__icon {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: rgba(13, 161, 146, 0.1);
-      color: #0da192;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .contact-card__icon svg {
-      width: 15px;
-      height: 15px;
-    }
-
-    .contact-card__info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .contact-card__label {
-      font-family: "Inter", sans-serif;
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #666;
-      line-height: 1;
-      margin-bottom: 3px;
-    }
-
-    .contact-card__value {
-      font-family: "Inter", sans-serif;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #e5e5e5;
-      line-height: 1.2;
+    .contact-card__item a {
+      color: #aaa;
       text-decoration: none;
       transition: color 0.2s;
     }
 
-    .contact-card__value:hover {
+    .contact-card__item a:hover {
       color: #0da192;
-    }
-
-    @media (max-width: 560px) {
-      .contact-card {
-        bottom: 16px;
-        right: 16px;
-        left: 16px;
-        min-width: 0;
-        padding: 16px 18px;
-      }
     }
   </style>
 </head>
@@ -468,33 +407,9 @@
 
   <!-- Dane kontaktowe -->
   <aside class="contact-card" aria-label="Dane kontaktowe">
-    <p class="contact-card__heading">Kontakt</p>
-
-    <div class="contact-card__row">
-      <div class="contact-card__icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-          <polyline points="22,6 12,13 2,6" />
-        </svg>
-      </div>
-      <div class="contact-card__info">
-        <span class="contact-card__label">E-mail</span>
-        <a href="mailto:kontakt@prostasprawa.pl" class="contact-card__value">kontakt@prostasprawa.pl</a>
-      </div>
-    </div>
-
-    <div class="contact-card__row">
-      <div class="contact-card__icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path
-            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.4 2 2 0 0 1 3.54 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6 6l.88-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z" />
-        </svg>
-      </div>
-      <div class="contact-card__info">
-        <span class="contact-card__label">Telefon</span>
-        <a href="tel:+48123456789" class="contact-card__value">+48 123 456 789</a>
-      </div>
-    </div>
+    <span class="contact-card__item"><a href="mailto:kontakt@prostasprawa.pl">kontakt@prostasprawa.pl</a></span>
+    <span class="contact-card__item"><a href="tel:+48123456789">+48 123 456 789</a></span>
+    <span class="contact-card__item">ul. Przykładowa 1, Warszawa</span>
 
     <div class="contact-card__row">
       <div class="contact-card__icon">

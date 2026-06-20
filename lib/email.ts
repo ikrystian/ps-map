@@ -128,7 +128,8 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const from = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
 
     const smtpConfigured = !!(host && user && pass && from)
-    const isDev = process.env.NODE_ENV !== 'production'
+    const nodeEnv = process.env.NODE_ENV as string
+    const isDev = nodeEnv !== 'production' && nodeEnv !== 'stage'
 
     // Na środowisku deweloperskim NIE wysyłamy prawdziwych maili.
     // Zamiast tego logujemy je do konsoli oraz do bazy (EmailLog),
