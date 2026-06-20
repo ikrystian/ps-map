@@ -6,6 +6,7 @@ import { BasicTab } from "@/components/panel-eksperta/profil/BasicTab"
 import { ContactTab } from "@/components/panel-eksperta/profil/ContactTab"
 import { MultimediaTab } from "@/components/panel-eksperta/profil/MultimediaTab"
 import { OfficeHoursCard } from "@/components/panel-eksperta/profil/OfficeHoursCard"
+import { ProfileScoreCard } from "@/components/panel-eksperta/profil/ProfileScoreCard"
 import { SpecializationTab } from "@/components/panel-eksperta/profil/SpecializationTab"
 import { Button } from "@/components/ui/button"
 import { ImageCropper } from "@/components/ui/image-cropper"
@@ -591,130 +592,143 @@ function LawFirmProfilePageContent() {
         subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
       />
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
 
-      {/* Re-designed premium tab selector */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6 relative z-10">
-        <TabsList className="p-1.5 bg-zinc-950/40 backdrop-blur-md border border-border/30 rounded-xl flex gap-1.5 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none h-auto">
-          <TabsTrigger
-            value="basic"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
-          >
-            <User className="h-4 w-4 shrink-0" />
-            <span>Dane podstawowe</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="contact"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
-          >
-            <MapPin className="h-4 w-4 shrink-0" />
-            <span>Kontakt i obszar</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="specialization"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
-          >
-            <Award className="h-4 w-4 shrink-0" />
-            <span>Oferta i zakres</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="multimedia"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
-          >
-            <ImageIcon className="h-4 w-4 shrink-0" />
-            <span>Galeria i wideo</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="consultations"
-            className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
-          >
-            <Clock className="h-4 w-4 shrink-0" />
-            <span>Godziny i dostępność</span>
-          </TabsTrigger>
-        </TabsList>
 
-        {/* Dane podstawowe */}
-        <TabsContent value="basic" className="space-y-6 animate-in fade-in-50 duration-300">
-          <BasicTab
-            formData={formData}
-            handleInputChange={handleInputChange}
-            isUploading={isUploading}
-            handleLogoFileSelect={handleLogoFileSelect}
-            handleMainImageFileSelect={handleMainImageFileSelect}
-            handleRemoveSingleImage={handleRemoveSingleImage}
-          />
-        </TabsContent>
+        {/* Treść profilu — 2/3 szerokości */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Re-designed premium tab selector */}
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+            <TabsList className="p-1.5 bg-zinc-950/40 backdrop-blur-md border border-border/30 rounded-xl flex gap-1.5 w-full max-w-full overflow-x-auto custom-scrollbar relative z-10 scrollbar-none h-auto">
+              <TabsTrigger
+                value="basic"
+                className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
+              >
+                <User className="h-4 w-4 shrink-0" />
+                <span>Dane podstawowe</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="contact"
+                className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
+              >
+                <MapPin className="h-4 w-4 shrink-0" />
+                <span>Kontakt i obszar</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="specialization"
+                className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
+              >
+                <Award className="h-4 w-4 shrink-0" />
+                <span>Oferta i zakres</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="multimedia"
+                className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
+              >
+                <ImageIcon className="h-4 w-4 shrink-0" />
+                <span>Galeria i wideo</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="consultations"
+                className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
+              >
+                <Clock className="h-4 w-4 shrink-0" />
+                <span>Godziny i dostępność</span>
+              </TabsTrigger>
+            </TabsList>
 
-        {/* Dane kontaktowe i obszar działania */}
-        <TabsContent value="contact" className="space-y-6 animate-in fade-in-50 duration-300">
-          <ContactTab
-            formData={formData}
-            handleInputChange={handleInputChange}
-            voivodeships={voivodeships}
-            maxVoivodeships={maxVoivodeships}
-            maxCities={maxCities}
-            citiesByVoivodeship={citiesByVoivodeship}
-            loadingCities={loadingCities}
-            toggleVoivodeship={toggleVoivodeship}
-            toggleCity={toggleCity}
-            hasMoreCities={hasMoreCities}
-            loadingMoreCities={loadingMoreCities}
-            fetchMoreCities={fetchMoreCities}
-          />
-        </TabsContent>
+            {/* Dane podstawowe */}
+            <TabsContent value="basic" className="space-y-6 animate-in fade-in-50 duration-300">
+              <BasicTab
+                formData={formData}
+                handleInputChange={handleInputChange}
+                isUploading={isUploading}
+                handleLogoFileSelect={handleLogoFileSelect}
+                handleMainImageFileSelect={handleMainImageFileSelect}
+                handleRemoveSingleImage={handleRemoveSingleImage}
+              />
+            </TabsContent>
 
-        {/* Zakres usług */}
-        <TabsContent value="specialization" className="space-y-6 animate-in fade-in-50 duration-300">
-          <SpecializationTab
-            formData={formData}
-            categories={categories}
-            limitSlowKluczowych={limitSlowKluczowych}
-            handleInputChange={handleInputChange}
-          />
-        </TabsContent>
+            {/* Dane kontaktowe i obszar działania */}
+            <TabsContent value="contact" className="space-y-6 animate-in fade-in-50 duration-300">
+              <ContactTab
+                formData={formData}
+                handleInputChange={handleInputChange}
+                voivodeships={voivodeships}
+                maxVoivodeships={maxVoivodeships}
+                maxCities={maxCities}
+                citiesByVoivodeship={citiesByVoivodeship}
+                loadingCities={loadingCities}
+                toggleVoivodeship={toggleVoivodeship}
+                toggleCity={toggleCity}
+                hasMoreCities={hasMoreCities}
+                loadingMoreCities={loadingMoreCities}
+                fetchMoreCities={fetchMoreCities}
+              />
+            </TabsContent>
 
-        {/* Multimedia */}
-        <TabsContent value="multimedia" className="space-y-6 animate-in fade-in-50 duration-300">
-          <MultimediaTab
-            formData={formData}
-            isUploading={isUploading}
-            handleInputChange={handleInputChange}
-            handleImageUpload={handleImageUpload}
-            handleRemoveImage={handleRemoveImage}
-          />
-        </TabsContent>
+            {/* Zakres usług */}
+            <TabsContent value="specialization" className="space-y-6 animate-in fade-in-50 duration-300">
+              <SpecializationTab
+                formData={formData}
+                categories={categories}
+                limitSlowKluczowych={limitSlowKluczowych}
+                handleInputChange={handleInputChange}
+              />
+            </TabsContent>
 
-        {/* Godziny i dostępność */}
-        <TabsContent value="consultations" className="space-y-6 animate-in fade-in-50 duration-300">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <OfficeHoursCard formData={formData} handleInputChange={handleInputChange} />
-            <ConsultationHoursForm />
+            {/* Multimedia */}
+            <TabsContent value="multimedia" className="space-y-6 animate-in fade-in-50 duration-300">
+              <MultimediaTab
+                formData={formData}
+                isUploading={isUploading}
+                handleInputChange={handleInputChange}
+                handleImageUpload={handleImageUpload}
+                handleRemoveImage={handleRemoveImage}
+              />
+            </TabsContent>
+
+            {/* Godziny i dostępność */}
+            <TabsContent value="consultations" className="space-y-6 animate-in fade-in-50 duration-300">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <OfficeHoursCard formData={formData} handleInputChange={handleInputChange} />
+                <ConsultationHoursForm />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          {/* Submit / Cancel Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-border/20">
+            <Button
+              type="submit"
+              disabled={isSaving}
+              className="h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+            >
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Zapisz profil
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl transition-all duration-200"
+              onClick={() => router.push("/panel-eksperta")}
+              disabled={isSaving}
+            >
+              Anuluj
+            </Button>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
 
-      {/* Submit / Cancel Actions */}
-      <div className="flex justify-end gap-3 pt-4 relative z-10 border-t border-border/20">
-        <Button
-          type="submit"
-          disabled={isSaving}
-          className="h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
-        >
-          {isSaving ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
-          Zapisz profil
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl transition-all duration-200"
-          onClick={() => router.push("/panel-eksperta")}
-          disabled={isSaving}
-        >
-          Anuluj
-        </Button>
+        {/* Ocena profilu — 1/3 szerokości */}
+        <div className="lg:col-span-1">
+          <div className="lg:sticky lg:top-4">
+            <ProfileScoreCard formData={formData} onNavigate={handleTabChange} />
+          </div>
+        </div>
       </div>
 
       {selectedLogoFile && (

@@ -265,7 +265,7 @@ export function SearchHelpSection() {
               </motion.span>
 
               {/* Card Shape */}
-              <div className="w-36 h-36 rounded-xl bg-darker/60 border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-all duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/40 group-hover:shadow-[0_12px_40px_-5px_rgba(13,161,146,0.15)]">
+              <div className="w-36 h-36 rounded-xl bg-background border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-all duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/40 group-hover:shadow-[0_12px_40px_-5px_rgba(13,161,146,0.15)]">
                 <motion.div
                   custom={index}
                   variants={floatVariants}
