@@ -22,7 +22,7 @@ import {
 import * as LucideIcons from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 
 interface MostConsultedCategoriesProps {
   consultedData?: Record<string, LawFirm[]>
@@ -43,6 +43,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
   const { status } = useSession()
   const isLoggedIn = status === "authenticated"
   const [activeIdx, setActiveIdx] = useState(0)
+  const sliderRef = useRef<HTMLDivElement>(null)
 
   // Filtrujemy zakładki po aktywnych ID z ustawień
   const activeTabs = useMemo(() => {
@@ -69,11 +70,21 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
   }
 
   const handlePrev = () => {
-    setActiveIdx((prev) => (prev === 0 ? activeTabs.length - 1 : prev - 1))
+    if (sliderRef.current) {
+      const card = sliderRef.current.querySelector(".slider-card")
+      const cardWidth = card ? card.getBoundingClientRect().width : 320
+      const gap = 24
+      sliderRef.current.scrollBy({ left: -(cardWidth + gap), behavior: "smooth" })
+    }
   }
 
   const handleNext = () => {
-    setActiveIdx((prev) => (prev === activeTabs.length - 1 ? 0 : prev + 1))
+    if (sliderRef.current) {
+      const card = sliderRef.current.querySelector(".slider-card")
+      const cardWidth = card ? card.getBoundingClientRect().width : 320
+      const gap = 24
+      sliderRef.current.scrollBy({ left: cardWidth + gap, behavior: "smooth" })
+    }
   }
 
   const getCategoryFirms = (catIdx: number) => {
@@ -139,7 +150,8 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
   }
 
   return (
-    <section className="py-20 xl:py-24 bg-darker text-white overflow-hidden">
+    <section className="py-20 xl:py-24 bg-[#121212] text-white overflow-hidden">
+      {/* Header + Tabs stay within the container */}
       <div className="container mx-auto px-4 max-w-8xl">
         <div className="flex items-center gap-6 mb-12">
           <h2 className="text-xl md:text-3xl font-light text-zinc-100 whitespace-nowrap font-playfair">
@@ -148,13 +160,18 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
           <div className="flex-grow border-t border-zinc-800/80" />
         </div>
 
-        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 md:mb-12 max-w-6xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
+        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-6 md:mb-12 px-4 max-w-8xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
           {activeTabs.map((tab, idx) => {
             const isActive = activeIdx === idx
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveIdx(idx)}
+                onClick={() => {
+                  setActiveIdx(idx)
+                  if (sliderRef.current) {
+                    sliderRef.current.scrollTo({ left: 0, behavior: "smooth" })
+                  }
+                }}
                 className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-[150px] md:w-auto md:shrink ${isActive
                   ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
                   : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
@@ -163,23 +180,35 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                 <div className="mb-1 md:mb-4">
                   <CategoryIcon iconName={tab.ikona} className={`w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"}`} />
                 </div>
-                <span className="text-sm font-light tracking-wider leading-tight uppercase">
+                <span className="text-xs font-light tracking-wider leading-tight uppercase">
                   {tab.nazwa}
                 </span>
               </button>
             )
           })}
         </div>
+      </div>
 
-        <div className="relative min-h-[460px]">
+      {/* Slider: starts at container padding but overflows to the right */}
+      <div className="relative min-h-[460px]">
+        <div
+          ref={sliderRef}
+          className="flex gap-6 overflow-x-auto pb-4"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
+            paddingRight: "2rem",
+          }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIdx}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
+              initial={{ opacity: 0, x: 25 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -25 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-8xl mx-auto"
+              className="flex gap-6"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: React.ElementType, href: string, title: string }) => {
@@ -219,7 +248,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-85 w-full overflow-hidden aspect-[5/2] bg-zinc-900">
                       <img
@@ -255,13 +284,13 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                             {firm.nazwa}
                           </Link>
                         </h3>
-                        <p className="text-xs text-zinc-400 flex items-center justify-center gap-1.5 mb-6">
+                        <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-3">
                           <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
                           {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ""}
                         </p>
                       </div>
 
-                      <div className="flex justify-center items-center w-full pt-4 border-t border-zinc-800/80">
+                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80">
                         <div className="flex gap-2">
                           <ContactButton
                             icon={Phone}
@@ -299,25 +328,26 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
             </motion.div>
           </AnimatePresence>
         </div>
+      </div>
 
-        {activeTabs.length > 1 && (
-          <div className="flex justify-center gap-4 mt-12">
-            <button
-              onClick={handlePrev}
-              className="w-12 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label="Poprzednia kategoria"
-            >
-              <ChevronLeft className="w-5 h-5 text-white" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="w-12 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label="Następna kategoria"
-            >
-              <ChevronRight className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        )}
+      {/* Bottom navigation arrows aligned to container */}
+      <div className="container mx-auto px-4 max-w-8xl">
+        <div className="flex justify-center gap-3 mt-8">
+          <button
+            onClick={handlePrev}
+            className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            aria-label="Poprzedni slajd"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            aria-label="Następny slajd"
+          >
+            <ChevronRight className="w-5 h-5 text-white" />
+          </button>
+        </div>
       </div>
     </section>
   )

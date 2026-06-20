@@ -145,14 +145,14 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
 
           {/* Navigation & Selector Container */}
-          <div className="grid grid-cols-6 gap-2 w-full">
+          <div className="flex gap-4 w-full">
             {/* Category tabs scrollable horizontally on mobile */}
 
             {categoriesList.map((cat, i) => (
               <button
                 key={cat}
                 onClick={() => handleCategoryChange(i)}
-                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
+                className={`flex text-center flex-1 justify-center px-5 py-4 rounded-lg text-sm  font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
                   ? "bg-black text-white shadow-lg"
                   : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
                   }`}
@@ -162,17 +162,17 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
             ))}
 
             {/* Previous / Next Arrow Buttons */}
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={handlePrev}
-                className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 cursor-pointer"
+                className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 cursor-pointer"
                 aria-label="Poprzedni slajd"
               >
                 <ChevronLeft className="w-5 h-5 text-white" />
               </button>
               <button
                 onClick={handleNext}
-                className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 cursor-pointer"
+                className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 cursor-pointer"
                 aria-label="Następny slajd"
               >
                 <ChevronRight className="w-5 h-5 text-white" />
@@ -183,10 +183,10 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       </div>
 
       {/* Sliding Carousel Grid with Framer Motion, extending off-screen to the right */}
-      <div id="items-in-category-slider" className="relative container px-4 mx-auto min-h-[460px]">
+      <div id="items-in-category-slider" className="relative px-4 container mx-auto min-h-[460px]">
         <div
           ref={sliderRef}
-          className="grid grid-cols-4 w-full"
+          className="grid grid-cols-4 gap-4 w-full"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -201,7 +201,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -25 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="flex gap-2 w-full"
+              className="flex gap-4 w-full"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
@@ -275,7 +275,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                     </div>
 
                     {/* Card Content and Metadata */}
-                    <div className="relative p-6 text-center flex-grow flex flex-col justify-between">
+                    <div className="relative px-6 py-6 text-center flex-grow flex flex-col justify-between">
                       <div>
                         {/* Upper Case Category subtitle */}
                         <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
@@ -288,7 +288,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                           </Link>
                         </h3>
                         {/* Location text */}
-                        <p className="text-xs text-zinc-400 flex items-center justify-center gap-1.5 mb-6">
+                        <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-4">
                           <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
                           {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ", Świętokrzyskie"}
                         </p>
@@ -296,7 +296,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
                       {/* Bottom Action Row with Circular and Square buttons */}
                       <div className="flex justify-center items-center w-full pt-4 border-t border-zinc-800/80">
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                           {/* Circular Phone Action */}
                           <ContactButton
                             icon={Phone}
