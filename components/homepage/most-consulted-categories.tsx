@@ -54,7 +54,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
     // Only show tabs that have either active promotions or some law firms matching
     return tabs.filter((tab) => {
       if (consultedData && consultedData[tab.id] && consultedData[tab.id].length > 0) return true
-      const hasFirms = lawFirms?.some(firm => 
+      const hasFirms = lawFirms?.some(firm =>
         firm.categories?.some(c => {
           const catId = c.category?.id || c.id
           return catId === tab.id

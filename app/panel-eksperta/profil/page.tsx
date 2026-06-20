@@ -690,7 +690,7 @@ function LawFirmProfilePageContent() {
 
             {/* Godziny i dostępność */}
             <TabsContent value="consultations" className="space-y-6 animate-in fade-in-50 duration-300">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              <div className="grid grid-cols-1 gap-6 items-start">
                 <OfficeHoursCard formData={formData} handleInputChange={handleInputChange} />
                 <ConsultationHoursForm />
               </div>

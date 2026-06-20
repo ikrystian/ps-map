@@ -130,7 +130,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
   }
 
   return (
-    <section className="py-8 xl:py-24 text-white overflow-hidden">
+    <section className="py-8 xl:py-24 text-white overflow-hidden bg-card">
       {/* Top Header Row is wrapped in its own container to align perfectly */}
       <div className="container mx-auto px-4 max-w-8xl mb-12">
         <div className="mb-12">
@@ -145,25 +145,21 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
 
           {/* Navigation & Selector Container */}
-          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full justify-beetween overflow-hidden">
+          <div className="grid grid-cols-6 gap-2 w-full">
             {/* Category tabs scrollable horizontally on mobile */}
-            <div
-              className="flex items-center flex flex-1 gap-2 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 scroll-smooth custom-scrollbar"
-              style={{ scrollbarWidth: 'thin' }}
-            >
-              {categoriesList.map((cat, i) => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryChange(i)}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
-                    ? "bg-black text-white shadow-lg"
-                    : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
-                    }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+
+            {categoriesList.map((cat, i) => (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(i)}
+                className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
+                  ? "bg-black text-white shadow-lg"
+                  : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
 
             {/* Previous / Next Arrow Buttons */}
             <div className="flex gap-2 flex-shrink-0">
@@ -187,15 +183,15 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       </div>
 
       {/* Sliding Carousel Grid with Framer Motion, extending off-screen to the right */}
-      <div id="items-in-category-slider" className="relative min-h-[460px] w-full">
+      <div id="items-in-category-slider" className="relative container px-4 mx-auto min-h-[460px]">
         <div
           ref={sliderRef}
-          className="overflow-x-auto scroll-smooth scrollbar-none py-4"
+          className="grid grid-cols-4 w-full"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
-            paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
-            paddingRight: "calc(max(1rem, (100vw - 1500px) / 2))"
+            // paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
+            // paddingRight: "calc(max(1rem, (100vw - 1500px) / 2))"
           }}
         >
           <AnimatePresence mode="wait">
@@ -205,7 +201,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -25 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="flex gap-6 w-max"
+              className="flex gap-2 w-full"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
@@ -245,7 +241,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="w-[290px] sm:w-[330px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
+                    className="w-full max-w-full shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
                     <div className="relative h-75 w-full overflow-hidden aspect-[3/5] bg-zinc-900">

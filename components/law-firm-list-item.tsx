@@ -416,7 +416,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                     </span>
                   </div>
                 </div>
-                <AwardEmblem />
+                {/* <AwardEmblem /> */}
               </div>
 
               {/* Description */}
