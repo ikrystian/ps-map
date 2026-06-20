@@ -19,7 +19,7 @@ const getOptimalBuildCPUs = () => {
 };
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["ps-dev.com.pl", "team.studio-ai.com.pl"],
+  allowedDevOrigins: ["ps-dev.com.pl", "team.studio-ai.com.pl", "rejestracja.prostasprawa.pl", "stage.prostasprawa.pl"],
   env: {
     ENV: process.env.ENV || "local",
   },

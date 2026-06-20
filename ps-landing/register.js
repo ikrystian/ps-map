@@ -2,7 +2,7 @@
 // Tworzy konto eksperta bezpośrednio w głównej aplikacji (Next.js) bez maila
 // aktywacyjnego. Dane słownikowe (województwa, kategorie, specjalizacje, miasta)
 // pobierane są z tej samej aplikacji. Zmień API_BASE jeśli adres się zmieni.
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://stage.prostasprawa.pl";
 
 // ===== Multi-step =====
 const formSteps = document.querySelectorAll(".form-step");
