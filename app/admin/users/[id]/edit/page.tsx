@@ -35,7 +35,7 @@ const userSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters").or(z.literal("")).optional(),
   role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
-  status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
+  status: z.enum(["ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   image: z.string().optional(),
   // Client fields
   client: z.object({
@@ -101,7 +101,7 @@ interface UserData {
   name?: string | null
   email: string
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED"
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED" | "PENDING"
   image?: string | null
   client?: {
     id: string
@@ -601,6 +601,7 @@ export default function EditUserPage() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="ACTIVE">Aktywny</SelectItem>
+                              <SelectItem value="PENDING">Oczekujący</SelectItem>
                               <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
                               <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
                               <SelectItem value="BLOCKED">Zablokowany</SelectItem>

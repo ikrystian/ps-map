@@ -119,6 +119,8 @@ export default function LoginPage() {
         setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
       } else if (oauthError === "BlockedAccount") {
         setError("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
+      } else if (oauthError === "PendingAccount") {
+        setError("Twoje konto oczekuje na zatwierdzenie. Skontaktuj się z administratorem.")
       } else if (oauthError === "InactiveAccount") {
         setError("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
       } else {

@@ -58,6 +58,15 @@ export async function POST(request: Request) {
       )
     }
 
+    // Sprawdź czy konto oczekuje na zatwierdzenie
+    if (user.status === "PENDING") {
+      await logLoginAttempt({ userId: user.id, success: false })
+      return NextResponse.json(
+        { error: "Twoje konto oczekuje na zatwierdzenie. Skontaktuj się z administratorem." },
+        { status: 403 }
+      )
+    }
+
     // Sprawdź czy konto jest nieaktywne
     if (user.status === "INACTIVE") {
       await logLoginAttempt({ userId: user.id, success: false })

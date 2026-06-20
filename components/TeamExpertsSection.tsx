@@ -136,7 +136,7 @@ export default function TeamExpertsSection() {
     show: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 260, damping: 22 },
+      transition: { type: "spring", stiffness: 260, damping: 22 } as const,
     },
   };
 
@@ -244,10 +244,11 @@ export default function TeamExpertsSection() {
                             {displayName}
                           </h4>
                           {expert.id.startsWith("mock-") === false && (
-                            <ShieldCheck
-                              className="h-4.5 w-4.5 text-primary shrink-0"
-                              title="Zweryfikowany Ekspert"
-                            />
+                            <span title="Zweryfikowany Ekspert">
+                              <ShieldCheck
+                                className="h-4.5 w-4.5 text-primary shrink-0"
+                              />
+                            </span>
                           )}
                         </div>
                         <p className="text-xs text-zinc-400 font-medium truncate">

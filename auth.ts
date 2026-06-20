@@ -87,6 +87,12 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
         }
 
+        // Sprawdź czy konto oczekuje na zatwierdzenie
+        if (user.status === "PENDING") {
+          await logLoginAttempt({ userId: user.id, success: false })
+          throw new Error("Twoje konto oczekuje na zatwierdzenie. Skontaktuj się z administratorem.")
+        }
+
         // Sprawdź czy konto jest nieaktywne
         if (user.status === "INACTIVE") {
           await logLoginAttempt({ userId: user.id, success: false })
@@ -297,6 +303,11 @@ export const authOptions: NextAuthConfig = {
           // Check if user is blocked or suspended
           if (dbUser.status === "BLOCKED" || dbUser.status === "SUSPENDED") {
             return "/logowanie?error=BlockedAccount"
+          }
+
+          // Check if user is pending approval
+          if (dbUser.status === "PENDING") {
+            return "/logowanie?error=PendingAccount"
           }
 
           // Check if user is inactive

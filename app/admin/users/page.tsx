@@ -38,7 +38,7 @@ interface User {
   email: string
   image?: string | null
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED"
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED" | "PENDING"
   emailVerified?: Date | null
   createdAt: string
   updatedAt: string
@@ -216,6 +216,7 @@ export default function AdminUsersPage() {
   const formatStatus = (status: string) => {
     const statusMap: { [key: string]: string } = {
       ACTIVE: "Active",
+      PENDING: "Pending",
       INACTIVE: "Inactive",
       SUSPENDED: "Suspended",
       BLOCKED: "Blocked",
@@ -314,6 +315,7 @@ export default function AdminUsersPage() {
               <SelectContent>
                 <SelectItem value="all">Wszyskie statusy</SelectItem>
                 <SelectItem value="ACTIVE">Aktywny</SelectItem>
+                <SelectItem value="PENDING">Oczekujący</SelectItem>
                 <SelectItem value="INACTIVE">Nieaktywny</SelectItem>
                 <SelectItem value="SUSPENDED">Zawieszony</SelectItem>
                 <SelectItem value="BLOCKED">Zablokowany</SelectItem>

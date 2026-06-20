@@ -582,6 +582,7 @@ export async function POST(request: NextRequest) {
             // aktywacyjnego, więc oznaczamy email jako zweryfikowany od razu, żeby było
             // gotowe do logowania po starcie platformy.
             emailVerified: body.skipEmailVerification ? new Date() : undefined,
+            status: body.skipEmailVerification ? "PENDING" : "ACTIVE",
           },
         })
       }
