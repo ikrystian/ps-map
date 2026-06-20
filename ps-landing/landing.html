@@ -1,470 +1,591 @@
 <!doctype html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Prosta Sprawa – rozwiązujemy Twoje problemy prawne w kilku krokach. Startujemy 1 lipca 2026."
-    />
-    <title>Prosta Sprawa – już wkrótce startujemy</title>
-    <script src="logger.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-    <style>
-      .app-hero {
-        position: relative;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        padding: 96px 0 40px;
-        background: url("./backgrounds/4.png") center / cover no-repeat;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Prosta Sprawa – rozwiązujemy Twoje problemy prawne w kilku krokach. Startujemy 1 lipca 2026." />
+  <title>Prosta Sprawa – już wkrótce startujemy</title>
+  <script src="logger.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .app-hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 96px 0 40px;
+      background: url("./backgrounds/4.png") center / cover no-repeat;
+    }
+
+    /* Warstwa przyciemnienia dla czytelności */
+    .app-hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 20, 20, 0.72);
+      backdrop-filter: blur(1px);
+      z-index: 0;
+    }
+
+    /* Cząsteczki (tsParticles) – w obrębie sekcji hero */
+    #tsparticles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Animowane kule gradientowe */
+    .app-hero__orb {
+      position: absolute;
+      width: 60%;
+      height: 60%;
+      border-radius: 50%;
+      filter: blur(160px);
+      z-index: 0;
+      animation: app-hero-pulse 6s ease-in-out infinite;
+    }
+
+    .app-hero__orb--primary {
+      top: 25%;
+      left: -25%;
+      background: rgba(13, 161, 146, 0.22);
+    }
+
+    .app-hero__orb--teal {
+      bottom: 25%;
+      right: -25%;
+      background: rgba(20, 184, 166, 0.12);
+      animation-delay: 1.5s;
+    }
+
+    @keyframes app-hero-pulse {
+
+      0%,
+      100% {
+        opacity: 0.7;
       }
 
-      /* Warstwa przyciemnienia dla czytelności */
-      .app-hero__overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(20, 20, 20, 0.72);
-        backdrop-filter: blur(1px);
-        z-index: 0;
+      50% {
+        opacity: 1;
       }
+    }
 
-      /* Cząsteczki (tsParticles) – w obrębie sekcji hero */
-      #tsparticles {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-      }
+    .app-hero__content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+    }
 
-      /* Animowane kule gradientowe */
-      .app-hero__orb {
-        position: absolute;
-        width: 60%;
-        height: 60%;
-        border-radius: 50%;
-        filter: blur(160px);
-        z-index: 0;
-        animation: app-hero-pulse 6s ease-in-out infinite;
-      }
+    .app-hero__badge {
+      display: inline-block;
+      padding: 9px 22px;
+      border: 1px solid rgba(13, 161, 146, 0.4);
+      background: rgba(13, 161, 146, 0.06);
+      backdrop-filter: blur(8px);
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #d8efe9;
+      margin-bottom: 32px;
+    }
 
-      .app-hero__orb--primary {
-        top: 25%;
-        left: -25%;
-        background: rgba(13, 161, 146, 0.22);
-      }
+    .app-hero__title {
+      font-family: "Playfair Display", serif;
+      font-weight: 500;
+      color: #fff;
+      font-size: clamp(3.2rem, 11vw, 8rem);
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+      text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
 
-      .app-hero__orb--teal {
-        bottom: 25%;
-        right: -25%;
-        background: rgba(20, 184, 166, 0.12);
-        animation-delay: 1.5s;
-      }
+    .app-hero__subtitle {
+      font-family: "Playfair Display", serif;
+      font-weight: 300;
+      color: #e5e5e5;
+      font-size: clamp(1.4rem, 3.5vw, 2.25rem);
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
 
-      @keyframes app-hero-pulse {
-        0%,
-        100% {
-          opacity: 0.7;
-        }
+    .app-hero__subtitle em {
+      font-style: italic;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: underline;
+      text-decoration-color: rgba(13, 161, 146, 0.5);
+      text-underline-offset: 8px;
+    }
 
-        50% {
-          opacity: 1;
-        }
-      }
+    .app-hero__desc {
+      font-family: "Inter", sans-serif;
+      color: #a3a3a3;
+      font-size: clamp(1rem, 1.4vw, 1.25rem);
+      line-height: 1.7;
+      max-width: 640px;
+      margin: 0 auto 48px;
+    }
 
-      .app-hero__content {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 0 24px;
-        text-align: center;
-      }
+    /* Countdown (zamiast przycisków „Sprawy prywatne / firmowe") */
+    .app-hero__countdown-label {
+      font-family: "Inter", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #c8a864;
+      margin-bottom: 20px;
+    }
 
-      .app-hero__badge {
-        display: inline-block;
-        padding: 9px 22px;
-        border: 1px solid rgba(13, 161, 146, 0.4);
-        background: rgba(13, 161, 146, 0.06);
-        backdrop-filter: blur(8px);
-        border-radius: 50px;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #d8efe9;
-        margin-bottom: 32px;
-      }
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 72px;
+      flex-wrap: wrap;
+    }
 
-      .app-hero__title {
-        font-family: "Playfair Display", serif;
-        font-weight: 500;
-        color: #fff;
-        font-size: clamp(3.2rem, 11vw, 8rem);
-        line-height: 1.02;
-        letter-spacing: -0.02em;
-        margin-bottom: 32px;
-        text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-      }
+    .countdown__box {
+      min-width: 120px;
+      padding: 24px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      transition:
+        border-color 0.3s,
+        background 0.3s;
+    }
 
-      .app-hero__subtitle {
-        font-family: "Playfair Display", serif;
-        font-weight: 300;
-        color: #e5e5e5;
-        font-size: clamp(1.4rem, 3.5vw, 2.25rem);
-        line-height: 1.3;
-        margin-bottom: 20px;
-      }
+    .countdown__box:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
 
-      .app-hero__subtitle em {
-        font-style: italic;
-        font-weight: 700;
-        color: #fff;
-        text-decoration: underline;
-        text-decoration-color: rgba(13, 161, 146, 0.5);
-        text-underline-offset: 8px;
-      }
+    .countdown__num {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 600;
+      line-height: 1;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
 
-      .app-hero__desc {
-        font-family: "Inter", sans-serif;
-        color: #a3a3a3;
-        font-size: clamp(1rem, 1.4vw, 1.25rem);
-        line-height: 1.7;
-        max-width: 640px;
-        margin: 0 auto 48px;
-      }
+    .countdown__unit {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9a9a9a;
+    }
 
-      /* Countdown (zamiast przycisków „Sprawy prywatne / firmowe") */
-      .app-hero__countdown-label {
-        font-family: "Inter", sans-serif;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #c8a864;
-        margin-bottom: 20px;
-      }
+    .countdown__done {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: #fff;
+      margin-bottom: 72px;
+    }
 
-      .countdown {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        margin-bottom: 72px;
-        flex-wrap: wrap;
-      }
+    /* Wskaźniki */
+    .app-hero__indicators {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px 48px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
 
+    .indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .indicator__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(13, 161, 146, 0.12);
+      color: #0da192;
+    }
+
+    .indicator__icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .indicator__text {
+      text-align: left;
+    }
+
+    .indicator__value {
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .indicator__label {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    /* Dolny gradient */
+    .app-hero__fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 160px;
+      background: linear-gradient(to top, #121212, transparent);
+      z-index: 5;
+    }
+
+    /* Logo top-left */
+    .app-hero__logo {
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      z-index: 20;
+    }
+
+    .app-hero__logo img {
+      height: 34px;
+      width: auto;
+    }
+
+    @media (max-width: 560px) {
       .countdown__box {
-        min-width: 120px;
-        padding: 24px 16px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 18px;
-        backdrop-filter: blur(12px);
-        transition:
-          border-color 0.3s,
-          background 0.3s;
+        min-width: 0;
+        flex: 1 1 40%;
       }
+    }
 
-      .countdown__box:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.25);
+    /* Dane kontaktowe – prawy dolny róg */
+    .contact-card {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      background: rgba(18, 18, 18, 0.82);
+      border: 1px solid rgba(13, 161, 146, 0.28);
+      border-radius: 18px;
+      padding: 20px 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      min-width: 230px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .contact-card:hover {
+      border-color: rgba(13, 161, 146, 0.55);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 24px rgba(13, 161, 146, 0.08);
+    }
+
+    .contact-card__heading {
+      font-family: "Inter", sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #0da192;
+      margin-bottom: 14px;
+    }
+
+    .contact-card__row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .contact-card__row:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-card__icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(13, 161, 146, 0.1);
+      color: #0da192;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-card__icon svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .contact-card__info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-card__label {
+      font-family: "Inter", sans-serif;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .contact-card__value {
+      font-family: "Inter", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #e5e5e5;
+      line-height: 1.2;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .contact-card__value:hover {
+      color: #0da192;
+    }
+
+    @media (max-width: 560px) {
+      .contact-card {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        min-width: 0;
+        padding: 16px 18px;
       }
+    }
+  </style>
+</head>
 
-      .countdown__num {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(2.4rem, 6vw, 3.6rem);
-        font-weight: 600;
-        line-height: 1;
-        color: #fff;
-        font-variant-numeric: tabular-nums;
-      }
+<body style="background: #121212">
+  <section class="app-hero">
+    <a href="index.html" class="app-hero__logo"><img src="logo.svg" alt="Prosta Sprawa" /></a>
 
-      .countdown__unit {
-        display: block;
-        margin-top: 10px;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: #9a9a9a;
-      }
+    <div class="app-hero__overlay"></div>
+    <div class="app-hero__orb app-hero__orb--primary"></div>
+    <div class="app-hero__orb app-hero__orb--teal"></div>
+    <div id="tsparticles"></div>
 
-      .countdown__done {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(1.6rem, 4vw, 2.4rem);
-        color: #fff;
-        margin-bottom: 72px;
-      }
+    <div class="app-hero__content">
+      <span class="app-hero__badge">Twoje wsparcie prawne w zasięgu ręki</span>
 
-      /* Wskaźniki */
-      .app-hero__indicators {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 24px 48px;
-        padding-top: 40px;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-      }
+      <h1 class="app-hero__title">Prosta Sprawa</h1>
 
-      .indicator {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
+      <h2 class="app-hero__subtitle">
+        Rozwiązujemy Twoje <em>problemy prawne</em> w kilku krokach.
+      </h2>
+      <p class="app-hero__desc">
+        Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników. Szybko,
+        bezpiecznie i na Twoich zasadach.
+      </p>
 
-      .indicator__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        background: rgba(13, 161, 146, 0.12);
-        color: #0da192;
-      }
-
-      .indicator__icon svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      .indicator__text {
-        text-align: left;
-      }
-
-      .indicator__value {
-        font-weight: 700;
-        color: #fff;
-        line-height: 1;
-      }
-
-      .indicator__label {
-        font-size: 0.72rem;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: #777;
-        margin-top: 5px;
-      }
-
-      /* Dolny gradient */
-      .app-hero__fade {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 160px;
-        background: linear-gradient(to top, #121212, transparent);
-        z-index: 5;
-      }
-
-      /* Logo top-left */
-      .app-hero__logo {
-        position: absolute;
-        top: 28px;
-        left: 28px;
-        z-index: 20;
-      }
-
-      .app-hero__logo img {
-        height: 34px;
-        width: auto;
-      }
-
-      @media (max-width: 560px) {
-        .countdown__box {
-          min-width: 0;
-          flex: 1 1 40%;
-        }
-      }
-    </style>
-  </head>
-
-  <body style="background: #121212">
-    <section class="app-hero">
-      <a href="index.html" class="app-hero__logo"
-        ><img src="logo.svg" alt="Prosta Sprawa"
-      /></a>
-
-      <div class="app-hero__overlay"></div>
-      <div class="app-hero__orb app-hero__orb--primary"></div>
-      <div class="app-hero__orb app-hero__orb--teal"></div>
-      <div id="tsparticles"></div>
-
-      <div class="app-hero__content">
-        <span class="app-hero__badge"
-          >Twoje wsparcie prawne w zasięgu ręki</span
-        >
-
-        <h1 class="app-hero__title">Prosta Sprawa</h1>
-
-        <h2 class="app-hero__subtitle">
-          Rozwiązujemy Twoje <em>problemy prawne</em> w kilku krokach.
-        </h2>
-        <p class="app-hero__desc">
-          Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników. Szybko,
-          bezpiecznie i na Twoich zasadach.
-        </p>
-
-        <p class="app-hero__countdown-label">Startujemy za</p>
-        <div class="countdown" id="countdown">
-          <div class="countdown__box">
-            <span class="countdown__num" data-days>--</span
-            ><span class="countdown__unit">Dni</span>
-          </div>
-          <div class="countdown__box">
-            <span class="countdown__num" data-hours>--</span
-            ><span class="countdown__unit">Godzin</span>
-          </div>
-          <div class="countdown__box">
-            <span class="countdown__num" data-minutes>--</span
-            ><span class="countdown__unit">Minut</span>
-          </div>
-          <div class="countdown__box">
-            <span class="countdown__num" data-seconds>--</span
-            ><span class="countdown__unit">Sekund</span>
-          </div>
+      <p class="app-hero__countdown-label">Startujemy za</p>
+      <div class="countdown" id="countdown">
+        <div class="countdown__box">
+          <span class="countdown__num" data-days>--</span><span class="countdown__unit">Dni</span>
         </div>
-
-        <div class="app-hero__indicators">
-          <div class="indicator">
-            <div class="indicator__icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </div>
-            <div class="indicator__text">
-              <p class="indicator__value">1000+</p>
-              <p class="indicator__label">Ekspertów</p>
-            </div>
-          </div>
-          <div class="indicator">
-            <div class="indicator__icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
-            <div class="indicator__text">
-              <p class="indicator__value">100%</p>
-              <p class="indicator__label">Bezpieczeństwa</p>
-            </div>
-          </div>
-          <div class="indicator">
-            <div class="indicator__icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </div>
-            <div class="indicator__text">
-              <p class="indicator__value">98%</p>
-              <p class="indicator__label">Skuteczności</p>
-            </div>
-          </div>
+        <div class="countdown__box">
+          <span class="countdown__num" data-hours>--</span><span class="countdown__unit">Godzin</span>
+        </div>
+        <div class="countdown__box">
+          <span class="countdown__num" data-minutes>--</span><span class="countdown__unit">Minut</span>
+        </div>
+        <div class="countdown__box">
+          <span class="countdown__num" data-seconds>--</span><span class="countdown__unit">Sekund</span>
         </div>
       </div>
 
-      <div class="app-hero__fade"></div>
-    </section>
+      <div class="app-hero__indicators">
+        <div class="indicator">
+          <div class="indicator__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <div class="indicator__text">
+            <p class="indicator__value">1000+</p>
+            <p class="indicator__label">Ekspertów</p>
+          </div>
+        </div>
+        <div class="indicator">
+          <div class="indicator__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <div class="indicator__text">
+            <p class="indicator__value">100%</p>
+            <p class="indicator__label">Bezpieczeństwa</p>
+          </div>
+        </div>
+        <div class="indicator">
+          <div class="indicator__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+          <div class="indicator__text">
+            <p class="indicator__value">98%</p>
+            <p class="indicator__label">Skuteczności</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- tsParticles (vanilla, CDN) – https://particles.js.org/guides/vanilla -->
-    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
-    <script>
-      (async () => {
-        await loadSlim(tsParticles);
+    <div class="app-hero__fade"></div>
+  </section>
 
-        await tsParticles.load({
-          id: "tsparticles",
-          options: {
-            fpsLimit: 60,
-            fullScreen: { enable: false },
-            particles: {
-              number: { value: 70, density: { enable: true } },
-              color: { value: "#0da192" },
-              links: {
-                enable: true,
-                color: "#0da192",
-                distance: 150,
-                opacity: 0.22,
-                width: 1,
-              },
-              move: {
-                enable: true,
-                speed: 0.8,
-                outModes: { default: "out" },
-              },
-              opacity: { value: 0.4 },
-              size: { value: { min: 1, max: 3 } },
+  <!-- Dane kontaktowe -->
+  <aside class="contact-card" aria-label="Dane kontaktowe">
+    <p class="contact-card__heading">Kontakt</p>
+
+    <div class="contact-card__row">
+      <div class="contact-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
+        </svg>
+      </div>
+      <div class="contact-card__info">
+        <span class="contact-card__label">E-mail</span>
+        <a href="mailto:kontakt@prostasprawa.pl" class="contact-card__value">kontakt@prostasprawa.pl</a>
+      </div>
+    </div>
+
+    <div class="contact-card__row">
+      <div class="contact-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.4 2 2 0 0 1 3.54 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6 6l.88-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z" />
+        </svg>
+      </div>
+      <div class="contact-card__info">
+        <span class="contact-card__label">Telefon</span>
+        <a href="tel:+48123456789" class="contact-card__value">+48 123 456 789</a>
+      </div>
+    </div>
+
+    <div class="contact-card__row">
+      <div class="contact-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      </div>
+      <div class="contact-card__info">
+        <span class="contact-card__label">Adres</span>
+        <span class="contact-card__value">ul. Przykładowa 1, Warszawa</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- tsParticles (vanilla, CDN) – https://particles.js.org/guides/vanilla -->
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
+  <script>
+    (async () => {
+      await loadSlim(tsParticles);
+
+      await tsParticles.load({
+        id: "tsparticles",
+        options: {
+          fpsLimit: 60,
+          fullScreen: { enable: false },
+          particles: {
+            number: { value: 70, density: { enable: true } },
+            color: { value: "#0da192" },
+            links: {
+              enable: true,
+              color: "#0da192",
+              distance: 150,
+              opacity: 0.22,
+              width: 1,
             },
-            interactivity: {
-              events: { onHover: { enable: true, mode: "grab" } },
-              modes: { grab: { distance: 160, links: { opacity: 0.4 } } },
+            move: {
+              enable: true,
+              speed: 0.8,
+              outModes: { default: "out" },
             },
-            detectRetina: true,
+            opacity: { value: 0.4 },
+            size: { value: { min: 1, max: 3 } },
           },
-        });
-      })();
-    </script>
+          interactivity: {
+            events: { onHover: { enable: true, mode: "grab" } },
+            modes: { grab: { distance: 160, links: { opacity: 0.4 } } },
+          },
+          detectRetina: true,
+        },
+      });
+    })();
+  </script>
 
-    <script>
-      (function () {
-        // Cel: 1 lipca 2026, 00:00 (czas lokalny)
-        const target = new Date(2026, 6, 1, 0, 0, 0).getTime();
-        const cd = document.getElementById("countdown");
-        const elDays = cd.querySelector("[data-days]");
-        const elHours = cd.querySelector("[data-hours]");
-        const elMinutes = cd.querySelector("[data-minutes]");
-        const elSeconds = cd.querySelector("[data-seconds]");
+  <script>
+    (function () {
+      // Cel: 1 lipca 2026, 00:00 (czas lokalny)
+      const target = new Date(2026, 6, 1, 0, 0, 0).getTime();
+      const cd = document.getElementById("countdown");
+      const elDays = cd.querySelector("[data-days]");
+      const elHours = cd.querySelector("[data-hours]");
+      const elMinutes = cd.querySelector("[data-minutes]");
+      const elSeconds = cd.querySelector("[data-seconds]");
 
-        const pad = (n) => String(n).padStart(2, "0");
+      const pad = (n) => String(n).padStart(2, "0");
 
-        function tick() {
-          const diff = target - Date.now();
-          if (diff <= 0) {
-            cd.innerHTML =
-              '<p class="countdown__done">Już wystartowaliśmy! 🎉</p>';
-            clearInterval(timer);
-            return;
-          }
-          const totalSeconds = Math.floor(diff / 1000);
-          const days = Math.floor(totalSeconds / 86400);
-          const hours = Math.floor((totalSeconds % 86400) / 3600);
-          const minutes = Math.floor((totalSeconds % 3600) / 60);
-          const seconds = totalSeconds % 60;
-
-          elDays.textContent = days;
-          elHours.textContent = pad(hours);
-          elMinutes.textContent = pad(minutes);
-          elSeconds.textContent = pad(seconds);
+      function tick() {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+          cd.innerHTML =
+            '<p class="countdown__done">Już wystartowaliśmy! 🎉</p>';
+          clearInterval(timer);
+          return;
         }
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-        tick();
-        const timer = setInterval(tick, 1000);
-      })();
-    </script>
-  </body>
+        elDays.textContent = days;
+        elHours.textContent = pad(hours);
+        elMinutes.textContent = pad(minutes);
+        elSeconds.textContent = pad(seconds);
+      }
+
+      tick();
+      const timer = setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+
 </html>
