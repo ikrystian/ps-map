@@ -41,7 +41,7 @@ jobs:
               "repository": os.environ.get("GITHUB_REPOSITORY", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", ""),
               "pusher": "ikrystian",
-              "projectId": "cmq52o0bn0007fyk35ejagn5l",
+              "projectId": "cmqmzkfjv0005ma1zpmv9nh6s",
               "commits": commit_urls
           }
 
