@@ -1,4 +1,4 @@
-import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
+import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { EmailType } from "@prisma/client"
@@ -745,6 +745,135 @@ export async function POST(request: NextRequest) {
       } catch (welcomeError) {
         // Nie blokuj rejestracji, jeśli mail powitalny się nie wyśle.
         console.error('Failed to send landing welcome email to:', body.email, welcomeError)
+      }
+
+      // Wyślij e-mail informacyjny do BOK (bok@prostasprawa.pl) z uzupełnionymi danymi formularza
+      try {
+        let categoryNames = ''
+        if (body.categoriesIds && Array.isArray(body.categoriesIds) && body.categoriesIds.length > 0) {
+          const dbCategories = await prisma.category.findMany({
+            where: { id: { in: body.categoriesIds } },
+            select: { nazwa: true },
+          })
+          categoryNames = dbCategories.map((c: any) => c.nazwa).join(', ')
+        }
+
+        let expertiseCategoryName = ''
+        if (body.expertiseCategoryId) {
+          const expCat = await prisma.expertiseCategory.findUnique({
+            where: { id: body.expertiseCategoryId },
+            select: { nazwa: true },
+          })
+          if (expCat) {
+            expertiseCategoryName = expCat.nazwa
+          }
+        }
+
+        const notificationHtml = `
+          <div style="font-family: 'DM Sans', Arial, sans-serif; color: #e8e4dc; line-height: 1.6;">
+            <h2 style="font-family: 'DM Serif Display', Georgia, serif; color: #2dd4bf; font-size: 22px; margin-top: 0; margin-bottom: 16px; font-weight: normal;">Nowa rejestracja eksperta z landing page</h2>
+            <p style="font-size: 15px; color: #e8e4dc; margin-bottom: 24px;">W witrynie Prostasprawa.pl zarejestrowano nowego eksperta. Poniżej znajdują się dane przesłane w formularzu:</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+              <tbody>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; width: 40%; font-weight: 500;">Pełna nazwa firmy:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px; font-weight: 600;">${body.nazwaFirmy || body.nazwa || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">NIP:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.nip || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">REGON:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.regon || 'Brak'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">KRS:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.krs || 'Brak'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Osoba kontaktowa:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.imieKontakt || ''} ${body.nazwiskoKontakt || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Email:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #2dd4bf; font-size: 14px;"><a href="mailto:${body.email || ''}" style="color: #2dd4bf; text-decoration: none;">${body.email || ''}</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Telefon kontaktowy:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.numerTelefonu || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Drugi telefon:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.numerTelefonu2 || 'Brak'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Adres:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.adres || ''}, ${body.kodPocztowy || ''} ${body.miasto || ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Województwo główne:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${voivodeship?.nazwa || 'Nie wybrano'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Typ działalności:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.typ || ''}${body.typInny ? ` (${body.typInny})` : ''}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Główna specjalizacja:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${expertiseCategoryName || 'Nie wybrano'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Wszystkie specjalizacje:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${categoryNames || 'Brak'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Akceptacja regulaminu:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.zgodaRegulamin ? 'Tak' : 'Nie'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Zgoda na dane:</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+
+        const notificationText = `
+Nowa rejestracja eksperta z landing page
+
+W witrynie Prostasprawa.pl zarejestrowano nowego eksperta. Poniżej znajdują się dane przesłane w formularzu:
+
+Pełna nazwa firmy: ${body.nazwaFirmy || body.nazwa || ''}
+NIP: ${body.nip || ''}
+REGON: ${body.regon || 'Brak'}
+KRS: ${body.krs || 'Brak'}
+Osoba kontaktowa: ${body.imieKontakt || ''} ${body.nazwiskoKontakt || ''}
+Email: ${body.email || ''}
+Telefon kontaktowy: ${body.numerTelefonu || ''}
+Drugi telefon: ${body.numerTelefonu2 || 'Brak'}
+Adres: ${body.adres || ''}, ${body.kodPocztowy || ''} ${body.miasto || ''}
+Województwo główne: ${voivodeship?.nazwa || 'Nie wybrano'}
+Typ działalności: ${body.typ || ''}${body.typInny ? ` (${body.typInny})` : ''}
+Główna specjalizacja: ${expertiseCategoryName || 'Nie wybrano'}
+Wszystkie specjalizacje: ${categoryNames || 'Brak'}
+Akceptacja regulaminu: ${body.zgodaRegulamin ? 'Tak' : 'Nie'}
+Zgoda na dane: ${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}
+        `
+
+        const brandHtml = wrapInBrandLayoutIfNeeded(notificationHtml, "Nowa rejestracja eksperta z landing page")
+
+        await sendEmail({
+          to: 'krystian@bpcoders.pl',
+          subject: `Nowa rejestracja eksperta - ${body.nazwaFirmy || body.nazwa || ''}`,
+          html: brandHtml,
+          text: notificationText,
+          templateType: 'NOWA_REJESTRACJA_BOK',
+        })
+      } catch (notifErr) {
+        console.error('Failed to send notification email to bok@prostasprawa.pl:', notifErr)
       }
     }
 
