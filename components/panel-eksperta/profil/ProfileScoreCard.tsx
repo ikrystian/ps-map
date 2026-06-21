@@ -22,6 +22,7 @@ import {
   ArrowRight,
   type LucideIcon,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface ProfileScoreData {
   // Dane podstawowe
@@ -131,6 +132,7 @@ function getTier(score: number) {
 }
 
 export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps) {
+  const router = useRouter()
   const socialFilled = [
     formData.linkLinkedIn,
     formData.linkFacebook,
@@ -211,7 +213,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
     },
     {
       tab: "contact",
-      title: "Kontakt i obszar",
+      title: "Kontakt",
       icon: MapPin,
       fields: [
         {
@@ -461,7 +463,13 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
                       <button
                         key={field.id}
                         type="button"
-                        onClick={() => onNavigate(group.tab)}
+                        onClick={() => {
+                          if (field.id === "obszar") {
+                            router.push("/panel-eksperta/zakres-uslug")
+                          } else {
+                            onNavigate(group.tab)
+                          }
+                        }}
                         className={cn(
                           "w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 group",
                           field.done
