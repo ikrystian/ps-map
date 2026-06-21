@@ -75,6 +75,7 @@ interface LawFirmRankingData {
   ratingScore: number
   scoreBeforeBoost: number
   boostMultiplier: number
+  promoSpentScore: number
   finalScore: number
   avgRating: number
   reviewCount: number
@@ -423,14 +424,17 @@ export default function AdminPozycjonowaniePage() {
                       Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdej eksperta przypisywany jest
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
-                    <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex items-center justify-center gap-2">
+                    <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-2">
                       <span className="text-primary font-bold">Score</span> = (
                       <span className="text-green-400">Weryfikacja [1000 pkt]</span> +
                       <span className="text-blue-400"> Wyświetlenia * 0.1</span> +
                       <span className="text-amber-400"> Śr. Ocena * 50</span>) *
-                      <span className="text-purple-400 font-bold"> Mnożnik Promocji</span>
+                      <span className="text-purple-400 font-bold"> Mnożnik Promocji</span> +
+                      <span className="text-rose-400 font-bold"> Wydano na prom.</span>
                     </div>
                     <p>
+                      Składnik <span className="text-rose-400 font-semibold">Wydano na prom.</span> (suma punktów wydanych
+                      na promocje) jest doliczany **poza mnożnikiem** — w stosunku 1:1, bez wzmacniania przez mnożnik promocji.
                       Gdzie **Mnożnik Promocji** to najwyższy mnożnik z aktywnych wykupionych promocji:
                     </p>
                     <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">

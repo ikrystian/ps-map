@@ -1,6 +1,7 @@
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
+import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { EmailType } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
@@ -210,6 +211,10 @@ export async function GET(request: NextRequest) {
               nazwa: true,
             },
           },
+          pointTransactions: {
+            where: { type: "PROMOTION_PURCHASE" },
+            select: { amount: true },
+          },
         },
         orderBy:
           sortBy === "ranking"
@@ -295,13 +300,16 @@ export async function GET(request: NextRequest) {
         // Get highlight type for visual distinction
         const highlightType = await getLawFirmHighlightType(firm.id, firmPromotions)
 
-        // Calculate base score (verified firms get priority)
-        const baseScore = firm.zweryfikowana ? 1000 : 0
-        const viewScore = firm.wyswietleniaProfilu * 0.1
-        const ratingScore = avgRating * 50
-
-        // Apply promotion boost
-        const finalScore = (baseScore + viewScore + ratingScore) * boost.boostMultiplier
+        // Calculate ranking score using the shared formula. "Wydano na prom."
+        // (total points spent on promotions) is added 1:1 outside the multiplier.
+        const totalSpentPoints = sumPromotionSpentPoints(firm.pointTransactions || [])
+        const { finalScore } = computeRankingScore({
+          zweryfikowana: firm.zweryfikowana,
+          wyswietleniaProfilu: firm.wyswietleniaProfilu,
+          avgRating,
+          boostMultiplier: boost.boostMultiplier,
+          totalSpentPoints,
+        })
 
         // Ustawienie "Wyświetlanie awatara w katalogu" – ukrywa logo eksperta na listingach
         const pokazAwatar = firm.user?.notificationSettings?.wyswietlanieAwatara !== false

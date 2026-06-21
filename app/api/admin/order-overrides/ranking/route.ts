@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -112,17 +113,24 @@ export async function GET(request: NextRequest) {
         }
       })
 
-      // Score components
-      const baseScore = firm.zweryfikowana ? 1000 : 0
-      const viewScore = firm.wyswietleniaProfilu * 0.1
-      const ratingScore = avgRating * 50
-      const scoreBeforeBoost = baseScore + viewScore + ratingScore
-      const finalScore = scoreBeforeBoost * maxMultiplier
-
       // Calculate total points spent on promotions (tx amounts are negative, so sum absolute values)
-      const totalSpentPoints = Math.abs(
-        firm.pointTransactions.reduce((sum, tx) => sum + tx.amount, 0)
-      )
+      const totalSpentPoints = sumPromotionSpentPoints(firm.pointTransactions)
+
+      // Score components (shared formula: "Wydano na prom." added outside the multiplier)
+      const {
+        baseScore,
+        viewScore,
+        ratingScore,
+        scoreBeforeBoost,
+        promoSpentScore,
+        finalScore,
+      } = computeRankingScore({
+        zweryfikowana: firm.zweryfikowana,
+        wyswietleniaProfilu: firm.wyswietleniaProfilu,
+        avgRating,
+        boostMultiplier: maxMultiplier,
+        totalSpentPoints,
+      })
 
       // Extract active promotion details
       const activePromotions = firm.promotions.map((p) => ({
@@ -175,6 +183,7 @@ export async function GET(request: NextRequest) {
         ratingScore: parseFloat(ratingScore.toFixed(1)),
         scoreBeforeBoost: parseFloat(scoreBeforeBoost.toFixed(1)),
         boostMultiplier: maxMultiplier,
+        promoSpentScore: parseFloat(promoSpentScore.toFixed(1)),
         finalScore: parseFloat(finalScore.toFixed(1)),
         avgRating: parseFloat(avgRating.toFixed(1)),
         reviewCount,

@@ -36,12 +36,27 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
-import type { LawFirm } from "@/types"
+
+interface RankingLawFirm {
+  id: string
+  nazwa: string
+  pozycjaRanking: number | null
+  punktySaldo: number
+  mainCategoryId: string
+  mainCategoryName?: string
+  /** Wynik wg pełnego wzoru punktowego (nie tylko punktów wydanych na promocje). */
+  rankingScore: number
+  scoreBeforeBoost: number
+  boostMultiplier: number
+  promoSpentScore: number
+}
 
 interface Competitor {
   id: string
   nazwa: string
   pozycjaRanking: number | null
+  /** Wynik wg pełnego wzoru punktowego. */
+  rankingScore: number
 }
 
 const containerVariants = {
@@ -132,7 +147,7 @@ function RankingIllustration() {
 export default function RankingBoostPage() {
   const { data: session } = useSession()
   const { toast } = useToast()
-  const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
+  const [lawFirm, setLawFirm] = useState<RankingLawFirm | null>(null)
   const [competitors, setCompetitors] = useState<Competitor[]>([])
   const [loading, setLoading] = useState(true)
   const [points, setPoints] = useState(0)
@@ -141,40 +156,46 @@ export default function RankingBoostPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!session?.user?.id) return
-      try {
-        const response = await fetch("/api/law-firms/ranking-boost")
-        if (!response.ok) throw new Error("Nie udało się pobrać danych")
-        const data = await response.json()
-        setLawFirm(data.lawFirm)
-        setCompetitors(data.competitors)
-      } catch (error) {
-        toast({
-          title: "Błąd",
-          description: "Nie udało się pobrać danych rankingu.",
-          variant: "destructive",
-        })
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    if (!session?.user?.id) return
+    try {
+      const response = await fetch("/api/law-firms/ranking-boost")
+      if (!response.ok) throw new Error("Nie udało się pobrać danych")
+      const data = await response.json()
+      setLawFirm(data.lawFirm)
+      setCompetitors(data.competitors)
+    } catch (error) {
+      toast({
+        title: "Błąd",
+        description: "Nie udało się pobrać danych rankingu.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, toast])
 
   useEffect(() => {
     if (!lawFirm) return
 
-    const allFirms = [...competitors, { ...lawFirm, pozycjaRanking: lawFirm.pozycjaRanking ?? 0 }]
-      .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+    // Pozycja liczona wg pełnego wzoru punktowego (rankingScore), a nie tylko
+    // punktów wydanych na promocje.
+    const allFirms = [...competitors, { id: lawFirm.id, rankingScore: lawFirm.rankingScore }]
+      .sort((a, b) => b.rankingScore - a.rankingScore)
 
     const rank = allFirms.findIndex(f => f.id === lawFirm.id) + 1
     setCurrentRank(rank)
 
-    const newRankingScore = (lawFirm.pozycjaRanking ?? 0) + points
-    const newAllFirms = [...competitors, { ...lawFirm, pozycjaRanking: newRankingScore }]
-      .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+    // Przydzielenie punktów zwiększa składnik "Wydano na prom." 1:1 (poza mnożnikiem),
+    // więc nowy wynik = obecny wynik + przydzielone punkty.
+    const newRankingScore = lawFirm.rankingScore + points
+    const newAllFirms = [...competitors, { id: lawFirm.id, rankingScore: newRankingScore }]
+      .sort((a, b) => b.rankingScore - a.rankingScore)
 
     const newCalculatedRank = newAllFirms.findIndex(f => f.id === lawFirm.id) + 1
     setNewRank(newCalculatedRank)
@@ -196,8 +217,9 @@ export default function RankingBoostPage() {
         throw new Error(errorData.error || "Nie udało się podnieść rankingu")
       }
 
-      const updatedLawFirm = await response.json()
-      setLawFirm(updatedLawFirm)
+      await response.json()
+      // Przeładuj dane, aby przeliczyć wynik wg pełnego wzoru po doliczeniu wydanych punktów
+      await fetchData()
       setPoints(0)
       setShowSuccessDialog(true)
     } catch (error) {
@@ -326,7 +348,7 @@ export default function RankingBoostPage() {
                   <div className="text-4xl sm:text-5xl font-black text-zinc-300 font-playfair tracking-tight">
                     #{currentRank}
                   </div>
-                  <span className="text-xs text-zinc-500 mt-2 font-mono">{lawFirm.pozycjaRanking ?? 0} pkt</span>
+                  <span className="text-xs text-zinc-500 mt-2 font-mono">{lawFirm.rankingScore.toLocaleString()} pkt</span>
                 </div>
 
                 {/* Transition Arrow / Value */}
@@ -382,7 +404,7 @@ export default function RankingBoostPage() {
                     "text-xs mt-2 font-mono transition-colors",
                     points > 0 ? "text-primary font-semibold" : "text-zinc-500"
                   )}>
-                    {(lawFirm.pozycjaRanking ?? 0) + points} pkt
+                    {(lawFirm.rankingScore + points).toLocaleString()} pkt
                   </span>
                 </div>
               </div>
@@ -506,7 +528,7 @@ export default function RankingBoostPage() {
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
                         Przeznaczasz <strong className="text-white font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
-                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{(lawFirm.pozycjaRanking ?? 0) + points} pkt</strong>. Operacji tej nie można cofnąć.
+                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{(lawFirm.rankingScore + points).toLocaleString()} pkt</strong>. Operacji tej nie można cofnąć.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:gap-0 pt-4 flex flex-col-reverse sm:flex-row">
@@ -544,8 +566,11 @@ export default function RankingBoostPage() {
             </CardHeader>
             <CardContent className="p-0 overflow-y-auto flex-1 custom-scrollbar">
               <div className="divide-y divide-border/10">
-                {[...competitors, { ...lawFirm, pozycjaRanking: (lawFirm.pozycjaRanking ?? 0) + points }]
-                  .sort((a, b) => (b.pozycjaRanking ?? 0) - (a.pozycjaRanking ?? 0))
+                {[
+                  ...competitors.map(c => ({ id: c.id, nazwa: c.nazwa, rankingScore: c.rankingScore })),
+                  { id: lawFirm.id, nazwa: lawFirm.nazwa, rankingScore: lawFirm.rankingScore + points },
+                ]
+                  .sort((a, b) => b.rankingScore - a.rankingScore)
                   .map((firm, index) => {
                     const isMe = firm.id === lawFirm.id
 
@@ -556,8 +581,8 @@ export default function RankingBoostPage() {
                       "text-amber-600", // Bronze
                     ]
 
-                    const score = firm.pozycjaRanking ?? 0
-                    const maxScore = Math.max(...competitors.map(c => c.pozycjaRanking ?? 0), (lawFirm.pozycjaRanking ?? 0) + points, 1)
+                    const score = firm.rankingScore
+                    const maxScore = Math.max(...competitors.map(c => c.rankingScore), lawFirm.rankingScore + points, 1)
                     const percent = Math.max(5, Math.min(100, (score / maxScore) * 100))
 
                     return (
