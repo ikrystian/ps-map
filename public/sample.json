@@ -1,0 +1,145 @@
+{
+  "lawFirms": [
+    {
+      "user": {
+        "email": "kontakt@kancelaria-kowalski.pl",
+        "password": "BezpieczneHaslo123!",
+        "name": "Kancelaria Kowalski"
+      },
+      "lawFirm": {
+        "typ": "SPOLKA_PARTNERSKA",
+        "typInny": null,
+        "nazwa": "Kancelaria Kowalski",
+        "nazwaFirmy": "Kowalski i Wspólnicy Sp. P.",
+        "nip": "1234567890",
+        "regon": "123456789",
+        "krs": "0000123456",
+
+        "imieKontakt": "Jan",
+        "nazwiskoKontakt": "Kowalski",
+        "numerTelefonu": "+48 600 100 200",
+        "numerTelefonu2": "+48 22 100 20 30",
+        "adres": "ul. Marszałkowska 1",
+        "kodPocztowy": "00-001",
+        "miasto": "Warszawa",
+        "voivodeship": "Mazowieckie",
+        "latitude": 52.2297,
+        "longitude": 21.0122,
+
+        "opis": "Doświadczona kancelaria specjalizująca się w prawie gospodarczym i obsłudze spółek.",
+        "logo": "/uploads/law-firms/logo.png",
+        "zdjecieGlowne": "/uploads/law-firms/main.jpg",
+        "galeriaZdjec": ["/uploads/law-firms/img1.jpg", "/uploads/law-firms/img2.jpg"],
+        "filmYouTube": "https://www.youtube.com/watch?v=xxxxxxxxxxx",
+        "okladkaFilmu": "/uploads/law-firms/cover.jpg",
+        "kolejnoscMultimedia": "zdjecia",
+
+        "statusGodzinyOtwarcia": true,
+        "godzinyOtwarcia": {
+          "poniedzialek": "9:00-17:00",
+          "wtorek": "9:00-17:00",
+          "sroda": "9:00-17:00",
+          "czwartek": "9:00-17:00",
+          "piatek": "9:00-15:00",
+          "sobota": "zamkniete",
+          "niedziela": "zamkniete"
+        },
+
+        "linkLinkedIn": "https://linkedin.com/company/kowalski",
+        "linkFacebook": "https://facebook.com/kowalski",
+        "linkInstagram": "https://instagram.com/kowalski",
+        "linkTwitter": "https://twitter.com/kowalski",
+        "linkTikTok": "https://tiktok.com/@kowalski",
+        "stronaWww": "https://kancelaria-kowalski.pl",
+
+        "edukacja": [
+          {
+            "uczelnia": "Uniwersytet Warszawski",
+            "wydzial": "Prawo i Administracja",
+            "rokOd": 2005,
+            "rokDo": 2010
+          }
+        ],
+
+        "oirpMiasto": "Warszawa",
+        "oirpWpis": "WA-1234",
+        "oirpStatus": true,
+        "oraMiasto": "Warszawa",
+        "oraWpis": "ORA-5678",
+        "oraStatus": false,
+
+        "unikatowyOpisUslugi": "Kompleksowa obsługa prawna firm – od rejestracji po bieżące doradztwo.",
+        "slowaKluczowe": ["prawo gospodarcze", "spółki", "kontrakty"],
+
+        "callaPolska": false,
+        "onlineOnly": false,
+        "typOferty": "WSZYSTKIE",
+
+        "pakietSubskrypcji": "PREMIUM",
+        "zweryfikowana": true,
+        "aktywna": true,
+        "zgodaRegulamin": true,
+        "zgodaPrzetwarzanie": true
+      },
+
+      "voivodeships": ["Mazowieckie", "Łódzkie"],
+      "categories": ["Prawo Gospodarcze", "Prawo Cywilne"],
+      "services": [
+        {
+          "nazwaUslugi": "Rejestracja spółki",
+          "opisUslugi": "Kompleksowa rejestracja spółki z o.o. wraz z dokumentacją.",
+          "cenaOd": 1500,
+          "cenaDo": 3000,
+          "jednostka": "ZA_USLUGE",
+          "aktywna": true
+        },
+        {
+          "nazwaUslugi": "Doradztwo prawne",
+          "opisUslugi": "Bieżące doradztwo prawne dla przedsiębiorców.",
+          "cenaOd": 250,
+          "cenaDo": null,
+          "jednostka": "ZA_GODZINE",
+          "aktywna": true
+        }
+      ],
+      "certificates": [
+        {
+          "nazwaCertyfikatu": "Radca Prawny",
+          "wydawca": "Okręgowa Izba Radców Prawnych w Warszawie",
+          "dataUzyskania": "2012-06-15",
+          "dataWaznosci": null,
+          "numerCertyfikatu": "RP-12345",
+          "skanCertyfikatu": "/uploads/certificates/cert.pdf",
+          "aktywny": true
+        }
+      ]
+    },
+    {
+      "user": {
+        "email": "biuro@nowak-legal.pl",
+        "password": "Haslo987!"
+      },
+      "lawFirm": {
+        "typ": "OSOBA_FIZYCZNA",
+        "nazwa": "Adwokat Anna Nowak",
+        "nazwaFirmy": "Kancelaria Adwokacka Anna Nowak",
+        "nip": "9876543210",
+        "imieKontakt": "Anna",
+        "nazwiskoKontakt": "Nowak",
+        "numerTelefonu": "+48 500 200 300",
+        "adres": "ul. Piotrkowska 50",
+        "kodPocztowy": "90-001",
+        "miasto": "Łódź",
+        "voivodeship": "Łódzkie",
+        "opis": "Kancelaria adwokacka specjalizująca się w prawie rodzinnym i karnym.",
+        "typOferty": "KONSULTACJA",
+        "pakietSubskrypcji": "STANDARD",
+        "aktywna": true
+      },
+      "voivodeships": ["Łódzkie"],
+      "categories": ["Prawo Rodzinne", "Prawo Karne"],
+      "services": [],
+      "certificates": []
+    }
+  ]
+}

@@ -214,31 +214,7 @@ export function SearchHelpSection() {
               />
 
               {/* Location Pin Icon at the End — wiggles after path draws */}
-              <motion.g
-                transform="translate(1148, 38)"
-                initial={{ opacity: 0, rotate: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 2, duration: 0.3 }}
-                animate={{ rotate: [0, 20, -12, 18, -8, 14, 0] }}
-                style={{ originX: "1160px", originY: "50px" }}
-              >
-                <g transform="rotate(20 12 12)">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="22"
-                    height="22"
-                    fill="none"
-                    stroke="rgba(255, 255, 255, 0.45)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </g>
-              </motion.g>
+
             </svg>
           </div>
 

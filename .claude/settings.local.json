@@ -22,7 +22,8 @@
       "Bash(grep -nE \"return \\\\\\(|</div>|</main>|^\\\\s*\\\\\\)\\\\s*$|^}\")",
       "Bash(echo \"=== eslint exit: $? ===\")",
       "Bash(git -C /home/krystian/Projects/ps-map show 037be74 --stat)",
-      "Bash(git -C /home/krystian/Projects/ps-map show 037be74)"
+      "Bash(git -C /home/krystian/Projects/ps-map show 037be74)",
+      "Bash(node *)"
     ]
   }
 }

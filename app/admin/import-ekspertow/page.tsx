@@ -146,53 +146,202 @@ export default function ImportEkspertow() {
   "lawFirms": [
     {
       "user": {
-        "email": "kontakt@ekspert.pl",
-        "password": "HasloEkspert123!"
+        "email": "kontakt@kancelaria-kowalski.pl",   // WYMAGANE, unikalny
+        "password": "BezpieczneHaslo123!",            // opcjonalne (domyślnie Password123!)
+        "name": "Kancelaria Kowalski"                 // opcjonalne (domyślnie = nazwa)
       },
       "lawFirm": {
-        "typ": "SPOLKA_PARTNERSKA",
-        "nazwa": "Ekspert Prawny",
-        "nazwaFirmy": "Ekspert Prawny Sp. P.",
-        "nip": "1234567890",
+        // --- Dane podstawowe ---
+        "typ": "SPOLKA_PARTNERSKA",                   // patrz "Dozwolone wartości"
+        "typInny": null,                              // tylko gdy typ = "INNY"
+        "nazwa": "Kancelaria Kowalski",               // WYMAGANE
+        "nazwaFirmy": "Kowalski i Wspólnicy Sp. P.",
+        "nip": "1234567890",                          // unikalny (zalecane)
+        "regon": "123456789",
+        "krs": "0000123456",
+
+        // --- Dane kontaktowe i adres siedziby (zapis w koncie User) ---
+        "imieKontakt": "Jan",
+        "nazwiskoKontakt": "Kowalski",
+        "numerTelefonu": "+48 600 100 200",
+        "numerTelefonu2": "+48 22 100 20 30",
+        "adres": "ul. Marszałkowska 1",
+        "kodPocztowy": "00-001",
+        "miasto": "Warszawa",
+        "voivodeship": "Mazowieckie",                 // województwo siedziby (zalecane)
+        "latitude": 52.2297,
+        "longitude": 21.0122,
+
+        // --- Profil publiczny i multimedia ---
+        "opis": "Doświadczona kancelaria...",
         "logo": "/uploads/law-firms/logo.png",
         "zdjecieGlowne": "/uploads/law-firms/main.jpg",
-        "galeriaZdjec": ["/uploads/law-firms/img1.jpg"],
-        ...
+        "galeriaZdjec": ["/uploads/law-firms/img1.jpg", "/uploads/law-firms/img2.jpg"],
+        "filmYouTube": "https://www.youtube.com/watch?v=xxxx",
+        "okladkaFilmu": "/uploads/law-firms/cover.jpg",
+        "kolejnoscMultimedia": "zdjecia",             // "zdjecia" lub "film"
+
+        // --- Godziny otwarcia ---
+        "statusGodzinyOtwarcia": true,
+        "godzinyOtwarcia": {
+          "poniedzialek": "9:00-17:00",
+          "wtorek": "9:00-17:00",
+          "sroda": "9:00-17:00",
+          "czwartek": "9:00-17:00",
+          "piatek": "9:00-15:00",
+          "sobota": "zamkniete",
+          "niedziela": "zamkniete"
+        },
+
+        // --- Social media i strona WWW ---
+        "linkLinkedIn": "https://linkedin.com/company/kowalski",
+        "linkFacebook": "https://facebook.com/kowalski",
+        "linkInstagram": "https://instagram.com/kowalski",
+        "linkTwitter": "https://twitter.com/kowalski",
+        "linkTikTok": "https://tiktok.com/@kowalski",
+        "stronaWww": "https://kancelaria-kowalski.pl",
+
+        // --- Edukacja ---
+        "edukacja": [
+          { "uczelnia": "Uniwersytet Warszawski", "wydzial": "Prawo i Administracja", "rokOd": 2005, "rokDo": 2010 }
+        ],
+
+        // --- Wpisy do rejestrów (OIRP / ORA) ---
+        "oirpMiasto": "Warszawa",
+        "oirpWpis": "WA-1234",
+        "oirpStatus": true,
+        "oraMiasto": "Warszawa",
+        "oraWpis": "ORA-5678",
+        "oraStatus": false,
+
+        // --- Specjalizacja i wyszukiwanie ---
+        "unikatowyOpisUslugi": "Kompleksowa obsługa prawna firm.",
+        "slowaKluczowe": ["prawo gospodarcze", "spółki", "kontrakty"],
+
+        // --- Obszar i typ działania ---
+        "callaPolska": false,                         // obsługa całej Polski
+        "onlineOnly": false,                          // tylko zdalnie
+        "typOferty": "WSZYSTKIE",                     // patrz "Dozwolone wartości"
+
+        // --- Subskrypcja i status konta ---
+        "pakietSubskrypcji": "PREMIUM",               // patrz "Dozwolone wartości"
+        "zweryfikowana": true,
+        "aktywna": true,
+        "zgodaRegulamin": true,
+        "zgodaPrzetwarzanie": true
       },
-      "voivodeships": ["Mazowieckie", "Łódzkie"],
-      "categories": ["Prawo Gospodarcze", "Prawo Cywilne"],
-      "services": [...],
+
+      // --- Powiązane kolekcje ---
+      "voivodeships": ["Mazowieckie", "Łódzkie"],     // województwa działania (nazwy)
+      "categories": ["Prawo Gospodarcze", "Prawo Cywilne"], // specjalizacje (nazwy kategorii)
+      "services": [
+        {
+          "nazwaUslugi": "Rejestracja spółki",
+          "opisUslugi": "Kompleksowa rejestracja spółki z o.o.",
+          "cenaOd": 1500,
+          "cenaDo": 3000,
+          "jednostka": "ZA_USLUGE",                   // patrz "Dozwolone wartości"
+          "aktywna": true
+        }
+      ],
       "certificates": [
         {
-          "nazwaCertyfikatu": "Certyfikat",
+          "nazwaCertyfikatu": "Radca Prawny",
+          "wydawca": "Okręgowa Izba Radców Prawnych",
+          "dataUzyskania": "2012-06-15",
+          "dataWaznosci": null,                        // null = bezterminowy
+          "numerCertyfikatu": "RP-12345",
           "skanCertyfikatu": "/uploads/certificates/cert.pdf",
-          ...
+          "aktywny": true
         }
       ]
     }
   ]
 }`}
             </pre>
+            <p className="text-xs text-muted-foreground mt-2">
+              Powyżej pokazano komentarze (// ...) wyłącznie dla czytelności – w pliku
+              importu muszą zostać usunięte, ponieważ JSON ich nie dopuszcza. Pobierz
+              gotowy, poprawny plik przyciskiem na dole.
+            </p>
           </div>
 
           <div>
             <h3 className="font-semibold mb-2">Wymagane pola:</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>user.email - unikalny adres email</li>
-              <li>lawFirm.nip - NIP eksperta (unikalny)</li>
-              <li>lawFirm.voivodeship - województwo siedziby</li>
+              <li>user.email - unikalny adres email (login eksperta)</li>
+              <li>lawFirm.nazwa - nazwa wyświetlana eksperta</li>
+            </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              Zalecane: lawFirm.nip (unikalny) oraz lawFirm.voivodeship (województwo
+              siedziby). Pozostałe pola są opcjonalne – brakujące dane zostaną uzupełnione
+              wartościami domyślnymi.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Konto i dane kontaktowe:</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>user.email, user.password, user.name - dane logowania</li>
+              <li>lawFirm.imieKontakt, lawFirm.nazwiskoKontakt - osoba kontaktowa</li>
+              <li>lawFirm.numerTelefonu, lawFirm.numerTelefonu2 - telefony</li>
+              <li>lawFirm.adres, lawFirm.kodPocztowy, lawFirm.miasto - adres siedziby</li>
+              <li>lawFirm.voivodeship - województwo siedziby (nazwa)</li>
+              <li>lawFirm.latitude, lawFirm.longitude - współrzędne na mapie</li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-2">Pola obrazków i mediów:</h3>
+            <h3 className="font-semibold mb-2">Dane firmy i rejestry:</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>lawFirm.logo - URL do logo ekspercie (np. /uploads/law-firms/logo.png)</li>
-              <li>lawFirm.zdjecieGlowne - URL do głównego zdjęcia (np. /uploads/law-firms/main.jpg)</li>
+              <li>lawFirm.typ, lawFirm.typInny - forma działalności</li>
+              <li>lawFirm.nazwaFirmy, lawFirm.nip, lawFirm.regon, lawFirm.krs</li>
+              <li>lawFirm.oirpMiasto, lawFirm.oirpWpis, lawFirm.oirpStatus - wpis OIRP</li>
+              <li>lawFirm.oraMiasto, lawFirm.oraWpis, lawFirm.oraStatus - wpis ORA</li>
+              <li>lawFirm.zweryfikowana, lawFirm.aktywna - status konta</li>
+              <li>lawFirm.zgodaRegulamin, lawFirm.zgodaPrzetwarzanie - zgody</li>
+              <li>lawFirm.pakietSubskrypcji - pakiet subskrypcji</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Profil, multimedia i social media:</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>lawFirm.opis, lawFirm.unikatowyOpisUslugi - opisy profilu</li>
+              <li>lawFirm.logo - URL do logo (np. /uploads/law-firms/logo.png)</li>
+              <li>lawFirm.zdjecieGlowne - URL głównego zdjęcia</li>
               <li>lawFirm.galeriaZdjec - tablica URL-i do galerii zdjęć</li>
-              <li>lawFirm.filmYouTube - URL filmu z YouTube (opcjonalnie)</li>
-              <li>lawFirm.okladkaFilmu - URL miniatury filmu (opcjonalnie)</li>
-              <li>certificate.skanCertyfikatu - URL do skanu certyfikatu (np. /uploads/certificates/cert.pdf)</li>
+              <li>lawFirm.filmYouTube, lawFirm.okladkaFilmu - film i jego miniatura</li>
+              <li>lawFirm.kolejnoscMultimedia - "zdjecia" lub "film"</li>
+              <li>lawFirm.statusGodzinyOtwarcia, lawFirm.godzinyOtwarcia - godziny pracy</li>
+              <li>lawFirm.linkLinkedIn, linkFacebook, linkInstagram, linkTwitter, linkTikTok, stronaWww</li>
+              <li>lawFirm.edukacja - tablica wpisów (uczelnia, wydzial, rokOd, rokDo)</li>
+              <li>lawFirm.slowaKluczowe - tablica tagów do wyszukiwania</li>
+              <li>lawFirm.callaPolska, lawFirm.onlineOnly, lawFirm.typOferty - obszar i typ działania</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Powiązane kolekcje (tablice obok user / lawFirm):</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>voivodeships - województwa działania (tablica nazw)</li>
+              <li>categories - specjalizacje (tablica nazw kategorii)</li>
+              <li>services - usługi (nazwaUslugi, opisUslugi, cenaOd, cenaDo, jednostka, aktywna)</li>
+              <li>certificates - certyfikaty (nazwaCertyfikatu, wydawca, dataUzyskania, dataWaznosci, numerCertyfikatu, skanCertyfikatu, aktywny)</li>
+            </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              Nazwy w voivodeships i categories muszą odpowiadać istniejącym słownikom –
+              wartości nierozpoznane są pomijane.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Dozwolone wartości (enumy):</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>lawFirm.typ: OSOBA_FIZYCZNA, SPOLKA_CYWILNA, SPOLKA_PARTNERSKA, SPOLKA_KOMANDYTOWA, SPOLKA_JAWNA, SPOLKA_ZOO, INNY</li>
+              <li>lawFirm.typOferty: STALA_WSPOLPRACA, JEDNORAZOWA_USLUGA, KONSULTACJA, WSZYSTKIE</li>
+              <li>lawFirm.pakietSubskrypcji: PODSTAWOWY, STANDARD, PREMIUM, BIZNES</li>
+              <li>service.jednostka: ZA_USLUGE, ZA_GODZINE, RYCZALT, DO_UZGODNIENIA</li>
             </ul>
           </div>
 
