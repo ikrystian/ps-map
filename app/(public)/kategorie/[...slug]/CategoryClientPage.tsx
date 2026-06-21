@@ -485,7 +485,7 @@ export default function CategoryClientPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className={cn("lg:col-span-1 transition-all duration-300", showMobileFilters ? "block" : "hidden lg:block")}>
-            <Card>
+            <Card className="bg-card/50">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Filtry</span>

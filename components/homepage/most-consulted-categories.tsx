@@ -248,18 +248,18 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-500/100 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-500/90 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
+                      <div className="absolute inset-0 z-100  bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
                         alt={firm.nazwa}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
-                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 backdrop-blur-md p-2 rounded-xl border border-white/5">
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-white/5">
                         <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
                           {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
                         </div>
