@@ -1,7 +1,54 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { fetchAndSavePexelsImage } from "@/lib/pexels"
 import bcrypt from "bcryptjs"
 import { NextRequest, NextResponse } from "next/server"
+
+// Pola ze zdjęciami zastępowane przy imporcie obrazami z Pexels.
+// Gdy pole zawiera ścieżkę/ścieżki do obrazków, pobieramy zdjęcie dla danej
+// frazy, zapisujemy je lokalnie i podmieniamy wartość na lokalny URL.
+// Proporcje (orientacja) dopasowane do miejsca wyświetlania pola w profilu.
+const IMAGE_FIELDS = {
+  logo: { phrase: "shape", orientation: "square" as const },
+  zdjecieGlowne: { phrase: "prawnik", orientation: "landscape" as const },
+  galeriaZdjec: { phrase: "biuro", orientation: "landscape" as const },
+}
+
+/**
+ * Podmienia pola ze zdjęciami (logo, zdjecieGlowne, galeriaZdjec) na świeżo
+ * pobrane i lokalnie zapisane obrazy z Pexels. Wołane PRZED transakcją DB,
+ * aby operacje sieciowe (pobieranie plików) nie blokowały zapisu do bazy.
+ * Gdy pobranie się nie uda (np. brak PEXELS_API_KEY), zostaje wartość oryginalna.
+ */
+async function resolveImageFields(lawFirmData: any): Promise<void> {
+  if (!lawFirmData) return
+
+  // logo – pojedyncza ścieżka
+  if (lawFirmData.logo) {
+    const { phrase, orientation } = IMAGE_FIELDS.logo
+    const url = await fetchAndSavePexelsImage(phrase, orientation)
+    if (url) lawFirmData.logo = url
+  }
+
+  // zdjecieGlowne – pojedyncza ścieżka
+  if (lawFirmData.zdjecieGlowne) {
+    const { phrase, orientation } = IMAGE_FIELDS.zdjecieGlowne
+    const url = await fetchAndSavePexelsImage(phrase, orientation)
+    if (url) lawFirmData.zdjecieGlowne = url
+  }
+
+  // galeriaZdjec – tablica ścieżek (każda pozycja = osobne zdjęcie)
+  if (Array.isArray(lawFirmData.galeriaZdjec) && lawFirmData.galeriaZdjec.length > 0) {
+    const { phrase, orientation } = IMAGE_FIELDS.galeriaZdjec
+    const resolved = await Promise.all(
+      lawFirmData.galeriaZdjec.map(async (original: string) => {
+        const url = await fetchAndSavePexelsImage(phrase, orientation)
+        return url ?? original
+      })
+    )
+    lawFirmData.galeriaZdjec = resolved
+  }
+}
 
 // Helper function to generate slug
 function generateSlug(text: string): string {
@@ -111,6 +158,10 @@ export async function POST(request: NextRequest) {
         const hashedPassword = userData.password
           ? await bcrypt.hash(userData.password, 10)
           : await bcrypt.hash("Password123!", 10)
+
+        // Pobierz zdjęcia z Pexels i podmień pola ze ścieżkami na lokalne URL-e.
+        // Poza transakcją – to operacje sieciowe (nie trzymamy otwartej transakcji DB).
+        await resolveImageFields(lawFirmData)
 
         // Use transaction to create everything atomically
         await prisma.$transaction(async (tx: any) => {
