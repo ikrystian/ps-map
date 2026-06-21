@@ -38,12 +38,7 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
           {/* Header section with elegant title and divider line */}
           <div className="flex items-center gap-6 mb-12 w-full">
             <h2 className="text-2xl md:text-3xl font-playfair text-white tracking-wide font-medium">
-              Aktualności: <span
-                className="italic font-light text-transparent"
-                style={{ WebkitTextStroke: "1px rgba(255, 255, 255, 0.4)" }}
-              >
-                informacje i porady prawne
-              </span>
+              Aktualności
             </h2>
             <div className="h-[1px] bg-neutral-800 flex-grow" />
           </div>

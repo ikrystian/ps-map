@@ -697,7 +697,7 @@ export default function ForLawyersClientPage() {
                                     />
                                 </svg>
                             </div>
-                            <span className="text-xl font-semibold text-white mb-5 font-sans">tel. 790-466-488</span>
+                            <span className="text-xl font-semibold text-white mb-5 font-sans">tel. +48 534 888 555</span>
                         </div>
                         <div className="group bg-[linear-gradient(180deg,rgba(255,255,255,0.03)_0%,rgba(255,255,255,0.01)_100%)] border border-white/[0.05] rounded-[32px] py-[50px] px-[30px] flex flex-col items-center text-center transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:-translate-y-3 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0.02)_100%)] hover:border-gold/[0.3] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
                             <div className="w-[72px] h-[72px] rounded-[20px] bg-white/[0.03] border border-white/[0.08] flex items-center justify-center mb-6 text-gold transition-all duration-300 group-hover:bg-gold group-hover:text-[#111] group-hover:rotate-[10deg] [&_svg]:w-8 [&_svg]:h-8">
@@ -706,7 +706,7 @@ export default function ForLawyersClientPage() {
                                     <path d="M22 7l-10 7L2 7" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
                             </div>
-                            <a href="mailto:kontakt@prostasprawa.pl" className="inline-flex items-center justify-center py-3.5 px-7 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white font-sans text-[0.85rem] font-bold uppercase tracking-[1px] no-underline transition-all duration-300 w-full hover:bg-white hover:text-[#111]">
+                            <a href="mailto:bok@prostasprawa.pl" className="inline-flex items-center justify-center py-3.5 px-7 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white font-sans text-[0.85rem] font-bold uppercase tracking-[1px] no-underline transition-all duration-300 w-full hover:bg-white hover:text-[#111]">
                                 NAPISZ DO NAS
                             </a>
                         </div>

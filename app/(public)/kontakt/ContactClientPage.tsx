@@ -382,18 +382,11 @@ export default function ContactClientPage() {
                 </div>
 
                 <div className="space-y-2 text-neutral-400  text-sm sm:text-base">
-                  <a href="tel:+48123321321" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
+                  <a href="tel:+48534888555" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5 opacity-40" />
-                    +48 123 321 321
+                    +48 534 888 555
                   </a>
-                  <a href="tel:+48123321321" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 opacity-40" />
-                    +48 123 321 321
-                  </a>
-                  <a href="tel:+48123321321" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 opacity-40" />
-                    +48 123 321 321
-                  </a>
+
                 </div>
               </div>
             </motion.div>
@@ -425,14 +418,11 @@ export default function ContactClientPage() {
                 </div>
 
                 <div className="space-y-3 text-neutral-400  text-sm sm:text-base">
-                  <a href="mailto:biuro@prostasprawa.pl" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
+                  <a href="mailto:bok@prostasprawa.pl" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 opacity-40" />
-                    biuro@prostasprawa.pl
+                    bok@prostasprawa.pl
                   </a>
-                  <a href="mailto:sprawy@prostasprawa.pl" className="block hover:text-emerald-500 transition-colors flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 opacity-40" />
-                    sprawy@prostasprawa.pl
-                  </a>
+
                 </div>
               </div>
             </motion.div>

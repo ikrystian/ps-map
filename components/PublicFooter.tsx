@@ -173,8 +173,8 @@ export default function PublicFooter() {
 
             <div className="flex items-center gap-2 text-xs md:text-sm font-semibold text-[#d7b56d] pt-2">
               <Phone className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
-              <a href="tel:+48571500055" className="hover:underline">
-                +48 571 - 500 - 055
+              <a href="tel:+48534888555" className="hover:underline">
+                +48 534 888 555
               </a>
             </div>
           </div>
