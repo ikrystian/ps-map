@@ -612,7 +612,7 @@ function LawFirmProfilePageContent() {
                 className="rounded-lg text-xs font-semibold py-2.5 px-4 text-zinc-400 hover:text-white hover:bg-zinc-800/20 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all duration-200 flex items-center gap-2"
               >
                 <MapPin className="h-4 w-4 shrink-0" />
-                <span>Kontakt i obszar</span>
+                <span>Kontakt</span>
               </TabsTrigger>
               <TabsTrigger
                 value="specialization"
@@ -649,21 +649,12 @@ function LawFirmProfilePageContent() {
               />
             </TabsContent>
 
-            {/* Dane kontaktowe i obszar działania */}
+            {/* Dane kontaktowe */}
             <TabsContent value="contact" className="space-y-6 animate-in fade-in-50 duration-300">
               <ContactTab
                 formData={formData}
                 handleInputChange={handleInputChange}
                 voivodeships={voivodeships}
-                maxVoivodeships={maxVoivodeships}
-                maxCities={maxCities}
-                citiesByVoivodeship={citiesByVoivodeship}
-                loadingCities={loadingCities}
-                toggleVoivodeship={toggleVoivodeship}
-                toggleCity={toggleCity}
-                hasMoreCities={hasMoreCities}
-                loadingMoreCities={loadingMoreCities}
-                fetchMoreCities={fetchMoreCities}
               />
             </TabsContent>
 

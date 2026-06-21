@@ -447,7 +447,7 @@ export default function DocumentsPage() {
                 Dodaj dokument
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 relative overflow-hidden">
+            <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
               <DialogHeader>
@@ -1024,7 +1024,7 @@ export default function DocumentsPage() {
       <Dialog open={isPreviewDialogOpen} onOpenChange={(open) => {
         if (!open) closePreviewDialog()
       }}>
-        <DialogContent className="max-w-4xl w-[95vw] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[90vh] relative">
+        <DialogContent className="max-w-4xl w-[95vw] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[90vh]">
           <BorderBeam lightColor="var(--primary)" lightWidth={450} duration={8} borderWidth={1} />
           <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
 

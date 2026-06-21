@@ -5,13 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Switch } from "@/components/ui/switch"
-import { Check, ChevronDown, Phone, MapPin, Globe, Share2, Loader2, User, Mail, Briefcase } from "lucide-react"
+import { Check, ChevronDown, Phone, MapPin, Globe, Share2, User, Mail } from "lucide-react"
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
@@ -22,56 +19,10 @@ import {
 import { cn } from "@/lib/utils"
 import { BorderBeam } from "@/components/ui/border-beam"
 
-import type { Voivodeship, City } from "@/types"
+import type { Voivodeship } from "@/types"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
-
-function CityLazyLoadTrigger({
-  voivodeshipId,
-  fetchMoreCities,
-  isLoadingMore,
-}: {
-  voivodeshipId: string
-  fetchMoreCities?: (id: string) => void
-  isLoadingMore?: boolean
-}) {
-  const triggerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!fetchMoreCities || isLoadingMore) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchMoreCities(voivodeshipId)
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    if (triggerRef.current) {
-      observer.observe(triggerRef.current)
-    }
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [voivodeshipId, fetchMoreCities, isLoadingMore])
-
-  return (
-    <div ref={triggerRef} className="py-2 flex justify-center items-center gap-2 text-xs text-zinc-500">
-      {isLoadingMore ? (
-        <>
-          <Loader2 className="h-3 w-3 animate-spin text-primary" />
-          <span>Ładowanie kolejnych miast...</span>
-        </>
-      ) : (
-        <span className="opacity-0">Wczytaj więcej</span>
-      )}
-    </div>
-  )
-}
 
 interface ContactTabProps {
   formData: {
@@ -90,37 +41,15 @@ interface ContactTabProps {
     linkInstagram: string
     linkTwitter: string
     linkTikTok: string
-    callaPolska: boolean
-    onlineOnly: boolean
-    voivodeshipsIds: string[]
-    citiesIds: string[]
   }
   handleInputChange: (field: string, value: any) => void
   voivodeships: Voivodeship[]
-  maxVoivodeships: number
-  maxCities: number
-  citiesByVoivodeship: Record<string, City[]>
-  loadingCities: Record<string, boolean>
-  toggleVoivodeship: (id: string) => void
-  toggleCity: (id: string) => void
-  hasMoreCities?: Record<string, boolean>
-  loadingMoreCities?: Record<string, boolean>
-  fetchMoreCities?: (voivodeshipId: string) => void
 }
 
 export function ContactTab({
   formData,
   handleInputChange,
   voivodeships,
-  maxVoivodeships,
-  maxCities,
-  citiesByVoivodeship,
-  loadingCities,
-  toggleVoivodeship,
-  toggleCity,
-  hasMoreCities,
-  loadingMoreCities,
-  fetchMoreCities,
 }: ContactTabProps) {
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
@@ -596,224 +525,6 @@ export function ContactTab({
           </div>
         </Card>
       </div>
-
-      {/* Obszar działania */}
-      <Card id="tour-zakres-area" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
-        <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={10} borderWidth={1} />
-        <CardHeader className="border-b border-border/10 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-primary/10 p-2 rounded-xl text-primary">
-              <Globe className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-xl text-white font-playfair">Obszar świadczenia usług</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">
-                Zdefiniuj, gdzie i w jaki sposób świadczysz pomoc prawną
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6 pt-6">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div
-              className={cn(
-                "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300",
-                formData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
-              )}
-            >
-              <Label
-                htmlFor="callaPolska-switch"
-                className="flex items-center gap-3 cursor-pointer flex-1"
-              >
-                <div
-                  className={cn(
-                    "p-2 rounded-lg transition-colors duration-300",
-                    formData.callaPolska ? "bg-primary text-white" : "bg-zinc-900 text-zinc-500"
-                  )}
-                >
-                  <Globe className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-white">Cała Polska</p>
-                  <p className="text-xs text-zinc-400">Widoczność w całym kraju</p>
-                </div>
-              </Label>
-              <Switch
-                id="callaPolska-switch"
-                checked={!!formData.callaPolska}
-                onCheckedChange={(val) => handleInputChange("callaPolska", val)}
-              />
-            </div>
-
-            <div
-              className={cn(
-                "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300",
-                formData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-border/30 bg-zinc-950/10 hover:bg-zinc-800/10"
-              )}
-            >
-              <Label
-                htmlFor="onlineOnly-switch"
-                className="flex items-center gap-3 cursor-pointer flex-1"
-              >
-                <div
-                  className={cn(
-                    "p-2 rounded-lg transition-colors duration-300",
-                    formData.onlineOnly ? "bg-primary text-white" : "bg-zinc-900 text-zinc-500"
-                  )}
-                >
-                  <div className="h-5 w-5 flex items-center justify-center font-bold text-xs">WEB</div>
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-white">Tylko online</p>
-                  <p className="text-xs text-zinc-400">Konsultacje wyłącznie zdalne</p>
-                </div>
-              </Label>
-              <Switch
-                id="onlineOnly-switch"
-                checked={!!formData.onlineOnly}
-                onCheckedChange={(val) => handleInputChange("onlineOnly", val)}
-              />
-            </div>
-          </div>
-
-          {!formData.callaPolska && (
-            <div className="pt-6 border-t border-border/10">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
-                <div className="flex gap-3 text-xs">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
-                    Województwa:{" "}
-                    <span className={cn(
-                      "font-semibold",
-                      formData.voivodeshipsIds.length >= maxVoivodeships ? "text-amber-400" : "text-primary"
-                    )}>
-                      {formData.voivodeshipsIds.length}
-                    </span>
-                    <span className="text-zinc-500">/</span>
-                    <span className="text-zinc-400">{maxVoivodeships}</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
-                    Miasta:{" "}
-                    <span className={cn(
-                      "font-semibold",
-                      formData.citiesIds.length >= maxCities ? "text-amber-400" : "text-primary"
-                    )}>
-                      {formData.citiesIds.length}
-                    </span>
-                    <span className="text-zinc-500">/</span>
-                    <span className="text-zinc-400">{maxCities}</span>
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Województwa */}
-                <div className="space-y-3">
-                  <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Województwa</h5>
-                  <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
-                    {voivodeships.map((v) => (
-                      <div
-                        key={v.id}
-                        className={cn(
-                          "flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200",
-                          formData.voivodeshipsIds.includes(v.id)
-                            ? "bg-primary/5 border-primary/30 text-primary font-medium"
-                            : "border-transparent bg-transparent hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
-                        )}
-                      >
-                        <Checkbox
-                          id={`voiv-${v.id}`}
-                          checked={formData.voivodeshipsIds.includes(v.id)}
-                          onCheckedChange={() => toggleVoivodeship(v.id)}
-                        />
-                        <Label
-                          htmlFor={`voiv-${v.id}`}
-                          className="text-sm cursor-pointer flex-1 py-1"
-                        >
-                          {v.nazwa}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Miasta */}
-                <div className="space-y-3">
-                  <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">
-                    Miasta w wybranych województwach
-                  </h5>
-                  <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
-                    {formData.voivodeshipsIds.length === 0 ? (
-                      <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-zinc-500 py-16 opacity-60">
-                        <MapPin className="h-8 w-8 mb-2 text-zinc-600 animate-pulse" />
-                        <p className="text-xs font-medium">Wybierz województwo po lewej stronie</p>
-                      </div>
-                    ) : (
-                      formData.voivodeshipsIds.map((vId) => {
-                        const vName = voivodeships.find((v) => v.id === vId)?.nazwa
-                        const cities = citiesByVoivodeship[vId] || []
-                        const isLoading = loadingCities[vId]
-
-                        return (
-                          <div key={vId} className="mb-4 last:mb-0">
-                            <div className="text-xs font-bold text-secondary mb-2 flex items-center gap-2 uppercase tracking-wide">
-                              <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
-                              {vName}
-                            </div>
-                            <div className="grid grid-cols-1 gap-1">
-                              {isLoading ? (
-                                <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
-                                  <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                                  Ładowanie miast...
-                                </div>
-                              ) : cities.length === 0 ? (
-                                <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
-                              ) : (
-                                <>
-                                  {cities.map((city) => (
-                                    <div
-                                      key={city.id}
-                                      className={cn(
-                                        "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200",
-                                        formData.citiesIds.includes(city.id)
-                                          ? "bg-primary/10 text-primary font-medium border border-primary/20"
-                                          : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
-                                      )}
-                                    >
-                                      <Checkbox
-                                        id={`city-${city.id}`}
-                                        checked={formData.citiesIds.includes(city.id)}
-                                        onCheckedChange={() => toggleCity(city.id)}
-                                      />
-                                      <Label
-                                        htmlFor={`city-${city.id}`}
-                                        className="text-xs cursor-pointer flex-1 py-1"
-                                      >
-                                        {city.nazwa}
-                                      </Label>
-                                    </div>
-                                  ))}
-                                  {hasMoreCities?.[vId] && (
-                                    <CityLazyLoadTrigger
-                                      voivodeshipId={vId}
-                                      fetchMoreCities={fetchMoreCities}
-                                      isLoadingMore={loadingMoreCities?.[vId]}
-                                    />
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   )
 }
