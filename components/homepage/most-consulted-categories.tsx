@@ -248,9 +248,11 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-800/80 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-500/100 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
-                    <div className="relative h-85 w-full overflow-hidden aspect-[5/2] bg-zinc-900">
+                    <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
                         alt={firm.nazwa}
@@ -290,7 +292,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                         </p>
                       </div>
 
-                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80">
+                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80border-zinc-500/100">
                         <div className="flex gap-2">
                           <ContactButton
                             icon={Phone}

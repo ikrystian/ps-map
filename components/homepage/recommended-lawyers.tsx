@@ -94,10 +94,10 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       list = [...recommendedData[currentCategory]]
     }
 
-    // Pad with other general lawFirms up to 10 items if we have fewer
-    if (list.length < 10 && lawFirms && lawFirms.length > 0) {
+    // Pad with other general lawFirms up to 4 items if we have fewer
+    if (list.length < 4 && lawFirms && lawFirms.length > 0) {
       let i = 0
-      while (list.length < 10 && i < lawFirms.length * 2) {
+      while (list.length < 4 && i < lawFirms.length * 2) {
         const firmIdx = (catIdx + i) % lawFirms.length
         const firm = lawFirms[firmIdx]
         if (!list.some(f => f.id === firm.id)) {
@@ -109,13 +109,13 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
     // Fallback if list is still empty or directly populated from fallback
     if (list.length === 0 && lawFirms && lawFirms.length > 0) {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 4; i++) {
         const firmIdx = (catIdx + i) % lawFirms.length
         list.push(lawFirms[firmIdx])
       }
     }
 
-    return list.slice(0, 10)
+    return list.slice(0, 4)
   }
 
   // Returns a premium image for the lawyer, falling back to unsplash headshots if missing or placeholder
@@ -244,7 +244,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                     className="w-full max-w-full shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
-                    <div className="relative h-75 w-full overflow-hidden aspect-[3/5] bg-zinc-900">
+                    <div className="relative h-65 w-full overflow-hidden aspect-[6/2] bg-zinc-900">
                       <img
                         src={getFirmImage(firm, index)}
                         alt={firm.nazwa}
