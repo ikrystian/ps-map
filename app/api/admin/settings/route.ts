@@ -215,6 +215,12 @@ export async function GET(request: NextRequest) {
         description: "Adres email nadawcy",
       }
     }
+    if (!settingsObject.emailFromName) {
+      settingsObject.emailFromName = {
+        value: process.env.EMAIL_FROM_NAME || "",
+        description: "Wyświetlana nazwa nadawcy (pojawia się zamiast adresu email w kliencie pocztowym)",
+      }
+    }
 
 
     return NextResponse.json(settingsObject, { status: 200 })

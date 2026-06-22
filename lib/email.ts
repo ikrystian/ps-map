@@ -115,6 +115,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
             'emailServerUser',
             'emailServerPassword',
             'emailFrom',
+            'emailFromName',
           ],
         },
       },
@@ -125,7 +126,13 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const portStr = settingsMap.get('emailServerPort') || process.env.EMAIL_SERVER_PORT || '587'
     const user = settingsMap.get('emailServerUser') || process.env.EMAIL_SERVER_USER
     const pass = settingsMap.get('emailServerPassword') || process.env.EMAIL_SERVER_PASSWORD
-    const from = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
+    const fromAddress = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
+    const fromName = settingsMap.get('emailFromName') || process.env.EMAIL_FROM_NAME || ''
+    const from = fromAddress
+      ? fromName
+        ? `"${fromName}" <${fromAddress}>`
+        : fromAddress
+      : undefined
 
     const smtpConfigured = !!(host && user && pass && from)
     const nodeEnv = process.env.NODE_ENV as string

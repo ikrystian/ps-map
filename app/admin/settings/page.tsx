@@ -156,6 +156,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  emailFromName?: {
+    value: string
+    description: string | null
+  }
   homepageConsultedCategories?: {
     value: string
     description: string | null
@@ -204,6 +208,7 @@ export default function AdminSettingsPage() {
   const [emailServerUser, setEmailServerUser] = useState("")
   const [emailServerPassword, setEmailServerPassword] = useState("")
   const [emailFrom, setEmailFrom] = useState("")
+  const [emailFromName, setEmailFromName] = useState("")
 
   // Homepage Categories
   const [homepageConsultedCategories, setHomepageConsultedCategories] = useState<string[]>([])
@@ -266,6 +271,7 @@ export default function AdminSettingsPage() {
         setEmailServerUser(data.emailServerUser?.value || "")
         setEmailServerPassword(data.emailServerPassword?.value || "")
         setEmailFrom(data.emailFrom?.value || "")
+        setEmailFromName(data.emailFromName?.value || "")
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
 
@@ -504,6 +510,10 @@ export default function AdminSettingsPage() {
             emailFrom: {
               value: emailFrom,
               description: "Adres email nadawcy",
+            },
+            emailFromName: {
+              value: emailFromName,
+              description: "Wyświetlana nazwa nadawcy (pojawia się zamiast adresu email w kliencie pocztowym)",
             },
             homepageConsultedCategories: {
               value: JSON.stringify(homepageConsultedCategories),
@@ -1302,18 +1312,34 @@ export default function AdminSettingsPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="emailFrom">Adres nadawcy (Od)</Label>
-                <Input
-                  id="emailFrom"
-                  type="email"
-                  value={emailFrom}
-                  onChange={(e) => setEmailFrom(e.target.value)}
-                  placeholder="np. noreply@prostasprawa.pl"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Adres e-mail, z którego będą wysyłane wiadomości (powinien odpowiadać autoryzowanemu nadawcy w SMTP).
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="emailFrom">Adres nadawcy (Od)</Label>
+                  <Input
+                    id="emailFrom"
+                    type="email"
+                    value={emailFrom}
+                    onChange={(e) => setEmailFrom(e.target.value)}
+                    placeholder="np. noreply@prostasprawa.pl"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Adres e-mail, z którego będą wysyłane wiadomości (powinien odpowiadać autoryzowanemu nadawcy w SMTP).
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="emailFromName">Nazwa nadawcy (wyświetlana)</Label>
+                  <Input
+                    id="emailFromName"
+                    type="text"
+                    value={emailFromName}
+                    onChange={(e) => setEmailFromName(e.target.value)}
+                    placeholder="np. Prosta Sprawa"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Imię lub nazwa wyświetlana w kliencie pocztowym zamiast samego adresu e-mail (np. &quot;Prosta Sprawa&quot;).
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
