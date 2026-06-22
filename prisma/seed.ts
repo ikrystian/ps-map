@@ -16,6 +16,7 @@ import { seedReviewReports } from './seeds/review-reports'; // Importuj seeder z
 import { seedStaticPages } from './seeds/static-pages'
 import { seedTestUser } from './seeds/test-user'
 import { seedVoivodeships } from './seeds/voivodeships'
+import { seedDocuments } from './seeds/documents'
 
 async function main() {
   console.log('Start seeding...')
@@ -120,6 +121,7 @@ async function main() {
   await seedTestUser(prisma)                   // stałe konta testowe do logowania
   await seedStaticPages(prisma)
   await seedLawFirmPromotions(prisma)          // Dodaj promocje dla każdego eksperta
+  await seedDocuments(prisma)                  // Dodaj dokumenty dla każdego eksperta
 
 
   // ==========================================================================

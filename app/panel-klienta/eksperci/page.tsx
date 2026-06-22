@@ -245,7 +245,7 @@ export default function ClientFavoritesPage() {
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
                       <div className="flex flex-col sm:flex-row items-start gap-4 flex-1">
                         {/* Logo */}
-                        <div className="relative h-20 w-20 rounded-lg overflow-hidden border border-border/30 bg-zinc-950/60 flex-shrink-0 flex items-center justify-center p-2">
+                        <div className="relative h-32 w-32 rounded-lg overflow-hidden border border-border/30 bg-zinc-950/60 flex-shrink-0 flex items-center justify-center p-2">
                           {lawFirm.logo ? (
                             <Image
                               src={lawFirm.logo}
@@ -374,7 +374,7 @@ export default function ClientFavoritesPage() {
                     {/* Description */}
                     {lawFirm.opis && (
                       <p className="text-sm text-zinc-400 line-clamp-2 leading-relaxed mb-4 font-light">
-                        {lawFirm.opis}
+                        {lawFirm.opis.replace(/<[^>]*>/g, "")}
                       </p>
                     )}
 

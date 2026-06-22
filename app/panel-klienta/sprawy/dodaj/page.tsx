@@ -626,7 +626,7 @@ export default function ClientAddCasePage() {
                           "w-full flex items-center justify-between p-3.5 rounded-lg border text-left transition-all",
                           formData.categoryId === cat.id
                             ? "border-primary bg-primary/5 text-primary"
-                            : "border-border/10 hover:border-border/50 hover:bg-background-sec/20"
+                            : "border-border/10 hover:border-primary/50 hover:bg-primary/10 hover:text-white"
                         )}
                       >
                         <div className="flex flex-col">
@@ -668,7 +668,7 @@ export default function ClientAddCasePage() {
                             "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all",
                             activeParentId === parent.id
                               ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                              : "text-muted-foreground hover:text-white hover:bg-background-sec/30"
+                              : "text-muted-foreground hover:text-white hover:bg-primary/15"
                           )}
                         >
                           <span className="truncate">{parent.nazwa}</span>
@@ -698,7 +698,7 @@ export default function ClientAddCasePage() {
                               "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all",
                               formData.categoryId === activeParent.id
                                 ? "border-primary bg-primary/5 text-primary"
-                                : "border-dashed border-border/20 hover:border-primary/50 hover:bg-background-sec/20"
+                                : "border-dashed border-border/20 hover:border-primary hover:bg-primary/10"
                             )}
                           >
                             <div className="flex flex-col">
@@ -727,7 +727,7 @@ export default function ClientAddCasePage() {
                                 setIsCategoryModalOpen(false)
                               }}
                               className={cn(
-                                "w-full flex items-center justify-between p-3 rounded-lg border border-border/10 text-left transition-all text-xs font-medium text-muted-foreground hover:border-border/50 hover:bg-background-sec/20",
+                                "w-full flex items-center justify-between p-3 rounded-lg border border-border/10 text-left transition-all text-xs font-medium text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-white",
                                 formData.categoryId === child.id && "border-primary bg-primary/5 text-primary hover:border-primary"
                               )}
                             >
