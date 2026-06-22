@@ -147,7 +147,7 @@ export default function SearchLawyerPage() {
 
   // Pagination
   const [page, setPage] = useState(1)
-  const limit = 12
+  const [limit, setLimit] = useState(12)
 
   // Fetch categories, voivodeships, expertise-categories and geographic hierarchy on mount
   useEffect(() => {
@@ -179,6 +179,12 @@ export default function SearchLawyerPage() {
           const settingsData = await settingsRes.json()
           if (settingsData.geographicHierarchy) {
             setGeographicHierarchy(settingsData.geographicHierarchy)
+          }
+          if (settingsData.publicItemsPerPage) {
+            const val = parseInt(settingsData.publicItemsPerPage)
+            if (!isNaN(val) && val > 0) {
+              setLimit(val)
+            }
           }
         }
       } catch (error) {
@@ -229,7 +235,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page, selectedExpertiseCategory])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page, limit, selectedExpertiseCategory])
 
   // Dynamic fetch and caching for cities
   useEffect(() => {

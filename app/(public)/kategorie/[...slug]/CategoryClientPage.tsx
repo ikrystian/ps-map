@@ -162,7 +162,7 @@ export default function CategoryClientPage() {
 
   // Pagination
   const [page, setPage] = useState(1)
-  const limit = 12
+  const [limit, setLimit] = useState(12)
 
   // Fetch category data
   useEffect(() => {
@@ -199,6 +199,12 @@ export default function CategoryClientPage() {
           const data = await settingsRes.json()
           if (data.geographicHierarchy) {
             setGeographicHierarchy(data.geographicHierarchy)
+          }
+          if (data.publicItemsPerPage) {
+            const val = parseInt(data.publicItemsPerPage)
+            if (!isNaN(val) && val > 0) {
+              setLimit(val)
+            }
           }
         }
       } catch (error) {
@@ -344,6 +350,7 @@ export default function CategoryClientPage() {
     verifiedOnly,
     sortBy,
     page,
+    limit,
     selectedExpertiseCategory,
   ])
 

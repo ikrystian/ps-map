@@ -168,6 +168,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  publicItemsPerPage?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -180,6 +184,7 @@ export default function AdminSettingsPage() {
   const [contactEmail, setContactEmail] = useState("kontakt@prostasprawa.pl")
   const [supportEmail, setSupportEmail] = useState("pomoc@prostasprawa.pl")
   const [reviewsPerPage, setReviewsPerPage] = useState("10")
+  const [publicItemsPerPage, setPublicItemsPerPage] = useState("12")
   const [minReviewLength, setMinReviewLength] = useState("50")
   const [featuredCategoriesLimit, setFeaturedCategoriesLimit] = useState("8")
   const [maxTags, setMaxTags] = useState("5")
@@ -239,6 +244,7 @@ export default function AdminSettingsPage() {
         setContactEmail(data.contactEmail?.value || "kontakt@prostasprawa.pl")
         setSupportEmail(data.supportEmail?.value || "pomoc@prostasprawa.pl")
         setReviewsPerPage(data.reviewsPerPage?.value || "10")
+        setPublicItemsPerPage(data.publicItemsPerPage?.value || "12")
         setMinReviewLength(data.minReviewLength?.value || "50")
         setFavicon(data.favicon?.value || "/favicon.png")
         setOgTitle(data.ogTitle?.value || "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi")
@@ -317,6 +323,12 @@ export default function AdminSettingsPage() {
       return
     }
 
+    const publicItemsPerPageNum = parseInt(publicItemsPerPage)
+    if (isNaN(publicItemsPerPageNum) || publicItemsPerPageNum < 1 || publicItemsPerPageNum > 100) {
+      toast.error("Liczba pozycji na stronę w kategoriach i wyszukiwarce musi być liczbą od 1 do 100")
+      return
+    }
+
     const minReviewLengthNum = parseInt(minReviewLength)
     if (isNaN(minReviewLengthNum) || minReviewLengthNum < 10 || minReviewLengthNum > 500) {
       toast.error("Minimalna długość opinii musi być liczbą od 10 do 500")
@@ -390,6 +402,10 @@ export default function AdminSettingsPage() {
             reviewsPerPage: {
               value: reviewsPerPage,
               description: "Liczba opinii wyświetlanych na jednej stronie",
+            },
+            publicItemsPerPage: {
+              value: publicItemsPerPage,
+              description: "Liczba wyświetlanych pozycji na stronie w kategoriach oraz wyszukiwarce",
             },
             minReviewLength: {
               value: minReviewLength,
@@ -1032,6 +1048,24 @@ export default function AdminSettingsPage() {
                 />
                 <p className="text-sm text-muted-foreground">
                   Liczba wyróżnionych kategorii na stronie głównej (4-20)
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="publicItemsPerPage">
+                  Liczba pozycji na stronę (Kategorie i Wyszukiwarka)
+                </Label>
+                <Input
+                  id="publicItemsPerPage"
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={publicItemsPerPage}
+                  onChange={(e) => setPublicItemsPerPage(e.target.value)}
+                  placeholder="12"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Liczba adwokatów/ekspertów wyświetlanych na jednej stronie w widoku kategorii oraz w wynikach wyszukiwania (1-100)
                 </p>
               </div>
 
