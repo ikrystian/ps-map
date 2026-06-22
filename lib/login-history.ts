@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { headers } from "next/headers"
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context"
 
 // Funkcja pomocnicza do pobierania lokalizacji z IP
 async function getLocation(ip: string): Promise<string | null> {
@@ -62,6 +63,9 @@ export async function logLoginAttempt({
       userAgent = reqHeaders.get("user-agent") || null
       ipAddress = reqHeaders.get("x-forwarded-for")?.split(",")[0] || reqHeaders.get("x-real-ip") || null
     } catch (e) {
+      if (isDynamicServerError(e)) {
+        throw e
+      }
       console.warn("Could not retrieve headers in logLoginAttempt:", e)
     }
 
