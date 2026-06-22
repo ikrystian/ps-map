@@ -150,7 +150,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
   }
 
   return (
-    <section className="py-20 xl:py-24 bg-[#121212] text-white overflow-hidden">
+    <section className="py-20 xl:py-24 bg-darker text-white overflow-hidden">
       {/* Header + Tabs stay within the container */}
       <div className="container mx-auto px-4 max-w-8xl">
         <div className="flex items-center gap-6 mb-12">
@@ -248,7 +248,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-zinc-500/90 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 1overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
 
