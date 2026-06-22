@@ -93,7 +93,7 @@ export async function seedTestData(prisma: PrismaClient) {
             },
           });
         }
-        console.log(`  ✓ Categories: ${selectedCategories.length}`);
+        console.log(`  ✓ Categories: ${leafCategories.length > 0 ? 1 : 0}`);
       } else {
         // Stwórz klienta (indywidualnego lub biznesowego)
         const isB2B = faker.number.int({ min: 1, max: 100 }) <= 40; // 40% B2B, 60% INDIVIDUAL

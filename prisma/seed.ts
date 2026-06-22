@@ -17,6 +17,7 @@ import { seedStaticPages } from './seeds/static-pages'
 import { seedTestUser } from './seeds/test-user'
 import { seedVoivodeships } from './seeds/voivodeships'
 import { seedDocuments } from './seeds/documents'
+import { seedAdvertisements } from './seeds/advertisements'
 
 async function main() {
   console.log('Start seeding...')
@@ -26,6 +27,8 @@ async function main() {
   // UWAGA: NIE usuwamy City ani Voivodeship — miasta (~43k) są importowane
   // osobno (import_postal_codes.py), a ich usunięcie osierociłoby powiązania.
   // ==========================================================================
+  await prisma.advertisement.deleteMany()
+  await prisma.adClient.deleteMany()
   await prisma.reviewReport.deleteMany()
   await prisma.negotiation.deleteMany()
   await prisma.chatMessage.deleteMany()
@@ -101,6 +104,7 @@ async function main() {
   await seedHelpCenter(prisma)
   await seedHomepageTestimonials(prisma)
   await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
+  await seedAdvertisements(prisma)
 
   // ==========================================================================
   // SPÓJNY, POWIĄZANY GRAF DANYCH
