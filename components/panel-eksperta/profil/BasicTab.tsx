@@ -14,6 +14,7 @@ import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { BorderBeam } from "@/components/ui/border-beam"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -40,12 +41,14 @@ interface BasicTabProps {
     oraStatus: boolean
     oraMiasto: string
     oraWpis: string
+    expertiseCategoryId: string
   }
   handleInputChange: (field: string, value: any) => void
   isUploading: boolean
   handleLogoFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleMainImageFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleRemoveSingleImage: (field: "logo" | "zdjecieGlowne") => void
+  expertiseCategories: any[]
 }
 
 export function BasicTab({
@@ -55,11 +58,73 @@ export function BasicTab({
   handleLogoFileSelect,
   handleMainImageFileSelect,
   handleRemoveSingleImage,
+  expertiseCategories,
 }: BasicTabProps) {
   const [showLogoConfirm, setShowLogoConfirm] = useState(false)
   const [showCoverConfirm, setShowCoverConfirm] = useState(false)
   const [showDescTips, setShowDescTips] = useState(false)
   const descTipsRef = useRef<HTMLDivElement>(null)
+
+  const [selectedCatId, setSelectedCatId] = useState("")
+  const [selectedSubcatId, setSelectedSubcatId] = useState("")
+
+  useEffect(() => {
+    if (!formData.expertiseCategoryId || !expertiseCategories || expertiseCategories.length === 0) return
+
+    let foundCatId = ""
+    let foundSubcatId = ""
+
+    for (const cat of expertiseCategories) {
+      if (cat.id === formData.expertiseCategoryId) {
+        foundCatId = cat.id
+        break
+      }
+      if (cat.children) {
+        for (const sub of cat.children) {
+          if (sub.id === formData.expertiseCategoryId) {
+            foundCatId = cat.id
+            foundSubcatId = sub.id
+            break
+          }
+          if (sub.children) {
+            for (const leaf of sub.children) {
+              if (leaf.id === formData.expertiseCategoryId) {
+                foundCatId = cat.id
+                foundSubcatId = sub.id
+                break
+              }
+            }
+          }
+          if (foundCatId) break
+        }
+      }
+      if (foundCatId) break
+    }
+
+    if (foundCatId) {
+      setSelectedCatId(foundCatId)
+      setSelectedSubcatId(foundSubcatId)
+    }
+  }, [formData.expertiseCategoryId, expertiseCategories])
+
+  const selectedCat = expertiseCategories?.find((c) => c.id === selectedCatId)
+  const hasSubcategories = !!(
+    selectedCat?.children &&
+    selectedCat.children.length > 0 &&
+    selectedCat.children.some((ch: any) => ch.children && ch.children.length > 0)
+  )
+
+  const subcategoriesList = selectedCat?.children || []
+  const selectedSubcat = subcategoriesList.find((s: any) => s.id === selectedSubcatId)
+
+  let specializationsList: any[] = []
+  if (selectedCat) {
+    if (!hasSubcategories) {
+      specializationsList = subcategoriesList
+    } else if (selectedSubcat) {
+      specializationsList = selectedSubcat.children || []
+    }
+  }
 
   // Po odsłonięciu sekcji ze wskazówkami przewiń do niej płynnie
   useEffect(() => {
@@ -122,6 +187,90 @@ export function BasicTab({
                       className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Branża i specjalizacja */}
+              <div className="border-t border-border/10 pt-6 space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-white">Branża i specjalizacja rejestracyjna</h4>
+                  <p className="text-xs text-zinc-400 font-light mt-1">
+                    Określ swoją główną specjalizację zawodową podaną podczas rejestracji.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Kategoria */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="category-select" className="text-zinc-300 font-medium">Kategoria główna *</Label>
+                    <Select
+                      value={selectedCatId}
+                      onValueChange={(val) => {
+                        setSelectedCatId(val)
+                        setSelectedSubcatId("")
+                        handleInputChange("expertiseCategoryId", "")
+                      }}
+                    >
+                      <SelectTrigger id="category-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                        <SelectValue placeholder="Wybierz kategorię..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {expertiseCategories?.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.nazwa}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Podkategoria (warunkowo) */}
+                  {selectedCat && hasSubcategories && (
+                    <div className="grid gap-2 animate-in fade-in-50 duration-200">
+                      <Label htmlFor="subcategory-select" className="text-zinc-300 font-medium">Podkategoria *</Label>
+                      <Select
+                        value={selectedSubcatId}
+                        onValueChange={(val) => {
+                          setSelectedSubcatId(val)
+                          handleInputChange("expertiseCategoryId", "")
+                        }}
+                      >
+                        <SelectTrigger id="subcategory-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                          <SelectValue placeholder="Wybierz podkategorię..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subcategoriesList.map((sub: any) => (
+                            <SelectItem key={sub.id} value={sub.id}>
+                              {sub.nazwa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {/* Specjalizacja / Typ działalności */}
+                  {selectedCat && (!hasSubcategories || selectedSubcatId) && specializationsList.length > 0 && (
+                    <div className="grid gap-2 animate-in fade-in-50 duration-200">
+                      <Label htmlFor="specialization-select" className="text-zinc-300 font-medium">Specjalizacja *</Label>
+                      <Select
+                        value={formData.expertiseCategoryId || ""}
+                        onValueChange={(val) => {
+                          handleInputChange("expertiseCategoryId", val)
+                        }}
+                      >
+                        <SelectTrigger id="specialization-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                          <SelectValue placeholder="Wybierz specjalizację..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {specializationsList.map((spec: any) => (
+                            <SelectItem key={spec.id} value={spec.id}>
+                              {spec.nazwa}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
               </div>
 

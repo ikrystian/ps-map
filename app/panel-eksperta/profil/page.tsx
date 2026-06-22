@@ -52,6 +52,7 @@ function LawFirmProfilePageContent() {
   const [isUploading, setIsUploading] = useState(false)
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null)
   const [showLogoCropper, setShowLogoCropper] = useState(false)
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
@@ -142,21 +143,28 @@ function LawFirmProfilePageContent() {
 
     // Typ oferty
     typOferty: "WSZYSTKIE",
+    expertiseCategoryId: "",
   })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Pobierz dane pomocnicze
-        const [voivRes, lawFirmRes, areaRes] = await Promise.all([
+        const [voivRes, lawFirmRes, areaRes, expRes] = await Promise.all([
           fetch("/api/voivodeships"),
           session?.user?.id ? fetch(`/api/law-firms/${session.user.id}`) : null,
           fetch("/api/law-firm/area"),
+          fetch("/api/expertise-categories"),
         ])
 
         if (voivRes.ok) {
           const voivData = await voivRes.json()
           setVoivodeships(voivData)
+        }
+
+        if (expRes && expRes.ok) {
+          const expData = await expRes.json()
+          setExpertiseCategories(expData)
         }
 
         if (areaRes && areaRes.ok) {
@@ -646,6 +654,7 @@ function LawFirmProfilePageContent() {
                 handleLogoFileSelect={handleLogoFileSelect}
                 handleMainImageFileSelect={handleMainImageFileSelect}
                 handleRemoveSingleImage={handleRemoveSingleImage}
+                expertiseCategories={expertiseCategories}
               />
             </TabsContent>
 
