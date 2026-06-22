@@ -43,7 +43,7 @@ const envInt = (key: string, def: number) => {
   return Number.isFinite(n) && n > 0 ? n : def
 }
 
-const NUM_LAW_FIRMS = envInt('NUM_LAW_FIRMS', 400)
+let NUM_LAW_FIRMS = envInt('NUM_LAW_FIRMS', 400)
 const NUM_CLIENTS = envInt('NUM_CLIENTS', 1000)
 const NUM_CASES = envInt('NUM_CASES', 1200)
 const TARGET_OFFERS = envInt('TARGET_OFFERS', 2000)
@@ -244,10 +244,17 @@ async function createChunkResilient(
   }
 }
 
+function getDescendants(parentId: string, allCats: { id: string; parentId: string | null }[]): { id: string; parentId: string | null }[] {
+  const children = allCats.filter(c => c.parentId === parentId)
+  const descendants = [...children]
+  for (const child of children) {
+    descendants.push(...getDescendants(child.id, allCats))
+  }
+  return descendants
+}
+
 export async function seedRelationalData(prisma: PrismaClient) {
   console.log('🌱 Seedowanie spójnych, powiązanych danych...')
-  console.log(`   wolumeny: ${NUM_LAW_FIRMS} kancelarii, ${NUM_CLIENTS} klientów, ${NUM_CASES} spraw, ${TARGET_OFFERS} ofert, ${TARGET_CONSULTATIONS} konsultacji`)
-  console.log(`   ⓘ  zwiększ przez env: NUM_LAW_FIRMS=2000 TARGET_OFFERS=10000 ... npm run db:seed`)
 
   // Ograniczenia pamięci SQLite/libsql — bez nich proces rośnie w pamięci natywnej
   // proporcjonalnie do liczby operacji. Mały cache stron + WAL z autocheckpointem
@@ -269,6 +276,11 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // --------------------------------------------------------------------------
   const voivodeships = await prisma.voivodeship.findMany({ select: { id: true, nazwa: true } })
   const categories = await prisma.category.findMany({ select: { id: true, nazwa: true, typ: true, parentId: true } })
+  const rootCategories = categories.filter((c) => c.parentId === null)
+  NUM_LAW_FIRMS = rootCategories.length * 10
+  console.log(`   wolumeny: ${NUM_LAW_FIRMS} kancelarii (10 dla każdej z ${rootCategories.length} głównych kategorii), ${NUM_CLIENTS} klientów, ${NUM_CASES} spraw, ${TARGET_OFFERS} ofert, ${TARGET_CONSULTATIONS} konsultacji`)
+  console.log(`   ⓘ  zwiększ przez env: NUM_LAW_FIRMS=2000 TARGET_OFFERS=10000 ... npm run db:seed`)
+
   const leafCategories = categories.filter(c => c.parentId !== null)
   const categoriesMap = new Map(categories.map(c => [c.id, c]))
   const cities = await prisma.city.findMany({ select: { id: true, nazwa: true, voivodeshipId: true } })
@@ -472,17 +484,21 @@ export async function seedRelationalData(prisma: PrismaClient) {
     for (const vId of voivSet) { const c = cityInVoiv(vId); if (c) citySet.add(c.id) }
     for (const cId of citySet) lawFirmCity.push({ id: uuid(), lawFirmId: id, cityId: cId, createdAt: u.createdAt })
 
-    const selectedLeaf = leafCategories.length ? pick(leafCategories) : pick(categories)
-    const parentCat = selectedLeaf.parentId ? categoriesMap.get(selectedLeaf.parentId) : null
+    const rootCatIndex = Math.floor(i / 10)
+    const rootCat = rootCategories[rootCatIndex]
+    const descendants = getDescendants(rootCat.id, categories)
+    const allAssignedCategories = [rootCat, ...descendants]
 
-    lawFirmCategory.push({
-      id: uuid(),
-      lawFirmId: id,
-      categoryId: selectedLeaf.id,
-      kolejnosc: 0,
-      createdAt: u.createdAt,
+    allAssignedCategories.forEach((cat, idx) => {
+      lawFirmCategory.push({
+        id: uuid(),
+        lawFirmId: id,
+        categoryId: cat.id,
+        kolejnosc: idx,
+        createdAt: u.createdAt,
+      })
     })
-    lawFirms[lawFirms.length - 1].mainCategoryId = parentCat?.id ?? null
+    lawFirms[lawFirms.length - 1].mainCategoryId = rootCat.id
 
     for (const nazwaUslugi of faker.helpers.arrayElements(SERVICE_NAMES, randInt(2, 6))) {
       const od = randInt(100, 800)
