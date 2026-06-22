@@ -130,7 +130,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const fromName = settingsMap.get('emailFromName') || process.env.EMAIL_FROM_NAME || ''
     const from = fromAddress
       ? fromName
-        ? `"${fromName}" <${fromAddress}>`
+        ? `${fromName} <${fromAddress}>`
         : fromAddress
       : undefined
 
