@@ -317,6 +317,7 @@ a .bg-card {
 }
 
 @keyframes pulse-dot {
+
   0%,
   100% {
     opacity: 1;
@@ -1101,13 +1102,26 @@ a .bg-card {
 }
 
 .prose {
+  line-height: 1.6;
   p {
     margin-bottom: 0.5rem;
+    + ul {
+      margin-top: 1rem;
+    }
+    }
+ ul {
+   list-style-type: circle;
+   list-style-position: inside;
+   padding-left: 1rem;
+   li {
+   }
+   + h2{
+      margin-top: 2rem;
+    }
   }
 
   h2 {
     font-size: 2rem;
-    margin-bottom: 1.5rem;
   }
 }
 
