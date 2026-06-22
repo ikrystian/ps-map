@@ -151,8 +151,11 @@ export class SMTPClient {
       await this.command(Buffer.from(this.config.auth.user).toString('base64'), 334, true)
       await this.command(Buffer.from(this.config.auth.pass).toString('base64'), 235, true)
 
-      // MAIL FROM
-      await this.command(`MAIL FROM:<${options.from}>`, 250)
+      // MAIL FROM - only bare email address is allowed in SMTP envelope
+      const mailFromAddress = options.from.includes('<')
+        ? (options.from.match(/<([^>]+)>/) || [])[1] || options.from
+        : options.from
+      await this.command(`MAIL FROM:<${mailFromAddress}>`, 250)
 
       // RCPT TO
       await this.command(`RCPT TO:<${options.to}>`, 250)
