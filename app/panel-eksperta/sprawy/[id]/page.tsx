@@ -335,7 +335,10 @@ export default function LawFirmCaseDetailsPage() {
               <CardTitle className="text-lg font-bold font-playfair text-white">Opis sprawy</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="whitespace-pre-wrap text-base text-zinc-300 leading-relaxed font-light">{caseData.opisSprawy}</p>
+              <div
+                className="prose prose-invert prose-sm max-w-none text-zinc-300 leading-relaxed font-light [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_strong]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_a]:text-primary"
+                dangerouslySetInnerHTML={{ __html: caseData.opisSprawy }}
+              />
             </CardContent>
           </Card>
 

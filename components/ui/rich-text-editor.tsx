@@ -294,6 +294,92 @@ export function RichTextEditor({
         data: {
           blocks: initialBlocks
         },
+        i18n: {
+          messages: {
+            ui: {
+              blockTunes: {
+                toggler: {
+                  "Click to tune": "Kliknij, aby dostosować",
+                  "or drag to move": "lub przeciągnij, aby przenieść"
+                }
+              },
+              inlineToolbar: {
+                converter: {
+                  "Convert to": "Konwertuj na"
+                }
+              },
+              toolbar: {
+                toolbox: {
+                  "Add": "Dodaj"
+                }
+              }
+            },
+            toolNames: {
+              "Text": "Tekst",
+              "Heading": "Nagłówek",
+              "List": "Lista",
+              "Warning": "Ostrzeżenie",
+              "Checklist": "Lista kontrolna",
+              "Quote": "Cytat",
+              "Code": "Kod",
+              "Delimiter": "Separator",
+              "Raw HTML": "Kod HTML",
+              "Table": "Tabela",
+              "Link": "Link",
+              "Marker": "Zakreślacz",
+              "Bold": "Pogrubienie",
+              "Italic": "Kursywa",
+              "Underline": "Podkreślenie",
+              "InlineCode": "Kod w tekście",
+              "Image": "Obraz",
+              "Embed": "Osadzone wideo"
+            },
+            tools: {
+              warning: {
+                "Title": "Tytuł",
+                "Message": "Wiadomość"
+              },
+              link: {
+                "Add a link": "Dodaj link"
+              },
+              stub: {
+                "The block can not be displayed": "Ten blok nie może być wyświetlony"
+              },
+              image: {
+                "Caption": "Podpis",
+                "Select an Image": "Wybierz obraz",
+                "With border": "Z obramowaniem",
+                "Stretch image": "Rozciągnij obraz",
+                "With background": "Z tłem"
+              },
+              list: {
+                "Ordered": "Uporządkowana",
+                "Unordered": "Nieuporządkowana"
+              },
+              table: {
+                "Add row to top": "Dodaj wiersz powyżej",
+                "Add row to bottom": "Dodaj wiersz poniżej",
+                "Delete row": "Usuń wiersz",
+                "Add column to left": "Dodaj kolumnę po lewej",
+                "Add column to right": "Dodaj kolumnę po prawej",
+                "Delete column": "Usuń kolumnę",
+                "With headings": "Z nagłówkami"
+              }
+            },
+            blockTunes: {
+              delete: {
+                "Delete": "Usuń",
+                "Click to delete": "Kliknij, aby usunąć"
+              },
+              moveUp: {
+                "Move up": "Przesuń w górę"
+              },
+              moveDown: {
+                "Move down": "Przesuń w dół"
+              }
+            }
+          }
+        },
         tools: {
           header: {
             class: Header,
@@ -451,7 +537,7 @@ export function RichTextEditor({
     <div className={cn("border rounded-xl overflow-hidden bg-background p-6", className)}>
       <div 
         ref={containerRef} 
-        className="editorjs-wrapper min-w-full prose prose-sm max-w-none dark:prose-invert focus:outline-none [&_.codex-editor__redactor]:pb-12 [&_.ce-block]:my-1.5 [&_.ce-header]:font-bold [&_.ce-header]:text-foreground [&_.ce-paragraph]:text-foreground [&_.ce-paragraph]:leading-relaxed [&_.cdx-list]:pl-6 [&_.cdx-list]:list-disc [&_.cdx-quote]:border-l-4 [&_.cdx-quote]:border-primary [&_.cdx-quote]:pl-4 [&_.cdx-quote]:italic [&_.cdx-warning]:bg-amber-500/10 [&_.cdx-warning]:border-l-4 [&_.cdx-warning]:border-amber-500 [&_.cdx-warning]:p-4 [&_.cdx-warning]:rounded-r-lg [&_.cdx-warning__title]:font-bold [&_.cdx-warning__title]:mb-1 [&_.cdx-warning__title]:text-foreground [&_.cdx-warning__message]:text-sm [&_.cdx-warning__message]:text-foreground [&_.ce-delimiter]:py-4 [&_.ce-delimiter]:text-2xl [&_.ce-delimiter]:font-bold [&_.ce-delimiter]:text-muted-foreground/50"
+        className="editorjs-wrapper min-w-full prose prose-sm max-w-none dark:prose-invert focus:outline-none [&_.codex-editor__redactor]:pb-12 [&_.ce-block]:my-1.5 [&_.ce-header]:font-bold [&_.ce-header]:text-foreground [&_.ce-paragraph]:text-foreground [&_.ce-paragraph]:leading-relaxed [&_.cdx-list]:pl-6 [&_.cdx-list]:list-disc [&_.cdx-quote]:border-l-4 [&_.cdx-quote]:border-primary [&_.cdx-quote]:pl-4 [&_.cdx-quote]:italic [&_.cdx-warning]:bg-amber-500/10 [&_.cdx-warning]:border-l-4 [&_.cdx-warning]:border-amber-500 [&_.cdx-warning]:p-4 [&_.cdx-warning]:rounded-r-lg [&_.cdx-warning__title]:font-bold [&_.cdx-warning__title]:mb-1 [&_.cdx-warning__title]:text-foreground [&_.cdx-warning__message]:text-sm [&_.cdx-warning__message]:text-foreground [&_.ce-delimiter]:py-4 [&_.ce-delimiter]:text-2xl [&_.ce-delimiter]:font-bold [&_.ce-delimiter]:text-muted-foreground/50 [&_.ce-popover]:bg-popover [&_.ce-popover]:border [&_.ce-popover]:border-border [&_.ce-popover]:text-popover-foreground [&_.ce-popover-item]:text-popover-foreground [&_.ce-popover-item:hover]:bg-accent [&_.ce-popover-item:hover]:text-accent-foreground [&_.ce-popover-item__icon]:bg-muted [&_.ce-popover-item__icon]:text-foreground [&_.ce-inline-toolbar]:bg-popover [&_.ce-inline-toolbar]:border [&_.ce-inline-toolbar]:border-border [&_.ce-inline-toolbar]:text-popover-foreground [&_.ce-inline-toolbar__button]:text-popover-foreground [&_.ce-inline-toolbar__button:hover]:bg-accent [&_.ce-inline-toolbar__button--active]:text-primary [&_.ce-inline-toolbar__button--active]:bg-accent [&_.ce-conversion-toolbar]:bg-popover [&_.ce-conversion-toolbar]:border [&_.ce-conversion-toolbar]:border-border [&_.ce-conversion-tool]:text-popover-foreground [&_.ce-conversion-tool:hover]:bg-accent [&_.ce-toolbar__settings-btn]:text-foreground [&_.ce-toolbar__settings-btn:hover]:bg-accent [&_.ce-toolbar__plus]:text-foreground [&_.ce-toolbar__plus:hover]:bg-accent [&_.ce-settings__button]:text-popover-foreground [&_.ce-settings__button:hover]:bg-accent [&_.ce-settings__button--active]:text-primary [&_.tc-cell]:border-border [&_.tc-cell]:text-foreground [&_.tc-toolbox]:bg-popover [&_.tc-toolbox]:border [&_.tc-toolbox]:border-border [&_.tc-toolbox__toggler]:text-foreground [&_.tc-toolbox__toggler:hover]:bg-accent [&_.cdx-warning]:bg-muted/50 [&_.cdx-warning]:border-border [&_.cdx-input]:bg-transparent [&_.cdx-input]:text-foreground [&_.cdx-input]:border-border"
         style={{ minHeight }}
       />
     </div>
