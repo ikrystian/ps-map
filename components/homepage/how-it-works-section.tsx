@@ -181,7 +181,7 @@ export function HowItWorksSection() {
                                 )}
                             </ul>
                         </div>
-                        <Link href={activeTab === "user" ? "/dodaj-sprawe" : "/rejestracja-eksperta"}>
+                        <Link href={activeTab === "user" ? "/z-nami-wygrywasz" : "/dla-prawnika"}>
                             <InteractiveHoverButton >Zobacz więcej</InteractiveHoverButton>
                         </Link>
 

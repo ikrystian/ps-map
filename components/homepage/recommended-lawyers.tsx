@@ -53,36 +53,22 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
     return null
   }
 
-  // Carousel Prev/Next Handlers using ref-based scroll
-  const handlePrev = () => {
-    if (sliderRef.current) {
-      const card = sliderRef.current.querySelector(".shrink-0")
-      const cardWidth = card ? card.getBoundingClientRect().width : 368
-      const gap = 24
-      sliderRef.current.scrollBy({
-        left: -(cardWidth + gap),
-        behavior: "smooth"
-      })
-    }
-  }
-
-  const handleNext = () => {
-    if (sliderRef.current) {
-      const card = sliderRef.current.querySelector(".shrink-0")
-      const cardWidth = card ? card.getBoundingClientRect().width : 368
-      const gap = 24
-      sliderRef.current.scrollBy({
-        left: cardWidth + gap,
-        behavior: "smooth"
-      })
-    }
-  }
-
   const handleCategoryChange = (idx: number) => {
     setActiveIdx(idx)
     if (sliderRef.current) {
       sliderRef.current.scrollTo({ left: 0, behavior: "smooth" })
     }
+  }
+
+  // Carousel Prev/Next Handlers that switch active category
+  const handlePrev = () => {
+    const nextIdx = (activeIdx - 1 + categoriesList.length) % categoriesList.length
+    handleCategoryChange(nextIdx)
+  }
+
+  const handleNext = () => {
+    const nextIdx = (activeIdx + 1) % categoriesList.length
+    handleCategoryChange(nextIdx)
   }
 
   // Gets law firms dynamically based on category index, displaying exactly 10 items.
@@ -146,15 +132,15 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
           {/* Navigation & Selector Container */}
           <div className="flex gap-4 w-full">
-            {/* Category tabs scrollable horizontally on mobile */}
+            {/* Category tabs: only show the active category on mobile, all on desktop */}
 
             {categoriesList.map((cat, i) => (
               <button
                 key={cat}
                 onClick={() => handleCategoryChange(i)}
-                className={`flex text-center flex-1 justify-center px-5 py-4 rounded-lg text-sm  font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
-                  ? "bg-black text-white shadow-lg"
-                  : "bg-[#0da192] hover:bg-[#0b8b7e] text-white"
+                className={`recommended-lawyers-category-button text-center flex-1 justify-center px-5 py-4 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
+                  ? "bg-black text-white shadow-lg flex"
+                  : "bg-[#0da192] hover:bg-[#0b8b7e] text-white hidden md:flex"
                   }`}
               >
                 {cat}
@@ -162,7 +148,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
             ))}
 
             {/* Previous / Next Arrow Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0" id="main-arrows">
               <button
                 onClick={handlePrev}
                 className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 cursor-pointer"
@@ -186,12 +172,10 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       <div id="items-in-category-slider" className="relative px-4 container mx-auto min-h-[460px]">
         <div
           ref={sliderRef}
-          className="grid grid-cols-4 gap-4 w-full"
+          className="item-in-category-slider w-full overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
-            // paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
-            // paddingRight: "calc(max(1rem, (100vw - 1500px) / 2))"
           }}
         >
           <AnimatePresence mode="wait">
@@ -201,7 +185,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -25 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="flex gap-4 w-full"
+              className="flex gap-4 w-max md:w-full"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
@@ -241,7 +225,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="w-full max-w-full shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
+                    className="w-[290px] sm:w-[340px] md:w-[calc(25%-12px)] shrink-0 snap-start flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                   >
                     {/* Image Container with Rating Overlay */}
                     <div className="relative h-65 w-full overflow-hidden aspect-[6/2] bg-zinc-900">
