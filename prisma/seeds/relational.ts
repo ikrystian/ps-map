@@ -123,6 +123,18 @@ const JOB_NAMES = [
   'consultation-reminders', 'low-points-alerts', 'archive-old-cases', 'refresh-statistics',
 ]
 
+const LEGAL_KEYWORDS = [
+  "rozwód", "alimenty", "spadek", "prawo karne", "prawo cywilne", "prawo pracy",
+  "nieruchomości", "odszkodowanie", "podatki", "windykacja", "spółka", "kontrakt",
+  "RODO", "własność intelektualna", "prawo jazdy", "błąd medyczny", "prawo autorskie",
+  "prawo administracyjne", "prawo budowlane", "upadłość konsumencka", "porada prawna",
+  "obrona w sądzie", "reprezentacja prawna", "opinie prawne", "prawo gospodarcze",
+  "mediacje", "prawo transportowe", "obsługa firm", "prawo rodzinne", "prawo spadkowe",
+  "prawo spółek", "prawnik", "adwokat", "radca prawny", "doradztwo podatkowe",
+  "umowy", "sporządzanie umów", "windykacja należności", "prawo bankowe", "kredyty frankowe"
+];
+
+
 type FirmAgg = {
   zlozone: number
   wygrane: number
@@ -439,7 +451,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
       }))),
       oirpMiasto: hasOirp ? faker.location.city() : null, oirpWpis: hasOirp ? `WR-${faker.string.numeric(4)}` : null, oirpStatus: hasOirp,
       oraMiasto: hasOra ? faker.location.city() : null, oraWpis: hasOra ? `WAW/${faker.string.numeric(5)}` : null, oraStatus: hasOra,
-      unikatowyOpisUslugi: tmpl.tagline, slowaKluczowe: JSON.stringify(faker.lorem.words(4).split(' ')),
+      unikatowyOpisUslugi: tmpl.tagline, slowaKluczowe: JSON.stringify(faker.helpers.arrayElements(LEGAL_KEYWORDS, randInt(2, 5))),
       mainCategoryId: null as string | null, expertiseCategoryId: leafExpertiseCats.length ? pick(leafExpertiseCats).id : null, callaPolska: chance(0.3), onlineOnly: chance(0.2),
       typOferty: pick(Object.values(OfferType)), punktySaldo: 0, pakietSubskrypcji: pakiet,
       dataPakietuOd: null as Date | null, dataPakietuDo: null as Date | null, autoRenewal: chance(0.4),

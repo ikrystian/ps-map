@@ -59,6 +59,17 @@ export function createRandomLawFirmUserContact() {
     };
 }
 
+const LEGAL_KEYWORDS = [
+    "rozwód", "alimenty", "spadek", "prawo karne", "prawo cywilne", "prawo pracy",
+    "nieruchomości", "odszkodowanie", "podatki", "windykacja", "spółka", "kontrakt",
+    "RODO", "własność intelektualna", "prawo jazdy", "błąd medyczny", "prawo autorskie",
+    "prawo administracyjne", "prawo budowlane", "upadłość konsumencka", "porada prawna",
+    "obrona w sądzie", "reprezentacja prawna", "opinie prawne", "prawo gospodarcze",
+    "mediacje", "prawo transportowe", "obsługa firm", "prawo rodzinne", "prawo spadkowe",
+    "prawo spółek", "prawnik", "adwokat", "radca prawny", "doradztwo podatkowe",
+    "umowy", "sporządzanie umów", "windykacja należności", "prawo bankowe", "kredyty frankowe"
+];
+
 export function createRandomLawFirm(prisma: PrismaClient) {
     const realisticFirm = faker.helpers.arrayElement(REALISTIC_LAW_FIRMS);
     const companyName = realisticFirm.nazwa;
@@ -114,7 +125,7 @@ export function createRandomLawFirm(prisma: PrismaClient) {
         oraWpis: hasOra ? `WAW/${faker.string.numeric(5)}` : undefined,
         oraStatus: hasOra,
         unikatowyOpisUslugi: realisticFirm.tagline,
-        slowaKluczowe: JSON.stringify(faker.lorem.words(3).split(' ')),
+        slowaKluczowe: JSON.stringify(faker.helpers.arrayElements(LEGAL_KEYWORDS, faker.number.int({ min: 2, max: 5 }))),
         onlineOnly: faker.datatype.boolean(),
         typOferty: faker.helpers.arrayElement(Object.values(OfferType)),
         pakietSubskrypcji: faker.helpers.arrayElement(Object.values(SubscriptionPackage)),

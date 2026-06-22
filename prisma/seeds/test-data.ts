@@ -56,7 +56,7 @@ export async function seedTestData(prisma: PrismaClient) {
         console.log(`  ✓ Law Firm: ${lawFirm.nazwaFirmy}`);
 
         // 5. Dodaj losowe województwa działania
-        const numberOfVoivodeships = faker.number.int({ min: 1, max: 5 });
+        const numberOfVoivodeships = faker.number.int({ min: 1, max: 2 });
         const selectedVoivodeships = faker.helpers.arrayElements(allVoivodeships, numberOfVoivodeships);
 
         for (const voiv of selectedVoivodeships) {
@@ -70,7 +70,7 @@ export async function seedTestData(prisma: PrismaClient) {
         console.log(`  ✓ Voivodeships: ${selectedVoivodeships.length}`);
 
         // 6. Dodaj losowe kategorie
-        const numberOfCategories = faker.number.int({ min: 1, max: 8 });
+        const numberOfCategories = faker.number.int({ min: 1, max: 2 });
         const selectedCategories = faker.helpers.arrayElements(allCategories, numberOfCategories);
 
         for (const category of selectedCategories) {
