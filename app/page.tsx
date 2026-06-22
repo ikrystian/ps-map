@@ -150,6 +150,10 @@ export default function HomePage() {
 
       {/* SECTION 11.5: Cities List */}
       <CitiesList />
+
+      {/* SECTION 11.6: Local SEO Links */}
+      <LocalSeoLinks seed="homepage" />
+
       {/* SECTION 11.5: Testimonials */}
       {testimonials.length > 0 && (
         <section className="py-0 lg:py-15 bg-card border-t border-zinc-900/60 overflow-hidden">
