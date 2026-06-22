@@ -10,11 +10,16 @@ export async function GET(request: NextRequest) {
     const categoryId = searchParams.get("categoryId")
     const lawFirmId = searchParams.get("lawFirmId")
     const search = searchParams.get("search")
+    const sponsored = searchParams.get("sponsored")
     const skip = (page - 1) * limit
 
     // Buduj warunki filtrowania
     const where: any = {
       opublikowany: true,
+    }
+
+    if (sponsored === "true") {
+      where.isSponsored = true
     }
 
     if (categoryId) {

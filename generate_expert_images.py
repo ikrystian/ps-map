@@ -265,7 +265,7 @@ def main():
             continue
             
         desc = desc or "Ekspert Prawny i Pomoc Prawna"
-        city = city or "Polska"
+        city = city or ""
         
         # Prepare prompts
         logo_prompt = (

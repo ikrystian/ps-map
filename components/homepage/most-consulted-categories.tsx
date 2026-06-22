@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils"
-import type { Category } from "@/types/categories"
-import type { LawFirm } from "@/types/lawfirms"
-import { AnimatePresence, motion } from "framer-motion"
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import type { Category } from "@/types/categories";
+import type { LawFirm } from "@/types/lawfirms";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
   ChevronLeft,
@@ -17,137 +17,170 @@ import {
   Mail,
   MapPin,
   Phone,
-  Star
-} from "lucide-react"
-import * as LucideIcons from "lucide-react"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import { useState, useMemo, useRef } from "react"
+  Star,
+} from "lucide-react";
+import * as LucideIcons from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useState, useMemo, useRef } from "react";
 
 interface MostConsultedCategoriesProps {
-  consultedData?: Record<string, LawFirm[]>
-  categories: Category[]
-  lawFirms: LawFirm[]
-  consultedCategoryIds?: string[]
+  consultedData?: Record<string, LawFirm[]>;
+  categories: Category[];
+  lawFirms: LawFirm[];
+  consultedCategoryIds?: string[];
 }
 
-const CategoryIcon = ({ iconName, className }: { iconName?: string | null, className: string }) => {
+const CategoryIcon = ({
+  iconName,
+  className,
+}: {
+  iconName?: string | null;
+  className: string;
+}) => {
   if (iconName && LucideIcons[iconName as keyof typeof LucideIcons]) {
-    const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ElementType
-    return <Icon className={className} />
+    const Icon = LucideIcons[
+      iconName as keyof typeof LucideIcons
+    ] as React.ElementType;
+    return <Icon className={className} />;
   }
-  return <Star className={className} />
-}
+  return <Star className={className} />;
+};
 
-export function MostConsultedCategories({ consultedData, categories, lawFirms, consultedCategoryIds }: MostConsultedCategoriesProps) {
-  const { status } = useSession()
-  const isLoggedIn = status === "authenticated"
-  const [activeIdx, setActiveIdx] = useState(0)
-  const sliderRef = useRef<HTMLDivElement>(null)
+export function MostConsultedCategories({
+  consultedData,
+  categories,
+  lawFirms,
+  consultedCategoryIds,
+}: MostConsultedCategoriesProps) {
+  const { status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const [activeIdx, setActiveIdx] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   // Filtrujemy zakładki po aktywnych ID z ustawień
   const activeTabs = useMemo(() => {
-    let tabs = categories.filter(c => consultedCategoryIds?.includes(c.id))
+    let tabs = categories.filter((c) => consultedCategoryIds?.includes(c.id));
     // Fallback if no configuration is found
     if (tabs.length === 0) {
-      tabs = categories.slice(0, 6)
+      tabs = categories.slice(0, 6);
     }
     // Only show tabs that have either active promotions or some law firms matching
     return tabs.filter((tab) => {
-      if (consultedData && consultedData[tab.id] && consultedData[tab.id].length > 0) return true
-      const hasFirms = lawFirms?.some(firm =>
-        firm.categories?.some(c => {
-          const catId = c.category?.id || c.id
-          return catId === tab.id
-        })
+      if (
+        consultedData &&
+        consultedData[tab.id] &&
+        consultedData[tab.id].length > 0
       )
-      return hasFirms
-    })
-  }, [categories, consultedCategoryIds, consultedData, lawFirms])
+        return true;
+      const hasFirms = lawFirms?.some((firm) =>
+        firm.categories?.some((c) => {
+          const catId = c.category?.id || c.id;
+          return catId === tab.id;
+        }),
+      );
+      return hasFirms;
+    });
+  }, [categories, consultedCategoryIds, consultedData, lawFirms]);
 
   if (activeTabs.length === 0) {
-    return null
+    return null;
   }
 
   const handlePrev = () => {
     if (sliderRef.current) {
-      const card = sliderRef.current.querySelector(".slider-card")
-      const cardWidth = card ? card.getBoundingClientRect().width : 320
-      const gap = 24
-      sliderRef.current.scrollBy({ left: -(cardWidth + gap), behavior: "smooth" })
+      const card = sliderRef.current.querySelector(".slider-card");
+      const cardWidth = card ? card.getBoundingClientRect().width : 320;
+      const gap = 24;
+      sliderRef.current.scrollBy({
+        left: -(cardWidth + gap),
+        behavior: "smooth",
+      });
     }
-  }
+  };
 
   const handleNext = () => {
     if (sliderRef.current) {
-      const card = sliderRef.current.querySelector(".slider-card")
-      const cardWidth = card ? card.getBoundingClientRect().width : 320
-      const gap = 24
-      sliderRef.current.scrollBy({ left: cardWidth + gap, behavior: "smooth" })
+      const card = sliderRef.current.querySelector(".slider-card");
+      const cardWidth = card ? card.getBoundingClientRect().width : 320;
+      const gap = 24;
+      sliderRef.current.scrollBy({ left: cardWidth + gap, behavior: "smooth" });
     }
-  }
+  };
 
   const getCategoryFirms = (catIdx: number) => {
-    if (activeTabs.length === 0) return []
-    const tab = activeTabs[catIdx]
+    if (activeTabs.length === 0) return [];
+    const tab = activeTabs[catIdx];
 
-    let list: LawFirm[] = []
+    let list: LawFirm[] = [];
 
     // Priorytet dla firm z wykupioną promocją
     if (consultedData && consultedData[tab.id]) {
-      list = [...consultedData[tab.id]]
+      list = [...consultedData[tab.id]];
     }
 
     // Dobieranie pozostałych firm z danej kategorii
     if (list.length < 5 && lawFirms && lawFirms.length > 0) {
       const filtered = lawFirms.filter((firm) => {
-        if (!firm.categories) return false
+        if (!firm.categories) return false;
         return firm.categories.some((cat) => {
-          const catId = cat.category?.id || cat.id
-          return catId === tab.id
-        })
-      })
+          const catId = cat.category?.id || cat.id;
+          return catId === tab.id;
+        });
+      });
 
       filtered.forEach((firm) => {
         if (list.length < 5 && !list.some((f) => f.id === firm.id)) {
-          list.push(firm)
+          list.push(firm);
         }
-      })
+      });
     }
 
     // Fallback jeśli nadal brakuje firm
     if (list.length < 5 && lawFirms && lawFirms.length > 0) {
-      let i = 0
+      let i = 0;
       while (list.length < 5 && i < lawFirms.length * 2) {
-        const firmIdx = (catIdx * 1 + i) % lawFirms.length
-        const firm = lawFirms[firmIdx]
+        const firmIdx = (catIdx * 1 + i) % lawFirms.length;
+        const firm = lawFirms[firmIdx];
         if (!list.some((f) => f.id === firm.id)) {
-          list.push(firm)
+          list.push(firm);
         }
-        i++
+        i++;
       }
     }
 
-    return list.slice(0, 5)
-  }
+    return list.slice(0, 5);
+  };
 
   const getFirmImage = (firm: LawFirm) => {
-    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
-      return firm.logo
+    if (
+      firm.logo &&
+      (firm.logo.startsWith("http") ||
+        firm.logo.startsWith("/uploads") ||
+        firm.logo.startsWith("/generate") ||
+        firm.logo.startsWith("/api/files"))
+    ) {
+      return firm.logo;
     }
-    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
-      return firm.zdjecieGlowne
+    if (
+      firm.zdjecieGlowne &&
+      (firm.zdjecieGlowne.startsWith("http") ||
+        firm.zdjecieGlowne.startsWith("/uploads") ||
+        firm.zdjecieGlowne.startsWith("/generate") ||
+        firm.zdjecieGlowne.startsWith("/api/files"))
+    ) {
+      return firm.zdjecieGlowne;
     }
-    return "/images/placeholder.png"
-  }
+    return "/images/placeholder.png";
+  };
 
   // Zmienione zgodnie z instrukcją - pobieramy expertiseCategory zamiast getProfessionTitle
   const getSubtitle = (firm: LawFirm) => {
     if (firm.expertiseCategory?.nazwa) {
-      return firm.expertiseCategory.nazwa.toUpperCase()
+      return firm.expertiseCategory.nazwa.toUpperCase();
     }
-    return "EKSPERT"
-  }
+    return "EKSPERT";
+  };
 
   return (
     <section className="py-20 xl:py-24 bg-darker text-white overflow-hidden">
@@ -160,31 +193,37 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
           <div className="flex-grow border-t border-zinc-800/80" />
         </div>
 
-        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-6 md:mb-12 px-4 max-w-8xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
+        <div
+          className="flex md:grid md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-6 md:mb-12 px-4 max-w-8xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar"
+          style={{ scrollbarWidth: "thin" }}
+        >
           {activeTabs.map((tab, idx) => {
-            const isActive = activeIdx === idx
+            const isActive = activeIdx === idx;
             return (
               <button
                 key={tab.id}
                 onClick={() => {
-                  setActiveIdx(idx)
+                  setActiveIdx(idx);
                   if (sliderRef.current) {
-                    sliderRef.current.scrollTo({ left: 0, behavior: "smooth" })
+                    sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
                   }
                 }}
                 className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-[150px] md:w-auto md:shrink ${isActive
-                  ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
-                  : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
+                    ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
+                    : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
                   }`}
               >
                 <div className="mb-1 md:mb-4">
-                  <CategoryIcon iconName={tab.ikona} className={`w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"}`} />
+                  <CategoryIcon
+                    iconName={tab.ikona}
+                    className={`w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"}`}
+                  />
                 </div>
                 <span className="text-xs font-light tracking-wider leading-tight uppercase">
                   {tab.nazwa}
                 </span>
               </button>
-            )
+            );
           })}
         </div>
       </div>
@@ -211,39 +250,55 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
               className="flex gap-6"
             >
               {getCategoryFirms(activeIdx).map((firm, index) => {
-                const ContactButton = ({ icon: Icon, href, title }: { icon: React.ElementType, href: string, title: string }) => {
+                const ContactButton = ({
+                  icon: Icon,
+                  href,
+                  title,
+                }: {
+                  icon: React.ElementType;
+                  href: string;
+                  title: string;
+                }) => {
                   const button = (
                     <a
                       href={isLoggedIn ? href : "#"}
                       onClick={(e) => {
                         if (!isLoggedIn) {
-                          e.preventDefault()
-                          e.stopPropagation()
+                          e.preventDefault();
+                          e.stopPropagation();
                         }
                       }}
                       className={cn(
                         "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md",
-                        isLoggedIn ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95" : "opacity-70 cursor-help"
+                        isLoggedIn
+                          ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95"
+                          : "opacity-70 cursor-help",
                       )}
                       title={isLoggedIn ? title : undefined}
                     >
-                      <Icon className={cn("w-4.5 h-4.5 text-white", Icon === Phone && "fill-white")} />
+                      <Icon
+                        className={cn(
+                          "w-4.5 h-4.5 text-white",
+                          Icon === Phone && "fill-white",
+                        )}
+                      />
                     </a>
-                  )
+                  );
 
-                  if (isLoggedIn) return button
+                  if (isLoggedIn) return button;
 
                   return (
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        {button}
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white text-xs">
+                      <TooltipTrigger asChild>{button}</TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="bg-[#1a1a1a] border-zinc-800 text-white text-xs"
+                      >
                         Informacja dostępna po zalogowaniu
                       </TooltipContent>
                     </Tooltip>
-                  )
-                }
+                  );
+                };
 
                 return (
                   <div
@@ -251,7 +306,6 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                     className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 1overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
-
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
@@ -261,15 +315,20 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
 
                       <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-white/5">
                         <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
-                          {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
+                          {firm.avgRating > 0
+                            ? firm.avgRating.toFixed(1).replace(".", ",")
+                            : "5,0"}
                         </div>
                         <div className="flex flex-col justify-center">
                           <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+                              <Star
+                                key={i}
+                                className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]"
+                              />
                             ))}
                           </div>
-                          <span className="text-sm text-black font-semibold mt-1">
+                          <span className="text-sm text-primary font-semibold mt-1">
                             {firm.reviewCount || 11} opinii
                           </span>
                         </div>
@@ -288,7 +347,10 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                         </h3>
                         <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-3">
                           <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-                          {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ""}
+                          {firm.miasto}
+                          {firm.voivodeship?.nazwa
+                            ? `, ${firm.voivodeship.nazwa}`
+                            : ""}
                         </p>
                       </div>
 
@@ -296,13 +358,21 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                         <div className="flex gap-2">
                           <ContactButton
                             icon={Phone}
-                            href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "#"}
+                            href={
+                              firm.numerTelefonu
+                                ? `tel:${firm.numerTelefonu}`
+                                : "#"
+                            }
                             title="Zadzwoń do eksperta"
                           />
 
                           <ContactButton
                             icon={Mail}
-                            href={firm.emailKontakt ? `mailto:${firm.emailKontakt}` : "#"}
+                            href={
+                              firm.emailKontakt
+                                ? `mailto:${firm.emailKontakt}`
+                                : "#"
+                            }
                             title="Wyślij e-mail"
                           />
 
@@ -325,7 +395,7 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
                       </div>
                     </div>
                   </div>
-                )
+                );
               })}
             </motion.div>
           </AnimatePresence>
@@ -352,5 +422,5 @@ export function MostConsultedCategories({ consultedData, categories, lawFirms, c
         </div>
       </div>
     </section>
-  )
+  );
 }
