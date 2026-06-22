@@ -425,7 +425,10 @@ export default function ClientCaseDetailsPage() {
               <CardTitle className="text-lg font-playfair text-white">Opis sprawy</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed font-light">{caseData.opisSprawy}</p>
+              <div
+                className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed font-light"
+                dangerouslySetInnerHTML={{ __html: caseData.opisSprawy }}
+              />
             </CardContent>
           </Card>
 

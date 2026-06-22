@@ -90,6 +90,10 @@ interface Case {
 import { Category } from "@/types/categories"
 import type { Voivodeship } from "@/types"
 
+const stripHtml = (html: string) => {
+  return html ? html.replace(/<[^>]*>/g, "") : ""
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -825,7 +829,7 @@ const SprawyPage = () => {
 
                           {/* Preview Description snippet */}
                           <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
-                            {sprawa.opisSprawy}
+                            {stripHtml(sprawa.opisSprawy)}
                           </p>
 
                           {/* Metadata grid redesigned */}

@@ -69,15 +69,27 @@ export async function seedTestData(prisma: PrismaClient) {
         }
         console.log(`  ✓ Voivodeships: ${selectedVoivodeships.length}`);
 
-        // 6. Dodaj losowe kategorie
-        const numberOfCategories = faker.number.int({ min: 1, max: 2 });
-        const selectedCategories = faker.helpers.arrayElements(allCategories, numberOfCategories);
+        // 6. Dodaj jedną kategorię najniższego poziomu i ustaw jej rodzica jako główną
+        const leafCategories = allCategories.filter(c => c.parentId !== null);
+        const categoriesMap = new Map(allCategories.map(c => [c.id, c]));
 
-        for (const category of selectedCategories) {
+        if (leafCategories.length > 0) {
+          const selectedLeaf = faker.helpers.arrayElement(leafCategories);
+          const parentCat = selectedLeaf.parentId ? categoriesMap.get(selectedLeaf.parentId) : null;
+
+          if (parentCat) {
+            await prisma.lawFirm.update({
+              where: { id: lawFirm.id },
+              data: {
+                mainCategoryId: parentCat.id,
+              },
+            });
+          }
+
           await prisma.lawFirmCategory.create({
             data: {
               lawFirmId: lawFirm.id,
-              categoryId: category.id,
+              categoryId: selectedLeaf.id,
             },
           });
         }

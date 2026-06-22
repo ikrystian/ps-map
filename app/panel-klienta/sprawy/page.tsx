@@ -73,6 +73,10 @@ interface Case {
 }
 import { Category } from "@/types/categories"
 
+const stripHtml = (html: string) => {
+  return html ? html.replace(/<[^>]*>/g, "") : ""
+}
+
 const statusLabels: Record<string, { label: string; className: string }> = {
   NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
   OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
@@ -550,7 +554,7 @@ export default function ClientCasesPage() {
 
                           {/* Description preview */}
                           <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
-                            {caseItem.opisSprawy}
+                            {stripHtml(caseItem.opisSprawy)}
                           </p>
 
                           {/* Metadata grid */}

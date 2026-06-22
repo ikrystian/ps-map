@@ -269,6 +269,8 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // --------------------------------------------------------------------------
   const voivodeships = await prisma.voivodeship.findMany({ select: { id: true, nazwa: true } })
   const categories = await prisma.category.findMany({ select: { id: true, nazwa: true, typ: true, parentId: true } })
+  const leafCategories = categories.filter(c => c.parentId !== null)
+  const categoriesMap = new Map(categories.map(c => [c.id, c]))
   const cities = await prisma.city.findMany({ select: { id: true, nazwa: true, voivodeshipId: true } })
   const accountManagers = await prisma.accountManager.findMany({ select: { id: true } })
   const subscriptionPlans = await prisma.subscriptionPlan.findMany()
@@ -470,9 +472,17 @@ export async function seedRelationalData(prisma: PrismaClient) {
     for (const vId of voivSet) { const c = cityInVoiv(vId); if (c) citySet.add(c.id) }
     for (const cId of citySet) lawFirmCity.push({ id: uuid(), lawFirmId: id, cityId: cId, createdAt: u.createdAt })
 
-    const firmCats = faker.helpers.arrayElements(categories, randInt(2, 8))
-    firmCats.forEach((cat, order) => lawFirmCategory.push({ id: uuid(), lawFirmId: id, categoryId: cat.id, kolejnosc: order, createdAt: u.createdAt }))
-    lawFirms[lawFirms.length - 1].mainCategoryId = firmCats[0]?.id ?? null
+    const selectedLeaf = leafCategories.length ? pick(leafCategories) : pick(categories)
+    const parentCat = selectedLeaf.parentId ? categoriesMap.get(selectedLeaf.parentId) : null
+
+    lawFirmCategory.push({
+      id: uuid(),
+      lawFirmId: id,
+      categoryId: selectedLeaf.id,
+      kolejnosc: 0,
+      createdAt: u.createdAt,
+    })
+    lawFirms[lawFirms.length - 1].mainCategoryId = parentCat?.id ?? null
 
     for (const nazwaUslugi of faker.helpers.arrayElements(SERVICE_NAMES, randInt(2, 6))) {
       const od = randInt(100, 800)

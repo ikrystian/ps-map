@@ -373,7 +373,7 @@ export default function ClientFavoritesPage() {
                   <CardContent className="p-6 pt-0">
                     {/* Description */}
                     {lawFirm.opis && (
-                      <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-4 font-light">
+                      <p className="text-sm text-zinc-400 line-clamp-2 leading-relaxed mb-4 font-light">
                         {lawFirm.opis}
                       </p>
                     )}

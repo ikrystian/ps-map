@@ -612,7 +612,7 @@ export function EnhancedChatArea({
               <div key={dateKey} className="space-y-4">
                 {/* Separator daty */}
                 <div className="flex items-center justify-center my-4">
-                  <span className="bg-zinc-800/60 border border-zinc-700/50 px-3 py-0.5 rounded-full text-sm uppercase tracking-wider text-zinc-400 font-semibold shadow-sm">
+                  <span className="bg-zinc-800/60 border border-zinc-700/50 px-3 py-0.5 rounded-full text-xs uppercase tracking-wider text-zinc-400 font-semibold shadow-sm">
                     {formatMessageDate(dateMessages[0].createdAt)}
                   </span>
                 </div>
@@ -691,7 +691,8 @@ export function EnhancedChatArea({
                           <div className="flex items-center gap-1 mt-1.5 justify-end">
                             <span
                               className={cn(
-                                "text-sm font-mono",
+                                "text-xs",
+
                                 isMyMessage
                                   ? "text-white/60"
                                   : "text-zinc-500 font-light"
