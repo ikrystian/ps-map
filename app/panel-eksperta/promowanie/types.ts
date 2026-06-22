@@ -2,6 +2,7 @@ export interface LawFirm {
   id: string
   nazwa: string
   punktySaldo: number
+  mainCategoryId?: string | null
 }
 
 export interface Promotion {

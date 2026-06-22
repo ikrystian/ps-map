@@ -974,7 +974,7 @@ export default function LawFirmReviewsPage() {
 
       {/* Modern Dialog Odpowiedzi z Podglądem Opinii i Szablonami */}
       <Dialog open={replyDialogOpen} onOpenChange={setReplyDialogOpen}>
-        <DialogContent className="sm:max-w-[620px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+        <DialogContent className="sm:max-w-[620px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
           <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
@@ -1073,7 +1073,7 @@ export default function LawFirmReviewsPage() {
 
       {/* Dialog Potwierdzenia Usunięcia Negatywnej Opinii */}
       <Dialog open={deleteConfirmDialogOpen} onOpenChange={setDeleteConfirmDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+        <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
           <BorderBeam lightColor="#e11d48" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-red-500">

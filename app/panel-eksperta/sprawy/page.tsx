@@ -942,7 +942,7 @@ const SprawyPage = () => {
 
       {/* Reject Modal */}
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl relative overflow-hidden">
+        <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
           <BorderBeam lightColor="var(--error)" lightWidth={350} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">

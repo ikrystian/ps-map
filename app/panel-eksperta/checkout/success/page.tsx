@@ -8,8 +8,8 @@ import {
   ArrowRight,
   Coins,
   Crown,
-  Home,
   Loader2,
+  Package,
   PartyPopper,
   Receipt,
   Sparkle,
@@ -452,10 +452,10 @@ export default function CheckoutSuccessPage() {
                 variant="primary"
                 size="lg"
                 className="flex-1 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-                onClick={() => router.push("/panel-eksperta")}
+                onClick={() => router.push("/panel-eksperta/pakiet")}
               >
-                <Home className="h-5 w-5 mr-2" />
-                Panel główny ekspert
+                <Package className="h-5 w-5 mr-2" />
+                Pakiety
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </motion.div>

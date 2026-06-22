@@ -177,6 +177,12 @@ export async function GET(request: NextRequest) {
         description: "Hierarchia geograficzna używana w formularzach i filtrach: voivodeships (województwa), counties (powiaty), cities (miasta)",
       }
     }
+    if (!settingsObject.publicItemsPerPage) {
+      settingsObject.publicItemsPerPage = {
+        value: "12",
+        description: "Liczba wyświetlanych pozycji na stronie w kategoriach oraz wyszukiwarce",
+      }
+    }
     if (!settingsObject.promoteConsultedImmediately) {
       settingsObject.promoteConsultedImmediately = {
         value: "false",

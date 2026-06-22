@@ -59,6 +59,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.geographicHierarchy) {
       settingsObject.geographicHierarchy = "voivodeships"
     }
+    if (!settingsObject.publicItemsPerPage) {
+      settingsObject.publicItemsPerPage = "12"
+    }
     if (!settingsObject.promoteConsultedImmediately) {
       settingsObject.promoteConsultedImmediately = "false"
     }
@@ -86,6 +89,7 @@ export async function GET(request: NextRequest) {
         enablePaymentPrzelew: "true",
         enablePaymentTpay: "true",
         enableUserSelectionOnLogin: "true",
+        publicItemsPerPage: "12",
       },
       { status: 200 }
     )
