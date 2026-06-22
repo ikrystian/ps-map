@@ -105,7 +105,21 @@ export async function seedBlogPosts(prisma: PrismaClient) {
       } else {
         const randomCategory = faker.helpers.arrayElement(categories)
         categoryId = randomCategory.id;
-        postData = createRandomBlogPost();
+        if (realisticPosts.length > 0) {
+          const jsonPost = faker.helpers.arrayElement(realisticPosts);
+          postData = {
+            tytul: jsonPost.tytul,
+            slug: `${jsonPost.slug}-${faker.string.alphanumeric(6).toLowerCase()}`,
+            tresc: jsonPost.tresc,
+            tagi: jsonPost.tagi,
+            obrazekWyrozniajacy: jsonPost.obrazekWyrozniajacy,
+            metaTitle: jsonPost.metaTitle,
+            metaDescription: jsonPost.metaDescription,
+            opublikowany: jsonPost.opublikowany,
+          };
+        } else {
+          postData = createRandomBlogPost();
+        }
       }
 
       await prisma.blogPost.create({
