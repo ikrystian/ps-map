@@ -47,9 +47,9 @@ Zaloguj się przez stronę **`/logowanie`**. Domyślne konta po wgraniu danych t
 
 | Rola | Login (e-mail) | Hasło | Do czego służy |
 |------|----------------|-------|----------------|
-| **Administrator** | `admin@bpcoders.pl` | `ADmin123` | Pełny panel zarządzania (`/admin`) |
-| **Klient** | `test-client@example.com` | `Password123` | Dodawanie spraw, przeglądanie i akceptacja ofert |
-| **Ekspert (kancelaria)** | `test-law-firm@example.com` | `Password123` | Składanie ofert, edycja wizytówki, pakiety |
+| **Administrator** | `admin@ps-dev.com.pl` | `ADmin123` | Pełny panel zarządzania (`/admin`) |
+| **Klient** | `test-client@ps-dev.com.pl` | `Password123` | Dodawanie spraw, przeglądanie i akceptacja ofert |
+| **Ekspert (kancelaria)** | `test-law-firm@ps-dev.com.pl` | `Password123` | Składanie ofert, edycja wizytówki, pakiety |
 
 > Jeśli któreś konto nie działa, zgłoś to — być może dane testowe nie zostały wgrane.
 > Część testów (np. rejestracja) wymaga **założenia nowych, własnych kont** — instrukcja

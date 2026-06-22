@@ -47,9 +47,9 @@ Dodatkowy status każdego konta: `ACTIVE` / `INACTIVE` / `SUSPENDED` / `BLOCKED`
 
 | Rola | E-mail | Hasło |
 |---|---|---|
-| Administrator | `admin@bpcoders.pl` | `ADmin123` |
-| Klient | `test-client@example.com` | `Password123` |
-| Ekspert | `test-law-firm@example.com` | `Password123` |
+| Administrator | `admin@ps-dev.com.pl` | `ADmin123` |
+| Klient | `test-client@ps-dev.com.pl` | `Password123` |
+| Ekspert | `test-law-firm@ps-dev.com.pl` | `Password123` |
 
 ## Spis dokumentów
 

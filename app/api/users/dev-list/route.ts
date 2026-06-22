@@ -29,7 +29,7 @@ function withPassword(user: DevUser) {
     email: user.email,
     role: user.role,
     name: user.name,
-    password: user.email === 'admin@bpcoders.pl' ? 'ADmin123' : 'Password123',
+    password: user.email === 'admin@ps-dev.com.pl' ? 'ADmin123' : 'Password123',
   }
 }
 

@@ -619,7 +619,6 @@ export default function LawFirmProfilePage() {
                       )}
                     </div>
                   </div>
-                  <p className="text-xs md:text-sm text-primary font-bold uppercase tracking-wider">{lawFirm?.nazwaFirmy}</p>
                 </div>
 
                 {/* Rating, Opening Status, and Location details in clean pills */}
@@ -707,7 +706,6 @@ export default function LawFirmProfilePage() {
 
                   {/* Location pill */}
                   <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
-                    <MapPin className="h-3.5 w-3.5 text-teal-400 animate-bounce" style={{ animationDuration: '3s' }} />
                     {lawFirm.miasto}
                   </div>
                 </div>

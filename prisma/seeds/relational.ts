@@ -69,7 +69,7 @@ const round2 = (n: number) => Math.round(n * 100) / 100
 const dateBetween = (from: Date, to: Date) =>
   from.getTime() >= to.getTime() ? new Date(to.getTime()) : faker.date.between({ from, to })
 
-const EMAIL_DOMAINS = ['gmail.com', 'wp.pl', 'onet.pl', 'interia.pl', 'o2.pl', 'poczta.fm']
+const EMAIL_DOMAINS = ['ps-dev.com.pl']
 
 const OFFER_INTROS = [
   'Szanowni Państwo, po zapoznaniu się z opisem sprawy chętnie podejmiemy się jej prowadzenia. Posiadamy wieloletnie doświadczenie w analogicznych postępowaniach.',

@@ -13,9 +13,9 @@ Niniejsza dokumentacja stanowi kompletny przewodnik dla testera manualnego syste
 ### 2. Baza Danych i Konta Testowe
 Przed przystąpieniem do testów upewnij się, że na środowisku testowym uruchomiono skrypt wypełniający bazę danymi (seed). Otrzymasz dostęp do predefiniowanych kont:
 
-*   **Administrator:** `admin@bpcoders.pl` / `ADmin123`
-*   **Klient:** `test-client@example.com` / `Password123`
-*   **Ekspert:** `test-law-firm@example.com` / `Password123`
+*   **Administrator:** `admin@ps-dev.com.pl` / `ADmin123`
+*   **Klient:** `test-client@ps-dev.com.pl` / `Password123`
+*   **Ekspert:** `test-law-firm@ps-dev.com.pl` / `Password123`
 
 *Uwaga:* Zalecane jest również ręczne przejście procesu rejestracji dla stworzenia zupełnie nowych kont do testów ("od zera").
 

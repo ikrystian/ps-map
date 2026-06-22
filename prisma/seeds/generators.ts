@@ -7,7 +7,7 @@ import { REALISTIC_REVIEWS } from './data/realistic-reviews';
 export function createRandomUser(prisma: PrismaClient, role: UserRole) {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
-    const email = faker.internet.email({ firstName, lastName }).toLowerCase();
+    const email = faker.internet.email({ firstName, lastName, provider: 'ps-dev.com.pl' }).toLowerCase();
     return {
         email,
         name: `${firstName} ${lastName} `,
@@ -231,7 +231,7 @@ export function createRandomAccountManager() {
     return {
         imie: faker.person.firstName(),
         nazwisko: faker.person.lastName(),
-        email: faker.internet.email(),
+        email: faker.internet.email({ provider: 'ps-dev.com.pl' }).toLowerCase(),
         telefon: faker.phone.number(),
         avatar: faker.image.avatar(),
         aktywny: faker.datatype.boolean(),

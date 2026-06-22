@@ -9,7 +9,7 @@ export async function seedTestUser(prisma: PrismaClient) {
     // Create Law Firm
     const lawFirmUser = await prisma.user.create({
         data: {
-            email: "test-law-firm@example.com",
+            email: "test-law-firm@ps-dev.com.pl",
             name: "Test Law Firm",
             password: hashedPassword,
             role: UserRole.LAW_FIRM,
@@ -50,7 +50,7 @@ export async function seedTestUser(prisma: PrismaClient) {
     // Create Client
     const clientUser = await prisma.user.create({
         data: {
-            email: "test-client@example.com",
+            email: "test-client@ps-dev.com.pl",
             name: "Test Client",
             password: hashedPassword,
             role: UserRole.CLIENT,

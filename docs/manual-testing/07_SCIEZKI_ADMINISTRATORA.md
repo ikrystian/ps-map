@@ -1,7 +1,7 @@
 # Instrukcja Testów Manualnych - ProstaSprawa.pl
 ## Część 7: Panel Administratora (CMS)
 
-Zaloguj się na konto administratora: `admin@bpcoders.pl` / `ADmin123`.
+Zaloguj się na konto administratora: `admin@ps-dev.com.pl` / `ADmin123`.
 
 ### 7.1. Dashboard Administratora
 **Cel:** Ogólny przegląd stanu serwisu.

@@ -149,9 +149,9 @@ Po pomyślnym wykonaniu komendy `bun run db:seed`, w bazie danych utworzone zost
 
 | Rola użytkownika | Adres E-mail | Hasło | Opis |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@bpcoders.pl` | `ADmin123` | Dostęp do panelu administratora (`/admin`) |
-| **Klient (Testowy)** | `test-client@example.com` | `Password123` | Profil klienta, podgląd spraw i ofert |
-| **Ekspert (Testowy)** | `test-law-firm@example.com` | `Password123` | Profil kancelarii, wysyłanie ofert i edycja profilu |
+| **Administrator** | `admin@ps-dev.com.pl` | `ADmin123` | Dostęp do panelu administratora (`/admin`) |
+| **Klient (Testowy)** | `test-client@ps-dev.com.pl` | `Password123` | Profil klienta, podgląd spraw i ofert |
+| **Ekspert (Testowy)** | `test-law-firm@ps-dev.com.pl` | `Password123` | Profil kancelarii, wysyłanie ofert i edycja profilu |
 
 ---
 

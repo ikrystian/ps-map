@@ -1,7 +1,7 @@
 # 06 — Panel administratora (część 1)
 
 > 🔒 Wszystkie testy wymagają zalogowania jako **administrator**:
-> `admin@bpcoders.pl` / `ADmin123`. Panel dostępny pod `/admin`. Menu po lewej zawiera
+> `admin@ps-dev.com.pl` / `ADmin123`. Panel dostępny pod `/admin`. Menu po lewej zawiera
 > wszystkie sekcje. Ta część obejmuje: pulpit, użytkowników, ekspertów, sprawy, transakcje,
 > promocje, pozycjonowanie, reklamy i opinie. Pozostałe sekcje — w pliku 07.
 >

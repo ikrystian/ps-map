@@ -93,42 +93,42 @@ async function main() {
   await seedVoivodeships(prisma)               // upsert — zachowuje istniejące ID (powiązane z miastami)
   await seedCategories(prisma)
   await seedExpertiseCategories(prisma)        // drzewo kategorii rejestracji ekspertów (krok 1)
-  //await seedBlogCategories(prisma)
+  await seedBlogCategories(prisma)
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)
-  //await seedHelpCenter(prisma)
-  //await seedHomepageTestimonials(prisma)
-  //await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
+  await seedHelpCenter(prisma)
+  await seedHomepageTestimonials(prisma)
+  await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
 
   // ==========================================================================
   // SPÓJNY, POWIĄZANY GRAF DANYCH
   // 1000 użytkowników, 2000 spraw, ~5000 ofert + zależne: negocjacje, opinie,
   // powiadomienia, zamówienia, faktury, transakcje punktowe, czat, statystyki.
   // ==========================================================================
-  //await seedRelationalData(prisma)
+  await seedRelationalData(prisma)
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
-  //await seedHomepagePromotions(prisma)
+  await seedHomepagePromotions(prisma)
 
   // ==========================================================================
   // SEEDERY ZALEŻNE OD POWYŻSZEGO (czytają kancelarie/opinie/użytkowników z bazy)
   // ==========================================================================
-  //await seedReviewReports(prisma)              // zgłoszenia istniejących opinii
-  //await seedBlogPosts(prisma)                  // posty przypisane do istniejących kancelarii
+  await seedReviewReports(prisma)              // zgłoszenia istniejących opinii
+  await seedBlogPosts(prisma)                  // posty przypisane do istniejących kancelarii
 
-  //await seedTestUser(prisma)                   // stałe konta testowe do logowania
-  //await seedStaticPages(prisma)
+  await seedTestUser(prisma)                   // stałe konta testowe do logowania
+  await seedStaticPages(prisma)
 
   // ==========================================================================
   // ADMIN
   // ==========================================================================
   const hashedPassword = await bcrypt.hash('ADmin123', 10)
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@bpcoders.pl' },
+    where: { email: 'admin@ps-dev.com.pl' },
     update: { password: hashedPassword, role: 'ADMIN' },
     create: {
-      email: 'admin@bpcoders.pl',
+      email: 'admin@ps-dev.com.pl',
       name: 'Administrator',
       password: hashedPassword,
       role: 'ADMIN',

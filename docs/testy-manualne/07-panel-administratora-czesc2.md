@@ -1,6 +1,6 @@
 # 07 — Panel administratora (część 2)
 
-> 🔒 Zalogowany jako **administrator** (`admin@bpcoders.pl` / `ADmin123`).
+> 🔒 Zalogowany jako **administrator** (`admin@ps-dev.com.pl` / `ADmin123`).
 > Ta część obejmuje treści (kategorie, lokalizacje, strony, moduły, blog), komunikację
 > (newsletter, e-maile, powiadomienia, centrum pomocy), system (harmonogram, ustawienia,
 > logi), pakiety, ordery oraz profil admina.
