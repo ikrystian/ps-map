@@ -301,9 +301,11 @@ export default function LawFirmPromotionPage() {
     if (type === "POLECANI_PRAWNICY") {
       setSelectedCategory("Adwokat")
     } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
-      setSelectedCategory(consultedCategories[0]?.id || "all")
+      const hasMainInConsulted = consultedCategories.some(c => c.id === lawFirm?.mainCategoryId)
+      setSelectedCategory(hasMainInConsulted && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : (consultedCategories[0]?.id || "all"))
     } else {
-      setSelectedCategory("all")
+      const hasMainInCategories = categories.some(c => c.id === lawFirm?.mainCategoryId)
+      setSelectedCategory(hasMainInCategories && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : "all")
     }
 
     setDialogOpen(true)

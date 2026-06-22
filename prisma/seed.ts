@@ -10,7 +10,7 @@ import { seedExpertiseCategories } from './seeds/expertise-categories'; // Drzew
 import { seedHelpCenter } from './seeds/help-center'; // Importuj nowy seeder centrum pomocy
 import { seedHomepagePromotions } from './seeds/homepage-promotions'
 import { seedHomepageTestimonials } from './seeds/homepage-testimonials'
-import { seedPromotionConfigs } from './seeds/promotions'
+import { seedPromotionConfigs, seedLawFirmPromotions } from './seeds/promotions'
 import { seedRelationalData } from './seeds/relational'; // NOWY: spójny, powiązany graf danych (użytkownicy, sprawy, oferty, ...)
 import { seedReviewReports } from './seeds/review-reports'; // Importuj seeder zgłoszeń opinii
 import { seedStaticPages } from './seeds/static-pages'
@@ -119,6 +119,8 @@ async function main() {
 
   await seedTestUser(prisma)                   // stałe konta testowe do logowania
   await seedStaticPages(prisma)
+  await seedLawFirmPromotions(prisma)          // Dodaj promocje dla każdego eksperta
+
 
   // ==========================================================================
   // ADMIN

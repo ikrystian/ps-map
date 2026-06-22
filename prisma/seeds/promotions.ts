@@ -127,3 +127,93 @@ export async function seedPromotionConfigs(prisma: PrismaClient) {
 
   console.log('Promotion configurations seeded successfully!')
 }
+
+export async function seedLawFirmPromotions(prisma: PrismaClient) {
+  console.log('Seeding promotions for all experts...')
+
+  const lawFirms = await prisma.lawFirm.findMany({
+    select: { id: true }
+  })
+
+  if (lawFirms.length === 0) {
+    console.warn('No law firms found to seed promotions for.')
+    return
+  }
+
+  const now = new Date()
+
+  // 3 dni temu
+  const threeDaysAgo = new Date(now)
+  threeDaysAgo.setDate(now.getDate() - 3)
+
+  // za 4 dni
+  const fourDaysFromNow = new Date(now)
+  fourDaysFromNow.setDate(now.getDate() + 4)
+
+  // za 5 dni
+  const fiveDaysFromNow = new Date(now)
+  fiveDaysFromNow.setDate(now.getDate() + 5)
+
+  // za 12 dni
+  const twelveDaysFromNow = new Date(now)
+  twelveDaysFromNow.setDate(now.getDate() + 12)
+
+  // 10 dni temu
+  const tenDaysAgo = new Date(now)
+  tenDaysAgo.setDate(now.getDate() - 10)
+
+  // 5 dni temu
+  const fiveDaysAgo = new Date(now)
+  fiveDaysAgo.setDate(now.getDate() - 5)
+
+  let promotionsCreated = 0
+
+  for (const lawFirm of lawFirms) {
+    // 1. Aktywna promocja: WYRÓŻNIENIE
+    await prisma.promotion.create({
+      data: {
+        lawFirmId: lawFirm.id,
+        typPromocji: PromotionType.WYROZNIENIE,
+        czasTrwaniaDni: 7,
+        startPromocji: threeDaysAgo,
+        koniecPromocji: fourDaysFromNow,
+        kosztPunktow: 50,
+        automatyczneOdnowienie: true,
+        aktywna: true,
+      }
+    })
+
+    // 2. Zaplanowana promocja: STRONA_GŁÓWNA
+    await prisma.promotion.create({
+      data: {
+        lawFirmId: lawFirm.id,
+        typPromocji: PromotionType.STRONA_GLOWNA,
+        czasTrwaniaDni: 7,
+        startPromocji: fiveDaysFromNow,
+        koniecPromocji: twelveDaysFromNow,
+        kosztPunktow: 200,
+        automatyczneOdnowienie: false,
+        aktywna: true,
+      }
+    })
+
+    // 3. Archiwalna promocja: PODBICIE_OGŁOSZENIA
+    await prisma.promotion.create({
+      data: {
+        lawFirmId: lawFirm.id,
+        typPromocji: PromotionType.PODBICIE_OGLOSZENIA,
+        czasTrwaniaDni: 5,
+        startPromocji: tenDaysAgo,
+        koniecPromocji: fiveDaysAgo,
+        kosztPunktow: 100,
+        automatyczneOdnowienie: false,
+        aktywna: true,
+      }
+    })
+
+    promotionsCreated += 3
+  }
+
+  console.log(`Successfully seeded ${promotionsCreated} promotions for ${lawFirms.length} law firms.`)
+}
+
