@@ -8,8 +8,7 @@ import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { NextRequest, NextResponse } from "next/server"
 
-// Helper function to generate slug from name and NIP
-function generateSlug(nazwa: string, nip: string): string {
+function generateSlug(nazwa: string, nip?: string | null): string {
   const polishChars: Record<string, string> = {
     'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
     'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
@@ -31,8 +30,8 @@ function generateSlug(nazwa: string, nip: string): string {
     .replace(/^-+|-+$/g, '')
 
   // Add last 4 digits of NIP for uniqueness
-  const nipSuffix = nip.slice(-4)
-  return `${slug}-${nipSuffix}`
+  const suffix = nip ? nip.slice(-4) : Math.random().toString(36).substring(2, 6)
+  return `${slug}-${suffix}`
 }
 
 export async function GET(request: NextRequest) {
@@ -434,7 +433,6 @@ export async function POST(request: NextRequest) {
       'password',
       'typ',
       'nazwa',
-      'nip',
       'imieKontakt',
       'nazwiskoKontakt',
       'numerTelefonu',
@@ -492,16 +490,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Sprawdź, czy NIP już istnieje
-    const existingNip = await prisma.lawFirm.findUnique({
-      where: { nip: body.nip },
-    })
+    // Sprawdź, czy NIP już istnieje (jeśli podano)
+    if (body.nip) {
+      const existingNip = await prisma.lawFirm.findUnique({
+        where: { nip: body.nip },
+      })
 
-    if (existingNip) {
-      return NextResponse.json(
-        { error: "Ekspert o takim numerze NIP już istnieje" },
-        { status: 409 }
-      )
+      if (existingNip) {
+        return NextResponse.json(
+          { error: "Ekspert o takim numerze NIP już istnieje" },
+          { status: 409 }
+        )
+      }
     }
 
     // Hash hasła
@@ -636,7 +636,7 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
-          nip: body.nip,
+          nip: body.nip || null,
           regon: body.regon || null,
           krs: body.krs || null,
           opis: body.opis || "",

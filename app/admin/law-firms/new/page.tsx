@@ -38,9 +38,8 @@ const createLawFirmSchema = z.object({
   typInny: z.string().optional(),
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
-  nazwa: z.string().min(1, "Company name is required"),
   slug: z.string().optional(),
-  nip: z.string().min(10, "NIP must be 10 digits"),
+  nip: z.string().regex(/^\d{10}$/, "NIP must be 10 digits").or(z.literal("")),
   regon: z.string().optional(),
   krs: z.string().optional(),
 

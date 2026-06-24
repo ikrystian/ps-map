@@ -194,7 +194,7 @@ model LawFirm {
   // Dane firmy
   nazwa                 String
   slug                  String   @unique // URL-friendly slug
-  nip                   String   @unique
+  nip                   String?  @unique
   regon                 String?
   krs                   String?
 
