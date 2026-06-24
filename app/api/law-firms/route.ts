@@ -1,3 +1,4 @@
+import { pickCompanyDataFields } from "@/lib/biala-lista"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
@@ -144,7 +145,6 @@ export async function GET(request: NextRequest) {
     if (search) {
       andConditions.push({
         OR: [
-          { nazwa: { contains: search } },
           { nazwa: { contains: search } },
           { user: { miasto: { contains: search } } },
         ],
@@ -318,7 +318,6 @@ export async function GET(request: NextRequest) {
           id: firm.id,
           slug: firm.slug,
           nazwa: firm.nazwa,
-          nazwa: firm.nazwa,
           logo: pokazAwatar ? firm.logo : null,
           zdjecieGlowne: firm.zdjecieGlowne,
           opis: firm.opis,
@@ -434,7 +433,6 @@ export async function POST(request: NextRequest) {
       'email',
       'password',
       'typ',
-      'nazwa',
       'nazwa',
       'nip',
       'imieKontakt',
@@ -638,7 +636,6 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
-          nazwa: body.nazwa,
           nip: body.nip,
           regon: body.regon || null,
           krs: body.krs || null,
@@ -655,6 +652,17 @@ export async function POST(request: NextRequest) {
           mainCategoryId: mainCategoryId,
         },
       })
+
+      // Zapisz dane firmy pobrane z CEIDG DataStore (przedrostek COMPANY_).
+      // Osobny model przypisany do użytkownika — pola NIE są łączone z nip/regon/nazwa.
+      const companyData = pickCompanyDataFields(body.companyData)
+      if (Object.keys(companyData).length > 0) {
+        await tx.companyData.upsert({
+          where: { userId: user.id },
+          create: { userId: user.id, ...companyData },
+          update: companyData,
+        })
+      }
 
       // Dodaj województwa działania
       if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds) && body.voivodeshipsIds.length > 0) {
@@ -855,7 +863,7 @@ Nowa rejestracja eksperta z landing page
 
 W witrynie Prostasprawa.pl zarejestrowano nowego eksperta. Poniżej znajdują się dane przesłane w formularzu:
 
-Pełna nazwa firmy: ${body.nazwa || body.nazwa || ''}
+Wyświetlana nazwa: ${body.nazwa || body.nazwa || ''}
 NIP: ${body.nip || ''}
 REGON: ${body.regon || 'Brak'}
 KRS: ${body.krs || 'Brak'}

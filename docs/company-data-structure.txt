@@ -1,0 +1,97 @@
+================================================================================
+DANE FIRMY Z "WYKAZU PODATNIKÓW VAT" (BIAŁA LISTA) — STRUKTURA
+pola z przedrostkiem COMPANY_
+================================================================================
+
+Źródło danych:
+  REST API Ministerstwa Finansów "Wykaz podatników VAT" (tzw. Biała lista).
+  GET https://wl-api.mf.gov.pl/api/search/nip/{nip}?date=YYYY-MM-DD
+  Usługa jest BEZPŁATNA i NIE wymaga klucza ani rejestracji (date = bieżący dzień).
+
+Cel:
+  Przy rejestracji eksperta (/rejestracja/ekspert?step=4) użytkownik może wybrać
+  opcję "Firma". Pojawia się wtedy pole COMPANY_NIP. Po wpisaniu NIP-u i kliknięciu
+  "Wyszukaj dane firmy" aplikacja odpytuje API, wyświetla pobrane dane jako tekst,
+  a po wysłaniu formularza zapisuje je w bazie i przypisuje do użytkownika.
+
+WAŻNE ZAŁOŻENIE:
+  Wszystkie pola pobierane z API mają przedrostek COMPANY_ i są przechowywane w
+  ODDZIELNYM modelu `CompanyData`. NIE są łączone z istniejącymi kolumnami
+  (LawFirm.nip / LawFirm.regon / LawFirm.nazwa). To są nowe, niezależne pola.
+
+--------------------------------------------------------------------------------
+PRZEPŁYW DANYCH
+--------------------------------------------------------------------------------
+1. Frontend: app/(public)/rejestracja/ekspert/LawFirmRegisterClientPage.tsx
+   - selektor "Rejestruję się jako: Osoba prywatna / Firma"
+   - pole COMPANY_NIP + przycisk "Wyszukaj dane firmy"
+   - POST /api/company-lookup { nip }
+   - wynik wyświetlany jako tekst i trzymany w formData.companyData
+
+2. API wyszukiwania: app/api/company-lookup/route.ts
+   - wywołuje lib/biala-lista.ts -> lookupCompanyByNip(nip)
+
+3. Klient API: lib/biala-lista.ts
+   - GET /api/search/nip/{nip}?date={dziś}
+   - mapuje result.subject -> obiekt pól COMPANY_ (mapSubjectToCompanyData)
+
+4. Zapis: app/api/law-firms/route.ts (POST, w transakcji rejestracji)
+   - pickCompanyDataFields(body.companyData) -> tx.companyData.upsert({ userId, ... })
+
+5. Baza: model CompanyData (prisma/schema.prisma), relacja 1:1 z User (userId UNIQUE)
+
+--------------------------------------------------------------------------------
+KONFIGURACJA
+--------------------------------------------------------------------------------
+Brak wymaganej konfiguracji. Opcjonalnie:
+  BIALA_LISTA_URL - nadpisuje bazowy adres API (domyślnie https://wl-api.mf.gov.pl)
+
+--------------------------------------------------------------------------------
+MAPOWANIE: pole JSON (result.subject)  ->  pole COMPANY_ (kolumna CompanyData)
+--------------------------------------------------------------------------------
+(parametr zapytania, NIP)        -> COMPANY_searchNip
+name                             -> COMPANY_name              (nazwa / imię i nazwisko)
+nip                              -> COMPANY_nip
+statusVat                        -> COMPANY_statusVat         ("Czynny"/"Zwolniony"/null)
+regon                            -> COMPANY_regon
+pesel                            -> COMPANY_pesel
+krs                              -> COMPANY_krs
+residenceAddress                 -> COMPANY_residenceAddress  (adres siedziby/zamieszkania)
+workingAddress                   -> COMPANY_workingAddress    (adres działalności)
+registrationLegalDate            -> COMPANY_registrationLegalDate
+registrationDenialBasis          -> COMPANY_registrationDenialBasis
+registrationDenialDate           -> COMPANY_registrationDenialDate
+restorationBasis                 -> COMPANY_restorationBasis
+restorationDate                  -> COMPANY_restorationDate
+removalBasis                     -> COMPANY_removalBasis
+removalDate                      -> COMPANY_removalDate
+exemptionSmeDate                 -> COMPANY_exemptionSmeDate
+accountNumbers (array)           -> COMPANY_accountNumbers    (JSON: ["...", "..."])
+hasVirtualAccounts (bool)        -> COMPANY_hasVirtualAccounts ("true"/"false")
+representatives (array)          -> COMPANY_representatives    (JSON)
+authorizedClerks (array)         -> COMPANY_authorizedClerks   (JSON)
+partners (array)                 -> COMPANY_partners           (JSON)
+result.requestId                 -> COMPANY_requestId          (potwierdzenie zapytania)
+result.requestDateTime           -> COMPANY_requestDateTime    (data/godzina weryfikacji)
+cały subject (JSON)              -> COMPANY_rawResponse        (audyt)
+
+--------------------------------------------------------------------------------
+ODPOWIEDZI API / OBSŁUGA BŁĘDÓW
+--------------------------------------------------------------------------------
+- HTTP 200 + result.subject != null  -> znaleziono (zwracamy pola COMPANY_)
+- HTTP 200 + result.subject == null  -> NOT_FOUND (404) "Nie znaleziono firmy..."
+- HTTP 400 { code: "WL-1xx" }         -> INVALID_NIP (400) "Nieprawidłowy NIP."
+- timeout / błąd sieci / inny status  -> UPSTREAM_ERROR (502)
+  (NIP jest dodatkowo walidowany lokalnie cyfrą kontrolną przed zapytaniem)
+
+--------------------------------------------------------------------------------
+TYPY / UWAGI
+--------------------------------------------------------------------------------
+- Wszystkie pola COMPANY_ w bazie są typu String? (nullable). Daty zapisujemy jako
+  tekst w postaci zwróconej przez API.
+- Pola listowe/obiektowe (accountNumbers, representatives, authorizedClerks,
+  partners) trzymamy jako JSON-string; hasVirtualAccounts jako "true"/"false".
+- COMPANY_rawResponse przechowuje pełny obiekt subject (audyt / ponowne parsowanie).
+- COMPANY_requestId + COMPANY_requestDateTime stanowią ślad weryfikacji w MF.
+- Relacja: User 1—1 CompanyData (CompanyData.userId UNIQUE, onDelete: Cascade).
+================================================================================
