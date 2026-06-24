@@ -256,7 +256,7 @@ export async function GET(request: NextRequest) {
     const response = {
       lawFirm: {
         id: lawFirm.id,
-        nazwa: lawFirm.nazwaFirmy,
+        nazwa: lawFirm.nazwa,
         pozycjaRanking: overallPosition,
         wyswietleniaProfilu: lawFirm.wyswietleniaProfilu,
         zlozoneOferty: totalOffers,

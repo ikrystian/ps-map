@@ -19,7 +19,7 @@ CREATE TABLE "new_Client" (
     "clientType" TEXT NOT NULL DEFAULT 'INDIVIDUAL',
     "imie" TEXT NOT NULL,
     "nazwisko" TEXT NOT NULL,
-    "nazwaFirmy" TEXT,
+    "nazwa" TEXT,
     "nip" TEXT,
     "regon" TEXT,
     "krs" TEXT,
@@ -31,7 +31,7 @@ CREATE TABLE "new_Client" (
     "punktySaldo" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Client_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO "new_Client" ("clientType", "createdAt", "id", "imie", "krs", "nazwaFirmy", "nazwisko", "nip", "punktySaldo", "regon", "updatedAt", "userId", "zgodaMarketing", "zgodaNewsletter", "zgodaRegulamin") SELECT "clientType", "createdAt", "id", "imie", "krs", "nazwaFirmy", "nazwisko", "nip", "punktySaldo", "regon", "updatedAt", "userId", "zgodaMarketing", "zgodaNewsletter", "zgodaRegulamin" FROM "Client";
+INSERT INTO "new_Client" ("clientType", "createdAt", "id", "imie", "krs", "nazwa", "nazwisko", "nip", "punktySaldo", "regon", "updatedAt", "userId", "zgodaMarketing", "zgodaNewsletter", "zgodaRegulamin") SELECT "clientType", "createdAt", "id", "imie", "krs", "nazwa", "nazwisko", "nip", "punktySaldo", "regon", "updatedAt", "userId", "zgodaMarketing", "zgodaNewsletter", "zgodaRegulamin" FROM "Client";
 DROP TABLE "Client";
 ALTER TABLE "new_Client" RENAME TO "Client";
 CREATE UNIQUE INDEX "Client_userId_key" ON "Client"("userId");

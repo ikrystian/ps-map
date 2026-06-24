@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             logo: true,
           },
         },

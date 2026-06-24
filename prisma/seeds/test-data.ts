@@ -53,7 +53,7 @@ export async function seedTestData(prisma: PrismaClient) {
             slug,
           },
         });
-        console.log(`  ✓ Law Firm: ${lawFirm.nazwaFirmy}`);
+        console.log(`  ✓ Law Firm: ${lawFirm.nazwa}`);
 
         // 5. Dodaj losowe województwa działania
         const numberOfVoivodeships = faker.number.int({ min: 1, max: 2 });
@@ -119,7 +119,7 @@ export async function seedTestData(prisma: PrismaClient) {
               zgodaMarketing: faker.datatype.boolean(),
             }
           });
-          console.log(`  ✓ B2B Client profile created for: ${user.email} (${clientData.nazwaFirmy})`)
+          console.log(`  ✓ B2B Client profile created for: ${user.email} (${clientData.nazwa})`)
         } else {
           await prisma.client.create({
             data: {

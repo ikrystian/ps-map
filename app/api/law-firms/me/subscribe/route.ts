@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       const dataPakietuOd = new Date()
       const orderNumber = `SUB-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
       const finalDaneFaktury = JSON.stringify({
-        nazwaFirmy: lawFirm.nazwaFirmy || "",
+        nazwa: lawFirm.nazwa || "",
         nip: lawFirm.nip || "",
         adres: lawFirm.user?.adres || "",
         kodPocztowy: lawFirm.user?.kodPocztowy || "",
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
     let order
 
     const finalDaneFaktury = JSON.stringify({
-      nazwaFirmy: lawFirm.nazwaFirmy || "",
+      nazwa: lawFirm.nazwa || "",
       nip: lawFirm.nip || "",
       adres: lawFirm.user?.adres || "",
       kodPocztowy: lawFirm.user?.kodPocztowy || "",
@@ -438,7 +438,7 @@ export async function POST(request: NextRequest) {
         invoiceNumber,
         orderId: order.id,
         lawFirmId: lawFirm.id,
-        buyerName: lawFirm.nazwaFirmy,
+        buyerName: lawFirm.nazwa,
         buyerNIP: lawFirm.nip,
         buyerAddress: lawFirm.user?.adres || "",
         buyerPostalCode: lawFirm.user?.kodPocztowy || "",

@@ -64,7 +64,6 @@ Plik `proxy.ts` pełni rolę middleware NextAuth (eksport `default auth((req) =>
 | `P24_MERCHANT_ID`, `P24_POS_ID`, `P24_CRC`, `P24_API_KEY`, `P24_SANDBOX`, `P24_API_URL` | Przelewy24 |
 | `PAYU_POS_ID`, `PAYU_MD5_KEY`, `PAYU_CLIENT_ID`, `PAYU_CLIENT_SECRET`, `PAYU_ENVIRONMENT` | PayU |
 | `NEXT_PUBLIC_C15T_PROJECT_ID`, `NEXT_PUBLIC_C15T_API_URL` | c15t — Consent Management Platform (zgody cookies; klient w `app/consent-manager.client.tsx`) |
-| `NEXT_PUBLIC_UPLOAD_SERVICE_URL`, `UPLOADTHING_TOKEN` | Usługi uploadu |
 | `AUTH_GOOGLE_ID/SECRET`, `AUTH_FACEBOOK_ID/SECRET`, `AUTH_APPLE_ID/SECRET` | OAuth (używane w `auth.ts`) |
 
 ## Struktura katalogów

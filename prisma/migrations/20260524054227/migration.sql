@@ -63,7 +63,7 @@ CREATE TABLE "new_Client" (
     "imie" TEXT NOT NULL,
     "nazwisko" TEXT NOT NULL,
     "telefon" TEXT,
-    "nazwaFirmy" TEXT,
+    "nazwa" TEXT,
     "nip" TEXT,
     "regon" TEXT,
     "krs" TEXT,

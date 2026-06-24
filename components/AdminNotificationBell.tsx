@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "react"
 interface LawFirm {
   id: string
   nazwa: string
-  nazwaFirmy: string
+  nazwa: string
 }
 
 interface Order {
@@ -83,7 +83,7 @@ export default function AdminNotificationBell() {
 
             // Show toast for new transactions (limit to 3 at once to avoid spam)
             newOrders.slice(0, 3).forEach(order => {
-              const lawFirmName = order.lawFirm?.nazwaFirmy || order.lawFirm?.nazwa || "Ekspert"
+              const lawFirmName = order.lawFirm?.nazwa || order.lawFirm?.nazwa || "Ekspert"
               const typeLabel = order.orderType === "POINTS" ? "Zakup punktów" : "Zakup subskrypcji"
               const orderNum = order.orderNumber ? ` #${order.orderNumber}` : ""
 
@@ -196,7 +196,7 @@ export default function AdminNotificationBell() {
         ) : (
           <div className="max-h-[350px] overflow-y-auto space-y-1 py-1 pr-1">
             {transactions.map(order => {
-              const lawFirmName = order.lawFirm?.nazwaFirmy || order.lawFirm?.nazwa || "Ekspert"
+              const lawFirmName = order.lawFirm?.nazwa || order.lawFirm?.nazwa || "Ekspert"
               const isPoints = order.orderType === "POINTS"
               const status = statusLabels[order.statusPlatnosci] || { label: order.statusPlatnosci, className: "", icon: Clock }
               const StatusIcon = status.icon

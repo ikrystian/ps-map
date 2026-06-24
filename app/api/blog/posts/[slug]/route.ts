@@ -19,7 +19,7 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             logo: true,
             opis: true,
             slug: true,
@@ -35,7 +35,7 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             logo: true,
             opis: true,
             slug: true,
@@ -72,17 +72,17 @@ export async function GET(
       ...post,
       lawFirm: post.lawFirm
         ? {
-            ...post.lawFirm,
-            miasto: post.lawFirm.user?.miasto ?? "",
-            voivodeship: post.lawFirm.user?.voivodeship ?? null,
-          }
+          ...post.lawFirm,
+          miasto: post.lawFirm.user?.miasto ?? "",
+          voivodeship: post.lawFirm.user?.voivodeship ?? null,
+        }
         : post.lawFirm,
       sponsoredLawFirm: post.sponsoredLawFirm
         ? {
-            ...post.sponsoredLawFirm,
-            miasto: post.sponsoredLawFirm.user?.miasto ?? "",
-            voivodeship: post.sponsoredLawFirm.user?.voivodeship ?? null,
-          }
+          ...post.sponsoredLawFirm,
+          miasto: post.sponsoredLawFirm.user?.miasto ?? "",
+          voivodeship: post.sponsoredLawFirm.user?.voivodeship ?? null,
+        }
         : post.sponsoredLawFirm,
     })
   } catch (error) {

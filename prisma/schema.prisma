@@ -153,7 +153,7 @@ model Client {
   // (numerTelefonu, adres, kodPocztowy, miasto, voivodeshipId)
 
   // Dane firmowe (tylko dla BUSINESS)
-  nazwaFirmy      String?
+  nazwa      String?
   nip             String?
   regon           String?
   krs             String?
@@ -192,7 +192,6 @@ model LawFirm {
 
   // Dane firmy
   nazwa                 String
-  nazwaFirmy            String
   slug                  String   @unique // URL-friendly slug
   nip                   String   @unique
   regon                 String?

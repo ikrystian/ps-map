@@ -125,7 +125,7 @@ export default function EditLawFirmPage() {
       typ: "OSOBA_FIZYCZNA",
       typInny: "",
       nazwa: "",
-      nazwaFirmy: "",
+      nazwa: "",
       slug: "",
       nip: "",
       regon: "",
@@ -406,8 +406,8 @@ export default function EditLawFirmPage() {
             userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED",
             typ: lawFirm.typ,
             typInny: lawFirm.typInny || "",
-            nazwa: lawFirm.nazwaFirmy,
-            nazwaFirmy: lawFirm.nazwaFirmy,
+            nazwa: lawFirm.nazwa,
+            nazwa: lawFirm.nazwa,
             slug: lawFirm.slug || "",
             nip: lawFirm.nip,
             regon: lawFirm.regon || "",
@@ -502,7 +502,7 @@ export default function EditLawFirmPage() {
         "typ",
         "typInny",
         "nazwa",
-        "nazwaFirmy",
+        "nazwa",
         "slug",
         "nip",
         "regon",
@@ -800,12 +800,12 @@ export default function EditLawFirmPage() {
 
                             <FormField
                               control={form.control}
-                              name="nazwaFirmy"
+                              name="nazwa"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Pełna nazwa firmy</FormLabel>
+                                  <FormLabel>Nazwa profilu</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Pełna nazwa firmy" {...field} />
+                                    <Input placeholder="Nazwa profilu" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>

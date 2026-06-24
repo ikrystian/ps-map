@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
       imie,
       nazwisko,
       telefon,
-      nazwaFirmy,
+      nazwa,
       nip,
       regon,
       krs,
@@ -143,7 +143,7 @@ export async function PUT(request: NextRequest) {
 
     // Określenie nazwy wyświetlanej użytkownika
     const targetName = clientType === "BUSINESS"
-      ? (nazwaFirmy || `${imie} ${nazwisko}`)
+      ? (nazwa || `${imie} ${nazwisko}`)
       : `${imie} ${nazwisko}`
 
     // Aktualizuj dane klienta
@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
         clientType: clientType || "INDIVIDUAL",
         imie,
         nazwisko,
-        nazwaFirmy: clientType === "BUSINESS" ? nazwaFirmy : null,
+        nazwa: clientType === "BUSINESS" ? nazwa : null,
         nip: clientType === "BUSINESS" ? nip : null,
         regon: clientType === "BUSINESS" ? regon : null,
         krs: clientType === "BUSINESS" ? krs : null,

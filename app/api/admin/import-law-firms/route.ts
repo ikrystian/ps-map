@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
               typ: lawFirmData.typ || "OSOBA_FIZYCZNA",
               typInny: lawFirmData.typInny,
               nazwa: lawFirmData.nazwa,
-              nazwaFirmy: lawFirmData.nazwaFirmy || lawFirmData.nazwa,
+              nazwa: lawFirmData.nazwa || lawFirmData.nazwa,
               slug,
               nip: lawFirmData.nip || `TEMP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               regon: lawFirmData.regon,

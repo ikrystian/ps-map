@@ -236,7 +236,7 @@ export default function RankingClientPage() {
                                       </Badge>
                                     )}
                                   </div>
-                                  <p className="text-xs text-zinc-400 font-light">{firm.nazwaFirmy}</p>
+                                  <p className="text-xs text-zinc-400 font-light">{firm.nazwa}</p>
                                 </div>
                               </div>
 

@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
       andConditions.push({
         OR: [
           { nazwa: { contains: search } },
-          { nazwaFirmy: { contains: search } },
+          { nazwa: { contains: search } },
           { user: { miasto: { contains: search } } },
         ],
       })
@@ -318,7 +318,7 @@ export async function GET(request: NextRequest) {
           id: firm.id,
           slug: firm.slug,
           nazwa: firm.nazwa,
-          nazwaFirmy: firm.nazwaFirmy,
+          nazwa: firm.nazwa,
           logo: pokazAwatar ? firm.logo : null,
           zdjecieGlowne: firm.zdjecieGlowne,
           opis: firm.opis,
@@ -435,7 +435,7 @@ export async function POST(request: NextRequest) {
       'password',
       'typ',
       'nazwa',
-      'nazwaFirmy',
+      'nazwa',
       'nip',
       'imieKontakt',
       'nazwiskoKontakt',
@@ -638,7 +638,7 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
-          nazwaFirmy: body.nazwaFirmy,
+          nazwa: body.nazwa,
           nip: body.nip,
           regon: body.regon || null,
           krs: body.krs || null,
@@ -787,7 +787,7 @@ export async function POST(request: NextRequest) {
               <tbody>
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; width: 40%; font-weight: 500;">Pełna nazwa firmy:</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px; font-weight: 600;">${body.nazwaFirmy || body.nazwa || ''}</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px; font-weight: 600;">${body.nazwa || body.nazwa || ''}</td>
                 </tr>
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">NIP:</td>
@@ -855,7 +855,7 @@ Nowa rejestracja eksperta z landing page
 
 W witrynie Prostasprawa.pl zarejestrowano nowego eksperta. Poniżej znajdują się dane przesłane w formularzu:
 
-Pełna nazwa firmy: ${body.nazwaFirmy || body.nazwa || ''}
+Pełna nazwa firmy: ${body.nazwa || body.nazwa || ''}
 NIP: ${body.nip || ''}
 REGON: ${body.regon || 'Brak'}
 KRS: ${body.krs || 'Brak'}
@@ -876,7 +876,7 @@ Zgoda na dane: ${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}
 
         await sendEmail({
           to: 'krystian@bpcoders.pl',
-          subject: `Nowa rejestracja eksperta - ${body.nazwaFirmy || body.nazwa || ''}`,
+          subject: `Nowa rejestracja eksperta - ${body.nazwa || body.nazwa || ''}`,
           html: brandHtml,
           text: notificationText,
           templateType: 'NOWA_REJESTRACJA_BOK',

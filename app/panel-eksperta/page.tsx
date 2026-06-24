@@ -389,7 +389,7 @@ export default function LawFirmDashboardPage() {
 
       <PageHeader
         title="Panel Eksperta"
-        subtitle={`Witaj, ${lawFirm.nazwaFirmy}! Oto podsumowanie Twojej aktywności.`}
+        subtitle={`Witaj, ${lawFirm.nazwa}! Oto podsumowanie Twojej aktywności.`}
       />
 
 

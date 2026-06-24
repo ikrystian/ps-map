@@ -388,7 +388,7 @@ export async function POST(request: NextRequest) {
             userId: caseData.client.userId,
             typ: "NOWA_OFERTA",
             tytul: "Otrzymałeś nową ofertę",
-            tresc: `Ekspert ${lawFirm.nazwaFirmy} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
+            tresc: `Ekspert ${lawFirm.nazwa} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
             linkUrl: `/panel-klienta/sprawy/${caseId}`
           }
         })
@@ -424,7 +424,7 @@ export async function POST(request: NextRequest) {
           templateType: EmailType.NOWA_OFERTA,
           variables: {
             "{klient}": caseWithClient.client.imie,
-            "{ekspert}": lawFirm.nazwaFirmy,
+            "{ekspert}": lawFirm.nazwa,
             "{nazwaSprawi}": caseWithClient.nazwaSprawy,
             "{kwota}": formattedKwota,
             "{termin}": formattedTermin,

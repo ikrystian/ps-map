@@ -23,7 +23,7 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             user: {
               select: {
                 email: true,
@@ -155,7 +155,7 @@ export async function PUT(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           },
         },
         client: {

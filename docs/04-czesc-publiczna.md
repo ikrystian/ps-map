@@ -54,14 +54,14 @@ Strona wyboru typu konta (klient / ekspert).
 ### `/rejestracja/klient` — pola formularza
 - Typ klienta: `clientType` (INDIVIDUAL/BUSINESS)
 - Dane: `imie`, `nazwisko`, `telefon`, `email`, `password` + `confirmPassword`
-- Dla firm: `nazwaFirmy`, `nip`, `regon`, `krs`
+- Dla firm: `nazwa`, `nip`, `regon`, `krs`
 - Adres: `miasto`, `kodPocztowy`, `voivodeshipId`
 - Zgody: `zgodaRegulamin` (wymagana), `zgodaNewsletter`, `zgodaMarketing`
 - Alternatywnie przyciski social (`social-registration-buttons.tsx`) — uwaga: OAuth pozwala tylko logować istniejące konta (patrz [03](03-autentykacja-i-autoryzacja.md))
 
 ### `/rejestracja/ekspert` — pola formularza (formularz wieloetapowy, ~1510 linii)
 - Forma działalności: `typ` + `typInny`
-- Firma: `nazwa`, `nazwaFirmy`, `nip`, `regon`, `krs`
+- Firma: `nazwa`, `nazwa`, `nip`, `regon`, `krs`
 - Kontakt: `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2`, `email` (konto), `password`/`confirmPassword`
 - Adres: `adres`, `kodPocztowy`, `miasto`, `voivodeshipId`
 - Działalność: `categoriesIds[]` (specjalizacje), `voivodeshipsIds[]` (obszar działania), `callaPolska`, `typOferty`

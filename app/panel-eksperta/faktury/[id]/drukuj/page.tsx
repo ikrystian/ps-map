@@ -33,7 +33,7 @@ interface Invoice {
   }
   lawFirm: {
     nazwa: string
-    nazwaFirmy: string | null
+    nazwa: string | null
     nip: string | null
     adres: string | null
     kodPocztowy: string | null

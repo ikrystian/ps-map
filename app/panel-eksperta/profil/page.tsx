@@ -70,7 +70,7 @@ function LawFirmProfilePageContent() {
     slug: "",
     // Dane podstawowe
     nazwa: "",
-    nazwaFirmy: "",
+    nazwa: "",
     opis: "",
     logo: "",
     zdjecieGlowne: "",

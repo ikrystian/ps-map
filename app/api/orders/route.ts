@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
     const finalDaneFaktury = daneFaktury
       ? JSON.stringify(daneFaktury)
       : JSON.stringify({
-        nazwaFirmy: lawFirm.nazwaFirmy || "",
+        nazwa: lawFirm.nazwa || "",
         nip: lawFirm.nip || "",
         adres: lawFirm.user?.adres || "",
         kodPocztowy: lawFirm.user?.kodPocztowy || "",

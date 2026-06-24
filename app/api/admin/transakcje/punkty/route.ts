@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
           lawFirm: {
             OR: [
               { nazwa: { contains: search } },
-              { nazwaFirmy: { contains: search } },
+              { nazwa: { contains: search } },
             ]
           }
         },
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               nazwa: true,
-              nazwaFirmy: true,
+              nazwa: true,
               punktySaldo: true,
             },
           },

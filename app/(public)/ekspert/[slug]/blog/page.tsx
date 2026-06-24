@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       where: { slug },
       select: {
         nazwa: true,
-        nazwaFirmy: true,
+        nazwa: true,
       },
     })
 
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    const displayName = lawFirm.nazwaFirmy || lawFirm.nazwa
+    const displayName = lawFirm.nazwa || lawFirm.nazwa
     return {
       title: `Blog Eksperta ${displayName} | Prosta Sprawa`,
       description: `Artykuły, porady prawne i analizy publikowane przez ekspertów z eksperta ${displayName}.`,

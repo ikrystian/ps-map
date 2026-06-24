@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation"
 interface ProfileScoreData {
   // Dane podstawowe
   nazwa: string
-  nazwaFirmy: string
+  nazwa: string
   opis: string
   logo: string
   zdjecieGlowne: string
@@ -170,12 +170,12 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
           done: !!formData.nazwa?.trim(),
         },
         {
-          id: "nazwaFirmy",
+          id: "nazwa",
           label: "Nazwa firmy",
           description:
             "Pełna nazwa kancelarii lub działalności. Buduje wiarygodność i jest wykorzystywana w danych firmowych profilu.",
           weight: 8,
-          done: !!formData.nazwaFirmy?.trim(),
+          done: !!formData.nazwa?.trim(),
         },
         {
           id: "opis",

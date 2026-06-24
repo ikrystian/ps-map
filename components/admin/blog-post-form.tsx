@@ -98,16 +98,16 @@ interface BlogPostFormProps {
 
 export function BlogPostForm({ postId }: BlogPostFormProps) {
   const [categories, setCategories] = useState<BlogCategory[]>([])
-  const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string; nazwaFirmy: string }[]>([])
+  const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string; nazwa: string }[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(!!postId)
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [loadingLawFirms, setLoadingLawFirms] = useState(false)
-  
+
   // Collapse/Expand state for right column boxes (default to collapsed/false)
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
-  
+
   const router = useRouter()
 
   const form = useForm<PostFormValues>({
@@ -408,7 +408,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
               {/* SEO */}
               <motion.div variants={itemVariants}>
                 <Card className="border shadow-sm overflow-hidden">
-                  <CardHeader 
+                  <CardHeader
                     className="py-5 px-6 border-b cursor-pointer flex flex-row items-center justify-between select-none hover:bg-muted/5 transition-colors"
                     onClick={() => setSeoOpen(!seoOpen)}
                   >
@@ -418,10 +418,10 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                         Wprowadź tagi i metadane pod wyszukiwarki internetowe.
                       </CardDescription>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-transparent"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -569,7 +569,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                   {form.watch("isSponsored") && (
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500" />
                   )}
-                  <CardHeader 
+                  <CardHeader
                     className="py-5 px-6 border-b cursor-pointer flex flex-row items-center justify-between select-none hover:bg-muted/5 transition-colors"
                     onClick={() => setSponsoredOpen(!sponsoredOpen)}
                   >
@@ -582,10 +582,10 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                         Oznacz ten wpis jako sponsorowany i przypisz do niego eksperta lub eksperta.
                       </CardDescription>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-transparent"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -656,7 +656,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                                       <SelectContent>
                                         {lawFirms.map((firm) => (
                                           <SelectItem key={firm.id} value={firm.id}>
-                                            {firm.nazwa} {firm.nazwaFirmy && firm.nazwaFirmy !== firm.nazwa ? `(${firm.nazwaFirmy})` : ""}
+                                            {firm.nazwa} {firm.nazwa && firm.nazwa !== firm.nazwa ? `(${firm.nazwa})` : ""}
                                           </SelectItem>
                                         ))}
                                       </SelectContent>
@@ -731,7 +731,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                 </span>
               )}
             </div>
-            
+
             <div className="flex gap-3 ml-auto">
               <Button
                 type="button"

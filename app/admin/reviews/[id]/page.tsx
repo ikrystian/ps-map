@@ -463,7 +463,7 @@ export default function ReviewDetailsPage() {
               </div>
               <div>
                 <Label className="text-muted-foreground">Firma</Label>
-                <p className="font-medium">{review.lawFirm?.nazwaFirmy || ""}</p>
+                <p className="font-medium">{review.lawFirm?.nazwa || ""}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Email</Label>

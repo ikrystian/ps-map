@@ -377,7 +377,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const id = uuid()
     await clientsInserter.push({
       id, userId: u.id, clientType: isB2B ? ClientType.BUSINESS : ClientType.INDIVIDUAL, imie, nazwisko,
-      nazwaFirmy: isB2B ? `${faker.company.name()} ${pick(['Sp. z o.o.', 'S.A.', 'Sp. k.', 'Sp. j.'])}` : null,
+      nazwa: isB2B ? `${faker.company.name()} ${pick(['Sp. z o.o.', 'S.A.', 'Sp. k.', 'Sp. j.'])}` : null,
       nip: isB2B ? faker.string.numeric(10) : null, regon: isB2B ? faker.string.numeric(9) : null,
       krs: isB2B && chance(0.5) ? faker.string.numeric(10) : null,
       zgodaRegulamin: true, zgodaNewsletter: chance(0.6), zgodaMarketing: chance(0.5), punktySaldo: 0,
@@ -406,7 +406,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
   // ==========================================================================
   // 3. KANCELARIE (obiekty trzymamy do uzupełnienia statystyk i salda)
   // ==========================================================================
-  type FirmRow = { id: string; userId: string; nazwa: string; nazwaFirmy: string; nip: string; adres: string; kodPocztowy: string; miasto: string; createdAt: Date; pakiet: SubscriptionPackage }
+  type FirmRow = { id: string; userId: string; nazwa: string; nazwa: string; nip: string; adres: string; kodPocztowy: string; miasto: string; createdAt: Date; pakiet: SubscriptionPackage }
   const lawFirms: any[] = []
   const firmRows: FirmRow[] = []
   const userContactUpdates: { userId: string; data: any }[] = []
@@ -449,7 +449,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     })
 
     lawFirms.push({
-      id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwaFirmy: tmpl.nazwa, slug, nip: faker.string.numeric(10),
+      id, userId: u.id, typ: pick(Object.values(LawFirmType)), nazwa: displayName, nazwa: tmpl.nazwa, slug, nip: faker.string.numeric(10),
       regon: faker.string.numeric(9), krs: chance(0.5) ? faker.string.numeric(10) : null,
       opis: descHtml, logo: faker.image.avatar(), zdjecieGlowne: faker.image.url({ width: 1920, height: 400 }),
       galeriaZdjec: JSON.stringify(Array.from({ length: randInt(2, 6) }, () => faker.image.url())),
@@ -473,7 +473,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
       zgodaRegulamin: true, zgodaPrzetwarzanie: true, zweryfikowana: chance(0.7), aktywna: true,
       accountManagerId: accountManagers.length ? pick(accountManagers).id : null, createdAt: u.createdAt, updatedAt: u.createdAt,
     })
-    firmRows.push({ id, userId: u.id, nazwa: displayName, nazwaFirmy: tmpl.nazwa, nip, adres, kodPocztowy, miasto, createdAt: u.createdAt, pakiet })
+    firmRows.push({ id, userId: u.id, nazwa: displayName, nazwa: tmpl.nazwa, nip, adres, kodPocztowy, miasto, createdAt: u.createdAt, pakiet })
 
     const voivSet = new Set<string>([voiv.id])
     for (const v of faker.helpers.arrayElements(voivodeships, randInt(1, 4))) voivSet.add(v.id)
@@ -679,7 +679,7 @@ export async function seedRelationalData(prisma: PrismaClient) {
     const metoda = pick([PaymentMethod.PAYU, PaymentMethod.PRZELEWY24, PaymentMethod.TPAY, PaymentMethod.PRZELEW])
     const orderId = uuid()
     const orderNumber = `ZAM/${createdAt.getFullYear()}/${String(orderSeq++).padStart(6, '0')}`
-    const daneFaktury = JSON.stringify({ nazwa: f.nazwaFirmy, nip: f.nip, adres: `${f.adres}, ${f.kodPocztowy} ${f.miasto}` })
+    const daneFaktury = JSON.stringify({ nazwa: f.nazwa, nip: f.nip, adres: `${f.adres}, ${f.kodPocztowy} ${f.miasto}` })
     const isSub = chance(0.5)
 
     if (isSub && subscriptionPlans.length) {
@@ -1006,7 +1006,7 @@ function buildInvoice(orderId: string, firm: any, kwota: number, issueDate: Date
   const due = new Date(issueDate); due.setDate(due.getDate() + 14)
   return {
     id: uuid(), invoiceNumber: `FV/${issueDate.getFullYear()}/${String(seq).padStart(6, '0')}`, orderId, lawFirmId: firm.id,
-    buyerName: firm.nazwaFirmy, buyerNIP: firm.nip, buyerAddress: firm.adres, buyerPostalCode: firm.kodPocztowy, buyerCity: firm.miasto, buyerCountry: 'Polska',
+    buyerName: firm.nazwa, buyerNIP: firm.nip, buyerAddress: firm.adres, buyerPostalCode: firm.kodPocztowy, buyerCity: firm.miasto, buyerCountry: 'Polska',
     netAmount: net, vatRate: 23.0, vatAmount, grossAmount: round2(kwota), status: InvoiceStatus.PAID,
     issueDate, saleDate: issueDate, paymentDate, dueDate: due, pdfUrl: null, createdAt: issueDate, updatedAt: paymentDate,
   }

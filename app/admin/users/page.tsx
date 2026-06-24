@@ -52,7 +52,7 @@ interface User {
   lawFirm?: {
     id: string
     nazwa: string
-    nazwaFirmy: string
+    nazwa: string
     nip: string
     zweryfikowana: boolean
     aktywna: boolean
@@ -248,7 +248,7 @@ export default function AdminUsersPage() {
       return `${user.client.imie[0]}${user.client.nazwisko[0]}`.toUpperCase()
     }
     if (user.lawFirm) {
-      return user.lawFirm.nazwaFirmy.substring(0, 2).toUpperCase()
+      return user.lawFirm.nazwa.substring(0, 2).toUpperCase()
     }
     return user.email.substring(0, 2).toUpperCase()
   }
@@ -389,7 +389,7 @@ export default function AdminUsersPage() {
                       )}
                       {user.lawFirm && (
                         <span className="text-sm text-muted-foreground">
-                          {user.lawFirm.nazwaFirmy}
+                          {user.lawFirm.nazwa}
                         </span>
                       )}
                       {!user.client && !user.lawFirm && "—"}

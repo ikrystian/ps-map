@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       linkUrl: "/panel-eksperta/konsultacje",
       emailTemplateType: "NOWA_KONSULTACJA",
       emailVariables: {
-        '{ekspert}': newBooking.lawFirm.nazwaFirmy,
+        '{ekspert}': newBooking.lawFirm.nazwa,
         '{klient}': newBooking.client.user.name || newBooking.client.user.email,
         '{czas}': `${duration} min`,
         '{temat}': topic || 'Konsultacja prawna',

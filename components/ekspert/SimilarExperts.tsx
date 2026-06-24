@@ -66,14 +66,14 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
                   {hasImage ? (
                     <Image
                       src={expert.logo!}
-                      alt={expert.nazwaFirmy || expert.nazwa}
+                      alt={expert.nazwa || expert.nazwa}
                       fill
                       className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-500">
                       <span className="text-xl font-bold text-zinc-600">
-                        {(expert.nazwaFirmy || expert.nazwa || "E")[0]?.toUpperCase()}
+                        {(expert.nazwa || expert.nazwa || "E")[0]?.toUpperCase()}
                       </span>
                     </div>
                   )}
@@ -87,7 +87,7 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
                         {profession}
                       </p>
                       <h3 className="text-sm font-semibold text-white group-hover:text-[#0da192] transition-colors truncate leading-tight">
-                        {expert.nazwaFirmy || expert.nazwa}
+                        {expert.nazwa || expert.nazwa}
                       </h3>
                     </div>
                     <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-[#0da192] transition-colors flex-shrink-0 mt-0.5" />

@@ -58,7 +58,7 @@ const step6Schema = z.object({
 
 const step4Schema = z.object({
   // Dane firmy
-  nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
+  nazwa: z.string().min(3, "Nazwa profilu musi mieć co najmniej 3 znaki"),
   nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
   regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
   krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
@@ -124,7 +124,7 @@ export default function LawFirmRegistrationPage() {
 
     // Krok 2: Dane firmy
     nazwa: "",
-    nazwaFirmy: "",
+    nazwa: "",
     nip: "",
     regon: "",
     krs: "",
@@ -493,8 +493,8 @@ export default function LawFirmRegistrationPage() {
           typ: formData.typ,
           typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
-          nazwa: formData.nazwaFirmy,
-          nazwaFirmy: formData.nazwaFirmy,
+          nazwa: formData.nazwa,
+          nazwa: formData.nazwa,
           nip: formData.nip,
           regon: formData.regon || null,
           krs: formData.krs || null,
@@ -773,25 +773,25 @@ export default function LawFirmRegistrationPage() {
               <h3 className="text-lg font-bold border-b pb-2">Dane firmy</h3>
               <div className="space-y-4">
 
-                {/* nazwaFirmy */}
+                {/* nazwa */}
                 <div className="space-y-2">
-                  <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>
+                  <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa wyświetlana</Label>
                   <Input
-                    id="nazwaFirmy"
+                    id="nazwa"
                     type="text"
-                    value={formData.nazwaFirmy}
+                    value={formData.nazwa}
                     onChange={(e) => {
-                      setFormData({ ...formData, nazwaFirmy: e.target.value })
-                      if (fieldErrors.nazwaFirmy) {
+                      setFormData({ ...formData, nazwa: e.target.value })
+                      if (fieldErrors.nazwa) {
                         const newErrors = { ...fieldErrors }
-                        delete newErrors.nazwaFirmy
+                        delete newErrors.nazwa
                         setFieldErrors(newErrors)
                       }
                     }}
-                    placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
-                    className={cn("h-11", fieldErrors.nazwaFirmy && "border-destructive")}
+                    placeholder="Pełna nazwa profilu"
+                    className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
                   />
-                  {fieldErrors.nazwaFirmy && <p className="text-xs text-destructive">{fieldErrors.nazwaFirmy}</p>}
+                  {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
                 </div>
                 {/* nip, regon, krs */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

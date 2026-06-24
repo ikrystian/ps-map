@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { nazwa: { contains: search } },
-        { nazwaFirmy: { contains: search } },
+        { nazwa: { contains: search } },
         { nip: { contains: search } },
         { user: { imie: { contains: search } } },
         { user: { nazwisko: { contains: search } } },
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       typInny,
       expertiseCategoryId,
       nazwa,
-      nazwaFirmy,
+      nazwa,
       nip,
       regon,
       krs,
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!typ || !nazwa || !nazwaFirmy || !nip || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
+    if (!typ || !nazwa || !nazwa || !nip || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
         { status: 400 }
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
           typInny: typ === "INNY" ? typInny : null,
           expertiseCategoryId: expertiseCategoryId || null,
           nazwa,
-          nazwaFirmy,
+          nazwa,
           slug,
           nip: cleanNip,
           regon: regon || null,

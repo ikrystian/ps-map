@@ -59,7 +59,7 @@ Standardowe modele adaptera NextAuth (OAuth provider+providerAccountId unique, s
 |---|---|
 | Typ | `clientType`: `INDIVIDUAL` (osoba prywatna) / `BUSINESS` (firma) |
 | Dane osobowe | `imie`, `nazwisko`, `telefon?` |
-| Dane firmowe (BUSINESS) | `nazwaFirmy?`, `nip?`, `regon?`, `krs?` |
+| Dane firmowe (BUSINESS) | `nazwa?`, `nip?`, `regon?`, `krs?` |
 | Adres | `adres?`, `kodPocztowy?`, `miasto?`, `voivodeshipId?` → `Voivodeship` |
 | Zgody | `zgodaRegulamin`, `zgodaNewsletter`, `zgodaMarketing` |
 | Saldo | `punktySaldo` (Int, default 0) |
@@ -78,7 +78,7 @@ Ulubione kancelarie klienta — para `clientId`+`lawFirmId` (unique). Zasila wid
 | Grupa | Pola |
 |---|---|
 | Typ działalności | `typ`: `OSOBA_FIZYCZNA` / `SPOLKA_CYWILNA` / `SPOLKA_PARTNERSKA` / `SPOLKA_KOMANDYTOWA` / `SPOLKA_JAWNA` / `SPOLKA_ZOO` / `INNY` (+ `typInny`) |
-| Identyfikacja | `nazwa`, `nazwaFirmy`, `slug` (unique, URL wizytówki), `nip` (unique), `regon?`, `krs?` |
+| Identyfikacja | `nazwa`, `nazwa`, `slug` (unique, URL wizytówki), `nip` (unique), `regon?`, `krs?` |
 | Osoba kontaktowa | `imieKontakt`, `nazwiskoKontakt`, `numerTelefonu`, `numerTelefonu2?` |
 | Adres + geo | `adres`, `kodPocztowy`, `miasto`, `voivodeshipId`, `latitude?`, `longitude?` (mapa) |
 | Profil publiczny | `opis`, `logo`, `zdjecieGlowne`, `galeriaZdjec` (JSON array URL-i), `filmYouTube`, `okladkaFilmu`, `kolejnoscMultimedia` ("zdjecia"/"film") |

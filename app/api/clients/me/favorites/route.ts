@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
         lawFirm: {
           id: lawFirm.id,
           nazwa: lawFirm.nazwa,
-          nazwaFirmy: lawFirm.nazwaFirmy,
+          nazwa: lawFirm.nazwa,
           typ: lawFirm.typ,
           opis: lawFirm.opis,
           logo: lawFirm.logo,

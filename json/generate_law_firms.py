@@ -451,7 +451,7 @@ for i in range(300):
             "typ": typ,
             "typInny": typ_inny,
             "nazwa": firm_name,
-            "nazwaFirmy": full_firm_name,
+            "nazwa": full_firm_name,
             "nip": nip,
             "regon": generate_regon(i),
             "krs": generate_krs(i),

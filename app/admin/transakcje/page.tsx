@@ -417,7 +417,7 @@ export default function AdminTransakcjePage() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{order.lawFirm.nazwaFirmy || order.lawFirm.nazwa}</div>
+                        <div className="font-medium">{order.lawFirm.nazwa || order.lawFirm.nazwa}</div>
                         <div className="text-sm text-muted-foreground">{order.lawFirm.user?.email}</div>
                       </div>
                     </TableCell>

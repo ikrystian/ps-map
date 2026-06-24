@@ -16,7 +16,7 @@ export async function generateInvoiceForOrder(orderId: string) {
         lawFirm: {
           select: {
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             nip: true,
             user: {
               select: {
@@ -90,7 +90,7 @@ export async function generateInvoiceForOrder(orderId: string) {
         invoiceNumber,
         orderId: order.id,
         lawFirmId: order.lawFirmId,
-        buyerName: order.lawFirm.nazwaFirmy || order.lawFirm.nazwa || '',
+        buyerName: order.lawFirm.nazwa || order.lawFirm.nazwa || '',
         buyerNIP: order.lawFirm.nip || undefined,
         buyerAddress: order.lawFirm.user?.adres || '',
         buyerPostalCode: order.lawFirm.user?.kodPocztowy || '',

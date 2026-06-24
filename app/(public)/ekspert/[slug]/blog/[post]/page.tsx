@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         lawFirm: {
           select: {
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           }
         }
       }
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    const firmName = post.lawFirm?.nazwaFirmy || post.lawFirm?.nazwa || "Eksperta"
+    const firmName = post.lawFirm?.nazwa || post.lawFirm?.nazwa || "Eksperta"
     const plainTextDescription = post.tresc.replace(/<[^>]*>/g, "").substring(0, 160)
 
     return {

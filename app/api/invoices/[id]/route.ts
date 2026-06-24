@@ -49,7 +49,7 @@ export async function GET(
         lawFirm: {
           select: {
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             nip: true,
             user: {
               select: {

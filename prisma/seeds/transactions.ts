@@ -52,7 +52,7 @@ export async function seedTransactions(prisma: PrismaClient) {
         data: orderData,
       })
 
-      console.log(`✓ Transaction: ${orderData.orderType} for ${randomLawFirm.nazwaFirmy} - ${orderData.kwota} PLN`)
+      console.log(`✓ Transaction: ${orderData.orderType} for ${randomLawFirm.nazwa} - ${orderData.kwota} PLN`)
     } catch (error) {
       console.error(`Error seeding transaction:`, error)
     }

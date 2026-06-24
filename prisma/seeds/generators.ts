@@ -51,7 +51,7 @@ export function createRandomClientB2B() {
     clientType: ClientType.BUSINESS,
     imie: contactFirstName,
     nazwisko: contactLastName,
-    nazwaFirmy: companyName,
+    nazwa: companyName,
     nip: faker.string.numeric("10"),
     regon: faker.string.numeric("9"),
     krs: faker.string.numeric("10"),
@@ -143,7 +143,7 @@ export function createRandomLawFirm(prisma: PrismaClient) {
   return {
     typ: faker.helpers.arrayElement(Object.values(LawFirmType)),
     nazwa: companyName,
-    nazwaFirmy: companyName,
+    nazwa: companyName,
     nip: faker.string.numeric("##########"),
     regon: faker.string.numeric("#########"),
     krs: faker.string.numeric("##########"),

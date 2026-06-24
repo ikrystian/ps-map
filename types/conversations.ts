@@ -28,7 +28,7 @@ export interface ConversationLawFirm {
   lawFirm: {
     id: string
     nazwa: string
-    nazwaFirmy?: string
+    nazwa?: string
     logo?: string
     opis?: string
   }

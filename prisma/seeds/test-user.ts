@@ -41,7 +41,7 @@ export async function seedTestUser(prisma: PrismaClient) {
                 nip: "1234567890",
                 typ: "SPOLKA_ZOO",
                 typOferty: "WSZYSTKIE",
-                nazwaFirmy: "Test Law Firm LLC"
+                nazwa: "Test Law Firm LLC"
             },
         })
     }

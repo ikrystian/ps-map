@@ -38,7 +38,7 @@ const createLawFirmSchema = z.object({
   typInny: z.string().optional(),
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
-  nazwaFirmy: z.string().min(1, "Company name is required"),
+  nazwa: z.string().min(1, "Company name is required"),
   slug: z.string().optional(),
   nip: z.string().min(10, "NIP must be 10 digits"),
   regon: z.string().optional(),
@@ -143,7 +143,7 @@ export default function NewLawFirmPage() {
       typInny: "",
       expertiseCategoryId: "",
       nazwa: "",
-      nazwaFirmy: "",
+      nazwa: "",
       slug: "",
       nip: "",
       regon: "",
@@ -427,7 +427,7 @@ export default function NewLawFirmPage() {
 
                 <FormField
                   control={form.control}
-                  name="nazwaFirmy"
+                  name="nazwa"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nazwa firmy</FormLabel>

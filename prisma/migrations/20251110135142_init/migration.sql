@@ -40,7 +40,6 @@ CREATE TABLE "LawFirm" (
     "typ" TEXT NOT NULL,
     "typInny" TEXT,
     "nazwa" TEXT NOT NULL,
-    "nazwaFirmy" TEXT NOT NULL,
     "nip" TEXT NOT NULL,
     "regon" TEXT,
     "krs" TEXT,
