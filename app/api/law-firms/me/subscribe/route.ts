@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { resolveInvoiceBuyer } from "@/lib/invoice-generator"
 import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
@@ -54,7 +55,19 @@ export async function POST(request: NextRequest) {
       where: { userId: session.user.id },
       include: {
         user: {
-          select: { adres: true, kodPocztowy: true, miasto: true },
+          select: {
+            adres: true,
+            kodPocztowy: true,
+            miasto: true,
+            companyData: {
+              select: {
+                COMPANY_name: true,
+                COMPANY_nip: true,
+                COMPANY_residenceAddress: true,
+                COMPANY_workingAddress: true,
+              },
+            },
+          },
         },
       },
     })
@@ -432,17 +445,21 @@ export async function POST(request: NextRequest) {
     const dueDate = new Date()
     dueDate.setDate(dueDate.getDate() + 7)
 
+    // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
+    // razie z profilu kancelarii/użytkownika.
+    const buyer = resolveInvoiceBuyer(lawFirm)
+
     // Utwórz fakturę
     const invoice = await prisma.invoice.create({
       data: {
         invoiceNumber,
         orderId: order.id,
         lawFirmId: lawFirm.id,
-        buyerName: lawFirm.nazwa,
-        buyerNIP: lawFirm.nip,
-        buyerAddress: lawFirm.user?.adres || "",
-        buyerPostalCode: lawFirm.user?.kodPocztowy || "",
-        buyerCity: lawFirm.user?.miasto || "",
+        buyerName: buyer.buyerName,
+        buyerNIP: buyer.buyerNIP,
+        buyerAddress: buyer.buyerAddress,
+        buyerPostalCode: buyer.buyerPostalCode,
+        buyerCity: buyer.buyerCity,
         netAmount,
         vatRate,
         vatAmount,

@@ -243,7 +243,7 @@ export default function BlogPage() {
             Baza Wiedzy
           </Badge>
 
-          <h1 className="text-4xl md:text-6xl font-playfair font-bold text-foreground tracking-tight leading-none">
+          <h1 className="text-4xl md:text-6xl font-playfair  text-foreground tracking-tight leading-none">
             Poradniki i Analizy Prawne
           </h1>
 

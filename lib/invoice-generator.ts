@@ -2,6 +2,84 @@ import { prisma } from "@/lib/prisma"
 import { sendInvoiceToKsef } from "@/lib/ksef"
 
 /**
+ * Rozbija pełny adres z Białej listy MF (np. "UL. PRZYKŁADOWA 1, 00-000 WARSZAWA")
+ * na ulicę, kod pocztowy i miasto. Kotwicą podziału jest kod pocztowy w formacie
+ * 00-000. Gdy formatu nie da się rozpoznać, całość trafia do pola "ulica".
+ */
+function parseCompanyAddress(address: string): {
+  street: string
+  postalCode: string
+  city: string
+} {
+  const raw = address.trim()
+  const postalMatch = raw.match(/(\d{2}-\d{3})/)
+
+  if (!postalMatch || postalMatch.index === undefined) {
+    return { street: raw, postalCode: "", city: "" }
+  }
+
+  const postalCode = postalMatch[1]
+  const street = raw.slice(0, postalMatch.index).replace(/[,\s]+$/, "").trim()
+  const city = raw.slice(postalMatch.index + postalCode.length).replace(/^[,\s]+/, "").trim()
+
+  return { street, postalCode, city }
+}
+
+/** Minimalny kształt danych kancelarii potrzebny do ustalenia nabywcy faktury. */
+export interface InvoiceBuyerSource {
+  nazwa: string | null
+  nip: string | null
+  user?: {
+    adres: string | null
+    kodPocztowy: string | null
+    miasto: string | null
+    companyData?: {
+      COMPANY_name: string | null
+      COMPANY_nip: string | null
+      COMPANY_residenceAddress: string | null
+      COMPANY_workingAddress: string | null
+    } | null
+  } | null
+}
+
+/**
+ * Ustala dane nabywcy faktury. Jeżeli użytkownik ma uzupełnione dane firmy
+ * (CompanyData pobrane z Białej listy MF), fakturę wystawiamy na ich podstawie.
+ * W przeciwnym razie używane są dane z profilu kancelarii/użytkownika.
+ */
+export function resolveInvoiceBuyer(lawFirm: InvoiceBuyerSource): {
+  buyerName: string
+  buyerNIP: string | undefined
+  buyerAddress: string
+  buyerPostalCode: string
+  buyerCity: string
+} {
+  let buyerName = lawFirm.nazwa || ""
+  let buyerNIP: string | undefined = lawFirm.nip || undefined
+  let buyerAddress = lawFirm.user?.adres || ""
+  let buyerPostalCode = lawFirm.user?.kodPocztowy || ""
+  let buyerCity = lawFirm.user?.miasto || ""
+
+  const companyData = lawFirm.user?.companyData
+
+  if (companyData && (companyData.COMPANY_name || companyData.COMPANY_nip)) {
+    buyerName = companyData.COMPANY_name || buyerName
+    buyerNIP = companyData.COMPANY_nip || buyerNIP
+
+    const rawAddress =
+      companyData.COMPANY_workingAddress || companyData.COMPANY_residenceAddress
+    if (rawAddress) {
+      const parsed = parseCompanyAddress(rawAddress)
+      buyerAddress = parsed.street || buyerAddress
+      buyerPostalCode = parsed.postalCode || buyerPostalCode
+      buyerCity = parsed.city || buyerCity
+    }
+  }
+
+  return { buyerName, buyerNIP, buyerAddress, buyerPostalCode, buyerCity }
+}
+
+/**
  * Generates an invoice for a paid order
  * @param orderId - The ID of the order to generate invoice for
  * @returns The created invoice or null if order not found/already has invoice
@@ -16,13 +94,20 @@ export async function generateInvoiceForOrder(orderId: string) {
         lawFirm: {
           select: {
             nazwa: true,
-            nazwa: true,
             nip: true,
             user: {
               select: {
                 adres: true,
                 kodPocztowy: true,
                 miasto: true,
+                companyData: {
+                  select: {
+                    COMPANY_name: true,
+                    COMPANY_nip: true,
+                    COMPANY_residenceAddress: true,
+                    COMPANY_workingAddress: true,
+                  },
+                },
               },
             },
           },
@@ -78,6 +163,10 @@ export async function generateInvoiceForOrder(orderId: string) {
 
     const invoiceNumber = `FV/${year}/${month}/${String(invoiceCount + 1).padStart(5, '0')}`
 
+    // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
+    // razie z profilu kancelarii/użytkownika.
+    const buyer = resolveInvoiceBuyer(order.lawFirm)
+
     // Calculate amounts (prices already include VAT 23%)
     const grossAmount = order.kwota
     const vatRate = 23.0
@@ -90,11 +179,11 @@ export async function generateInvoiceForOrder(orderId: string) {
         invoiceNumber,
         orderId: order.id,
         lawFirmId: order.lawFirmId,
-        buyerName: order.lawFirm.nazwa || order.lawFirm.nazwa || '',
-        buyerNIP: order.lawFirm.nip || undefined,
-        buyerAddress: order.lawFirm.user?.adres || '',
-        buyerPostalCode: order.lawFirm.user?.kodPocztowy || '',
-        buyerCity: order.lawFirm.user?.miasto || '',
+        buyerName: buyer.buyerName,
+        buyerNIP: buyer.buyerNIP,
+        buyerAddress: buyer.buyerAddress,
+        buyerPostalCode: buyer.buyerPostalCode,
+        buyerCity: buyer.buyerCity,
         buyerCountry: 'Polska',
         netAmount,
         vatRate,

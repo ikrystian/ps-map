@@ -263,6 +263,7 @@ export default function LawFirmPanelLayout({
           </div>
         </div>
       )}
+
       {navigationGroups.map((group, groupIndex) => (
         <div key={group.label ?? `group-${groupIndex}`} className={cn("space-y-1", groupIndex > 0 && "pt-2")}>
           {/* Section header — hidden when collapsed so only icons remain */}
@@ -354,70 +355,6 @@ export default function LawFirmPanelLayout({
         </div>
       ))}
 
-      {/* Link do publicznej strony eksperta */}
-      {
-        lawFirmSlug && (
-          <>
-            <div className="border-t border-border my-2" />
-            <Link
-              href={`/ekspert/${lawFirmSlug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={() => setHoveredIndex(navigation.length)}
-              className={cn(
-                "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
-                "text-muted-foreground hover:text-white",
-                !inSheet && isCollapsed && "justify-center"
-              )}
-              title={!inSheet && isCollapsed ? "Mój profil publiczny" : undefined}
-            >
-              <AnimatePresence>
-                {hoveredIndex === navigation.length && (
-                  <motion.span
-                    layoutId="expert-sidebar-hover-pill"
-                    className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 30,
-                    }}
-                  />
-                )}
-              </AnimatePresence>
-
-              <motion.div
-                animate={{
-                  scale: hoveredIndex === navigation.length ? 1.1 : 1,
-                  x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
-                  rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
-                }}
-                transition={{
-                  scale: { type: "spring", stiffness: 400, damping: 20 },
-                  x: { type: "spring", stiffness: 400, damping: 20 },
-                  rotate: { duration: 0.4, ease: "easeInOut" }
-                }}
-                className="flex items-center justify-center flex-shrink-0"
-              >
-                <ExternalLink className="h-5 w-5" />
-              </motion.div>
-
-              {(inSheet || !isCollapsed) && (
-                <motion.span
-                  animate={{
-                    x: hoveredIndex === navigation.length ? 4 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                >
-                  Mój profil publiczny
-                </motion.span>
-              )}
-            </Link>
-          </>
-        )
-      }
 
       <div className="border-t border-border my-2" />
       <Button

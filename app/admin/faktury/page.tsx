@@ -1,6 +1,6 @@
 "use client"
 
-import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,11 +17,13 @@ import {
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import {
+  Building2,
   CheckCircle2,
   Clock,
   Download,
   FileText,
   Loader2,
+  Send,
   XCircle,
   Coins,
   ShieldCheck
@@ -42,6 +44,14 @@ interface Invoice {
   buyerName: string
   buyerNIP: string
   pdfUrl: string | null
+  ksefStatus?: string | null
+  ksefNumber?: string | null
+  ksefReferenceNumber?: string | null
+  ksefDiagnostics?: string | null
+  lawFirm: {
+    id: string
+    nazwa: string
+  } | null
   order: {
     orderNumber: string
     orderType: string
@@ -82,9 +92,10 @@ const itemVariants = {
   },
 }
 
-export default function InvoicesPage() {
+export default function AdminInvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
+  const [syncingId, setSyncingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchInvoices()
@@ -92,7 +103,7 @@ export default function InvoicesPage() {
 
   const fetchInvoices = async () => {
     try {
-      const response = await fetch("/api/invoices")
+      const response = await fetch("/api/admin/invoices")
       if (!response.ok) throw new Error("Failed to fetch invoices")
       const data = await response.json()
       setInvoices(data)
@@ -100,6 +111,26 @@ export default function InvoicesPage() {
       toast.error("Nie udało się pobrać faktur")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSendToKsef = async (id: string) => {
+    setSyncingId(id)
+    try {
+      const response = await fetch(`/api/invoices/${id}/ksef`, {
+        method: "POST"
+      })
+      const result = await response.json()
+      if (response.ok && result.success) {
+        toast.success("Pomyślnie wysłano fakturę do KSeF")
+      } else {
+        toast.error(result.invoice?.ksefDiagnostics || result.error || "Błąd podczas wysyłania do KSeF")
+      }
+      fetchInvoices()
+    } catch (error) {
+      toast.error("Wystąpił błąd podczas wysyłania do KSeF")
+    } finally {
+      setSyncingId(null)
     }
   }
 
@@ -138,23 +169,11 @@ export default function InvoicesPage() {
 
   return (
     <div className="relative space-y-8">
+      <AdminHeaderSetter title="Faktury" subtitle="Wszystkie faktury VAT w systemie" />
+
       {/* Ambient Background Glows */}
       <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
-
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative z-10"
-      >
-        <PageHeader
-          title="Faktury VAT"
-          subtitle="Zarządzaj swoimi fakturami oraz sprawdzaj status płatności."
-        />
-
-      </motion.div>
 
       {/* Main Container */}
       <motion.div
@@ -174,7 +193,7 @@ export default function InvoicesPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-white">Brak faktur</h3>
                   <p className="text-zinc-400 text-xs mt-1.5 leading-relaxed font-light">
-                    Nie wystawiono jeszcze żadnych faktur VAT na Twoim profilu. Faktury pojawią się automatycznie po wykupieniu pakietu punktów lub subskrypcji.
+                    W systemie nie wystawiono jeszcze żadnych faktur VAT. Faktury pojawiają się automatycznie po wykupieniu przez ekspertów pakietu punktów lub subskrypcji.
                   </p>
                 </div>
               </CardContent>
@@ -186,9 +205,9 @@ export default function InvoicesPage() {
               <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden">
                 <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
                 <CardHeader className="border-b border-border/20 py-4 px-6">
-                  <CardTitle className="text-lg font-playfair text-white">Historia faktur</CardTitle>
+                  <CardTitle className="text-lg font-playfair text-white">Wszystkie faktury</CardTitle>
                   <CardDescription className="text-zinc-400 text-xs">
-                    Wszystkie wygenerowane faktury rozliczeniowe za usługi portalu ({invoices.length})
+                    Wszystkie faktury rozliczeniowe wystawione w systemie ({invoices.length})
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -198,12 +217,14 @@ export default function InvoicesPage() {
                       <TableHeader>
                         <TableRow className="border-b border-border/20 hover:bg-transparent">
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Numer faktury</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Ekspert</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data wystawienia</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Przedmiot</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Kwota netto</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">VAT</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Kwota brutto</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
+                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-44">Status KSeF</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -216,6 +237,12 @@ export default function InvoicesPage() {
                             <TableRow key={invoice.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
                               <TableCell className="py-4 px-6 font-semibold text-white">
                                 {invoice.invoiceNumber}
+                              </TableCell>
+                              <TableCell className="py-4 px-6">
+                                <div className="flex items-center gap-1.5 text-zinc-300">
+                                  <Building2 className="h-3.5 w-3.5 text-zinc-500" />
+                                  <span className="font-medium">{invoice.lawFirm?.nazwa || invoice.buyerName}</span>
+                                </div>
                               </TableCell>
                               <TableCell className="py-4 px-6 text-xs font-light text-zinc-400">
                                 <div className="flex items-center gap-1.5">
@@ -258,6 +285,68 @@ export default function InvoicesPage() {
                                   {statusInfo.label}
                                 </Badge>
                               </TableCell>
+                              <TableCell className="py-4 px-6">
+                                {invoice.ksefStatus === "ACCEPTED" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 rounded-md">
+                                      <CheckCircle2 className="h-3 w-3 text-success" />
+                                      Zaakceptowano
+                                    </Badge>
+                                    {invoice.ksefNumber && (
+                                      <div className="text-sm font-mono text-zinc-500 break-all max-w-[140px]" title={invoice.ksefNumber}>
+                                        {invoice.ksefNumber}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "SENT" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 rounded-md">
+                                      <Clock className="h-3 w-3 animate-pulse text-blue-400" />
+                                      Wysłano
+                                    </Badge>
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "PENDING" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 rounded-md">
+                                      <Loader2 className="h-3 w-3 animate-spin text-warning" />
+                                      Przetwarzanie
+                                    </Badge>
+                                  </div>
+                                )}
+                                {invoice.ksefStatus === "FAILED" && (
+                                  <div className="space-y-1">
+                                    <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 rounded-md" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
+                                      <XCircle className="h-3 w-3" />
+                                      Błąd wysyłki
+                                    </Badge>
+                                    {invoice.ksefDiagnostics && (
+                                      <div className="text-sm text-error max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
+                                        {invoice.ksefDiagnostics}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
+                                  <div className="mt-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-xs text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-lg px-2 py-1 h-7 flex items-center gap-1"
+                                      onClick={() => handleSendToKsef(invoice.id)}
+                                      disabled={syncingId === invoice.id}
+                                    >
+                                      {syncingId === invoice.id ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Send className="h-3 w-3" />
+                                      )}
+                                      {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                                    </Button>
+                                  </div>
+                                )}
+                              </TableCell>
                               <TableCell className="py-4 px-6 text-right">
                                 <div className="flex items-center justify-end">
                                   <Button
@@ -291,6 +380,10 @@ export default function InvoicesPage() {
                               <h4 className="font-semibold text-white text-sm">
                                 {invoice.invoiceNumber}
                               </h4>
+                              <p className="text-sm text-zinc-400 font-light mt-0.5 flex items-center gap-1">
+                                <Building2 className="h-3 w-3 text-zinc-500" />
+                                {invoice.lawFirm?.nazwa || invoice.buyerName}
+                              </p>
                               <p className="text-sm text-zinc-500 font-light mt-0.5">{formatDate(invoice.issueDate)}</p>
                             </div>
                             <Badge className={cn("gap-1 py-0.5 rounded-md font-medium text-sm", statusInfo.className)}>
@@ -321,7 +414,54 @@ export default function InvoicesPage() {
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-end border-t border-border/5 pt-2.5">
+                          {/* KSeF Status on Mobile */}
+                          <div className="flex items-center justify-between border-t border-border/5 pt-2.5">
+                            <div>
+                              <span className="text-zinc-500 block font-light text-sm">Status KSeF</span>
+                              <div className="mt-1">
+                                {invoice.ksefStatus === "ACCEPTED" && (
+                                  <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 px-2 text-sm">
+                                    <CheckCircle2 className="h-3 w-3" />
+                                    Zaakceptowano
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "SENT" && (
+                                  <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 px-2 text-sm">
+                                    <Clock className="h-3 w-3 animate-pulse" />
+                                    Wysłano
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "PENDING" && (
+                                  <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 px-2 text-sm">
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Przetwarzanie
+                                  </Badge>
+                                )}
+                                {invoice.ksefStatus === "FAILED" && (
+                                  <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 px-2 text-sm">
+                                    <XCircle className="h-3 w-3" />
+                                    Błąd wysyłki
+                                  </Badge>
+                                )}
+                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-sm text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-md p-1 h-auto flex items-center gap-1"
+                                    onClick={() => handleSendToKsef(invoice.id)}
+                                    disabled={syncingId === invoice.id}
+                                  >
+                                    {syncingId === invoice.id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <Send className="h-3 w-3" />
+                                    )}
+                                    {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+
                             <Button
                               variant="outline"
                               size="sm"

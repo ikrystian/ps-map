@@ -1398,7 +1398,7 @@ export default function LawFirmRegistrationPage() {
       <Card className="border-none shadow-none bg-transparent">
         <CardHeader className="space-y-2 px-0 pt-0">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-3xl font-extrabold tracking-tight">Rejestracja</CardTitle>
+            <CardTitle className="text-3xl font-playfair tracking-tight">Rejestracja</CardTitle>
             <span className="text-xs font-light bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
               Krok {currentStepIndex + 1} / {totalSteps}
             </span>
